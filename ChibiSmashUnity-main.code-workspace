@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "../Downloads/ChibiSmashUnity-main"
+		}
+	],
+	"settings": {
+		"dotnet.defaultSolution": "ChibiSmashUnity-main.slnx"
+	}
+}
