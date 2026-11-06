@@ -402,10 +402,13 @@ namespace ChibiClash
             PromptMessage = "Perform: " + ClassDef.GestureName(Def.ultGesture);
         }
 
+        /// <summary>One frame of the ult window countdown: unscaled so hitstop/cinematic slow-mo don't stretch it, frozen while paused.</summary>
+        public static float TickUltWindow(float left, float unscaledDt, bool paused) => paused ? left : left - unscaledDt;
+
         void UpdateUltWindow()
         {
             if (!UltWindow) return;
-            UltWindowLeft -= Time.unscaledDeltaTime;
+            UltWindowLeft = TickUltWindow(UltWindowLeft, Time.unscaledDeltaTime, Match.Paused);
             bool match = Gestures.Stable == Def.ultGesture && Gestures.StableTime >= 0.15f;
             if (match && !Gestures.TelemetryValid)
             {
@@ -688,8 +691,11 @@ namespace ChibiClash
 
         public void RingOut(Vector2 respawn)
         {
-            ReleaseHeld();
+            // cancel every in-progress action, ours and (if it's holding us) the opponent's grab/kick
+            Interrupt();
+            if (Opponent != null && Opponent.heldTarget == this) Opponent.Interrupt();
             if (held) SetHeld(false);
+            parryUntil = spinGuardUntil = 0f;
             float penalty = MaxHp * 0.15f;
             Hp = Mathf.Max(0f, Hp - penalty);
             transform.position = respawn;

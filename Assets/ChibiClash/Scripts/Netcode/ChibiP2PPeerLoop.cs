@@ -297,6 +297,8 @@ namespace ChibiClash.Netcode
             _tx.Checksum = _latestHash;
 
             _txBuf.Clear();
+            // Write throws InvalidOperationException on overrun; deliberately not caught, so a too-large
+            // message surfaces as an error instead of a silently truncated datagram.
             ChibiPacketCodec.Write(_txBuf, _tx);
             _net.Send(_txBuf.Bytes, _txBuf.ByteLength);
         }
@@ -366,16 +368,17 @@ namespace ChibiClash.Netcode
     /// </summary>
     public sealed class ChibiP2PPeerLoop : MonoBehaviour
     {
-        public const float TickSeconds = 1f / ChibiSimConst.TickRate;
-        const int MaxTicksPerRenderFrame = 5;
+        public const float TickSeconds = ChibiTickClock.TickSeconds;
 
         public ChibiRollbackSession Session { get; private set; }
         public ChibiReplayRecorder Replay { get; private set; }
-        public float RenderAlpha => _acc / TickSeconds;
+        public float RenderAlpha => _clock.RenderAlpha;
 
         IChibiInputSource _source;
         IChibiTransport _transport;
-        float _acc;
+        readonly ChibiTickClock _clock = new ChibiTickClock();
+        Func<float> _dilation;   // cached once in Begin so Update allocates nothing
+        Action _tick;
 
         public void Begin(int localIndex, in ChibiMatchConfig cfg, IChibiTransport transport, IChibiInputSource source, bool recordReplay = true)
         {
@@ -387,7 +390,9 @@ namespace ChibiClash.Netcode
                 Replay = new ChibiReplayRecorder(cfg);
                 Session.OnFrameConfirmed += Replay.Add;
             }
-            _acc = 0f;
+            _dilation = () => Session.TimeDilation;
+            _tick = () => Session.Tick();
+            _clock.Reset();
         }
 
         void Update()
@@ -395,17 +400,7 @@ namespace ChibiClash.Netcode
             if (Session == null) return;
             _source.PollRenderFrame();
 
-            _acc += Time.unscaledDeltaTime;
-            float step = TickSeconds * Session.TimeDilation;
-            int ran = 0;
-            while (_acc >= step && ran < MaxTicksPerRenderFrame)
-            {
-                Session.Tick();
-                _acc -= step;
-                ran++;
-                step = TickSeconds * Session.TimeDilation;
-            }
-            if (ran == MaxTicksPerRenderFrame) _acc = 0f;   // hitch: drop the backlog instead of spiralling
+            _clock.Run(Time.unscaledDeltaTime, _dilation, _tick);   // re-reads TimeDilation after every tick
         }
 
         void OnDestroy()

@@ -228,7 +228,7 @@ namespace ChibiClash
         {
             Time.timeScale = 1f;
             Fx.Popups.Clear();
-            if (cam != null) cam.targets = null;
+            if (cam != null) cam.ReleaseTargets(F);
         }
     }
 }

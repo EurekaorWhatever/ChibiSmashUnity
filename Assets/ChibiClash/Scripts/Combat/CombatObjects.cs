@@ -241,8 +241,8 @@ namespace ChibiClash
             transform.Rotate(0f, 0f, 180f * Time.deltaTime);
             float s = 1f + Mathf.Sin(Time.time * 10f) * 0.04f;
             transform.localScale = new Vector3(s * owner.Facing, s, 1f);
-            var ang = UnityEngine.Random.value * Mathf.PI * 2f;
-            Fx.Burst(owner.Center + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * 2f, new Color(1f, UnityEngine.Random.Range(0.3f, 0.8f), 0.1f), 1, 1.5f, 0.3f);
+            var ang = FxRandom.Value * Mathf.PI * 2f;
+            Fx.Burst(owner.Center + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * 2f, new Color(1f, FxRandom.Range(0.3f, 0.8f), 0.1f), 1, 1.5f, 0.3f);
 
             tick -= Time.deltaTime;
             var target = owner.Opponent;
@@ -301,9 +301,9 @@ namespace ChibiClash
             var ep = new ParticleSystem.EmitParams { position = pos, startColor = c, applyShapeToPosition = false };
             for (int i = 0; i < count; i++)
             {
-                ep.velocity = UnityEngine.Random.insideUnitCircle * speed;
-                ep.startSize = size * UnityEngine.Random.Range(0.6f, 1.3f);
-                ep.startLifetime = life * UnityEngine.Random.Range(0.7f, 1.3f);
+                ep.velocity = FxRandom.InsideUnitCircle * speed;
+                ep.startSize = size * FxRandom.Range(0.6f, 1.3f);
+                ep.startLifetime = life * FxRandom.Range(0.7f, 1.3f);
                 ps.Emit(ep, 1);
             }
         }

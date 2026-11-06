@@ -32,9 +32,31 @@ namespace ChibiClash.Netcode
 
     public struct ChibiMatchConfig
     {
+        /// <summary>Bump whenever simulation rules change so old replays / mismatched peers are detected.</summary>
+        /// <summary>Bump whenever simulation rules or move data change, so mismatched peers/replays are rejected.</summary>
+        /// <remarks>2: Melee Dash &amp; Thrust matched to the original. 3: melee light/heavy hit areas matched to the original MeleeBox. 4: input message widened to 16 bits (Dash, gesture, PoseVerified).</remarks>
+        public const int RulesVersion = 4;
+
         public uint Seed;
         public FighterClass Class0, Class1;
         public int Passive0, Passive1;
+
+        /// <summary>
+        /// FNV-style hash of RulesVersion and every config field. Peers / replays with different hashes
+        /// would not simulate the same match.
+        /// </summary>
+        /// <example><code>bool same = a.ComputeHash() == b.ComputeHash();</code></example>
+        public uint ComputeHash()
+        {
+            uint h = 2166136261u;
+            ChibiSimState.Mix(ref h, RulesVersion);
+            ChibiSimState.Mix(ref h, unchecked((int)Seed));
+            ChibiSimState.Mix(ref h, (int)Class0);
+            ChibiSimState.Mix(ref h, (int)Class1);
+            ChibiSimState.Mix(ref h, Passive0);
+            ChibiSimState.Mix(ref h, Passive1);
+            return h;
+        }
     }
 
     // ====================================================================================== move data
@@ -81,19 +103,25 @@ namespace ChibiClash.Netcode
                       R = ChibiMove.FRing, H = ChibiMove.FHoming, G = ChibiMove.FSpinGuard, T = ChibiMove.FTargeted;
             var t = new ChibiMove[5][];
 
+            // Melee normals match Fighter.NormalStrike: MeleeBox(Def.reach * (heavy ? 1.15 : 1), 1.3) spans from the
+            // fighter's centre to reach + 0.3 ahead, 1.3 tall around the body centre (0.675 above the feet).
+            // Def.reach (ClassData.cs): Melee 1.35, Heavy 1.55, Polearm 2.0. Timing is ported separately (step 8).
             t[(int)FighterClass.Melee] = new[]
             {
-                Mv(4, 3, 9, 1000, 200, 1150, 150, 1100, 45, 35, 16),                         // light thrust
-                Mv(10, 4, 16, 1800, 200, 1350, 100, 1200, 130, 100, 30),                     // heavy slash
-                Mv(4, 8, 12, 1600, 200, 900, 150, 1000, 115, 65, 27, vx: 300, cd: 240),      // Dash & Thrust
+                Mv(4, 3, 9, 1000, 0, 1650, 25, 1300, 45, 35, 16),                          // light thrust
+                Mv(10, 4, 16, 1800, 0, 1853, 25, 1300, 130, 100, 30),                      // heavy slash
+                // Dash & Thrust — matches Fighter.DashThrust: hit check from the first frame, every frame of the 0.22 s
+                // (13-tick) dash at 18 u/s; whole move locked for 0.4 s (24 ticks); box = MeleeBox(0.8, 1.2) =
+                // from the fighter's centre to 1.1 u ahead, 1.2 u tall around the body centre (0.725 above feet).
+                Mv(0, 13, 11, 1600, 0, 1100, 75, 1200, 115, 65, 27, vx: 300, cd: 240),
                 Mv(3, 21, 6, flags: P, cd: 300),                                             // Parry (reflects damage)
                 Mv(4, 36, 10, 550, 200, 1500, 100, 1100, 20, 15, 10, rehit: 6, cd: 420),     // Thrust Barrage (6 pulses)
                 Mv(10, 1, 20, flags: A),                                                     // ULT Sword Aura (10 s wave buff)
             };
             t[(int)FighterClass.Heavy] = new[]
             {
-                Mv(6, 4, 12, 1000, 200, 1550, 100, 1300, 55, 40, 18),
-                Mv(16, 5, 20, 1800, 200, 1780, 0, 1400, 140, 110, 32),
+                Mv(6, 4, 12, 1000, 0, 1850, 25, 1300, 55, 40, 18),
+                Mv(16, 5, 20, 1800, 0, 2083, 25, 1300, 140, 110, 32),
                 Mv(8, 3, 24, 2200, 150, 1000, 100, 1200, 40, 150, 40, cd: 360, flags: U),    // Grab & smash
                 Mv(6, 60, 14, 700, 0, 2400, 0, 1400, 50, 50, 15, rehit: 12, cd: 420, flags: C), // Tornado Spin (5 hits)
                 new ChibiMove(),                                                             // (Heavy has only two skills)
@@ -119,8 +147,8 @@ namespace ChibiClash.Netcode
             };
             t[(int)FighterClass.Polearm] = new[]
             {
-                Mv(5, 3, 10, 1000, 200, 1850, 150, 800, 45, 35, 16),
-                Mv(12, 4, 18, 1800, 200, 2050, 100, 1100, 130, 100, 30),
+                Mv(5, 3, 10, 1000, 0, 2300, 25, 1300, 45, 35, 16),
+                Mv(12, 4, 18, 1800, 0, 2600, 25, 1300, 130, 100, 30),
                 Mv(22, 5, 14, 1800, 100, 1900, 0, 1200, 100, 150, 30, vx: 100, vy: 230, cd: 300), // Leap slam
                 Mv(2, 70, 4, 300, 0, 3000, 0, 1200, 40, 35, 12, rehit: 18, cd: 360, flags: C | G), // Spin guard
                 Mv(10, 1, 14, 1400, kx: 85, ky: 50, stun: 21, ps: 270, pl: 45, cd: 360),     // Throw spear

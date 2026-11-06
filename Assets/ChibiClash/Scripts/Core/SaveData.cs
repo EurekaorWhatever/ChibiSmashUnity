@@ -82,11 +82,34 @@ namespace ChibiClash
         public bool preMatchCheck = true;
     }
 
+    /// <summary>Key/value storage behind SaveData. The game uses PlayerPrefs; tests pass an in-memory store.</summary>
+    public interface ISaveStore
+    {
+        /// <summary>The stored string for key, or "" if there is none.</summary>
+        string Get(string key);
+        /// <summary>Store value under key (may stay in memory until Flush).</summary>
+        void Set(string key, string value);
+        /// <summary>Write pending changes to disk.</summary>
+        void Flush();
+    }
+
+    /// <summary>ISaveStore backed by PlayerPrefs, used by Load() and Save().</summary>
+    public sealed class PlayerPrefsSaveStore : ISaveStore
+    {
+        public static readonly PlayerPrefsSaveStore Instance = new PlayerPrefsSaveStore();
+        public string Get(string key) => PlayerPrefs.GetString(key, "");
+        public void Set(string key, string value) => PlayerPrefs.SetString(key, value);
+        public void Flush() => PlayerPrefs.Save();
+    }
+
     /// <summary>Persistent player profile: currency, owned cosmetics, quests and settings.</summary>
     [Serializable]
     public class SaveData
     {
-        const string Key = "ChibiClash.Save.v1";
+        /// <summary>Store key of the profile JSON.</summary>
+        public const string Key = "ChibiClash.Save.v1";
+        /// <summary>Store key where an unreadable profile is kept instead of being overwritten.</summary>
+        public const string BackupKey = Key + ".corrupt";
         public const int PullCost = 100;
         public const int TenPullCost = 900;
 
@@ -99,24 +122,51 @@ namespace ChibiClash
         public Settings settings = new Settings();
         public int wins, losses, matches;
 
-        public static SaveData Load()
+        /// <summary>Load the profile from PlayerPrefs.</summary>
+        public static SaveData Load() => Load(PlayerPrefsSaveStore.Instance);
+
+        /// <summary>Load the profile from store. Unreadable JSON is copied to BackupKey before a fresh profile is returned.</summary>
+        public static SaveData Load(ISaveStore store)
         {
             SaveData d = null;
+            string json = "", error = null;
             try
             {
-                var json = PlayerPrefs.GetString(Key, "");
-                if (!string.IsNullOrEmpty(json)) d = JsonUtility.FromJson<SaveData>(json);
+                json = store.Get(Key) ?? "";
+                if (json.Length > 0)
+                {
+                    d = JsonUtility.FromJson<SaveData>(json);
+                    if (d == null) error = "save parsed to null";
+                }
             }
-            catch (Exception e) { Debug.LogWarning("ChibiClash: save reset (" + e.Message + ")"); }
+            catch (Exception e) { d = null; error = e.Message; }
+            if (error != null) BackupCorrupt(store, json, error);
             if (d == null) d = new SaveData();
             d.Repair();
             return d;
         }
 
-        public void Save()
+        // Keeps the unreadable save so the fresh profile's next Save() cannot destroy it. There is one backup slot:
+        // an identical string is not rewritten, a different corrupt save replaces it (newest wins).
+        static void BackupCorrupt(ISaveStore store, string json, string error)
         {
-            PlayerPrefs.SetString(Key, JsonUtility.ToJson(this));
-            PlayerPrefs.Save();
+            if (string.IsNullOrEmpty(json)) { Debug.LogWarning("ChibiClash: save reset (" + error + ")"); return; }
+            try
+            {
+                if (store.Get(BackupKey) != json) { store.Set(BackupKey, json); store.Flush(); }
+                Debug.LogWarning("ChibiClash: save unreadable (" + error + "); original kept under key '" + BackupKey + "', starting a fresh profile");
+            }
+            catch (Exception e) { Debug.LogWarning("ChibiClash: save unreadable (" + error + ") and backup to '" + BackupKey + "' failed (" + e.Message + ")"); }
+        }
+
+        /// <summary>Write the profile to PlayerPrefs.</summary>
+        public void Save() => Save(PlayerPrefsSaveStore.Instance);
+
+        /// <summary>Write the profile to store.</summary>
+        public void Save(ISaveStore store)
+        {
+            store.Set(Key, JsonUtility.ToJson(this));
+            store.Flush();
         }
 
         void Repair()
@@ -142,8 +192,11 @@ namespace ChibiClash
 
         void AddQuest(string id, string desc, int target, int reward)
         {
-            if (quests.Any(q => q.id == id)) return;
-            quests.Add(new Quest { id = id, desc = desc, target = target, reward = reward });
+            var q = quests.FirstOrDefault(x => x != null && x.id == id);
+            if (q == null) { quests.Add(new Quest { id = id, desc = desc, target = target, reward = reward }); return; }
+            // A saved target <= 0 would hang Progress: restore the built-in target. Text and valid rewards are kept.
+            if (q.target <= 0) { q.target = target; q.progress = Mathf.Clamp(q.progress, 0, target - 1); }
+            if (q.reward < 0) q.reward = reward;
         }
 
         public Skin Equipped(FighterClass c)
@@ -162,7 +215,7 @@ namespace ChibiClash
         public int Progress(string id, int amount, List<string> log)
         {
             var q = quests.FirstOrDefault(x => x.id == id);
-            if (q == null || amount <= 0) return 0;
+            if (q == null || amount <= 0 || q.target <= 0) return 0;   // target <= 0 would never leave the loop below
             q.progress += amount;
             int earned = 0;
             while (q.progress >= q.target)

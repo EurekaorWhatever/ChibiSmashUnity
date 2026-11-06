@@ -140,6 +140,12 @@ namespace ChibiClash
 
         public void Shake(float amount) => shake = Mathf.Max(shake, amount);
 
+        /// <summary>Stop following <paramref name="owner"/>'s fighters, unless a newer match has already taken over the camera (Rematch).</summary>
+        public void ReleaseTargets(Fighter[] owner)
+        {
+            if (targets == owner) targets = null;
+        }
+
         public void Focus(Fighter f, float seconds)
         {
             focus = f;
@@ -170,7 +176,7 @@ namespace ChibiClash
             Vector3 offset = Vector3.zero;
             if (shake > 0f)
             {
-                offset = (Vector3)(Random.insideUnitCircle * shake * 0.6f);
+                offset = (Vector3)(FxRandom.InsideUnitCircle * shake * 0.6f);
                 shake = Mathf.MoveTowards(shake, 0f, dt * 2.5f);
             }
             transform.position = pos + offset;

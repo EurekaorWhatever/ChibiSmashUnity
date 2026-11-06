@@ -18,27 +18,43 @@ namespace ChibiClash.Netcode
         Skill2 = 1 << 9,
         Skill3 = 1 << 10,
         Ultimate = 1 << 11,
+        /// <summary>Dash request (bit 12). Carried on the wire; not yet consumed by the simulation.</summary>
+        Dash = 1 << 12,
+        /// <summary>
+        /// Bit 15: set by the input side when the gesture (bits 13-14) came from a live, telemetry-validated
+        /// camera pose. A hint for the receiver, not proof: the peer can set it freely.
+        /// </summary>
+        PoseVerified = 1 << 15,
     }
 
     /// <summary>
-    /// One player's input for one simulation frame, packed into 12 bits:
+    /// One player's input for one simulation frame, packed into 16 bits:
     ///
     ///   bit  0..3   direction (ChibiDir, 0..8; 9..15 are illegal and sanitised to neutral)
     ///   bit  4      light attack        bit  8   skill 1
     ///   bit  5      heavy attack        bit  9   skill 2
     ///   bit  6      jump                bit 10   skill 3
     ///   bit  7      shield              bit 11   ultimate
-    ///   bit 12..15  reserved (future extension, e.g. a camera gesture id). They are NOT sent today:
-    ///               raise <see cref="WireBits"/> and the codec widens automatically.
+    ///   bit 12      dash
+    ///   bit 13..14  gesture id (ChibiClash.Gesture: 0 None, 1 CrossArms, 2 PunchForward, 3 RaiseHands)
+    ///   bit 15      pose verified (hint from the camera input side, not proof)
+    /// Bits 12..15 travel on the wire but the simulation ignores them for now.
     ///
     /// The struct holds *state* (what is held), never events. Press edges are derived inside the simulation
     /// from the previous frame's value, so nothing extra travels over the network and rollback stays exact.
     /// </summary>
     public struct ChibiInputPacket : IEquatable<ChibiInputPacket>
     {
-        public const int WireBits = 12;
-        public const ushort WireMask = (1 << WireBits) - 1;
+        /// <summary>Number of input bits sent per frame on the wire.</summary>
+        public const int WireBits = 16;
+        /// <summary>Mask of all bits that travel on the wire (all 16).</summary>
+        public const ushort WireMask = 0xFFFF;
+        /// <summary>Mask of the direction nibble (bits 0..3).</summary>
         public const ushort DirMask = 0xF;
+        /// <summary>Bit position of the 2-bit gesture id.</summary>
+        public const int GestureShift = 13;
+        /// <summary>Mask of the gesture id bits (13..14).</summary>
+        public const ushort GestureMask = 0x3 << 13;
 
         public ushort Raw;
 
@@ -54,9 +70,19 @@ namespace ChibiClash.Netcode
         public int MoveY => DirY[DirIndex];
         public bool Has(ChibiButtons b) => (Raw & (ushort)b) != 0;
 
-        public static ChibiInputPacket Make(ChibiDir dir, ChibiButtons buttons)
+        /// <summary>Camera gesture id held this frame (bits 13..14). Get/set touches only those bits.</summary>
+        public Gesture Gesture
         {
-            return new ChibiInputPacket { Raw = (ushort)(((ushort)dir & DirMask) | (ushort)buttons) };
+            get => (Gesture)((Raw & GestureMask) >> GestureShift);
+            set => Raw = (ushort)((Raw & ~GestureMask) | (((int)value << GestureShift) & GestureMask));
+        }
+
+        /// <summary>Pack a direction, held buttons and an optional gesture id into one frame of input.</summary>
+        public static ChibiInputPacket Make(ChibiDir dir, ChibiButtons buttons, Gesture gesture = Gesture.None)
+        {
+            var p = new ChibiInputPacket { Raw = (ushort)(((ushort)dir & DirMask) | ((ushort)buttons & ~GestureMask)) };
+            p.Gesture = gesture;
+            return p;
         }
 
         /// <summary>Quantise a stick/dpad (each axis already reduced to -1, 0, +1) into the 8-way direction.</summary>
@@ -67,7 +93,8 @@ namespace ChibiClash.Netcode
             return (ChibiDir)AxesToDir[(y + 1) * 3 + (x + 1)];
         }
 
-        /// <summary>Drop reserved bits and illegal direction values (never trust the wire).</summary>
+        /// <summary>Drop bits outside <see cref="WireMask"/> and illegal direction values (never trust the wire).
+        /// Dash, gesture and PoseVerified bits are kept.</summary>
         public ChibiInputPacket Sanitized()
         {
             ushort r = (ushort)(Raw & WireMask);
@@ -111,18 +138,27 @@ namespace ChibiClash.Netcode
     ///   8  magic 0xC7                        24 lastFrame
     ///   24 ackFrame + 1                      4  advantage + 8
     ///   3  count - 1
-    ///   n  inputs: first = 12 raw bits; each next = 1 bit "same as previous" (1) or 0 + 12 raw bits
+    ///   n  inputs: first = 16 raw bits; each next = 1 bit "same as previous" (1) or 0 + 16 raw bits
     ///   1  hasChecksum; if set: 24 frame, 32 checksum
-    /// Typical size when held inputs repeat: 63 + 12 + 7 = 82 bits = 11 bytes. Worst case 28 bytes.
+    /// Typical size when held inputs repeat: 63 + 16 + 7 + 1 = 87 bits = 11 bytes.
+    /// Worst case (8 inputs, no repeats, checksum): header 8+24+24+4+3 = 63, first input 16,
+    /// 7 x (1+16) = 119, checksum 1+24+32 = 57 -> 255 bits = 32 bytes. See <see cref="MaxPacketBytes"/>.
     /// Frame counters are 24 bit (about 77 hours at 60 Hz).
     /// </summary>
     public static class ChibiPacketCodec
     {
         public const byte Magic = 0xC7;
-        public const int MaxPacketBytes = 32;
+        /// <summary>
+        /// Capacity of every send/receive BitBuffer. Worst case today is 255 bits = 32 bytes; 48 leaves 16 bytes
+        /// of headroom for a later field without another wire break, and stays far below Relay's 1400-byte limit.
+        /// Received datagrams larger than this are rejected (BitBuffer.LoadFrom flags Overrun, TryRead returns false).
+        /// </summary>
+        public const int MaxPacketBytes = 48;
         const int FrameBits = 24;
         const uint FrameMask = (1u << FrameBits) - 1u;
 
+        /// <summary>Serialise <paramref name="m"/> into <paramref name="b"/>.</summary>
+        /// <exception cref="InvalidOperationException">The message did not fit the buffer (never sent truncated).</exception>
         public static void Write(BitBuffer b, ChibiNetMessage m)
         {
             b.Write(Magic, 8);
@@ -148,6 +184,11 @@ namespace ChibiClash.Netcode
                 b.Write((uint)m.ChecksumFrame & FrameMask, FrameBits);
                 b.Write(m.Checksum, 32);
             }
+
+            if (b.Overrun)
+                throw new InvalidOperationException(
+                    "ChibiPacketCodec.Write: message overran " + b.Bytes.Length + "-byte packet (Count=" + m.Count +
+                    ", HasChecksum=" + m.HasChecksum + "); refusing to send a truncated datagram.");
         }
 
         /// <summary>Returns false for anything that is not a well-formed message (wrong magic, truncated).</summary>
