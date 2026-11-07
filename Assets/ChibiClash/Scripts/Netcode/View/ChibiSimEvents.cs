@@ -23,6 +23,8 @@ namespace ChibiClash.Netcode
         ProjectileSpawned,
         /// <summary>Projectile slot Index stopped being live. Value = owner fighter.</summary>
         ProjectileGone,
+        /// <summary>Fighter started a dash (DashTicks rose from 0, or re-armed while dashing). Value = DashDir (-1/+1).</summary>
+        DashStarted,
     }
 
     /// <summary>One presentation event. Index is the fighter (0/1) or, for projectile events, the projectile slot.</summary>
@@ -110,6 +112,9 @@ namespace ChibiClash.Netcode
             if (c.Invuln == ChibiSimConst.RespawnInvuln && p.Invuln != ChibiSimConst.RespawnInvuln &&
                 c.X == 0 && c.Y == ChibiSimConst.RespawnY)
                 output.Add(new ChibiSimEvent(ChibiSimEventKind.RingOut, i));
+
+            if (c.DashTicks > 0 && (p.DashTicks == 0 || c.DashTicks > p.DashTicks))
+                output.Add(new ChibiSimEvent(ChibiSimEventKind.DashStarted, i, c.DashDir));
         }
     }
 }

@@ -147,5 +147,35 @@ namespace ChibiClash.Tests
             Assert.AreEqual(1, Count(ev, ChibiSimEventKind.Damaged, 1));
             Assert.AreEqual(0, Count(ev, ChibiSimEventKind.Damaged, 0));
         }
+
+        [Test]
+        public void DashTicksRiseFromZero_EmitsOneDashStarted()
+        {
+            // Arrange
+            var prev = NewState();
+            prev.F[0].DashTicks = 0;
+            var cur = Copy(prev);
+            cur.F[0].DashTicks = 8;
+            cur.F[0].DashDir = 1;
+            var ev = new List<ChibiSimEvent>();
+
+            // Act
+            ChibiSimEvents.Diff(prev, cur, ev);
+
+            // Assert
+            Assert.AreEqual(1, Count(ev, ChibiSimEventKind.DashStarted));
+            var dash = ev.Find(x => x.Kind == ChibiSimEventKind.DashStarted);
+            Assert.AreEqual(0, dash.Index);
+            Assert.AreEqual(1, dash.Value);
+
+            // Act: dash continues counting down
+            prev = Copy(cur);
+            cur.F[0].DashTicks = 7;
+            ev.Clear();
+            ChibiSimEvents.Diff(prev, cur, ev);
+
+            // Assert
+            Assert.AreEqual(0, Count(ev, ChibiSimEventKind.DashStarted));
+        }
     }
 }

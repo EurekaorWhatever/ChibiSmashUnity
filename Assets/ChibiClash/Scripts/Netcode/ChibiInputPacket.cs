@@ -18,7 +18,7 @@ namespace ChibiClash.Netcode
         Skill2 = 1 << 9,
         Skill3 = 1 << 10,
         Ultimate = 1 << 11,
-        /// <summary>Dash request (bit 12). Carried on the wire; not yet consumed by the simulation.</summary>
+        /// <summary>Dash request (bit 12, press edge). Consumed by the simulation since RulesVersion 6; never enters the attack input buffer.</summary>
         Dash = 1 << 12,
         /// <summary>
         /// Bit 15: set by the input side when the gesture (bits 13-14) came from a live, telemetry-validated

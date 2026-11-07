@@ -219,6 +219,10 @@ namespace ChibiClash.Tests
         const double FastFallTerminalTol = 2;
         const double FastFallDetect = -16;          // second difference: -9.81 normal vs -22.31 with fast-fall; midpoint
         const int FastFallStartY = 15000;
+        // Terminal drop column: X = 7000 is outside every Sky Dojo platform's support band (stage-conversion.md section 1/2:
+        // right platform cx 4200 + halfW 1700 + fighter 375 = 6275; centre |X| < 1875) and inside the main stage (8000).
+        // At X = 0 the 36-tick drop from 15000 (~11 000 milli) crossed the centre platform top 5550 and landed mid-sample.
+        const int FastFallColumnX = 7000;
         const int FastFallSettleTicks = 30;         // cap reached ~18 ticks after engaging from rest
         const int FastFallSampleTicks = 6;
 
@@ -241,7 +245,7 @@ namespace ChibiClash.Tests
 
             // Terminal: drop from rest high on stage holding Down; sample the per-tick fall once the cap holds.
             var t = NewMatch(FighterClass.Melee);
-            PlaceInAir(t, 0, FastFallStartY);
+            PlaceInAir(t, FastFallColumnX, FastFallStartY);
             for (int i = 0; i < FastFallSettleTicks; i++) Tick(t, Hold(ChibiDir.S));
             int yStart = t.F[0].Y;
             for (int i = 0; i < FastFallSampleTicks; i++) Tick(t, Hold(ChibiDir.S));

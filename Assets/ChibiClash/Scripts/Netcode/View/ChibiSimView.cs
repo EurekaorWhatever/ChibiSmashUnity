@@ -15,7 +15,6 @@ namespace ChibiClash.Netcode
         // centre used by Fighter.cs (collider 1.35 tall, offset -0.05), i.e. 0.725 above the feet.
         const float MilliToWorld = 1f / 1000f;
         const float FeetToPivot = 0.725f;
-        const int StageIndex = 0;                 // Sky Dojo: halfWidth 8 == ChibiSimConst.StageHalfWidth
         const float StunVisualTicks = 18f;        // Fighter.cs shows the stun stars above 0.3 s of hitstun
         const float CamLerp = 6f, CamSizeLerp = 5f, CamMinSize = 5.5f, CamMaxSize = 10f, CamPad = 3.2f;
         const float ShakeOnHit = 0.25f, ShakeDecay = 2.5f, ShakeScale = 0.6f;
@@ -65,7 +64,8 @@ namespace ChibiClash.Netcode
             _seen.CopyFrom(state);
 
             Fx.Init(transform);
-            _stage = StageBuilder.Build(StageIndex, transform);
+            // Stage chosen by cfg.Stage (0 Sky Dojo, 1 Neon City, 2 Lava Forge); sim Y 0 maps to _stage.groundY.
+            _stage = StageBuilder.Build(cfg.Stage, transform);
 
             for (int i = 0; i < 2; i++)
             {
@@ -191,6 +191,9 @@ namespace ChibiClash.Netcode
                 case ChibiSimEventKind.RingOut:
                     Fx.Text(Center(e.Index) + Vector2.up * 1.2f, "RING OUT", Gui.Red, 1.1f);
                     break;
+                case ChibiSimEventKind.DashStarted:
+                    Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 8, 3f, 0.3f);   // Fighter.cs dash start
+                    break;
                 case ChibiSimEventKind.KO:
                     Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 40, 8f, 0.5f);
                     Fx.Text(Center(e.Index) + Vector2.up * 1.4f, "K.O.", Gui.Red, 1.5f);
@@ -275,9 +278,11 @@ namespace ChibiClash.Netcode
         /// <summary>Player 1's input source (original game devices + gesture tracker) while running; else null.</summary>
         public static ChibiPlayerInputSource P1Input { get; private set; }
 
-        /// <summary>Start the test match (no-op if already running). Play Mode only.</summary>
-        /// <example><code>ChibiSimTestMatch.Start();</code></example>
-        public static GameObject Start()
+        /// <summary>Start the test match on <paramref name="stage"/> (no-op if already running). Play Mode only.</summary>
+        /// <param name="stage">Index into StageBuilder.Names (0 Sky Dojo, 1 Neon City, 2 Lava Forge); clamped to range.</param>
+        /// <returns>The root GameObject of the running test match.</returns>
+        /// <example><code>ChibiSimTestMatch.Start(1);   // Neon City</code></example>
+        public static GameObject Start(int stage = 0)
         {
             if (_root != null) return _root;
 
@@ -311,7 +316,8 @@ namespace ChibiClash.Netcode
 
             var cfg = new ChibiMatchConfig
             {
-                Seed = TestSeed, Class0 = FighterClass.Melee, Class1 = FighterClass.Heavy, Passive0 = 0, Passive1 = 0
+                Seed = TestSeed, Class0 = FighterClass.Melee, Class1 = FighterClass.Heavy, Passive0 = 0, Passive1 = 0,
+                Stage = Mathf.Clamp(stage, 0, StageBuilder.Names.Length - 1)
             };
             _root = new GameObject("SimTestMatch");
             var loop = _root.AddComponent<ChibiLocalLoop>();

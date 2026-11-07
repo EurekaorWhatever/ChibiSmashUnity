@@ -10,6 +10,8 @@ Drafted by studio agents and reviewed in session. **The user decisions below ove
 | Q3 | Input packet grows to 16 bits so Dash and gesture inputs go online. |
 | Q4 | Mid-match disconnect: the opponent wins automatically. |
 | — | Rollback engine: keep the existing `ChibiRollbackSession`; no second rollback engine. |
+| D-S1/S2 (2026-11-07) | Stages (stage-conversion.md): do NOT copy the "grounded inside a platform slab" glitch — grounded only when truly resting on a surface (C50 arc term gated on resting on a surface); platforms use the clean rule "falling onto the top from above always lands" (no Box2D slip-through). |
+| D2 (2026-11-07) | Dash: copy the original at 60 Hz (dash-conversion.md option A): 8 DashTicks, ~1983 milli on the ground. |
 | D1 (2026-11-06) | Movement: add the 50 Hz arc-correction term (movement-conversion.md decision D1) so 60 Hz jump/fall arcs land on the original's 50 Hz Box2D arcs. Velocities move to exact 1/900 milli/tick units. |
 
 ## Files
