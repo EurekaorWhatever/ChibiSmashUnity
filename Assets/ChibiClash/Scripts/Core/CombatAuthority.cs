@@ -19,9 +19,9 @@ namespace ChibiClash
     public enum HitResult { Miss, Hit, Blocked, Parried, Negated }
 
     /// <summary>
-    /// Every damage number in the game is produced here. In online play this class runs on the
-    /// authoritative server only (GDD 3: hitboxes and damage are validated server-side), so clients
-    /// cannot modify the formula.
+    /// Every damage number in the game is produced here. Online play is peer-to-peer rollback with no
+    /// server and no authority: both peers run the same deterministic simulation from the same inputs,
+    /// and a tampered formula shows up as a checksum desync rather than being rejected.
     /// </summary>
     public static class CombatAuthority
     {

@@ -19,7 +19,7 @@ namespace ChibiClash
 
     /// <summary>
     /// Runs one local match. In online play this simulation would be the rollback-netcode tick
-    /// (inputs exchanged per frame, server authoritative for ranked); locally it runs directly.
+    /// (inputs exchanged per frame peer-to-peer via Unity Relay; no server authority); locally it runs directly.
     /// </summary>
     public class MatchController : MonoBehaviour
     {

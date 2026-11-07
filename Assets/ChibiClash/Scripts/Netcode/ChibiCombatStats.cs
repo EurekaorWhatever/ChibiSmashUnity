@@ -32,7 +32,8 @@ namespace ChibiClash.Netcode
     /// <summary>
     /// Integer-only combat numbers for one fighter (class base stats + the chosen passive).
     /// All ratios are permille (1000 = 100%) so there is no floating point anywhere in the simulation.
-    /// Positions/speeds are in milli-units: 1000 = one Unity world unit, speeds are milli-units per tick.
+    /// Positions are in milli-units (1000 = one Unity world unit); move speeds are velocity sub-units
+    /// (1/ChibiSimConst.VelSub milli-unit per tick), see docs/architecture/netcode/movement-conversion.md section 3.
     /// </summary>
     public struct ChibiCombatStats
     {
@@ -43,7 +44,8 @@ namespace ChibiClash.Netcode
         public int Defense;
         public int CritRatePermille;      // base 50 = 5%
         public int CritDamagePermille;    // bonus on top of 1000: 500 = x1.5
-        public int BaseMoveSpeed;         // milli-units per tick
+        /// <summary>Run speed in velocity sub-units per tick: ClassData moveSpeed (u/s) x 50/3 milli/tick x 900.</summary>
+        public int BaseMoveSpeed;
         public int PatternLength;         // light-attack combo length before the loop restarts
 
         // ---- passive modifiers (see Create) ----
@@ -60,6 +62,8 @@ namespace ChibiClash.Netcode
 
         // Status magnitudes (shared by all classes)
         public const int HexSlowPermille = 150;
+        /// <summary>Tailwind (Ranged passive 1) move-speed bonus: x1.1 (Fighter.cs:142).</summary>
+        public const int TailwindPermille = 100;
         public const int HexWeakenPermille = 100;
         public const int HexSluggishPermille = 150;
         public const int ArmorBreakPermille = 150;
@@ -92,28 +96,28 @@ namespace ChibiClash.Netcode
             switch (cls)
             {
                 case FighterClass.Melee:
-                    s.Attack = 20; s.MaxHp = 500; s.Defense = 20; s.BaseMoveSpeed = 127; s.PatternLength = 4;
+                    s.Attack = 20; s.MaxHp = 500; s.Defense = 20; s.BaseMoveSpeed = 114000; s.PatternLength = 4;
                     if (passive == 0) s.AttackSpeedBonusPermille = 150;   // +15% attack speed
                     else s.LifestealPermille = 50;                        // 5% life steal
                     break;
                 case FighterClass.Heavy:
-                    s.Attack = 35; s.MaxHp = 600; s.Defense = 30; s.BaseMoveSpeed = 105; s.PatternLength = 5;
+                    s.Attack = 35; s.MaxHp = 600; s.Defense = 30; s.BaseMoveSpeed = 94500; s.PatternLength = 5;
                     s.DamageBonusPermille = 200;                          // both options: +20% damage
                     if (passive == 0) s.AttackSpeedBonusPermille = -150;  // ...with -15% attack speed
                     else s.MoveSpeedBonusPermille = -150;                 // ...or -15% move speed
                     break;
                 case FighterClass.Ranged:
-                    s.Attack = 15; s.MaxHp = 400; s.Defense = 10; s.BaseMoveSpeed = 122; s.PatternLength = 4;
+                    s.Attack = 15; s.MaxHp = 400; s.Defense = 10; s.BaseMoveSpeed = 109500; s.PatternLength = 4;
                     if (passive == 0) s.CritRatePermille += 200;          // +20% crit rate
                     else { s.TailwindDuration = 600; s.TailwindCooldown = 1800; } // +10% speed 10s, 30s cd
                     break;
                 case FighterClass.Magic:
-                    s.Attack = 20; s.MaxHp = 375; s.Defense = 10; s.BaseMoveSpeed = 115; s.PatternLength = 4;
+                    s.Attack = 20; s.MaxHp = 375; s.Defense = 10; s.BaseMoveSpeed = 103500; s.PatternLength = 4;
                     if (passive == 0) s.OnHitHexPermille = 100;           // 10% (GDD text is garbled: "1a 0%")
                     else s.WardPermille = 200;                            // 20% to block damage
                     break;
                 default: // Polearm
-                    s.Attack = 25; s.MaxHp = 500; s.Defense = 20; s.BaseMoveSpeed = 117; s.PatternLength = 4;
+                    s.Attack = 25; s.MaxHp = 500; s.Defense = 20; s.BaseMoveSpeed = 105000; s.PatternLength = 4;
                     if (passive == 0) s.OnHitArmorBreakPermille = 100;    // 10% to reduce defense 15%
                     else s.PatienceTicks = 180;                           // 3 s idle -> next hit +50%
                     break;
@@ -123,10 +127,18 @@ namespace ChibiClash.Netcode
 
         // ------------------------------------------------------------------ derived numbers
 
+        /// <summary>
+        /// Run speed in velocity sub-units per tick. Modifiers MULTIPLY like the original (Fighter.cs:139-143):
+        /// base x (1000 + passive bonus) x (1000 - hex) x (1000 + tailwind) / 1000^k, rounded half away from zero once.
+        /// </summary>
         public static int EffectiveMoveSpeed(in ChibiCombatStats s, bool hexed, bool tailwind)
         {
-            int permille = 1000 + s.MoveSpeedBonusPermille - (hexed ? HexSlowPermille : 0) + (tailwind ? 100 : 0);
-            return s.BaseMoveSpeed * permille / 1000;
+            long num = s.BaseMoveSpeed, den = 1;
+            if (s.MoveSpeedBonusPermille != 0) { num *= 1000 + s.MoveSpeedBonusPermille; den *= 1000; }
+            if (hexed) { num *= 1000 - HexSlowPermille; den *= 1000; }
+            if (tailwind) { num *= 1000 + TailwindPermille; den *= 1000; }
+            long q = (Math.Abs(num) + den / 2) / den;
+            return (int)(num < 0 ? -q : q);
         }
 
         public static int AttackSpeedPermille(in ChibiCombatStats s, bool hexed)

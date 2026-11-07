@@ -110,7 +110,8 @@ namespace ChibiClash
     /// Client-side CV telemetry checks (GDD 3, anti-cheat). Flags streams that look spoofed:
     /// frozen landmarks (replayed image), low confidence, or poses that move faster than a body can (macros).
     /// Evaluated once per NEW pose sample, using the real time between samples, so camera frame rate doesn't matter.
-    /// In online play the same checks run again on the server against the uploaded telemetry.
+    /// This is a self-reported, client-side heuristic only: online play is peer-to-peer rollback with no server,
+    /// so nothing re-checks it; the remote peer only sees the PoseVerified hint bit, which it cannot trust.
     /// </summary>
     public class TelemetryValidator
     {

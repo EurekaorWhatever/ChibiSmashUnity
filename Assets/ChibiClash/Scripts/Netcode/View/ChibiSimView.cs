@@ -120,7 +120,8 @@ namespace ChibiClash.Netcode
                 v.transform.position = teleport ? p1 : Vector3.Lerp(p0, p1, alpha);
                 v.SetFacing(f.Facing >= 0 ? 1 : -1);
 
-                var vel = new Vector2(f.Vx, f.Vy) * (ChibiSimConst.TickRate * MilliToWorld);
+                // Sim velocities are sub-units (1/VelSub milli per tick): convert to world units per second.
+                var vel = new Vector2(f.Vx, f.Vy) * (ChibiSimConst.TickRate * MilliToWorld / ChibiSimConst.VelSub);
                 v.Tick(vel, f.Grounded, f.Shielding);
 
                 bool parry = f.ParryTicks > 0;

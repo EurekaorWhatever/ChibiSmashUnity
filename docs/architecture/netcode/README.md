@@ -10,6 +10,7 @@ Drafted by studio agents and reviewed in session. **The user decisions below ove
 | Q3 | Input packet grows to 16 bits so Dash and gesture inputs go online. |
 | Q4 | Mid-match disconnect: the opponent wins automatically. |
 | — | Rollback engine: keep the existing `ChibiRollbackSession`; no second rollback engine. |
+| D1 (2026-11-06) | Movement: add the 50 Hz arc-correction term (movement-conversion.md decision D1) so 60 Hz jump/fall arcs land on the original's 50 Hz Box2D arcs. Velocities move to exact 1/900 milli/tick units. |
 
 ## Files
 | File | Author agent | Contents |
@@ -19,6 +20,8 @@ Drafted by studio agents and reviewed in session. **The user decisions below ove
 | [mode3-ai-input.md](mode3-ai-input.md) | ai-programmer | Vs-AI input injection design |
 | [ugs-api-check.md](ugs-api-check.md) | unity-specialist | UGS / Transport API signatures verified against installed packages |
 | [feature-inventory.md](feature-inventory.md) | gameplay-programmer | All 148 features of the original game, determinism status, port order |
+| [security-gesture-review.md](security-gesture-review.md) | security-engineer | What a modified client can fake (gesture bits, PoseVerified); rules for step 15; PoseVerified is self-reported only |
+| [movement-conversion.md](movement-conversion.md) | systems-designer | Step 4: every original movement value converted to sim units, precision scheme, reference test values |
 
 ## Known existing bugs (confirmed in code)
 - Packets over 32 bytes are silently truncated: `BitBuffer.cs:60`, unchecked at `ChibiP2PPeerLoop.cs:301`.

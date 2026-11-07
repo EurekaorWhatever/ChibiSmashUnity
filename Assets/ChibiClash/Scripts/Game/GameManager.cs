@@ -285,7 +285,7 @@ namespace ChibiClash
             var c4 = new Rect(a.x + cw + 15f, a.y + 215f, cw, 200f);
             if (ModeCard(c1, "VS CPU", "PvE · earn coins & quest progress against the computer", Gui.Accent, true)) BeginSelect(true, false);
             if (ModeCard(c2, "LOCAL VERSUS", "2 players, one keyboard or two gamepads", Gui.Accent2, true)) BeginSelect(false, false);
-            ModeCard(c3, "RANKED ONLINE", "Rollback netcode on regional dedicated servers.\nNot connected in this build (needs Photon Fusion backend).", Gui.Muted, false);
+            ModeCard(c3, "RANKED ONLINE", "P2P rollback netcode via Unity Relay & Lobby.\nComing soon. Not connected in this build.", Gui.Muted, false);
             if (ModeCard(c4, "TRAINING", "Practice combos and gestures on a dummy", Gui.Gold, true)) BeginSelect(true, true);
 
             var q = new Rect(a.xMax - 420f, a.y, 420f, a.height);

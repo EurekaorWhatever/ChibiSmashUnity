@@ -54,8 +54,8 @@ namespace ChibiClash.Netcode
         {
             if (State.MatchOver) return false;
             int frame = State.Frame;
-            var in0 = new ChibiInputPacket { Raw = (ushort)(_p0.SampleTick().Raw & ChibiInputPacket.WireMask) };
-            var in1 = new ChibiInputPacket { Raw = (ushort)(_p1.SampleTick().Raw & ChibiInputPacket.WireMask) };
+            var in0 = new ChibiInputPacket { Raw = (ushort)(_p0.SampleTick().Raw & ChibiInputPacket.WireMask) }.Sanitized();
+            var in1 = new ChibiInputPacket { Raw = (ushort)(_p1.SampleTick().Raw & ChibiInputPacket.WireMask) }.Sanitized();
             ChibiSimulation.Step(State, in0, in1);
             OnFrame?.Invoke(frame, in0, in1);
             return !State.MatchOver;

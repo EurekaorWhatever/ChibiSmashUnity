@@ -2,15 +2,34 @@ using System;
 
 namespace ChibiClash.Netcode
 {
-    /// <summary>Tuning constants. Units: positions milli-units (1000 = 1 world unit), velocities milli-units/tick.</summary>
+    /// <summary>
+    /// Tuning constants. Units: positions milli-units (1000 = 1 world unit). Fighter and projectile velocities are
+    /// velocity sub-units: 1/<see cref="VelSub"/> milli-unit per tick (accelerations likewise per tick²), so every
+    /// movement constant of the original Fighter.cs is an exact integer.
+    /// Source: docs/architecture/netcode/movement-conversion.md sections 1-3.
+    /// </summary>
     public static class ChibiSimConst
     {
         public const int TickRate = 60;
         public const int MatchTicks = 180 * TickRate;
 
-        public const int Gravity = 10, MaxFall = 330, FastFall = 8;
-        public const int JumpVel = 217, AirJumpVel = 190;
-        public const int GroundAccel = 20, AirAccel = 11, ShieldFriction = 40, MoveFriction = 25, StunFriction = 8;
+        /// <summary>Velocity sub-units per milli-unit (LCM of the 100/9/18/3/2 denominators; doc section 3).</summary>
+        public const int VelSub = 900;
+
+        /// <summary>Gravity 9.81 x 3.6 u/s² = 9.81 milli/tick² (doc row 1). No global fall cap (doc row 21).</summary>
+        public const int Gravity = 8829;
+        /// <summary>50 Hz arc correction 0.1·g = 0.981 milli/tick, subtracted from airborne Y steps (doc section 2, D1).</summary>
+        public const int ArcC50 = 883;
+        /// <summary>Ground jump 13 u/s and air jump 11.5 u/s (doc rows 16-17, Fighter.cs:296,302).</summary>
+        public const int JumpVel = 195000, AirJumpVel = 172500;
+        /// <summary>Free movement accel: ground 70 u/s², air 40 u/s² (doc rows 12-13, Fighter.cs:283).</summary>
+        public const int GroundAccel = 17500, AirAccel = 10000;
+        /// <summary>Grounded decels: block 60 u/s², attack 25 u/s², disabled 30 u/s² (doc rows 14, 15, 24).</summary>
+        public const int ShieldFriction = 15000, MoveFriction = 6250, DisabledFriction = 7500;
+        /// <summary>Fast-fall: +45 u/s² while vy &lt; 3 u/s, clamped with max() at -24 u/s (doc rows 18-20, Fighter.cs:307).</summary>
+        public const int FastFallAccel = 11250, FastFallCap = 360000, FastFallTriggerVy = 45000;
+        /// <summary>Ground probe: grounded up to 100 milli above the floor while vy ≤ 0.5 u/s (doc row 22, Fighter.cs:244,253).</summary>
+        public const int GroundProbeHeight = 100, GroundProbeMaxVy = 7500;
 
         public const int StageHalfWidth = 8000;
         public const int BlastX = 17000, BlastBottom = -9000, BlastTop = 18000, RespawnY = 6000;
@@ -34,8 +53,8 @@ namespace ChibiClash.Netcode
     {
         /// <summary>Bump whenever simulation rules change so old replays / mismatched peers are detected.</summary>
         /// <summary>Bump whenever simulation rules or move data change, so mismatched peers/replays are rejected.</summary>
-        /// <remarks>2: Melee Dash &amp; Thrust matched to the original. 3: melee light/heavy hit areas matched to the original MeleeBox. 4: input message widened to 16 bits (Dash, gesture, PoseVerified).</remarks>
-        public const int RulesVersion = 4;
+        /// <remarks>2: Melee Dash &amp; Thrust matched to the original. 3: melee light/heavy hit areas matched to the original MeleeBox. 4: input message widened to 16 bits (Dash, gesture, PoseVerified). 5: movement matched to original (1/900 velocity units, C50 arc term, friction/fast-fall/air-block/jump-during-attack).</remarks>
+        public const int RulesVersion = 5;
 
         public uint Seed;
         public FighterClass Class0, Class1;
@@ -67,9 +86,9 @@ namespace ChibiClash.Netcode
         public int Startup, Active, Recovery;       // ticks; startup+recovery scale with attack speed
         public int Mult;                             // damage multiplier, permille of Attack (0 = no damage)
         public int BoxX, BoxW, BoxY, BoxH;           // melee hitbox: BoxX = near edge offset from fighter centre (toward facing)
-        public int KbX, KbY, Stun;                   // knockback (milli/tick) and hitstun ticks
-        public int SelfVx, SelfVy;                   // self motion; SelfVx applies through startup+active, SelfVy once at tick 0
-        public int ProjSpeed, ProjLife;              // >0 turns the hit into a projectile
+        public int KbX, KbY, Stun;                   // knockback (milli/tick; x VelSub when applied) and hitstun ticks
+        public int SelfVx, SelfVy;                   // self motion (milli/tick; x VelSub when applied); SelfVx applies through startup+active, SelfVy once at tick 0
+        public int ProjSpeed, ProjLife;              // >0 turns the hit into a projectile (speed milli/tick; x VelSub at spawn)
         public int Rehit;                            // >0: re-arm the hit (or fire another projectile) every N active ticks
         public int Cooldown;                         // ticks (skills only)
         public int Flags;
@@ -165,7 +184,13 @@ namespace ChibiClash.Netcode
     {
         public int Class, Passive;
         public ChibiCombatStats Stats;                // derived from Class/Passive; copied for speed, not hashed
-        public int X, Y, Vx, Vy, Facing;
+        /// <summary>Position in milli-units.</summary>
+        public int X, Y;
+        /// <summary>Velocity in sub-units (1/<see cref="ChibiSimConst.VelSub"/> milli per tick).</summary>
+        public int Vx, Vy;
+        /// <summary>Sub-milli position remainders in [0, VelSub), carried between ticks (rollback state).</summary>
+        public int XRem, YRem;
+        public int Facing;
         public bool Grounded;
         public int AirJumps, Hp, Ult, Stun, Invuln;
 
@@ -187,7 +212,7 @@ namespace ChibiClash.Netcode
         public void CopyFrom(ChibiFighterSim o)
         {
             Class = o.Class; Passive = o.Passive; Stats = o.Stats;
-            X = o.X; Y = o.Y; Vx = o.Vx; Vy = o.Vy; Facing = o.Facing; Grounded = o.Grounded;
+            X = o.X; Y = o.Y; Vx = o.Vx; Vy = o.Vy; XRem = o.XRem; YRem = o.YRem; Facing = o.Facing; Grounded = o.Grounded;
             AirJumps = o.AirJumps; Hp = o.Hp; Ult = o.Ult; Stun = o.Stun; Invuln = o.Invuln;
             MoveSlot = o.MoveSlot; MoveTick = o.MoveTick; MoveStartup = o.MoveStartup; MoveActive = o.MoveActive;
             MoveRecovery = o.MoveRecovery; MoveMult = o.MoveMult; MoveKbScale = o.MoveKbScale; ShotIdx = o.ShotIdx;
@@ -206,6 +231,7 @@ namespace ChibiClash.Netcode
         {
             ChibiSimState.Mix(ref h, Class); ChibiSimState.Mix(ref h, Passive);
             ChibiSimState.Mix(ref h, X); ChibiSimState.Mix(ref h, Y); ChibiSimState.Mix(ref h, Vx); ChibiSimState.Mix(ref h, Vy);
+            ChibiSimState.Mix(ref h, XRem); ChibiSimState.Mix(ref h, YRem);
             ChibiSimState.Mix(ref h, Facing); ChibiSimState.Mix(ref h, Grounded ? 1 : 0);
             ChibiSimState.Mix(ref h, AirJumps); ChibiSimState.Mix(ref h, Hp); ChibiSimState.Mix(ref h, Ult);
             ChibiSimState.Mix(ref h, Stun); ChibiSimState.Mix(ref h, Invuln);
@@ -232,12 +258,15 @@ namespace ChibiClash.Netcode
     public sealed class ChibiProjectileSim
     {
         public bool Active;
+        /// <summary>X/Y in milli; Vx/Vy in velocity sub-units (1/VelSub milli per tick); KbX/KbY knockback in milli/tick.</summary>
         public int Owner, X, Y, Vx, Vy, Life, Mult, KbX, KbY, Stun;
+        /// <summary>Sub-milli position remainders in [0, VelSub) (rollback state).</summary>
+        public int XRem, YRem;
         public bool Homing;
 
         public void CopyFrom(ChibiProjectileSim o)
         {
-            Active = o.Active; Owner = o.Owner; X = o.X; Y = o.Y; Vx = o.Vx; Vy = o.Vy; Life = o.Life;
+            Active = o.Active; Owner = o.Owner; X = o.X; Y = o.Y; Vx = o.Vx; Vy = o.Vy; XRem = o.XRem; YRem = o.YRem; Life = o.Life;
             Mult = o.Mult; KbX = o.KbX; KbY = o.KbY; Stun = o.Stun; Homing = o.Homing;
         }
     }
@@ -289,6 +318,7 @@ namespace ChibiClash.Netcode
                 Mix(ref h, p.Active ? 1 : 0);
                 if (!p.Active) continue;
                 Mix(ref h, p.Owner); Mix(ref h, p.X); Mix(ref h, p.Y); Mix(ref h, p.Vx); Mix(ref h, p.Vy);
+                Mix(ref h, p.XRem); Mix(ref h, p.YRem);
                 Mix(ref h, p.Life); Mix(ref h, p.Mult); Mix(ref h, p.KbX); Mix(ref h, p.KbY); Mix(ref h, p.Stun);
                 Mix(ref h, p.Homing ? 1 : 0);
             }
@@ -331,7 +361,7 @@ namespace ChibiClash.Netcode
             f.Class = (int)cls;
             f.Passive = passive == 0 ? 0 : 1;
             f.Stats = ChibiCombatStats.Create(cls, passive);
-            f.X = x; f.Y = 0; f.Vx = 0; f.Vy = 0; f.Facing = facing; f.Grounded = true; f.AirJumps = 1;
+            f.X = x; f.Y = 0; f.Vx = 0; f.Vy = 0; f.XRem = 0; f.YRem = 0; f.Facing = facing; f.Grounded = true; f.AirJumps = 1;
             f.Hp = f.Stats.MaxHp; f.Ult = 0; f.Stun = 0; f.Invuln = 0;
             f.MoveSlot = -1; f.MoveTick = 0; f.MoveStartup = 0; f.MoveActive = 0; f.MoveRecovery = 0;
             f.MoveMult = 0; f.MoveKbScale = 1000; f.ShotIdx = 0; f.TargetX = 0; f.MoveHit = false;
@@ -404,14 +434,18 @@ namespace ChibiClash.Netcode
             if (act != 0) { f.BufBtn |= act; f.BufAge = 0; }
             else if (f.BufBtn != 0 && ++f.BufAge > ChibiSimConst.InputBufferTicks) f.BufBtn = 0;
 
+            // Doc 5.1 / Fighter.cs:179-189: no x-velocity change at all during hitstun (knockback keeps its speed).
+            // The 30 u/s² DisabledFriction branch (grounded, not stunned, cannot act) has no reachable state here:
+            // the sim has no intro/pause, and a KO ends the match before the next Step.
             if (f.Stun > 0)
             {
                 f.MoveSlot = -1; f.Shielding = false; f.ShieldTick = 0; f.ParryTicks = 0; f.GuardTicks = 0;
-                if (f.Grounded) f.Vx = Approach(f.Vx, 0, ChibiSimConst.StunFriction);
             }
             else if (f.MoveSlot >= 0)
             {
                 AdvanceMove(s, i);
+                // Doc 5.9 / Fighter.cs:291-307: jump and fast-fall sit outside the actionLock gate.
+                JumpAndFastFall(f, input.MoveY, edges);
             }
             else
             {
@@ -425,11 +459,13 @@ namespace ChibiClash.Netcode
         static void FreeActions(ChibiSimState s, int i, ChibiInputPacket input, int edges)
         {
             var f = s.F[i];
-            if (input.Has(ChibiButtons.Shield) && f.Grounded && f.GuardBrokenTicks == 0)
+            // Doc 5.5 / Fighter.cs:261-277: blocking works in the air too. Only the 60 u/s² slowdown is ground-gated;
+            // in the air Vx is frozen, and jump / fast-fall / attacks are skipped (the original returns here).
+            if (input.Has(ChibiButtons.Shield) && f.GuardBrokenTicks == 0)
             {
                 f.ShieldTick = f.Shielding ? f.ShieldTick + 1 : 0;
                 f.Shielding = true;
-                f.Vx = Approach(f.Vx, 0, ChibiSimConst.ShieldFriction);
+                if (f.Grounded) f.Vx = Approach(f.Vx, 0, ChibiSimConst.ShieldFriction);
                 return;
             }
             f.Shielding = false;
@@ -439,13 +475,7 @@ namespace ChibiClash.Netcode
             int speed = ChibiCombatStats.EffectiveMoveSpeed(f.Stats, f.SlowTicks > 0, f.TailwindTicks > 0);
             f.Vx = Approach(f.Vx, dirX * speed, f.Grounded ? ChibiSimConst.GroundAccel : ChibiSimConst.AirAccel);
             if (dirX != 0) f.Facing = dirX;
-            if (dirY < 0 && !f.Grounded && f.Vy <= 0) f.Vy -= ChibiSimConst.FastFall;
-
-            if ((edges & (int)ChibiButtons.Jump) != 0)
-            {
-                if (f.Grounded) f.Vy = ChibiSimConst.JumpVel;
-                else if (f.AirJumps > 0) { f.AirJumps--; f.Vy = ChibiSimConst.AirJumpVel; }
-            }
+            JumpAndFastFall(f, dirY, edges);
 
             // Priority: ultimate > skills > heavy > light
             int b = f.BufBtn;
@@ -459,6 +489,21 @@ namespace ChibiClash.Netcode
             if (reloading) return;
             if ((b & (int)ChibiButtons.Heavy) != 0) StartMove(s, i, 1);
             else if ((b & (int)ChibiButtons.Light) != 0) StartMove(s, i, 0);
+        }
+
+        /// <summary>
+        /// Jump (sets Vy) then fast-fall, in that order (doc section 2 step 1, Fighter.cs:291-307).
+        /// Fast-fall: Vy = max(Vy - 45 u/s², -24 u/s) while Down is held, airborne and Vy &lt; 3 u/s.
+        /// </summary>
+        static void JumpAndFastFall(ChibiFighterSim f, int dirY, int edges)
+        {
+            if ((edges & (int)ChibiButtons.Jump) != 0)
+            {
+                if (f.Grounded) { f.Vy = ChibiSimConst.JumpVel; f.Grounded = false; }
+                else if (f.AirJumps > 0) { f.AirJumps--; f.Vy = ChibiSimConst.AirJumpVel; }
+            }
+            if (dirY < 0 && !f.Grounded && f.Vy < ChibiSimConst.FastFallTriggerVy)
+                f.Vy = Math.Max(f.Vy - ChibiSimConst.FastFallAccel, -ChibiSimConst.FastFallCap);
         }
 
         static void StartMove(ChibiSimState s, int i, int slot)
@@ -513,8 +558,8 @@ namespace ChibiClash.Netcode
             int activeEnd = activeStart + f.MoveActive;
             f.Shielding = false;
 
-            if (t == 0 && mv.SelfVy != 0) { f.Vy = mv.SelfVy; f.Grounded = false; }
-            if (mv.SelfVx != 0 && t < activeEnd) f.Vx = mv.SelfVx * f.Facing;
+            if (t == 0 && mv.SelfVy != 0) { f.Vy = mv.SelfVy * ChibiSimConst.VelSub; f.Grounded = false; }
+            if (mv.SelfVx != 0 && t < activeEnd) f.Vx = mv.SelfVx * ChibiSimConst.VelSub * f.Facing;
             else if (f.Grounded) f.Vx = Approach(f.Vx, 0, ChibiSimConst.MoveFriction);
             if ((mv.Flags & ChibiMove.FTargeted) != 0 && t < activeStart) f.TargetX = o.X; // cloud follows, then locks
 
@@ -548,20 +593,35 @@ namespace ChibiClash.Netcode
             if (f.MoveTick >= f.MoveStartup + f.MoveActive + f.MoveRecovery) f.MoveSlot = -1;
         }
 
+        /// <summary>
+        /// Doc section 2 steps 2-4: gravity (no global cap), position integration with the sub-milli remainder and the
+        /// C50 50 Hz arc term while airborne, then landing snap and the original ground probe (≤ 100 milli above the
+        /// floor and Vy ≤ 0.5 u/s counts as grounded, Fighter.cs:244,253).
+        /// </summary>
         static void Physics(ChibiFighterSim f)
         {
             int prevY = f.Y;
+            bool airborne = !f.Grounded || f.Vy > 0;
             f.Vy -= ChibiSimConst.Gravity;
-            if (f.Vy < -ChibiSimConst.MaxFall) f.Vy = -ChibiSimConst.MaxFall;
-            f.X += f.Vx;
-            f.Y += f.Vy;
+            Integrate(ref f.X, ref f.XRem, f.Vx);
+            Integrate(ref f.Y, ref f.YRem, airborne ? f.Vy - ChibiSimConst.ArcC50 : f.Vy);
 
-            f.Grounded = false;
             bool onStage = Math.Abs(f.X) <= ChibiSimConst.StageHalfWidth;
-            if (onStage && prevY >= 0 && f.Y <= 0 && f.Vy <= 0)
-            {
-                f.Y = 0; f.Vy = 0; f.Grounded = true; f.AirJumps = 1;
-            }
+            bool landed = onStage && prevY >= 0 && f.Y <= 0 && f.Vy <= 0;
+            if (landed) { f.Y = 0; f.YRem = 0; f.Vy = 0; }
+            f.Grounded = landed || (onStage && f.Y >= 0 && f.Y <= ChibiSimConst.GroundProbeHeight &&
+                                    f.Vy <= ChibiSimConst.GroundProbeMaxVy);
+            if (f.Grounded) f.AirJumps = 1;
+        }
+
+        /// <summary>pos (milli) += vel (sub-units) using floor division, so negative velocities round consistently.</summary>
+        static void Integrate(ref int pos, ref int rem, int vel)
+        {
+            int t = rem + vel;
+            int q = t / ChibiSimConst.VelSub;
+            if (t % ChibiSimConst.VelSub < 0) q--;
+            pos += q;
+            rem = t - q * ChibiSimConst.VelSub;
         }
 
         // ------------------------------------------------------------------ hit detection
@@ -603,13 +663,15 @@ namespace ChibiClash.Netcode
                    y0 < target.Y + ChibiSimConst.HurtH && y1 > target.Y;
         }
 
+        /// <summary>Spawns a projectile. <paramref name="vx"/> is in milli/tick (move-table units) and is stored x VelSub.</summary>
         static void SpawnProjectile(ChibiSimState s, int owner, int x, int y, int vx, int life, int mult, int kbX, int kbY, int stun, bool homing)
         {
             for (int n = 0; n < s.Proj.Length; n++)
             {
                 var p = s.Proj[n];
                 if (p.Active) continue;
-                p.Active = true; p.Owner = owner; p.X = x; p.Y = y; p.Vx = vx; p.Vy = 0; p.Life = life;
+                p.Active = true; p.Owner = owner; p.X = x; p.Y = y; p.Vx = vx * ChibiSimConst.VelSub; p.Vy = 0;
+                p.XRem = 0; p.YRem = 0; p.Life = life;
                 p.Mult = mult; p.KbX = kbX; p.KbY = kbY; p.Stun = stun; p.Homing = homing;
                 return;
             }
@@ -628,10 +690,12 @@ namespace ChibiClash.Netcode
                 if (p.Homing)
                 {
                     int dy = target.Y + 650 - p.Y;
-                    p.Vy += Sign(dy) * 8;
-                    if (p.Vy > 100) p.Vy = 100; else if (p.Vy < -100) p.Vy = -100;
+                    const int steer = 8 * ChibiSimConst.VelSub, maxVy = 100 * ChibiSimConst.VelSub;   // 8 / 100 milli/tick
+                    p.Vy += Sign(dy) * steer;
+                    if (p.Vy > maxVy) p.Vy = maxVy; else if (p.Vy < -maxVy) p.Vy = -maxVy;
                 }
-                p.X += p.Vx; p.Y += p.Vy;
+                Integrate(ref p.X, ref p.XRem, p.Vx);
+                Integrate(ref p.Y, ref p.YRem, p.Vy);
                 p.Life--;
 
                 if (p.Life <= 0 || Math.Abs(p.X) > ChibiSimConst.BlastX || p.Y < ChibiSimConst.BlastBottom || p.Y > ChibiSimConst.BlastTop)
@@ -689,7 +753,7 @@ namespace ChibiClash.Netcode
                 reflected = ChibiCombatStats.MitigateDefense(reflected, ChibiCombatStats.EffectiveDefense(A.Stats, A.ArmorBreakTicks > 0));
                 A.Hp = Math.Max(0, A.Hp - reflected);
                 A.Stun = Math.Max(A.Stun, 30);
-                A.Vx = -h.Dir * 120; A.Vy = 80;
+                A.Vx = -h.Dir * 120 * ChibiSimConst.VelSub; A.Vy = 80 * ChibiSimConst.VelSub;   // 120 / 80 milli/tick
                 GainUlt(D, ChibiSimConst.UltPerParry);
                 D.Parries++;
                 return;
@@ -727,14 +791,14 @@ namespace ChibiClash.Netcode
 
             if (blocking)
             {
-                D.Vx = h.Dir * h.KbX / 4;
+                D.Vx = h.Dir * h.KbX * ChibiSimConst.VelSub / 4;     // PendingHit knockback is milli/tick
                 GainUlt(A, 10);
                 return;
             }
 
             D.Stun = Math.Max(D.Stun, stun);
-            D.Vx = h.Dir * h.KbX;
-            D.Vy = h.KbY;
+            D.Vx = h.Dir * h.KbX * ChibiSimConst.VelSub;
+            D.Vy = h.KbY * ChibiSimConst.VelSub;
             D.MoveSlot = -1; D.Shielding = false; D.ParryTicks = 0; D.GuardTicks = 0;
 
             // attacker rewards
@@ -767,7 +831,7 @@ namespace ChibiClash.Netcode
                 if (Math.Abs(f.X) > ChibiSimConst.BlastX || f.Y < ChibiSimConst.BlastBottom || f.Y > ChibiSimConst.BlastTop)
                 {
                     f.Hp = Math.Max(0, f.Hp - f.Stats.MaxHp * ChibiSimConst.RingOutPenaltyPermille / 1000);
-                    f.X = 0; f.Y = ChibiSimConst.RespawnY; f.Vx = 0; f.Vy = 0; f.Stun = 0;
+                    f.X = 0; f.Y = ChibiSimConst.RespawnY; f.Vx = 0; f.Vy = 0; f.XRem = 0; f.YRem = 0; f.Stun = 0;
                     f.Invuln = ChibiSimConst.RespawnInvuln;
                     f.MoveSlot = -1; f.Shielding = false; f.ParryTicks = 0; f.GuardTicks = 0;
                 }

@@ -145,7 +145,7 @@ namespace ChibiClash.Netcode
             if (_frame - _remoteContig <= MaxPrediction)
             {
                 int f = _localLast + 1;
-                Store(_local, f, (ushort)(_source.SampleTick().Raw & ChibiInputPacket.WireMask), true);
+                Store(_local, f, new ChibiInputPacket { Raw = (ushort)(_source.SampleTick().Raw & ChibiInputPacket.WireMask) }.Sanitized().Raw, true);
                 _localLast = f;
                 Advance();
                 advanced = true;
