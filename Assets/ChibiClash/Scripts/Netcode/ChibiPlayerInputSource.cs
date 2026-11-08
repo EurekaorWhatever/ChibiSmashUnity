@@ -10,7 +10,8 @@ namespace ChibiClash.Netcode
     ///
     /// Render frames: <see cref="PollRenderFrame"/> ticks the device once and LATCHES one-shot presses
     /// (Jump, Light, Heavy, Dash, Skill1-3, Ult) until the next <see cref="SampleTick"/>, so a tap shorter than
-    /// one 60 Hz tick is never lost. Held state (MoveX, Down, Block) keeps the newest polled value.
+    /// one 60 Hz tick is never lost. Held state (MoveX, Down, Block) keeps the newest polled value; Block is also
+    /// latched (damage-conversion.md §7) so a shield tap released before the next sample still yields one tick of Shield.
     ///
     /// SampleTick with no PollRenderFrame since the previous sample (catch-up ticks in one render frame) REUSES the
     /// last polled held values and does not re-poll: re-polling would tick the tracker twice in one frame and
@@ -30,6 +31,8 @@ namespace ChibiClash.Netcode
         bool _down, _block;
         // One-shot latches, OR-ed across render frames until the next SampleTick.
         ChibiButtons _latched;
+        // True if Block was down in any render frame since the last SampleTick (damage-conversion.md §7).
+        bool _shieldLatch;
 
         /// <summary>
         /// Build a source from explicit dependencies (DI / tests).
@@ -92,6 +95,7 @@ namespace ChibiClash.Netcode
             _moveX = _device.MoveX;
             _down = _device.Down;
             _block = _device.Block;
+            if (_block) _shieldLatch = true;
 
             if (_device.Jump) _latched |= ChibiButtons.Jump;
             if (_device.Light) _latched |= ChibiButtons.Light;
@@ -105,13 +109,16 @@ namespace ChibiClash.Netcode
 
         /// <summary>
         /// Build this tick's packet from latched presses, the latest held state and the current gesture, then clear
-        /// the latches. PoseVerified is set only when the gesture is not None and comes from a verified pose.
+        /// the latches. Shield = Block held now OR seen down since the last sample (damage-conversion.md §7), so a
+        /// sub-tick tap gives exactly one tick of Shield. PoseVerified is set only when the gesture is not None and
+        /// comes from a verified pose.
         /// </summary>
         public ChibiInputPacket SampleTick()
         {
             ChibiButtons b = _latched;
             _latched = ChibiButtons.None;
-            if (_block) b |= ChibiButtons.Shield;
+            if (_block || _shieldLatch) b |= ChibiButtons.Shield;
+            _shieldLatch = false;
 
             Gesture g = _gesture();
             if (g != Gesture.None && _poseVerified()) b |= ChibiButtons.PoseVerified;

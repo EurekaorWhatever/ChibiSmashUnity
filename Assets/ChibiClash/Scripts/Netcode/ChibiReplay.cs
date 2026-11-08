@@ -32,16 +32,19 @@ namespace ChibiClash.Netcode
     }
 
     /// <summary>
-    /// Replay file format "CCRP" v1 (little endian):
-    ///   4  magic 'C','C','R','P'      1  version
+    /// Replay file format "CCRP" v2 (little endian; rules v10, timescale-conversion.md section 8.3 item 3):
+    ///   4  magic 'C','C','R','P'      1  version (2)
     ///   4  seed                       4  class0,class1,passive0,passive1 (1 byte each)
-    ///   4  frame count                4  final checksum (state after the last frame)
+    ///   4  stage (int)                4  config hash (ChibiMatchConfig.ComputeHash: RulesVersion + every config field)
+    ///   4  frame count (real ticks)   4  final checksum (state after the last frame)
     ///   n  run-length records: ushort p0, ushort p1, byte run (1..255)
+    /// TryRead rejects v1 files and any file whose stored config hash differs from the hash of the config it read
+    /// (other RulesVersion or a corrupt header), so an old replay can no longer re-simulate silently under new rules.
     /// Held inputs dominate real play, so RLE shrinks a 99 s match to a few KB.
     /// </summary>
     public static class ChibiReplay
     {
-        const byte Version = 1;
+        const byte Version = 2;
 
         public static ChibiSimState Simulate(in ChibiMatchConfig cfg, IList<ushort> p0, IList<ushort> p1)
         {
@@ -62,6 +65,8 @@ namespace ChibiClash.Netcode
                 w.Write(cfg.Seed);
                 w.Write((byte)cfg.Class0); w.Write((byte)cfg.Class1);
                 w.Write((byte)cfg.Passive0); w.Write((byte)cfg.Passive1);
+                w.Write(cfg.Stage);
+                w.Write(cfg.ComputeHash());
                 w.Write((uint)p0.Count);
                 w.Write(finalChecksum);
 
@@ -89,6 +94,9 @@ namespace ChibiClash.Netcode
                     cfg.Seed = r.ReadUInt32();
                     cfg.Class0 = (FighterClass)r.ReadByte(); cfg.Class1 = (FighterClass)r.ReadByte();
                     cfg.Passive0 = r.ReadByte(); cfg.Passive1 = r.ReadByte();
+                    cfg.Stage = r.ReadInt32();
+                    uint configHash = r.ReadUInt32();
+                    if (configHash != cfg.ComputeHash()) return false;   // other RulesVersion or corrupt header
                     uint frames = r.ReadUInt32();
                     finalChecksum = r.ReadUInt32();
                     if (frames > 60u * 60u * 60u) return false;   // > 1 hour: reject

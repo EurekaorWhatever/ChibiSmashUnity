@@ -73,8 +73,9 @@ namespace ChibiClash.Tests
             f.X = x; f.Y = y; f.Vy = 0; f.Grounded = false; f.AirJumps = 1;
         }
 
-        static void Tick(ChibiSimState s, ChibiInputPacket p1) => ChibiSimulation.Step(s, p1, default);
-        static void Tick(ChibiSimState s, ChibiInputPacket p1, ChibiInputPacket p2) => ChibiSimulation.Step(s, p1, p2);
+        // counts game steps (D10): one Tick = one game step; frozen hitstop / cinematic real ticks are consumed inside.
+        static void Tick(ChibiSimState s, ChibiInputPacket p1) => ChibiTestTime.StepGame(s, p1, default);
+        static void Tick(ChibiSimState s, ChibiInputPacket p1, ChibiInputPacket p2) => ChibiTestTime.StepGame(s, p1, p2);
 
         static void Idle(ChibiSimState s, int ticks)
         {
@@ -353,6 +354,7 @@ namespace ChibiClash.Tests
         [Test]
         public void Dash_DuringAttack_AllowedAndAttackStillHits()
         {
+            // counts game steps (D10)
             // Arrange: P2 stands where P1's light box (centre .. 1650 ahead) reaches during the dash
             int startup = MeleeLightFirstHitTick();
             Assert.GreaterOrEqual(startup, 0, "fixture: the Melee light must hit an idle overlapping victim");

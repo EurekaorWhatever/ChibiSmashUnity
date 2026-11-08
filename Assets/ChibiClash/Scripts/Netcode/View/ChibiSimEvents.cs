@@ -19,12 +19,14 @@ namespace ChibiClash.Netcode
         RingOut,
         /// <summary>Fighter's HP hit zero on the tick the match ended.</summary>
         KO,
-        /// <summary>Projectile slot Index became live. Value = owner fighter.</summary>
+        /// <summary>Projectile slot Index became live (or now holds a new projectile, see <see cref="ChibiSimEvents.SameProjectile"/>). Value = owner fighter, Value2 = (int)<see cref="ChibiProjKind"/>.</summary>
         ProjectileSpawned,
-        /// <summary>Projectile slot Index stopped being live. Value = owner fighter.</summary>
+        /// <summary>Projectile slot Index stopped being live (or was reused). Value = owner fighter, Value2 = (int)<see cref="ChibiProjKind"/> of the projectile that left.</summary>
         ProjectileGone,
         /// <summary>Fighter started a dash (DashTicks rose from 0, or re-armed while dashing). Value = DashDir (-1/+1).</summary>
         DashStarted,
+        /// <summary>Ult cinematic began (CinematicRealTicks rose). Index = CinematicFighter (the ult user).</summary>
+        CinematicStarted,
     }
 
     /// <summary>One presentation event. Index is the fighter (0/1) or, for projectile events, the projectile slot.</summary>
@@ -67,9 +69,13 @@ namespace ChibiClash.Netcode
         {
             for (int i = 0; i < 2; i++) DiffFighter(i, prev.F[i], cur.F[i], output);
 
+            // Rise only (a new ult re-arms the counter upward); the per-real-tick countdown never emits.
+            if (cur.CinematicRealTicks > prev.CinematicRealTicks && cur.CinematicFighter >= 0 && cur.CinematicFighter < 2)
+                output.Add(new ChibiSimEvent(ChibiSimEventKind.CinematicStarted, cur.CinematicFighter));
+
             if (!prev.MatchOver && cur.MatchOver)
                 for (int i = 0; i < 2; i++)
-                    if (cur.F[i].Hp <= 0) output.Add(new ChibiSimEvent(ChibiSimEventKind.KO, i));
+                    if (cur.F[i].HpU <= 0) output.Add(new ChibiSimEvent(ChibiSimEventKind.KO, i));
 
             int n = cur.Proj.Length < prev.Proj.Length ? cur.Proj.Length : prev.Proj.Length;
             for (int i = 0; i < n; i++)
@@ -78,17 +84,28 @@ namespace ChibiClash.Netcode
                 var b = cur.Proj[i];
                 if (a.Active && b.Active)
                 {
-                    // Slot freed and reused within one tick: a fresh projectile has a different owner or more life.
-                    if (a.Owner != b.Owner || b.Life > a.Life)
+                    // Slot freed and reused within one step (A6): the new projectile has a new SpawnFrame. Life is not
+                    // a usable signal (the spear's return floor raises it; a reuse can have less life than the old one).
+                    if (!SameProjectile(a, b))
                     {
-                        output.Add(new ChibiSimEvent(ChibiSimEventKind.ProjectileGone, i, a.Owner));
-                        output.Add(new ChibiSimEvent(ChibiSimEventKind.ProjectileSpawned, i, b.Owner));
+                        output.Add(new ChibiSimEvent(ChibiSimEventKind.ProjectileGone, i, a.Owner, (int)a.Kind));
+                        output.Add(new ChibiSimEvent(ChibiSimEventKind.ProjectileSpawned, i, b.Owner, (int)b.Kind));
                     }
                 }
-                else if (!a.Active && b.Active) output.Add(new ChibiSimEvent(ChibiSimEventKind.ProjectileSpawned, i, b.Owner));
-                else if (a.Active && !b.Active) output.Add(new ChibiSimEvent(ChibiSimEventKind.ProjectileGone, i, a.Owner));
+                else if (!a.Active && b.Active) output.Add(new ChibiSimEvent(ChibiSimEventKind.ProjectileSpawned, i, b.Owner, (int)b.Kind));
+                else if (a.Active && !b.Active) output.Add(new ChibiSimEvent(ChibiSimEventKind.ProjectileGone, i, a.Owner, (int)a.Kind));
             }
         }
+
+        /// <summary>
+        /// True when two snapshots of one live slot hold the same projectile (amendment A6). SpawnFrame is the
+        /// identity: a reused slot always gets the current GameTicks, which differs from any projectile already shown.
+        /// Owner and Kind are also compared so a rollback diff (shown state vs re-simulated state) that spawned a
+        /// different projectile on the same tick is still reported as a reuse. Both must be Active; not checked here.
+        /// </summary>
+        /// <example><code>bool lerp = a.Active &amp;&amp; b.Active &amp;&amp; ChibiSimEvents.SameProjectile(a, b);</code></example>
+        public static bool SameProjectile(ChibiProjectileSim a, ChibiProjectileSim b) =>
+            a.SpawnFrame == b.SpawnFrame && a.Owner == b.Owner && a.Kind == b.Kind;
 
         static void DiffFighter(int i, ChibiFighterSim p, ChibiFighterSim c, List<ChibiSimEvent> output)
         {
@@ -100,7 +117,10 @@ namespace ChibiClash.Netcode
                 output.Add(new ChibiSimEvent(ChibiSimEventKind.MoveStarted, i, c.MoveSlot, combo));
             }
 
-            if (c.Hp < p.Hp) output.Add(new ChibiSimEvent(ChibiSimEventKind.Damaged, i, p.Hp - c.Hp));
+            // Fires on any micro-HP decrease (even 0.4 HP); Value is the loss rounded half-up to whole HP for the popup (F:438).
+            if (c.HpU < p.HpU)
+                output.Add(new ChibiSimEvent(ChibiSimEventKind.Damaged, i,
+                    (int)(((long)p.HpU - c.HpU + ChibiCombatStats.HpScale / 2) / ChibiCombatStats.HpScale)));
 
             if (c.Shielding != p.Shielding) output.Add(new ChibiSimEvent(ChibiSimEventKind.ShieldChanged, i, on: c.Shielding));
 

@@ -31,6 +31,7 @@ namespace ChibiClash.Netcode
 
         ChibiLocalLoop _loop;
         ChibiLocalSession _subscribed;
+        ChibiSimView _view;           // same GameObject; source of the cinematic band and flash (lazily found)
         readonly ChibiInputPacket[] _last = new ChibiInputPacket[2];
         readonly float[,] _seen = new float[2, 9];          // last time each ShownButtons entry was pressed
         readonly Gesture[] _gesture = new Gesture[2];
@@ -94,13 +95,21 @@ namespace ChibiClash.Netcode
             Gui.Begin();
             var s = _loop.Session.State;
 
+            if (_view == null) _view = GetComponent<ChibiSimView>();
+            if (_view != null)
+            {
+                float ct = Time.unscaledTime - _view.CinematicStart;              // Hud.cs:18-19
+                if (_view.CinematicFighter >= 0 && ct < 1.5f) Cinematic(_view, ct);
+            }
+
             Popups();
             Panel(s.F[0], 0, new Rect(16f, 14f, 420f, PanelH));
             Panel(s.F[1], 1, new Rect(Gui.W - 436f, 14f, 420f, PanelH));
 
             Gui.Text(new Rect(Gui.W * 0.5f - 200f, 14f, 400f, 30f), "SIM TEST MATCH", 22, Gui.Accent);
-            int secs = Mathf.Max(0, (ChibiSimConst.MatchTicks - s.Frame) / ChibiSimConst.TickRate);
-            Gui.Text(new Rect(Gui.W * 0.5f - 200f, 44f, 400f, 30f), secs + "s   frame " + s.Frame, 16, Color.white);
+            // Match time is game time (GameTicks), not real ticks: hitstop and cinematics do not run the clock.
+            int secs = Mathf.Max(0, (ChibiSimConst.MatchTicks - s.GameTicks) / ChibiSimConst.TickRate);
+            Gui.Text(new Rect(Gui.W * 0.5f - 200f, 44f, 400f, 30f), secs + "s   step " + s.GameTicks + "   frame " + s.Frame, 16, Color.white);
             Gui.Text(new Rect(16f, Gui.H - 48f, Gui.W - 32f, 40f), ControlsHint(), 13, Gui.Muted, TextAnchor.MiddleLeft);
 
             if (s.MatchOver)
@@ -110,6 +119,32 @@ namespace ChibiClash.Netcode
                 Gui.Rect(r, Gui.Panel, 12f);
                 Gui.Text(r, "MATCH OVER — " + w, 34, Gui.Gold);
             }
+
+            if (_view != null && _view.FlashAlpha > 0.01f)                        // Hud.cs:55-58
+            {
+                var c = _view.FlashColor;
+                Gui.Rect(new Rect(0f, 0f, Gui.W, Gui.H), new Color(c.r, c.g, c.b, _view.FlashAlpha * 0.5f));
+            }
+        }
+
+        /// <summary>Ult cinematic bars and name band, copied from Hud.Cinematic (Hud.cs:177-195).</summary>
+        static void Cinematic(ChibiSimView v, float t)
+        {
+            float inT = Mathf.Clamp01(t / 0.2f);
+            float outT = Mathf.Clamp01((1.5f - t) / 0.3f);
+            float k = Mathf.Min(inT, outT);
+            float bar = 80f * k;
+            Gui.Rect(new Rect(0f, 0f, Gui.W, bar), Color.black);
+            Gui.Rect(new Rect(0f, Gui.H - bar, Gui.W, bar), Color.black);
+
+            var c = v.CinematicColor;
+            float slide = (1f - inT) * Gui.W;
+            var band = new Rect(-slide, Gui.H * 0.62f, Gui.W, 90f);
+            Gui.Rect(band, new Color(c.r * 0.3f, c.g * 0.3f, c.b * 0.3f, 0.85f * k));
+            Gui.Rect(new Rect(band.x, band.y, band.width, 4f), new Color(c.r, c.g, c.b, k));
+            Gui.Rect(new Rect(band.x, band.yMax - 4f, band.width, 4f), new Color(c.r, c.g, c.b, k));
+            Gui.Text(new Rect(band.x, band.y + 4f, band.width, 56f), v.CinematicTitle, 46, new Color(1f, 1f, 1f, k));
+            Gui.Text(new Rect(band.x, band.y + 56f, band.width, 28f), v.CinematicSubtitle, 15, new Color(c.r, c.g, c.b, k));
         }
 
         void Panel(ChibiFighterSim f, int i, Rect r)
@@ -117,7 +152,7 @@ namespace ChibiClash.Netcode
             Gui.Rect(r, Gui.Panel, 10f);
             var def = ClassDef.Get((FighterClass)f.Class);
             Gui.Text(new Rect(r.x + 12f, r.y + 6f, r.width - 24f, 24f), Names[i] + "  " + def.heroName, 16, Color.white, TextAnchor.MiddleLeft);
-            float hp = f.Stats.MaxHp > 0 ? f.Hp / (float)f.Stats.MaxHp : 0f;
+            float hp = f.Stats.MaxHp > 0 ? f.HpU / ((float)f.Stats.MaxHp * ChibiCombatStats.HpScale) : 0f;   // exact fraction
             Gui.Bar(new Rect(r.x + 12f, r.y + 34f, r.width - 24f, 20f), hp, hp > 0.3f ? Gui.Green : Gui.Red, Gui.PanelLight);
             Gui.Text(new Rect(r.x + 12f, r.y + 34f, r.width - 24f, 20f), f.Hp + " / " + f.Stats.MaxHp, 12, Color.white);
             float ult = f.Ult / (float)ChibiSimConst.UltMax;

@@ -161,8 +161,9 @@ namespace ChibiClash.Tests
         }
 
         [Test]
-        public void HeldShield_UsesNewestValue()
+        public void ShieldTap_ReleasedBeforeSample_StillSetsShield()
         {
+            // User-approved behaviour change per damage-conversion.md §7: a tap released before the sample is latched.
             // Arrange: Block held in frame 1, released in frame 2, one sample after both.
             var rig = new Rig();
             rig.Device.Next(d => d.Block = true);
@@ -172,9 +173,11 @@ namespace ChibiClash.Tests
             rig.Source.PollRenderFrame();
             rig.Source.PollRenderFrame();
             var p = rig.Source.SampleTick();
+            var next = rig.Source.SampleTick();
 
             // Assert
-            Assert.IsFalse(p.Has(ChibiButtons.Shield));
+            Assert.IsTrue(p.Has(ChibiButtons.Shield));
+            Assert.IsFalse(next.Has(ChibiButtons.Shield), "shield latch must clear after one sample");
         }
 
         [Test]
@@ -251,6 +254,44 @@ namespace ChibiClash.Tests
             Assert.AreEqual(AllButtonBits, ButtonsOf(p));
             Assert.AreEqual(ChibiDir.SW, p.Direction);
             Assert.AreEqual(Gesture.RaiseHands, p.Gesture);
+        }
+
+        // ---------------------------------------------------------------- short shield taps (damage-conversion.md §7)
+
+        [Test]
+        public void ShortShieldTap_BetweenSamples_SetsShieldForOneTick()
+        {
+            // Arrange: Block down in render frame 1 only, frames 2-3 nothing, all before one sim tick.
+            var rig = new Rig();
+            rig.Device.Next(d => d.Block = true);
+            rig.Device.NextIdle();
+            rig.Device.NextIdle();
+
+            // Act
+            rig.Source.PollRenderFrame();
+            rig.Source.PollRenderFrame();
+            rig.Source.PollRenderFrame();
+            var tapTick = rig.Source.SampleTick();
+            var nextTick = rig.PollThenSample(_ => { });
+
+            // Assert: exactly one tick of Shield.
+            Assert.IsTrue(tapTick.Has(ChibiButtons.Shield), "sub-tick shield tap must reach the sim");
+            Assert.IsFalse(nextTick.Has(ChibiButtons.Shield), "shield latch must clear after one sample");
+        }
+
+        [Test]
+        public void ShieldHeldAcrossSample_StillSet()
+        {
+            // Arrange
+            var rig = new Rig();
+
+            // Act: Block held through two consecutive samples.
+            var first = rig.PollThenSample(d => d.Block = true);
+            var second = rig.PollThenSample(d => d.Block = true);
+
+            // Assert
+            Assert.IsTrue(first.Has(ChibiButtons.Shield));
+            Assert.IsTrue(second.Has(ChibiButtons.Shield));
         }
     }
 }

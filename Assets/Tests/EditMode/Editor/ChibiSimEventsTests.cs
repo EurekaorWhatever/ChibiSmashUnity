@@ -125,6 +125,60 @@ namespace ChibiClash.Tests
         }
 
         [Test]
+        public void ProjectileLifeRaisedSameSpawnFrame_EmitsNothing()
+        {
+            // Arrange: a returning spear's Life floor (projectile-conversion.md return rule, CO:73 Life = max(Life, 0.5))
+            // raises Life on the SAME projectile. Same SpawnFrame/Owner/Kind = same projectile, so no gone/spawn (A6).
+            const int Slot = 3, Owner = 1, Spawn = 12;
+            const int OldLife = 20, NewLife = 30;
+            var prev = NewState();
+            var p = prev.Proj[Slot];
+            p.Active = true; p.Owner = Owner; p.Kind = ChibiProjKind.Spear;
+            p.SpawnFrame = Spawn; p.Life = OldLife;
+            var cur = Copy(prev);
+            cur.Proj[Slot].Life = NewLife;
+            var ev = new List<ChibiSimEvent>();
+
+            // Act
+            ChibiSimEvents.Diff(prev, cur, ev);
+
+            // Assert
+            Assert.AreEqual(0, Count(ev, ChibiSimEventKind.ProjectileGone, Slot));
+            Assert.AreEqual(0, Count(ev, ChibiSimEventKind.ProjectileSpawned, Slot));
+        }
+
+        [Test]
+        public void ProjectileSlotReusedSameOwnerLessLife_EmitsGoneThenSpawned()
+        {
+            // Arrange: slot 2 holds owner 0's arrow (spawned on tick 10). In one step it despawns and owner 0 spawns a
+            // new projectile into the same slot (tick 40) with LESS life than the old one had (A6, the lead -> arrow 0
+            // reuse case). Owner and Kind are unchanged; only SpawnFrame, Life and position differ.
+            const int Slot = 2, Owner = 0;
+            const int OldSpawn = 10, NewSpawn = 40;
+            const int OldLife = 50, NewLife = 27;
+            const int OldX = 4000, NewX = 500;
+            var prev = NewState();
+            var p = prev.Proj[Slot];
+            p.Active = true; p.Owner = Owner; p.Kind = ChibiProjKind.Arrow;
+            p.SpawnFrame = OldSpawn; p.Life = OldLife; p.X = OldX;
+            var cur = Copy(prev);
+            var c = cur.Proj[Slot];
+            c.SpawnFrame = NewSpawn; c.Life = NewLife; c.X = NewX;
+            var ev = new List<ChibiSimEvent>();
+
+            // Act
+            ChibiSimEvents.Diff(prev, cur, ev);
+
+            // Assert: the old projectile left and a new one arrived, in that order.
+            Assert.AreEqual(1, Count(ev, ChibiSimEventKind.ProjectileGone, Slot));
+            Assert.AreEqual(1, Count(ev, ChibiSimEventKind.ProjectileSpawned, Slot));
+            Assert.AreEqual(2, ev.Count);
+            Assert.AreEqual(ChibiSimEventKind.ProjectileGone, ev[0].Kind);
+            Assert.AreEqual(ChibiSimEventKind.ProjectileSpawned, ev[1].Kind);
+            Assert.AreEqual(Owner, ev[1].Value);
+        }
+
+        [Test]
         public void RealSimLightPress_StartsMoveAndDamagesP2()
         {
             var s = NewState();
@@ -176,6 +230,36 @@ namespace ChibiClash.Tests
 
             // Assert
             Assert.AreEqual(0, Count(ev, ChibiSimEventKind.DashStarted));
+        }
+
+        [Test]
+        public void CinematicRealTicksRise_EmitsOneCinematicStarted()
+        {
+            // Arrange
+            const int CinematicTicks = 48;   // 0.8 s at 60 Hz (MatchController.Cinematic)
+            var prev = NewState();
+            prev.CinematicRealTicks = 0;
+            prev.CinematicFighter = -1;
+            var cur = Copy(prev);
+            cur.CinematicRealTicks = CinematicTicks;
+            cur.CinematicFighter = 1;
+            var ev = new List<ChibiSimEvent>();
+
+            // Act
+            ChibiSimEvents.Diff(prev, cur, ev);
+
+            // Assert
+            Assert.AreEqual(1, Count(ev, ChibiSimEventKind.CinematicStarted));
+            Assert.AreEqual(1, ev.Find(x => x.Kind == ChibiSimEventKind.CinematicStarted).Index);
+
+            // Act: next frozen real tick, the cinematic counts down
+            prev = Copy(cur);
+            cur.CinematicRealTicks = CinematicTicks - 1;
+            ev.Clear();
+            ChibiSimEvents.Diff(prev, cur, ev);
+
+            // Assert
+            Assert.AreEqual(0, Count(ev, ChibiSimEventKind.CinematicStarted));
         }
     }
 }

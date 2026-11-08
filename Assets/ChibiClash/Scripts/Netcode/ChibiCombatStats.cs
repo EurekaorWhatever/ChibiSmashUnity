@@ -72,17 +72,56 @@ namespace ChibiClash.Netcode
         public const int PatienceBonusPermille = 500;
         public const int GuardBreakStunTicks = 60;    // 1 s stun when the guard shatters
         public const int GuardBrokenTicks = 180;      // 3 s before the guard can be raised again
-        public const int GuardRegenPerTick = 4;       // guard is stored x10: 0.4 HP per tick = 24 HP/s
+        /// <summary>Micro-HP per HP: HP and guard are stored exactly in micro-HP (damage-conversion.md section 1b, D9-1 = a).</summary>
+        public const int HpScale = 1_000_000;
+        /// <summary>Nano-HP per HP: intermediate damage unit, exact for every permille factor (section 1b).</summary>
+        public const long NanoPerHp = 1_000_000_000L;
+        /// <summary>Guard regen 24 HP/s = 0.4 HP = 400 000 micro-HP per tick, exact at 60 Hz (section 2, F:202-203).</summary>
+        public const int GuardRegenPerTickU = 400_000;
 
-        /// <summary>Permille of damage that gets through a block: 400 at 10 DEF, 300 at 20, 200 at 30.</summary>
-        public static int BlockedPermille(int defense)
+        /// <summary>Guard max in micro-HP from the BASE defense: (40 + 3·DEF) HP (F:90): 70 / 100 / 130 HP at 10 / 20 / 30.</summary>
+        public static int GuardMaxU(int defense) => (40 + 3 * defense) * HpScale;
+
+        /// <summary>Defense in hundredths, x0.85 when armor-broken (F:148): 2000 / 3000 / 1000, broken 1700 / 2550 / 850.</summary>
+        public static int DefenseH(in ChibiCombatStats s, bool armorBroken) =>
+            s.Defense * (armorBroken ? (1000 - ArmorBreakPermille) / 10 : 100);
+
+        /// <summary>Block fraction x100 000: clamp(50000 - 10·DefH, 10000, 50000) = clamp(0.5 - DEF·0.01, 0.1, 0.5) (CA:52-55).</summary>
+        public static int BlockedPcm(int defH)
         {
-            int p = 500 - defense * 10;
-            return p < 100 ? 100 : (p > 500 ? 500 : p);
+            int p = 50000 - 10 * defH;
+            return p < 10000 ? 10000 : (p > 50000 ? 50000 : p);
         }
 
-        /// <summary>Guard durability x10 (blocked raw damage drains it): 700 / 1000 / 1300 at 10 / 20 / 30 DEF.</summary>
-        public static int GuardMax10(int defense) => (40 + 3 * defense) * 10;
+        /// <summary>
+        /// Raw damage in nano-HP (section 1c, CA:43-49): Attack·Mult, x(1 + damage bonus), x0.9 if weakened, then ONE crit
+        /// draw (always consumed) and x(1 + crit damage) on a crit. Every step is exact (no rounding). Also the guard drain.
+        /// </summary>
+        /// <param name="multPermille">Move multiplier incl. finisher and Patience.</param>
+        public static long RawDamageNano(in ChibiCombatStats atk, int multPermille, bool weakened, ref ChibiRng rng, out bool crit)
+        {
+            long n = (long)atk.Attack * NanoPerHp * multPermille / 1000;
+            n = n * (1000 + atk.DamageBonusPermille) / 1000;
+            if (weakened) n = n * (1000 - HexWeakenPermille) / 1000;
+            crit = rng.Roll(atk.CritRatePermille);
+            if (crit) n = n * (1000 + atk.CritDamagePermille) / 1000;
+            return n;
+        }
+
+        /// <summary>
+        /// Final damage in micro-HP (section 1c, CA:34): blocked fraction on the exact raw value, then
+        /// max(1 HP, X - floor(DEF/10)), one half-up rounding nano -> micro. Never below 1 HP.
+        /// </summary>
+        public static int FinalDamageMicro(long rawN, int defH, bool blocked)
+        {
+            long x = blocked ? rawN * BlockedPcm(defH) / 100000 : rawN;
+            long dmg = x - (defH / 1000) * NanoPerHp;
+            if (dmg < NanoPerHp) dmg = NanoPerHp;
+            return (int)((dmg + 500) / 1000);
+        }
+
+        /// <summary>Life steal heal in micro-HP: dmg·permille/1000, half-up (Blood Edge 5 %: 18 HP -> 0.9 HP, section 5).</summary>
+        public static int LifestealMicro(int dmgU, int permille) => (int)(((long)dmgU * permille + 500) / 1000);
 
         /// <summary>Archer and mage knockback is halved (balance).</summary>
         public static bool HalfKnockback(int cls) => cls == (int)FighterClass.Ranged || cls == (int)FighterClass.Magic;
@@ -147,39 +186,40 @@ namespace ChibiClash.Netcode
             return p < 300 ? 300 : p;
         }
 
+        /// <summary>
+        /// Attack speed in parts per million for the normals (slots 0/1). Modifiers MULTIPLY like the original
+        /// (Fighter.cs:123-133): (1000 + class passive bonus) x (hexed ? 850 : 1000). Range 722 500 .. 1 150 000.
+        /// Source: normals-conversion.md section 1 (spPpm). Skills still use <see cref="AttackSpeedPermille"/> until step 10.
+        /// </summary>
+        public static int AttackSpeedPpm(in ChibiCombatStats s, bool hexed)
+        {
+            int classP = 1000 + s.AttackSpeedBonusPermille;
+            if (classP < 300) classP = 300;
+            return classP * (hexed ? 1000 - HexSluggishPermille : 1000);
+        }
+
+        /// <summary>
+        /// Light/heavy timing from the original's dur = baseMs / AttackSpeed (normals-conversion.md sections 1a-1c):
+        /// k_strike = ceil(24·baseMs·1000 / spPpm), k_lock = ceil(60·baseMs·1000 / spPpm);
+        /// Startup = k_strike - 1, Active = 1, Recovery = k_lock - k_strike - 1, so the hit probe runs on tick k_strike and
+        /// the next normal is accepted on tick k_lock. Example (base light, 240 ms): 5/1/8, hit tick 6, accepted on 15.
+        /// </summary>
+        /// <param name="baseMs">240 (light) or 420 (heavy).</param>
+        /// <param name="spPpm">Multiplicative attack speed from <see cref="AttackSpeedPpm"/>.</param>
+        public static void NormalFrames(int baseMs, int spPpm, out int startup, out int recovery)
+        {
+            int kStrike = (24 * baseMs * 1000 + spPpm - 1) / spPpm;
+            int kLock = (60 * baseMs * 1000 + spPpm - 1) / spPpm;
+            startup = kStrike - 1;
+            recovery = kLock - kStrike - 1;
+            if (recovery < 0) recovery = 0;
+        }
+
         /// <summary>Scale a frame count by attack speed, rounding up so a move is never faster than its data.</summary>
         public static int ScaleFrames(int frames, int attackSpeedPermille)
         {
             if (frames <= 0) return 0;
             return (frames * 1000 + attackSpeedPermille - 1) / attackSpeedPermille;
-        }
-
-        public static int EffectiveDefense(in ChibiCombatStats s, bool armorBroken)
-        {
-            return armorBroken ? s.Defense * (1000 - ArmorBreakPermille) / 1000 : s.Defense;
-        }
-
-        /// <summary>GDD rule: every 10 defense removes 1 point of incoming damage; a hit always deals at least 1.</summary>
-        public static int MitigateDefense(int rawDamage, int defense)
-        {
-            int d = rawDamage - defense / 10;
-            return d < 1 ? 1 : d;
-        }
-
-        /// <summary>
-        /// Outgoing damage before the defender's mitigation. Order of operations (identical on both peers):
-        ///   1. attack x move multiplier        2. passive damage bonus        3. hexed attacker -10%
-        ///   4. ONE crit roll (always consumed, so the RNG stream never depends on the outcome)
-        /// All divisions are C# integer divisions (truncate toward zero), which are defined identically on every platform.
-        /// </summary>
-        public static int RollDamage(in ChibiCombatStats atk, int multPermille, bool weakened, ref ChibiRng rng, out bool crit)
-        {
-            long raw = (long)atk.Attack * multPermille / 1000;
-            raw = raw * (1000 + atk.DamageBonusPermille) / 1000;
-            if (weakened) raw = raw * (1000 - HexWeakenPermille) / 1000;
-            crit = rng.Roll(atk.CritRatePermille);
-            if (crit) raw = raw * (1000 + atk.CritDamagePermille) / 1000;
-            return (int)raw;
         }
     }
 }

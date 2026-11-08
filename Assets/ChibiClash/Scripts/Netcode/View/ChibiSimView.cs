@@ -6,8 +6,12 @@ namespace ChibiClash.Netcode
     /// <summary>
     /// Draws a ChibiLocalLoop's deterministic simulation with the original game visuals (FighterVisual, StageBuilder,
     /// Fx). Read-only: the view never writes to simulation state; the sim decides, the view only draws.
-    /// Positions are interpolated between the last two ticks with loop.RenderAlpha; presentation events come from
-    /// ChibiSimEvents, diffed once per simulated tick.
+    /// Positions are interpolated between the last two GAME steps (timescale-conversion.md 8.3(2)); presentation events
+    /// come from ChibiSimEvents, diffed once per game step (frozen real ticks are skipped so nothing re-fires).
+    /// Presentation speed follows the original MatchController.Update (MatchController.cs:112-116): Time.timeScale is
+    /// set to the sim's current scale (hitstop 0.05, cinematic 0.2) and to 0.3 for 1.2 s after the match ends. The
+    /// sim clock runs on Time.unscaledDeltaTime (ChibiLocalLoop.cs:54) and never reads Time.timeScale, so this only
+    /// slows Fx, FighterVisual animation and anything else on scaled time.
     /// </summary>
     public sealed class ChibiSimView : MonoBehaviour
     {
@@ -18,6 +22,11 @@ namespace ChibiClash.Netcode
         const float StunVisualTicks = 18f;        // Fighter.cs shows the stun stars above 0.3 s of hitstun
         const float CamLerp = 6f, CamSizeLerp = 5f, CamMinSize = 5.5f, CamMaxSize = 10f, CamPad = 3.2f;
         const float ShakeOnHit = 0.25f, ShakeDecay = 2.5f, ShakeScale = 0.6f;
+        // Ult cinematic, MatchController.Cinematic (MatchController.cs:184-193) and CameraController (Stage.cs:161-164).
+        const float CinematicFocusSec = 0.8f, CinematicFocusSize = 3.6f, CinematicShake = 0.3f;
+        const float CinematicFlash = 0.8f, FlashDecay = 2.5f;          // MatchController.cs:189 / :119
+        // Finish slow-mo, MatchController.cs:114 (view only; the sim has already stopped at MatchOver).
+        const float FinishScale = 0.3f, FinishSec = 1.2f;
 
         enum Anim : byte { Swing, Thrust, Spin, Slam, Recoil }
 
@@ -46,10 +55,55 @@ namespace ChibiClash.Netcode
         readonly FighterVisual[] _vis = new FighterVisual[2];
         readonly Skin[] _skin = new Skin[2];
         readonly ClassDef[] _def = new ClassDef[2];
-        SpriteRenderer[] _proj;
+        ProjVis[] _proj;
+        readonly bool[] _weaponHidden = new bool[2];   // last SpearOut applied to FighterVisual.SetWeaponVisible
+        // VolleyLead expiries seen in OnSimFrame (position taken from the pre-step state): Fx.Burst in LateUpdate.
+        readonly List<Vector2> _leadBurstPos = new List<Vector2>(4);
+        readonly List<int> _leadBurstOwner = new List<int>(4);
+        // Projectile looks, CombatObjects.cs:27-42 (Glow 0.5 alpha x2.2 at order 59, Core at order 60) with the
+        // sizes / colours from Fighter.cs. Trail: CombatObjects.cs:79-86.
+        const float ProjGlowScale = 2.2f, ProjGlowAlpha = 0.5f, TrailInterval = 0.03f;
+        const float SmashWaveBaseR = 600f;             // sim Radius at spawn; y scale = Radius / 600 (GrowRate, CO:77)
+        const float LeadBurstSpeed = 7f, LeadBurstSize = 0.4f;
+        const int LeadBurstCount = 40;
+        static readonly Color ArrowColor = new Color(0.95f, 0.9f, 0.75f);   // Fighter.cs SpawnArrow / volley arrows
+        static readonly Color FireballColor = new Color(1f, 0.45f, 0.1f), FireballTrail = new Color(1f, 0.8f, 0.2f);
+        static readonly Color PoseFireballColor = new Color(1f, 0.55f, 0.15f);   // Fighter.cs:388-389
+        static readonly Color SpearColor = new Color(0.85f, 0.88f, 0.95f);
+
+        /// <summary>Per-slot projectile visual: Glow + Core sprites under one root, plus the identity they were built for.</summary>
+        sealed class ProjVis
+        {
+            public Transform Root;
+            public SpriteRenderer Glow, Core;
+            public bool Live, Grow;
+            public int SpawnFrame, Owner;
+            public ChibiProjKind Kind;
+            public Color Trail;
+            public float TrailTimer;
+        }
         StageInfo _stage;
         Camera _cam;
         float _shake;
+        int _focus = -1;           // fighter the camera is focused on during the ult cinematic, -1 none
+        float _focusUntil;         // unscaled time the focus ends
+        bool _finished;            // MatchOver seen
+        float _finishedTime;       // unscaled time MatchOver was first seen
+
+        /// <summary>Fighter of the latest ult cinematic (0/1), -1 before any. Read by ChibiSimTestHud.</summary>
+        public int CinematicFighter { get; private set; } = -1;
+        /// <summary>Time.unscaledTime the latest cinematic started (Hud.cs:18 shows the band while under 1.5 s).</summary>
+        public float CinematicStart { get; private set; } = -10f;
+        /// <summary>Cinematic band colour: Gui.Gold for gold skins, else the skin's ultFx (Hud.cs:186).</summary>
+        public Color CinematicColor { get; private set; }
+        /// <summary>Band title (Hud.cs:192-193), built once per cinematic.</summary>
+        public string CinematicTitle { get; private set; } = "";
+        /// <summary>Band subtitle "HERO · ult description" (Hud.cs:194), built once per cinematic.</summary>
+        public string CinematicSubtitle { get; private set; } = "";
+        /// <summary>Full-screen flash alpha; drawn at half alpha (Hud.cs:55-58).</summary>
+        public float FlashAlpha { get; private set; }
+        /// <summary>Full-screen flash colour (the ult user's ultFx, MatchController.cs:190).</summary>
+        public Color FlashColor { get; private set; }
 
         /// <summary>Ground height of the drawn stage in world units.</summary>
         public float GroundY => _stage != null ? _stage.groundY : 0f;
@@ -80,12 +134,17 @@ namespace ChibiClash.Netcode
                 go.transform.position = WorldPos(state.F[i].X, state.F[i].Y);
             }
 
-            var size = new Vector2(ChibiSimConst.ProjHalfW * 2 * MilliToWorld, ChibiSimConst.ProjHalfH * 2 * MilliToWorld);
-            _proj = new SpriteRenderer[state.Proj.Length];
+            // One Glow + Core pair per pool slot, created once; Configure re-skins it when the slot's identity changes.
+            _proj = new ProjVis[state.Proj.Length];
             for (int i = 0; i < _proj.Length; i++)
             {
-                _proj[i] = Art.Sprite(transform, "SimProj" + i, Art.Circle, Color.white, Vector2.zero, size, 60);
-                _proj[i].enabled = false;
+                var root = new GameObject("SimProj" + i).transform;
+                root.SetParent(transform, false);
+                var v = new ProjVis { Root = root };
+                v.Glow = Art.Sprite(root, "Glow", Art.Soft, Color.clear, Vector2.zero, Vector2.one, 59);
+                v.Core = Art.Sprite(root, "Core", Art.Circle, Color.white, Vector2.zero, Vector2.one, 60);
+                root.gameObject.SetActive(false);
+                _proj[i] = v;
             }
 
             _cam = Camera.main;
@@ -93,22 +152,67 @@ namespace ChibiClash.Netcode
         }
 
         Vector3 WorldPos(int x, int y) => new Vector3(x * MilliToWorld, GroundY + FeetToPivot + y * MilliToWorld, 0f);
+        Vector3 ProjPos(int x, int y) => new Vector3(x * MilliToWorld, GroundY + y * MilliToWorld, 0f);
 
         void OnSimFrame(int frame, ChibiInputPacket a, ChibiInputPacket b)
         {
             var cur = _loop.Session.State;
+            // Frozen real tick (hitstop / cinematic, no game step ran): the world did not change, so keep the
+            // interpolation pair and emit nothing.
+            if (cur.GameTicks == _seen.GameTicks && cur.MatchOver == _seen.MatchOver) return;
+            if (!_seen.MatchOver && cur.MatchOver && !_finished)
+            {
+                _finished = true;
+                _finishedTime = Time.unscaledTime;
+            }
+            int first = _events.Count;
             ChibiSimEvents.Diff(_seen, cur, _events);
+            // Thousand Arrows lead expiry burst (Fighter.cs:1021): the event carries no position, so read it from the
+            // state that still holds the lead before _seen is overwritten.
+            for (int i = first; i < _events.Count; i++)
+            {
+                var e = _events[i];
+                if (e.Kind != ChibiSimEventKind.ProjectileGone || e.Value2 != (int)ChibiProjKind.VolleyLead) continue;
+                var lead = _seen.Proj[e.Index];
+                _leadBurstPos.Add(ProjPos(lead.X, lead.Y));
+                _leadBurstOwner.Add(Mathf.Clamp(e.Value, 0, 1));
+            }
             _before.CopyFrom(_seen);
             _seen.CopyFrom(cur);
+        }
+
+        /// <summary>Presentation time scale for this frame, mirroring MatchController.cs:111-116.</summary>
+        float ViewTimeScale(ChibiSimState live)
+        {
+            // MatchController.cs:114 overrides hitstop/cinematic once the match is finished. The sim stops stepping
+            // at MatchOver (its timers freeze), so its scale is ignored from then on.
+            if (_finished) return Time.unscaledTime - _finishedTime < FinishSec ? FinishScale : 1f;
+            return ChibiSimulation.CurrentScalePermille(live) / 1000f;   // 1 / 0.2 / 0.05, the same values as :112-113
+        }
+
+        void Update()
+        {
+            if (_loop == null || _loop.Session == null) return;
+            Time.timeScale = ViewTimeScale(_loop.Session.State);   // restored by ChibiSimTestMatch.Stop
         }
 
         void LateUpdate()
         {
             if (_loop == null || _loop.Session == null) return;
-            float alpha = Mathf.Clamp01(_loop.RenderAlpha);
+            var live = _loop.Session.State;
+            // timescale-conversion.md 8.3(2): f = min(0.999, (sinceStep + RenderAlpha) * scale / 1000). NOT TimeAccum,
+            // which keeps the carried phase and would stall every tick after the first hitstop. After MatchOver the
+            // sim no longer steps, so show the final state.
+            float alpha = live.MatchOver ? 1f
+                : Mathf.Min(0.999f, (live.RealTicksSinceStep + Mathf.Clamp01(_loop.RenderAlpha))
+                                    * ChibiSimulation.CurrentScalePermille(live) / 1000f);
 
             for (int i = 0; i < _events.Count; i++) Apply(_events[i]);
             _events.Clear();
+            for (int i = 0; i < _leadBurstPos.Count; i++)
+                Fx.Burst(_leadBurstPos[i], _skin[_leadBurstOwner[i]].ultFx, LeadBurstCount, LeadBurstSpeed, LeadBurstSize);
+            _leadBurstPos.Clear();
+            _leadBurstOwner.Clear();
 
             for (int i = 0; i < 2; i++)
             {
@@ -126,27 +230,61 @@ namespace ChibiClash.Netcode
 
                 bool parry = f.ParryTicks > 0;
                 float guard = 1f;
-                int gmax = ChibiCombatStats.GuardMax10(f.Stats.Defense);
-                if (f.Shielding && gmax > 0) guard = Mathf.Clamp01(f.GuardHp10 / (float)gmax);
+                int gmax = ChibiCombatStats.GuardMaxU(f.Stats.Defense);
+                if (f.Shielding && gmax > 0) guard = Mathf.Clamp01(f.GuardU / (float)gmax);
                 v.SetShield(f.Shielding || parry, parry, guard);
                 v.SetAura(f.AuraTicks > 0 || f.RingTicks > 0, _skin[i].ultFx);
                 v.SetStunned(f.Stun > StunVisualTicks);
+                // Thrown spear (Fighter.cs ThrowSpear / OnGone): hide the held weapon while it is out. Only on change,
+                // SetWeaponVisible allocates (GetComponentsInChildren).
+                if (f.SpearOut != _weaponHidden[i])
+                {
+                    _weaponHidden[i] = f.SpearOut;
+                    v.SetWeaponVisible(!f.SpearOut);
+                }
             }
 
+            float dt = Time.deltaTime;   // scaled, like the original Projectile.Update trail timer
             for (int i = 0; i < _proj.Length; i++)
             {
                 var b = _seen.Proj[i];
-                var sr = _proj[i];
-                if (!b.Active) { if (sr.enabled) sr.enabled = false; continue; }
+                var v = _proj[i];
+                if (!b.Active)
+                {
+                    if (v.Live) { v.Live = false; v.Root.gameObject.SetActive(false); }
+                    continue;
+                }
+                bool fresh = !v.Live || v.SpawnFrame != b.SpawnFrame || v.Kind != b.Kind || v.Owner != b.Owner;
+                if (fresh) Configure(v, b);
+
                 var a = _before.Proj[i];
-                var p1 = new Vector3(b.X * MilliToWorld, GroundY + b.Y * MilliToWorld, 0f);
-                if (a.Active && a.Owner == b.Owner)
-                    p1 = Vector3.Lerp(new Vector3(a.X * MilliToWorld, GroundY + a.Y * MilliToWorld, 0f), p1, alpha);
-                sr.transform.position = p1;
-                if (!sr.enabled) sr.enabled = true;
+                bool lerp = a.Active && ChibiSimEvents.SameProjectile(a, b);
+                var p = ProjPos(b.X, b.Y);
+                if (lerp) p = Vector3.Lerp(ProjPos(a.X, a.Y), p, alpha);
+                v.Root.position = p;
+
+                // transform.right = velocity direction (CO:41, :76); growing waves keep their spawn rotation (CO:76).
+                if ((fresh || !v.Grow) && (b.Vx != 0 || b.Vy != 0))
+                    v.Root.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(b.Vy, b.Vx) * Mathf.Rad2Deg);
+                if (v.Grow)
+                {
+                    float r = lerp ? Mathf.Lerp(a.Radius, b.Radius, alpha) : b.Radius;
+                    v.Root.localScale = new Vector3(1f, r / SmashWaveBaseR, 1f);
+                }
+
+                if (v.Trail.a > 0f)
+                {
+                    v.TrailTimer -= dt;
+                    if (v.TrailTimer <= 0f)
+                    {
+                        v.TrailTimer = TrailInterval;
+                        Fx.Burst(p, v.Trail, 1, 0.3f, 0.18f, 0.25f);   // CO:84
+                    }
+                }
             }
 
-            Fx.Tick(Time.deltaTime);
+            Fx.Tick(Time.deltaTime);   // scaled, like MatchController.cs:118
+            FlashAlpha = Mathf.MoveTowards(FlashAlpha, 0f, Time.unscaledDeltaTime * FlashDecay);   // MatchController.cs:119
             UpdateCamera();
         }
 
@@ -198,13 +336,71 @@ namespace ChibiClash.Netcode
                     Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 40, 8f, 0.5f);
                     Fx.Text(Center(e.Index) + Vector2.up * 1.4f, "K.O.", Gui.Red, 1.5f);
                     break;
-                case ChibiSimEventKind.ProjectileSpawned:
-                {
-                    int owner = Mathf.Clamp(e.Value, 0, 1);
-                    _proj[e.Index].color = Color.Lerp(_def[owner].color, Color.white, 0.3f);
+                case ChibiSimEventKind.CinematicStarted:
+                    StartCinematic(e.Index);
                     break;
-                }
             }
+        }
+
+        /// <summary>MatchController.Cinematic (MatchController.cs:184-193) for fighter <paramref name="i"/>.</summary>
+        void StartCinematic(int i)
+        {
+            var skin = _skin[i];
+            var def = _def[i];
+            CinematicFighter = i;
+            CinematicStart = Time.unscaledTime;                              // :187
+            FlashAlpha = CinematicFlash;                                     // :189
+            FlashColor = skin.ultFx;                                         // :190
+            _focus = i;                                                      // :191 cam.Focus(f, 0.8f)
+            _focusUntil = Time.unscaledTime + CinematicFocusSec;
+            _shake = Mathf.Max(_shake, CinematicShake);                      // :192 Shake(0.3f)
+            // Hud.cs:186, :192-194; strings built once here, not per OnGUI.
+            CinematicColor = skin.goldCinematic ? Gui.Gold : skin.ultFx;
+            CinematicTitle = skin.goldCinematic ? "★ " + def.ultName + " ★" : def.ultName;
+            CinematicSubtitle = def.heroName.ToUpper() + " · " + def.ultDesc;
+        }
+
+        /// <summary>Re-skin slot visual <paramref name="v"/> for projectile <paramref name="b"/> (new identity).</summary>
+        void Configure(ProjVis v, ChibiProjectileSim b)
+        {
+            var ult = _skin[Mathf.Clamp(b.Owner, 0, 1)].ultFx;
+            UnityEngine.Sprite sprite = Art.Rounded;
+            Color c, trail = Color.clear;
+            Vector2 size;
+            switch (b.Kind)
+            {
+                case ChibiProjKind.Arrow: c = ArrowColor; size = new Vector2(0.6f, 0.08f); trail = ult; break;      // Fighter.cs:536-540
+                case ChibiProjKind.ArrowBig: c = ArrowColor; size = new Vector2(0.9f, 0.14f); trail = ult; break;
+                case ChibiProjKind.Bolt:                                                                            // Fighter.cs:481-484
+                case ChibiProjKind.SeekerOrb:   // temporary: magic bolt look until port step 13
+                    sprite = Art.Circle; c = Color.Lerp(ult, Color.white, 0.3f); size = new Vector2(0.35f, 0.35f); break;
+                case ChibiProjKind.BoltBig:
+                    sprite = Art.Circle; c = Color.Lerp(ult, Color.white, 0.3f); size = new Vector2(0.55f, 0.55f); break;
+                case ChibiProjKind.AuraWave: c = new Color(ult.r, ult.g, ult.b, 0.85f); size = new Vector2(0.25f, 1.2f); break;   // Fighter.cs:492-493
+                case ChibiProjKind.Fireball:                                                                        // Fighter.cs:880-883
+                    sprite = Art.Circle; c = FireballColor; size = new Vector2(0.55f, 0.55f); trail = FireballTrail; break;
+                case ChibiProjKind.PoseFireball:
+                    sprite = Art.Circle; c = PoseFireballColor; size = new Vector2(0.45f, 0.45f); break;
+                case ChibiProjKind.Spear: c = SpearColor; size = new Vector2(1.5f, 0.1f); break;                    // Fighter.cs:940-941
+                case ChibiProjKind.SmashWave: c = ult; size = new Vector2(0.5f, 1.1f); break;                       // Fighter.cs:999-1000
+                case ChibiProjKind.VolleyLead: c = ult; size = new Vector2(1f, 0.18f); break;                       // Fighter.cs:1014-1015
+                case ChibiProjKind.VolleyArrow: c = ArrowColor; size = new Vector2(0.55f, 0.07f); trail = ult; break;   // Fighter.cs:1025-1028
+                default: sprite = Art.Circle; c = Color.white; size = new Vector2(0.35f, 0.35f); break;
+            }
+            v.Glow.color = new Color(c.r, c.g, c.b, ProjGlowAlpha);
+            v.Glow.transform.localScale = new Vector3(size.x * ProjGlowScale, size.y * ProjGlowScale, 1f);
+            v.Core.sprite = sprite;
+            v.Core.color = c;
+            v.Core.transform.localScale = new Vector3(size.x, size.y, 1f);
+            v.Root.rotation = Quaternion.identity;   // CO:41 falls back to Vector3.right for a zero velocity
+            v.Root.localScale = Vector3.one;
+            v.Grow = b.Kind == ChibiProjKind.SmashWave;
+            v.Trail = trail;
+            v.TrailTimer = 0f;                       // first trail puff on the first drawn frame, as CO's trailTimer starts at 0
+            v.SpawnFrame = b.SpawnFrame;
+            v.Kind = b.Kind;
+            v.Owner = b.Owner;
+            if (!v.Live) { v.Live = true; v.Root.gameObject.SetActive(true); }
         }
 
         static void Play(FighterVisual v, Anim a, float d)
@@ -227,11 +423,21 @@ namespace ChibiClash.Netcode
             if (_cam == null) return;
             _cam.orthographic = true;
             float dt = Time.unscaledDeltaTime;
-            Vector2 a = Center(0), b = Center(1);
-            Vector2 goal = (a + b) * 0.5f;
-            goal.y = Mathf.Max(goal.y, 0.5f);
-            float dist = Mathf.Max(Mathf.Abs(a.x - b.x) * 0.5f / Mathf.Max(0.1f, _cam.aspect), Mathf.Abs(a.y - b.y) * 0.5f);
-            float size = Mathf.Clamp(dist + CamPad, CamMinSize, CamMaxSize);
+            Vector2 goal;
+            float size;
+            if (_focus >= 0 && Time.unscaledTime < _focusUntil)
+            {
+                goal = Center(_focus);                                       // Stage.cs:161-164
+                size = CinematicFocusSize;
+            }
+            else
+            {
+                Vector2 a = Center(0), b = Center(1);
+                goal = (a + b) * 0.5f;
+                goal.y = Mathf.Max(goal.y, 0.5f);
+                float dist = Mathf.Max(Mathf.Abs(a.x - b.x) * 0.5f / Mathf.Max(0.1f, _cam.aspect), Mathf.Abs(a.y - b.y) * 0.5f);
+                size = Mathf.Clamp(dist + CamPad, CamMinSize, CamMaxSize);
+            }
             var t = _cam.transform;
             Vector3 basePos = Vector3.Lerp(t.position, new Vector3(goal.x, goal.y, -10f), 1f - Mathf.Exp(-dt * CamLerp));
             basePos.z = -10f;
@@ -249,6 +455,8 @@ namespace ChibiClash.Netcode
         {
             if (_loop != null && _loop.Session != null) _loop.Session.OnFrame -= OnSimFrame;
             _events.Clear();
+            _leadBurstPos.Clear();
+            _leadBurstOwner.Clear();
             Fx.Popups.Clear();
         }
     }

@@ -10,6 +10,10 @@ Drafted by studio agents and reviewed in session. **The user decisions below ove
 | Q3 | Input packet grows to 16 bits so Dash and gesture inputs go online. |
 | Q4 | Mid-match disconnect: the opponent wins automatically. |
 | — | Rollback engine: keep the existing `ChibiRollbackSession`; no second rollback engine. |
+| D-P1..P3 (2026-11-08) | Projectiles (projectile-conversion.md incl. technical-director review amendments 1-8): D-P1 = A, split spread by rejection sampling inside the circle (max 16 tries, sim RNG); D-P2 = A, MaxProjectiles 64 with an in-state dropped-shot counter; D-P3 = A, Mage seeking-orb stand-in uses the new 2D homing. RulesVersion 11. |
+| D10 (2026-11-08) | Slow-motion: option A-held (timescale-conversion.md §3/§5 + technical-director review §8): integer accumulator runs one game step per 1000 permille; presses on frozen real ticks count at the next game step only (then D-N1 rules apply); Block latched as held; view interpolation per §8(b); replay format v2; all gameplay reads of s.Frame move to GameTicks. |
+| D9-1 (2026-11-08) | Damage: option (a) — HP and guard stored in micro-HP, damage computed exactly in nano units, defense in hundredths, one final rounding (damage-conversion.md §8). Matches the original's float HP. |
+| D-N1 (2026-11-08) | Input: NO input buffer, like the original (normals-conversion.md option A). A press while busy (attack lock, dash, hitstun, reload) is lost. Applies to all action presses; skill/ult priority order is aligned in step 12. |
 | D-S1/S2 (2026-11-07) | Stages (stage-conversion.md): do NOT copy the "grounded inside a platform slab" glitch — grounded only when truly resting on a surface (C50 arc term gated on resting on a surface); platforms use the clean rule "falling onto the top from above always lands" (no Box2D slip-through). |
 | D2 (2026-11-07) | Dash: copy the original at 60 Hz (dash-conversion.md option A): 8 DashTicks, ~1983 milli on the ground. |
 | D1 (2026-11-06) | Movement: add the 50 Hz arc-correction term (movement-conversion.md decision D1) so 60 Hz jump/fall arcs land on the original's 50 Hz Box2D arcs. Velocities move to exact 1/900 milli/tick units. |
