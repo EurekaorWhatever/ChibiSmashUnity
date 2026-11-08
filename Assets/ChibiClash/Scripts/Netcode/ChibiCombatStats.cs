@@ -180,16 +180,10 @@ namespace ChibiClash.Netcode
             return (int)(num < 0 ? -q : q);
         }
 
-        public static int AttackSpeedPermille(in ChibiCombatStats s, bool hexed)
-        {
-            int p = 1000 + s.AttackSpeedBonusPermille - (hexed ? HexSluggishPermille : 0);
-            return p < 300 ? 300 : p;
-        }
-
         /// <summary>
         /// Attack speed in parts per million for the normals (slots 0/1). Modifiers MULTIPLY like the original
         /// (Fighter.cs:123-133): (1000 + class passive bonus) x (hexed ? 850 : 1000). Range 722 500 .. 1 150 000.
-        /// Source: normals-conversion.md section 1 (spPpm). Skills still use <see cref="AttackSpeedPermille"/> until step 10.
+        /// Source: normals-conversion.md section 1 (spPpm). Skills and the ult never read attack speed (multiphase-conversion.md fact 7, rules v12).
         /// </summary>
         public static int AttackSpeedPpm(in ChibiCombatStats s, bool hexed)
         {
@@ -213,13 +207,6 @@ namespace ChibiClash.Netcode
             startup = kStrike - 1;
             recovery = kLock - kStrike - 1;
             if (recovery < 0) recovery = 0;
-        }
-
-        /// <summary>Scale a frame count by attack speed, rounding up so a move is never faster than its data.</summary>
-        public static int ScaleFrames(int frames, int attackSpeedPermille)
-        {
-            if (frames <= 0) return 0;
-            return (frames * 1000 + attackSpeedPermille - 1) / attackSpeedPermille;
         }
     }
 }

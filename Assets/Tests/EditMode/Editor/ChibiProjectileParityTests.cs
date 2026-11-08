@@ -843,7 +843,7 @@ namespace ChibiClash.Tests
         [Test]
         public void A8_RulesVersion_Is11()
         {
-            Assert.AreEqual(RulesVersion11, ConstOf(typeof(ChibiMatchConfig), "RulesVersion"), "A8: RulesVersion");
+            Assert.GreaterOrEqual(ConstOf(typeof(ChibiMatchConfig), "RulesVersion"), RulesVersion11, "A8: RulesVersion at least 11");
         }
 
         // ================================================================== P20 rollback

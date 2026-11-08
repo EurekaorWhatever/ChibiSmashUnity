@@ -57,6 +57,7 @@ namespace ChibiClash.Netcode
         readonly ClassDef[] _def = new ClassDef[2];
         ProjVis[] _proj;
         readonly bool[] _weaponHidden = new bool[2];   // last SpearOut applied to FighterVisual.SetWeaponVisible
+        readonly Transform[] _ring = new Transform[2];   // FireRing visual per fighter (CombatObjects.cs:229-235), shown while RingTicks > 0
         // VolleyLead expiries seen in OnSimFrame (position taken from the pre-step state): Fx.Burst in LateUpdate.
         readonly List<Vector2> _leadBurstPos = new List<Vector2>(4);
         readonly List<int> _leadBurstOwner = new List<int>(4);
@@ -82,6 +83,29 @@ namespace ChibiClash.Netcode
             public Color Trail;
             public float TrailTimer;
         }
+        // Mage minions / Thunder Cloud looks, CombatObjects.cs Minion.Spawn :126-147 and ThunderCloud.Spawn :184-194.
+        sealed class MinionVis
+        {
+            public Transform Root;
+            public SpriteRenderer Body;
+            public bool Live;
+            public int SpawnTick, Owner;
+        }
+        sealed class CloudVis
+        {
+            public Transform Root;
+            public SpriteRenderer Bolt;
+            public bool Live;
+            public int SpawnTick, Owner;
+        }
+        MinionVis[] _minion;
+        CloudVis[] _cloud;
+        static readonly Color CloudGrey = new Color(0.35f, 0.35f, 0.45f);       // CO:186
+        static readonly Color BoltColor = new Color(1f, 0.95f, 0.4f);           // CO:192 bolt, CO:211 strike burst
+        const float BoltDrop = 3.2f;                                            // CO:211 burst at cloud + down * 3.2
+        /// <summary>Minion / cloud bursts captured in OnSimFrame (positions from the states of that step), drawn in LateUpdate.</summary>
+        struct PendingBurst { public Vector2 Pos; public Color Color; public int Count; public float Speed, Size; }
+        readonly List<PendingBurst> _bursts = new List<PendingBurst>(16);
         StageInfo _stage;
         Camera _cam;
         float _shake;
@@ -132,6 +156,14 @@ namespace ChibiClash.Netcode
                 _vis[i].Build(_def[i], _skin[i], 10 + i * 20, WeaponDef.Get(cls, 0));
                 _vis[i].SetFacing(state.F[i].Facing >= 0 ? 1 : -1);
                 go.transform.position = WorldPos(state.F[i].X, state.F[i].Y);
+
+                // FireRing.Spawn (CombatObjects.cs:229-235): soft glow + ring sprite, built once and toggled by RingTicks.
+                var ring = new GameObject("SimFireRing" + (i + 1)).transform;
+                ring.SetParent(transform, false);
+                Art.Sprite(ring, "Glow", Art.Soft, RingGlow, Vector2.zero, new Vector2(5f, 5f), 5);
+                Art.Sprite(ring, "Ring", Art.Ring, RingColor, Vector2.zero, new Vector2(4f, 4f), 46);
+                ring.gameObject.SetActive(false);
+                _ring[i] = ring;
             }
 
             // One Glow + Core pair per pool slot, created once; Configure re-skins it when the slot's identity changes.
@@ -145,6 +177,34 @@ namespace ChibiClash.Netcode
                 v.Core = Art.Sprite(root, "Core", Art.Circle, Color.white, Vector2.zero, Vector2.one, 60);
                 root.gameObject.SetActive(false);
                 _proj[i] = v;
+            }
+
+            // Minion and cloud pools, one sprite set per sim slot, built once (like ProjVis).
+            _minion = new MinionVis[state.Minions.Length];
+            for (int i = 0; i < _minion.Length; i++)
+            {
+                var root = new GameObject("SimMinion" + i).transform;
+                root.SetParent(transform, false);
+                var v = new MinionVis { Root = root };
+                v.Body = Art.Sprite(root, "Body", Art.Circle, Color.white, Vector2.zero, new Vector2(0.5f, 0.45f), 40);
+                Art.Sprite(root, "Eye", Art.Circle, Color.white, new Vector2(0.08f, 0.05f), new Vector2(0.14f, 0.14f), 41);
+                Art.Sprite(root, "Pupil", Art.Circle, Color.black, new Vector2(0.1f, 0.05f), new Vector2(0.07f, 0.07f), 42);
+                root.gameObject.SetActive(false);
+                _minion[i] = v;
+            }
+            _cloud = new CloudVis[state.Clouds.Length];
+            for (int i = 0; i < _cloud.Length; i++)
+            {
+                var root = new GameObject("SimCloud" + i).transform;
+                root.SetParent(transform, false);
+                var v = new CloudVis { Root = root };
+                Art.Sprite(root, "C1", Art.Circle, CloudGrey, new Vector2(-0.4f, 0f), new Vector2(0.8f, 0.6f), 45);
+                Art.Sprite(root, "C2", Art.Circle, CloudGrey, new Vector2(0.1f, 0.15f), new Vector2(0.9f, 0.75f), 45);
+                Art.Sprite(root, "C3", Art.Circle, CloudGrey, new Vector2(0.5f, -0.05f), new Vector2(0.7f, 0.55f), 45);
+                v.Bolt = Art.Sprite(root, "Bolt", Art.Square, BoltColor, new Vector2(0f, -1.6f), new Vector2(0.14f, 3.2f), 44);
+                v.Bolt.enabled = false;
+                root.gameObject.SetActive(false);
+                _cloud[i] = v;
             }
 
             _cam = Camera.main;
@@ -176,6 +236,34 @@ namespace ChibiClash.Netcode
                 var lead = _seen.Proj[e.Index];
                 _leadBurstPos.Add(ProjPos(lead.X, lead.Y));
                 _leadBurstOwner.Add(Mathf.Clamp(e.Value, 0, 1));
+            }
+            // Minion / cloud bursts: positions come from this step's states (a gone minion's last position is only in
+            // _seen; a slot may be reused before LateUpdate runs), so capture them here.
+            for (int i = first; i < _events.Count; i++)
+            {
+                var e = _events[i];
+                var ult = _skin[Mathf.Clamp(e.Value, 0, 1)].ultFx;
+                switch (e.Kind)
+                {
+                    case ChibiSimEventKind.MinionSpawned:   // Minion.Spawn CO:147
+                    {
+                        var m = cur.Minions[e.Index];
+                        AddBurst(ProjPos(m.X, m.Y), ult, 10, 3f, 0.3f);
+                        break;
+                    }
+                    case ChibiSimEventKind.MinionGone:      // Minion.Update despawn CO:157
+                    {
+                        var m = _seen.Minions[e.Index];
+                        AddBurst(ProjPos(m.X, m.Y), ult, 8, 2f, 0.25f);
+                        break;
+                    }
+                    case ChibiSimEventKind.CloudStrike:     // ThunderCloud.Update strike CO:211 (no Shake in the original)
+                    {
+                        var c = cur.Clouds[e.Index];
+                        AddBurst((Vector2)ProjPos(c.MilliX, c.MilliY) + Vector2.down * BoltDrop, BoltColor, 12, 4f, 0.25f);
+                        break;
+                    }
+                }
             }
             _before.CopyFrom(_seen);
             _seen.CopyFrom(cur);
@@ -213,6 +301,12 @@ namespace ChibiClash.Netcode
                 Fx.Burst(_leadBurstPos[i], _skin[_leadBurstOwner[i]].ultFx, LeadBurstCount, LeadBurstSpeed, LeadBurstSize);
             _leadBurstPos.Clear();
             _leadBurstOwner.Clear();
+            for (int i = 0; i < _bursts.Count; i++)
+            {
+                var pb = _bursts[i];
+                Fx.Burst(pb.Pos, pb.Color, pb.Count, pb.Speed, pb.Size);
+            }
+            _bursts.Clear();
 
             for (int i = 0; i < 2; i++)
             {
@@ -233,7 +327,8 @@ namespace ChibiClash.Netcode
                 int gmax = ChibiCombatStats.GuardMaxU(f.Stats.Defense);
                 if (f.Shielding && gmax > 0) guard = Mathf.Clamp01(f.GuardU / (float)gmax);
                 v.SetShield(f.Shielding || parry, parry, guard);
-                v.SetAura(f.AuraTicks > 0 || f.RingTicks > 0, _skin[i].ultFx);
+                v.SetAura(f.AuraTicks > 0, _skin[i].ultFx);   // Sword Aura only (F:195); Fire Ring draws its own ring
+                UpdateFireRing(i, f.RingTicks > 0, f.Facing >= 0 ? 1 : -1);
                 v.SetStunned(f.Stun > StunVisualTicks);
                 // Thrown spear (Fighter.cs ThrowSpear / OnGone): hide the held weapon while it is out. Only on change,
                 // SetWeaponVisible allocates (GetComponentsInChildren).
@@ -283,9 +378,67 @@ namespace ChibiClash.Netcode
                 }
             }
 
+            UpdateMinionsAndClouds(alpha);
+
             Fx.Tick(Time.deltaTime);   // scaled, like MatchController.cs:118
             FlashAlpha = Mathf.MoveTowards(FlashAlpha, 0f, Time.unscaledDeltaTime * FlashDecay);   // MatchController.cs:119
             UpdateCamera();
+        }
+
+        void AddBurst(Vector2 pos, Color c, int count, float speed, float size) =>
+            _bursts.Add(new PendingBurst { Pos = pos, Color = c, Count = count, Speed = speed, Size = size });
+
+        /// <summary>
+        /// Minion and cloud pools: show live slots, interpolate only while the slot holds the same occupant
+        /// (SameMinion / SameCloud, TD amendment 5), else snap. Read-only on sim state.
+        /// </summary>
+        void UpdateMinionsAndClouds(float alpha)
+        {
+            for (int i = 0; i < _minion.Length; i++)
+            {
+                var b = _seen.Minions[i];
+                var v = _minion[i];
+                if (!b.Active)
+                {
+                    if (v.Live) { v.Live = false; v.Root.gameObject.SetActive(false); }
+                    continue;
+                }
+                if (!v.Live || v.SpawnTick != b.SpawnTick || v.Owner != b.Owner)
+                {
+                    v.Live = true; v.SpawnTick = b.SpawnTick; v.Owner = b.Owner;
+                    // CO:132 body = Lerp(ultFx, black, 0.2); eye and pupil are fixed colours.
+                    v.Body.color = Color.Lerp(_skin[Mathf.Clamp(b.Owner, 0, 1)].ultFx, Color.black, 0.2f);
+                    v.Root.gameObject.SetActive(true);
+                }
+                var a = _before.Minions[i];
+                var p = ProjPos(b.X, b.Y);
+                if (a.Active && ChibiSimEvents.SameMinion(a, b)) p = Vector3.Lerp(ProjPos(a.X, a.Y), p, alpha);
+                v.Root.position = p;
+                v.Root.localScale = new Vector3(b.Facing >= 0 ? 1f : -1f, 1f, 1f);   // CO:161 eye/scale flip
+            }
+
+            for (int i = 0; i < _cloud.Length; i++)
+            {
+                var b = _seen.Clouds[i];
+                var v = _cloud[i];
+                if (!b.Active)
+                {
+                    if (v.Live) { v.Live = false; v.Root.gameObject.SetActive(false); }
+                    continue;
+                }
+                if (!v.Live || v.SpawnTick != b.SpawnTick || v.Owner != b.Owner)
+                {
+                    v.Live = true; v.SpawnTick = b.SpawnTick; v.Owner = b.Owner;
+                    v.Root.gameObject.SetActive(true);
+                }
+                var a = _before.Clouds[i];
+                var p = ProjPos(b.MilliX, b.MilliY);
+                if (a.Active && ChibiSimEvents.SameCloud(a, b)) p = Vector3.Lerp(ProjPos(a.MilliX, a.MilliY), p, alpha);
+                v.Root.position = p;
+                // TD amendment 6: the original enables the bolt from the frame after the strike (CO:206-207).
+                bool bolt = b.BoltTicks > 0 && b.BoltTicks < ChibiSimConst.CloudBolt;
+                if (v.Bolt.enabled != bolt) v.Bolt.enabled = bolt;
+            }
         }
 
         void Apply(in ChibiSimEvent e)
@@ -305,14 +458,15 @@ namespace ChibiClash.Netcode
                     {
                         int cls = Mathf.Clamp(f.Class, 0, SkillAnim.GetLength(0) - 1);
                         int col = Mathf.Clamp(e.Value - 2, 0, SkillAnim.GetLength(1) - 1);
-                        Play(v, SkillAnim[cls, col], SkillDur[cls, col]);
+                        // Program moves animate per frame from ProgramFrame (their frame 0 follows in the same diff).
+                        if (!ChibiSimEvents.IsProgram(f.Class, e.Value)) Play(v, SkillAnim[cls, col], SkillDur[cls, col]);
                         if (e.Value >= 2 && e.Value <= 4)
                         {
                             var names = _def[e.Index].skillNames;
                             int k = e.Value - 2;
                             if (names != null && k < names.Length) Fx.Text(Center(e.Index) + Vector2.up * 1.25f, names[k], _def[e.Index].color, 0.75f);
                         }
-                        else if (e.Value == 5) Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 40, 8f, 0.5f);
+                        // Slot 5: the common FireUltimate burst (F:962) is in CinematicStarted, which every ult emits.
                     }
                     break;
                 }
@@ -338,7 +492,152 @@ namespace ChibiClash.Netcode
                     break;
                 case ChibiSimEventKind.CinematicStarted:
                     StartCinematic(e.Index);
+                    // FireUltimate common burst (F:962). Here, not in MoveStarted: Sword Aura / Fire Ring start with MoveSlot -1.
+                    Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 40, 8f, 0.5f);
                     break;
+                case ChibiSimEventKind.ProgramFrame:
+                    ProgramFx(e.Index, e.Value, e.Value2, e.On);
+                    break;
+                case ChibiSimEventKind.MovePhaseChanged:
+                    // Leap Slam landed (F:911-915). Grab's phase 1 (connect) has no effect of its own in the original.
+                    if (_seen.F[e.Index].Class == (int)FighterClass.Polearm && e.Value2 == 2 && e.Value == 1)
+                    {
+                        var f = _seen.F[e.Index];
+                        _vis[e.Index].PlaySlam(0.2f);
+                        var feet = new Vector2(f.X * MilliToWorld + f.Facing * 1.2f, GroundY + f.Y * MilliToWorld);
+                        Fx.Burst(feet, LeapDust, 18, 5f, 0.35f);
+                        _shake = Mathf.Max(_shake, 0.25f);                    // Match.Shake(0.25f)
+                    }
+                    else if (_seen.F[e.Index].Class == (int)FighterClass.Heavy && e.Value2 == 5 && e.Value == 1)
+                    {
+                        // ULT Smash landed (F:993, F:1006-1007): slam pose, burst at the feet (Center.x, col.bounds.min.y).
+                        var f = _seen.F[e.Index];
+                        _vis[e.Index].PlaySlam(0.2f);
+                        var feet = new Vector2(f.X * MilliToWorld, GroundY + f.Y * MilliToWorld);
+                        Fx.Burst(feet, _skin[e.Index].ultFx, 50, 9f, 0.5f);
+                        _shake = Mathf.Max(_shake, 0.6f);                     // Match.Shake(0.6f)
+                    }
+                    break;
+            }
+        }
+
+        // Program-move effect colours, Fighter.cs:816 (grab slam), :832 (tornado), :914 (leap slam).
+        static readonly Color GrabDust = new Color(0.8f, 0.7f, 0.6f), TornadoWind = new Color(0.9f, 0.9f, 1f, 0.6f),
+                              LeapDust = new Color(0.9f, 0.8f, 0.5f);
+
+        /// <summary>
+        /// Per-frame Visual / Fx / Shake calls of the seven program moves (Fighter.cs:775-933), keyed by the sim frame
+        /// (multiphase-conversion.md section 2 frame tables). View only: reads _seen, uses Fx (FxRandom), never the sim RNG.
+        /// </summary>
+        void ProgramFx(int i, int slot, int frame, bool phase)
+        {
+            var f = _seen.F[i];
+            var v = _vis[i];
+            switch ((FighterClass)f.Class)
+            {
+                case FighterClass.Melee:   // Thrust Barrage F:775-786: PlayThrust(0.1) per hit
+                    if (slot == 4 && frame % ChibiSimConst.ThrustPeriod == 0 &&
+                        frame <= ChibiSimConst.ThrustPeriod * (ChibiSimConst.ThrustHits - 1))
+                        v.PlayThrust(0.1f);
+                    break;
+                case FighterClass.Heavy:
+                    if (slot == 5)
+                    {
+                        if (frame == 0) v.PlaySwing(0.4f);   // ULT Smash jump F:989 (slam: MovePhaseChanged)
+                    }
+                    else if (slot == 2)
+                    {
+                        // Grab F:788-818: PlayThrust(0.2) at start, PlaySlam(0.2) after the lift, burst + shake at the slam.
+                        if (frame == 0) v.PlayThrust(0.2f);
+                        else if (phase && frame == ChibiSimConst.GrabLiftFrames) v.PlaySlam(0.2f);
+                        else if (phase && frame == ChibiSimConst.GrabReleaseFrame)
+                        {
+                            Fx.Burst(WorldPos(f.GrabLX, f.GrabLY), GrabDust, 20, 5f, 0.4f);   // at `slam` (F:806, F:816)
+                            _shake = Mathf.Max(_shake, 0.35f);                               // Match.Shake(0.35f)
+                        }
+                    }
+                    else if (slot == 3)
+                    {
+                        // Tornado F:820-842: PlaySpin(1.0) at start, wind burst on every hit tick (0, 12, .., 48).
+                        if (frame == 0) v.PlaySpin(1.0f);
+                        if (frame % ChibiSimConst.TornadoPeriod == 0 && frame <= ChibiSimConst.TornadoLastHit)
+                            Fx.Burst(Center(i), TornadoWind, 6, 4f, 0.3f);
+                    }
+                    break;
+                case FighterClass.Ranged:
+                    if (slot == 5) { if (frame == 0) v.PlayRecoil(0.3f); }   // ULT Thousand Arrows F:1014 (split burst: lead expiry)
+                    else if (slot == 2 && frame == ChibiSimConst.BackstepShotFrame) v.PlayRecoil(0.2f);   // Backstep F:853
+                    else if (slot == 4 && frame % ChibiSimConst.BarragePeriod == 0 &&
+                             frame < ChibiSimConst.BarragePeriod * ChibiSimConst.BarrageShots)
+                        v.PlayRecoil(0.08f);                                                           // Barrage F:870
+                    break;
+                case FighterClass.Polearm:
+                    if (slot == 5) { KickFx(i, frame); break; }
+                    if (frame != 0) break;
+                    if (slot == 2) v.PlaySwing(0.5f);        // Leap Slam F:905 (slam: MovePhaseChanged)
+                    else if (slot == 3) v.PlaySpin(1.2f);    // Spin Guard F:923 (no per-hit effects in the original)
+                    break;
+            }
+        }
+
+        // FireRing sprite colours, CombatObjects.cs:233-234.
+        static readonly Color RingGlow = new Color(1f, 0.4f, 0.05f, 0.35f), RingColor = new Color(1f, 0.55f, 0.1f, 0.9f);
+        const float RingSpin = 180f, RingPulseHz = 10f, RingPulse = 0.04f, RingSparkR = 2f;
+
+        /// <summary>
+        /// FireRing.Update visuals (CombatObjects.cs:238-245): follows fighter i, spins 180 deg/s, pulses 4% at 10 rad/s,
+        /// mirrors with facing, one spark per render frame on a radius-2 circle. View only (Fx / FxRandom); the ring's
+        /// damage ticks are the sim's.
+        /// </summary>
+        void UpdateFireRing(int i, bool on, int facing)
+        {
+            var ring = _ring[i];
+            if (ring == null) return;
+            if (ring.gameObject.activeSelf != on)
+            {
+                ring.gameObject.SetActive(on);
+                if (on) ring.localRotation = Quaternion.identity;   // a fresh FireRing starts unrotated
+            }
+            if (!on) return;
+            Vector2 c = Center(i);
+            ring.position = c;
+            ring.Rotate(0f, 0f, RingSpin * Time.deltaTime);
+            float s = 1f + Mathf.Sin(Time.time * RingPulseHz) * RingPulse;
+            ring.localScale = new Vector3(s * facing, s, 1f);
+            float ang = FxRandom.Value * Mathf.PI * 2f;
+            Fx.Burst(c + new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * RingSparkR,
+                     new Color(1f, FxRandom.Range(0.3f, 0.8f), 0.1f), 1, 1.5f, 0.3f);
+        }
+
+        // ULT Kick hit-1 burst colour, Fighter.cs:1070.
+        static readonly Color KickHitRed = new Color(1f, 0.3f, 0.3f);
+
+        /// <summary>
+        /// ULT Polearm Kick per-frame effects (Fighter.cs:1036-1079). The branch is the current MovePhase (1 = dash, else the
+        /// in-range lerp / hold / release program); frames follow ChibiSimConst Kick* (lerp 0..8, hold 9, rise 30, release 50).
+        /// </summary>
+        void KickFx(int i, int frame)
+        {
+            var f = _seen.F[i];
+            var v = _vis[i];
+            var ult = _skin[i].ultFx;
+            if (f.MovePhase == 1)
+            {
+                if (frame == 0) v.PlayThrust(0.3f);                                         // F:1044 out of range: dash
+                return;
+            }
+            if (frame < ChibiSimConst.KickLerpFrames) Fx.Burst(Center(i), ult, 2, 2f, 0.3f);   // F:1062 every lerp frame
+            else if (frame == ChibiSimConst.KickLerpFrames)
+            {
+                v.PlayThrust(0.25f);                                                        // F:1068
+                Fx.Burst(Center(1 - i), KickHitRed, 20, 5f, 0.35f);                         // F:1070 at o.Center
+            }
+            else if (frame == ChibiSimConst.KickRiseFrame) v.PlaySpin(0.35f);               // F:1073
+            else if (frame == ChibiSimConst.KickReleaseFrame)
+            {
+                v.PlaySwing(0.2f);                                                          // F:1075
+                Fx.Burst(Center(1 - i), ult, 45, 9f, 0.5f);                                 // F:1078 at o.Center
+                _shake = Mathf.Max(_shake, 0.55f);                                          // Match.Shake(0.55f)
             }
         }
 
@@ -372,7 +671,6 @@ namespace ChibiClash.Netcode
                 case ChibiProjKind.Arrow: c = ArrowColor; size = new Vector2(0.6f, 0.08f); trail = ult; break;      // Fighter.cs:536-540
                 case ChibiProjKind.ArrowBig: c = ArrowColor; size = new Vector2(0.9f, 0.14f); trail = ult; break;
                 case ChibiProjKind.Bolt:                                                                            // Fighter.cs:481-484
-                case ChibiProjKind.SeekerOrb:   // temporary: magic bolt look until port step 13
                     sprite = Art.Circle; c = Color.Lerp(ult, Color.white, 0.3f); size = new Vector2(0.35f, 0.35f); break;
                 case ChibiProjKind.BoltBig:
                     sprite = Art.Circle; c = Color.Lerp(ult, Color.white, 0.3f); size = new Vector2(0.55f, 0.55f); break;
