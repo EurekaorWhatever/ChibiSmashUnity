@@ -14,7 +14,7 @@ namespace ChibiClash
 
         View view = View.Menu;
         Tab tab = Tab.Brawl;
-        MatchController match;
+        ChibiMatch match;   // every mode runs on the deterministic sim (port step 18)
         MatchConfig pending = new MatchConfig();
 
         HumanInput menuInput;
@@ -114,12 +114,12 @@ namespace ChibiClash
             pending.timeLimit = MatchController.MatchSeconds;
             pending.difficulty = Save.settings.cpuDifficulty;
             if (match != null) Destroy(match.gameObject);
-            match = MatchController.Create(this, pending);
+            match = ChibiMatch.Create(this, pending);
             view = View.Match;
         }
 
         /// <summary>Skip the menus and start a match directly (editor testing / automation).</summary>
-        public MatchController QuickMatch(FighterClass p1, FighterClass p2, bool vsCpu, int stage = 0, bool training = false)
+        public ChibiMatch QuickMatch(FighterClass p1, FighterClass p2, bool vsCpu, int stage = 0, bool training = false)
         {
             pending.cls[0] = p1;
             pending.cls[1] = p2;
@@ -203,7 +203,7 @@ namespace ChibiClash
             {
                 switch (Hud.Draw(match, this))
                 {
-                    case Hud.Action.Resume: match.Paused = false; break;
+                    case Hud.Action.Resume: match.SetPaused(false); break;
                     case Hud.Action.Rematch: StartMatch(); break;
                     case Hud.Action.CharacterSelect: LeaveMatch(View.Select); break;
                     case Hud.Action.Menu: LeaveMatch(View.Menu); break;

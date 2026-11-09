@@ -132,9 +132,21 @@ namespace ChibiClash.Netcode
         /// <summary>Ground height of the drawn stage in world units.</summary>
         public float GroundY => _stage != null ? _stage.groundY : 0f;
 
+        /// <summary>World position of fighter <paramref name="i"/>'s body centre (name tags, popups). Zero before Begin.</summary>
+        public Vector2 FighterCenter(int i) => i >= 0 && i < 2 ? Center(i) : Vector2.zero;
+
+        /// <summary>True once the view has seen MatchOver; <see cref="FinishedTime"/> is the unscaled time it did.</summary>
+        public bool Finished => _finished;
+        /// <summary>Time.unscaledTime at which MatchOver was first shown (results appear 1.3 s later, Hud.cs:62).</summary>
+        public float FinishedTime => _finishedTime;
+        /// <summary>The drawn stage (name, ground height).</summary>
+        public StageInfo Stage => _stage;
+
         /// <summary>Build the visuals for <paramref name="loop"/> (already begun). Call once.</summary>
+        /// <param name="skins">Per-player skins (the profile's equipped skins); null = class defaults (test match).</param>
+        /// <param name="weapons">Per-player weapon variants; null = variant 0.</param>
         /// <example><code>view.Begin(loop, cfg);</code></example>
-        public void Begin(IChibiSimFeed loop, in ChibiMatchConfig cfg)
+        public void Begin(IChibiSimFeed loop, in ChibiMatchConfig cfg, Skin[] skins = null, WeaponDef[] weapons = null)
         {
             _loop = loop;
             var state = loop.State;
@@ -149,11 +161,11 @@ namespace ChibiClash.Netcode
             {
                 var cls = i == 0 ? cfg.Class0 : cfg.Class1;
                 _def[i] = ClassDef.Get(cls);
-                _skin[i] = Skin.Default(cls);           // test match: no save data, default skins
+                _skin[i] = skins != null && skins[i] != null ? skins[i] : Skin.Default(cls);   // test match: defaults
                 var go = new GameObject("SimP" + (i + 1));
                 go.transform.SetParent(transform, false);
                 _vis[i] = go.AddComponent<FighterVisual>();
-                _vis[i].Build(_def[i], _skin[i], 10 + i * 20, WeaponDef.Get(cls, 0));
+                _vis[i].Build(_def[i], _skin[i], 10 + i * 20, weapons != null && weapons[i] != null ? weapons[i] : WeaponDef.Get(cls, 0));
                 _vis[i].SetFacing(state.F[i].Facing >= 0 ? 1 : -1);
                 go.transform.position = WorldPos(state.F[i].X, state.F[i].Y);
 
@@ -281,7 +293,8 @@ namespace ChibiClash.Netcode
         void Update()
         {
             if (_loop == null || _loop.State == null) return;
-            Time.timeScale = ViewTimeScale(_loop.State);   // restored by ChibiSimTestMatch.Stop
+            // Offline pause freezes presentation too (MC:109 timeScale 0); restored by ChibiSimTestMatch.Stop / ChibiMatch.
+            Time.timeScale = _loop is ChibiLocalLoop l && l.Paused ? 0f : ViewTimeScale(_loop.State);
         }
 
         void LateUpdate()

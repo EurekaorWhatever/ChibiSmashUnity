@@ -336,7 +336,8 @@ namespace ChibiClash.Netcode
         /// <remarks>14: ultimates matched to original (ultimates-conversion.md, port step 14): full common start (Interrupt, Stun 0, invuln 36 then the class assignment), Sword Aura / Fire Ring on the press tick with no lock (D-U2 = A), Smash jump + landing slam + two growing SmashWaves, Thousand Arrows lead + split, Polearm Kick dash box / teleport lerp + hold + two hits (KickFrom/To fields, D-U3 = A; invulnerable victim still held, D-U4 = A); ult frame-0 velocity applied but a same-tick jump keeps its vy (TD A2); step-14 constants in the config hash.</remarks>
         /// <remarks>15: gesture controls (gesture-conversion.md, port step 15): the Ult button opens the 3 s gesture window (180 real ticks, 1.5 s retry wait), the class gesture held 9 real ticks fires the ult even while stunned or held; CrossArms blocks like Shield; RaiseHands Super Jump; PunchForward Pose Fireball (slot 6 lock); the instant-ult button stand-in is removed. PoseVerified is never read.</remarks>
         /// <remarks>16: match flow (match-flow-conversion.md, port step 16): optional 2.2 s intro (132 real ticks, input off, no clock, no ring-out), match clock counts running game steps only, timeout winner by exact HP fraction (cross-multiplied), training (no timer, KO revives, ult fill command), same-tick double KO = draw (D-F1).</remarks>
-        public const int RulesVersion = 16;
+        /// <remarks>17: MaxCombo per fighter (rewards / results, port step 18), in state and hash.</remarks>
+        public const int RulesVersion = 17;
 
         public uint Seed;
         public FighterClass Class0, Class1;
@@ -660,6 +661,8 @@ namespace ChibiClash.Netcode
         public int DropPlatform = -1;
 
         public int HitsLanded, CombosLanded, UltsUsed, Parries;
+        /// <summary>Highest ComboHits reached this match (rules v17, MaxCombo F:42, F:636): results screen and quests.</summary>
+        public int MaxCombo;
 
         /// <summary>
         /// A thrown spear is in flight (F:455, F:938-949; rules v11): light / heavy presses start nothing. Set only when the
@@ -726,6 +729,7 @@ namespace ChibiClash.Netcode
             DashTicks = o.DashTicks; DashCd = o.DashCd; DashDir = o.DashDir;
             DropTicks = o.DropTicks; DropPlatform = o.DropPlatform;
             HitsLanded = o.HitsLanded; CombosLanded = o.CombosLanded; UltsUsed = o.UltsUsed; Parries = o.Parries;
+            MaxCombo = o.MaxCombo;
             SpearOut = o.SpearOut;
             MoveLockEnd = o.MoveLockEnd; MovePhase = o.MovePhase; Held = o.Held; Holding = o.Holding;
             GrabSX = o.GrabSX; GrabSY = o.GrabSY; GrabTX = o.GrabTX; GrabTY = o.GrabTY; GrabLX = o.GrabLX; GrabLY = o.GrabLY;
@@ -777,6 +781,7 @@ namespace ChibiClash.Netcode
             ChibiSimState.Mix(ref h, SuperJumpCd); ChibiSimState.Mix(ref h, PoseShotCd);
             ChibiSimState.Mix(ref h, UltPrompt); ChibiSimState.Mix(ref h, UltPromptTicks);
             ChibiSimState.Mix(ref h, Revives);   // rules v16
+            ChibiSimState.Mix(ref h, MaxCombo);  // rules v17
         }
     }
 
@@ -1053,6 +1058,7 @@ namespace ChibiClash.Netcode
             f.GuardU = ChibiCombatStats.GuardMaxU(f.Stats.Defense); f.GuardBrokenTicks = 0;
             f.PrevInput = 0; f.LatchedEdges = 0; f.LatchedHeld = 0;
             f.HitsLanded = f.CombosLanded = f.UltsUsed = f.Parries = 0;
+            f.MaxCombo = 0;
             f.DashTicks = 0; f.DashCd = 0; f.DashDir = 0;
             f.DropTicks = 0; f.DropPlatform = -1;
             f.SpearOut = false;
@@ -2552,6 +2558,7 @@ namespace ChibiClash.Netcode
             A.HitsLanded++;
             A.ComboHits++;
             A.ComboTimer = 66;
+            if (A.ComboHits > A.MaxCombo) A.MaxCombo = A.ComboHits;   // F:636
             if (A.ComboHits % A.Stats.PatternLength == 0) A.CombosLanded++;
             int gain = ChibiSimConst.UltPerHit + (A.ComboHits >= 3 ? ChibiSimConst.UltPerComboHit - ChibiSimConst.UltPerHit : 0);
             if ((long)A.HpU * 10 < (long)A.Stats.MaxHp * ChibiCombatStats.HpScale * 3) gain *= 2;   // under 30 % HP
