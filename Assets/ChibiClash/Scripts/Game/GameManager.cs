@@ -24,6 +24,13 @@ namespace ChibiClash
         string joinCode = "";
         string lanAddress = "";
         string onlineNote = "";
+
+        // Friends (player names, friend list, invites): Unity Authentication + Unity Friends on top of the private rooms.
+        Netcode.ChibiSocialManager social;
+        bool showFriends;
+        string nameInput = "", friendInput = "";
+        string removeArmedId;
+        float removeArmedUntil;
         MatchConfig pending = new MatchConfig();
 
         HumanInput menuInput;
@@ -59,6 +66,11 @@ namespace ChibiClash
             menuTracker = new GestureTracker(menuPose);
             rooms = gameObject.AddComponent<Netcode.NetworkRoomManager>();
             rooms.OnConnected += OnRoomConnected;
+            social = gameObject.AddComponent<Netcode.ChibiSocialManager>();
+            social.Bind(rooms);
+            // Invites are ignored while playing or while another room flow is running.
+            social.IsBusy = () => view == View.Match || pendingOnline != null ||
+                                  rooms.State == Netcode.ChibiRoomState.Connecting || rooms.State == Netcode.ChibiRoomState.Joining;
             WebcamFeed.SetEnabled(Save.settings.useWebcam);
             ResetCamera();
         }
@@ -151,7 +163,12 @@ namespace ChibiClash
             {
                 case "select": BeginSelect(true, false); return;
                 case "precheck": BeginSelect(true, false); preCheckT = 0f; view = View.PreCheck; return;
-                case "online": pending.cpu[0] = pending.cpu[1] = false; pending.training = false; view = View.Online; return;
+                case "online":
+                case "friends":
+                    pending.cpu[0] = pending.cpu[1] = false; pending.training = false; view = View.Online;
+                    showFriends = screen == "friends";
+                    if (showFriends && !social.Ready && !social.Working) social.Connect();
+                    return;
             }
             view = View.Menu;
             tab = screen == "training" ? Tab.Training : screen == "armory" ? Tab.Armory : screen == "settings" ? Tab.Settings : Tab.Brawl;
@@ -162,6 +179,7 @@ namespace ChibiClash
             if (match != null) Destroy(match.gameObject);   // online: destroying the runner forfeits a running match
             match = null;
             if (rooms != null) rooms.Cancel();
+            if (social != null) social.SetInMatch(false);
             Time.timeScale = 1f;
             ResetCamera();
             view = to;
@@ -233,6 +251,7 @@ namespace ChibiClash
                 case View.PreCheck: PreCheckView(); break;
                 case View.Online: OnlineView(); break;
             }
+            InvitePopup();
 
             if (toast != null && Time.unscaledTime < toastUntil)
             {
@@ -573,6 +592,7 @@ namespace ChibiClash
                 pendingOnline = null;
                 pendingOnlineInput = null;
                 view = View.Match;
+                social.SetInMatch(true);
             }
             else if (m.Phase == Netcode.ChibiOnlinePhase.Closed)
             {
@@ -595,11 +615,27 @@ namespace ChibiClash
             PlayerColumn(0, left);
 
             var r = new Rect(left.xMax + 20f, 104f, Gui.W - 60f - left.width - 20f, 500f);
-            Gui.Rect(r, Gui.Panel, 16f);
-            Gui.Frame(r, Gui.Accent2, 2f, 16f);
-            float x = r.x + 24f, w = r.width - 48f, y = r.y + 16f;
             bool busy = rooms.State != Netcode.ChibiRoomState.Idle && rooms.State != Netcode.ChibiRoomState.Failed || pendingOnline != null;
 
+            // Tabs: ROOMS (codes, quick match, LAN) and FRIENDS (name, friend list, invites).
+            if (Gui.Button(new Rect(r.xMax - 330f, 62f, 160f, 34f), "ROOMS", Gui.Accent2, 15, true, !showFriends)) showFriends = false;
+            if (Gui.Button(new Rect(r.xMax - 160f, 62f, 160f, 34f), "FRIENDS" + (social.Requests.Count > 0 ? " (" + social.Requests.Count + ")" : ""),
+                           Gui.Accent, 15, true, showFriends))
+            {
+                showFriends = true;
+                if (!social.Ready && !social.Working) social.Connect();
+            }
+
+            Gui.Rect(r, Gui.Panel, 16f);
+            Gui.Frame(r, Gui.Accent2, 2f, 16f);
+            if (showFriends) FriendsPanel(r, busy);
+            else RoomsPanel(r, busy);
+            OnlineBottomButtons(busy);
+        }
+
+        void RoomsPanel(Rect r, bool busy)
+        {
+            float x = r.x + 24f, w = r.width - 48f, y = r.y + 16f;
             Gui.Text(new Rect(x, y, w, 26f), "STAGE (the room host's pick is used)", 14, Gui.Gold, TextAnchor.MiddleLeft);
             y += 30f;
             float sw = (w - 20f) / 3f;
@@ -646,7 +682,118 @@ namespace ChibiClash
             bool failed = rooms.State == Netcode.ChibiRoomState.Failed;
             string status = onlineNote.Length > 0 ? onlineNote : rooms.Status;
             Gui.Text(new Rect(x, y, w, 60f), status, 15, failed ? Gui.Red : Color.white, TextAnchor.UpperCenter, false);
+        }
 
+        /// <summary>FRIENDS tab: our player name, add a friend by name, incoming requests, friends with online dot and INVITE.</summary>
+        void FriendsPanel(Rect r, bool busy)
+        {
+            float x = r.x + 24f, w = r.width - 48f, y = r.y + 16f;
+            var field = new GUIStyle(GUI.skin.textField) { fontSize = 18, alignment = TextAnchor.MiddleCenter };
+
+            if (!social.Ready)
+            {
+                Gui.Text(new Rect(x, y, w, 80f), social.Working ? "Connecting to friends..." : social.Status, 15,
+                         social.StatusIsError ? Gui.Red : Color.white, TextAnchor.UpperCenter, false);
+                if (!social.Working && Gui.Button(new Rect(x + w * 0.5f - 110f, y + 90f, 220f, 46f), "CONNECT", Gui.Accent2, 16))
+                    social.Connect();
+                return;
+            }
+
+            // Our name ("Kira#4821"): what friends type to add us.
+            if (social.NeedsName)
+            {
+                Gui.Text(new Rect(x, y, w, 24f), "Choose your player name (3-16 letters, numbers or _)", 14, Gui.Gold, TextAnchor.MiddleLeft);
+                y += 28f;
+                var nf = new Rect(x, y, w - 160f, 40f);
+                nameInput = GUI.TextField(nf, nameInput ?? "", Netcode.ChibiSocialRules.NameMax, field);
+                if (Gui.Button(new Rect(nf.xMax + 10f, y, 150f, 40f), "SET NAME", Gui.Accent, 15, !social.Working))
+                    social.SetName(nameInput);
+                y += 54f;
+            }
+            else
+            {
+                Gui.Text(new Rect(x, y, w, 30f), "YOU: " + social.MyName, 20, Gui.Gold, TextAnchor.MiddleLeft);
+                Gui.Text(new Rect(x, y + 28f, w, 20f), "Give this name to friends so they can add you.", 12, Gui.Muted, TextAnchor.MiddleLeft);
+                y += 56f;
+            }
+
+            // Add a friend by name.
+            var af = new Rect(x, y, w - 160f, 40f);
+            friendInput = GUI.TextField(af, friendInput ?? "", 24, field);
+            if (Gui.Button(new Rect(af.xMax + 10f, y, 150f, 40f), "ADD FRIEND", Gui.Accent2, 15, !social.Working))
+            { social.AddFriend(friendInput); friendInput = ""; }
+            y += 52f;
+
+            // Incoming requests.
+            foreach (var q in social.Requests)
+            {
+                if (y > r.yMax - 120f) break;
+                Gui.Rect(new Rect(x, y, w, 40f), Gui.PanelLight, 8f);
+                Gui.Text(new Rect(x + 12f, y, w - 300f, 40f), q.Name + "  wants to be friends", 14, Color.white, TextAnchor.MiddleLeft, false);
+                if (Gui.Button(new Rect(x + w - 282f, y + 4f, 90f, 32f), "ACCEPT", Gui.Green, 13, !social.Working)) social.AcceptRequest(q.Id);
+                if (Gui.Button(new Rect(x + w - 186f, y + 4f, 90f, 32f), "DECLINE", Gui.Red, 13, !social.Working)) social.DeclineRequest(q.Id);
+                // Block stops further requests, messages and invites from a spammer.
+                if (Gui.Button(new Rect(x + w - 90f, y + 4f, 80f, 32f), "BLOCK", Gui.Muted, 12, !social.Working)) social.Block(q.Id);
+                y += 46f;
+            }
+
+            // Friends.
+            Gui.Text(new Rect(x, y, w, 24f), "FRIENDS (" + social.Friends.Count + ")", 14, Gui.Gold, TextAnchor.MiddleLeft);
+            y += 28f;
+            if (social.Friends.Count == 0)
+                Gui.Text(new Rect(x, y, w, 40f), "No friends yet. Add one by name above.", 13, Gui.Muted, TextAnchor.UpperLeft, false);
+            foreach (var f in social.Friends)
+            {
+                if (y > r.yMax - 110f) { Gui.Text(new Rect(x, y, w, 20f), "...", 13, Gui.Muted); break; }
+                Gui.Rect(new Rect(x, y, w, 40f), Gui.PanelLight, 8f);
+                Gui.Rect(new Rect(x + 12f, y + 15f, 10f, 10f), f.Online ? Gui.Green : Gui.Muted, 5f);
+                Gui.Text(new Rect(x + 30f, y, w - 280f, 40f), f.Name + (f.Online ? "" : "  (offline)"), 14, Color.white, TextAnchor.MiddleLeft, false);
+                if (Gui.Button(new Rect(x + w - 240f, y + 4f, 130f, 32f), "INVITE", Gui.Accent, 13, f.Online && !busy && !social.Working)
+                    && f.Online && !busy)
+                { onlineNote = ""; social.SendInvite(f.Id); }
+                // Two-click remove: the first click arms "SURE?" for 3 seconds.
+                bool armed = removeArmedId == f.Id && Time.unscaledTime < removeArmedUntil;
+                if (Gui.Button(new Rect(x + w - 102f, y + 4f, 90f, 32f), armed ? "SURE?" : "REMOVE", armed ? Gui.Red : Gui.Muted, 12, !social.Working))
+                {
+                    if (armed) { social.RemoveFriend(f.Id); removeArmedId = null; }
+                    else { removeArmedId = f.Id; removeArmedUntil = Time.unscaledTime + 3f; }
+                }
+                y += 46f;
+            }
+
+            if (!string.IsNullOrEmpty(rooms.RoomCode))
+                Gui.Text(new Rect(x, r.yMax - 96f, w, 24f), "Room " + rooms.RoomCode + " is open for your friend.", 13, Gui.Gold);
+            string status = rooms.State == Netcode.ChibiRoomState.Failed ? rooms.Status : social.Status;
+            bool err = rooms.State == Netcode.ChibiRoomState.Failed || social.StatusIsError;
+            Gui.Text(new Rect(x, r.yMax - 70f, w, 60f), status, 14, err ? Gui.Red : Color.white, TextAnchor.UpperCenter, false);
+        }
+
+        /// <summary>Invite pop-up on every menu screen: ACCEPT joins the friend's room, DECLINE tells them. Expires after 60 s.</summary>
+        void InvitePopup()
+        {
+            if (social == null || social.Invites.Count == 0) return;
+            var inv = social.Invites[0];
+            var r = new Rect(Gui.W * 0.5f - 260f, 120f, 520f, 150f);
+            Gui.Glow(new Rect(r.x - 30f, r.y - 30f, r.width + 60f, r.height + 60f), new Color(1f, 0.8f, 0.2f, 0.35f));
+            Gui.Rect(r, Gui.Panel, 16f);
+            Gui.Frame(r, Gui.Gold, 3f, 16f);
+            Gui.Text(new Rect(r.x, r.y + 14f, r.width, 34f), "MATCH INVITE", 22, Gui.Gold);
+            int left = Mathf.Max(0, Mathf.CeilToInt(inv.ExpiresAt - Time.unscaledTime));
+            Gui.Text(new Rect(r.x, r.y + 48f, r.width, 28f), inv.FromName + " wants to fight you  (" + left + "s)", 16, Color.white);
+            if (Gui.Button(new Rect(r.x + 60f, r.y + 90f, 180f, 44f), "ACCEPT", Gui.Green, 17))
+            {
+                pending.cpu[0] = pending.cpu[1] = false;
+                pending.training = false;
+                showFriends = true;
+                onlineNote = "";
+                view = View.Online;
+                social.AcceptInvite(0);
+            }
+            if (Gui.Button(new Rect(r.xMax - 240f, r.y + 90f, 180f, 44f), "DECLINE", Gui.Red, 17)) social.DeclineInvite(0);
+        }
+
+        void OnlineBottomButtons(bool busy)
+        {
             float by = Gui.H - 110f;
             if (busy && Gui.Button(new Rect(Gui.W - 470f, by - 6f, 180f, 56f), "CANCEL", Gui.Red, 18))
             {

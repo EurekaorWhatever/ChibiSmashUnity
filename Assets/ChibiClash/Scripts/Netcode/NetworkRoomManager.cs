@@ -82,8 +82,9 @@ namespace ChibiClash.Netcode
         public void JoinPrivateRoom(string lobbyCode)
         {
             if (Busy) return;
-            lobbyCode = (lobbyCode ?? "").Trim().ToUpperInvariant();
-            if (lobbyCode.Length == 0) { Fail("Enter the room code your friend shows."); return; }
+            if (string.IsNullOrWhiteSpace(lobbyCode)) { Fail("Enter the room code your friend shows."); return; }
+            lobbyCode = ChibiSocialRules.NormalizeCode(lobbyCode);
+            if (lobbyCode == null) { Fail("That is not a valid room code (letters and numbers only)."); return; }
             _ = RunJoinByCode(lobbyCode, ++_flow);
         }
 
@@ -160,21 +161,36 @@ namespace ChibiClash.Netcode
         {
             State = ChibiRoomState.SigningIn;
             Status = "Signing in...";
-            if (string.IsNullOrEmpty(Application.cloudProjectId))
-            {
-                Fail(NotLinkedMessage);
-                return false;
-            }
+            string error = await EnsureSignedInAsync();
+            if (flow != _flow) return false;
+            if (error != null) { Fail(error); return false; }
+            return true;
+        }
+
+        static Task<string> _signIn;
+
+        /// <summary>
+        /// Initialise Unity Services and sign in anonymously once per run (shared by rooms and friends; concurrent callers
+        /// await the same attempt). Returns null on success, else a player-facing reason.
+        /// </summary>
+        public static Task<string> EnsureSignedInAsync()
+        {
+            if (string.IsNullOrEmpty(Application.cloudProjectId)) return Task.FromResult(NotLinkedMessage);
+            if (_signIn == null || _signIn.IsCompleted && _signIn.Result != null) _signIn = SignInOnce();
+            return _signIn;
+        }
+
+        static async Task<string> SignInOnce()
+        {
             try
             {
                 if (UnityServices.State != ServicesInitializationState.Initialized) await UnityServices.InitializeAsync();
                 if (!AuthenticationService.Instance.IsSignedIn) await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                return flow == _flow;
+                return null;
             }
             catch (Exception e)
             {
-                if (flow == _flow) Fail("Sign-in failed: " + Explain(e));
-                return false;
+                return "Sign-in failed: " + Explain(e);
             }
         }
 
@@ -391,10 +407,10 @@ namespace ChibiClash.Netcode
         /// <summary>Shown when the build has no Unity Cloud project id (Relay / Lobby cannot work without one).</summary>
         public const string NotLinkedMessage =
             "Online is not set up in this build: link the project to a Unity Cloud project (Edit > Project Settings > " +
-            "Services), then turn on Relay and Lobby for it in the Unity Dashboard.";
+            "Services), then turn on Relay, Lobby and Friends for it in the Unity Dashboard. (LAN play works without this.)";
 
         /// <summary>Player-facing reason: the innermost exception's message, with the one setup step this project needs called out.</summary>
-        static string Explain(Exception e)
+        public static string Explain(Exception e)
         {
             while (e.InnerException != null) e = e.InnerException;
             if (e is AggregateException ae && ae.InnerExceptions.Count > 0) e = ae.InnerExceptions[0];
