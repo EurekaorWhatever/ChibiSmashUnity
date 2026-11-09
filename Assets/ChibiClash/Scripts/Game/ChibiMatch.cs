@@ -46,12 +46,16 @@ namespace ChibiClash
 
         /// <summary>Live simulation state (may be a predicted frame online). Read only.</summary>
         public ChibiSimState State => Feed?.State;
-        /// <summary>The match ended (KO, time-out, or a disconnect online).</summary>
-        public bool Finished => State != null && State.MatchOver;
+        /// <summary>
+        /// The match ended. Offline: KO or time-out. Online: only once the result is FINAL (a confirmed KO / time-out,
+        /// or the opponent leaving / dropping, which wins the match for the one who stays, decision Q4).
+        /// </summary>
+        public bool Finished => Online ? _runner != null && _runner.Match != null && _runner.Match.HasResult
+                                       : State != null && State.MatchOver;
         /// <summary>Offline pause (Esc); always false online.</summary>
         public bool Paused => _local != null && _local.Paused;
-        /// <summary>Winner 0 / 1, or -1 for a draw (valid once finished).</summary>
-        public int Winner => State != null ? State.Winner : -1;
+        /// <summary>Winner 0 / 1, or -1 for a draw / no contest (valid once finished).</summary>
+        public int Winner => Online ? OnlineResult.Winner : State != null ? State.Winner : -1;
         /// <summary>Stage display name.</summary>
         public string StageName => View != null && View.Stage != null ? View.Stage.name : "";
 
@@ -113,6 +117,66 @@ namespace ChibiClash
             BuildView();
         }
 
+        /// <summary>
+        /// Wrap a running online match (its handshake agreed, so the state exists). The local fighter keeps the profile's
+        /// equipped skin and weapon; the opponent's cosmetics are not exchanged and show as class defaults.
+        /// </summary>
+        public static ChibiMatch CreateOnline(GameManager gm, ChibiOnlineMatchRunner runner, ChibiPlayerInputSource localInput,
+                                              int localWeapon)
+        {
+            var hs = runner.Match.Handshake;
+            var cfg = hs.Config;
+            var mc = new MatchConfig { stage = cfg.Stage, training = false };
+            mc.cls[0] = cfg.Class0; mc.cls[1] = cfg.Class1;
+            mc.passive[0] = cfg.Passive0; mc.passive[1] = cfg.Passive1;
+            mc.cpu[0] = mc.cpu[1] = false;
+            int me = runner.Match.LocalIndex;
+            mc.weapon[me] = localWeapon;
+
+            var m = runner.gameObject.AddComponent<ChibiMatch>();
+            m.GM = gm;
+            m.Config = mc;
+            m.Online = true;
+            m._runner = runner;
+            m.LocalPlayer = me;
+            m.SimConfig = cfg;
+            m.Feed = runner;
+            m._human[me] = localInput;
+            for (int i = 0; i < 2; i++)
+            {
+                m._def[i] = ClassDef.Get(mc.cls[i]);
+                m._skin[i] = i == me && gm != null && gm.Save != null ? gm.Save.Equipped(m._def[i].type) : Skin.Default(m._def[i].type);
+                m._weapon[i] = WeaponDef.Get(m._def[i].type, i == me ? localWeapon : 0);
+            }
+            m.BuildView();
+            return m;
+        }
+
+        ChibiOnlineMatchRunner _runner;
+
+        /// <summary>The online match's final result (online only; Outcome None until decided).</summary>
+        public ChibiOnlineResult OnlineResult => _runner != null && _runner.Match != null ? _runner.Match.Result : default;
+
+        /// <summary>One line for the results screen explaining an online ending that was not a KO / time-out.</summary>
+        public string OnlineEndText
+        {
+            get
+            {
+                if (!Online) return "";
+                switch (OnlineResult.Cause)
+                {
+                    case ChibiEndCause.OpponentLeft: return "Your opponent left the match.";
+                    case ChibiEndCause.OpponentTimedOut: return "Your opponent stopped responding.";
+                    case ChibiEndCause.ConnectionLost: return "The connection to your opponent was lost.";
+                    case ChibiEndCause.LocalForfeit: return "You left the match.";
+                    case ChibiEndCause.Desync: return "The two games disagreed (desync): no contest.";
+                    case ChibiEndCause.UnconfirmedEnd: return "The match end could not be confirmed: no contest.";
+                    case ChibiEndCause.HandshakeFailed: return "The match could not start.";
+                    default: return "";
+                }
+            }
+        }
+
         void BuildView()
         {
             View = gameObject.AddComponent<ChibiSimView>();
@@ -133,7 +197,7 @@ namespace ChibiClash
             if (s.Running && !Paused)
                 for (int i = 0; i < 2; i++) Tracker(i)?.SamplePosture(Time.deltaTime);
 
-            if (s.MatchOver && !_awarded)
+            if (Finished && !_awarded)
             {
                 _awarded = true;
                 FinishedTime = Time.unscaledTime;
@@ -174,6 +238,16 @@ namespace ChibiClash
         void AwardRewards()
         {
             if (GM == null || GM.Save == null || Config.training) return;
+            if (Online)
+            {
+                // No contest (desync / unconfirmed end) and aborted matches give nothing to anybody.
+                var o = OnlineResult.Outcome;
+                if (o != ChibiMatchOutcome.Win && o != ChibiMatchOutcome.Loss && o != ChibiMatchOutcome.Draw)
+                {
+                    RewardLog.Add("No contest: no rewards");
+                    return;
+                }
+            }
             var me = State.F[LocalPlayer];
             var tracker = Tracker(LocalPlayer);
             var stats = new MatchStatsForRewards

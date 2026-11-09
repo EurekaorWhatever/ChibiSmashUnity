@@ -1,0 +1,72 @@
+# Online rooms: Authentication, Lobby, Relay, Unity Transport (after port step 19)
+
+Code: `Netcode/NetworkRoomManager.cs` (rooms), `Netcode/ChibiUtpTransport.cs` (UDP pipe), `Netcode/ChibiOnlineMatch.cs`
+(handshake + rollback + result, from online part 1/2), `Game/ChibiMatch.cs` (online view), `Game/GameManager.cs` (ONLINE screen).
+Tests: `ChibiUtpTransportTests` (real UDP on 127.0.0.1), `ChibiOnlineMatchTests`, `ChibiRollbackSessionTests`, `ChibiSyncVerificationTests`.
+
+## 1. Data flow
+
+```
+ local devices / camera ──► ChibiPlayerInputSource ──► 16-bit input (dir, buttons, dash, gesture)
+                                                           │
+                         ChibiRollbackSession: input delay 2, predict remote, save state each frame,
+                         roll back + re-simulate on a misprediction, checksum every 30 frames
+                                                           │  0xC7 datagram: oldest unacked inputs (≤16, delta coded)
+                         ChibiChannelMux (0xC7 inputs │ 0xC9 control: Hello / Start / Ready / Leave / Reject)
+                                                           │
+                         ChibiUtpTransport: Unity Transport, unreliable pipeline, 256-byte datagram cap
+                                                           │  DTLS (encrypted UDP)
+                                                 Unity Relay server (hides both IPs)
+                                                           │
+                                                   the other player (same stack)
+```
+
+Both computers run the same deterministic simulation from the same inputs; only inputs travel (about 11 bytes per
+datagram at 60 Hz when held inputs repeat).
+
+## 2. Modes
+
+| Mode | Flow |
+|---|---|
+| Private room (Q2: Lobby code) | Host: Relay `CreateAllocationAsync(1)` + `GetJoinCodeAsync` → private 2-player Lobby with the Relay code (member-only data) → shows the **Lobby** code. Friend: `JoinLobbyByCodeAsync(code)` → reads the Relay code → `JoinAllocationAsync` → UDP link. |
+| Matchmaking | `QuickJoinLobbyAsync` filtered on free slot + protocol tag `p<protocol>r<rules>` (S1 index), else host a public lobby and retry quick-join every 6-8 s, so two searching players always meet. |
+| LAN (no services) | `HostLan()` listens on UDP 7777 and shows this PC's IP; `JoinLan(ip)` connects. Same transport, handshake and rollback. |
+| vs AI | offline, `ChibiCpuInputSource` (step 17). |
+
+Once the link is up the host deletes the lobby (no third player can join), then `ChibiOnlineMatch` runs:
+handshake (host decides seed/stage; both compare a hash of RulesVersion + every constant table; mismatched builds are
+refused with a clear message), then rollback play, then a result decided only from the CONFIRMED state.
+
+## 3. Results and disconnects
+
+| Event | Result |
+|---|---|
+| KO / time-out in the confirmed state | win / loss / draw (same-tick double KO = draw, D-F1) |
+| opponent quits (Leave), goes silent 5 s, or the transport drops | **you win** (decision Q4) |
+| you quit | loss |
+| checksum mismatch (desync) | no contest, no rewards |
+
+Rewards online: PvP rules (40 win / 15 otherwise + posture), quests as offline; none for no contest.
+
+## 4. The two known network bugs
+
+| Bug | Status |
+|---|---|
+| Large packets silently cut off | Fixed (online part 1): `ChibiPacketCodec.Write` throws instead of sending a truncated datagram; receivers reject oversize; `ChibiUtpTransport` drops (and counts) any datagram over 256 bytes. Tests: `ChibiPacketCodecTests`, `Send_OversizedDatagram_IsDroppedNeverTruncated`. |
+| Lag stall that froze both players | Fixed (online part 1): every datagram resends the OLDEST unacked inputs (up to 16), so a burst loss longer than the old 8-input window no longer leaves a permanent hole. Test: `BurstLossLongerThanResendWindow_BothPeersRecover` (watched failing on the old code). |
+
+## 5. Setup needed once (needs the project owner's Unity account)
+
+1. Unity Editor: **Edit > Project Settings > Services** → link to (or create) a Unity Cloud project.
+2. Unity Dashboard (cloud.unity.com) → the project → enable **Relay** and **Lobby** (Authentication anonymous sign-in is on by default).
+3. Both players must run the same build (the handshake refuses different rules / constants).
+
+Until then the ONLINE screen shows exactly this instruction, and LAN play works without any setup.
+
+## 6. Security notes (P2P, no authority)
+
+- The sim never reads the self-reported PoseVerified bit; every gesture action has the same gates as buttons (gesture-conversion.md).
+- Inputs are sanitised on receive; datagrams with a wrong magic, truncated, oversize or acking frames we never sent are dropped.
+- A desync is a no contest, so a modified client cannot convert a forged checksum into a win.
+- Honest limit: with two peers and no server, a player who pulls their own cable makes the OTHER player win (Q4),
+  which is the intended rule; ranked play would need a server-side replay check.

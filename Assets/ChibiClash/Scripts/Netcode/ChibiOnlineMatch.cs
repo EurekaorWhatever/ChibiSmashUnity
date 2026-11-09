@@ -143,13 +143,19 @@ namespace ChibiClash.Netcode
         /// <summary>One 60 Hz tick. Returns true when the simulation advanced this tick.</summary>
         public bool Tick()
         {
+            // A real transport (Unity Transport / Relay) is serviced around the tick: receive first, flush sends last.
+            var pumped = _mux.Raw as IChibiPumpedTransport;
+            pumped?.Pump();
+            bool advanced;
             switch (Phase)
             {
-                case ChibiOnlinePhase.Handshaking: TickHandshake(); return false;
-                case ChibiOnlinePhase.Playing: return TickPlaying();
-                case ChibiOnlinePhase.Lingering: return TickLingering();
-                default: return false;
+                case ChibiOnlinePhase.Handshaking: TickHandshake(); advanced = false; break;
+                case ChibiOnlinePhase.Playing: advanced = TickPlaying(); break;
+                case ChibiOnlinePhase.Lingering: advanced = TickLingering(); break;
+                default: advanced = false; break;
             }
+            pumped?.Flush();
+            return advanced;
         }
 
         void TickHandshake()

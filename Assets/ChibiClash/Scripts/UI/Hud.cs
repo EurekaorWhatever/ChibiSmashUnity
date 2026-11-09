@@ -286,8 +286,12 @@ namespace ChibiClash
             Gui.Rect(r, Gui.Panel, 20f);
             Gui.Frame(r, Gui.Gold, 3f, 20f);
             int w = m.Winner;
-            string title = w < 0 ? "DRAW!" : m.IsCpu(w) ? "CPU WINS" : m.Online ? (w == m.LocalPlayer ? "YOU WIN!" : "RIVAL WINS") : "PLAYER " + (w + 1) + " WINS!";
+            bool noContest = m.Online && m.OnlineResult.Outcome != ChibiMatchOutcome.Win && m.OnlineResult.Outcome != ChibiMatchOutcome.Loss &&
+                             m.OnlineResult.Outcome != ChibiMatchOutcome.Draw;
+            string title = noContest ? "NO CONTEST" : w < 0 ? "DRAW!" : m.IsCpu(w) ? "CPU WINS" : m.Online ? (w == m.LocalPlayer ? "YOU WIN!" : "RIVAL WINS") : "PLAYER " + (w + 1) + " WINS!";
             Gui.Text(new Rect(r.x, r.y + 14f, r.width, 60f), title, 44, w == m.LocalPlayer ? Gui.Gold : Color.white);
+            string why = m.OnlineEndText;
+            if (why.Length > 0) Gui.Text(new Rect(r.x, r.y + 60f, r.width, 24f), why, 14, Gui.Muted);
 
             for (int i = 0; i < 2; i++)
             {

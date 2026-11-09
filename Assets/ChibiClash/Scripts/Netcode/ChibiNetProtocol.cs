@@ -450,7 +450,7 @@ namespace ChibiClash.Netcode
                     _cfg = new ChibiMatchConfig
                     {
                         Seed = _seed, Class0 = _hostClass, Passive0 = _hostPassive, Class1 = m.Class, Passive1 = m.Passive,
-                        Stage = _stage,
+                        Stage = _stage, Intro = true,   // online matches always play the 2.2 s intro, never training (rules v16)
                     };
                     _hash = ChibiControlCodec.MatchHash(_cfg, _settings);
                     _haveJoiner = true;
@@ -483,9 +483,13 @@ namespace ChibiClash.Netcode
                     if (m.Protocol != ChibiPacketCodec.ProtocolVersion) { Reject(ChibiRejectReason.ProtocolMismatch); return; }
                     if (m.Rules != ChibiMatchConfig.RulesVersion) { Reject(ChibiRejectReason.RulesMismatch); return; }
                     if (!ValidStart(m)) { Reject(ChibiRejectReason.InvalidConfig); return; }
+                    // Online flags are fixed by protocol, not sent: intro on, training off (rules v16).
+                    var cfg = m.Config;
+                    cfg.Intro = true;
+                    cfg.Training = false;
                     // Recompute with OUR constant tables: equal only if both builds would simulate the same match.
-                    if (ChibiControlCodec.MatchHash(m.Config, m.Settings) != m.MatchHash) { Reject(ChibiRejectReason.ContentMismatch); return; }
-                    _cfg = m.Config;
+                    if (ChibiControlCodec.MatchHash(cfg, m.Settings) != m.MatchHash) { Reject(ChibiRejectReason.ContentMismatch); return; }
+                    _cfg = cfg;
                     _settings = m.Settings;
                     _hash = m.MatchHash;
                     State = ChibiHandshakeState.Agreed;

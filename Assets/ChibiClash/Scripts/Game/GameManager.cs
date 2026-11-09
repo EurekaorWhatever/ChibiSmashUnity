@@ -7,7 +7,7 @@ namespace ChibiClash
     /// <summary>Entry point: owns the save profile, menu flow (GDD 5) and the active match.</summary>
     public class GameManager : MonoBehaviour
     {
-        enum View { Menu, Select, PreCheck, Match }
+        enum View { Menu, Select, PreCheck, Match, Online }
         enum Tab { Brawl, Training, Armory, Settings }
 
         public SaveData Save { get; private set; }
@@ -15,6 +15,15 @@ namespace ChibiClash
         View view = View.Menu;
         Tab tab = Tab.Brawl;
         ChibiMatch match;   // every mode runs on the deterministic sim (port step 18)
+
+        // Online (Lobby code rooms, matchmaking, Relay): the room manager hands over a connected transport, the runner
+        // plays the handshake, and the match view appears once both peers agreed.
+        Netcode.NetworkRoomManager rooms;
+        Netcode.ChibiOnlineMatchRunner pendingOnline;
+        Netcode.ChibiPlayerInputSource pendingOnlineInput;
+        string joinCode = "";
+        string lanAddress = "";
+        string onlineNote = "";
         MatchConfig pending = new MatchConfig();
 
         HumanInput menuInput;
@@ -48,6 +57,8 @@ namespace ChibiClash
             var sim = new SimulatedPoseSource("P1 simulated", () => menuInput.SimulatedGesture, () => menuInput.Slouching);
             menuPose = new AutoPoseSource(0, sim, () => Save.settings.useWebcam);
             menuTracker = new GestureTracker(menuPose);
+            rooms = gameObject.AddComponent<Netcode.NetworkRoomManager>();
+            rooms.OnConnected += OnRoomConnected;
             WebcamFeed.SetEnabled(Save.settings.useWebcam);
             ResetCamera();
         }
@@ -72,6 +83,7 @@ namespace ChibiClash
 
         void Update()
         {
+            UpdatePendingOnline();
             if (view == View.Match) return;
             if (listening) CaptureRebind();
             menuInput.Tick(null, Time.unscaledDeltaTime);
@@ -139,6 +151,7 @@ namespace ChibiClash
             {
                 case "select": BeginSelect(true, false); return;
                 case "precheck": BeginSelect(true, false); preCheckT = 0f; view = View.PreCheck; return;
+                case "online": pending.cpu[0] = pending.cpu[1] = false; pending.training = false; view = View.Online; return;
             }
             view = View.Menu;
             tab = screen == "training" ? Tab.Training : screen == "armory" ? Tab.Armory : screen == "settings" ? Tab.Settings : Tab.Brawl;
@@ -146,8 +159,9 @@ namespace ChibiClash
 
         void LeaveMatch(View to)
         {
-            if (match != null) Destroy(match.gameObject);
+            if (match != null) Destroy(match.gameObject);   // online: destroying the runner forfeits a running match
             match = null;
+            if (rooms != null) rooms.Cancel();
             Time.timeScale = 1f;
             ResetCamera();
             view = to;
@@ -217,6 +231,7 @@ namespace ChibiClash
                 case View.Menu: MenuView(); break;
                 case View.Select: SelectView(); break;
                 case View.PreCheck: PreCheckView(); break;
+                case View.Online: OnlineView(); break;
             }
 
             if (toast != null && Time.unscaledTime < toastUntil)
@@ -285,7 +300,13 @@ namespace ChibiClash
             var c4 = new Rect(a.x + cw + 15f, a.y + 215f, cw, 200f);
             if (ModeCard(c1, "VS CPU", "PvE · earn coins & quest progress against the computer", Gui.Accent, true)) BeginSelect(true, false);
             if (ModeCard(c2, "LOCAL VERSUS", "2 players, one keyboard or two gamepads", Gui.Accent2, true)) BeginSelect(false, false);
-            ModeCard(c3, "RANKED ONLINE", "P2P rollback netcode via Unity Relay & Lobby.\nComing soon. Not connected in this build.", Gui.Muted, false);
+            if (ModeCard(c3, "ONLINE", "Private room with a friend (room code) or matchmaking.\nRollback netcode over Unity Relay.", Gui.Muted, true))
+            {
+                pending.cpu[0] = pending.cpu[1] = false;
+                pending.training = false;
+                onlineNote = "";
+                view = View.Online;
+            }
             if (ModeCard(c4, "TRAINING", "Practice combos and gestures on a dummy", Gui.Gold, true)) BeginSelect(true, true);
 
             var q = new Rect(a.xMax - 420f, a.y, 420f, a.height);
@@ -519,6 +540,126 @@ namespace ChibiClash
             y += 52f;
             if (changed) Save.Save();
             return changed;
+        }
+
+        // ---------------------------------------------------------------- ONLINE
+
+        /// <summary>The room manager connected us: start the online match (handshake first; the view appears once agreed).</summary>
+        void OnRoomConnected(Netcode.ChibiUtpTransport transport, bool isHost)
+        {
+            var input = Netcode.ChibiPlayerInputSource.ForPlayer(0);   // the local player always uses P1's devices / camera
+            var settings = Netcode.ChibiRollbackSettings.Default;
+            var online = isHost
+                ? Netcode.ChibiOnlineMatch.Host(transport, input, pending.cls[0], pending.passive[0], pending.stage,
+                                                (uint)System.Environment.TickCount ^ 0xC1B1u, settings)
+                : Netcode.ChibiOnlineMatch.Join(transport, input, pending.cls[0], pending.passive[0]);
+            var go = new GameObject("OnlineMatch");
+            var runner = go.AddComponent<Netcode.ChibiOnlineMatchRunner>();
+            runner.Begin(online, input);
+            pendingOnline = runner;
+            pendingOnlineInput = input;
+            onlineNote = "Connected. Agreeing on the match...";
+        }
+
+        /// <summary>Watch the handshake of a just-connected online match: show the match once it plays, or explain why not.</summary>
+        void UpdatePendingOnline()
+        {
+            if (pendingOnline == null) return;
+            var m = pendingOnline.Match;
+            if (m.Phase == Netcode.ChibiOnlinePhase.Playing || m.Phase == Netcode.ChibiOnlinePhase.Lingering)
+            {
+                if (match != null) Destroy(match.gameObject);
+                match = ChibiMatch.CreateOnline(this, pendingOnline, pendingOnlineInput, pending.weapon[0]);
+                pendingOnline = null;
+                pendingOnlineInput = null;
+                view = View.Match;
+            }
+            else if (m.Phase == Netcode.ChibiOnlinePhase.Closed)
+            {
+                var r = m.Result;
+                onlineNote = r.RejectReason == Netcode.ChibiRejectReason.RulesMismatch || r.RejectReason == Netcode.ChibiRejectReason.ProtocolMismatch ||
+                             r.RejectReason == Netcode.ChibiRejectReason.ContentMismatch
+                    ? "Your opponent runs a different version of the game. Both players need the same build."
+                    : "The match could not start (" + r.HandshakeState + ").";
+                Destroy(pendingOnline.gameObject);
+                pendingOnline = null;
+                pendingOnlineInput = null;
+                rooms.Cancel();
+            }
+        }
+
+        void OnlineView()
+        {
+            Header("Online · play a friend with a room code, or find an opponent");
+            var left = new Rect(30f, 104f, (Gui.W - 60f) * 0.5f - 10f, 500f);
+            PlayerColumn(0, left);
+
+            var r = new Rect(left.xMax + 20f, 104f, Gui.W - 60f - left.width - 20f, 500f);
+            Gui.Rect(r, Gui.Panel, 16f);
+            Gui.Frame(r, Gui.Accent2, 2f, 16f);
+            float x = r.x + 24f, w = r.width - 48f, y = r.y + 16f;
+            bool busy = rooms.State != Netcode.ChibiRoomState.Idle && rooms.State != Netcode.ChibiRoomState.Failed || pendingOnline != null;
+
+            Gui.Text(new Rect(x, y, w, 26f), "STAGE (the room host's pick is used)", 14, Gui.Gold, TextAnchor.MiddleLeft);
+            y += 30f;
+            float sw = (w - 20f) / 3f;
+            for (int s = 0; s < StageBuilder.Names.Length; s++)
+                if (Gui.Button(new Rect(x + s * (sw + 10f), y, sw, 40f), StageBuilder.Names[s], Gui.Gold, 14, !busy, pending.stage == s) && !busy)
+                    pending.stage = s;
+            y += 60f;
+
+            if (Gui.Button(new Rect(x, y, w, 52f), "CREATE PRIVATE ROOM", Gui.Accent, 18, !busy) && !busy)
+            { onlineNote = ""; rooms.CreatePrivateRoom(); }
+            y += 64f;
+
+            Gui.Text(new Rect(x, y, 120f, 40f), "ROOM CODE", 14, Color.white, TextAnchor.MiddleLeft);
+            var field = new Rect(x + 120f, y, w - 120f - 150f, 40f);
+            GUI.SetNextControlName("JoinCode");
+            var style = new GUIStyle(GUI.skin.textField) { fontSize = 22, alignment = TextAnchor.MiddleCenter };
+            if (!busy) joinCode = GUI.TextField(field, joinCode ?? "", 12, style).ToUpperInvariant();
+            else GUI.Label(field, joinCode, style);
+            if (Gui.Button(new Rect(field.xMax + 10f, y, 140f, 40f), "JOIN", Gui.Accent2, 16, !busy) && !busy)
+            { onlineNote = ""; rooms.JoinPrivateRoom(joinCode); }
+            y += 56f;
+
+            if (Gui.Button(new Rect(x, y, w, 52f), "QUICK MATCH", Gui.Accent2, 18, !busy) && !busy)
+            { onlineNote = ""; rooms.QuickMatch(); }
+            y += 64f;
+
+            // LAN direct play: no Unity services needed (same network). Same transport, handshake and rollback as Relay.
+            if (Gui.Button(new Rect(x, y, 150f, 40f), "LAN HOST", Gui.Gold, 15, !busy) && !busy)
+            { onlineNote = ""; rooms.HostLan(); }
+            var ipField = new Rect(x + 160f, y, w - 160f - 150f, 40f);
+            var ipStyle = new GUIStyle(GUI.skin.textField) { fontSize = 18, alignment = TextAnchor.MiddleCenter };
+            if (!busy) lanAddress = GUI.TextField(ipField, lanAddress ?? "", 40, ipStyle);
+            else GUI.Label(ipField, lanAddress, ipStyle);
+            if (Gui.Button(new Rect(ipField.xMax + 10f, y, 140f, 40f), "LAN JOIN", Gui.Gold, 15, !busy) && !busy)
+            { onlineNote = ""; rooms.JoinLan(lanAddress); }
+            y += 58f;
+
+            if (!string.IsNullOrEmpty(rooms.RoomCode))
+            {
+                Gui.Text(new Rect(x, y, w, 22f), "Share this code with your friend:", 13, Gui.Muted);
+                Gui.Text(new Rect(x, y + 20f, w, 56f), rooms.RoomCode, 44, Gui.Gold);
+                y += 80f;
+            }
+            bool failed = rooms.State == Netcode.ChibiRoomState.Failed;
+            string status = onlineNote.Length > 0 ? onlineNote : rooms.Status;
+            Gui.Text(new Rect(x, y, w, 60f), status, 15, failed ? Gui.Red : Color.white, TextAnchor.UpperCenter, false);
+
+            float by = Gui.H - 110f;
+            if (busy && Gui.Button(new Rect(Gui.W - 470f, by - 6f, 180f, 56f), "CANCEL", Gui.Red, 18))
+            {
+                if (pendingOnline != null) { Destroy(pendingOnline.gameObject); pendingOnline = null; pendingOnlineInput = null; }
+                rooms.Cancel();
+                onlineNote = "";
+            }
+            if (Gui.Button(new Rect(Gui.W - 270f, by - 6f, 240f, 56f), "BACK", Gui.Muted, 20))
+            {
+                if (pendingOnline != null) { Destroy(pendingOnline.gameObject); pendingOnline = null; pendingOnlineInput = null; }
+                rooms.Cancel();
+                view = View.Menu;
+            }
         }
 
         // ---------------------------------------------------------------- CHARACTER SELECT
