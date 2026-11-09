@@ -157,6 +157,20 @@ namespace ChibiClash.Netcode
         public int LocalIndex => _local;
         public ChibiRollbackSettings Settings => _settings;
         public int ConfirmedFrame => Math.Min(_frame, _inputs.RemoteContiguous + 1);
+
+        /// <summary>
+        /// The state at the start of <see cref="ConfirmedFrame"/>: every input before it is final, so no rollback can
+        /// change it. Use it (not <see cref="State"/>, which may be predicted) for anything that must be final, such as
+        /// declaring the winner. Null only if the snapshot fell out of the ring (cannot happen while Validate holds). Do not mutate.
+        /// </summary>
+        public ChibiSimState ConfirmedState
+        {
+            get
+            {
+                int c = ConfirmedFrame;
+                return c == _frame ? _state : _snaps.Peek(c);
+            }
+        }
         public int LocalFrameAdvantage => _frame - Math.Max(0, _remoteSeen - _settings.InputDelay);
 
         /// <summary>Session with the production <see cref="ChibiRollbackSettings.Default"/>.</summary>

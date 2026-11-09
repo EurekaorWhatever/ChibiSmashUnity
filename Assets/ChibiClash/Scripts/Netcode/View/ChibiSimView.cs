@@ -48,7 +48,7 @@ namespace ChibiClash.Netcode
             { 0.5f, 1.2f, 0.3f, 0.3f },
         };
 
-        ChibiLocalLoop _loop;
+        IChibiSimFeed _loop;   // offline ChibiLocalLoop or online ChibiOnlineMatchRunner
         readonly ChibiSimState _before = new ChibiSimState();   // state one tick before _seen (interpolation start)
         readonly ChibiSimState _seen = new ChibiSimState();     // latest tick the view has processed
         readonly List<ChibiSimEvent> _events = new List<ChibiSimEvent>(32);
@@ -134,10 +134,10 @@ namespace ChibiClash.Netcode
 
         /// <summary>Build the visuals for <paramref name="loop"/> (already begun). Call once.</summary>
         /// <example><code>view.Begin(loop, cfg);</code></example>
-        public void Begin(ChibiLocalLoop loop, in ChibiMatchConfig cfg)
+        public void Begin(IChibiSimFeed loop, in ChibiMatchConfig cfg)
         {
             _loop = loop;
-            var state = loop.Session.State;
+            var state = loop.State;
             _before.CopyFrom(state);
             _seen.CopyFrom(state);
 
@@ -208,7 +208,7 @@ namespace ChibiClash.Netcode
             }
 
             _cam = Camera.main;
-            loop.Session.OnFrame += OnSimFrame;
+            loop.OnFrame += OnSimFrame;
         }
 
         Vector3 WorldPos(int x, int y) => new Vector3(x * MilliToWorld, GroundY + FeetToPivot + y * MilliToWorld, 0f);
@@ -216,7 +216,7 @@ namespace ChibiClash.Netcode
 
         void OnSimFrame(int frame, ChibiInputPacket a, ChibiInputPacket b)
         {
-            var cur = _loop.Session.State;
+            var cur = _loop.State;
             // Frozen real tick (hitstop / cinematic, no game step ran): the world did not change, so keep the
             // interpolation pair and emit nothing.
             if (cur.GameTicks == _seen.GameTicks && cur.MatchOver == _seen.MatchOver) return;
@@ -280,14 +280,14 @@ namespace ChibiClash.Netcode
 
         void Update()
         {
-            if (_loop == null || _loop.Session == null) return;
-            Time.timeScale = ViewTimeScale(_loop.Session.State);   // restored by ChibiSimTestMatch.Stop
+            if (_loop == null || _loop.State == null) return;
+            Time.timeScale = ViewTimeScale(_loop.State);   // restored by ChibiSimTestMatch.Stop
         }
 
         void LateUpdate()
         {
-            if (_loop == null || _loop.Session == null) return;
-            var live = _loop.Session.State;
+            if (_loop == null || _loop.State == null) return;
+            var live = _loop.State;
             // timescale-conversion.md 8.3(2): f = min(0.999, (sinceStep + RenderAlpha) * scale / 1000). NOT TimeAccum,
             // which keeps the carried phase and would stall every tick after the first hitstop. After MatchOver the
             // sim no longer steps, so show the final state.
@@ -751,7 +751,7 @@ namespace ChibiClash.Netcode
 
         void OnDestroy()
         {
-            if (_loop != null && _loop.Session != null) _loop.Session.OnFrame -= OnSimFrame;
+            if (_loop != null && !(_loop is Object o && o == null)) _loop.OnFrame -= OnSimFrame;
             _events.Clear();
             _leadBurstPos.Clear();
             _leadBurstOwner.Clear();
