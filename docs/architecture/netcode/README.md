@@ -33,10 +33,15 @@ Drafted by studio agents and reviewed in session. **The user decisions below ove
 | [feature-inventory.md](feature-inventory.md) | gameplay-programmer | All 148 features of the original game, determinism status, port order |
 | [security-gesture-review.md](security-gesture-review.md) | security-engineer | What a modified client can fake (gesture bits, PoseVerified); rules for step 15; PoseVerified is self-reported only |
 | [movement-conversion.md](movement-conversion.md) | systems-designer | Step 4: every original movement value converted to sim units, precision scheme, reference test values |
+| [gesture-conversion.md](gesture-conversion.md) | step 15 | Ult gesture window, CrossArms block, Super Jump, Pose Fireball, security rules applied |
+| [match-flow-conversion.md](match-flow-conversion.md) | step 16 | Intro, match clock, KO / timeout winners, training, pause |
+| [cpu-ai-conversion.md](cpu-ai-conversion.md) | step 17 | CPU as a deterministic input source |
+| [verification-report.md](verification-report.md) | step 19 | Sync, replay, state-coverage and per-class verification results |
+| [online-rooms.md](online-rooms.md) | online | Lobby code rooms, matchmaking, Relay, LAN, results on disconnect, setup steps |
 
-## Known existing bugs (confirmed in code)
-- Packets over 32 bytes are silently truncated: `BitBuffer.cs:60`, unchecked at `ChibiP2PPeerLoop.cs:301`.
-- Resend window is only the newest 8 inputs (`ChibiP2PPeerLoop.cs:278-281`); a lag of more than 8 frames on acks can stall both peers until disconnect.
+## Known bugs (both fixed)
+- ~~Packets over 32 bytes silently truncated~~: fixed in online part 1 (codec throws, receivers reject, transport drops oversize). See online-rooms.md section 4.
+- ~~Resend window only the newest 8 inputs (lag stall)~~: fixed in online part 1 (oldest unacked first, up to 16). See online-rooms.md section 4.
 
 ## Superseded in these docs
 - Any recommendation to show the **Relay** join code (Q2 chose Lobby).
