@@ -1,5 +1,5 @@
 =====================================================================
-  CHIBI CLASH: HOW ONLINE PLAY WORKS (MADE SIMPLE)
+  CHIBI CLASH: NETWORK ENGINEERING INFORMATION
 =====================================================================
 
 This guide explains how Chibi Clash plays over the internet, in easy
