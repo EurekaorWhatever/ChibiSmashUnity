@@ -32,10 +32,11 @@ namespace ChibiClash.Netcode
     }
 
     /// <summary>
-    /// Replay file format "CCRP" v2 (little endian; rules v10, timescale-conversion.md section 8.3 item 3):
+    /// Replay file format "CCRP" v3 (little endian; v2 rules v10, timescale-conversion.md section 8.3 item 3; v3 adds flags):
     ///   4  magic 'C','C','R','P'      1  version (2)
     ///   4  seed                       4  class0,class1,passive0,passive1 (1 byte each)
-    ///   4  stage (int)                4  config hash (ChibiMatchConfig.ComputeHash: RulesVersion + every config field)
+    ///   4  stage (int)                1  flags (bit 0 Intro, bit 1 Training; v3)
+    ///   4  config hash (ChibiMatchConfig.ComputeHash: RulesVersion + every config field)
     ///   4  frame count (real ticks)   4  final checksum (state after the last frame)
     ///   n  run-length records: ushort p0, ushort p1, byte run (1..255)
     /// TryRead rejects v1 files and any file whose stored config hash differs from the hash of the config it read
@@ -44,7 +45,9 @@ namespace ChibiClash.Netcode
     /// </summary>
     public static class ChibiReplay
     {
-        const byte Version = 2;
+        /// <summary>v3 (rules v16): adds a flags byte after the stage (bit 0 Intro, bit 1 Training).</summary>
+        const byte Version = 3;
+        const int FlagIntro = 1, FlagTraining = 2;
 
         public static ChibiSimState Simulate(in ChibiMatchConfig cfg, IList<ushort> p0, IList<ushort> p1)
         {
@@ -66,6 +69,7 @@ namespace ChibiClash.Netcode
                 w.Write((byte)cfg.Class0); w.Write((byte)cfg.Class1);
                 w.Write((byte)cfg.Passive0); w.Write((byte)cfg.Passive1);
                 w.Write(cfg.Stage);
+                w.Write((byte)((cfg.Intro ? FlagIntro : 0) | (cfg.Training ? FlagTraining : 0)));   // v3
                 w.Write(cfg.ComputeHash());
                 w.Write((uint)p0.Count);
                 w.Write(finalChecksum);
@@ -95,6 +99,10 @@ namespace ChibiClash.Netcode
                     cfg.Class0 = (FighterClass)r.ReadByte(); cfg.Class1 = (FighterClass)r.ReadByte();
                     cfg.Passive0 = r.ReadByte(); cfg.Passive1 = r.ReadByte();
                     cfg.Stage = r.ReadInt32();
+                    int flags = r.ReadByte();
+                    if ((flags & ~(FlagIntro | FlagTraining)) != 0) return false;
+                    cfg.Intro = (flags & FlagIntro) != 0;
+                    cfg.Training = (flags & FlagTraining) != 0;
                     uint configHash = r.ReadUInt32();
                     if (configHash != cfg.ComputeHash()) return false;   // other RulesVersion or corrupt header
                     uint frames = r.ReadUInt32();

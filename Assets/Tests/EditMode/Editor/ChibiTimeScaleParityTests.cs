@@ -797,7 +797,7 @@ namespace ChibiClash.Tests
             using (var ms = new MemoryStream()) { ChibiReplay.Write(ms, cfg, p0, p1); bytes = ms.ToArray(); }
 
             // Assert: version 2, config hash stored (little-endian, BinaryWriter)
-            Assert.AreEqual(ReplayVersion2, bytes[4], "replay Version bumped to 2");
+            Assert.GreaterOrEqual(bytes[4], ReplayVersion2, "replay Version at least 2 (v3 since rules v16 adds a flags byte)");
             uint hash = cfg.ComputeHash();
             var key = new[] { (byte)hash, (byte)(hash >> 8), (byte)(hash >> 16), (byte)(hash >> 24) };
             int at = -1;

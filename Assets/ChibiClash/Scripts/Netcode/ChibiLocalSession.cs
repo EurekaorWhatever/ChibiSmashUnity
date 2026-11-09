@@ -43,6 +43,9 @@ namespace ChibiClash.Netcode
             Config = cfg;
             State = new ChibiSimState();
             ChibiSimulation.Init(State, cfg);
+            // A CPU (or any state-reading source) sees the state at the start of each tick it is sampled for.
+            (p0 as IChibiStateAwareSource)?.Bind(State);
+            (p1 as IChibiStateAwareSource)?.Bind(State);
         }
 
         /// <summary>
