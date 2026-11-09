@@ -64,10 +64,34 @@ namespace ChibiClash.Netcode
         /// <summary>When true, incoming invites are ignored (in a match or already in a room flow).</summary>
         public Func<bool> IsBusy = () => false;
 
+        /// <summary>
+        /// The name the player chose in this game (saved profile, no tag). On sign-in, if Unity's name differs (first
+        /// sign-in, or the player renamed while offline) it is pushed to Unity so friends always see the current name.
+        /// </summary>
+        public Func<string> PreferredName = () => "";
+
+        /// <summary>A player we sent a friend request to with INVITE: the invite goes out once they accept (see InviteByName).</summary>
+        public string WaitingToInviteName { get; private set; } = "";
+
+        /// <summary>Set by the game: false (e.g. a player under 13) keeps the friends service off and drops every invite.</summary>
+        public Func<bool> OnlineAllowed = () => true;
+
+        /// <summary>
+        /// The friend this room was made with (we invited them, or we accepted their invite), as OUR friends list names
+        /// them; "" otherwise. The match shows this name instead of the unverified one the peer sends in the handshake.
+        /// </summary>
+        public string MatchFriendName { get; private set; } = "";
+
+        /// <summary>Forget <see cref="MatchFriendName"/> (a new room / quick match is not with that friend).</summary>
+        public void ClearMatchFriend() { MatchFriendName = ""; }
+
         NetworkRoomManager _rooms;
         bool _friendsInitialised, _subscribed;
         string _inviteTargetId;               // friend we are creating a room for
         float _inviteTargetSince;
+        string _invitedId;                    // friend who holds our current invite (told when we cancel)
+        float _waitingToInviteUntil;          // InviteByName: give up auto-inviting after this (local clock)
+        string _waitingToInviteId;            // InviteByName: the exact player we asked (never matched by name later)
         readonly Dictionary<string, float> _lastInviteFrom = new Dictionary<string, float>();
         readonly Dictionary<string, float> _lastInviteTo = new Dictionary<string, float>();
 
@@ -80,6 +104,7 @@ namespace ChibiClash.Netcode
         public async void Connect()
         {
             if (Working) return;
+            if (OnlineAllowed != null && !OnlineAllowed()) { SetStatus(NetworkRoomManager.NotAllowedMessage, true); return; }
             Working = true;
             try
             {
@@ -97,16 +122,33 @@ namespace ChibiClash.Netcode
                 await FriendsService.Instance.SetPresenceAvailabilityAsync(Availability.Online);
                 Ready = true;
                 RebuildLists();
+                // Keep Unity's public name equal to the name chosen in the game (first sign-in or renamed offline).
+                string wanted = PreferredName?.Invoke() ?? "";
+                if (ChibiSocialRules.ValidateName(wanted) == null && !string.Equals(ChibiSocialRules.BaseName(MyName), wanted, StringComparison.Ordinal))
+                {
+                    try
+                    {
+                        string full = await AuthenticationService.Instance.UpdatePlayerNameAsync(wanted);
+                        MyName = ChibiSocialRules.SafeDisplayName(full);
+                        NeedsName = false;
+                    }
+                    catch (Exception e) { Debug.LogWarning("ChibiClash name sync: " + NetworkRoomManager.Explain(e)); }
+                }
                 SetStatus(NeedsName ? "Choose a player name so friends can find you." : "Signed in as " + MyName + ".", false);
             }
             catch (Exception e) { SetStatus("Friends unavailable: " + NetworkRoomManager.Explain(e), true); }
             finally { Working = false; }
         }
 
-        /// <summary>Set our public player name (validated). Unity appends a tag such as #1234 to keep names unique.</summary>
+        /// <summary>
+        /// Set or change our public player name (validated). Unity appends a tag such as #1234 to keep names unique;
+        /// the tag can change with the name, so friends see the new name on their list automatically (they are linked
+        /// by player id, not by name).
+        /// </summary>
         public async void SetName(string name)
         {
             if (Working || !Ready) return;
+            name = (name ?? "").Trim();
             string err = ChibiSocialRules.ValidateName(name);
             if (err != null) { SetStatus(err, true); return; }
             Working = true;
@@ -238,6 +280,81 @@ namespace ChibiClash.Netcode
 
         // ================================================================== invites
 
+        /// <summary>
+        /// INVITE by typed name ("Kira#4821"). A friend is invited at once. Anyone else first gets a friend request,
+        /// and the invite follows automatically when they accept: accepting is their consent, so a stranger can never
+        /// put an invite pop-up on someone's screen. Only one such waiting invite at a time; it lapses after
+        /// <see cref="ChibiSocialRules.InviteByNameWaitSeconds"/>.
+        /// </summary>
+        public async void InviteByName(string name)
+        {
+            if (Working || !Ready) return;
+            string n = ChibiSocialRules.NormalizeFriendName(name);
+            if (n == null) { SetStatus("Type the player's name like Kira#4821.", true); return; }
+            if (string.Equals(n, MyName, StringComparison.OrdinalIgnoreCase)) { SetStatus("That is your own name.", true); return; }
+
+            string id = FriendIdByName(n);
+            if (id != null)
+            {
+                if (!IsOnline(id)) { SetStatus(FriendName(id) + " is offline right now.", true); return; }
+                SendInvite(id);
+                return;
+            }
+            Working = true;
+            try
+            {
+                var rel = await FriendsService.Instance.AddFriendByNameAsync(n);
+                RebuildLists();
+                // Wait on the exact player id the service resolved, so a different "Kira" befriended later never gets the code.
+                _waitingToInviteId = rel?.Member?.Id;
+                if (string.IsNullOrEmpty(_waitingToInviteId)) { SetStatus("Friend request sent to " + ChibiSocialRules.SafeDisplayName(n) + ".", false); return; }
+                WaitingToInviteName = ChibiSocialRules.SafeDisplayName(n);
+                _waitingToInviteUntil = Time.unscaledTime + ChibiSocialRules.InviteByNameWaitSeconds;
+                SetStatus("Friend request sent to " + WaitingToInviteName + ". The invite goes out as soon as they accept.", false);
+            }
+            catch (Exception e) { SetStatus("Could not reach " + ChibiSocialRules.SafeDisplayName(n) + ": " + NetworkRoomManager.Explain(e), true); }
+            finally { Working = false; }
+        }
+
+        /// <summary>Id of the friend whose Unity name matches (with tag: exact; without tag: the only friend with that base name).</summary>
+        string FriendIdByName(string n)
+        {
+            if (!_friendsInitialised) return null;
+            bool tagged = n.IndexOf('#') >= 0;
+            string found = null;
+            foreach (var r in FriendsService.Instance.Friends)
+            {
+                string fn = r.Member?.Profile?.Name;
+                if (string.IsNullOrEmpty(fn) || r.Member.Id == null) continue;
+                bool match = tagged ? string.Equals(fn, n, StringComparison.OrdinalIgnoreCase)
+                                    : string.Equals(ChibiSocialRules.BaseName(fn), n, StringComparison.OrdinalIgnoreCase);
+                if (!match) continue;
+                if (found != null && !tagged) return null;   // ambiguous without the tag: ask for it (never guess)
+                found = r.Member.Id;
+            }
+            return found;
+        }
+
+        bool IsOnline(string id)
+        {
+            foreach (var f in Friends) if (f.Id == id) return f.Online;
+            return false;
+        }
+
+        /// <summary>Stop waiting to auto-invite a player we sent a request to.</summary>
+        public void ForgetWaitingInvite() { WaitingToInviteName = ""; _waitingToInviteId = null; }
+
+        /// <summary>We cancelled our room: tell the friend holding our invite so their pop-up disappears.</summary>
+        public void WithdrawInvite()
+        {
+            _inviteTargetId = null;
+            MatchFriendName = "";
+            ForgetWaitingInvite();
+            if (_invitedId == null) return;
+            CancelOutgoingInvite(_invitedId);
+            _invitedId = null;
+        }
+
         /// <summary>Invite a friend: create a private room, then send them its code (rate limited per friend).</summary>
         public void SendInvite(string friendId)
         {
@@ -247,6 +364,7 @@ namespace ChibiClash.Netcode
             { SetStatus("Wait a moment before inviting again.", true); return; }
             _lastInviteTo[friendId] = now;
             _inviteTargetId = friendId;
+            MatchFriendName = FriendName(friendId);
             _inviteTargetSince = now;
             if (string.IsNullOrEmpty(_rooms.RoomCode)) _rooms.CreatePrivateRoom();
             SetStatus("Creating a room for " + FriendName(friendId) + "...", false);
@@ -258,6 +376,7 @@ namespace ChibiClash.Netcode
             if (index < 0 || index >= Invites.Count || _rooms == null) return;
             var inv = Invites[index];
             Invites.Clear();   // one match at a time: other invites are dropped
+            MatchFriendName = inv.FromName;   // from OUR friends list, not from the message
             _rooms.JoinPrivateRoom(inv.Code);
             SetStatus("Joining " + inv.FromName + "...", false);
         }
@@ -288,6 +407,8 @@ namespace ChibiClash.Netcode
             {
                 SetStatus(FriendName(e.UserId) + " declined the invite.", true);
                 _inviteTargetId = null;
+                MatchFriendName = "";
+                _invitedId = null;
                 _rooms?.Cancel();
                 return;
             }
@@ -297,6 +418,7 @@ namespace ChibiClash.Netcode
                 return;
             }
 
+            if (OnlineAllowed != null && !OnlineAllowed()) return;   // age gate: never show an invite
             float now = Time.unscaledTime;
             float last = _lastInviteFrom.TryGetValue(e.UserId ?? "", out float l) ? l : float.NegativeInfinity;
             var verdict = ChibiSocialRules.ValidateInvite(m, friend, NetworkRoomManager.ProtocolTag, now, last, Invites.Count, IsBusy());
@@ -319,6 +441,18 @@ namespace ChibiClash.Netcode
         {
             float now = Time.unscaledTime;
             if (_listsDirty) { _listsDirty = false; RebuildLists(); }
+
+            // InviteByName: the player we asked accepted (they are now a friend and online) -> invite them once.
+            if (WaitingToInviteName.Length > 0)
+            {
+                if (now > _waitingToInviteUntil || string.IsNullOrEmpty(_waitingToInviteId)) ForgetWaitingInvite();
+                else if (!Working && (IsBusy == null || !IsBusy()) && IsFriend(_waitingToInviteId) && IsOnline(_waitingToInviteId))
+                {
+                    string id = _waitingToInviteId;
+                    ForgetWaitingInvite();
+                    SendInvite(id);
+                }
+            }
             for (int n = 0; n < 8 && _messages.TryDequeue(out var msg); n++) OnMessage(msg);   // a few per frame
             Invites.RemoveAll(i => i.ExpiresAt <= now);
 
@@ -348,6 +482,7 @@ namespace ChibiClash.Netcode
                     Kind = ChibiSocialRules.KindInvite, Code = code, Proto = NetworkRoomManager.ProtocolTag,
                     V = ChibiSocialRules.InviteVersion,
                 });
+                _invitedId = friendId;
                 SetStatus("Invite sent to " + FriendName(friendId) + ". Waiting for them to join...", false);
             }
             catch (Exception e) { SetStatus("Could not send the invite: " + NetworkRoomManager.Explain(e), true); }

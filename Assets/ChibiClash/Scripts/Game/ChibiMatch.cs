@@ -41,6 +41,7 @@ namespace ChibiClash
         readonly WeaponDef[] _weapon = new WeaponDef[2];
         readonly ChibiPlayerInputSource[] _human = new ChibiPlayerInputSource[2];
         readonly bool[] _cpu = new bool[2];
+        readonly string[] _names = { "", "" };
         ChibiLocalLoop _local;
         bool _awarded;
 
@@ -67,6 +68,21 @@ namespace ChibiClash
         public WeaponDef WeaponOf(int i) => _weapon[i];
         /// <summary>Fighter <paramref name="i"/> is played by the CPU.</summary>
         public bool IsCpu(int i) => _cpu[i];
+        /// <summary>
+        /// Online: the chosen player name of fighter <paramref name="i"/> ("Kira#4821"), already safe to draw; "" offline
+        /// or when that player sent none (older build / no name).
+        /// </summary>
+        public string NameOf(int i) => _names[i];
+
+        /// <summary>
+        /// Show the opponent by the name OUR friends list gives them (an invite match): verified, so shown in full with
+        /// its #tag. Ignored offline.
+        /// </summary>
+        public void SetVerifiedOpponentName(string friendName)
+        {
+            if (!Online || string.IsNullOrEmpty(friendName)) return;
+            _names[1 - LocalPlayer] = ChibiSocialRules.PeerDisplayName(friendName, verified: true);
+        }
         /// <summary>Gesture tracker of a local human fighter (camera / simulated poses), else null.</summary>
         public GestureTracker Tracker(int i) => _human[i] != null ? _human[i].Tracker : null;
         /// <summary>World position of fighter <paramref name="i"/>'s body centre.</summary>
@@ -110,6 +126,8 @@ namespace ChibiClash
                 if (_cpu[i]) src[i] = new ChibiCpuInputSource(i, Config.training ? 0 : Config.difficulty, SimConfig.Seed);
                 else src[i] = _human[i] = ChibiPlayerInputSource.ForPlayer(i);
             }
+            // The profile owner (P1) is shown by their chosen name; P2 / CPU keep their labels.
+            if (!_cpu[0] && GM != null && GM.Save != null) _names[0] = ChibiSocialRules.CleanSavedName(GM.Save.playerName);
             _local = gameObject.AddComponent<ChibiLocalLoop>();
             _local.Begin(SimConfig, src[0], src[1], recordReplay: true);
             Feed = _local;
@@ -142,6 +160,9 @@ namespace ChibiClash
             m.SimConfig = cfg;
             m.Feed = runner;
             m._human[me] = localInput;
+            // Names travel in the handshake (cosmetic). Sanitised again here: never trust the wire for anything drawn.
+            m._names[me] = hs.LocalName.Length > 0 ? ChibiSocialRules.SafeDisplayName(hs.LocalName) : "";
+            m._names[1 - me] = ChibiSocialRules.PeerDisplayName(hs.PeerName, verified: false);   // not bound to an account
             for (int i = 0; i < 2; i++)
             {
                 m._def[i] = ClassDef.Get(mc.cls[i]);

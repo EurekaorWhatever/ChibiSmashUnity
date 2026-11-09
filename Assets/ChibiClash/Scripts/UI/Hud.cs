@@ -89,7 +89,22 @@ namespace ChibiClash
             return new Color(0.4f, 0.4f, 0.5f);
         }
 
-        static string Who(ChibiMatch m, int i) => m.IsCpu(i) ? "CPU" : m.Online && i != m.LocalPlayer ? "RIVAL" : "P" + (i + 1);
+        /// <summary>
+        /// Label of fighter <paramref name="i"/>. Online it is the player's chosen name: short form ("Kira") in tight spots,
+        /// full ("Kira#4821") when <paramref name="full"/>. Falls back to RIVAL / P1 when no name was sent.
+        /// </summary>
+        static string Who(ChibiMatch m, int i, bool full = false)
+        {
+            if (m.IsCpu(i)) return "CPU";
+            if (m.Online)
+            {
+                string n = m.NameOf(i);
+                if (n.Length > 0) return full ? n : Netcode.ChibiSocialRules.BaseName(n);
+                return i != m.LocalPlayer ? "RIVAL" : "YOU";
+            }
+            string own = m.NameOf(i);
+            return own.Length > 0 ? own : "P" + (i + 1);
+        }
 
         static void PlayerPanel(ChibiMatch m, int i, Rect r, bool right)
         {
@@ -101,7 +116,7 @@ namespace ChibiClash
             Gui.Frame(r, new Color(def.color.r, def.color.g, def.color.b, 0.6f), 2f, 14f);
             float px = right ? r.xMax - 100f : r.x + 10f;
             Gui.Pfp(new Rect(px, r.y + 10f, 90f, 90f), def, m.SkinOf(i));
-            Gui.Text(new Rect(px, r.y + 100f, 90f, 24f), Who(m, i), 16, i == 0 ? Gui.Accent : Gui.Accent2);
+            Gui.Text(new Rect(px - 20f, r.y + 100f, 130f, 24f), Who(m, i), 14, i == 0 ? Gui.Accent : Gui.Accent2);
 
             float bx = right ? r.x + 12f : r.x + 110f;
             float bw = 318f;
@@ -230,7 +245,7 @@ namespace ChibiClash
             {
                 var p = Gui.WorldToGui(m.Center(i) + Vector2.up * 1.25f);
                 var c = i == 0 ? Gui.Accent : Gui.Accent2;
-                Gui.Text(new Rect(p.x - 40f, p.y - 22f, 80f, 20f), Who(m, i), 14, c);
+                Gui.Text(new Rect(p.x - 70f, p.y - 22f, 140f, 20f), Who(m, i), 14, c);
                 Gui.Text(new Rect(p.x - 40f, p.y - 8f, 80f, 16f), "▼", 10, c);
             }
         }
@@ -300,7 +315,7 @@ namespace ChibiClash
                 var col = new Rect(r.x + 30f + i * 340f, r.y + 84f, 320f, 190f);
                 Gui.Rect(col, Gui.PanelLight, 12f);
                 Gui.Pfp(new Rect(col.x + 10f, col.y + 10f, 64f, 64f), def, m.SkinOf(i));
-                Gui.Text(new Rect(col.x + 84f, col.y + 10f, 230f, 30f), Who(m, i) + " · " + def.heroName, 18, Color.white, TextAnchor.MiddleLeft);
+                Gui.Text(new Rect(col.x + 84f, col.y + 10f, 230f, 30f), Who(m, i, true) + " · " + def.heroName, 18, Color.white, TextAnchor.MiddleLeft);
                 float hpFrac = f.Stats.MaxHp > 0 ? f.HpU / ((float)f.Stats.MaxHp * ChibiCombatStats.HpScale) : 0f;
                 Gui.Text(new Rect(col.x + 84f, col.y + 38f, 230f, 24f), "HP left " + Mathf.CeilToInt(hpFrac * 100f) + "%", 14, Gui.Muted, TextAnchor.MiddleLeft);
                 var tr = m.Tracker(i);
@@ -316,7 +331,7 @@ namespace ChibiClash
                 Gui.Text(rw, "Training: no rewards", 16, Gui.Muted);
             else
             {
-                Gui.Text(new Rect(rw.x + 14f, rw.y + 6f, rw.width, 24f), "REWARDS (" + (m.Online ? "your" : "P1") + " profile)", 14, Gui.Gold, TextAnchor.MiddleLeft);
+                Gui.Text(new Rect(rw.x + 14f, rw.y + 6f, rw.width, 24f), "REWARDS (" + (m.NameOf(m.LocalPlayer).Length > 0 ? Netcode.ChibiSocialRules.BaseName(m.NameOf(m.LocalPlayer)) + "'s" : m.Online ? "your" : "P1") + " profile)", 14, Gui.Gold, TextAnchor.MiddleLeft);
                 Gui.Text(new Rect(rw.x + 14f, rw.y + 32f, rw.width - 28f, 120f), string.Join("\n", m.RewardLog), 13, Color.white, TextAnchor.UpperLeft, false);
                 Gui.Text(new Rect(rw.x, rw.y + 6f, rw.width - 14f, 24f), "+" + m.CoinsEarned + " coins  (total " + m.GM.Save.coins + ")", 16, Gui.Gold, TextAnchor.MiddleRight);
             }

@@ -22,6 +22,8 @@ namespace ChibiClash.Netcode
         public byte[] Bytes => _buf;
         public int BitPosition => _bitPos;
         public int ByteLength => (_bitPos + 7) >> 3;
+        /// <summary>Bits that can still be read (or written) before <see cref="Overrun"/>; lets readers accept optional trailing fields.</summary>
+        public int BitsLeft => _bitLimit - _bitPos;
 
         public BitBuffer(int capacityBytes)
         {

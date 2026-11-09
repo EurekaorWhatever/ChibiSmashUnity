@@ -128,15 +128,15 @@ namespace ChibiClash.Netcode
         /// <example><code>var m = ChibiOnlineMatch.Host(transport, input, FighterClass.Melee, 0, stage: 0, seed, ChibiRollbackSettings.Default);</code></example>
         public static ChibiOnlineMatch Host(IChibiTransport transport, IChibiInputSource input, FighterClass myClass, int myPassive,
                                             int stage, uint seed, ChibiRollbackSettings settings,
-                                            int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks)
+                                            int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks, string localName = "")
             => new ChibiOnlineMatch(transport,
-                c => ChibiHandshake.ForHost(c, myClass, myPassive, stage, seed, settings, handshakeTimeoutTicks), input);
+                c => ChibiHandshake.ForHost(c, myClass, myPassive, stage, seed, settings, handshakeTimeoutTicks, localName), input);
 
         /// <summary>Joiner side (sim player 1).</summary>
         /// <example><code>var m = ChibiOnlineMatch.Join(transport, input, FighterClass.Magic, 1);</code></example>
         public static ChibiOnlineMatch Join(IChibiTransport transport, IChibiInputSource input, FighterClass myClass, int myPassive,
-                                            int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks)
-            => new ChibiOnlineMatch(transport, c => ChibiHandshake.ForJoiner(c, myClass, myPassive, handshakeTimeoutTicks), input);
+                                            int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks, string localName = "")
+            => new ChibiOnlineMatch(transport, c => ChibiHandshake.ForJoiner(c, myClass, myPassive, handshakeTimeoutTicks, localName), input);
 
         // ================================================================== tick
 

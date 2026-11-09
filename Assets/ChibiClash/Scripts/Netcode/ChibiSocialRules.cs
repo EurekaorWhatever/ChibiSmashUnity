@@ -41,6 +41,71 @@ namespace ChibiClash.Netcode
         public const int NameMin = 3, NameMax = 16;
         /// <summary>Longest name we ever draw (name + "#" + 4-digit tag + slack); longer input is cut.</summary>
         public const int DisplayMax = 24;
+        /// <summary>INVITE by name to a non-friend: how long we wait for them to accept the friend request (seconds).</summary>
+        public const float InviteByNameWaitSeconds = 600f;
+
+        /// <summary>The chosen part of a Unity name: "Kira#4821" -> "Kira" (null -> "").</summary>
+        public static string BaseName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return "";
+            int h = name.IndexOf('#');
+            return h < 0 ? name : name.Substring(0, h);
+        }
+
+        // Words a name may not contain (checked case-insensitively, with common digit swaps undone: 0->o 1->i 3->e 4->a 5->s 7->t).
+        // A short baseline list; a live game would add the platform's text filter on top.
+        static readonly string[] BlockedWords =
+        {
+            "fuck", "shit", "bitch", "cunt", "dick", "cock", "pussy", "whore", "slut", "porn", "rape", "nazi", "hitler",
+            "nigg", "fag", "retard", "admin", "moderator", "official",
+        };
+
+        /// <summary>True when <paramref name="name"/> contains a blocked word (also catches "Sh1t", "F_U_C_K").</summary>
+        public static bool ContainsBlockedWord(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            var sb = new StringBuilder(name.Length);
+            foreach (char ch in name)
+            {
+                char c = char.ToLowerInvariant(ch);
+                switch (c)
+                {
+                    case '0': c = 'o'; break;
+                    case '1': c = 'i'; break;
+                    case '3': c = 'e'; break;
+                    case '4': c = 'a'; break;
+                    case '5': c = 's'; break;
+                    case '7': c = 't'; break;
+                }
+                if (c >= 'a' && c <= 'z') sb.Append(c);   // drop separators: "f_u_c_k" -> "fuck"
+            }
+            string flat = sb.ToString();
+            foreach (var w in BlockedWords)
+                if (flat.IndexOf(w, StringComparison.Ordinal) >= 0) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// How an opponent's name from the match handshake is shown. The handshake name is not bound to an account, so an
+        /// UNVERIFIED name shows without its #tag (a stranger cannot pose as a friend's exact "Kira#4821"). A VERIFIED
+        /// name (taken from OUR friends list for an invite match) shows in full. Blocked words show as "Player".
+        /// </summary>
+        public static string PeerDisplayName(string raw, bool verified)
+        {
+            if (string.IsNullOrEmpty(raw)) return "";
+            string safe = SafeDisplayName(raw);
+            if (ContainsBlockedWord(safe)) return "Player";
+            if (verified) return safe;
+            string b = BaseName(safe);
+            return b.Length == 0 ? "Player" : b;
+        }
+
+        /// <summary>A saved player name if it is still valid, else "" (a tampered profile cannot inject anything).</summary>
+        public static string CleanSavedName(string saved)
+        {
+            string s = (saved ?? "").Trim();
+            return ValidateName(s) == null ? s : "";
+        }
         /// <summary>Lobby codes are short upper-case alphanumerics; accept 4..12 to stay robust to format changes.</summary>
         public const int CodeMin = 4, CodeMax = 12;
         /// <summary>An invite is shown for this long, then dropped (seconds, local clock: a peer's clock is not trusted).</summary>
@@ -59,6 +124,7 @@ namespace ChibiClash.Netcode
             if (string.IsNullOrEmpty(name)) return "Enter a name.";
             if (name.Length < NameMin) return "Name is too short (at least " + NameMin + " characters).";
             if (name.Length > NameMax) return "Name is too long (at most " + NameMax + " characters).";
+            if (ContainsBlockedWord(name)) return "Please choose a different name.";
             foreach (char c in name)
                 if (!IsNameChar(c)) return "Use only letters, numbers and _ (no spaces or symbols).";
             return null;

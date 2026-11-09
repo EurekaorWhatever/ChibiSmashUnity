@@ -121,6 +121,13 @@ namespace ChibiClash
         public int keybindVersion;
         public Settings settings = new Settings();
         public int wins, losses, matches;
+        /// <summary>
+        /// Player name chosen on first launch (3-16 letters, digits or _; no tag). Shown to opponents and pushed to
+        /// Unity Authentication for friends. Read it through ChibiSocialRules.CleanSavedName (the file can be edited).
+        /// </summary>
+        public string playerName = "";
+        /// <summary>AgeBand chosen on first launch (0 = not asked). Only the group is stored, never the age.</summary>
+        public int ageBand;
 
         /// <summary>Load the profile from PlayerPrefs.</summary>
         public static SaveData Load() => Load(PlayerPrefsSaveStore.Instance);

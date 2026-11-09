@@ -29,6 +29,9 @@ namespace ChibiClash
         Netcode.ChibiSocialManager social;
         bool showFriends;
         string nameInput = "", friendInput = "";
+        // Player name dialog: forced on first launch (no saved name), opened from the name badge in the header.
+        bool nameDialog;
+        string nameError = "", ageInput = "";
         string removeArmedId;
         float removeArmedUntil;
         MatchConfig pending = new MatchConfig();
@@ -68,6 +71,10 @@ namespace ChibiClash
             rooms.OnConnected += OnRoomConnected;
             social = gameObject.AddComponent<Netcode.ChibiSocialManager>();
             social.Bind(rooms);
+            social.PreferredName = () => Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
+            // Age gate enforced inside both services too, not only by the menu (no side path can start online play).
+            rooms.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
+            social.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
             // Invites are ignored while playing or while another room flow is running.
             social.IsBusy = () => view == View.Match || pendingOnline != null ||
                                   rooms.State == Netcode.ChibiRoomState.Connecting || rooms.State == Netcode.ChibiRoomState.Joining;
@@ -165,6 +172,7 @@ namespace ChibiClash
                 case "precheck": BeginSelect(true, false); preCheckT = 0f; view = View.PreCheck; return;
                 case "online":
                 case "friends":
+                    if (!PlayerIdentity.OnlineAllowed(Save.ageBand)) { view = View.Menu; Toast("Online play is for players 13 and older."); return; }
                     pending.cpu[0] = pending.cpu[1] = false; pending.training = false; view = View.Online;
                     showFriends = screen == "friends";
                     if (showFriends && !social.Ready && !social.Working) social.Connect();
@@ -244,6 +252,20 @@ namespace ChibiClash
             }
 
             Background();
+            // First launch onboarding: age group, then the player name (their identity everywhere in the game).
+            if (PlayerIdentity.NeedsAge(Save.ageBand))
+            {
+                Header("Welcome!");
+                AgeDialog();
+                return;
+            }
+            if (NeedsFirstName && !nameDialog) OpenNameDialog();
+            if (nameDialog)
+            {
+                Header("Your player name");
+                NameDialog();
+                return;
+            }
             switch (view)
             {
                 case View.Menu: MenuView(); break;
@@ -285,6 +307,111 @@ namespace ChibiClash
             Gui.Frame(coin, Gui.Gold, 2f, 22f);
             Gui.Circle(new Rect(coin.x + 10f, coin.y + 9f, 26f, 26f), Gui.Gold);
             Gui.Text(new Rect(coin.x + 44f, coin.y, 150f, 44f), Save.coins + " coins", 18, Gui.Gold, TextAnchor.MiddleLeft);
+
+            // Name badge: who we are; click to change the name.
+            if (!nameDialog && !PlayerIdentity.NeedsAge(Save.ageBand))
+            {
+                string shown = DisplayedName();
+                if (Gui.Button(new Rect(Gui.W - 520f, 26f, 280f, 38f), (shown.Length > 0 ? shown : "SET NAME") + "  ·  EDIT", Gui.Accent2, 16))
+                    OpenNameDialog();
+            }
+        }
+
+        // ---------------------------------------------------------------- PLAYER NAME
+
+        /// <summary>No valid saved name yet: the first-launch name dialog is shown.</summary>
+        bool NeedsFirstName => Netcode.ChibiSocialRules.CleanSavedName(Save.playerName).Length == 0;
+
+        /// <summary>The name to show for us: Unity's tagged name once signed in ("Kira#4821"), else the saved one.</summary>
+        string DisplayedName() =>
+            social != null && social.Ready && !social.NeedsName ? social.MyName : Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
+
+        /// <summary>
+        /// Onboarding step 1: a neutral age question (no hint of a "right" answer). Only the age GROUP is saved. Under 13,
+        /// online friends / invites / matchmaking stay locked; everything offline is available.
+        /// </summary>
+        void AgeDialog()
+        {
+            var r = new Rect(Gui.W * 0.5f - 330f, 170f, 660f, 300f);
+            Gui.Rect(r, Gui.Panel, 18f);
+            Gui.Frame(r, Gui.Accent2, 3f, 18f);
+            Gui.Text(new Rect(r.x, r.y + 18f, r.width, 36f), "HOW OLD ARE YOU?", 26, Gui.Accent2);
+            Gui.Text(new Rect(r.x + 30f, r.y + 58f, r.width - 60f, 40f),
+                     "We only keep your age group, never your age or birthday.", 13, Gui.Muted, TextAnchor.UpperCenter, false);
+
+            bool enter = Event.current.type == EventType.KeyDown &&
+                         (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter);
+            var field = new Rect(r.x + r.width * 0.5f - 90f, r.y + 106f, 180f, 56f);
+            GUI.SetNextControlName("Age");
+            var style = new GUIStyle(GUI.skin.textField) { fontSize = 30, alignment = TextAnchor.MiddleCenter };
+            string typed = GUI.TextField(field, ageInput ?? "", 3, style);
+            ageInput = System.Text.RegularExpressions.Regex.Replace(typed, "[^0-9]", "");   // digits only
+            if (GUI.GetNameOfFocusedControl() != "Age") GUI.FocusControl("Age");
+            Gui.Text(new Rect(r.x + 30f, r.y + 168f, r.width - 60f, 24f), nameError, 14, Gui.Red);
+
+            if (Gui.Button(new Rect(r.x + r.width * 0.5f - 130f, r.y + 210f, 260f, 54f), "NEXT", Gui.Accent, 20) || enter)
+            {
+                var band = PlayerIdentity.BandForAnswer(ageInput);
+                if (band == AgeBand.Unknown) nameError = "Please type your age as a number.";
+                else
+                {
+                    Save.ageBand = (int)band;
+                    Save.Save();
+                    nameError = "";
+                    ageInput = "";
+                }
+                if (enter) Event.current.Use();
+            }
+        }
+
+        void OpenNameDialog()
+        {
+            nameDialog = true;
+            nameInput = Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
+            nameError = "";
+        }
+
+        /// <summary>Choose or change the player name (validated by ChibiSocialRules.ValidateName; saved; pushed to Unity).</summary>
+        void NameDialog()
+        {
+            bool first = NeedsFirstName;
+            var r = new Rect(Gui.W * 0.5f - 330f, 170f, 660f, 300f);
+            Gui.Rect(r, Gui.Panel, 18f);
+            Gui.Frame(r, Gui.Gold, 3f, 18f);
+            Gui.Text(new Rect(r.x, r.y + 18f, r.width, 36f), first ? "WELCOME, FIGHTER! WHAT IS YOUR NAME?" : "CHANGE YOUR NAME", 24, Gui.Gold);
+            Gui.Text(new Rect(r.x + 30f, r.y + 58f, r.width - 60f, 40f),
+                     "3-16 letters, numbers or _. Pick a fun fighter name, not your real name. It is how friends find and invite you, and what everyone sees.",
+                     13, Gui.Muted, TextAnchor.UpperCenter, false);
+
+            bool enter = Event.current.type == EventType.KeyDown &&
+                         (Event.current.keyCode == KeyCode.Return || Event.current.keyCode == KeyCode.KeypadEnter);
+            var field = new Rect(r.x + 60f, r.y + 112f, r.width - 120f, 50f);
+            GUI.SetNextControlName("PlayerName");
+            var style = new GUIStyle(GUI.skin.textField) { fontSize = 26, alignment = TextAnchor.MiddleCenter };
+            nameInput = GUI.TextField(field, nameInput ?? "", Netcode.ChibiSocialRules.NameMax, style);
+            if (GUI.GetNameOfFocusedControl() != "PlayerName") GUI.FocusControl("PlayerName");
+            Gui.Text(new Rect(r.x + 30f, r.y + 168f, r.width - 60f, 24f), nameError, 14, Gui.Red);
+
+            float bw = first ? 260f : 200f;
+            float bx = first ? r.x + (r.width - bw) * 0.5f : r.x + r.width * 0.5f - bw - 10f;
+            if (Gui.Button(new Rect(bx, r.y + 210f, bw, 54f), first ? "LET'S FIGHT!" : "SAVE", Gui.Accent, 20) || enter)
+            {
+                string n = (nameInput ?? "").Trim();
+                string err = Netcode.ChibiSocialRules.ValidateName(n);
+                if (err != null) nameError = err;
+                else
+                {
+                    bool changed = n != Save.playerName;
+                    Save.playerName = n;
+                    Save.Save();
+                    nameDialog = false;
+                    if (changed && social.Ready) social.SetName(n);   // signed in: rename on Unity now (else synced on connect)
+                    Toast("You are " + n + "!");
+                }
+                if (enter) Event.current.Use();
+            }
+            if (!first && Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 210f, 200f, 54f), "CANCEL", Gui.Muted, 18))
+                nameDialog = false;
         }
 
         void MenuView()
@@ -319,7 +446,13 @@ namespace ChibiClash
             var c4 = new Rect(a.x + cw + 15f, a.y + 215f, cw, 200f);
             if (ModeCard(c1, "VS CPU", "PvE · earn coins & quest progress against the computer", Gui.Accent, true)) BeginSelect(true, false);
             if (ModeCard(c2, "LOCAL VERSUS", "2 players, one keyboard or two gamepads", Gui.Accent2, true)) BeginSelect(false, false);
-            if (ModeCard(c3, "ONLINE", "Private room with a friend (room code) or matchmaking.\nRollback netcode over Unity Relay.", Gui.Muted, true))
+            bool onlineOk = PlayerIdentity.OnlineAllowed(Save.ageBand);
+            bool onlineClicked = ModeCard(c3, onlineOk ? "ONLINE" : "ONLINE  (13+)",
+                         onlineOk ? "Play friends anywhere over the internet: invite by name,\nprivate rooms or matchmaking (Wi-Fi or mobile data)."
+                                  : "Online play with friends is for players 13 and older.\nVS CPU, local versus and training are all open.",
+                         Gui.Muted, true);
+            if (onlineClicked && !onlineOk) Toast("Online play is for players 13 and older.");
+            if (onlineClicked && onlineOk)
             {
                 pending.cpu[0] = pending.cpu[1] = false;
                 pending.training = false;
@@ -566,12 +699,16 @@ namespace ChibiClash
         /// <summary>The room manager connected us: start the online match (handshake first; the view appears once agreed).</summary>
         void OnRoomConnected(Netcode.ChibiUtpTransport transport, bool isHost)
         {
+            if (!PlayerIdentity.OnlineAllowed(Save.ageBand)) { transport.Dispose(); rooms.Cancel(); return; }   // age gate, last line
             var input = Netcode.ChibiPlayerInputSource.ForPlayer(0);   // the local player always uses P1's devices / camera
             var settings = Netcode.ChibiRollbackSettings.Default;
+            string me = DisplayedName();   // sent in the handshake so the opponent sees our name (cosmetic, not hashed)
             var online = isHost
                 ? Netcode.ChibiOnlineMatch.Host(transport, input, pending.cls[0], pending.passive[0], pending.stage,
-                                                (uint)System.Environment.TickCount ^ 0xC1B1u, settings)
-                : Netcode.ChibiOnlineMatch.Join(transport, input, pending.cls[0], pending.passive[0]);
+                                                (uint)System.Environment.TickCount ^ 0xC1B1u, settings,
+                                                Netcode.ChibiHandshake.DefaultTimeoutTicks, me)
+                : Netcode.ChibiOnlineMatch.Join(transport, input, pending.cls[0], pending.passive[0],
+                                                Netcode.ChibiHandshake.DefaultTimeoutTicks, me);
             var go = new GameObject("OnlineMatch");
             var runner = go.AddComponent<Netcode.ChibiOnlineMatchRunner>();
             runner.Begin(online, input);
@@ -589,6 +726,8 @@ namespace ChibiClash
             {
                 if (match != null) Destroy(match.gameObject);
                 match = ChibiMatch.CreateOnline(this, pendingOnline, pendingOnlineInput, pending.weapon[0]);
+                match.SetVerifiedOpponentName(social.MatchFriendName);   // invite match: the friends-list name
+                social.ClearMatchFriend();
                 pendingOnline = null;
                 pendingOnlineInput = null;
                 view = View.Match;
@@ -610,7 +749,10 @@ namespace ChibiClash
 
         void OnlineView()
         {
-            Header("Online · play a friend with a room code, or find an opponent");
+            if (!PlayerIdentity.OnlineAllowed(Save.ageBand)) { view = View.Menu; return; }   // age gate (13+), defence in depth
+            bool noInternet = Application.internetReachability == NetworkReachability.NotReachable;
+            Header(noInternet ? "<color=#ff6b6b>No internet: connect to Wi-Fi or mobile data to play friends anywhere (LAN still works)</color>"
+                              : "Online · play friends anywhere over the internet: invite by name, room code or matchmaking");
             var left = new Rect(30f, 104f, (Gui.W - 60f) * 0.5f - 10f, 500f);
             PlayerColumn(0, left);
 
@@ -645,7 +787,7 @@ namespace ChibiClash
             y += 60f;
 
             if (Gui.Button(new Rect(x, y, w, 52f), "CREATE PRIVATE ROOM", Gui.Accent, 18, !busy) && !busy)
-            { onlineNote = ""; rooms.CreatePrivateRoom(); }
+            { onlineNote = ""; social.ClearMatchFriend(); rooms.CreatePrivateRoom(); }
             y += 64f;
 
             Gui.Text(new Rect(x, y, 120f, 40f), "ROOM CODE", 14, Color.white, TextAnchor.MiddleLeft);
@@ -655,22 +797,25 @@ namespace ChibiClash
             if (!busy) joinCode = GUI.TextField(field, joinCode ?? "", 12, style).ToUpperInvariant();
             else GUI.Label(field, joinCode, style);
             if (Gui.Button(new Rect(field.xMax + 10f, y, 140f, 40f), "JOIN", Gui.Accent2, 16, !busy) && !busy)
-            { onlineNote = ""; rooms.JoinPrivateRoom(joinCode); }
+            { onlineNote = ""; social.ClearMatchFriend(); rooms.JoinPrivateRoom(joinCode); }
             y += 56f;
 
-            if (Gui.Button(new Rect(x, y, w, 52f), "QUICK MATCH", Gui.Accent2, 18, !busy) && !busy)
-            { onlineNote = ""; rooms.QuickMatch(); }
+            if (Gui.Button(new Rect(x, y, w, 40f), "QUICK MATCH", Gui.Accent2, 18, !busy) && !busy)
+            { onlineNote = ""; social.ClearMatchFriend(); rooms.QuickMatch(); }
+            // Privacy notice: what matchmaking shares.
+            Gui.Text(new Rect(x, y + 41f, w, 18f), "Finds the closest players. Shares your country (from device settings), never your location.",
+                     11, Gui.Muted);
             y += 64f;
 
             // LAN direct play: no Unity services needed (same network). Same transport, handshake and rollback as Relay.
             if (Gui.Button(new Rect(x, y, 150f, 40f), "LAN HOST", Gui.Gold, 15, !busy) && !busy)
-            { onlineNote = ""; rooms.HostLan(); }
+            { onlineNote = ""; social.ClearMatchFriend(); rooms.HostLan(); }
             var ipField = new Rect(x + 160f, y, w - 160f - 150f, 40f);
             var ipStyle = new GUIStyle(GUI.skin.textField) { fontSize = 18, alignment = TextAnchor.MiddleCenter };
             if (!busy) lanAddress = GUI.TextField(ipField, lanAddress ?? "", 40, ipStyle);
             else GUI.Label(ipField, lanAddress, ipStyle);
             if (Gui.Button(new Rect(ipField.xMax + 10f, y, 140f, 40f), "LAN JOIN", Gui.Gold, 15, !busy) && !busy)
-            { onlineNote = ""; rooms.JoinLan(lanAddress); }
+            { onlineNote = ""; social.ClearMatchFriend(); rooms.JoinLan(lanAddress); }
             y += 58f;
 
             if (!string.IsNullOrEmpty(rooms.RoomCode))
@@ -699,30 +844,28 @@ namespace ChibiClash
                 return;
             }
 
-            // Our name ("Kira#4821"): what friends type to add us.
-            if (social.NeedsName)
-            {
-                Gui.Text(new Rect(x, y, w, 24f), "Choose your player name (3-16 letters, numbers or _)", 14, Gui.Gold, TextAnchor.MiddleLeft);
-                y += 28f;
-                var nf = new Rect(x, y, w - 160f, 40f);
-                nameInput = GUI.TextField(nf, nameInput ?? "", Netcode.ChibiSocialRules.NameMax, field);
-                if (Gui.Button(new Rect(nf.xMax + 10f, y, 150f, 40f), "SET NAME", Gui.Accent, 15, !social.Working))
-                    social.SetName(nameInput);
-                y += 54f;
-            }
-            else
-            {
-                Gui.Text(new Rect(x, y, w, 30f), "YOU: " + social.MyName, 20, Gui.Gold, TextAnchor.MiddleLeft);
-                Gui.Text(new Rect(x, y + 28f, w, 20f), "Give this name to friends so they can add you.", 12, Gui.Muted, TextAnchor.MiddleLeft);
-                y += 56f;
-            }
+            // Our name ("Kira#4821"): what friends type to add / invite us. Changed with the name badge at the top.
+            Gui.Text(new Rect(x, y, w, 30f), "YOU: " + (social.NeedsName ? "(setting your name...)" : social.MyName), 20, Gui.Gold, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(x, y + 28f, w, 20f), "Friends type this name to add or invite you. Change it with the name button at the top.",
+                     12, Gui.Muted, TextAnchor.MiddleLeft);
+            y += 56f;
 
-            // Add a friend by name.
-            var af = new Rect(x, y, w - 160f, 40f);
+            // Type a player's name: ADD FRIEND, or INVITE straight into our room (a friend request goes first if needed).
+            var af = new Rect(x, y, w - 300f, 40f);
             friendInput = GUI.TextField(af, friendInput ?? "", 24, field);
-            if (Gui.Button(new Rect(af.xMax + 10f, y, 150f, 40f), "ADD FRIEND", Gui.Accent2, 15, !social.Working))
+            if (Gui.Button(new Rect(af.xMax + 10f, y, 140f, 40f), "ADD FRIEND", Gui.Accent2, 14, !social.Working))
             { social.AddFriend(friendInput); friendInput = ""; }
-            y += 52f;
+            if (Gui.Button(new Rect(af.xMax + 155f, y, 135f, 40f), "INVITE", Gui.Accent, 15, !social.Working && !busy) && !busy)
+            { onlineNote = ""; social.InviteByName(friendInput); friendInput = ""; }
+            y += 44f;
+            if (social.WaitingToInviteName.Length > 0)
+            {
+                Gui.Text(new Rect(x, y, w - 100f, 24f), "Waiting for " + social.WaitingToInviteName + " to accept, then the invite goes out.",
+                         12, Gui.Gold, TextAnchor.MiddleLeft, false);
+                if (Gui.Button(new Rect(x + w - 90f, y, 90f, 24f), "STOP", Gui.Muted, 11)) social.ForgetWaitingInvite();
+            }
+            else Gui.Text(new Rect(x, y, w, 24f), "Type a name like Kira#4821.", 12, Gui.Muted, TextAnchor.MiddleLeft);
+            y += 30f;
 
             // Incoming requests.
             foreach (var q in social.Requests)
@@ -771,7 +914,7 @@ namespace ChibiClash
         /// <summary>Invite pop-up on every menu screen: ACCEPT joins the friend's room, DECLINE tells them. Expires after 60 s.</summary>
         void InvitePopup()
         {
-            if (social == null || social.Invites.Count == 0) return;
+            if (social == null || social.Invites.Count == 0 || !PlayerIdentity.OnlineAllowed(Save.ageBand)) return;
             var inv = social.Invites[0];
             var r = new Rect(Gui.W * 0.5f - 260f, 120f, 520f, 150f);
             Gui.Glow(new Rect(r.x - 30f, r.y - 30f, r.width + 60f, r.height + 60f), new Color(1f, 0.8f, 0.2f, 0.35f));
@@ -798,12 +941,14 @@ namespace ChibiClash
             if (busy && Gui.Button(new Rect(Gui.W - 470f, by - 6f, 180f, 56f), "CANCEL", Gui.Red, 18))
             {
                 if (pendingOnline != null) { Destroy(pendingOnline.gameObject); pendingOnline = null; pendingOnlineInput = null; }
+                social.WithdrawInvite();   // the invited friend's pop-up disappears instead of pointing at a dead room
                 rooms.Cancel();
                 onlineNote = "";
             }
             if (Gui.Button(new Rect(Gui.W - 270f, by - 6f, 240f, 56f), "BACK", Gui.Muted, 20))
             {
                 if (pendingOnline != null) { Destroy(pendingOnline.gameObject); pendingOnline = null; pendingOnlineInput = null; }
+                social.WithdrawInvite();
                 rooms.Cancel();
                 view = View.Menu;
             }
@@ -833,7 +978,9 @@ namespace ChibiClash
             Gui.Rect(r, Gui.Panel, 16f);
             var pc = i == 0 ? Gui.Accent : Gui.Accent2;
             Gui.Frame(r, pc, 2f, 16f);
-            string who = cpu ? (pending.training ? "TRAINING DUMMY" : "CPU · " + Difficulty[Save.settings.cpuDifficulty]) : "PLAYER " + (i + 1);
+            string myName = Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
+            string who = cpu ? (pending.training ? "TRAINING DUMMY" : "CPU · " + Difficulty[Save.settings.cpuDifficulty])
+                       : i == 0 && myName.Length > 0 ? myName : "PLAYER " + (i + 1);   // P1 is the profile owner
             Gui.Text(new Rect(r.x + 18f, r.y + 8f, 300f, 30f), who, 20, pc, TextAnchor.MiddleLeft);
             if (cpu && Gui.Button(new Rect(r.xMax - 128f, r.y + 8f, 110f, 30f), "RANDOM", pc, 13))
             {

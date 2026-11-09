@@ -46,7 +46,19 @@ namespace ChibiClash.Netcode
         const float RetryQuickJoinSeconds = 6f;
         /// <summary>Give up waiting for the UDP link after Relay join (seconds).</summary>
         const float ConnectTimeoutSeconds = 15f;
-        const string KeyRelay = "relay", KeyProto = "proto";
+        const string KeyRelay = "relay", KeyProto = "proto", KeyCountry = "cc", KeySubregion = "sub", KeyContinent = "cont";
+        /// <summary>Public lobbies read per matchmaking search (oldest first); enough to find the closest waiting player.</summary>
+        const int SearchPageSize = 50;
+        /// <summary>Candidates tried per search before hosting / waiting again (Lobby allows only a few joins per player per few seconds).</summary>
+        const int JoinAttemptsPerSearch = 2;
+        /// <summary>Quick match: give up on an opponent's Relay link after this long and search again (it may have left).</summary>
+        const float QuickConnectTimeoutSeconds = 8f;
+        /// <summary>Quick match: how many times a vanished opponent sends us back into the search before we give up.</summary>
+        const int MaxRequeues = 5;
+        /// <summary>Among equally close waiting players, pick randomly from this many so searchers do not all pile on one lobby.</summary>
+        const int SpreadAcross = 3;
+        /// <summary>When the Lobby service says "too many requests" (peak traffic), wait this long (+ random jitter) before searching again.</summary>
+        const float RateLimitBackoffSeconds = 15f;
         /// <summary>Relay connection type: DTLS = encrypted UDP.</summary>
         const string RelayConnectionType = "dtls";
 
@@ -70,18 +82,43 @@ namespace ChibiClash.Netcode
         Lobby _lobby;
         float _heartbeatAt, _retryAt, _connectDeadline;
         int _flow;   // incremented by Cancel / a new flow so stale async continuations stop
+        string _myCountry = "";   // matchmaking: this device's country code ("" = unknown -> worldwide)
+        bool _searching;          // a search is in flight (never two at once: a second join would orphan a lobby)
+        int _requeues;            // quick match: opponents that vanished during connect
+
+        /// <summary>
+        /// Set by the game: false (e.g. a player under 13) makes every online flow refuse to start. Checked here as well
+        /// as in the menu so no screen or side path can bypass it.
+        /// </summary>
+        public Func<bool> OnlineAllowed = () => true;
+        /// <summary>Shown when <see cref="OnlineAllowed"/> refuses.</summary>
+        public const string NotAllowedMessage = "Online play is for players 13 and older.";
+
+        bool Gate()
+        {
+            if (OnlineAllowed == null || OnlineAllowed()) return true;
+            Fail(NotAllowedMessage);
+            return false;
+        }
+        float _searchStart;       // matchmaking: when QUICK MATCH was pressed (the search widens with waiting time)
+
+        /// <summary>
+        /// Matchmaking: where the search currently looks ("your country and South-eastern Asia", "Asia", "the whole world").
+        /// Empty outside QUICK MATCH.
+        /// </summary>
+        public string SearchArea => _quickMode && Busy ? AreaLabel(CurrentMaxTier()) : "";
 
         bool Busy => State != ChibiRoomState.Idle && State != ChibiRoomState.Failed && State != ChibiRoomState.Connected;
 
         // ================================================================== public flows
 
         /// <summary>Host a private room; on success <see cref="RoomCode"/> holds the Lobby code to share.</summary>
-        public void CreatePrivateRoom() { if (!Busy) _ = RunHost(isPrivate: true, ++_flow); }
+        public void CreatePrivateRoom() { if (!Busy && Gate()) _ = RunHost(isPrivate: true, ++_flow); }
 
         /// <summary>Join a friend's private room by its Lobby code (decision Q2).</summary>
         public void JoinPrivateRoom(string lobbyCode)
         {
-            if (Busy) return;
+            if (Busy || !Gate()) return;
             if (string.IsNullOrWhiteSpace(lobbyCode)) { Fail("Enter the room code your friend shows."); return; }
             lobbyCode = ChibiSocialRules.NormalizeCode(lobbyCode);
             if (lobbyCode == null) { Fail("That is not a valid room code (letters and numbers only)."); return; }
@@ -89,7 +126,7 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>Find any opponent on the same build (quick-join, else host and keep looking).</summary>
-        public void QuickMatch() { if (!Busy) _ = RunQuickMatch(++_flow); }
+        public void QuickMatch() { if (!Busy && Gate()) _ = RunQuickMatch(++_flow); }
 
         /// <summary>Default UDP port for LAN direct play.</summary>
         public const ushort LanPort = 7777;
@@ -101,7 +138,7 @@ namespace ChibiClash.Netcode
         /// </summary>
         public void HostLan(ushort port = LanPort)
         {
-            if (Busy) return;
+            if (Busy || !Gate()) return;
             ++_flow;
             _quickMode = false;
             _isHost = true;
@@ -116,7 +153,7 @@ namespace ChibiClash.Netcode
         /// <summary>Join a LAN host by IP address (see <see cref="HostLan"/>).</summary>
         public void JoinLan(string address, ushort port = LanPort)
         {
-            if (Busy) return;
+            if (Busy || !Gate()) return;
             ++_flow;
             address = (address ?? "").Trim();
             if (address.Length == 0) { Fail("Enter the host's IP address."); return; }
@@ -176,6 +213,7 @@ namespace ChibiClash.Netcode
         public static Task<string> EnsureSignedInAsync()
         {
             if (string.IsNullOrEmpty(Application.cloudProjectId)) return Task.FromResult(NotLinkedMessage);
+            if (Application.internetReachability == NetworkReachability.NotReachable) return Task.FromResult(NoInternetMessage);
             if (_signIn == null || _signIn.IsCompleted && _signIn.Result != null) _signIn = SignInOnce();
             return _signIn;
         }
@@ -199,6 +237,7 @@ namespace ChibiClash.Netcode
         async Task RunHost(bool isPrivate, int flow)
         {
             _quickMode = !isPrivate;
+            if (isPrivate) _myCountry = "";
             if (!await SignIn(flow)) return;
             State = ChibiRoomState.CreatingRoom;
             Status = isPrivate ? "Creating a private room..." : "No open match found, hosting one...";
@@ -219,14 +258,23 @@ namespace ChibiClash.Netcode
                         [KeyProto] = new DataObject(DataObject.VisibilityOptions.Public, ProtocolTag, DataObject.IndexOptions.S1),
                     },
                 };
+                // Matchmaking lobbies show only a 2-letter country code (from the device region setting) so the closest
+                // players find each other. Private rooms share nothing.
+                if (!isPrivate && _myCountry.Length > 0)
+                {
+                    // Indexed so searchers ask the SERVER for exactly their radius (country / sub-region / continent).
+                    options.Data[KeyCountry] = new DataObject(DataObject.VisibilityOptions.Public, _myCountry, DataObject.IndexOptions.S2);
+                    options.Data[KeySubregion] = new DataObject(DataObject.VisibilityOptions.Public, ChibiRegions.Subregion(_myCountry), DataObject.IndexOptions.S3);
+                    options.Data[KeyContinent] = new DataObject(DataObject.VisibilityOptions.Public, ChibiRegions.Continent(_myCountry), DataObject.IndexOptions.S4);
+                }
                 var lobby = await LobbyService.Instance.CreateLobbyAsync("Chibi Clash " + ProtocolTag, 2, options);
                 if (flow != _flow) { _ = LeaveLobby(lobby, true); return; }
                 _lobby = lobby;
                 RoomCode = isPrivate ? lobby.LobbyCode : "";
                 State = ChibiRoomState.WaitingForOpponent;
-                Status = isPrivate ? "Room ready. Share the code with your friend." : "Searching for an opponent...";
+                Status = isPrivate ? "Room ready. Share the code with your friend." : "Searching for players in " + SearchArea + "...";
                 _heartbeatAt = Time.unscaledTime + HeartbeatSeconds;
-                _retryAt = Time.unscaledTime + RetryQuickJoinSeconds;
+                _retryAt = Mathf.Max(_retryAt, Time.unscaledTime + RetryQuickJoinSeconds);   // keep a rate-limit back-off
             }
             catch (Exception e)
             {
@@ -262,59 +310,188 @@ namespace ChibiClash.Netcode
             }
         }
 
-        async Task RunQuickMatch(int flow)
+        async Task RunQuickMatch(int flow, bool fresh = true)
         {
+            _quickMode = true;
+            if (fresh)
+            {
+                _myCountry = ChibiRegions.DeviceCountry();
+                _searchStart = Time.unscaledTime;
+                _requeues = 0;
+                _retryAt = 0f;
+            }
             if (!await SignIn(flow)) return;
             State = ChibiRoomState.Searching;
-            Status = "Searching for an opponent...";
-            var lobby = await TryQuickJoin(flow);
-            if (flow != _flow) return;
-            if (lobby != null) { await ConnectAsJoiner(lobby, flow); return; }
-            await RunHost(isPrivate: false, flow);
+            Status = "Searching for players in " + SearchArea + "...";
+            var found = await Search(flow, null);
+            if (flow != _flow) { if (found.Lobby != null) _ = LeaveLobby(found.Lobby, false); return; }
+            if (found.Lobby != null) { await ConnectAsJoiner(found.Lobby, flow); return; }
+            await RunHost(isPrivate: false, flow);   // nobody close enough waits (or we are throttled): let them find us
         }
 
-        /// <summary>Quick-join a public lobby of this build with a free slot, or null when none exists.</summary>
-        async Task<Lobby> TryQuickJoin(int flow)
+        int CurrentMaxTier() => ChibiRegions.MaxTierAfter(Time.unscaledTime - _searchStart, _myCountry.Length > 0);
+
+        string AreaLabel(int maxTier)
         {
+            if (_myCountry.Length == 0 || maxTier >= ChibiRegions.TierWorld) return "the whole world";
+            if (maxTier <= ChibiRegions.TierSubregion) return "your country and " + ChibiRegions.SubregionName(_myCountry);
+            return ChibiRegions.Continent(_myCountry);
+        }
+
+        struct SearchResult
+        {
+            public Lobby Lobby;
+            public bool Throttled;
+        }
+
+        /// <summary>
+        /// One regional search (never two at once). <paramref name="mine"/> is our own waiting lobby when we host: two
+        /// waiting hosts would otherwise join each other at the same moment, so only the host with the higher lobby id
+        /// moves; the other stays and is joined.
+        /// </summary>
+        async Task<SearchResult> Search(int flow, Lobby mine)
+        {
+            if (_searching) return default;
+            _searching = true;
+            try { return await SearchOnce(flow, mine); }
+            finally { _searching = false; }
+        }
+
+        /// <summary>
+        /// ONE Lobby query per search, for exactly the current radius, filtered by the SERVER through indexes (so it
+        /// scales with the number of waiting players): sub-region (S3) at first, then continent (S4), then the whole
+        /// world. Results come oldest-waiting first; ChibiRegions ranks them (same country first) and we try up to
+        /// <see cref="JoinAttemptsPerSearch"/>, picking randomly among the equally close front-runners to spread load.
+        /// </summary>
+        async Task<SearchResult> SearchOnce(int flow, Lobby mine)
+        {
+            int maxTier = CurrentMaxTier();
+            List<Lobby> found;
             try
             {
-                var options = new QuickJoinLobbyOptions
+                var filters = new List<QueryFilter>
                 {
-                    Filter = new List<QueryFilter>
-                    {
-                        new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT),
-                        new QueryFilter(QueryFilter.FieldOptions.S1, ProtocolTag, QueryFilter.OpOptions.EQ),
-                    },
+                    new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT),
+                    new QueryFilter(QueryFilter.FieldOptions.S1, ProtocolTag, QueryFilter.OpOptions.EQ),
                 };
-                return await LobbyService.Instance.QuickJoinLobbyAsync(options);
+                if (_myCountry.Length > 0 && maxTier <= ChibiRegions.TierSubregion)
+                    filters.Add(new QueryFilter(QueryFilter.FieldOptions.S3, ChibiRegions.Subregion(_myCountry), QueryFilter.OpOptions.EQ));
+                else if (_myCountry.Length > 0 && maxTier <= ChibiRegions.TierContinent)
+                    filters.Add(new QueryFilter(QueryFilter.FieldOptions.S4, ChibiRegions.Continent(_myCountry), QueryFilter.OpOptions.EQ));
+                var query = new QueryLobbiesOptions
+                {
+                    Count = SearchPageSize,
+                    Filters = filters,
+                    Order = new List<QueryOrder> { new QueryOrder(true, QueryOrder.FieldOptions.Created) },   // longest wait first
+                };
+                found = (await LobbyService.Instance.QueryLobbiesAsync(query))?.Results;
             }
-            catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.NoOpenLobbies)
+            catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.RateLimited)
             {
-                return null;
+                BackOff();
+                return new SearchResult { Throttled = true };
             }
             catch (Exception e)
             {
-                if (flow == _flow) Debug.LogWarning("ChibiClash quick join: " + Explain(e));
-                return null;
+                if (flow == _flow) Debug.LogWarning("ChibiClash matchmaking search: " + Explain(e));
+                return default;
             }
+            if (flow != _flow || found == null || found.Count == 0) return default;
+
+            var lobbies = new List<Lobby>(found.Count);
+            var countries = new List<string>(found.Count);
+            foreach (var l in found)
+            {
+                if (l == null || string.IsNullOrEmpty(l.Id)) continue;
+                if (mine != null && string.CompareOrdinal(l.Id, mine.Id) >= 0) continue;   // ourselves, or the host who moves to us
+                lobbies.Add(l);
+                // Untrusted: only the country code is used, and ChibiRegions treats anything unknown as "far away".
+                countries.Add(l.Data != null && l.Data.TryGetValue(KeyCountry, out var cc) ? cc?.Value : "");
+            }
+
+            var order = ChibiRegions.RankCandidates(_myCountry, countries, maxTier);
+            if (order.Count > 1)
+            {
+                int best = ChibiRegions.Tier(_myCountry, countries[order[0]]), same = 1;
+                while (same < order.Count && same < SpreadAcross && ChibiRegions.Tier(_myCountry, countries[order[same]]) == best) same++;
+                int pick = UnityEngine.Random.Range(0, same);
+                (order[0], order[pick]) = (order[pick], order[0]);
+            }
+            for (int k = 0; k < order.Count && k < JoinAttemptsPerSearch; k++)
+            {
+                try
+                {
+                    var joined = await LobbyService.Instance.JoinLobbyByIdAsync(lobbies[order[k]].Id);
+                    if (flow != _flow) { _ = LeaveLobby(joined, false); return default; }
+                    return new SearchResult { Lobby = joined };
+                }
+                catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyFull || e.Reason == LobbyExceptionReason.LobbyNotFound)
+                {
+                    // Someone else got there first: try the next closest.
+                }
+                catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.RateLimited)
+                {
+                    BackOff();
+                    return new SearchResult { Throttled = true };
+                }
+                catch (Exception e)
+                {
+                    if (flow == _flow) Debug.LogWarning("ChibiClash matchmaking join: " + Explain(e));
+                    return default;
+                }
+                if (flow != _flow) return default;
+            }
+            return default;
+        }
+
+        /// <summary>Service is throttling us: stop searching for a while (jittered so many clients do not retry in lock-step).</summary>
+        void BackOff()
+        {
+            _retryAt = Mathf.Max(_retryAt, Time.unscaledTime + RateLimitBackoffSeconds + UnityEngine.Random.Range(0f, 5f));
         }
 
         async Task ConnectAsJoiner(Lobby lobby, int flow)
         {
-            if (!lobby.Data.TryGetValue(KeyRelay, out var relay) || string.IsNullOrEmpty(relay.Value))
+            DataObject relay = null;
+            if (lobby?.Data == null || !lobby.Data.TryGetValue(KeyRelay, out relay) || string.IsNullOrEmpty(relay?.Value))
             {
                 _ = LeaveLobby(lobby, false);
-                Fail("The room has no connection info (host left?).");
+                RetryOrFail("The room has no connection info (host left?).");
                 return;
             }
             State = ChibiRoomState.Connecting;
             Status = "Connecting to your opponent...";
-            JoinAllocation join = await RelayService.Instance.JoinAllocationAsync(relay.Value);
+            JoinAllocation join;
+            try { join = await RelayService.Instance.JoinAllocationAsync(relay.Value); }
+            catch (Exception e)
+            {
+                if (flow != _flow) return;
+                _ = LeaveLobby(lobby, false);
+                RetryOrFail("Could not reach your opponent: " + Explain(e));
+                return;
+            }
             if (flow != _flow) { _ = LeaveLobby(lobby, false); return; }
             _lobby = lobby;
             _isHost = false;
             _transport = ChibiUtpTransport.JoinRelay(join.ToRelayServerData(RelayConnectionType));
-            _connectDeadline = Time.unscaledTime + ConnectTimeoutSeconds;
+            _connectDeadline = Time.unscaledTime + (_quickMode ? QuickConnectTimeoutSeconds : ConnectTimeoutSeconds);
+        }
+
+        /// <summary>
+        /// Quick match: the opponent vanished while connecting (left, crashed, or switched lobbies) -> back into the search
+        /// with the radius already reached. Rooms by code and LAN fail with the reason instead.
+        /// </summary>
+        void RetryOrFail(string message)
+        {
+            if (!_quickMode || _requeues >= MaxRequeues) { Fail(message); return; }
+            _requeues++;
+            _transport?.Dispose();
+            _transport = null;
+            _ = LeaveLobby(_lobby, _isHost);
+            _lobby = null;
+            State = ChibiRoomState.Searching;
+            Status = "That player left. Searching again...";
+            _ = RunQuickMatch(++_flow, fresh: false);
         }
 
         // ================================================================== per frame: pump the link, heartbeat, hand off
@@ -338,7 +515,7 @@ namespace ChibiClash.Netcode
                 OnConnected?.Invoke(t, host);
                 return;
             }
-            if (_transport.LinkState == ChibiLinkState.Lost) { Fail("The connection to the Relay server failed."); return; }
+            if (_transport.LinkState == ChibiLinkState.Lost) { RetryOrFail("The connection to the Relay server failed."); return; }
 
             if (_isHost && _lobby != null)
             {
@@ -347,25 +524,40 @@ namespace ChibiClash.Netcode
                     _heartbeatAt = Time.unscaledTime + HeartbeatSeconds;
                     _ = Heartbeat(_lobby.Id);
                 }
-                if (_quickMode && Time.unscaledTime >= _retryAt)
+                if (_quickMode) Status = "Searching for players in " + SearchArea + "...";
+                if (_quickMode && !_searching && Time.unscaledTime >= _retryAt)
                 {
                     _retryAt = Time.unscaledTime + RetryQuickJoinSeconds + UnityEngine.Random.Range(0f, 2f);
                     _ = SwitchToJoinerIfSomeoneIsWaiting(_flow);
                 }
             }
-            else if (!_isHost && Time.unscaledTime > _connectDeadline) Fail("Could not reach your opponent (timed out).");
+            else if (!_isHost && Time.unscaledTime > _connectDeadline) RetryOrFail("Could not reach your opponent (timed out).");
         }
 
-        /// <summary>Two players who both hosted a public lobby would wait forever; the one who finds the other's lobby joins it.</summary>
+        /// <summary>
+        /// Two players who both hosted a public lobby would wait forever; the one who finds the other's lobby joins it.
+        /// Never abandons a player who already joined OUR lobby (their Relay link takes a few seconds to come up).
+        /// </summary>
         async Task SwitchToJoinerIfSomeoneIsWaiting(int flow)
         {
             var mine = _lobby;
-            var other = await TryQuickJoin(flow);
-            if (flow != _flow || other == null) return;
-            if (mine != null && other.Id == mine.Id) return;
-            if (_transport != null && _transport.LinkState == ChibiLinkState.Connected)
+            var other = (await Search(flow, mine)).Lobby;
+            if (other == null) return;
+            if (flow != _flow || mine == null || other.Id == mine.Id) { _ = LeaveLobby(other, false); return; }
+
+            bool someoneJoinedUs = _transport != null && _transport.LinkState == ChibiLinkState.Connected;
+            if (!someoneJoinedUs)
             {
-                _ = LeaveLobby(other, false);   // someone connected to us meanwhile: stay host
+                try
+                {
+                    var fresh = await LobbyService.Instance.GetLobbyAsync(mine.Id);
+                    someoneJoinedUs = fresh?.Players != null && fresh.Players.Count > 1;
+                }
+                catch (Exception) { someoneJoinedUs = true; }   // cannot tell: stay host (the safe side)
+            }
+            if (flow != _flow || someoneJoinedUs || (_transport != null && _transport.LinkState == ChibiLinkState.Connected))
+            {
+                _ = LeaveLobby(other, false);
                 return;
             }
             _ = LeaveLobby(mine, true);
@@ -403,6 +595,13 @@ namespace ChibiClash.Netcode
             State = ChibiRoomState.Failed;
             Status = message;
         }
+
+        /// <summary>
+        /// Shown when the device has no internet. Rooms, invites and quick match work from ANY place over the internet
+        /// (Wi-Fi or mobile data, different cities or the same room): Unity Relay connects the two players.
+        /// </summary>
+        public const string NoInternetMessage =
+            "No internet connection. Connect to Wi-Fi or mobile data to play friends anywhere. (LAN play works on the same network.)";
 
         /// <summary>Shown when the build has no Unity Cloud project id (Relay / Lobby cannot work without one).</summary>
         public const string NotLinkedMessage =

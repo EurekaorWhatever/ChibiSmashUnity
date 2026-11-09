@@ -23,6 +23,9 @@ Drafted by studio agents and reviewed in session. **The user decisions below ove
 | D2 (2026-11-07) | Dash: copy the original at 60 Hz (dash-conversion.md option A): 8 DashTicks, ~1983 milli on the ground. |
 | D1 (2026-11-06) | Movement: add the 50 Hz arc-correction term (movement-conversion.md decision D1) so 60 Hz jump/fall arcs land on the original's 50 Hz Box2D arcs. Velocities move to exact 1/900 milli/tick units. |
 
+**Developers start here:** [DEVELOPER-GUIDE.md](DEVELOPER-GUIDE.md) shows where to build freely (UI, view, menus,
+content), the determinism rules for gameplay, and the tripwire tests that protect the online core.
+
 ## Files
 | File | Author agent | Contents |
 |---|---|---|

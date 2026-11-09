@@ -174,24 +174,75 @@ namespace ChibiClash.Netcode
         public FighterClass Class;
         public int Passive;
         public byte Reason;
+        /// <summary>
+        /// Hello / Start, write side: the sender's chosen player name (cosmetic, optional, NOT part of the match hash).
+        /// Only <see cref="ChibiControlCodec.NameAlphabet"/> characters are sent; anything else is dropped.
+        /// </summary>
+        public string Name = "";
+        /// <summary>Hello / Start, read side: received name characters (reused buffer, no allocation per message).</summary>
+        public readonly char[] NameChars = new char[ChibiControlCodec.NameMaxChars];
+        /// <summary>Number of valid characters in <see cref="NameChars"/> (0 = the peer sent no name, e.g. an older build).</summary>
+        public int NameLength;
+        /// <summary>The received name as a string ("" when none). Allocates: call once, not per tick.</summary>
+        public string ReceivedName() => NameLength == 0 ? "" : new string(NameChars, 0, NameLength);
     }
 
     /// <summary>
     /// Wire format of control datagrams (bits, LSB first, via <see cref="BitBuffer"/>):
     ///   8 magic 0xC9, 4 type, then
-    ///   Hello : 8 protocol, 16 rules, 4 class, 1 passive
+    ///   Hello : 8 protocol, 16 rules, 4 class, 1 passive, [name]
     ///   Start : 8 protocol, 16 rules, 32 seed, 4 class0, 1 passive0, 4 class1, 1 passive1, 4 stage,
-    ///           4 inputDelay, 4 maxPrediction, 16 disconnectTicks, 32 matchHash
+    ///           4 inputDelay, 4 maxPrediction, 16 disconnectTicks, 32 matchHash, [name]
     ///   Ready : 32 matchHash
     ///   Reject/Leave : 8 reason
-    /// Largest (Start) = 8+4+8+16+32+4+1+4+1+4+4+4+16+32 = 138 bits = 18 bytes.
+    ///   [name] (optional trailer, cosmetic): 5 length (0..24), then 6 bits per character, an index into
+    ///          NameAlphabet. A datagram that ends before the trailer means "no name" (older builds), so adding
+    ///          it did not change the protocol version. A length above 24 is malformed.
+    /// Largest (Start + 24-char name) = 138 + 5 + 144 = 287 bits = 36 bytes.
     /// </summary>
     public static class ChibiControlCodec
     {
         public const byte Magic = 0xC9;
         /// <summary>Buffer size for control datagrams.</summary>
-        public const int MaxBytes = 32;
-        const int ClassBits = 4, StageBits = 4;
+        public const int MaxBytes = 48;
+        const int ClassBits = 4, StageBits = 4, NameLengthBits = 5, NameCharBits = 6;
+        /// <summary>Longest name on the wire (equals ChibiSocialRules.DisplayMax).</summary>
+        public const int NameMaxChars = 24;
+        /// <summary>
+        /// The only characters a name can carry (exactly 64 = 6 bits). No angle brackets, '=', spaces or control
+        /// characters, so a hostile peer cannot inject rich-text tags into the HUD through its name.
+        /// </summary>
+        public const string NameAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_#";
+
+        static void WriteName(BitBuffer b, string name)
+        {
+            name = name ?? "";
+            int n = 0;
+            foreach (char c in name) if (NameAlphabet.IndexOf(c) >= 0 && ++n == NameMaxChars) break;
+            b.Write((uint)n, NameLengthBits);
+            int written = 0;
+            foreach (char c in name)
+            {
+                if (written == n) break;
+                int k = NameAlphabet.IndexOf(c);
+                if (k < 0) continue;
+                b.Write((uint)k, NameCharBits);
+                written++;
+            }
+        }
+
+        /// <summary>Optional trailer: absent (too few bits left) = no name. Returns false only when malformed.</summary>
+        static bool ReadName(BitBuffer b, ChibiControlMessage m)
+        {
+            m.NameLength = 0;
+            if (b.BitsLeft < NameLengthBits) return true;
+            int n = (int)b.Read(NameLengthBits);
+            if (n > NameMaxChars) return false;
+            for (int i = 0; i < n; i++) m.NameChars[i] = NameAlphabet[(int)b.Read(NameCharBits)];
+            if (b.Overrun) return false;
+            m.NameLength = n;
+            return true;
+        }
 
         /// <summary>Serialise <paramref name="m"/>. Throws on overrun (never sends a truncated message).</summary>
         public static void Write(BitBuffer b, ChibiControlMessage m)
@@ -205,6 +256,7 @@ namespace ChibiClash.Netcode
                     b.Write((uint)m.Rules, 16);
                     b.Write((uint)m.Class, ClassBits);
                     b.Write((uint)m.Passive, 1);
+                    WriteName(b, m.Name);
                     break;
                 case ChibiControlType.Start:
                     b.Write((uint)m.Protocol, 8);
@@ -219,6 +271,7 @@ namespace ChibiClash.Netcode
                     b.Write((uint)m.Settings.MaxPrediction, 4);
                     b.Write((uint)m.Settings.DisconnectTicks, 16);
                     b.Write(m.MatchHash, 32);
+                    WriteName(b, m.Name);
                     break;
                 case ChibiControlType.Ready:
                     b.Write(m.MatchHash, 32);
@@ -238,6 +291,7 @@ namespace ChibiClash.Netcode
         {
             if (b.Read(8) != Magic) return false;
             m.Type = (ChibiControlType)b.Read(4);
+            m.NameLength = 0;
             switch (m.Type)
             {
                 case ChibiControlType.Hello:
@@ -245,6 +299,7 @@ namespace ChibiClash.Netcode
                     m.Rules = (int)b.Read(16);
                     m.Class = (FighterClass)b.Read(ClassBits);
                     m.Passive = (int)b.Read(1);
+                    if (b.Overrun || !ReadName(b, m)) return false;
                     break;
                 case ChibiControlType.Start:
                     m.Protocol = (int)b.Read(8);
@@ -259,6 +314,7 @@ namespace ChibiClash.Netcode
                     m.Settings.MaxPrediction = (int)b.Read(4);
                     m.Settings.DisconnectTicks = (int)b.Read(16);
                     m.MatchHash = b.Read(32);
+                    if (b.Overrun || !ReadName(b, m)) return false;
                     break;
                 case ChibiControlType.Ready:
                     m.MatchHash = b.Read(32);
@@ -370,23 +426,32 @@ namespace ChibiClash.Netcode
         public ChibiRejectReason RejectReason { get; private set; }
         /// <summary>True when the PEER refused us (false when we refused them).</summary>
         public bool RejectedByPeer { get; private set; }
+        /// <summary>Our player name as sent to the peer (cosmetic; "" = none).</summary>
+        public string LocalName { get; }
+        /// <summary>
+        /// The peer's player name from its Hello / Start ("" when it sent none). Untrusted but already limited to
+        /// <see cref="ChibiControlCodec.NameAlphabet"/>; it never affects the simulation or the match hash.
+        /// </summary>
+        public string PeerName { get; private set; } = "";
 
         /// <summary>Host (sim player 0): decides seed, stage and settings.</summary>
         /// <example><code>var hs = ChibiHandshake.ForHost(mux.Control, FighterClass.Melee, 0, stage: 1, seed, ChibiRollbackSettings.Default);</code></example>
         public static ChibiHandshake ForHost(IChibiTransport control, FighterClass myClass, int myPassive, int stage, uint seed,
-                                             ChibiRollbackSettings settings, int timeoutTicks = DefaultTimeoutTicks)
-            => new ChibiHandshake(true, control, myClass, myPassive, stage, seed, settings, timeoutTicks);
+                                             ChibiRollbackSettings settings, int timeoutTicks = DefaultTimeoutTicks,
+                                             string localName = "")
+            => new ChibiHandshake(true, control, myClass, myPassive, stage, seed, settings, timeoutTicks, localName);
 
         /// <summary>Joiner (sim player 1): sends its fighter, accepts the host's config if it hashes the same locally.</summary>
         /// <example><code>var hs = ChibiHandshake.ForJoiner(mux.Control, FighterClass.Magic, 1);</code></example>
         public static ChibiHandshake ForJoiner(IChibiTransport control, FighterClass myClass, int myPassive,
-                                               int timeoutTicks = DefaultTimeoutTicks)
-            => new ChibiHandshake(false, control, myClass, myPassive, 0, 0, default, timeoutTicks);
+                                               int timeoutTicks = DefaultTimeoutTicks, string localName = "")
+            => new ChibiHandshake(false, control, myClass, myPassive, 0, 0, default, timeoutTicks, localName);
 
         ChibiHandshake(bool isHost, IChibiTransport control, FighterClass myClass, int myPassive, int stage, uint seed,
-                       ChibiRollbackSettings settings, int timeoutTicks)
+                       ChibiRollbackSettings settings, int timeoutTicks, string localName)
         {
             _isHost = isHost;
+            LocalName = localName ?? "";
             _control = control ?? throw new ArgumentNullException(nameof(control));
             _timeoutTicks = timeoutTicks;
             if (!ChibiControlCodec.ValidClass(myClass)) throw new ArgumentOutOfRangeException(nameof(myClass));
@@ -454,6 +519,7 @@ namespace ChibiClash.Netcode
                     };
                     _hash = ChibiControlCodec.MatchHash(_cfg, _settings);
                     _haveJoiner = true;
+                    PeerName = m.ReceivedName();
                     SendStart();
                     break;
                 case ChibiControlType.Ready:
@@ -492,6 +558,7 @@ namespace ChibiClash.Netcode
                     _cfg = cfg;
                     _settings = m.Settings;
                     _hash = m.MatchHash;
+                    PeerName = m.ReceivedName();
                     State = ChibiHandshakeState.Agreed;
                     SendReady();
                     break;
@@ -537,6 +604,7 @@ namespace ChibiClash.Netcode
             _out.Rules = ChibiMatchConfig.RulesVersion;
             _out.Class = _myClass;
             _out.Passive = _myPassive;
+            _out.Name = LocalName;
             Send();
         }
 
@@ -548,6 +616,7 @@ namespace ChibiClash.Netcode
             _out.Config = _cfg;
             _out.Settings = _settings;
             _out.MatchHash = _hash;
+            _out.Name = LocalName;
             Send();
         }
 

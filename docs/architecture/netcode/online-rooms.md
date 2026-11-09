@@ -29,13 +29,34 @@ datagram at 60 Hz when held inputs repeat).
 | Mode | Flow |
 |---|---|
 | Private room (Q2: Lobby code) | Host: Relay `CreateAllocationAsync(1)` + `GetJoinCodeAsync` → private 2-player Lobby with the Relay code (member-only data) → shows the **Lobby** code. Friend: `JoinLobbyByCodeAsync(code)` → reads the Relay code → `JoinAllocationAsync` → UDP link. |
-| Matchmaking | `QuickJoinLobbyAsync` filtered on free slot + protocol tag `p<protocol>r<rules>` (S1 index), else host a public lobby and retry quick-join every 6-8 s, so two searching players always meet. |
+| Matchmaking (regional) | Closest waiting player first: see "Regional matchmaking" below. Else host a public lobby and search again every 6-8 s, so two searching players always meet. |
 | LAN (no services) | `HostLan()` listens on UDP 7777 and shows this PC's IP; `JoinLan(ip)` connects. Same transport, handshake and rollback. |
 | vs AI | offline, `ChibiCpuInputSource` (step 17). |
 
 Once the link is up the host deletes the lobby (no third player can join), then `ChibiOnlineMatch` runs:
 handshake (host decides seed/stage; both compare a hash of RulesVersion + every constant table; mismatched builds are
 refused with a clear message), then rollback play, then a result decided only from the CONFIRMED state.
+
+Players can be anywhere with internet (Wi-Fi or mobile data, other cities or the same room): Relay connects them,
+and the Relay SDK picks the server region with the best ping (QoS) automatically. No internet → the menu says so
+(`NoInternetMessage`); LAN still works on one network.
+
+### Regional matchmaking (`ChibiRegions`, tests: `ChibiRegionsTests`)
+
+- **Location** = the device's region setting (`RegionInfo.CurrentRegion`, e.g. `TH`). No GPS, no IP lookup, no permission.
+  Only the 2-letter code is published, as public lobby data indexed on S2, and only for matchmaking lobbies (private
+  rooms publish nothing).
+- **Closeness tiers** for every country in the world (UN M49): 0 same country → 1 same sub-region (TH-VN-MY-SG) →
+  2 neighbouring sub-region (TH-CN/JP/IN/AU) → 3 same continent → 4 world. Unknown or forged codes count as tier 4.
+- **Widening search**: tier ≤ 1 at once, +1 tier every 8 s, worldwide after 24 s. A device with no region searches worldwide.
+- **Search**: pass 1 asks the Lobby service for waiting lobbies of OUR country (S2 index, server-side filter, scales to
+  any number of waiting players); pass 2 lists the 50 oldest waiting lobbies of this build. Candidates are ranked by
+  tier, then by waiting time (oldest first, fair), and up to 3 are tried (`LobbyFull` / `LobbyNotFound` → next).
+- **Two waiting hosts**: only the host whose lobby id is higher moves to the other one, so they never swap at once.
+- **Load**: one search per 6-8 s per waiting player (random jitter); `RateLimited` → 15-20 s jittered back-off.
+  Matches are P2P through Relay, so there is no game server to scale; the per-match cost is two clients + one Relay hop.
+  Beyond very large populations, the next step is Unity Matchmaker (server-side tickets, QoS region + skill rules); the
+  tiers above map directly onto its rules.
 
 ## 3. Results and disconnects
 
