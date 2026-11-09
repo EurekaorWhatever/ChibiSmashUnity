@@ -116,12 +116,13 @@ namespace ChibiClash.Netcode
     }
 
     /// <summary>
-    /// One UDP datagram. Every datagram carries the newest local inputs again (up to 8 frames, delta coded),
-    /// so a lost packet is repaired by the very next one with no retransmit timer.
+    /// One UDP datagram. Every datagram carries the oldest unacknowledged local inputs again (up to 16 frames,
+    /// delta coded), so a lost packet is repaired by the very next one with no retransmit timer.
     /// </summary>
     public sealed class ChibiNetMessage
     {
-        public const int MaxInputs = 8;
+        /// <summary>Inputs per datagram (4-bit count on the wire since protocol 2; was 8 / 3 bits).</summary>
+        public const int MaxInputs = 16;
 
         public int LastFrame;      // frame number of Inputs[Count-1]
         public int AckFrame;       // newest remote frame the sender holds contiguously (-1 = none)
@@ -137,23 +138,32 @@ namespace ChibiClash.Netcode
     /// Wire format (bits, LSB first):
     ///   8  magic 0xC7                        24 lastFrame
     ///   24 ackFrame + 1                      4  advantage + 8
-    ///   3  count - 1
+    ///   4  count - 1
     ///   n  inputs: first = 16 raw bits; each next = 1 bit "same as previous" (1) or 0 + 16 raw bits
     ///   1  hasChecksum; if set: 24 frame, 32 checksum
-    /// Typical size when held inputs repeat: 63 + 16 + 7 + 1 = 87 bits = 11 bytes.
-    /// Worst case (8 inputs, no repeats, checksum): header 8+24+24+4+3 = 63, first input 16,
-    /// 7 x (1+16) = 119, checksum 1+24+32 = 57 -> 255 bits = 32 bytes. See <see cref="MaxPacketBytes"/>.
+    /// Typical size when held inputs repeat: 64 + 16 + 7 + 1 = 88 bits = 11 bytes.
+    /// Worst case (16 inputs, no repeats, checksum): header 8+24+24+4+4 = 64, first input 16,
+    /// 15 x (1+16) = 255, checksum 1+24+32 = 57 -> 392 bits = 49 bytes. See <see cref="MaxPacketBytes"/>.
     /// Frame counters are 24 bit (about 77 hours at 60 Hz).
+    /// The layout is versioned by <see cref="ProtocolVersion"/>, which the match handshake compares before any
+    /// 0xC7 datagram is exchanged (this datagram carries no version byte of its own, to stay small).
     /// </summary>
     public static class ChibiPacketCodec
     {
         public const byte Magic = 0xC7;
         /// <summary>
-        /// Capacity of every send/receive BitBuffer. Worst case today is 255 bits = 32 bytes; 48 leaves 16 bytes
-        /// of headroom for a later field without another wire break, and stays far below Relay's 1400-byte limit.
+        /// Wire protocol version, checked in the handshake and in the Lobby filter. Bump on ANY change to this layout,
+        /// the control messages or the rollback rules. 1: 3-bit count / 8 inputs. 2: 4-bit count / 16 inputs, oldest-
+        /// unacked resend window, control channel 0xC9.
+        /// </summary>
+        public const int ProtocolVersion = 2;
+        /// <summary>
+        /// Capacity of every send/receive BitBuffer. Worst case is 392 bits = 49 bytes; 64 leaves headroom for a later
+        /// field without another wire break, and stays far below Relay's 1400-byte limit.
         /// Received datagrams larger than this are rejected (BitBuffer.LoadFrom flags Overrun, TryRead returns false).
         /// </summary>
-        public const int MaxPacketBytes = 48;
+        public const int MaxPacketBytes = 64;
+        const int CountBits = 4;
         const int FrameBits = 24;
         const uint FrameMask = (1u << FrameBits) - 1u;
 
@@ -166,7 +176,9 @@ namespace ChibiClash.Netcode
             b.Write((uint)(m.AckFrame + 1) & FrameMask, FrameBits);
             int adv = m.Advantage < -8 ? -8 : (m.Advantage > 7 ? 7 : m.Advantage);
             b.Write((uint)(adv + 8), 4);
-            b.Write((uint)(m.Count - 1), 3);
+            if (m.Count < 1 || m.Count > ChibiNetMessage.MaxInputs)
+                throw new InvalidOperationException("ChibiPacketCodec.Write: Count " + m.Count + " outside 1.." + ChibiNetMessage.MaxInputs);
+            b.Write((uint)(m.Count - 1), CountBits);
 
             ushort prev = 0;
             for (int i = 0; i < m.Count; i++)
@@ -198,7 +210,7 @@ namespace ChibiClash.Netcode
             m.LastFrame = (int)b.Read(FrameBits);
             m.AckFrame = (int)b.Read(FrameBits) - 1;
             m.Advantage = (int)b.Read(4) - 8;
-            m.Count = (int)b.Read(3) + 1;
+            m.Count = (int)b.Read(CountBits) + 1;
 
             ushort prev = 0;
             for (int i = 0; i < m.Count; i++)

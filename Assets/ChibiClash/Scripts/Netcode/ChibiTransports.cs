@@ -62,6 +62,7 @@ namespace ChibiClash.Netcode
 
             public void Send(byte[] data, int length)
             {
+                if (_link._now < _link._blackoutEnd) return;          // burst loss: the whole link is down
                 if (_link._rng.Range(100) < _link.LossPercent) return;
                 var copy = new byte[length];
                 Buffer.BlockCopy(data, 0, copy, 0, length);
@@ -86,6 +87,7 @@ namespace ChibiClash.Netcode
         public int LatencyTicks, JitterTicks, LossPercent;
         public readonly IChibiTransport A, B;
         int _now;
+        int _blackoutEnd;
         ChibiRng _rng = new ChibiRng(12345);
 
         public ChibiLoopbackLink(int latencyTicks, int jitterTicks, int lossPercent)
@@ -98,6 +100,13 @@ namespace ChibiClash.Netcode
         }
 
         public void Advance() => _now++;
+
+        /// <summary>
+        /// Burst loss: drop every datagram sent in either direction during the next <paramref name="ticks"/> ticks
+        /// (a Wi-Fi dropout). Independent per-packet loss (LossPercent) almost never produces such a run.
+        /// </summary>
+        /// <example><code>link.DropAllFor(24);   // 400 ms outage</code></example>
+        public void DropAllFor(int ticks) => _blackoutEnd = _now + ticks;
     }
 
     /// <summary>Feeds inputs from a function of the frame number. Used by tests, bots and replays.</summary>
