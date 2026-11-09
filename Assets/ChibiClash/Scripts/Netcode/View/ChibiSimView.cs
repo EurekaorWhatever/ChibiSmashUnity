@@ -489,6 +489,9 @@ namespace ChibiClash.Netcode
                 case ChibiSimEventKind.RingOut:
                     Fx.Text(Center(e.Index) + Vector2.up * 1.2f, "RING OUT", Gui.Red, 1.1f);
                     break;
+                case ChibiSimEventKind.Revived:
+                    Fx.Text(Center(e.Index) + Vector2.up * 1.5f, "REVIVED", Color.white, 1f);   // MC:160
+                    break;
                 case ChibiSimEventKind.PoseSuperJump:
                 {
                     // Super Jump pose (F:380-381): burst at the feet and the pose label.
@@ -838,7 +841,7 @@ namespace ChibiClash.Netcode
             var cfg = new ChibiMatchConfig
             {
                 Seed = TestSeed, Class0 = FighterClass.Melee, Class1 = FighterClass.Heavy, Passive0 = 0, Passive1 = 0,
-                Stage = Mathf.Clamp(stage, 0, StageBuilder.Names.Length - 1)
+                Stage = Mathf.Clamp(stage, 0, StageBuilder.Names.Length - 1), Intro = true,
             };
             _root = new GameObject("SimTestMatch");
             var loop = _root.AddComponent<ChibiLocalLoop>();

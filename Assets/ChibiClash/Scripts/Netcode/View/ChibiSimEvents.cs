@@ -49,6 +49,8 @@ namespace ChibiClash.Netcode
         PoseSuperJump,
         /// <summary>Fighter's ult prompt changed (rules v15). Value = new <see cref="ChibiUltPrompt"/>.</summary>
         UltPromptChanged,
+        /// <summary>Training revive (rules v16): the fighter was KO'd and restored to full HP.</summary>
+        Revived,
     }
 
     /// <summary>One presentation event. Index is the fighter (0/1) or, for projectile / minion / cloud events, the pool slot.</summary>
@@ -238,6 +240,7 @@ namespace ChibiClash.Netcode
             // Rules v15: SuperJumpCd is set to its full value only on the pose tick and otherwise only counts down.
             if (c.SuperJumpCd > p.SuperJumpCd) output.Add(new ChibiSimEvent(ChibiSimEventKind.PoseSuperJump, i));
             if (c.UltPrompt != p.UltPrompt) output.Add(new ChibiSimEvent(ChibiSimEventKind.UltPromptChanged, i, c.UltPrompt));
+            if (c.Revives > p.Revives) output.Add(new ChibiSimEvent(ChibiSimEventKind.Revived, i));
         }
     }
 }

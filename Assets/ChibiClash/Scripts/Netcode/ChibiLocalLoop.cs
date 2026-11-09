@@ -72,9 +72,32 @@ namespace ChibiClash.Netcode
             _clock.Reset();
         }
 
+        /// <summary>
+        /// Offline pause (MC:106, rules v16): while true the simulation is not stepped at all, so every sim timer (match
+        /// clock, ult window, cooldowns) is frozen and no input is polled. Never used online.
+        /// </summary>
+        public bool Paused { get; private set; }
+
+        /// <summary>When true (default) Esc toggles <see cref="Paused"/> and, in training, T fills P1's ult (MC:106, MC:131).</summary>
+        public bool KeyboardShortcuts = true;
+
+        /// <summary>Pause or resume. Ignored once the match is over (MC:106 checks !Finished).</summary>
+        /// <example><code>loop.SetPaused(false);   // the HUD's Resume button</code></example>
+        public void SetPaused(bool paused)
+        {
+            if (Session == null || (paused && Session.State.MatchOver)) return;
+            if (Paused && !paused) _clock.Reset();   // no catch-up burst for the paused time
+            Paused = paused;
+        }
+
         void Update()
         {
             if (Session == null) return;
+            var kb = KeyboardShortcuts ? UnityEngine.InputSystem.Keyboard.current : null;
+            if (kb != null && kb.escapeKey.wasPressedThisFrame) SetPaused(!Paused);
+            if (Paused) return;
+            if (kb != null && kb.tKey.wasPressedThisFrame) ChibiSimulation.TrainingFillUlt(Session.State, 0);
+
             _p0.PollRenderFrame();
             _p1.PollRenderFrame();
 

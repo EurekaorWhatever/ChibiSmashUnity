@@ -109,10 +109,25 @@ namespace ChibiClash.Netcode
             UltPrompt(s.F[1], 1, new Rect(Gui.W - 436f, 22f + PanelH, 420f, 56f));
 
             Gui.Text(new Rect(Gui.W * 0.5f - 200f, 14f, 400f, 30f), "SIM TEST MATCH", 22, Gui.Accent);
-            // Match time is game time (GameTicks), not real ticks: hitstop and cinematics do not run the clock.
-            int secs = Mathf.Max(0, (ChibiSimConst.MatchTicks - s.GameTicks) / ChibiSimConst.TickRate);
-            Gui.Text(new Rect(Gui.W * 0.5f - 200f, 44f, 400f, 30f), secs + "s   step " + s.GameTicks + "   frame " + s.Frame, 16, Color.white);
+            // Match time is the sim's MatchClock (running game steps): no clock in the intro, hitstop / cinematics slow it.
+            string secs = s.Training ? "∞" : Mathf.CeilToInt(s.TimeLeftTicks / (float)ChibiSimConst.TickRate) + "s";
+            Gui.Text(new Rect(Gui.W * 0.5f - 200f, 44f, 400f, 30f), secs + "   step " + s.GameTicks + "   frame " + s.Frame, 16, Color.white);
             Gui.Text(new Rect(16f, Gui.H - 48f, Gui.W - 32f, 40f), ControlsHint(), 13, Gui.Muted, TextAnchor.MiddleLeft);
+
+            if (s.IntroRealTicks > 0)
+            {
+                // Hud.cs:47-53: "READY..." then "FIGHT!" for the last 0.8 s of the intro.
+                bool fight = s.IntroRealTicks <= ChibiSimConst.IntroFightTicks;
+                float pulse = 1f + Mathf.Sin(Time.unscaledTime * 10f) * 0.04f;
+                Gui.Text(new Rect(0f, Gui.H * 0.38f, Gui.W, 120f), fight ? "FIGHT!" : "READY...",
+                         Mathf.RoundToInt((fight ? 96 : 72) * pulse), fight ? Gui.Accent : Color.white);
+            }
+            if (_loop.Paused)
+            {
+                var pr = new Rect(Gui.W * 0.5f - 200f, Gui.H * 0.5f - 40f, 400f, 80f);
+                Gui.Rect(pr, Gui.Panel, 12f);
+                Gui.Text(pr, "PAUSED  ·  Esc to resume", 26, Color.white);
+            }
 
             if (s.MatchOver)
             {

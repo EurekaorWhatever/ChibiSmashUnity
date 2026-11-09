@@ -294,6 +294,12 @@ namespace ChibiClash.Netcode
         /// <summary>Move slot of the Pose Fireball's 0.25 s actionLock (no hitbox; the shot spawns on the pose tick).</summary>
         public const int PoseSlot = 6;
 
+        // ---- rules v16: match flow (match-flow-conversion.md).
+        /// <summary>Intro countdown 2.2 s (MC:26) in REAL ticks (unscaled, MC:124): real ticks 0..131 run with input off.</summary>
+        public const int IntroTicks = 132;
+        /// <summary>The "FIGHT!" banner shows for the last 0.8 s of the intro (Hud.cs:49): 48 real ticks. View only.</summary>
+        public const int IntroFightTicks = 48;
+
         /// <summary>Every step-15 constant, mixed into the config hash.</summary>
         public static readonly int[] GestureConstants =
         {
@@ -329,11 +335,16 @@ namespace ChibiClash.Netcode
         /// <remarks>13: Mage minions + Thunder Cloud (minion-cloud-conversion.md, port step 13): 12-slot minion pool (circle body, gravity x3, ground friction 48968 walk, wall cling, landing-step friction, bonk + hop), 4-slot cloud pool (micro-unit lerp follow, strikes 48 + 66n), D-C3 order fighters -> projectiles -> minions -> clouds, DroppedSummons; SeekerOrb and the thunder strike stand-in removed; pool sizes and step-13 constants in the config hash.</remarks>
         /// <remarks>14: ultimates matched to original (ultimates-conversion.md, port step 14): full common start (Interrupt, Stun 0, invuln 36 then the class assignment), Sword Aura / Fire Ring on the press tick with no lock (D-U2 = A), Smash jump + landing slam + two growing SmashWaves, Thousand Arrows lead + split, Polearm Kick dash box / teleport lerp + hold + two hits (KickFrom/To fields, D-U3 = A; invulnerable victim still held, D-U4 = A); ult frame-0 velocity applied but a same-tick jump keeps its vy (TD A2); step-14 constants in the config hash.</remarks>
         /// <remarks>15: gesture controls (gesture-conversion.md, port step 15): the Ult button opens the 3 s gesture window (180 real ticks, 1.5 s retry wait), the class gesture held 9 real ticks fires the ult even while stunned or held; CrossArms blocks like Shield; RaiseHands Super Jump; PunchForward Pose Fireball (slot 6 lock); the instant-ult button stand-in is removed. PoseVerified is never read.</remarks>
-        public const int RulesVersion = 15;
+        /// <remarks>16: match flow (match-flow-conversion.md, port step 16): optional 2.2 s intro (132 real ticks, input off, no clock, no ring-out), match clock counts running game steps only, timeout winner by exact HP fraction (cross-multiplied), training (no timer, KO revives, ult fill command), same-tick double KO = draw (D-F1).</remarks>
+        public const int RulesVersion = 16;
 
         public uint Seed;
         public FighterClass Class0, Class1;
         public int Passive0, Passive1;
+        /// <summary>Play the 2.2 s intro countdown before input is enabled (production matches). Unit tests usually leave it off.</summary>
+        public bool Intro;
+        /// <summary>Training mode (MC:68, MC:157-162): no match timer, a KO revives at full HP instead of ending the match.</summary>
+        public bool Training;
         /// <summary>
         /// Stage index: 0 Sky Dojo, 1 Neon City, 2 Lava Forge. Any other value plays as Sky Dojo (Stage.cs
         /// <c>default:</c>). Source: stage-conversion.md section 8.
@@ -379,6 +390,11 @@ namespace ChibiClash.Netcode
             for (int k = 0; k < gc.Length; k++) ChibiSimState.Mix(ref h, gc[k]);
             var ug = ChibiSimConst.UltGesture;
             for (int k = 0; k < ug.Length; k++) ChibiSimState.Mix(ref h, ug[k]);
+            // Step-16 match flow.
+            ChibiSimState.Mix(ref h, Intro ? 1 : 0);
+            ChibiSimState.Mix(ref h, Training ? 1 : 0);
+            ChibiSimState.Mix(ref h, ChibiSimConst.IntroTicks);
+            ChibiSimState.Mix(ref h, ChibiSimConst.MatchTicks);
             return h;
         }
     }
@@ -689,6 +705,8 @@ namespace ChibiClash.Netcode
         public int SuperJumpCd, PoseShotCd;
         /// <summary>HUD prompt (<see cref="ChibiUltPrompt"/>) and its real-tick timer for Detected / Failed (F:226-230).</summary>
         public int UltPrompt, UltPromptTicks;
+        /// <summary>Training revives so far (rules v16, Revive F:710-714). The view shows "REVIVED" when it rises.</summary>
+        public int Revives;
 
         public void CopyFrom(ChibiFighterSim o)
         {
@@ -715,6 +733,7 @@ namespace ChibiClash.Netcode
             UltWindowTicks = o.UltWindowTicks; UltRetryTicks = o.UltRetryTicks; GestureTicks = o.GestureTicks;
             UltFirePending = o.UltFirePending; LatchedPose = o.LatchedPose; SuperJumpCd = o.SuperJumpCd; PoseShotCd = o.PoseShotCd;
             UltPrompt = o.UltPrompt; UltPromptTicks = o.UltPromptTicks;
+            Revives = o.Revives;
         }
 
         public void Hash(ref uint h)
@@ -757,6 +776,7 @@ namespace ChibiClash.Netcode
             ChibiSimState.Mix(ref h, UltFirePending ? 1 : 0); ChibiSimState.Mix(ref h, LatchedPose);
             ChibiSimState.Mix(ref h, SuperJumpCd); ChibiSimState.Mix(ref h, PoseShotCd);
             ChibiSimState.Mix(ref h, UltPrompt); ChibiSimState.Mix(ref h, UltPromptTicks);
+            ChibiSimState.Mix(ref h, Revives);   // rules v16
         }
     }
 
@@ -883,6 +903,19 @@ namespace ChibiClash.Netcode
         /// <summary>Minion / cloud spawns dropped because the pool was full (rules v13). Rolled back and hashed; tests assert 0.</summary>
         public int DroppedSummons;
 
+        // ---- rules v16: match flow (match-flow-conversion.md). Rolled back and hashed.
+        /// <summary>Intro real ticks left (0 = running). Input is off while &gt; 0; decremented at the END of each real tick.</summary>
+        public int IntroRealTicks;
+        /// <summary>Game steps run while the match was running: the match timer (MC:135 counts scaled dt only while Running).</summary>
+        public int MatchClock;
+        /// <summary>Training mode copied from the config: no timer, KO revives.</summary>
+        public bool Training;
+
+        /// <summary>True once the intro is over and the match has not ended (MatchController.Running, MC:35).</summary>
+        public bool Running => IntroRealTicks == 0 && !MatchOver;
+        /// <summary>Game ticks left on the match timer (0 in training, where the timer is off).</summary>
+        public int TimeLeftTicks => Training ? 0 : Math.Max(0, ChibiSimConst.MatchTicks - MatchClock);
+
         public readonly ChibiFighterSim[] F = { new ChibiFighterSim(), new ChibiFighterSim() };
         public readonly ChibiProjectileSim[] Proj = new ChibiProjectileSim[ChibiSimConst.MaxProjectiles];
         /// <summary>Mage minion pool (rules v13), updated in slot order after the projectiles (D-C3 = A).</summary>
@@ -908,6 +941,7 @@ namespace ChibiClash.Netcode
             DroppedSummons = o.DroppedSummons;
             for (int i = 0; i < Minions.Length; i++) Minions[i].CopyFrom(o.Minions[i]);
             for (int i = 0; i < Clouds.Length; i++) Clouds[i].CopyFrom(o.Clouds[i]);
+            IntroRealTicks = o.IntroRealTicks; MatchClock = o.MatchClock; Training = o.Training;
         }
 
         public static void Mix(ref uint h, int v)
@@ -959,6 +993,7 @@ namespace ChibiClash.Netcode
                 Mix(ref h, c.Owner); Mix(ref h, c.CX); Mix(ref h, c.CY); Mix(ref h, c.Life); Mix(ref h, c.StrikeTicks);
                 Mix(ref h, c.BoltTicks); Mix(ref h, c.SpawnTick);
             }
+            Mix(ref h, IntroRealTicks); Mix(ref h, MatchClock); Mix(ref h, Training ? 1 : 0);   // rules v16
             return h;
         }
     }
@@ -992,6 +1027,9 @@ namespace ChibiClash.Netcode
             for (int i = 0; i < s.Minions.Length; i++) s.Minions[i].Active = false;
             for (int i = 0; i < s.Clouds.Length; i++) s.Clouds[i].Active = false;
             s.Stage = ChibiStageTable.Normalize(cfg.Stage);
+            s.IntroRealTicks = cfg.Intro ? ChibiSimConst.IntroTicks : 0;
+            s.MatchClock = 0;
+            s.Training = cfg.Training;
             var st = ChibiStageTable.Get(s.Stage);
             // Spawn transform (+-halfWidth*0.45, groundY+1.5) -> feet (+-SpawnX, 775), airborne (stage-conversion.md section 1).
             InitFighter(s.F[0], cfg.Class0, cfg.Passive0, -st.SpawnX, st.SpawnY, 1);
@@ -1023,6 +1061,7 @@ namespace ChibiClash.Netcode
             f.KickFromX = f.KickFromY = f.KickToX = f.KickToY = 0;
             f.UltWindowTicks = 0; f.UltRetryTicks = 0; f.GestureTicks = 0; f.UltFirePending = false; f.LatchedPose = 0;
             f.SuperJumpCd = 0; f.PoseShotCd = 0; f.UltPrompt = (int)ChibiUltPrompt.Hidden; f.UltPromptTicks = 0;
+            f.Revives = 0;
         }
 
         /// <summary>
@@ -1063,7 +1102,22 @@ namespace ChibiClash.Netcode
                 s.RealTicksSinceStep = 0;
             }
             else s.RealTicksSinceStep++;
+            // Intro (rules v16, MC:122-126): counted at the end of the real tick, so real ticks 0..IntroTicks-1 run with
+            // input off and the first tick with input is real tick IntroTicks.
+            Dec(ref s.IntroRealTicks);
             s.Frame++;
+        }
+
+        /// <summary>
+        /// Training "T" key (MC:129-132): fill fighter <paramref name="i"/>'s meter. Offline training only: it is a no-op
+        /// unless the match is a running training match. Call it between Steps (an out-of-band command, not an input bit).
+        /// </summary>
+        /// <returns>True when the meter was filled.</returns>
+        public static bool TrainingFillUlt(ChibiSimState s, int i)
+        {
+            if (!s.Training || !s.Running || i < 0 || i > 1) return false;
+            s.F[i].Ult = ChibiSimConst.UltMax;
+            return true;
         }
 
         /// <summary>Gesture id (0 None, 1 CrossArms, 2 PunchForward, 3 RaiseHands) held in raw input bits 13-14.</summary>
@@ -1095,7 +1149,7 @@ namespace ChibiClash.Netcode
         /// Gameplay input gate (MatchController.InputEnabled, MC:41): actions, poses and the ult fire need it. Pause is
         /// not modelled here: an offline pause simply stops stepping the sim.
         /// </summary>
-        static bool InputEnabled(ChibiSimState s) => !s.MatchOver;
+        static bool InputEnabled(ChibiSimState s) => s.Running;
 
         /// <summary>
         /// Every unscaled (real-time) timer, decremented once per real tick before the game step (section 8.3 item 4):
@@ -2761,8 +2815,14 @@ namespace ChibiClash.Netcode
             }
         }
 
+        /// <summary>
+        /// End of a game step (rules v16, match-flow-conversion.md section 2): ring-outs (only while running, MC:121-127
+        /// skips them in the intro), then KOs (training revives instead), then the match timer (running, not training).
+        /// A same-tick double KO is a draw (D-F1); the timeout winner is the higher exact HP fraction (MC:139-140).
+        /// </summary>
         static void ResolveBoundsAndMatchEnd(ChibiSimState s)
         {
+            if (!s.Running) return;
             var st = ChibiStageTable.Get(s.Stage);
             for (int i = 0; i < 2; i++)
             {
@@ -2785,18 +2845,42 @@ namespace ChibiClash.Netcode
             }
 
             bool ko0 = s.F[0].HpU <= 0, ko1 = s.F[1].HpU <= 0;
+            if (s.Training)
+            {
+                // OnKO in training (MC:157-161) -> Revive (F:710-714): full HP, hitstun cleared, nothing else.
+                for (int i = 0; i < 2; i++)
+                {
+                    var f = s.F[i];
+                    if (f.HpU > 0) continue;
+                    f.HpU = f.Stats.MaxHp * ChibiCombatStats.HpScale;
+                    f.Stun = 0;
+                    f.Revives++;
+                }
+                return;   // no timer in training (MC:68, MC:129-133)
+            }
             if (ko0 || ko1)
             {
                 s.MatchOver = true;
                 s.Winner = ko0 && ko1 ? -1 : (ko0 ? 1 : 0);
+                return;
             }
-            else if (s.GameTicks + 1 >= ChibiSimConst.MatchTicks)   // match clock counts game steps (section 4)
+            // Match timer: game steps while running (timescale section 4: hitstop / slow-mo slow it; MC:135).
+            s.MatchClock++;
+            if (s.MatchClock >= ChibiSimConst.MatchTicks)
             {
                 s.MatchOver = true;
-                long r0 = (long)s.F[0].HpU * 1000 / ((long)s.F[0].Stats.MaxHp * ChibiCombatStats.HpScale),
-                     r1 = (long)s.F[1].HpU * 1000 / ((long)s.F[1].Stats.MaxHp * ChibiCombatStats.HpScale);
-                s.Winner = r0 == r1 ? -1 : (r0 > r1 ? 0 : 1);
+                s.Winner = TimeoutWinner(s.F[0], s.F[1]);
             }
+        }
+
+        /// <summary>
+        /// Timeout winner (MC:139-140): the higher HP fraction HpU / MaxHp wins; equal fractions draw. Compared exactly by
+        /// cross-multiplication (the deterministic form of Mathf.Approximately, which is a relative 1e-6 test on floats).
+        /// </summary>
+        public static int TimeoutWinner(ChibiFighterSim a, ChibiFighterSim b)
+        {
+            long l = (long)a.HpU * b.Stats.MaxHp, r = (long)b.HpU * a.Stats.MaxHp;
+            return l == r ? -1 : (l > r ? 0 : 1);
         }
     }
 }

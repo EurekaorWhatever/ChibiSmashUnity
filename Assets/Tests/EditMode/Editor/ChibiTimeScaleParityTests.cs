@@ -479,6 +479,7 @@ namespace ChibiClash.Tests
             // Arrange: ult at c, then the clock is 3 game steps from time-out (section 4: GameTicks + 1 >= MatchTicks)
             var s = FireUlt(0);
             Set(s, GameTicksF, ChibiSimConst.MatchTicks - TimerLeadSteps);
+            s.MatchClock = ChibiSimConst.MatchTicks - TimerLeadSteps;   // rules v16: the timer reads MatchClock (running game steps)
             s.Frame = ChibiSimConst.MatchTicks - TimerLeadSteps;
 
             // Act: real ticks until the match ends
