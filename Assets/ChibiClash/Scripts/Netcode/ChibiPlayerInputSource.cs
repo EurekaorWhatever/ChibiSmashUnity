@@ -77,9 +77,11 @@ namespace ChibiClash.Netcode
             var gm = UnityEngine.Object.FindAnyObjectByType<GameManager>(FindObjectsInactive.Include);
             Func<bool> wantCamera = () => gm != null && gm.Save != null && gm.Save.settings.useWebcam;
             var tracker = new GestureTracker(new AutoPoseSource(player, sim, wantCamera));
+            // A gesture the TelemetryValidator rejects is sent as None: the original ignores it for blocking, poses and
+            // the ult (F:261, F:373, F:413). Input-side UX filter only, never a security gate (security review rule 2).
             return new ChibiPlayerInputSource(
                 input,
-                () => tracker.Stable,
+                () => tracker.TelemetryValid ? tracker.Stable : Gesture.None,
                 () => tracker.IsLive && tracker.TelemetryValid,
                 () => Time.unscaledDeltaTime,
                 tracker);

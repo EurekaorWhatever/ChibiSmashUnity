@@ -45,6 +45,10 @@ namespace ChibiClash.Netcode
         CloudGone,
         /// <summary>Cloud slot Index struck (its BoltTicks was set to CloudBolt this step). Value = owner fighter.</summary>
         CloudStrike,
+        /// <summary>Fighter did the Super Jump pose (SuperJumpCd was re-armed, rules v15, F:375-382).</summary>
+        PoseSuperJump,
+        /// <summary>Fighter's ult prompt changed (rules v15). Value = new <see cref="ChibiUltPrompt"/>.</summary>
+        UltPromptChanged,
     }
 
     /// <summary>One presentation event. Index is the fighter (0/1) or, for projectile / minion / cloud events, the pool slot.</summary>
@@ -230,6 +234,10 @@ namespace ChibiClash.Netcode
 
             if (c.DashTicks > 0 && (p.DashTicks == 0 || c.DashTicks > p.DashTicks))
                 output.Add(new ChibiSimEvent(ChibiSimEventKind.DashStarted, i, c.DashDir));
+
+            // Rules v15: SuperJumpCd is set to its full value only on the pose tick and otherwise only counts down.
+            if (c.SuperJumpCd > p.SuperJumpCd) output.Add(new ChibiSimEvent(ChibiSimEventKind.PoseSuperJump, i));
+            if (c.UltPrompt != p.UltPrompt) output.Add(new ChibiSimEvent(ChibiSimEventKind.UltPromptChanged, i, c.UltPrompt));
         }
     }
 }

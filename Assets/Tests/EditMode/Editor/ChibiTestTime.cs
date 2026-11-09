@@ -35,5 +35,20 @@ namespace ChibiClash.Tests
             }
             throw new InvalidOperationException($"fixture: no game step within {MaxRealTicksPerStep} real ticks");
         }
+
+        /// <summary>
+        /// Rules v15 fixture (gesture-conversion.md section 6): fills F[who]'s meter and sets UltFirePending, the state the
+        /// sim is in after the class gesture matched inside an open ult window on the previous real tick. The next game
+        /// step fires the ult at its top, before any action of that step: the same point (F:176) the real gesture path
+        /// uses, so step-14 parity fixtures that "press Ultimate on tick 0" keep their frame numbering. The full window
+        /// flow (button, hold count, timeout, retry) is covered by ChibiGestureParityTests.
+        /// </summary>
+        public static void ArmUltFire(ChibiSimState s, int who)
+        {
+            var f = s.F[who];
+            f.Ult = ChibiSimConst.UltMax;
+            f.UltWindowTicks = 0;
+            f.UltFirePending = true;
+        }
     }
 }

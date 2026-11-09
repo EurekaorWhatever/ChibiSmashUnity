@@ -105,6 +105,8 @@ namespace ChibiClash.Netcode
             Popups();
             Panel(s.F[0], 0, new Rect(16f, 14f, 420f, PanelH));
             Panel(s.F[1], 1, new Rect(Gui.W - 436f, 14f, 420f, PanelH));
+            UltPrompt(s.F[0], 0, new Rect(16f, 22f + PanelH, 420f, 56f));
+            UltPrompt(s.F[1], 1, new Rect(Gui.W - 436f, 22f + PanelH, 420f, 56f));
 
             Gui.Text(new Rect(Gui.W * 0.5f - 200f, 14f, 400f, 30f), "SIM TEST MATCH", 22, Gui.Accent);
             // Match time is game time (GameTicks), not real ticks: hitstop and cinematics do not run the clock.
@@ -125,6 +127,27 @@ namespace ChibiClash.Netcode
                 var c = _view.FlashColor;
                 Gui.Rect(new Rect(0f, 0f, Gui.W, Gui.H), new Color(c.r, c.g, c.b, _view.FlashAlpha * 0.5f));
             }
+        }
+
+        /// <summary>
+        /// Gesture ult prompt read from sim state (rules v15; colours and texts from Hud.cs:137-174): yellow
+        /// "Perform: X" with the window countdown, green "&lt;ult name&gt;!" once detected, red "Time's up!" after a timeout.
+        /// </summary>
+        static void UltPrompt(ChibiFighterSim f, int i, Rect r)
+        {
+            var state = (ChibiUltPrompt)f.UltPrompt;
+            bool open = f.UltWindowTicks > 0;
+            if (!open && state != ChibiUltPrompt.Detected && state != ChibiUltPrompt.Failed) return;
+            var def = ClassDef.Get((FighterClass)f.Class);
+            Color c = open ? Gui.Yellow : state == ChibiUltPrompt.Detected ? Gui.Green : Gui.Red;
+            Gui.Rect(r, new Color(0f, 0f, 0f, 0.55f), 10f);
+            string text = open
+                ? Names[i] + " · ULTIMATE READY — Perform: " + ClassDef.GestureName(def.ultGesture) + "   " +
+                  Mathf.CeilToInt(f.UltWindowTicks / (float)ChibiSimConst.TickRate) + "s"
+                : state == ChibiUltPrompt.Detected ? Names[i] + " · " + def.ultName + "!" : Names[i] + " · Time's up!";
+            Gui.Text(new Rect(r.x + 10f, r.y + 4f, r.width - 20f, 28f), text, 15, c, TextAnchor.MiddleLeft);
+            float frac = open ? f.UltWindowTicks / (float)ChibiSimConst.UltWindowTicks : 1f;
+            Gui.Bar(new Rect(r.x + 10f, r.yMax - 16f, r.width - 20f, 8f), frac, c, new Color(0f, 0f, 0f, 0.4f));
         }
 
         /// <summary>Ult cinematic bars and name band, copied from Hud.Cinematic (Hud.cs:177-195).</summary>

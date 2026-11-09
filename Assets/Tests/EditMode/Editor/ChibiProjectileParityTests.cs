@@ -772,12 +772,12 @@ namespace ChibiClash.Tests
             Assert.AreEqual(MaxProjectiles, s.Proj.Length, "P19: pool length");
             Put(s.F[0], -3000, 0, 1);
             Put(s.F[1], 3000, 0, -1);
-            s.F[0].Ult = s.F[1].Ult = ChibiSimConst.UltMax;
+            ChibiTestTime.ArmUltFire(s, 0); ChibiTestTime.ArmUltFire(s, 1);   // rules v15: both ults fire on step 0
             var cycle = new[] { ChibiButtons.Skill3, ChibiButtons.Light, ChibiButtons.Heavy, ChibiButtons.Skill1 };
             int peak = 0;
             for (int t = 0; t < steps && !s.MatchOver; t++)
             {
-                ChibiButtons b = t == 0 ? ChibiButtons.Ultimate : (t % 2 == 0 ? cycle[(t / 2) % cycle.Length] : ChibiButtons.None);
+                ChibiButtons b = t == 0 ? ChibiButtons.None : (t % 2 == 0 ? cycle[(t / 2) % cycle.Length] : ChibiButtons.None);
                 ChibiTestTime.StepGame(s, Press(b), Press(b));
                 int live = 0;
                 foreach (var p in s.Proj) if (p.Active) live++;

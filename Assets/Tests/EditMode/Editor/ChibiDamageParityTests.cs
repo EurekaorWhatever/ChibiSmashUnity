@@ -752,13 +752,13 @@ namespace ChibiClash.Tests
             // Qualified (fresh match) and not qualified (light 60 ticks before) must give the same first ult hit.
             const int ultAt = 60;
             var q = Arena(FighterClass.Polearm, PatiencePassive, FighterClass.Melee, DefPassive(FighterClass.Melee));
-            q.F[0].Ult = ChibiSimConst.UltMax;
-            var dq = HitDamages(q, 240, On(ChibiButtons.Ultimate, 0));
+            ChibiTestTime.ArmUltFire(q, 0);   // rules v15: gesture fire at the top of tick 0
+            var dq = HitDamages(q, 240, _ => ChibiButtons.None);
 
             var n = Arena(FighterClass.Polearm, PatiencePassive, FighterClass.Melee, DefPassive(FighterClass.Melee));
-            var dn = HitDamages(n, ultAt + 240, t => t == 0 ? ChibiButtons.Light : t == ultAt ? ChibiButtons.Ultimate : ChibiButtons.None, t =>
+            var dn = HitDamages(n, ultAt + 240, t => t == 0 ? ChibiButtons.Light : ChibiButtons.None, t =>
             {
-                if (t == ultAt) { Put(n.F[0], MeleeAX, 0, 1); Put(n.F[1], MeleeVX, 0, -1); n.F[0].Ult = ChibiSimConst.UltMax; }
+                if (t == ultAt) { Put(n.F[0], MeleeAX, 0, 1); Put(n.F[1], MeleeVX, 0, -1); ChibiTestTime.ArmUltFire(n, 0); }
             });
 
             Assert.GreaterOrEqual(dq.Count, 1, "precondition: the ult hits");

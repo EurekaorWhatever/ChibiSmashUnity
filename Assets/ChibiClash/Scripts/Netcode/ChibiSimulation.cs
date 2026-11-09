@@ -269,7 +269,55 @@ namespace ChibiClash.Netcode
             CloudSpawnOy, CloudGoalOy, CloudLerpDiv, CloudLife, CloudFirstStrike, CloudPeriod, CloudBolt, CloudStrikeDx,
             CloudMult, CloudKbY, CloudStun, CloudLock,
         };
+
+        // ---- rules v15: gesture controls (port step 15, docs/architecture/netcode/gesture-conversion.md and
+        // security-gesture-review.md rules 1-6). A gesture is a HELD input (bits 13-14) exactly like a button: every window
+        // and cooldown below is a hashed sim counter, never wall-clock time, and the sim never reads PoseVerified (bit 15).
+        /// <summary>Ult gesture window 3 s and retry wait 1.5 s, in REAL ticks: unscaled like the original (F:14, F:405-433).</summary>
+        public const int UltWindowTicks = 180, UltRetryTicks = 90;
+        /// <summary>The class gesture must be held for StableTime &gt;= 0.15 s = 9 consecutive real ticks (F:412).</summary>
+        public const int UltGestureHoldTicks = 9;
+        /// <summary>Saturation cap of <see cref="ChibiFighterSim.GestureTicks"/> (only the 9-tick threshold matters).</summary>
+        public const int GestureTicksCap = 255;
+        /// <summary>HUD prompt timers (F:422 Detected 2 s, F:431 Failed 1.3 s), real ticks. Presentation only, deterministic.</summary>
+        public const int PromptDetectedTicks = 120, PromptFailedTicks = 78;
+        /// <summary>Super Jump pose (F:375-382): RaiseHands onset, cd 3 s (game ticks, scaled dt), Vy 19 u/s, air jump refilled.</summary>
+        public const int SuperJumpCd = 180, SuperJumpVel = 285000;
+        /// <summary>
+        /// Pose Fireball (F:383-391): PunchForward onset while free (actionLock &lt;= 0), cd 4 s, actionLock 0.25 s (move
+        /// slot <see cref="PoseSlot"/>), Shoot((0.6, 0.1)) from Center = feet + (F·600, 775), 13 u/s, r 0.3, life 1.6 s,
+        /// HitSpec.Make(0.8, (4, 3), 0.3), destructible. Not a normal or skill: no Patience, no lastAttackTime reset.
+        /// </summary>
+        public const int PoseShotCd = 240, PoseShotLock = 15, PoseShotOx = 600, PoseShotOy = 775, PoseShotVel = 195000,
+                         PoseShotR = 300, PoseShotLife = 96, PoseShotMult = 800, PoseShotKbX = 60000, PoseShotKbY = 45000,
+                         PoseShotStun = 18;
+        /// <summary>Move slot of the Pose Fireball's 0.25 s actionLock (no hitbox; the shot spawns on the pose tick).</summary>
+        public const int PoseSlot = 6;
+
+        /// <summary>Every step-15 constant, mixed into the config hash.</summary>
+        public static readonly int[] GestureConstants =
+        {
+            UltWindowTicks, UltRetryTicks, UltGestureHoldTicks, GestureTicksCap, PromptDetectedTicks, PromptFailedTicks,
+            SuperJumpCd, SuperJumpVel, PoseShotCd, PoseShotLock, PoseShotOx, PoseShotOy, PoseShotVel, PoseShotR,
+            PoseShotLife, PoseShotMult, PoseShotKbX, PoseShotKbY, PoseShotStun, PoseSlot,
+        };
+
+        /// <summary>
+        /// Ult gesture per <see cref="FighterClass"/> index (ClassData.cs ultGesture, pinned by a test): Melee CrossArms,
+        /// Heavy RaiseHands, Ranged PunchForward, Magic CrossArms, Polearm PunchForward. Values are <see cref="Gesture"/> ids.
+        /// </summary>
+        public static readonly int[] UltGesture =
+        {
+            (int)Gesture.CrossArms, (int)Gesture.RaiseHands, (int)Gesture.PunchForward, (int)Gesture.CrossArms,
+            (int)Gesture.PunchForward,
+        };
     }
+
+    /// <summary>
+    /// Ult prompt shown on the HUD (Fighter.cs PromptState, F:8). Lives in sim state so both peers and replays show the
+    /// same prompt; it never affects gameplay.
+    /// </summary>
+    public enum ChibiUltPrompt { Hidden = 0, Preparing = 1, Detected = 2, Failed = 3 }
 
     public struct ChibiMatchConfig
     {
@@ -280,7 +328,8 @@ namespace ChibiClash.Netcode
         /// <remarks>12: multi-phase skills matched to original (program moves, held state, priority) — multiphase-conversion.md: per-move frame programs with MoveLockEnd, Heavy Grab hold (Held / Holding, GrabPhase before the melee probes), Leap Slam really leaps (D-M2 = B), same-tick grabs both whiff (D-M3 = B), Light &gt; Heavy &gt; skills (D-M1 = A), no attack speed on skills; step-12 constants in the config hash.</remarks>
         /// <remarks>13: Mage minions + Thunder Cloud (minion-cloud-conversion.md, port step 13): 12-slot minion pool (circle body, gravity x3, ground friction 48968 walk, wall cling, landing-step friction, bonk + hop), 4-slot cloud pool (micro-unit lerp follow, strikes 48 + 66n), D-C3 order fighters -> projectiles -> minions -> clouds, DroppedSummons; SeekerOrb and the thunder strike stand-in removed; pool sizes and step-13 constants in the config hash.</remarks>
         /// <remarks>14: ultimates matched to original (ultimates-conversion.md, port step 14): full common start (Interrupt, Stun 0, invuln 36 then the class assignment), Sword Aura / Fire Ring on the press tick with no lock (D-U2 = A), Smash jump + landing slam + two growing SmashWaves, Thousand Arrows lead + split, Polearm Kick dash box / teleport lerp + hold + two hits (KickFrom/To fields, D-U3 = A; invulnerable victim still held, D-U4 = A); ult frame-0 velocity applied but a same-tick jump keeps its vy (TD A2); step-14 constants in the config hash.</remarks>
-        public const int RulesVersion = 14;
+        /// <remarks>15: gesture controls (gesture-conversion.md, port step 15): the Ult button opens the 3 s gesture window (180 real ticks, 1.5 s retry wait), the class gesture held 9 real ticks fires the ult even while stunned or held; CrossArms blocks like Shield; RaiseHands Super Jump; PunchForward Pose Fireball (slot 6 lock); the instant-ult button stand-in is removed. PoseVerified is never read.</remarks>
+        public const int RulesVersion = 15;
 
         public uint Seed;
         public FighterClass Class0, Class1;
@@ -325,13 +374,18 @@ namespace ChibiClash.Netcode
             // Step-14 ult constants (ultimates-conversion.md section 4, TD amendment 8).
             var uc = ChibiSimConst.UltConstants;
             for (int k = 0; k < uc.Length; k++) ChibiSimState.Mix(ref h, uc[k]);
+            // Step-15 gesture constants and the class -> ult gesture table.
+            var gc = ChibiSimConst.GestureConstants;
+            for (int k = 0; k < gc.Length; k++) ChibiSimState.Mix(ref h, gc[k]);
+            var ug = ChibiSimConst.UltGesture;
+            for (int k = 0; k < ug.Length; k++) ChibiSimState.Mix(ref h, ug[k]);
             return h;
         }
     }
 
     // ====================================================================================== move data
 
-    /// <summary>Frame data for one attack. Slots: 0 light, 1 heavy, 2-4 skills, 5 ultimate.</summary>
+    /// <summary>Frame data for one attack. Slots: 0 light, 1 heavy, 2-4 skills, 5 ultimate, 6 Pose Fireball lock (v15).</summary>
     public struct ChibiMove
     {
         public int Startup, Active, Recovery;       // ticks; startup+recovery scale with attack speed (skills; normals use BaseMs)
@@ -451,6 +505,7 @@ namespace ChibiClash.Netcode
                 Mv(3, 21, 6, flags: P, cd: 300),                                             // Parry (reflects damage)
                 Mv(4, 36, 10, 550, 200, 1500, 100, 1100, 20, 15, 10, rehit: 6, cd: 420),     // Thrust Barrage (6 pulses)
                 Mv(0, 1, 0),                                                                 // ULT Sword Aura: inline in FireUlt (v14, D-U2 = A)
+                Mv(0, 1, ChibiSimConst.PoseShotLock - 1),                                    // Pose Fireball actionLock (v15, slot 6)
             };
             t[(int)FighterClass.Heavy] = new[]
             {
@@ -460,6 +515,7 @@ namespace ChibiClash.Netcode
                 Mv(6, 60, 14, 700, 0, 2400, 0, 1400, 50, 50, 15, rehit: 12, cd: 420, flags: C), // Tornado Spin (5 hits)
                 new ChibiMove(),                                                             // (Heavy has only two skills)
                 Mv(0, 1, 0),                                                                 // ULT Smash: program PSmash (v14)
+                Mv(0, 1, ChibiSimConst.PoseShotLock - 1),                                    // Pose Fireball actionLock (v15, slot 6)
             };
             t[(int)FighterClass.Ranged] = new[]
             {
@@ -475,6 +531,7 @@ namespace ChibiClash.Netcode
                 Shot(Mv(6, 25, 10, 600, rehit: 5, cd: 420), ChibiProjKind.Arrow, 250, PD, 500, 675, 270000, 78,
                      18000, 12000, 11),
                 Mv(0, 1, 0),                                                                 // ULT Thousand Arrows: program PArrows (v14)
+                Mv(0, 1, ChibiSimConst.PoseShotLock - 1),                                    // Pose Fireball actionLock (v15, slot 6)
             };
             t[(int)FighterClass.Magic] = new[]
             {
@@ -490,6 +547,7 @@ namespace ChibiClash.Netcode
                 // Summon Thunder Cloud (F:894-899, rules v13): no hitbox, frame 0 spawns the cloud, actionLock 0.3 s = 18, cd 10 s.
                 Mv(0, 1, ChibiSimConst.CloudLock - 1, cd: 600, flags: SC),
                 Mv(0, 1, 0),                                                                 // ULT Fire Ring: inline in FireUlt (v14, D-U2 = A)
+                Mv(0, 1, ChibiSimConst.PoseShotLock - 1),                                    // Pose Fireball actionLock (v15, slot 6)
             };
             t[(int)FighterClass.Polearm] = new[]
             {
@@ -502,6 +560,7 @@ namespace ChibiClash.Netcode
                 Shot(Mv(10, 1, 14, 1400, cd: 360), ChibiProjKind.Spear, 300, 0, 600, 775, 240000, 180,
                      75000, 45000, 21, 27, 800),
                 Mv(0, 1, 0),                                                                 // ULT Kick: program PKick (v14)
+                Mv(0, 1, ChibiSimConst.PoseShotLock - 1),                                    // Pose Fireball actionLock (v15, slot 6)
             };
             return t;
         }
@@ -612,6 +671,25 @@ namespace ChibiClash.Netcode
         /// </summary>
         public int KickFromX, KickFromY, KickToX, KickToY;
 
+        // ---- rules v15: gesture controls (gesture-conversion.md). All rolled back and hashed.
+        /// <summary>Ult gesture window real ticks left; &gt; 0 = window open (UltWindow, F:396-433). Opened by the Ult press edge.</summary>
+        public int UltWindowTicks;
+        /// <summary>Retry wait after a timed-out window, real ticks (ultRetryCd, F:210, F:432); the window cannot open while &gt; 0.</summary>
+        public int UltRetryTicks;
+        /// <summary>
+        /// Consecutive real ticks the current gesture id (bits 13-14) has been held, 1 on its first tick, 0 for None, capped
+        /// at <see cref="ChibiSimConst.GestureTicksCap"/>: the sim's StableTime (F:412).
+        /// </summary>
+        public int GestureTicks;
+        /// <summary>The window matched on a real tick (F:417-424); the ult fires at the top of the next game step, then clears.</summary>
+        public bool UltFirePending;
+        /// <summary>Gesture id whose onset (JustStarted, Pose.cs:190-195) was seen since the last game step; 0 = none. Cleared every step (D-N1).</summary>
+        public int LatchedPose;
+        /// <summary>Super Jump / Pose Fireball cooldowns in game ticks (superJumpCd / poseShotCd, scaled dt, F:208-209).</summary>
+        public int SuperJumpCd, PoseShotCd;
+        /// <summary>HUD prompt (<see cref="ChibiUltPrompt"/>) and its real-tick timer for Detected / Failed (F:226-230).</summary>
+        public int UltPrompt, UltPromptTicks;
+
         public void CopyFrom(ChibiFighterSim o)
         {
             Class = o.Class; Passive = o.Passive; Stats = o.Stats;
@@ -634,6 +712,9 @@ namespace ChibiClash.Netcode
             MoveLockEnd = o.MoveLockEnd; MovePhase = o.MovePhase; Held = o.Held; Holding = o.Holding;
             GrabSX = o.GrabSX; GrabSY = o.GrabSY; GrabTX = o.GrabTX; GrabTY = o.GrabTY; GrabLX = o.GrabLX; GrabLY = o.GrabLY;
             KickFromX = o.KickFromX; KickFromY = o.KickFromY; KickToX = o.KickToX; KickToY = o.KickToY;
+            UltWindowTicks = o.UltWindowTicks; UltRetryTicks = o.UltRetryTicks; GestureTicks = o.GestureTicks;
+            UltFirePending = o.UltFirePending; LatchedPose = o.LatchedPose; SuperJumpCd = o.SuperJumpCd; PoseShotCd = o.PoseShotCd;
+            UltPrompt = o.UltPrompt; UltPromptTicks = o.UltPromptTicks;
         }
 
         public void Hash(ref uint h)
@@ -671,6 +752,11 @@ namespace ChibiClash.Netcode
             ChibiSimState.Mix(ref h, GrabSX); ChibiSimState.Mix(ref h, GrabSY); ChibiSimState.Mix(ref h, GrabTX);
             ChibiSimState.Mix(ref h, GrabTY); ChibiSimState.Mix(ref h, GrabLX); ChibiSimState.Mix(ref h, GrabLY);
             ChibiSimState.Mix(ref h, KickFromX); ChibiSimState.Mix(ref h, KickFromY); ChibiSimState.Mix(ref h, KickToX); ChibiSimState.Mix(ref h, KickToY);
+            // Rules v15 (gesture-conversion.md), after the Kick fields.
+            ChibiSimState.Mix(ref h, UltWindowTicks); ChibiSimState.Mix(ref h, UltRetryTicks); ChibiSimState.Mix(ref h, GestureTicks);
+            ChibiSimState.Mix(ref h, UltFirePending ? 1 : 0); ChibiSimState.Mix(ref h, LatchedPose);
+            ChibiSimState.Mix(ref h, SuperJumpCd); ChibiSimState.Mix(ref h, PoseShotCd);
+            ChibiSimState.Mix(ref h, UltPrompt); ChibiSimState.Mix(ref h, UltPromptTicks);
         }
     }
 
@@ -935,6 +1021,8 @@ namespace ChibiClash.Netcode
             f.MoveLockEnd = 0; f.MovePhase = 0; f.Held = false; f.Holding = false;
             f.GrabSX = f.GrabSY = f.GrabTX = f.GrabTY = f.GrabLX = f.GrabLY = 0;
             f.KickFromX = f.KickFromY = f.KickToX = f.KickToY = 0;
+            f.UltWindowTicks = 0; f.UltRetryTicks = 0; f.GestureTicks = 0; f.UltFirePending = false; f.LatchedPose = 0;
+            f.SuperJumpCd = 0; f.PoseShotCd = 0; f.UltPrompt = (int)ChibiUltPrompt.Hidden; f.UltPromptTicks = 0;
         }
 
         /// <summary>
@@ -978,23 +1066,98 @@ namespace ChibiClash.Netcode
             s.Frame++;
         }
 
-        /// <summary>D-N1 latch (section 8.2): OR this real tick's press edges and Block level into the fighter's latch.</summary>
+        /// <summary>Gesture id (0 None, 1 CrossArms, 2 PunchForward, 3 RaiseHands) held in raw input bits 13-14.</summary>
+        static int GestureOf(int raw) => (raw & ChibiInputPacket.GestureMask) >> ChibiInputPacket.GestureShift;
+
+        /// <summary>
+        /// D-N1 latch (section 8.2): OR this real tick's press edges and Block level into the fighter's latch. Rules v15
+        /// (gesture-conversion.md section 2): the gesture id is a held input. Its hold count (StableTime) runs per REAL tick
+        /// like the original's unscaled tracker; an onset (JustStarted) is latched for the next game step; CrossArms counts
+        /// as a held Shield while no ult window is open (F:261). Bit 15 (PoseVerified) is never read (security rule 1).
+        /// </summary>
         static void Latch(ChibiFighterSim f, int raw)
         {
+            int g = GestureOf(raw);
+            if (g != GestureOf(f.PrevInput))
+            {
+                f.GestureTicks = g == 0 ? 0 : 1;
+                if (g != 0) f.LatchedPose = g;
+            }
+            else if (g != 0 && f.GestureTicks < ChibiSimConst.GestureTicksCap) f.GestureTicks++;
+
             f.LatchedEdges |= raw & ~f.PrevInput;
             f.LatchedHeld |= raw & (int)ChibiButtons.Shield;
+            if (g == (int)Gesture.CrossArms && f.UltWindowTicks == 0) f.LatchedHeld |= (int)ChibiButtons.Shield;
             f.PrevInput = raw;
         }
 
         /// <summary>
-        /// Every unscaled (real-time) timer, decremented once per real tick before the game step (section 8.3 item 4).
-        /// Future unscaled timers (ult gesture window, ultRetryCd, prompt) belong HERE, not in the game step.
+        /// Gameplay input gate (MatchController.InputEnabled, MC:41): actions, poses and the ult fire need it. Pause is
+        /// not modelled here: an offline pause simply stops stepping the sim.
+        /// </summary>
+        static bool InputEnabled(ChibiSimState s) => !s.MatchOver;
+
+        /// <summary>
+        /// Every unscaled (real-time) timer, decremented once per real tick before the game step (section 8.3 item 4):
+        /// hitstop, cinematic, and (rules v15) per fighter the ult retry wait, the HUD prompt and the ult gesture window.
         /// </summary>
         static void RealTickTimers(ChibiSimState s)
         {
             Dec(ref s.HitstopRealTicks);
             Dec(ref s.CinematicRealTicks);
             if (s.CinematicRealTicks == 0) s.CinematicFighter = -1;
+            UltWindowRealTick(s, 0);
+            UltWindowRealTick(s, 1);
+        }
+
+        /// <summary>
+        /// One real tick of the ult gesture flow (F:210, F:226-230, F:408-434), in the original's order: retry wait and
+        /// prompt timer (TickTimers), then the window: count down, match = class gesture held &gt;= 9 real ticks, fire
+        /// (needs alive + input enabled; NOT free of stun or hold), else time out into Failed + 1.5 s retry wait.
+        /// A match on a frozen real tick (hitstop / cinematic) closes the window now and fires at the next game step (D10).
+        /// </summary>
+        static void UltWindowRealTick(ChibiSimState s, int i)
+        {
+            var f = s.F[i];
+            Dec(ref f.UltRetryTicks);
+            if ((f.UltPrompt == (int)ChibiUltPrompt.Detected || f.UltPrompt == (int)ChibiUltPrompt.Failed) && --f.UltPromptTicks <= 0)
+            {
+                f.UltPrompt = (int)ChibiUltPrompt.Hidden;
+                f.UltPromptTicks = 0;
+            }
+            if (f.UltWindowTicks == 0) return;
+
+            int left = f.UltWindowTicks - 1;
+            bool match = GestureOf(f.PrevInput) == ChibiSimConst.UltGesture[f.Class] &&
+                         f.GestureTicks >= ChibiSimConst.UltGestureHoldTicks;
+            if (match && f.HpU > 0 && InputEnabled(s))
+            {
+                f.UltWindowTicks = 0;
+                f.UltPrompt = (int)ChibiUltPrompt.Detected;
+                f.UltPromptTicks = ChibiSimConst.PromptDetectedTicks;
+                f.UltFirePending = true;
+            }
+            else if (left <= 0)
+            {
+                f.UltWindowTicks = 0;
+                f.UltPrompt = (int)ChibiUltPrompt.Failed;
+                f.UltPromptTicks = ChibiSimConst.PromptFailedTicks;
+                f.UltRetryTicks = ChibiSimConst.UltRetryTicks;
+            }
+            else f.UltWindowTicks = left;
+        }
+
+        /// <summary>
+        /// TryOpenUltWindow (F:396-403), from the Ult press edge while able to act: needs a full meter, no open window, no
+        /// retry wait, alive. Opening never fires on the same tick (the window is checked before actions, F:176 vs F:266).
+        /// </summary>
+        static void TryOpenUltWindow(ChibiFighterSim f, int edges)
+        {
+            if ((edges & (int)ChibiButtons.Ultimate) == 0) return;
+            if (f.Ult < ChibiSimConst.UltMax || f.UltWindowTicks > 0 || f.UltRetryTicks > 0 || f.HpU <= 0) return;
+            f.UltWindowTicks = ChibiSimConst.UltWindowTicks;
+            f.UltPrompt = (int)ChibiUltPrompt.Preparing;
+            f.UltPromptTicks = 0;
         }
 
         /// <summary>
@@ -1003,8 +1166,8 @@ namespace ChibiClash.Netcode
         /// </summary>
         static void GameStep(ChibiSimState s, ChibiInputPacket in0, ChibiInputPacket in1)
         {
-            UpdateFighter(s, 0, ConsumeLatch(s.F[0], in0, out int e0), e0);
-            UpdateFighter(s, 1, ConsumeLatch(s.F[1], in1, out int e1), e1);
+            UpdateFighter(s, 0, ConsumeLatch(s.F[0], in0, out int e0, out int p0), e0, p0);
+            UpdateFighter(s, 1, ConsumeLatch(s.F[1], in1, out int e1, out int p1), e1, p1);
 
             // Rules v12 (TD amendment 1): grab start, hold path and release run after both fighters' Physics and BEFORE the
             // melee probes, so a grab beats any same-tick strike of the victim (Update runs before coroutines).
@@ -1024,13 +1187,20 @@ namespace ChibiClash.Netcode
             ResolveBoundsAndMatchEnd(s);
         }
 
-        /// <summary>Builds the step input (raw | LatchedHeld), returns the latched edges and clears both latches.</summary>
-        static ChibiInputPacket ConsumeLatch(ChibiFighterSim f, ChibiInputPacket input, out int edges)
+        /// <summary>
+        /// Builds the step input (raw | LatchedHeld, plus Shield for a CrossArms held with no ult window open, F:261 read
+        /// after the window update), returns the latched edges and pose onset, and clears the latches.
+        /// </summary>
+        static ChibiInputPacket ConsumeLatch(ChibiFighterSim f, ChibiInputPacket input, out int edges, out int pose)
         {
             edges = f.LatchedEdges;
-            var p = new ChibiInputPacket { Raw = (ushort)(input.Raw | f.LatchedHeld) };
+            pose = f.LatchedPose;
+            int raw = input.Raw | f.LatchedHeld;
+            if (GestureOf(input.Raw) == (int)Gesture.CrossArms && f.UltWindowTicks == 0) raw |= (int)ChibiButtons.Shield;
+            var p = new ChibiInputPacket { Raw = (ushort)raw };
             f.LatchedEdges = 0;
             f.LatchedHeld = 0;
+            f.LatchedPose = 0;
             return p;
         }
 
@@ -1050,7 +1220,7 @@ namespace ChibiClash.Netcode
         /// One game step of one fighter. <paramref name="edges"/> = press edges latched since the last game step (equal to
         /// this tick's edges at full speed); PrevInput is maintained per real tick in <see cref="Latch"/>.
         /// </summary>
-        static void UpdateFighter(ChibiSimState s, int i, ChibiInputPacket input, int edges)
+        static void UpdateFighter(ChibiSimState s, int i, ChibiInputPacket input, int edges, int pose)
         {
             var f = s.F[i];
             var st = ChibiStageTable.Get(s.Stage);
@@ -1078,11 +1248,29 @@ namespace ChibiClash.Netcode
                 if (f.TailwindCd > 0) f.TailwindCd--;
                 else { f.TailwindTicks = f.Stats.TailwindDuration; f.TailwindCd = f.Stats.TailwindCooldown; }
             }
+            Dec(ref f.SuperJumpCd); Dec(ref f.PoseShotCd);   // scaled dt (F:208-209)
+
+            // Rules v15: the gesture ult fires here, before every action gate (UpdateUltWindow F:176 runs before canAct,
+            // F:179), so it fires while stunned or held; FireUltimate clears the stun (F:958). Frame-0 velocity is written
+            // now and the rest of this tick sees it (F:178 reads velocity after the ult started).
+            bool ultFired = false;
+            if (f.UltFirePending)
+            {
+                f.UltFirePending = false;
+                if (f.HpU > 0 && InputEnabled(s))
+                {
+                    StartMove(s, i, 5);
+                    UltFireVelocity(f);
+                    ultFired = true;
+                }
+            }
 
             // Held (multiphase-conversion.md 2.2, F:179/190/685-690): kinematic, no input, no Physics; the holder's
-            // HoldPhase writes the position. Timers above still tick.
+            // HoldPhase writes the position. Timers above still tick. Rules v15: an ult fired while held keeps running
+            // (the original's coroutines are not stopped by being held), but the held body stays at V 0.
             if (f.Held)
             {
+                if (f.MoveSlot >= 0 && !ultFired) AdvanceMove(s, i, false, groundedAtStart);
                 f.Shielding = false; f.ShieldTick = 0;
                 f.Vx = 0; f.Vy = 0; f.XRem = 0; f.YRem = 0; f.Grounded = false;
                 return;
@@ -1096,11 +1284,37 @@ namespace ChibiClash.Netcode
             // the sim has no intro/pause, and a KO ends the match before the next Step.
             bool level = false;                          // original forces vy = 0 this tick (doubled 50 Hz arc term)
             bool dashing = f.Stun == 0 && f.DashTicks > 0;
+            bool acting = f.Stun == 0 && InputEnabled(s);
+            bool poseLock = false;
+            if (acting)
+            {
+                // canAct section (F:181-185): poses first, then HandleActions, whose first act is the Ult press (F:266,
+                // before the dash / block early returns, so it opens the window while dashing, blocking or attacking).
+                poseLock = HandlePoses(s, i, pose);
+                TryOpenUltWindow(f, edges);
+            }
+
             if (f.Stun > 0)
             {
                 // Interrupt() keeps parryUntil / spinGuardUntil (F:670-677): ParryTicks and GuardTicks are NOT cleared (section 8.5).
                 // Single release path (TD amendment 4); DashTicks is already 0 here (every stun source interrupts).
                 Interrupt(s, i);
+            }
+            else if (!acting)
+            {
+                // No input (step 16: intro / match over). F:186-189: grounded and not stunned -> 30 u/s² slowdown.
+                f.Shielding = false; f.ShieldTick = 0;
+                if (f.Grounded) f.Vx = Approach(f.Vx, 0, ChibiSimConst.DisabledFriction);
+            }
+            else if (!dashing && (ultFired || poseLock) && f.MoveSlot >= 0)
+            {
+                // A lock started on this tick by the ult fire or the Pose Fireball (both before HandleActions): the rest of
+                // HandleActions runs with actionLock > 0 (F:262 no block, F:286-288 grounded 25 u/s², jump, fast-fall, dash).
+                // The move itself first advances next tick (program frame 0 already ran inline).
+                f.Shielding = false; f.ShieldTick = 0;
+                if (f.Grounded) f.Vx = Approach(f.Vx, 0, ChibiSimConst.MoveFriction);
+                JumpAndFastFall(f, st, input.MoveY, edges);
+                TryDashStart(f, input, edges);
             }
             else if (dashing)
             {
@@ -1110,7 +1324,7 @@ namespace ChibiClash.Netcode
                 f.Vx = f.DashDir * ChibiSimConst.DashSpeedSub;
                 f.Vy = 0;
                 f.Shielding = false; f.ShieldTick = 0;
-                if (f.MoveSlot >= 0)
+                if (f.MoveSlot >= 0 && !poseLock)          // a Pose Fireball lock started this tick advances from next tick
                 {
                     int prog = ProgramOf(f), frame = f.MoveTick;
                     AdvanceMove(s, i, true, groundedAtStart);
@@ -1166,9 +1380,6 @@ namespace ChibiClash.Netcode
             f.Shielding = false;
             f.ShieldTick = 0;
 
-            // Rules v14: start-of-tick values for the ult stand-in (the original fires the ult at F:176, before HandleActions).
-            int vxPre = f.Vx, facingPre = f.Facing, airJumpsPre = f.AirJumps;
-            bool groundedPre = f.Grounded;
             int dirX = input.MoveX, dirY = input.MoveY;
             int speed = ChibiCombatStats.EffectiveMoveSpeed(f.Stats, f.SlowTicks > 0, f.TailwindTicks > 0);
             f.Vx = Approach(f.Vx, dirX * speed, f.Grounded ? ChibiSimConst.GroundAccel : ChibiSimConst.AirAccel);
@@ -1178,19 +1389,9 @@ namespace ChibiClash.Netcode
 
             // Priority D-M1 = A (multiphase-conversion.md section 4, Fighter.cs:318-333), this tick's press edges only (D-N1):
             // Light && !reload > Heavy && !reload > first ready skill 0, 1, 2. With a spear in flight (F:455) a Light / Heavy
-            // press returns at once and nothing else fires this tick. Ult stand-in (TD review): checked first, only on a
-            // full meter; otherwise the press falls through and never eats another press (gesture window: step 15).
+            // press returns at once and nothing else fires this tick. Rules v15: the Ult press only opens the gesture window
+            // (TryOpenUltWindow, before this) and never eats another press.
             int b = edges;
-            if ((b & (int)ChibiButtons.Ultimate) != 0 && f.Ult >= ChibiSimConst.UltMax)
-            {
-                // A jump edge processed this tick that set Vy (ground or air jump, not a drop-through) keeps it (TD A2).
-                bool jumpVy = (b & (int)ChibiButtons.Jump) != 0 && (f.AirJumps != airJumpsPre || (groundedPre && !f.Grounded));
-                bool locks = f.Class != (int)FighterClass.Melee && f.Class != (int)FighterClass.Magic;
-                if (locks) f.Facing = facingPre;    // actionLock > 0 from F:176: HandleActions does not turn (F:280)
-                StartMove(s, i, 5);
-                UltFrame0Velocity(f, locks, vxPre, groundedPre, jumpVy, dirY);
-                return;
-            }
             bool reloading = f.SetCd > 0 && (f.Class == (int)FighterClass.Ranged || f.Class == (int)FighterClass.Magic);
             if (!reloading)
             {
@@ -1360,32 +1561,57 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>
-        /// Ult frame-0 velocity (rules v14, fact 3: applied, unlike skills) and the same-frame HandleActions of the original
-        /// (fact 4): grounded actionLock decel 25 u/s² on vx; a jump this tick keeps its vy (TD A2), else the ult's vy is
-        /// written and fast-fall re-applied. Sword Aura / Fire Ring (no lock) keep the free movement already applied.
+        /// Ult frame-0 velocity writes (rules v14 fact 3, applied unlike skills), made at fire time (rules v15). The original
+        /// starts the ult coroutine at F:176, before the velocity read at F:178, so the same tick's HandleActions then works
+        /// on this velocity: grounded 25 u/s² decel, a jump overrides vy (TD A2), fast-fall (see the lock branch in
+        /// UpdateFighter). Grounded is not touched here: GroundCheck already ran, so a same-tick jump is a ground jump.
+        /// Sword Aura / Fire Ring and Thousand Arrows write no velocity.
         /// </summary>
-        static void UltFrame0Velocity(ChibiFighterSim f, bool locks, int vxPre, bool groundedPre, bool jumpVy, int dirY)
+        static void UltFireVelocity(ChibiFighterSim f)
         {
-            if (!locks) return;
-            bool writeVy = false;
-            int vy = 0;
             switch ((FighterClass)f.Class)
             {
-                case FighterClass.Heavy: f.Vx = 0; writeVy = true; vy = ChibiSimConst.SmashJumpVel; break;
-                case FighterClass.Ranged: f.Vx = vxPre; break;                 // no write; free accel undone
+                case FighterClass.Heavy: f.Vx = 0; f.Vy = ChibiSimConst.SmashJumpVel; break;
                 case FighterClass.Polearm:
                     f.Vx = f.MovePhase == KickDash ? f.Facing * ChibiSimConst.KickDashVel : 0;
-                    writeVy = true;
+                    f.Vy = 0;
                     break;
             }
-            if (writeVy && !jumpVy)
+        }
+
+        /// <summary>
+        /// HandlePoses (F:371-392) on this step's latched gesture onset, only while able to act and with no ult window open
+        /// (a telemetry-invalid camera sends gesture None on the input side). RaiseHands: Super Jump (Vy 19 u/s, air jump
+        /// refilled, cd 3 s). PunchForward while free: Pose Fireball (cd 4 s, 0.25 s lock in move slot 6). An onset on
+        /// cooldown is lost, like JustStarted. Returns true when the fireball started its lock this tick.
+        /// </summary>
+        static bool HandlePoses(ChibiSimState s, int i, int pose)
+        {
+            var f = s.F[i];
+            if (pose == 0 || f.UltWindowTicks > 0) return false;
+            if (pose == (int)Gesture.RaiseHands)
             {
-                f.Vy = vy;
-                if (vy > 0) f.Grounded = false;
-                if (dirY < 0 && !f.Grounded && f.Vy < ChibiSimConst.FastFallTriggerVy)
-                    f.Vy = Math.Max(f.Vy - ChibiSimConst.FastFallAccel, -ChibiSimConst.FastFallCap);
+                if (f.SuperJumpCd > 0) return false;
+                f.SuperJumpCd = ChibiSimConst.SuperJumpCd;
+                f.Vy = ChibiSimConst.SuperJumpVel;
+                f.AirJumps = 1;
+                return false;
             }
-            if (groundedPre) f.Vx = Approach(f.Vx, 0, ChibiSimConst.MoveFriction);
+            if (pose != (int)Gesture.PunchForward || f.PoseShotCd > 0 || f.MoveSlot >= 0) return false;
+            f.PoseShotCd = ChibiSimConst.PoseShotCd;
+            StartMove(s, i, ChibiSimConst.PoseSlot);
+            // actionLock = 0.25 is set on this tick and counted down from the next one (F:204, F:386), so the pose tick
+            // is lock frame 0 (like a program's inline frame 0): a press 15 ticks later is accepted.
+            f.MoveTick = 1;
+            SpawnProjectile(s, new ProjSpec
+            {
+                Owner = i, Kind = ChibiProjKind.PoseFireball, X = f.X + f.Facing * ChibiSimConst.PoseShotOx,
+                Y = f.Y + ChibiSimConst.PoseShotOy, Vx = f.Facing * ChibiSimConst.PoseShotVel, Vy = 0,
+                Radius = ChibiSimConst.PoseShotR, Life = ChibiSimConst.PoseShotLife, Mult = ChibiSimConst.PoseShotMult,
+                KbX = ChibiSimConst.PoseShotKbX, KbY = ChibiSimConst.PoseShotKbY, Stun = ChibiSimConst.PoseShotStun,
+                Flags = ChibiProjectileSim.FDestructible,
+            });
+            return true;
         }
 
         /// <summary>Program id of the fighter's running move (by class and slot), or <see cref="PNone"/>.</summary>

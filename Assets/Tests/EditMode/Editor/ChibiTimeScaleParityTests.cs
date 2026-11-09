@@ -323,10 +323,10 @@ namespace ChibiClash.Tests
         {
             var s = MeleeArena();
             s.F[1].Invuln = LongTimer;
-            s.F[0].Ult = ChibiSimConst.UltMax;
+            ChibiTestTime.ArmUltFire(s, 0);   // rules v15: the gesture fire point
             if (a0 != 0) Set(s, AccumF, a0);
             int used = s.F[0].UltsUsed;
-            Tick(s, ChibiButtons.Ultimate, ChibiButtons.None);
+            Tick(s, ChibiButtons.None, ChibiButtons.None);
             Assert.AreEqual(used + 1, s.F[0].UltsUsed, "precondition: ult fired on tick c");
             return s;
         }

@@ -617,10 +617,10 @@ namespace ChibiClash.Tests
             var ev = new List<ChibiSimEvent>();
             var shown = Copy(s);
             var idle = new ChibiInputPacket();
-            var press = ChibiInputPacket.Make(ChibiDir.Neutral, ChibiButtons.Ultimate);
+            ChibiTestTime.ArmUltFire(s, Ulter);   // rules v15: the gesture fire point, top of tick 0
             for (int t = 0; t < UltWatch; t++)
             {
-                ChibiSimulation.Step(s, t == 0 ? press : idle, idle);
+                ChibiSimulation.Step(s, idle, idle);
                 ev.Clear();
                 ChibiSimEvents.Diff(shown, s, ev);
                 shown.CopyFrom(s);

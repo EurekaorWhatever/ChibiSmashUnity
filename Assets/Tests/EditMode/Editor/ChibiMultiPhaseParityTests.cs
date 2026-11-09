@@ -1061,7 +1061,10 @@ namespace ChibiClash.Tests
             // Heavy (Smash locks as slot 5). Not Melee: since step 14 (D-U2 = A) Sword Aura starts instantly with no lock,
             // so a Melee ult leaves MoveSlot -1 and would not show which press won.
             var s = Arena(FighterClass.Heavy, HeavyP1, 0, FighterClass.Melee, BloodEdge, 6000);
+            // Rules v15: a full meter means the gesture fired the ult at the top of this tick (Smash locks, Light lost);
+            // otherwise the Ult press only tries to open the window and the Light starts.
             s.F[0].Ult = meter;
+            if (meter >= UltMax) ChibiTestTime.ArmUltFire(s, 0);
             Game(s, In(ChibiButtons.Ultimate | ChibiButtons.Light), N);
             Assert.AreEqual(expectSlot, s.F[0].MoveSlot, $"TD ult rule: meter {meter} -> slot {expectSlot}");
         }

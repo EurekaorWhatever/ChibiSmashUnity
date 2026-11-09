@@ -38,7 +38,8 @@ namespace ChibiClash.Netcode
     ///   bit 12      dash
     ///   bit 13..14  gesture id (ChibiClash.Gesture: 0 None, 1 CrossArms, 2 PunchForward, 3 RaiseHands)
     ///   bit 15      pose verified (hint from the camera input side, not proof)
-    /// Bits 12..15 travel on the wire but the simulation ignores them for now.
+    /// Since RulesVersion 15 the simulation reads the gesture id (bits 13..14) as a held input: ult window, CrossArms
+    /// block, poses. It never reads bit 15.
     ///
     /// The struct holds *state* (what is held), never events. Press edges are derived inside the simulation
     /// from the previous frame's value, so nothing extra travels over the network and rollback stays exact.
@@ -94,11 +95,13 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>Drop bits outside <see cref="WireMask"/> and illegal direction values (never trust the wire).
-        /// Dash, gesture and PoseVerified bits are kept.</summary>
+        /// Dash, gesture and PoseVerified bits are kept, except that PoseVerified is cleared when the gesture is None
+        /// (canonical form, security-gesture-review.md SEC-002). The simulation never reads PoseVerified.</summary>
         public ChibiInputPacket Sanitized()
         {
             ushort r = (ushort)(Raw & WireMask);
             if ((r & DirMask) > 8) r = (ushort)(r & ~DirMask);
+            if ((r & GestureMask) == 0) r = (ushort)(r & ~(ushort)ChibiButtons.PoseVerified);
             return new ChibiInputPacket { Raw = r };
         }
 

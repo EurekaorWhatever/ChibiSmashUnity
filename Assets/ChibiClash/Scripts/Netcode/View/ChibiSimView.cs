@@ -454,6 +454,12 @@ namespace ChibiClash.Netcode
                         float dur = (f.MoveStartup + f.MoveActive + f.MoveRecovery) / (float)ChibiSimConst.TickRate;
                         v.PlayNormal(e.Value == 1, e.Value2, dur);
                     }
+                    else if (e.Value == ChibiSimConst.PoseSlot)
+                    {
+                        // Pose Fireball (F:386-390): recoil and the pose label; the shot itself is a PoseFireball projectile.
+                        v.PlayRecoil(0.25f);
+                        Fx.Text(Center(e.Index) + Vector2.up * 1.2f, "POSE: FIREBALL", new Color(1f, 0.6f, 0.2f), 0.7f);
+                    }
                     else
                     {
                         int cls = Mathf.Clamp(f.Class, 0, SkillAnim.GetLength(0) - 1);
@@ -483,6 +489,15 @@ namespace ChibiClash.Netcode
                 case ChibiSimEventKind.RingOut:
                     Fx.Text(Center(e.Index) + Vector2.up * 1.2f, "RING OUT", Gui.Red, 1.1f);
                     break;
+                case ChibiSimEventKind.PoseSuperJump:
+                {
+                    // Super Jump pose (F:380-381): burst at the feet and the pose label.
+                    var f = _seen.F[e.Index];
+                    var feet = new Vector2(f.X * MilliToWorld, GroundY + f.Y * MilliToWorld);
+                    Fx.Burst(feet, new Color(0.6f, 0.9f, 1f), 18, 5f, 0.35f);
+                    Fx.Text(Center(e.Index) + Vector2.up * 1.2f, "POSE: SUPER JUMP", new Color(0.6f, 0.9f, 1f), 0.7f);
+                    break;
+                }
                 case ChibiSimEventKind.DashStarted:
                     Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 8, 3f, 0.3f);   // Fighter.cs dash start
                     break;

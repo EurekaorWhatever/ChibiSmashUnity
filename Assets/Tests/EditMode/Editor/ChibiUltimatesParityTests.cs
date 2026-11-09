@@ -171,8 +171,8 @@ namespace ChibiClash.Tests
         /// <summary>Tick 0: fill the meter and press Ultimate (plus <paramref name="extra"/>) for F[who].</summary>
         static void PressUlt(ChibiSimState s, int who = 0, ChibiButtons extra = ChibiButtons.None)
         {
-            s.F[who].Ult = ChibiSimConst.UltMax;
-            GameFor(s, who, In(ChibiButtons.Ultimate | extra));
+            ChibiTestTime.ArmUltFire(s, who);   // rules v15: the gesture fire point, top of tick 0
+            GameFor(s, who, In(extra));
         }
 
         static ChibiSimState Clone(ChibiSimState s)
@@ -253,22 +253,33 @@ namespace ChibiClash.Tests
 
         // Test 5 -- D-U1 = A: a stunned fighter cannot ult in step 14 (documented step-15 gap, F:417 vs SIM:1129).
         [Test]
-        public void T05_Stunned_NoUltUntilStep15()
+        public void T05_Stunned_GestureUltFiresAndClearsStun()
         {
+            // Rules v15 (step 15) replaces D-U1 A: the gesture ult fires at F:176, before the hitstun gate (F:179).
             var s = Arena(FighterClass.Polearm, PolearmP0, 0, FighterClass.Melee, BloodEdge, 12000);
             s.F[0].Stun = 30;
             PressUlt(s);
-            Assert.AreEqual(0, s.F[0].UltsUsed, "D-U1 A: stand-in only on the free path");
+            Assert.AreEqual(1, s.F[0].UltsUsed, "step 15: the ult fires while stunned");
+            Assert.AreEqual(0, s.F[0].Stun, "FireUltimate clears hitstun (F:958)");
         }
 
         // Test 25 -- F:674: Dash + Ult on the same tick -> the ult's Interrupt clears DashTicks.
         [Test]
         public void T06_DashAndUltSameTick_InterruptClearsDash()
         {
+            // Rules v15 order (F:176 ult, F:309 dash press): a dash already running is cleared by the ult's Interrupt ...
             var s = Arena(FighterClass.Melee, SwiftBlade, 0, FighterClass.Melee, BloodEdge, 12000);
-            PressUlt(s, 0, ChibiButtons.Dash);
+            Game(s, In(ChibiButtons.Dash), N);
+            Assert.Greater(s.F[0].DashTicks, 0, "precondition: dashing");
+            PressUlt(s);
             Assert.AreEqual(1, s.F[0].UltsUsed, "precondition: ult fired");
-            Assert.AreEqual(0, s.F[0].DashTicks, "test 25: Interrupt cleared the dash");
+            Assert.AreEqual(0, s.F[0].DashTicks, "test 25: Interrupt cleared the running dash");
+
+            // ... while a Dash pressed on the fire tick starts after it (HandleActions runs after FireUltimate).
+            var t = Arena(FighterClass.Melee, SwiftBlade, 0, FighterClass.Melee, BloodEdge, 12000);
+            PressUlt(t, 0, ChibiButtons.Dash);
+            Assert.AreEqual(1, t.F[0].UltsUsed);
+            Assert.AreEqual(ChibiSimConst.DashDuration, t.F[0].DashTicks, "same-tick Dash press starts after the ult");
         }
 
         // ================================================================== Sword Aura / Fire Ring (D-U2 = A)
@@ -580,8 +591,8 @@ namespace ChibiClash.Tests
             var s = KickArena(5000);
             var v = s.F[1];
             var shield = In(ChibiButtons.Shield);
-            s.F[0].Ult = ChibiSimConst.UltMax;
-            Game(s, In(ChibiButtons.Ultimate), shield);
+            ChibiTestTime.ArmUltFire(s, 0);
+            Game(s, N, shield);
             int hp = v.HpU;
             for (int t = 1; t <= 9; t++) Game(s, N, shield);
             Assert.Less(v.HpU, hp, "test 15: Kick hit 1 is unblockable");
@@ -840,7 +851,7 @@ namespace ChibiClash.Tests
         [Test]
         public void T33_RulesVersion14()
         {
-            Assert.AreEqual(RulesVersion14, ConstOf(typeof(ChibiMatchConfig), "RulesVersion"), "A8: RulesVersion 14");
+            Assert.GreaterOrEqual(ConstOf(typeof(ChibiMatchConfig), "RulesVersion"), RulesVersion14, "A8: RulesVersion at least 14");
         }
 
         // A8 -- v13 hash != v14 hash; the step-14 constants exist with the doc's values (names per section 4, TBD-verify).
