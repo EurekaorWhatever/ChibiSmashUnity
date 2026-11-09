@@ -194,13 +194,14 @@ namespace ChibiClash.Tests
         [TestCase("Sh1t")] [TestCase("admin_kira")] [TestCase("OFFICIAL")]
         public void ValidateName_BlockedWord_Rejected(string name) => Assert.IsNotNull(ChibiSocialRules.ValidateName(name));
 
-        [TestCase("Skillz")] [TestCase("Kira")] [TestCase("Assassin_7")] [TestCase("Scunthorpe_ok")]
-        public void ContainsBlockedWord_OrdinaryNames_Allowed(string name)
-        {
-            // Scunthorpe contains a slur substring: documents the known trade-off of substring filters.
-            bool expected = name == "Scunthorpe_ok";
-            Assert.AreEqual(expected, ChibiSocialRules.ContainsBlockedWord(name));
-        }
+        [TestCase("Skillz")] [TestCase("Kira")] [TestCase("Assassin_7")] [TestCase("Scunthorpe_ok")] [TestCase("Grape Escape")]
+        [TestCase("Peacock")] [TestCase("Cocktail Bar")]
+        public void ContainsBlockedWord_InnocentNames_Allowed(string name) =>
+            Assert.IsFalse(ChibiSocialRules.ContainsBlockedWord(name), name);
+
+        [TestCase("Grape rape")] [TestCase("peacock dick")]
+        public void ContainsBlockedWord_AllowListCannotHideARealBlockedWord(string name) =>
+            Assert.IsTrue(ChibiSocialRules.ContainsBlockedWord(name), name);
 
         // ================================================================== saved name rules
 

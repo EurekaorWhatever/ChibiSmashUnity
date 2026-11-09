@@ -55,6 +55,36 @@ namespace ChibiClash.Tests
             Assert.AreEqual("Player", ChibiSocialRules.SafeDisplayName(null));
         }
 
+        // ================================================================== room names (host-chosen, shown to the joiner)
+
+        [TestCase("Kira's Dojo")] [TestCase("Bangkok Brawl!")] [TestCase("Room-1")] [TestCase("abc")] [TestCase("ABCDEFGHIJKLMNOPQRSTUVWX")]
+        public void ValidateRoomName_GoodNames_Accepted(string name) => Assert.IsNull(ChibiSocialRules.ValidateRoomName(name));
+
+        [TestCase(null)] [TestCase("")] [TestCase("ab")] [TestCase("ABCDEFGHIJKLMNOPQRSTUVWXY")] [TestCase("<b>Room</b>")]
+        [TestCase("Two  spaces")] [TestCase("Line\nBreak")] [TestCase("Sh1t Room")] [TestCase("Room=1")]
+        public void ValidateRoomName_BadNames_Rejected(string name) => Assert.IsNotNull(ChibiSocialRules.ValidateRoomName(name));
+
+        [Test]
+        public void SafeRoomName_HostileLobbyName_Sanitised()
+        {
+            string safe = ChibiSocialRules.SafeRoomName("<size=500><color=red>Kira's   Dojo</color></size>\n");
+            Assert.IsFalse(safe.Contains("<") || safe.Contains(">") || safe.Contains("=") || safe.Contains("\n") || safe.Contains("  "), safe);
+            StringAssert.Contains("Kira's Dojo", safe);
+            Assert.LessOrEqual(ChibiSocialRules.SafeRoomName(new string('A', 300)).Length, ChibiSocialRules.RoomNameMax);
+        }
+
+        [TestCase(null)] [TestCase("")] [TestCase("<>")] [TestCase("F_U_C_K room")]
+        public void SafeRoomName_EmptyOrBlocked_Fallback(string raw) =>
+            Assert.AreEqual(ChibiSocialRules.FallbackRoomName, ChibiSocialRules.SafeRoomName(raw));
+
+        [TestCase("Kira#4821", "Kira's room")] [TestCase("", "My room")] [TestCase("Player", "My room")]
+        [TestCase("ABCDEFGHIJKLMNOP#1", "ABCDEFGHIJKLMNOP's room")]
+        public void DefaultRoomName_FromPlayerName(string player, string expected)
+        {
+            Assert.AreEqual(expected, ChibiSocialRules.DefaultRoomName(player));
+            Assert.IsNull(ChibiSocialRules.ValidateRoomName(ChibiSocialRules.DefaultRoomName(player)), "the default is always valid");
+        }
+
         // ================================================================== room codes
 
         [TestCase("k7q2px", "K7Q2PX")] [TestCase(" ABCD ", "ABCD")]

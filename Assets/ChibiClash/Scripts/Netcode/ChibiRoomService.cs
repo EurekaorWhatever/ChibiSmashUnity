@@ -1,0 +1,608 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.Services.Authentication;
+using Unity.Services.Lobbies;
+using Unity.Services.Lobbies.Models;
+using UnityEngine;
+
+namespace ChibiClash.Netcode
+{
+    /// <summary>What the friends layer needs from rooms: a room to invite into, and joining an accepted invite.</summary>
+    public interface IChibiInviteRooms
+    {
+        /// <summary>Code of the room we are in ("" when none yet).</summary>
+        string RoomCode { get; }
+        /// <summary>The last room request failed (see <see cref="RoomStatus"/>).</summary>
+        bool RoomFailed { get; }
+        string RoomStatus { get; }
+        /// <summary>Make a room to invite a friend into (no-op when we are already in one).</summary>
+        void CreateRoomForInvite(string roomName);
+        /// <summary>Join the room of an accepted invite.</summary>
+        void JoinRoomForInvite(string code);
+    }
+
+    /// <summary>
+    /// CREATE ROOM mode (docs/architecture/netcode/online-rooms.md "Rooms"): named private rooms that stay open between
+    /// fights. Each room is a private 2-seat Unity Lobby. Inside it both players choose a fighter and press OK (Ready);
+    /// START FIGHT works only when both are ready, and either player may press it:
+    ///   host presses  -> host un-readies, opens the match link (Relay) and publishes {relay, go} in the lobby
+    ///   guest presses -> guest publishes a start nonce; the host sees it on its next poll and does the above
+    ///   guest sees a NEW go -> acknowledges it (ack = go, ready off) -> connects -> handshake -> match (unchanged core)
+    ///   no acknowledgement within <see cref="AckTimeoutSeconds"/> -> the host cancels quickly
+    /// After the fight both return to the room and press OK again. Room actions only happen while the room screen is
+    /// open (<see cref="ScreenOpen"/>); leaving the screen un-readies. Rules live in <see cref="ChibiRoomRules"/> (pure,
+    /// tested); this class only talks to the Lobby service. Reviewed by the network-programmer and security-engineer
+    /// agents (races, relaunch spam, stale launches, rate limits). Main thread only.
+    /// </summary>
+    /// <example><code>
+    /// var svc = gameObject.AddComponent&lt;ChibiRoomService&gt;();
+    /// svc.Bind(roomManager);  svc.Create("Kira's Dojo", stage: 0);  svc.SetReady(true);  svc.PressStart();
+    /// </code></example>
+    public sealed class ChibiRoomService : MonoBehaviour, IChibiInviteRooms
+    {
+        const string KeyStage = "stage", KeyGo = "go", KeyRelay = "relay", KeyProto = "proto";
+        const string PName = "n", PClass = "c", PPassive = "p", PReady = "r", PStart = "s", PAck = "a";
+        const float PollSeconds = 2f, HeartbeatSeconds = 15f, ListRefreshMinSeconds = 10f;
+        /// <summary>A launch that has not connected after this long is cancelled.</summary>
+        public const float LaunchTimeoutSeconds = 25f;
+        /// <summary>The host cancels a launch the guest has not acknowledged within this long (guest gone or not ready).</summary>
+        public const float AckTimeoutSeconds = 8f;
+        /// <summary>At most this many fights started by the guest per <see cref="GuestLaunchWindowSeconds"/> (anti-spam).</summary>
+        public const int MaxGuestLaunches = 3;
+        public const float GuestLaunchWindowSeconds = 120f;
+        /// <summary>Rooms one player may host at once (each needs a heartbeat; Lobby limits heartbeats per player).</summary>
+        public const int MaxHostedRooms = 2;
+        const int MaxListedRooms = 10;
+
+        /// <summary>Rooms we are in (hosted or joined), for the room blocks on the ROOMS page.</summary>
+        public readonly List<ChibiRoomSnapshot> MyRooms = new List<ChibiRoomSnapshot>();
+        /// <summary>The room whose screen is open (null on the room list).</summary>
+        public ChibiRoomSnapshot Current { get; private set; }
+        /// <summary>Id of the room whose screen is open ("" none).</summary>
+        public string CurrentId { get; private set; } = "";
+        /// <summary>We pressed OK in the open room.</summary>
+        public bool LocalReady { get; private set; }
+        /// <summary>The open room was read fresh after entering (OK is allowed only then).</summary>
+        public bool Synced { get; private set; }
+        /// <summary>A request is in flight (buttons disabled).</summary>
+        public bool Working { get; private set; }
+        /// <summary>START FIGHT was triggered and the match link is being set up.</summary>
+        public bool Launching { get; private set; }
+        /// <summary>The current match link was started by this room (the game takes fighter and stage from here).</summary>
+        public bool OwnsLink { get; private set; }
+        public string Status { get; private set; } = "";
+        public bool StatusIsError { get; private set; }
+        /// <summary>The room list was loaded at least once (so an empty list really means "no rooms").</summary>
+        public bool ListLoaded { get; private set; }
+
+        /// <summary>Our player name to show in rooms (set by the game).</summary>
+        public Func<string> MyName = () => "";
+        /// <summary>Age gate (set by the game): false refuses every room action.</summary>
+        public Func<bool> OnlineAllowed = () => true;
+        /// <summary>True while a match is running (polling pauses; heartbeats continue).</summary>
+        public Func<bool> InMatch = () => false;
+        /// <summary>True while the room screen is on show: launches and starts are only acted on then.</summary>
+        public Func<bool> ScreenOpen = () => true;
+
+        /// <summary>Our player id ("" before sign-in).</summary>
+        public string MyId => AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : "";
+        /// <summary>We host the open room.</summary>
+        public bool IsHost => Current != null && Current.HostId.Length > 0 && Current.HostId == MyId;
+        /// <summary>The fighter we published with OK (the match uses exactly this).</summary>
+        public FighterClass PickClass => _class;
+        public int PickPassive => _passive;
+        /// <summary>The host's stage choice for the next fight (0..2).</summary>
+        public int Stage => Current != null ? Current.Stage : 0;
+
+        NetworkRoomManager _link;
+        FighterClass _class;
+        int _passive;
+        float _pollAt, _heartbeatAt, _listAt = -999f, _launchStarted, _goPublishedAt;
+        bool _polling, _guestJoining;
+        string _baselineGo = "", _lastGuestNonce = "", _myStartNonce = "", _myAck = "", _publishedGo = "";
+        readonly Queue<float> _guestLaunchTimes = new Queue<float>();
+
+        /// <summary>The room manager that opens the actual match link.</summary>
+        public void Bind(NetworkRoomManager link) => _link = link;
+
+        // ================================================================== IChibiInviteRooms
+
+        public string RoomCode => Current != null ? Current.Code : "";
+        public bool RoomFailed => StatusIsError;
+        public string RoomStatus => Status;
+        public void CreateRoomForInvite(string roomName) { if (Current == null) Create(roomName, 0); }
+        public void JoinRoomForInvite(string code) => JoinByCode(code);
+
+        // ================================================================== list
+
+        /// <summary>Reload the rooms we are in (throttled and spaced: Lobby allows about one read per second).</summary>
+        public async void Refresh(bool force = false)
+        {
+            if (Working || !Allowed()) return;
+            if (!force && Time.unscaledTime - _listAt < ListRefreshMinSeconds) return;
+            _listAt = Time.unscaledTime;
+            Working = true;
+            try
+            {
+                string err = await NetworkRoomManager.EnsureSignedInAsync();
+                if (err != null) { SetStatus(err, true); return; }
+                var ids = await LobbyService.Instance.GetJoinedLobbiesAsync();
+                var fresh = new List<ChibiRoomSnapshot>();
+                if (ids != null)
+                    for (int k = 0; k < ids.Count && fresh.Count < MaxListedRooms; k++)
+                    {
+                        if (k > 0) await Task.Delay(1100);   // spaced reads
+                        try { fresh.Add(ToSnapshot(await LobbyService.Instance.GetLobbyAsync(ids[k]))); }
+                        catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound || e.Reason == LobbyExceptionReason.Forbidden)
+                        { /* closed or we were removed */ }
+                        catch (Exception)
+                        {
+                            var old = Find(ids[k]);   // busy service: keep what we knew (never drop a live room)
+                            if (old != null) fresh.Add(old);
+                        }
+                    }
+                MyRooms.Clear();
+                MyRooms.AddRange(fresh);
+                ListLoaded = true;
+                SetStatus("", false);
+            }
+            catch (Exception e) { SetStatus("Could not load your rooms: " + NetworkRoomManager.Explain(e), true); }
+            finally { Working = false; }
+        }
+
+        /// <summary>The signed-in account changed: the old account's rooms are not ours any more.</summary>
+        public void ResetForAccountChange()
+        {
+            if (Launching) _link?.Cancel();
+            MyRooms.Clear();
+            Current = null;
+            CurrentId = "";
+            ListLoaded = false;
+            _listAt = -999f;
+            ResetSeat(true);
+            SetStatus("", false);
+        }
+
+        // ================================================================== create / join / enter / leave
+
+        /// <summary>Create a named room (validated) and open it.</summary>
+        public async void Create(string roomName, int stage)
+        {
+            if (Working || !Allowed()) return;
+            string name = (roomName ?? "").Trim();
+            string bad = ChibiSocialRules.ValidateRoomName(name);
+            if (bad != null) { SetStatus(bad, true); return; }
+            int hosted = 0;
+            foreach (var r in MyRooms) if (r.HostId == MyId && MyId.Length > 0) hosted++;
+            if (hosted >= MaxHostedRooms) { SetStatus("You already host " + MaxHostedRooms + " rooms. Close one first.", true); return; }
+            Working = true;
+            SetStatus("Creating \"" + name + "\"...", false);
+            try
+            {
+                string err = await NetworkRoomManager.EnsureSignedInAsync();
+                if (err != null) { SetStatus(err, true); return; }
+                await LeaveCurrentSeat();
+                var options = new CreateLobbyOptions
+                {
+                    IsPrivate = true,
+                    Player = MyPlayer(),
+                    Data = new Dictionary<string, DataObject>
+                    {
+                        [KeyProto] = new DataObject(DataObject.VisibilityOptions.Member, NetworkRoomManager.ProtocolTag),
+                        [KeyStage] = new DataObject(DataObject.VisibilityOptions.Member, ChibiRoomRules.ParseStage(stage.ToString()).ToString()),
+                        [KeyGo] = new DataObject(DataObject.VisibilityOptions.Member, ""),
+                        [KeyRelay] = new DataObject(DataObject.VisibilityOptions.Member, ""),
+                    },
+                };
+                var lobby = await LobbyService.Instance.CreateLobbyAsync(ChibiSocialRules.SafeRoomName(name), ChibiRoomRules.Seats, options);
+                Open(lobby, synced: true);   // we just created it: nothing stale
+                SetStatus("Room \"" + Current.Name + "\" is ready. Share the code " + Current.Code + " or invite a friend.", false);
+            }
+            catch (Exception e) { SetStatus("Could not create the room: " + NetworkRoomManager.Explain(e), true); }
+            finally { Working = false; }
+        }
+
+        /// <summary>Join a friend's room by its code and open it.</summary>
+        public async void JoinByCode(string code)
+        {
+            if (Working || !Allowed()) return;
+            string c = ChibiSocialRules.NormalizeCode(code);
+            if (c == null) { SetStatus("That is not a valid room code (letters and numbers only).", true); return; }
+            foreach (var r in MyRooms) if (r.Code == c) { Enter(r.Id); return; }   // already a member
+            Working = true;
+            SetStatus("Joining room " + c + "...", false);
+            try
+            {
+                string err = await NetworkRoomManager.EnsureSignedInAsync();
+                if (err != null) { SetStatus(err, true); return; }
+                await LeaveCurrentSeat();
+                var lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(c, new JoinLobbyByCodeOptions { Player = MyPlayer() });
+                Open(lobby, synced: false);   // an older launch may be in the lobby: baseline from the first poll
+                SetStatus("You joined \"" + Current.Name + "\". Choose your fighter and press OK.", false);
+            }
+            catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound || e.Reason == LobbyExceptionReason.InvalidJoinCode)
+            { SetStatus("No room with code " + c + ". Check the code and try again.", true); }
+            catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyFull)
+            { SetStatus("That room is full (2 players).", true); }
+            catch (Exception e) { SetStatus("Could not join: " + NetworkRoomManager.Explain(e), true); }
+            finally { Working = false; }
+        }
+
+        /// <summary>Open a room we are already in (a room block was clicked). OK unlocks after the first fresh read.</summary>
+        public void Enter(string roomId)
+        {
+            if (!Allowed()) return;
+            var r = Find(roomId);
+            if (r == null) return;
+            if (CurrentId.Length > 0 && CurrentId != roomId) _ = LeaveCurrentSeat();
+            Current = r;
+            CurrentId = r.Id;
+            ResetSeat(synced: false);
+            _pollAt = 0f;   // read it now
+            SetStatus("Loading the room...", false);
+        }
+
+        /// <summary>Back to the room list (we stay a member; the room stays open; our OK is withdrawn).</summary>
+        public void ExitToList()
+        {
+            _ = LeaveCurrentSeat();
+            Current = null;
+            CurrentId = "";
+        }
+
+        /// <summary>Leave a room for good (the host closes it for both).</summary>
+        public async void Leave(string roomId)
+        {
+            if (Working || string.IsNullOrEmpty(roomId)) return;
+            Working = true;
+            var room = Find(roomId);
+            bool host = room != null && room.HostId == MyId;
+            try
+            {
+                if (host) await LobbyService.Instance.DeleteLobbyAsync(roomId);
+                else await LobbyService.Instance.RemovePlayerAsync(roomId, MyId);
+                SetStatus(host ? "Room closed." : "You left the room.", false);
+            }
+            catch (Exception) { /* already gone */ }
+            finally
+            {
+                MyRooms.RemoveAll(r => r.Id == roomId);
+                if (CurrentId == roomId) { Current = null; CurrentId = ""; ResetSeat(true); }
+                Working = false;
+            }
+        }
+
+        // ================================================================== in the room
+
+        /// <summary>Our fighter choice (published with OK; changing it is only possible while not ready).</summary>
+        public void SetPick(FighterClass cls, int passive)
+        {
+            if (LocalReady || Launching) return;
+            _class = cls;
+            _passive = passive == 0 ? 0 : 1;
+        }
+
+        /// <summary>OK (ready = "I'm in with this fighter") or CHANGE (not ready). OK needs a fresh read of the room.</summary>
+        public async void SetReady(bool ready)
+        {
+            if (Current == null || Working || !Allowed()) return;
+            if (ready && !Synced) return;
+            if (LocalReady == ready) return;
+            LocalReady = ready;
+            if (!ready) _myStartNonce = "";
+            await PushPlayer();
+        }
+
+        /// <summary>Host: choose the stage of the next fight.</summary>
+        public async void SetStage(int stage)
+        {
+            if (!IsHost || Working || Current == null || !Allowed()) return;
+            stage = ChibiRoomRules.ParseStage(stage.ToString());
+            if (stage == Current.Stage) return;
+            Current.Stage = stage;
+            await UpdateLobbyData(new Dictionary<string, DataObject> { [KeyStage] = Member(stage.ToString()) }, "change the stage");
+        }
+
+        /// <summary>START FIGHT: only when both players are ready (else the reason is shown). Either player may press it.</summary>
+        public async void PressStart()
+        {
+            if (Current == null || Launching || Working || !Allowed()) return;
+            if (!ChibiRoomRules.CanStart(Current)) { SetStatus(ChibiRoomRules.WaitingFor(Current, MyId), true); return; }
+            if (IsHost) { await Launch(); return; }
+            _myStartNonce = ChibiRoomRules.NewNonce();
+            SetStatus("Starting... waiting for the host's game.", false);
+            await PushPlayer();
+            _pollAt = Time.unscaledTime + 0.5f;
+        }
+
+        /// <summary>The fight ended (or never started): back in the room, both press OK again for the next fight.</summary>
+        public void OnMatchEnded()
+        {
+            bool wasHost = IsHost;
+            ResetSeat(synced: Synced);
+            if (Current == null) return;
+            _ = PushPlayer();
+            if (wasHost) _ = UpdateLobbyData(new Dictionary<string, DataObject> { [KeyGo] = Member(""), [KeyRelay] = Member("") }, null);
+            SetStatus("Choose your fighter and press OK for the next fight.", false);
+        }
+
+        // ================================================================== internals
+
+        bool Allowed()
+        {
+            if (OnlineAllowed == null || OnlineAllowed()) return true;
+            SetStatus(NetworkRoomManager.NotAllowedMessage, true);
+            return false;
+        }
+
+        ChibiRoomSnapshot Find(string id)
+        {
+            foreach (var r in MyRooms) if (r.Id == id) return r;
+            return null;
+        }
+
+        void ResetSeat(bool synced)
+        {
+            LocalReady = false;
+            Launching = false;
+            OwnsLink = false;
+            _guestJoining = false;
+            _myStartNonce = "";
+            _publishedGo = "";
+            Synced = synced;
+        }
+
+        /// <summary>Withdraw OK / start in the room we are leaving (so nobody launches against an empty seat).</summary>
+        async Task LeaveCurrentSeat()
+        {
+            if (Current == null || (!LocalReady && _myStartNonce.Length == 0)) { ResetSeat(Synced); return; }
+            ResetSeat(Synced);
+            await PushPlayer();
+        }
+
+        static DataObject Member(string v) => new DataObject(DataObject.VisibilityOptions.Member, v);
+        static PlayerDataObject PMember(string v) => new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, v);
+
+        Player MyPlayer() => new Player(id: MyId, data: PlayerData());
+
+        Dictionary<string, PlayerDataObject> PlayerData()
+        {
+            // Only the chosen part of the name is shared (no #tag: a stranger with the code cannot harvest friend tags).
+            string name = ChibiSocialRules.BaseName(ChibiSocialRules.SafeDisplayName(MyName?.Invoke()));
+            return new Dictionary<string, PlayerDataObject>
+            {
+                [PName] = PMember(name),
+                [PClass] = PMember(((int)_class).ToString()),
+                [PPassive] = PMember(_passive.ToString()),
+                [PReady] = PMember(LocalReady ? "1" : "0"),
+                [PStart] = PMember(_myStartNonce),
+                [PAck] = PMember(_myAck),
+            };
+        }
+
+        async Task PushPlayer()
+        {
+            string id = CurrentId;
+            if (id.Length == 0 || MyId.Length == 0) return;
+            try
+            {
+                var lobby = await LobbyService.Instance.UpdatePlayerAsync(id, MyId, new UpdatePlayerOptions { Data = PlayerData() });
+                Apply(lobby);
+            }
+            catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound) { if (id == CurrentId) RoomGone(); }
+            catch (Exception e) { SetStatus("Could not update the room: " + NetworkRoomManager.Explain(e), true); }
+        }
+
+        async Task<bool> UpdateLobbyData(Dictionary<string, DataObject> data, string what)
+        {
+            try
+            {
+                Apply(await LobbyService.Instance.UpdateLobbyAsync(CurrentId, new UpdateLobbyOptions { Data = data }));
+                return true;
+            }
+            catch (Exception e)
+            {
+                if (what != null) SetStatus("Could not " + what + ": " + NetworkRoomManager.Explain(e), true);
+                return false;
+            }
+        }
+
+        void Open(Lobby lobby, bool synced)
+        {
+            var snap = ToSnapshot(lobby);
+            MyRooms.RemoveAll(r => r.Id == snap.Id);
+            MyRooms.Insert(0, snap);
+            ListLoaded = true;
+            Current = snap;
+            CurrentId = snap.Id;
+            ResetSeat(synced);
+            _baselineGo = snap.Go;
+            _lastGuestNonce = snap.Slots.Count > 1 ? snap.Slots[1].StartNonce : "";
+            _heartbeatAt = Mathf.Min(_heartbeatAt, Time.unscaledTime + HeartbeatSeconds);
+            _pollAt = Time.unscaledTime + PollSeconds;
+        }
+
+        void Apply(Lobby lobby)
+        {
+            if (lobby == null) return;
+            var snap = ToSnapshot(lobby);
+            for (int i = 0; i < MyRooms.Count; i++) if (MyRooms[i].Id == snap.Id) MyRooms[i] = snap;
+            if (snap.Id == CurrentId) Current = snap;
+        }
+
+        void RoomGone()
+        {
+            MyRooms.RemoveAll(r => r.Id == CurrentId);
+            Current = null;
+            CurrentId = "";
+            if (Launching) _link?.Cancel();
+            ResetSeat(true);
+            SetStatus("The room was closed (the host left).", true);
+        }
+
+        static string Val(Dictionary<string, DataObject> d, string k) => d != null && d.TryGetValue(k, out var v) && v != null ? v.Value : "";
+        static string PVal(Dictionary<string, PlayerDataObject> d, string k) => d != null && d.TryGetValue(k, out var v) && v != null ? v.Value : "";
+
+        static ChibiRoomSnapshot ToSnapshot(Lobby l)
+        {
+            var raw = new List<ChibiRoomRawPlayer>();
+            if (l.Players != null)
+                foreach (var p in l.Players)
+                    raw.Add(new ChibiRoomRawPlayer
+                    {
+                        Id = p?.Id, Name = PVal(p?.Data, PName), Class = PVal(p?.Data, PClass), Passive = PVal(p?.Data, PPassive),
+                        Ready = PVal(p?.Data, PReady), Start = PVal(p?.Data, PStart), Ack = PVal(p?.Data, PAck),
+                    });
+            return ChibiRoomRules.Snapshot(l.Id, l.Name, l.LobbyCode, l.HostId, Val(l.Data, KeyStage), Val(l.Data, KeyGo),
+                                           Val(l.Data, KeyRelay), raw);
+        }
+
+        /// <summary>Host: start the fight (both ready). Un-readies first, so a failed start never repeats by itself.</summary>
+        async Task Launch()
+        {
+            if (Launching || Current == null) return;
+            Launching = true;
+            OwnsLink = true;
+            _launchStarted = Time.unscaledTime;
+            _goPublishedAt = float.MaxValue;
+            if (Current.Slots.Count > 1) _lastGuestNonce = Current.Slots[1].StartNonce;   // every start press is used once
+            LocalReady = false;
+            SetStatus("Starting the fight...", false);
+            await PushPlayer();
+
+            string relay = Launching && _link != null ? await _link.HostLinkAsync() : null;
+            if (!Launching) { _link?.Cancel(); return; }   // cancelled (timeout / room gone) while we waited
+            if (relay == null) { AbortLaunch(_link != null ? _link.Status : "No connection."); return; }
+            _publishedGo = ChibiRoomRules.NewNonce();
+            bool ok = await UpdateLobbyData(new Dictionary<string, DataObject> { [KeyRelay] = Member(relay), [KeyGo] = Member(_publishedGo) }, "start");
+            if (!Launching || _link == null || _link.State != ChibiRoomState.WaitingForOpponent) { if (Launching) AbortLaunch("The fight could not start."); return; }
+            if (!ok) { AbortLaunch(Status); return; }
+            _goPublishedAt = Time.unscaledTime;
+            SetStatus("Fight starting! Waiting for your friend to connect...", false);
+        }
+
+        void AbortLaunch(string why)
+        {
+            _link?.Cancel();
+            bool host = IsHost;
+            ResetSeat(Synced);
+            if (host) _ = UpdateLobbyData(new Dictionary<string, DataObject> { [KeyGo] = Member(""), [KeyRelay] = Member("") }, null);
+            _ = PushPlayer();
+            SetStatus(why + " Both press OK and START FIGHT again.", true);
+        }
+
+        bool GuestLaunchAllowed()
+        {
+            float now = Time.unscaledTime;
+            while (_guestLaunchTimes.Count > 0 && now - _guestLaunchTimes.Peek() > GuestLaunchWindowSeconds) _guestLaunchTimes.Dequeue();
+            if (_guestLaunchTimes.Count >= MaxGuestLaunches) return false;
+            _guestLaunchTimes.Enqueue(now);
+            return true;
+        }
+
+        async Task Poll()
+        {
+            if (_polling || CurrentId.Length == 0) return;
+            _polling = true;
+            try
+            {
+                var lobby = await LobbyService.Instance.GetLobbyAsync(CurrentId);
+                Apply(lobby);
+                if (Current == null) return;
+                if (!Synced)
+                {
+                    // First fresh read after entering: whatever launch / start is in there is history, not a request.
+                    _baselineGo = Current.Go;
+                    _lastGuestNonce = Current.Slots.Count > 1 ? Current.Slots[1].StartNonce : "";
+                    Synced = true;
+                    SetStatus("Choose your fighter and press OK.", false);
+                    return;
+                }
+                if (!(ScreenOpen?.Invoke() ?? true)) return;   // act only while the player is looking at the room
+
+                if (IsHost && !Launching && ChibiRoomRules.HostShouldLaunch(Current, _lastGuestNonce))
+                {
+                    _lastGuestNonce = Current.Slots[1].StartNonce;
+                    if (GuestLaunchAllowed()) await Launch();
+                    else SetStatus("Too many starts. Wait a minute, then press START FIGHT.", true);
+                }
+                else if (IsHost && Launching && _publishedGo.Length > 0 && Current.Slots.Count > 1 && Current.Slots[1].Ack == _publishedGo)
+                {
+                    _goPublishedAt = float.MaxValue;   // the guest accepted this launch: wait for the link
+                }
+                else if (!IsHost && !Launching && ChibiRoomRules.GuestShouldConnect(Current, _baselineGo, MyId))
+                {
+                    _baselineGo = Current.Go;   // each launch is answered once
+                    if (LocalReady && _link != null)
+                    {
+                        // Acknowledge (ready off, start nonce spent) BEFORE connecting: no phantom ready if anything fails.
+                        _myAck = Current.Go;
+                        LocalReady = false;
+                        _myStartNonce = "";
+                        await PushPlayer();
+                        Launching = true;
+                        OwnsLink = true;
+                        _guestJoining = true;
+                        _launchStarted = Time.unscaledTime;
+                        SetStatus("Fight starting! Connecting...", false);
+                        if (!_link.JoinLink(Current?.RelayCode)) AbortLaunch(_link.Status.Length > 0 ? _link.Status : "Could not connect.");
+                    }
+                }
+            }
+            catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound) { RoomGone(); }
+            catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.RateLimited) { _pollAt = Time.unscaledTime + 6f; }
+            catch (Exception e) { Debug.LogWarning("ChibiClash room poll: " + NetworkRoomManager.Explain(e)); }
+            finally { _polling = false; }
+        }
+
+        void Update()
+        {
+            float now = Time.unscaledTime;
+            bool allowed = OnlineAllowed == null || OnlineAllowed();
+
+            // Keep every room we host alive (also during a fight, so the room is still there afterwards).
+            if (allowed && now >= _heartbeatAt)
+            {
+                _heartbeatAt = now + HeartbeatSeconds;
+                string me = MyId;
+                foreach (var r in MyRooms)
+                    if (r.HostId == me && me.Length > 0) _ = Heartbeat(r.Id);
+            }
+
+            bool inMatch = InMatch?.Invoke() ?? false;
+            bool screen = ScreenOpen?.Invoke() ?? true;
+
+            if (Launching && !inMatch)
+            {
+                var st = _link != null ? _link.State : ChibiRoomState.Failed;
+                if (st == ChibiRoomState.Connected) Launching = false;   // the match took over
+                else if (_guestJoining && st == ChibiRoomState.Failed) AbortLaunch(_link.Status);
+                else if (IsHost && now - _goPublishedAt > AckTimeoutSeconds) AbortLaunch("Your friend did not answer.");
+                else if (IsHost && Current != null && !screen) AbortLaunch("Start cancelled.");
+                else if (now - _launchStarted > LaunchTimeoutSeconds) AbortLaunch("Your friend did not connect.");
+            }
+
+            // Left the room screen while ready: withdraw OK so nothing starts behind the player's back.
+            if (LocalReady && !screen && !inMatch && !Launching) _ = LeaveCurrentSeat();
+
+            if (allowed && CurrentId.Length > 0 && !inMatch && now >= _pollAt)
+            {
+                _pollAt = now + PollSeconds;
+                _ = Poll();
+            }
+        }
+
+        static async Task Heartbeat(string id)
+        {
+            try { await LobbyService.Instance.SendHeartbeatPingAsync(id); }
+            catch (Exception) { /* closed: the next poll / refresh notices */ }
+        }
+
+        void SetStatus(string s, bool error)
+        {
+            Status = s ?? "";
+            StatusIsError = error;
+        }
+    }
+}

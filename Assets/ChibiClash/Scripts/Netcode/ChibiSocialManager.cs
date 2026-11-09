@@ -85,7 +85,7 @@ namespace ChibiClash.Netcode
         /// <summary>Forget <see cref="MatchFriendName"/> (a new room / quick match is not with that friend).</summary>
         public void ClearMatchFriend() { MatchFriendName = ""; }
 
-        NetworkRoomManager _rooms;
+        IChibiInviteRooms _rooms;
         bool _friendsInitialised, _subscribed;
         string _inviteTargetId;               // friend we are creating a room for
         float _inviteTargetSince;
@@ -96,7 +96,7 @@ namespace ChibiClash.Netcode
         readonly Dictionary<string, float> _lastInviteTo = new Dictionary<string, float>();
 
         /// <summary>Use these rooms to host invited matches and to join accepted invites.</summary>
-        public void Bind(NetworkRoomManager rooms) => _rooms = rooms;
+        public void Bind(IChibiInviteRooms rooms) => _rooms = rooms;
 
         // ================================================================== connect
 
@@ -366,7 +366,7 @@ namespace ChibiClash.Netcode
             _inviteTargetId = friendId;
             MatchFriendName = FriendName(friendId);
             _inviteTargetSince = now;
-            if (string.IsNullOrEmpty(_rooms.RoomCode)) _rooms.CreatePrivateRoom();
+            if (string.IsNullOrEmpty(_rooms.RoomCode)) _rooms.CreateRoomForInvite(ChibiSocialRules.DefaultRoomName(MyName));
             SetStatus("Creating a room for " + FriendName(friendId) + "...", false);
         }
 
@@ -377,7 +377,7 @@ namespace ChibiClash.Netcode
             var inv = Invites[index];
             Invites.Clear();   // one match at a time: other invites are dropped
             MatchFriendName = inv.FromName;   // from OUR friends list, not from the message
-            _rooms.JoinPrivateRoom(inv.Code);
+            _rooms.JoinRoomForInvite(inv.Code);
             SetStatus("Joining " + inv.FromName + "...", false);
         }
 
@@ -409,7 +409,7 @@ namespace ChibiClash.Netcode
                 _inviteTargetId = null;
                 MatchFriendName = "";
                 _invitedId = null;
-                _rooms?.Cancel();
+                // The room stays open (rooms persist): the friend can still be invited again or join by code.
                 return;
             }
             if (friend && m.Kind == ChibiSocialRules.KindCancel)
@@ -465,10 +465,10 @@ namespace ChibiClash.Netcode
                     _inviteTargetId = null;
                     _ = SendInviteMessage(target, code);
                 }
-                else if (_rooms.State == ChibiRoomState.Failed || now - _inviteTargetSince > 30f)
+                else if (_rooms.RoomFailed || now - _inviteTargetSince > 30f)
                 {
                     _inviteTargetId = null;
-                    if (_rooms.State == ChibiRoomState.Failed) SetStatus(_rooms.Status, true);
+                    if (_rooms.RoomFailed) SetStatus(_rooms.RoomStatus, true);
                 }
             }
         }
@@ -501,6 +501,22 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>Show "in a match" to friends (Busy) or available (Online).</summary>
+        /// <summary>The signed-in account changed: forget the old account's friends, requests and invites (reconnect to load the new ones).</summary>
+        public void ResetForAccountChange()
+        {
+            Ready = false;
+            MyName = "";
+            NeedsName = false;
+            Friends.Clear();
+            Requests.Clear();
+            Invites.Clear();
+            ForgetWaitingInvite();
+            MatchFriendName = "";
+            _inviteTargetId = null;
+            _invitedId = null;
+            SetStatus("", false);
+        }
+
         public async void SetInMatch(bool inMatch)
         {
             if (!Ready) return;

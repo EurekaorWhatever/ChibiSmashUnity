@@ -102,6 +102,17 @@ namespace ChibiClash
         public void Flush() => PlayerPrefs.Save();
     }
 
+    /// <summary>One account's identity on this computer (the active one is mirrored in SaveData.playerName / ageBand).</summary>
+    [Serializable]
+    public class AccountProfile
+    {
+        public string key = "";
+        public string name = "";
+        public int ageBand;
+        public int age;
+        public bool ageRecorded;
+    }
+
     /// <summary>Persistent player profile: currency, owned cosmetics, quests and settings.</summary>
     [Serializable]
     public class SaveData
@@ -126,8 +137,18 @@ namespace ChibiClash
         /// Unity Authentication for friends. Read it through ChibiSocialRules.CleanSavedName (the file can be edited).
         /// </summary>
         public string playerName = "";
-        /// <summary>AgeBand chosen on first launch (0 = not asked). Only the group is stored, never the age.</summary>
+        /// <summary>AgeBand from the first-launch age question (0 = not asked).</summary>
         public int ageBand;
+        /// <summary>Age the player gave (0 = not asked); written to the player age record (PlayerAgeLedger).</summary>
+        public int age;
+        /// <summary>This identity already has its row in the player age record (one row per new player).</summary>
+        public bool ageRecorded;
+        /// <summary>Signed-in account (Unity player id bound to the Google sign-in); "" = no account (guest).</summary>
+        public string accountId = "";
+        /// <summary>The "sign in to keep your name" step was answered (signed in or chose to play without an account).</summary>
+        public bool accountAsked;
+        /// <summary>Name and age group of every account used on this computer (+ "guest"); see PlayerIdentity.SwitchProfile.</summary>
+        public List<AccountProfile> profiles = new List<AccountProfile>();
 
         /// <summary>Load the profile from PlayerPrefs.</summary>
         public static SaveData Load() => Load(PlayerPrefsSaveStore.Instance);

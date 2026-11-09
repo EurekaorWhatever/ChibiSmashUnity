@@ -4,16 +4,49 @@ Code: `Netcode/ChibiSocialManager.cs` (services), `Netcode/ChibiSocialRules.cs` 
 `Game/GameManager.cs` (ONLINE > FRIENDS tab, invite pop-up). Tests: `ChibiSocialRulesTests`.
 Package: `com.unity.services.friends` 1.4.0.
 
-## Onboarding: age, then name (first launch)
+## Onboarding: age, account, name (first launch)
 
-1. **HOW OLD ARE YOU?** A neutral question (digits only). Only the age GROUP is saved (`PlayerIdentity`, `SaveData.ageBand`):
-   under 13 / 13-17 / 18+. Never the age or a birthday. Under 13 the ONLINE card is locked (13+), and everything
-   offline stays open. The age cannot be changed in the menu (no instant retry of the gate).
-2. **WHAT IS YOUR NAME?** 3-16 letters, numbers or _ (advice: a fighter name, not a real name). Saved in
-   `SaveData.playerName`. This is the player's identity everywhere: the name badge in every menu header, character
-   select, HUD, tags over fighters, results, friends list, invites, and the opponent's screen online.
-3. Change it any time: click the name badge (top of every menu) → **CHANGE YOUR NAME**. Signed in, Unity is renamed
-   at once; otherwise on the next sign-in (`ChibiSocialManager.PreferredName`). Friends stay linked by player id.
+1. **HOW OLD ARE YOU?** Digits only (`PlayerIdentity.ParseAge`, `SaveData.age` + `ageBand`). Every age can play every
+   mode (product decision 2026-11-09; `PlayerIdentity.RequireTeenForOnline = false` brings back a 13+ online gate).
+   The age is for market analysis (see "Player age record").
+2. **KEEP YOUR FIGHTER NAME** (`ChibiAccount`): **SIGN IN WITH GOOGLE** (Unity Player Accounts: the browser opens
+   Unity's sign-in page, "Continue with Google"; one click when the browser is already signed in to Google) or
+   **PLAY WITHOUT ACCOUNT**. Signed in: the Unity player is bound to that account, its public name follows it to every
+   computer, and Unity remembers the session, so the next launch signs the same account in silently
+   (`RestoreOnLaunch`). Changeable later from the name button: **SIGN OUT / SWITCH**.
+3. **WHAT IS YOUR NAME?** 3-16 letters, numbers or _ (advice: a fighter name, not a real name). This is the player's
+   identity everywhere: name badge in every menu header, character select, HUD, tags, results, rooms, friends,
+   invites, and the opponent's screen online.
+4. Change it any time: click the name badge → **CHANGE YOUR NAME** (pushed to the account when signed in).
+
+### One identity per account (`PlayerIdentity.SwitchProfile`, `SaveData.profiles`)
+
+| Situation | Result |
+|---|---|
+| Same Google account, any launch | Signed in by itself; name and info kept |
+| Same account on another computer | Its public name comes back (`Kira#4821` → `Kira`); age asked once on that computer |
+| First sign-in after playing as guest | The guest's name and age become the account's |
+| Another Google account | A new player: no name, asked age and name again (its own row in the age record) |
+| Back to an account used before on this computer | Its name and age come back |
+| Sign out | Back to the guest identity of this computer |
+
+## Player age record (market analysis)
+
+`Core/PlayerAgeLedger.cs`, tests in `PlayerIdentityTests`. One CSV row per new player, written when the player has given
+their age AND created their identity name (`GameManager.RecordNewPlayer`). Another account on the same computer is a
+new player (its own row); the guest's first account is the same person (no second row).
+
+- File: `<Application.persistentDataPath>/player-ages.csv`. On this Windows editor:
+  `C:\Users\<you>\AppData\LocalLow\DefaultCompany\My project\player-ages.csv` (the built game uses its company /
+  product name instead).
+- Columns: `utc_time,player_name,age,age_group,country,platform,game_version`; age groups under13, 13-17, 18-24,
+  25-34, 35-44, 45+; country from the device region setting.
+- Every value is cleaned (no commas, quotes, newlines or leading `=`), so a name can never break the columns or inject
+  a spreadsheet formula. Disk errors never break the game.
+- The file is per device. To see all players worldwide in one place, send the same row to a cloud service later
+  (for example Unity Analytics or Cloud Save); the row builder is ready for it.
+- Privacy: the row holds the player name and age. Tell players in the privacy policy, and check local rules before
+  release (Thailand PDPA, GDPR; some countries require parental consent for players under 13).
 
 ## Player flow
 
@@ -58,9 +91,9 @@ cosmetic: not in the match hash and never read by the simulation. Tests: `ChibiP
 | Request spam from one player | **BLOCK** on every request (Unity blocks requests, messages and invites from them) |
 | Event threading | Friends events only enqueue (bounded at 64); lists change on the main thread in `Update`; handlers unsubscribed on destroy |
 | Accidental friend removal | Two-click REMOVE ("SURE?") |
-| Privacy | Only the chosen name and online status are shared; no IP (Relay hides it); no camera data; age kept as a group only; matchmaking shares a country code, never GPS |
+| Privacy | Only the chosen name and online status are shared; no IP (Relay hides it); no camera data; the age is kept in the local age record (see above); matchmaking shares a country code, never GPS |
 | Invite by name to a stranger | Never a direct pop-up: a friend request first; the invite follows only after THEY accept; one waiting target, 10 min limit |
-| Children | Age gate: under 13, no online friends, invites or matchmaking (offline modes open) |
+| Children | All ages may play online (product decision); names are filtered, no chat exists, BLOCK is on every request. `RequireTeenForOnline` restores a 13+ gate if a market requires it |
 | Tampered save file | `CleanSavedName` re-validates the saved name; an unknown age group asks again |
 | Hostile peer name in the match | 6-bit alphabet on the wire, length-checked, re-sanitised before drawing |
 
@@ -73,4 +106,5 @@ cosmetic: not in the match hash and never read by the simulation. Tests: `ChibiP
 ## Setup
 
 Unity Dashboard → project → enable **Relay**, **Lobby** and **Friends** (plus the project link in Edit > Project Settings >
-Services). Until then the FRIENDS tab shows that instruction; LAN play still works.
+Services). For SIGN IN WITH GOOGLE: Dashboard → Player Authentication → **Unity Player Accounts** on, with Google as a
+sign-in option. Until then the FRIENDS tab and the sign-in button show that instruction; LAN and VS AI still work.

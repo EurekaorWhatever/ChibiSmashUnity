@@ -71,6 +71,11 @@ namespace ChibiClash.Netcode
         public string Status { get; private set; } = "";
         /// <summary>The private room's Lobby code to share (host of a private room only).</summary>
         public string RoomCode { get; private set; } = "";
+        /// <summary>
+        /// Name of the private room we host or joined ("Kira's Dojo"), safe to draw; "" outside private rooms. The joiner
+        /// reads it from the Lobby (another player's text, sanitised by ChibiSocialRules.SafeRoomName).
+        /// </summary>
+        public string RoomName { get; private set; } = "";
         /// <summary>The anonymous player id once signed in.</summary>
         public string PlayerId => AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : "";
 
@@ -113,7 +118,15 @@ namespace ChibiClash.Netcode
         // ================================================================== public flows
 
         /// <summary>Host a private room; on success <see cref="RoomCode"/> holds the Lobby code to share.</summary>
-        public void CreatePrivateRoom() { if (!Busy && Gate()) _ = RunHost(isPrivate: true, ++_flow); }
+        public void CreatePrivateRoom(string roomName = null)
+        {
+            if (Busy || !Gate()) return;
+            string name = (roomName ?? "").Trim();
+            if (name.Length == 0) name = ChibiSocialRules.FallbackRoomName;
+            string err = ChibiSocialRules.ValidateRoomName(name);
+            if (err != null) { Fail(err); return; }
+            _ = RunHost(isPrivate: true, ++_flow, name);
+        }
 
         /// <summary>Join a friend's private room by its Lobby code (decision Q2).</summary>
         public void JoinPrivateRoom(string lobbyCode)
@@ -145,6 +158,7 @@ namespace ChibiClash.Netcode
             _transport = ChibiUtpTransport.HostDirect(port);
             if (_transport.LinkState == ChibiLinkState.Lost) { Fail("Could not open UDP port " + port + " (already in use?)."); return; }
             RoomCode = "";
+            RoomName = "";
             State = ChibiRoomState.WaitingForOpponent;
             Status = "LAN host ready. Your friend joins: " + LocalIpv4() + "  (port " + port + ")";
             _connectDeadline = float.MaxValue;
@@ -188,6 +202,7 @@ namespace ChibiClash.Netcode
             _transport?.Dispose();
             _transport = null;
             RoomCode = "";
+            RoomName = "";
             State = ChibiRoomState.Idle;
             Status = "";
         }
@@ -234,7 +249,7 @@ namespace ChibiClash.Netcode
 
         // ================================================================== host
 
-        async Task RunHost(bool isPrivate, int flow)
+        async Task RunHost(bool isPrivate, int flow, string roomName = null)
         {
             _quickMode = !isPrivate;
             if (isPrivate) _myCountry = "";
@@ -267,18 +282,91 @@ namespace ChibiClash.Netcode
                     options.Data[KeySubregion] = new DataObject(DataObject.VisibilityOptions.Public, ChibiRegions.Subregion(_myCountry), DataObject.IndexOptions.S3);
                     options.Data[KeyContinent] = new DataObject(DataObject.VisibilityOptions.Public, ChibiRegions.Continent(_myCountry), DataObject.IndexOptions.S4);
                 }
-                var lobby = await LobbyService.Instance.CreateLobbyAsync("Chibi Clash " + ProtocolTag, 2, options);
+                // A private room carries the host's chosen name (seen only by members: private lobbies are never listed).
+                string lobbyName = isPrivate ? ChibiSocialRules.SafeRoomName(roomName) : "Chibi Clash " + ProtocolTag;
+                var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, 2, options);
                 if (flow != _flow) { _ = LeaveLobby(lobby, true); return; }
                 _lobby = lobby;
                 RoomCode = isPrivate ? lobby.LobbyCode : "";
+                RoomName = isPrivate ? lobbyName : "";
                 State = ChibiRoomState.WaitingForOpponent;
-                Status = isPrivate ? "Room ready. Share the code with your friend." : "Searching for players in " + SearchArea + "...";
+                Status = isPrivate ? "Room \"" + RoomName + "\" is ready. Share the code with your friend."
+                                   : "Searching for players in " + SearchArea + "...";
                 _heartbeatAt = Time.unscaledTime + HeartbeatSeconds;
                 _retryAt = Mathf.Max(_retryAt, Time.unscaledTime + RetryQuickJoinSeconds);   // keep a rate-limit back-off
             }
             catch (Exception e)
             {
                 if (flow == _flow) Fail("Could not create the room: " + Explain(e));
+            }
+        }
+
+        // ================================================================== room links (ChibiRoomService)
+
+        /// <summary>
+        /// Rooms: open the HOST end of the match link (a fresh Relay allocation, no lobby; the room's own lobby holds the
+        /// code). Returns the Relay join code to publish to the guest, or null on failure (see <see cref="Status"/>).
+        /// The connected link is handed over through <see cref="OnConnected"/> exactly like every other mode.
+        /// </summary>
+        public async Task<string> HostLinkAsync()
+        {
+            if (Busy || !Gate()) return null;
+            int flow = ++_flow;
+            _quickMode = false;
+            RoomCode = "";
+            if (!await SignIn(flow)) return null;
+            State = ChibiRoomState.CreatingRoom;
+            Status = "Starting the fight...";
+            try
+            {
+                Allocation alloc = await RelayService.Instance.CreateAllocationAsync(1);
+                string relayCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
+                if (flow != _flow) return null;
+                _transport = ChibiUtpTransport.HostRelay(alloc.ToRelayServerData(RelayConnectionType));
+                _isHost = true;
+                _lobby = null;
+                State = ChibiRoomState.WaitingForOpponent;
+                Status = "Waiting for your friend to connect...";
+                return relayCode;
+            }
+            catch (Exception e)
+            {
+                if (flow == _flow) Fail("Could not start the fight: " + Explain(e));
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Rooms: open the GUEST end of the match link with the host's Relay join code (from the room lobby).
+        /// Returns false at once when it cannot start (busy, age gate, bad code) so the caller never waits for nothing.
+        /// </summary>
+        public bool JoinLink(string relayCode)
+        {
+            if (Busy) { Status = "Another connection is still running."; return false; }
+            if (!Gate()) return false;
+            if (!ChibiRoomRules.ValidRelayCode(relayCode)) { Fail("The room has no valid connection info (host left?)."); return false; }
+            _quickMode = false;
+            _ = RunJoinLink(relayCode, ++_flow);
+            return true;
+        }
+
+        async Task RunJoinLink(string relayCode, int flow)
+        {
+            if (!await SignIn(flow)) return;
+            State = ChibiRoomState.Connecting;
+            Status = "Connecting to the host...";
+            try
+            {
+                JoinAllocation join = await RelayService.Instance.JoinAllocationAsync(relayCode);
+                if (flow != _flow) return;
+                _lobby = null;
+                _isHost = false;
+                _transport = ChibiUtpTransport.JoinRelay(join.ToRelayServerData(RelayConnectionType));
+                _connectDeadline = Time.unscaledTime + ConnectTimeoutSeconds;
+            }
+            catch (Exception e)
+            {
+                if (flow == _flow) Fail("Could not reach the host: " + Explain(e));
             }
         }
 
@@ -294,6 +382,7 @@ namespace ChibiClash.Netcode
             {
                 var lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(code);
                 if (flow != _flow) { _ = LeaveLobby(lobby, false); return; }
+                RoomName = ChibiSocialRules.SafeRoomName(lobby?.Name);   // the host's text: sanitised
                 await ConnectAsJoiner(lobby, flow);
             }
             catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound || e.Reason == LobbyExceptionReason.InvalidJoinCode)
@@ -313,6 +402,7 @@ namespace ChibiClash.Netcode
         async Task RunQuickMatch(int flow, bool fresh = true)
         {
             _quickMode = true;
+            RoomName = "";
             if (fresh)
             {
                 _myCountry = ChibiRegions.DeviceCountry();
@@ -460,7 +550,7 @@ namespace ChibiClash.Netcode
                 return;
             }
             State = ChibiRoomState.Connecting;
-            Status = "Connecting to your opponent...";
+            Status = RoomName.Length > 0 ? "Joined \"" + RoomName + "\". Connecting to the host..." : "Connecting to your opponent...";
             JoinAllocation join;
             try { join = await RelayService.Instance.JoinAllocationAsync(relay.Value); }
             catch (Exception e)
@@ -592,6 +682,7 @@ namespace ChibiClash.Netcode
             _ = LeaveLobby(_lobby, _isHost);
             _lobby = null;
             RoomCode = "";
+            RoomName = "";
             State = ChibiRoomState.Failed;
             Status = message;
         }

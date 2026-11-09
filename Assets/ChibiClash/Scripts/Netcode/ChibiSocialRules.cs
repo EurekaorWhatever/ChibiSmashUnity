@@ -60,6 +60,13 @@ namespace ChibiClash.Netcode
             "nigg", "fag", "retard", "admin", "moderator", "official",
         };
 
+        // Common words that contain a blocked substring but are harmless (the "Scunthorpe problem" of substring filters).
+        static readonly string[] AllowedWords =
+        {
+            "grape", "drape", "scrape", "trapeze", "therapist", "cocktail", "peacock", "hancock", "shuttlecock", "dickens",
+            "scunthorpe", "shiitake", "skilled", "bitcoin",
+        };
+
         /// <summary>True when <paramref name="name"/> contains a blocked word (also catches "Sh1t", "F_U_C_K").</summary>
         public static bool ContainsBlockedWord(string name)
         {
@@ -80,6 +87,9 @@ namespace ChibiClash.Netcode
                 if (c >= 'a' && c <= 'z') sb.Append(c);   // drop separators: "f_u_c_k" -> "fuck"
             }
             string flat = sb.ToString();
+            // Innocent words that merely contain a blocked substring ("grape", "Scunthorpe") are removed first.
+            foreach (var ok in AllowedWords)
+                if (flat.IndexOf(ok, StringComparison.Ordinal) >= 0) flat = flat.Replace(ok, "-");
             foreach (var w in BlockedWords)
                 if (flat.IndexOf(w, StringComparison.Ordinal) >= 0) return true;
             return false;
@@ -194,6 +204,62 @@ namespace ChibiClash.Netcode
             if (now - lastFromSender < InviteCooldown || pendingCount >= MaxPendingInvites) return ChibiInviteVerdict.Flooding;
             if (busy) return ChibiInviteVerdict.Busy;
             return ChibiInviteVerdict.Ok;
+        }
+
+        /// <summary>Room names: 3-24 characters.</summary>
+        public const int RoomNameMin = 3, RoomNameMax = 24;
+        /// <summary>Shown when a room has no usable name.</summary>
+        public const string FallbackRoomName = "Private room";
+
+        static bool IsRoomChar(char c) => IsNameChar(c) || c == ' ' || c == '-' || c == '\'' || c == '!';
+
+        /// <summary>
+        /// Check a room name the host typed. Returns null when valid, else a short reason. Letters, numbers, spaces and
+        /// _ - ' ! only (no angle brackets, so no rich-text tags), no blocked words.
+        /// </summary>
+        /// <example><code>string err = ChibiSocialRules.ValidateRoomName("Kira's Dojo");   // null = OK</code></example>
+        public static string ValidateRoomName(string name)
+        {
+            string s = (name ?? "").Trim();
+            if (s.Length < RoomNameMin) return "Room name is too short (at least " + RoomNameMin + " characters).";
+            if (s.Length > RoomNameMax) return "Room name is too long (at most " + RoomNameMax + " characters).";
+            foreach (char c in s)
+                if (!IsRoomChar(c)) return "Room names use letters, numbers, spaces and _ - ' ! only.";
+            if (s.Contains("  ")) return "Room names cannot have double spaces.";
+            if (ContainsBlockedWord(s)) return "Please choose a different room name.";
+            return null;
+        }
+
+        /// <summary>
+        /// Make a room name from the network (the Lobby name another player chose) safe to draw: allowed characters
+        /// only, spaces collapsed, cut to <see cref="RoomNameMax"/>; empty or blocked -> <see cref="FallbackRoomName"/>.
+        /// </summary>
+        public static string SafeRoomName(string raw)
+        {
+            if (string.IsNullOrEmpty(raw)) return FallbackRoomName;
+            var sb = new StringBuilder(Math.Min(raw.Length, RoomNameMax));
+            bool inTag = false;
+            foreach (char c in raw)
+            {
+                if (sb.Length >= RoomNameMax) break;
+                // Whole markup tags are dropped ("<color=red>" leaves nothing), not just their brackets.
+                if (c == '<') { inTag = true; continue; }
+                if (c == '>') { inTag = false; continue; }
+                if (inTag || !IsRoomChar(c)) continue;
+                if (c == ' ' && (sb.Length == 0 || sb[sb.Length - 1] == ' ')) continue;
+                sb.Append(c);
+            }
+            string s = sb.ToString().Trim();
+            return s.Length < RoomNameMin || ContainsBlockedWord(s) ? FallbackRoomName : s;
+        }
+
+        /// <summary>Suggested room name for a player: "Kira#4821" -> "Kira's room" (fallback "My room").</summary>
+        public static string DefaultRoomName(string playerName)
+        {
+            string b = BaseName(playerName ?? "");
+            if (b.Length == 0 || b == "Player") return "My room";
+            string s = b + "'s room";
+            return s.Length <= RoomNameMax ? s : b.Substring(0, RoomNameMax - 7) + "'s room";
         }
 
         static bool IsNameChar(char c) =>

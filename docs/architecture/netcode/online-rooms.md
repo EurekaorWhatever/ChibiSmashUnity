@@ -28,7 +28,8 @@ datagram at 60 Hz when held inputs repeat).
 
 | Mode | Flow |
 |---|---|
-| Private room (Q2: Lobby code) | Host: Relay `CreateAllocationAsync(1)` + `GetJoinCodeAsync` → private 2-player Lobby with the Relay code (member-only data) → shows the **Lobby** code. Friend: `JoinLobbyByCodeAsync(code)` → reads the Relay code → `JoinAllocationAsync` → UDP link. |
+| ROOMS (create room mode) | Named rooms that stay open between fights: see "Rooms" below (`ChibiRoomService`, `ChibiRoomRules`). |
+| Private room by code (API) | `NetworkRoomManager.CreatePrivateRoom(name)` / `JoinPrivateRoom(code)`: one-shot room, link on join (kept for automation). |
 | Matchmaking (regional) | Closest waiting player first: see "Regional matchmaking" below. Else host a public lobby and search again every 6-8 s, so two searching players always meet. |
 | LAN (no services) | `HostLan()` listens on UDP 7777 and shows this PC's IP; `JoinLan(ip)` connects. Same transport, handshake and rollback. |
 | vs AI | offline, `ChibiCpuInputSource` (step 17). |
@@ -40,6 +41,29 @@ refused with a clear message), then rollback play, then a result decided only fr
 Players can be anywhere with internet (Wi-Fi or mobile data, other cities or the same room): Relay connects them,
 and the Relay SDK picks the server region with the best ping (QoS) automatically. No internet → the menu says so
 (`NoInternetMessage`); LAN still works on one network.
+
+### Home page
+
+Three main blocks: **MATCHMAKING** (starts searching at once), **ROOMS**, **VS AI** (offline, the AI picks its fighter
+at random each fight, you press START BATTLE). Below: Local Versus, Training, Friends & LAN. MATCHMAKING and ROOMS need
+the internet (the block says NO INTERNET otherwise); VS AI, local versus and training never do.
+
+### Rooms (`ChibiRoomService`, `ChibiRoomRules`, tests: `ChibiRoomRulesTests`)
+
+- ROOMS page: no rooms yet → one big **CREATE ROOM** in the middle (+ join by code). With rooms → **+ CREATE ROOM**
+  top right and a block per room (name, code, players). Click a block to go in. Host at most 2 rooms.
+- A room is a private 2-seat Lobby kept alive by the host's heartbeat (also during fights). Player data: name (no
+  #tag), fighter, OK flag, start nonce, launch ack. Lobby data: stage, `go` nonce, Relay code.
+- Inside: pick a fighter, press **OK** (locked in; **CHANGE** unlocks). OK unlocks only after a fresh read of the room.
+  **START FIGHT** works only when both seats are taken and both pressed OK; either player may press it.
+- Host start → host un-readies, opens a fresh Relay link (`HostLinkAsync`), publishes `{relay, go}`. Guest start →
+  guest publishes a nonce, the host's 2 s poll launches (max 3 guest starts per 2 min). The guest sees the new `go`,
+  acknowledges it (ack = go, OK off), joins (`JoinLink`) → handshake → match. No ack within 8 s or no link within
+  25 s → cancelled; both press OK again. After the fight both return to the room.
+- Starts only happen while the room screen is open; leaving it withdraws OK. The match uses exactly the fighter locked
+  in with OK and the room's stage.
+- Reviewed by network-programmer (races, stale launches, rate limits) and security-engineer (relaunch spam, hostile
+  lobby data, age gate) agents; all findings fixed.
 
 ### Regional matchmaking (`ChibiRegions`, tests: `ChibiRegionsTests`)
 
@@ -79,7 +103,8 @@ Rewards online: PvP rules (40 win / 15 otherwise + posture), quests as offline; 
 ## 5. Setup needed once (needs the project owner's Unity account)
 
 1. Unity Editor: **Edit > Project Settings > Services** → link to (or create) a Unity Cloud project.
-2. Unity Dashboard (cloud.unity.com) → the project → enable **Relay** and **Lobby** (Authentication anonymous sign-in is on by default).
+2. Unity Dashboard (cloud.unity.com) → the project → enable **Relay**, **Lobby** and **Friends** (Authentication anonymous sign-in is on by default).
+   For SIGN IN WITH GOOGLE also turn on **Unity Player Accounts** with Google as a sign-in option.
 3. Both players must run the same build (the handshake refuses different rules / constants).
 
 Until then the ONLINE screen shows exactly this instruction, and LAN play works without any setup.
