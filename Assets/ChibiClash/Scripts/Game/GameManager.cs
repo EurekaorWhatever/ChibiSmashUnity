@@ -33,7 +33,9 @@ namespace ChibiClash
         // Player name dialog: forced on first launch (no saved name), opened from the name badge in the header.
         bool nameDialog;
         bool roomDialog;          // CREATE ROOM window (rooms page)
-        Netcode.ChibiAccount account;   // SIGN IN WITH GOOGLE (Unity Player Accounts): identity kept per account
+        Netcode.ChibiAccount account;   // optional SIGN IN WITH GOOGLE (Unity Player Accounts): name on other computers
+        /// <summary>Product decision 2026-11-09: no sign-in step on first launch (identity is automatic per computer user).</summary>
+        const bool ShowAccountStepOnFirstLaunch = false;
         Netcode.ChibiRoomService roomsSvc;   // CREATE ROOM mode: named rooms, OK / START FIGHT
         string leaveArmedId;      // two-click LEAVE ROOM
         float leaveArmedUntil;
@@ -364,8 +366,9 @@ namespace ChibiClash
                 AgeDialog();
                 return;
             }
-            // Onboarding step 2 (13+ only): sign in so the name stays with the account, or play without one.
-            if (!Save.accountAsked && PlayerIdentity.OnlineAllowed(Save.ageBand) && Save.accountId.Length == 0)
+            // No sign-in step: the identity is kept automatically for this computer's user profile (every launch, no
+            // button). SIGN IN WITH GOOGLE stays optional in the name window, only to carry the name to other computers.
+            if (ShowAccountStepOnFirstLaunch && !Save.accountAsked && PlayerIdentity.OnlineAllowed(Save.ageBand) && Save.accountId.Length == 0)
             {
                 Header("Your account");
                 AccountDialog();
@@ -641,7 +644,7 @@ namespace ChibiClash
                 Gui.Rect(ar, Gui.Panel, 12f);
                 Gui.Text(new Rect(ar.x + 18f, ar.y, ar.width - 260f, 50f),
                          account.SignedIn ? "Signed in with your account: this name stays with it on every computer."
-                                          : "Not signed in: the name is kept on this computer only.", 13, Gui.Muted, TextAnchor.MiddleLeft, false);
+                                          : "Saved on this computer automatically. Sign in only to use it on other computers.", 13, Gui.Muted, TextAnchor.MiddleLeft, false);
                 string label = account.SignedIn ? "SIGN OUT / SWITCH" : "SIGN IN WITH GOOGLE";
                 if (Gui.Button(new Rect(ar.xMax - 236f, ar.y + 7f, 222f, 36f), account.Working ? "SIGNING IN..." : label, Gui.Accent2, 14, !account.Working))
                 {

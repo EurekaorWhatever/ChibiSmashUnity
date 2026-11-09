@@ -9,11 +9,12 @@ Package: `com.unity.services.friends` 1.4.0.
 1. **HOW OLD ARE YOU?** Digits only (`PlayerIdentity.ParseAge`, `SaveData.age` + `ageBand`). Every age can play every
    mode (product decision 2026-11-09; `PlayerIdentity.RequireTeenForOnline = false` brings back a 13+ online gate).
    The age is for market analysis (see "Player age record").
-2. **KEEP YOUR FIGHTER NAME** (`ChibiAccount`): **SIGN IN WITH GOOGLE** (Unity Player Accounts: the browser opens
-   Unity's sign-in page, "Continue with Google"; one click when the browser is already signed in to Google) or
-   **PLAY WITHOUT ACCOUNT**. Signed in: the Unity player is bound to that account, its public name follows it to every
-   computer, and Unity remembers the session, so the next launch signs the same account in silently
-   (`RestoreOnLaunch`). Changeable later from the name button: **SIGN OUT / SWITCH**.
+2. **No sign-in step** (decision 2026-11-09, `ShowAccountStepOnFirstLaunch = false`). The identity is kept
+   automatically for this computer's user profile: every launch on the same computer and Windows user brings the same
+   name and info back; another Windows user starts fresh. (A Windows game cannot read which Google account the
+   computer or browser is signed in to; only Android offers that, through Google Play Games.) Optional, in the name
+   window: **SIGN IN WITH GOOGLE** (`ChibiAccount`, Unity Player Accounts) to carry the name to other computers; the
+   same account then signs in silently on launch (`RestoreOnLaunch`); **SIGN OUT / SWITCH** changes account.
 3. **WHAT IS YOUR NAME?** 3-16 letters, numbers or _ (advice: a fighter name, not a real name). This is the player's
    identity everywhere: name badge in every menu header, character select, HUD, tags, results, rooms, friends,
    invites, and the opponent's screen online.
