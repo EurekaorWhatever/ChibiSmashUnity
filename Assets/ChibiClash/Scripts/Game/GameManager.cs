@@ -155,6 +155,7 @@ namespace ChibiClash
             MenuInput.Poll();
             UpdateWipe();
             UpdatePendingOnline();
+            WatchOnlineSounds();
             if (page == Page.Match)
             {
                 MatchInput();
@@ -176,15 +177,15 @@ namespace ChibiClash
                 // Text-entry dialogs own the keyboard; only Back closes the ones that may be closed.
                 if (MenuInput.Any(NavCmd.Back))
                 {
-                    if (roomDialog) roomDialog = false;
-                    else if (nameDialog && !NeedsFirstName) nameDialog = false;
+                    if (roomDialog) { roomDialog = false; UiSound.Back(); }
+                    else if (nameDialog && !NeedsFirstName) { nameDialog = false; UiSound.Back(); }
                 }
                 return;
             }
             if (GUIUtility.keyboardControl != 0)
             {
                 // Typing into a text field (room code, friend name, LAN address): keys type, Esc leaves the field.
-                if (MenuInput.Any(NavCmd.Back)) GUIUtility.keyboardControl = 0;
+                if (MenuInput.Any(NavCmd.Back)) { GUIUtility.keyboardControl = 0; UiSound.Back(); }
                 return;
             }
             if (page == Page.Select) UpdateSelect();
@@ -220,16 +221,56 @@ namespace ChibiClash
             switch (page)
             {
                 case Page.Home: OpenExitPrompt(); return;
-                case Page.PreCheck: Go(Page.Select); return;
+                case Page.PreCheck: UiSound.Back(); Go(Page.Select); return;
                 case Page.Lobby: LobbyBack(); return;
-                case Page.Rooms: Go(Page.Online); return;
+                case Page.Rooms: UiSound.Back(); Go(Page.Online); return;
                 case Page.Room:
-                    if (roomsSvc.Launching || pendingOnline != null) return;
+                    if (roomsSvc.Launching || pendingOnline != null) { UiSound.Error(); return; }
+                    UiSound.Back();
                     roomsSvc.ExitToList();
                     Go(Page.Rooms);
                     return;
             }
-            if (IsNavPage(page)) Go(Page.Home);
+            if (IsNavPage(page))
+            {
+                UiSound.Back();
+                Go(Page.Home);
+            }
+        }
+
+        // ---------------------------------------------------------------- menu sounds driven by state changes
+
+        bool soundPaused, soundRoomFailed, soundRoomsErr, soundSocialErr, soundInRoom;
+
+        /// <summary>
+        /// Sounds for things that happen inside the online services rather than on a click: a failed join or search
+        /// (error), entering a room (lock-in), and the pause menu opening / closing (confirm / back).
+        /// </summary>
+        void WatchOnlineSounds()
+        {
+            bool paused = page == Page.Match && match != null && match.Paused;
+            if (paused != soundPaused) { if (paused) UiSound.Confirm(); else UiSound.Back(); }
+            soundPaused = paused;
+            if (rooms == null || roomsSvc == null || social == null) return;
+            bool failed = rooms.State == Netcode.ChibiRoomState.Failed;
+            if (failed && !soundRoomFailed) UiSound.Error();
+            soundRoomFailed = failed;
+            bool roomsErr = roomsSvc.StatusIsError;
+            if (roomsErr && !soundRoomsErr) UiSound.Error();
+            soundRoomsErr = roomsErr;
+            bool socialErr = social.StatusIsError;
+            if (socialErr && !soundSocialErr) UiSound.Error();
+            soundSocialErr = socialErr;
+            bool inRoom = roomsSvc.Current != null;
+            if (inRoom && !soundInRoom) UiSound.LockIn();
+            soundInRoom = inRoom;
+        }
+
+        /// <summary>A refused action: explain it and play the error sound.</summary>
+        void Deny(string message)
+        {
+            Toast(message);
+            UiSound.Error();
         }
 
         void MatchInput()
@@ -292,6 +333,7 @@ namespace ChibiClash
 
         void CycleTab(int d)
         {
+            UiSound.Navigate();
             int i = Array.IndexOf(NavPages, page);
             Go(NavPages[(i + d + NavPages.Length) % NavPages.Length]);
         }
@@ -314,12 +356,14 @@ namespace ChibiClash
 
         void OpenExitPrompt()
         {
+            UiSound.Confirm();
             exitPrompt = true;
             Gui.ResetFocus();
         }
 
         void CloseExitPrompt()
         {
+            UiSound.Back();
             exitPrompt = false;
             Gui.ResetFocus();
         }
@@ -551,6 +595,7 @@ namespace ChibiClash
 
         void Confirm()
         {
+            UiSound.Confirm();
             if (arcade) PrepareArcadeRound();
             if (Save.settings.preMatchCheck && !pending.training)
                 Wipe("CAMERA CHECK", () =>
@@ -843,7 +888,7 @@ namespace ChibiClash
                 if (Gui.Button(new Rect(x, p.yMax - 60f, 160f, 44f), "RETRY", Gui.Gold, 16)) preCheckT = 0f;
                 if (Gui.Button(new Rect(x + 180f, p.yMax - 60f, 160f, 44f), "PLAY ANYWAY", Gui.P1, 14)) LaunchMatch();
             }
-            if (Gui.Button(new Rect(W * 0.5f - 90f, 500f, 180f, 48f), "BACK", Gui.Steel, 16)) Go(Page.Select);
+            if (Gui.Button(new Rect(W * 0.5f - 90f, 500f, 180f, 48f), "BACK", Gui.Steel, 16)) { UiSound.Back(); Go(Page.Select); }
             Gui.Text(new Rect(0f, 560f, W, 40f), "Ranked queues require this check to pass. Casual matches may skip it.", 13, Gui.Muted, TextAnchor.MiddleCenter, false);
             Gui.Alpha = 1f;
             Gui.HintBar("PRE-MATCH CAMERA CHECK", Gui.Key("SPACE", "A"), "SELECT", Gui.Key("ESC", "B"), "BACK");

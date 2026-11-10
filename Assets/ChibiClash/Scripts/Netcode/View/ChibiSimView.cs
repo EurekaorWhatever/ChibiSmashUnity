@@ -221,6 +221,7 @@ namespace ChibiClash.Netcode
 
             _cam = Camera.main;
             loop.OnFrame += OnSimFrame;
+            ChibiAudio.BeginMatch(loop);   // [audio hook] SFX player binds this match (presentation only)
         }
 
         Vector3 WorldPos(int x, int y) => new Vector3(x * MilliToWorld, GroundY + FeetToPivot + y * MilliToWorld, 0f);
@@ -239,6 +240,7 @@ namespace ChibiClash.Netcode
             }
             int first = _events.Count;
             ChibiSimEvents.Diff(_seen, cur, _events);
+            ChibiAudio.OnSimStep(_seen, cur, _events, first);   // [audio hook] reads prev/cur + this step's events, before _seen moves on
             // Thousand Arrows lead expiry burst (Fighter.cs:1021): the event carries no position, so read it from the
             // state that still holds the lead before _seen is overwritten.
             for (int i = first; i < _events.Count; i++)
@@ -783,6 +785,7 @@ namespace ChibiClash.Netcode
         void OnDestroy()
         {
             if (_loop != null && !(_loop is Object o && o == null)) _loop.OnFrame -= OnSimFrame;
+            ChibiAudio.EndMatch(_loop);   // [audio hook] stop this match's loops
             _events.Clear();
             _leadBurstPos.Clear();
             _leadBurstOwner.Clear();

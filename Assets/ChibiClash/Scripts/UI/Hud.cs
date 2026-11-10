@@ -159,7 +159,7 @@ namespace ChibiClash
             Gui.Display(new Rect(bx, r.y + 4f, bw, 26f), CharNameUpper(def.type), 24, Gui.Paper, anchor, 0.15f);
             float nw = Gui.Measure(CharNameUpper(def.type), 24, true) + 12f;
             var sub = right ? new Rect(bx, r.y + 6f, bw - nw, 22f) : new Rect(bx + nw, r.y + 6f, bw - nw, 22f);
-            Gui.Text(sub, m.WeaponOf(i).name + " · " + def.passiveNames[f.Passive], 12, Gui.Muted, anchor, true, false);
+            Gui.Text(sub, ch.Weapon + " · " + def.passiveNames[f.Passive], 12, Gui.Muted, anchor, true, false);
 
             float maxHp = f.Stats.MaxHp;
             float hpNow = f.HpU / (float)ChibiCombatStats.HpScale;

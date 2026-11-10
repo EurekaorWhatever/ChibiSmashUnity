@@ -77,7 +77,10 @@ namespace ChibiClash.Netcode
         /// </summary>
         public string RoomName { get; private set; } = "";
         /// <summary>The anonymous player id once signed in.</summary>
-        public string PlayerId => AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : "";
+        /// <remarks>Guarded on the services state: AuthenticationService.Instance throws before UnityServices is initialized.</remarks>
+        public string PlayerId => Unity.Services.Core.UnityServices.State == Unity.Services.Core.ServicesInitializationState.Initialized &&
+                                  AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn
+            ? AuthenticationService.Instance.PlayerId : "";
 
         /// <summary>Raised once when the UDP link to the opponent is up. The receiver owns the transport from then on.</summary>
         public event Action<ChibiUtpTransport, bool> OnConnected;

@@ -89,6 +89,7 @@ namespace ChibiClash
 
         void CpuLevel(int d)
         {
+            UiSound.Step();
             Save.settings.cpuDifficulty = Mathf.Clamp(Save.settings.cpuDifficulty + d, 1, 3);
             Save.Save();
         }
@@ -111,18 +112,18 @@ namespace ChibiClash
                     else if (P(NavCmd.Confirm)) LockIn(s);
                     else if (P(NavCmd.Back))
                     {
-                        if (s == 1 && solo) slotState[0] = SlotState.Loadout;     // back to P1's own loadout
+                        if (s == 1 && solo) { slotState[0] = SlotState.Loadout; UiSound.Back(); }    // back to P1's own loadout
                         else if (s == 0) LeaveSelect();
                     }
                     break;
                 case SlotState.Loadout:
                     int rows = LoadoutRows(s);
-                    if (P(NavCmd.Up)) loadRow[s] = (loadRow[s] + rows - 1) % rows;
-                    if (P(NavCmd.Down)) loadRow[s] = (loadRow[s] + 1) % rows;
+                    if (P(NavCmd.Up)) { loadRow[s] = (loadRow[s] + rows - 1) % rows; UiSound.Navigate(); }
+                    if (P(NavCmd.Down)) { loadRow[s] = (loadRow[s] + 1) % rows; UiSound.Navigate(); }
                     if (P(NavCmd.Left)) ChangeLoadout(s, -1);
                     if (P(NavCmd.Right)) ChangeLoadout(s, 1);
                     if (P(NavCmd.Confirm)) SetReady(s);
-                    else if (P(NavCmd.Back)) slotState[s] = SlotState.Picking;
+                    else if (P(NavCmd.Back)) { slotState[s] = SlotState.Picking; UiSound.Back(); }
                     break;
                 case SlotState.Ready:
                     if (P(NavCmd.Back)) Unready(s);
@@ -141,6 +142,7 @@ namespace ChibiClash
         {
             if (cursor[s] == t) return;
             cursor[s] = t;
+            UiSound.Navigate();
             if (TileIsFighter(t)) SetPreview(s, CharacterRoster.All[t].Class);
             else previewTime[s] = Time.unscaledTime;
         }
@@ -166,6 +168,7 @@ namespace ChibiClash
             }
             else if (TileIsFighter(t)) SetPreview(s, CharacterRoster.All[t].Class);
             else return;
+            UiSound.LockIn();
             slotState[s] = SlotState.Loadout;
             loadRow[s] = 0;
             lockTime[s] = previewTime[s] = Time.unscaledTime;
@@ -175,6 +178,7 @@ namespace ChibiClash
 
         void ChangeLoadout(int s, int d)
         {
+            UiSound.Step();
             if (loadRow[s] == 0) pending.passive[s] = Mod(pending.passive[s] + d, 2);
             else
             {
@@ -185,6 +189,7 @@ namespace ChibiClash
 
         void SetReady(int s)
         {
+            UiSound.Confirm();
             slotState[s] = SlotState.Ready;
             lockTime[s] = Time.unscaledTime;
         }
@@ -193,17 +198,20 @@ namespace ChibiClash
         {
             if (s == 1 && HiddenRival) s = 0;
             slotState[s] = SlotState.Loadout;
+            UiSound.Back();
         }
 
         void StageStep(int d)
         {
-            if (arcade) return;
+            if (arcade) { UiSound.Error(); return; }
+            UiSound.Navigate();
             stageTarget += d;
             pending.stage = Mod(Mathf.RoundToInt(stageTarget), StageBuilder.Names.Length);
         }
 
         void LeaveSelect()
         {
+            UiSound.Back();
             var to = arcade ? Page.Arcade : pending.training ? Page.Training : Page.Play;
             Wipe(null, () =>
             {
@@ -462,7 +470,7 @@ namespace ChibiClash
             {
                 name = Hud.CharNameUpper(ch.Class);
                 role = ch.Role.ToUpper();
-                line = ch.Weapon.ToUpper() + "  ·  " + weapon.name.ToUpper();
+                line = "SIGNATURE WEAPON  ·  " + ch.Weapon.ToUpper();
             }
             Gui.Display(new Rect(ix, T - 4f, iw, 68f), name, 62, Gui.Paper, anchor, 0.2f, mystery ? pc : ch.Primary, 4f);
             Gui.Display(new Rect(ix, T + 60f, iw, 24f), role, 20, Gui.Gold, anchor, 0.18f);
@@ -525,22 +533,22 @@ namespace ChibiClash
             }
             Gui.Text(new Rect(r.x, r.y + 44f, r.width, 16f), def.passiveDescs[pending.passive[s]], 11, Gui.Muted, TextAnchor.MiddleLeft, false, false);
 
-            // cosmetic weapon
+            // Secondary: the cosmetic weapon look from the armory (the signature weapon is shown above). Only classes with
+            // more than one look get the selector.
             var variants = WeaponDef.ForClass(def.type);
             float wy = r.y + 62f;
-            Gui.Text(new Rect(r.x, wy, 70f, 24f), "WEAPON", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
             var weapon = WeaponDef.Get(def.type, pending.weapon[s]);
             if (variants.Count > 1)
             {
+                Gui.Text(new Rect(r.x, wy, 70f, 24f), "LOOK", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
                 if (focusRows && loadRow[s] == 1) Gui.Chevron(new Rect(r.x - 16f, wy + 4f, 8f, 16f), pc);
                 if (Gui.Hit(new Rect(r.x + 64f, wy, 26f, 24f), out bool hl, !picking)) { loadRow[s] = 1; ChangeLoadout(s, -1); }
                 Gui.Chevron(new Rect(r.x + 72f, wy + 5f, 9f, 14f), hl ? Gui.Paper : pc, false);
                 Gui.Text(new Rect(r.x + 92f, wy, r.width - 184f, 24f), weapon.name.ToUpper() + "  <color=#9AA6BC>" + (pending.weapon[s] + 1) + "/" + variants.Count + "</color>", 13, Gui.Paper, TextAnchor.MiddleCenter, true, false);
                 if (Gui.Hit(new Rect(r.xMax - 90f, wy, 26f, 24f), out bool hr, !picking)) { loadRow[s] = 1; ChangeLoadout(s, 1); }
                 Gui.Chevron(new Rect(r.xMax - 82f, wy + 5f, 9f, 14f), hr ? Gui.Paper : pc);
+                Gui.Text(new Rect(r.x, wy, r.width, 24f), "COSMETIC", 10, Gui.Muted, TextAnchor.MiddleRight, true, false);
             }
-            else Gui.Text(new Rect(r.x + 64f, wy, r.width - 64f, 24f), weapon.name.ToUpper(), 13, Gui.Paper, TextAnchor.MiddleLeft, true, false);
-            Gui.Text(new Rect(r.x, wy, r.width, 24f), "COSMETIC", 10, Gui.Muted, TextAnchor.MiddleRight, true, false);
             Gui.Alpha = 1f;
 
             // status / action row

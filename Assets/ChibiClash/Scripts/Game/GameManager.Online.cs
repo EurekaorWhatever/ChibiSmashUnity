@@ -101,7 +101,7 @@ namespace ChibiClash
             if (Gui.Button(new Rect(r.x + r.width * 0.5f - 130f, r.y + 210f, 260f, 54f), "NEXT", Gui.P1, 20) || enter)
             {
                 var band = PlayerIdentity.BandForAnswer(ageInput);
-                if (band == AgeBand.Unknown) nameError = "Please type your age as a number.";
+                if (band == AgeBand.Unknown) { nameError = "Please type your age as a number."; UiSound.Error(); }
                 else
                 {
                     Save.ageBand = (int)band;
@@ -152,8 +152,8 @@ namespace ChibiClash
             {
                 string n = (roomNameInput ?? "").Trim();
                 string err = Netcode.ChibiSocialRules.ValidateRoomName(n);
-                if (err != null) roomError = err;
-                else if (!PlayerIdentity.OnlineAllowed(Save.ageBand)) roomError = "Online play is for players 13 and older.";
+                if (err != null) { roomError = err; UiSound.Error(); }
+                else if (!PlayerIdentity.OnlineAllowed(Save.ageBand)) { roomError = "Online play is for players 13 and older."; UiSound.Error(); }
                 else
                 {
                     roomDialog = false;
@@ -167,7 +167,10 @@ namespace ChibiClash
                 if (enter) Event.current.Use();
             }
             if (Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 270f, 220f, 56f), "CANCEL", Gui.Steel, 18))
+            {
                 roomDialog = false;
+                UiSound.Back();
+            }
         }
 
         /// <summary>
@@ -243,7 +246,7 @@ namespace ChibiClash
             {
                 string n = (nameInput ?? "").Trim();
                 string err = Netcode.ChibiSocialRules.ValidateName(n);
-                if (err != null) nameError = err;
+                if (err != null) { nameError = err; UiSound.Error(); }
                 else
                 {
                     bool changed = n != Save.playerName;
@@ -276,7 +279,10 @@ namespace ChibiClash
                     Gui.Text(new Rect(ar.x, ar.yMax + 4f, ar.width, 40f), account.Status, 12, account.StatusIsError ? Gui.Red : Gui.Muted, TextAnchor.UpperCenter, false);
             }
             if (!first && Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 210f, 200f, 54f), "CANCEL", Gui.Steel, 18))
+            {
                 nameDialog = false;
+                UiSound.Back();
+            }
         }
 
         // ---------------------------------------------------------------- online match start
@@ -307,6 +313,7 @@ namespace ChibiClash
             pendingOnline = runner;
             pendingOnlineInput = input;
             onlineNote = "Connected. Agreeing on the match...";
+            UiSound.LockIn();   // match found
         }
 
         /// <summary>Watch the handshake of a just-connected online match: show the match once it plays, or explain why not.</summary>
@@ -342,6 +349,7 @@ namespace ChibiClash
                 pendingOnline = null;
                 pendingOnlineInput = null;
                 rooms.Cancel();
+                UiSound.Error();
                 if (roomsSvc.OwnsLink) roomsSvc.OnMatchEnded();   // room fight that never started: back to OK
             }
         }
@@ -546,6 +554,7 @@ namespace ChibiClash
 
         void LobbyBack()
         {
+            UiSound.Back();
             bool fromRoom = roomsSvc.Current != null && !OnlineBusy;
             if (fromRoom) { Go(Page.Room); return; }   // the room and its invites stay
             if (pendingOnline != null) { Destroy(pendingOnline.gameObject); pendingOnline = null; pendingOnlineInput = null; }
@@ -655,7 +664,7 @@ namespace ChibiClash
                      TextAnchor.UpperCenter, false);
             float by = a.yMax - 48f;
             if (Gui.Button(new Rect(a.x, by, 180f, 46f), "REFRESH", Gui.P2, 17, !working)) roomsSvc.Refresh(force: true);
-            if (Gui.Button(new Rect(a.xMax - 240f, by, 240f, 46f), "BACK", Gui.Steel, 18)) Go(Page.Online);
+            if (Gui.Button(new Rect(a.xMax - 240f, by, 240f, 46f), "BACK", Gui.Steel, 18)) { UiSound.Back(); Go(Page.Online); }
             EndPage();
             NavHints("ONLINE  ·  ROOMS");
         }
@@ -767,6 +776,7 @@ namespace ChibiClash
             }
             if (Gui.Button(new Rect(a.xMax - 240f, by, 240f, 46f), "BACK", Gui.Steel, 18, !launching))
             {
+                UiSound.Back();
                 roomsSvc.ExitToList();
                 Enter(Page.Rooms);
             }
@@ -838,21 +848,20 @@ namespace ChibiClash
             Gui.Text(new Rect(x, y + 44f, w, 16f), def.passiveDescs[Mathf.Clamp(pending.passive[0], 0, 1)], 11, Gui.Muted, TextAnchor.MiddleLeft, false, false);
             y += 64f;
 
-            // cosmetic weapon
+            // Secondary: the cosmetic weapon look from the armory (signature weapon shown under the name).
             var variants = WeaponDef.ForClass(def.type);
             pending.weapon[0] = Mathf.Clamp(pending.weapon[0], 0, variants.Count - 1);
             var weapon = WeaponDef.Get(def.type, pending.weapon[0]);
-            Gui.Text(new Rect(x, y, 70f, 24f), "WEAPON", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
             if (variants.Count > 1 && y + 24f <= r.yMax)
             {
-                if (Gui.Hit(new Rect(x + 64f, y, 26f, 24f), out bool hl, enabled) && enabled) pending.weapon[0] = Mod(pending.weapon[0] - 1, variants.Count);
+                Gui.Text(new Rect(x, y, 70f, 24f), "LOOK", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
+                if (Gui.Hit(new Rect(x + 64f, y, 26f, 24f), out bool hl, enabled) && enabled) { pending.weapon[0] = Mod(pending.weapon[0] - 1, variants.Count); UiSound.Step(); }
                 Gui.Chevron(new Rect(x + 72f, y + 5f, 9f, 14f), hl ? Gui.Paper : Gui.P1, false);
                 Gui.Text(new Rect(x + 92f, y, w - 184f, 24f), weapon.name.ToUpper() + "  <color=#9AA6BC>" + (pending.weapon[0] + 1) + "/" + variants.Count + "</color>", 13, Gui.Paper, TextAnchor.MiddleCenter, true, false);
-                if (Gui.Hit(new Rect(x + w - 90f, y, 26f, 24f), out bool hr, enabled) && enabled) pending.weapon[0] = Mod(pending.weapon[0] + 1, variants.Count);
+                if (Gui.Hit(new Rect(x + w - 90f, y, 26f, 24f), out bool hr, enabled) && enabled) { pending.weapon[0] = Mod(pending.weapon[0] + 1, variants.Count); UiSound.Step(); }
                 Gui.Chevron(new Rect(x + w - 82f, y + 5f, 9f, 14f), hr ? Gui.Paper : Gui.P1);
+                Gui.Text(new Rect(x, y, w, 24f), "COSMETIC", 10, Gui.Muted, TextAnchor.MiddleRight, true, false);
             }
-            else Gui.Text(new Rect(x + 64f, y, w - 64f, 24f), weapon.name.ToUpper(), 13, Gui.Paper, TextAnchor.MiddleLeft, true, false);
-            Gui.Text(new Rect(x, y, w, 24f), "COSMETIC", 10, Gui.Muted, TextAnchor.MiddleRight, true, false);
         }
     }
 }

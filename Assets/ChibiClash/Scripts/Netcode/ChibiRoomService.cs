@@ -86,7 +86,14 @@ namespace ChibiClash.Netcode
         public Func<bool> ScreenOpen = () => true;
 
         /// <summary>Our player id ("" before sign-in).</summary>
-        public string MyId => AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : "";
+        /// <remarks>
+        /// AuthenticationService.Instance THROWS (ServicesInitializationException) until UnityServices.InitializeAsync has
+        /// completed, which never happens in a project not linked to Unity Gaming Services; Update reads this every
+        /// frame, so check the services state first (found in Play Mode 2026-11-10: exception spam every frame).
+        /// </remarks>
+        public string MyId => Unity.Services.Core.UnityServices.State == Unity.Services.Core.ServicesInitializationState.Initialized &&
+                              AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn
+            ? AuthenticationService.Instance.PlayerId : "";
         /// <summary>We host the open room.</summary>
         public bool IsHost => Current != null && Current.HostId.Length > 0 && Current.HostId == MyId;
         /// <summary>The fighter we published with OK (the match uses exactly this).</summary>

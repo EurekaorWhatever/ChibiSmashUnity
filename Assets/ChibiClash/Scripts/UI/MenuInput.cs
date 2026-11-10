@@ -31,6 +31,7 @@ namespace ChibiClash
         {
             if (polledFrame == Time.frameCount) return;
             polledFrame = Time.frameCount;
+            UiSound.Flush();   // last frame's menu sound (one per frame, most important wins)
 
             bool anyKey = false, anyPad = false;
             var kb = Keyboard.current;

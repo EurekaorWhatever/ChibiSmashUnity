@@ -416,7 +416,11 @@ namespace ChibiClash
             {
                 NavMode = true;
                 if (focus < 0 || focus >= lastRects.Count || !lastLive[focus]) focus = DefaultFocus();
-                if (focus >= 0) focusRect = lastRects[focus];
+                if (focus >= 0)
+                {
+                    focusRect = lastRects[focus];
+                    if (dx != 0 || dy != 0) UiSound.Navigate();
+                }
                 return;
             }
             var from = lastRects[focus];
@@ -438,6 +442,7 @@ namespace ChibiClash
             {
                 focus = best;
                 focusRect = lastRects[best];
+                UiSound.Navigate();
             }
         }
 
@@ -466,14 +471,24 @@ namespace ChibiClash
             }
             focused = on && NavMode && id == focus;
             hot = hover || focused;
-            if (!on) return false;
+            if (!on)
+            {
+                // A click on a disabled widget: the error sound (the click itself does nothing).
+                var e = Event.current;
+                if (Interactive && !enabled && e.type == EventType.MouseDown && r.Contains(e.mousePosition)) UiSound.Error();
+                return false;
+            }
             bool click = GUI.Button(r, GUIContent.none, GUIStyle.none);
             if (activate == id)
             {
                 activate = -1;
                 click = true;
             }
-            if (click) focus = id;
+            if (click)
+            {
+                focus = id;
+                UiSound.Confirm();   // a back / lock-in / error request from the caller this frame outranks it
+            }
             return click;
         }
 

@@ -451,23 +451,23 @@ namespace ChibiClash
                          "Closest players first: your country, nearby countries, then the world.", Gui.P1,
                          onlineOk && online ? "FIND A RIVAL NOW" : "LOCKED", !onlineOk || !online))
             {
-                if (!onlineOk) Toast(Locked);
-                else if (!online) Toast(NoNet);
+                if (!onlineOk) Deny(Locked);
+                else if (!online) Deny(NoNet);
                 else StartMatchmaking();
             }
             if (ModeCard(1, new Rect(a.x + cw + 22f, a.y + 8f, cw, ch), "ROOMS", net == "ONLINE" ? "PRIVATE" : net,
                          "Your own named rooms. Invite a friend, both press OK, then START FIGHT.", Gui.Gold,
                          onlineOk && online ? "CREATE OR JOIN" : "LOCKED", !onlineOk || !online))
             {
-                if (!onlineOk) Toast(Locked);
-                else if (!online) Toast(NoNet);
+                if (!onlineOk) Deny(Locked);
+                else if (!online) Deny(NoNet);
                 else OpenRoomsPage();
             }
             if (ModeCard(2, new Rect(a.x + 2f * (cw + 22f), a.y + 8f, cw, ch), "FRIENDS\n& LAN", onlineOk ? "SOCIAL" : "13+ ONLY",
                          "Friends list, invites by name, room codes and same-network play.", Gui.P2,
                          onlineOk ? "OPEN LOBBY" : "LOCKED", !onlineOk))
             {
-                if (!onlineOk) Toast(Locked);
+                if (!onlineOk) Deny(Locked);
                 else OpenLobby(true);
             }
 
@@ -748,7 +748,12 @@ namespace ChibiClash
             Toggle(x, ref y, "PRE-MATCH CAMERA CHECK", ref s.preMatchCheck);
             Toggle(x, ref y, "SCREEN SHAKE", ref s.screenShake);
 
-            y += 10f;
+            // Volumes live in ChibiAudio (it persists them itself); 10 % steps with - / +, or click the meter.
+            float master = Netcode.ChibiAudio.MasterVolume, sfx = Netcode.ChibiAudio.SfxVolume;
+            if (VolumeSlider(x, ref y, "MASTER VOLUME", ref master)) Netcode.ChibiAudio.MasterVolume = master;
+            if (VolumeSlider(x, ref y, "SFX VOLUME", ref sfx)) Netcode.ChibiAudio.SfxVolume = sfx;
+
+            y += 4f;
             if (Gui.Button(new Rect(x, y, 260f, 44f), "RESET PROFILE", Gui.Red, 15))
             {
                 PlayerPrefs.DeleteKey("ChibiClash.Save.v1");
@@ -794,6 +799,29 @@ namespace ChibiClash
                 "Click a binding, then press a key or click a mouse button (Esc cancels). If it's already used, the two actions swap.\n" +
                 "Camera poses: cross arms = block · arm out to the side = fireball · both hands up = super jump (keyboard poses: 1/2/3 and 8/9/0).",
                 11, Gui.Muted, TextAnchor.UpperLeft, false);
+        }
+
+        static readonly string[] Percent = { "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%" };
+
+        /// <summary>Volume row: label, -, segmented meter (click to set), +, percentage. Returns true when changed.</summary>
+        bool VolumeSlider(float x, ref float y, string label, ref float value)
+        {
+            Gui.Text(new Rect(x, y, 300f, 40f), label, 15, Gui.Paper, TextAnchor.MiddleLeft);
+            int steps = Mathf.RoundToInt(Mathf.Clamp01(value) * 10f);
+            int before = steps;
+            if (Gui.Button(new Rect(x + 230f, y + 4f, 40f, 32f), "-", Gui.P2, 18, steps > 0)) steps--;
+            var bar = new Rect(x + 280f, y + 12f, 200f, 16f);
+            Gui.Meter(bar, steps / 10f, Gui.P2, 10);
+            if (Gui.Hit(new Rect(bar.x - 4f, y + 4f, bar.width + 8f, 32f), out bool hot))
+                steps = Mathf.Clamp(Mathf.RoundToInt((Event.current.mousePosition.x - bar.x) / bar.width * 10f), 0, 10);
+            if (hot) Gui.Frame(new Rect(bar.x - 4f, y + 6f, bar.width + 8f, 28f), Gui.Paper, 1f);
+            if (Gui.Button(new Rect(x + 490f, y + 4f, 40f, 32f), "+", Gui.P2, 18, steps < 10)) steps++;
+            Gui.Text(new Rect(x + 534f, y, 50f, 40f), Percent[steps], 13, Gui.Gold, TextAnchor.MiddleRight);
+            y += 46f;
+            if (steps == before) return false;
+            UiSound.Step();
+            value = steps / 10f;
+            return true;
         }
 
         bool Toggle(float x, ref float y, string label, ref bool value)
