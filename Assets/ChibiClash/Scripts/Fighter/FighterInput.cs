@@ -7,13 +7,16 @@ namespace ChibiClash
     public abstract class FighterInput
     {
         public float MoveX;
-        public bool Down, Jump, Light, Heavy, Block, Dash, Ult;
+        /// <summary>Up = held "aim up" (up-tilt / up-smash / up-special, CH-3); never jumps by itself.</summary>
+        public bool Down, Up, Jump, Light, Heavy, Block, Dash, Ult;
+        /// <summary>Special (B) button press (CH-3).</summary>
+        public bool Special;
         public readonly bool[] Skill = new bool[3];
 
         protected void Clear()
         {
             MoveX = 0f;
-            Down = Jump = Light = Heavy = Block = Dash = Ult = false;
+            Down = Up = Jump = Light = Heavy = Block = Dash = Ult = Special = false;
             Skill[0] = Skill[1] = Skill[2] = false;
         }
 
@@ -26,9 +29,11 @@ namespace ChibiClash
 
     /// <summary>
     /// Keyboard (rebindable in Settings, see Bindings) plus gamepad N for player N.
-    /// Defaults P1: A/D move, W or Space jump, left click light, right click heavy, F block, Q dash, U/I/O skills, R ultimate.
-    /// Defaults P2: arrows, . light, / heavy, RShift block, , dash, ; ' ] skills, Enter ultimate (numpad also works).
-    /// Gamepad: stick move, A jump, X light, Y heavy, RT block, B dash, LB/RB/LT skills, R3 or Start ultimate,
+    /// Defaults P1: A/D move, W aim up, S down, Space jump, left click light, right click heavy, E special, F block, Q dash,
+    /// U/I/O skills, R ultimate.
+    /// Defaults P2: arrows (Up aims), RCtrl jump, . light, / heavy, \ special, RShift block, , dash, ; ' ] skills, Enter
+    /// ultimate (numpad also works).
+    /// Gamepad: stick move/aim, A jump, X light, Y heavy, B special, RT block, L3 dash, LB/RB/LT skills, R3 or Start ultimate,
     /// d-pad poses (down cross, right/left punch, up raise).
     /// Simulated camera poses (only when no real camera tracking): P1 keys 1/2/3, P2 keys 8/9/0; P / - toggle slouch.
     /// </summary>
@@ -56,6 +61,8 @@ namespace ChibiClash
                 if (Held(kb, BindAction.Left)) MoveX -= 1f;
                 if (Held(kb, BindAction.Right)) MoveX += 1f;
                 Down = Held(kb, BindAction.Down);
+                Up = Held(kb, BindAction.Up);
+                Special = Pressed(kb, BindAction.Special);
                 Jump = Pressed(kb, BindAction.Jump) || Pressed(kb, BindAction.JumpAlt);
                 Light = Pressed(kb, BindAction.Light);
                 Heavy = Pressed(kb, BindAction.Heavy);
@@ -80,6 +87,7 @@ namespace ChibiClash
                     Skill[1] |= kb.numpad5Key.wasPressedThisFrame;
                     Skill[2] |= kb.numpad6Key.wasPressedThisFrame;
                     Ult |= kb.numpadEnterKey.wasPressedThisFrame;
+                    Special |= kb.numpadPlusKey.wasPressedThisFrame;
                     if (kb.minusKey.wasPressedThisFrame) slouch = !slouch;
                 }
             }
@@ -89,12 +97,15 @@ namespace ChibiClash
             {
                 float sx = gp.leftStick.x.ReadValue();
                 if (Mathf.Abs(sx) > 0.25f) MoveX = Mathf.Sign(sx);
-                Down |= gp.leftStick.y.ReadValue() < -0.6f;
+                float sy = gp.leftStick.y.ReadValue();
+                Down |= sy < -0.6f;
+                Up |= sy > 0.6f;
                 Jump |= gp.buttonSouth.wasPressedThisFrame;
                 Light |= gp.buttonWest.wasPressedThisFrame;
                 Heavy |= gp.buttonNorth.wasPressedThisFrame;
                 Block |= gp.rightTrigger.isPressed;
-                Dash |= gp.buttonEast.wasPressedThisFrame;
+                Special |= gp.buttonEast.wasPressedThisFrame;          // B = Special (Smash convention, CH-3)
+                Dash |= gp.leftStickButton.wasPressedThisFrame;      // L3 = dash / dodge
                 Skill[0] |= gp.leftShoulder.wasPressedThisFrame;
                 Skill[1] |= gp.rightShoulder.wasPressedThisFrame;
                 Skill[2] |= gp.leftTrigger.wasPressedThisFrame;

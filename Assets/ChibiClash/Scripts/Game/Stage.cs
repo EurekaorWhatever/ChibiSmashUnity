@@ -13,10 +13,23 @@ namespace ChibiClash
         public Color sky;
     }
 
-    /// <summary>Builds the three arenas from primitives: a solid main stage plus one-way floating platforms.</summary>
-    public static class StageBuilder
+    /// <summary>
+    /// Builds the three arenas: a solid main stage plus one-way floating platforms. The collider geometry below is the
+    /// visual twin of the simulation's Netcode/ChibiStageTable and must not change; the painted art on top of it lives in
+    /// StageMaps.cs (UI-1, decoration only).
+    /// </summary>
+    public static partial class StageBuilder
     {
         public static readonly string[] Names = { "Sky Dojo", "Neon City", "Lava Forge" };
+
+        // Stage-select preview palette (sky, main platform, trim) and a one-line description; mirrors Build below.
+        public static readonly Color[] PreviewSky = { new Color(0.42f, 0.68f, 0.95f), new Color(0.07f, 0.05f, 0.16f), new Color(0.22f, 0.07f, 0.05f) };
+        public static readonly Color[] PreviewGround = { new Color(0.64f, 0.61f, 0.55f), new Color(0.22f, 0.19f, 0.34f), new Color(0.17f, 0.14f, 0.16f) };
+        public static readonly Color[] PreviewTrim = { new Color(0.3f, 0.82f, 0.6f), new Color(0.2f, 0.95f, 1f), new Color(1f, 0.45f, 0.1f) };
+        public static readonly string[] Taglines =
+        {
+            "Mountain shrine above the clouds", "Rooftop arena under neon rain", "Molten foundry over a lava sea",
+        };
 
         public static StageInfo Build(int index, Transform parent)
         {
@@ -27,27 +40,29 @@ namespace ChibiClash
             {
                 case 1:
                     s = Info("Neon City", 9f, -2.5f, new Color(0.07f, 0.05f, 0.16f));
-                    Decor(root, new Color(0.9f, 0.2f, 0.8f, 0.25f), new Color(0.2f, 0.9f, 1f, 0.2f), true);
-                    Main(root, s, new Color(0.2f, 0.18f, 0.32f), new Color(0.2f, 0.95f, 1f));
-                    Float(root, new Vector2(-5.5f, -0.2f), 3.4f, new Color(1f, 0.3f, 0.8f));
-                    Float(root, new Vector2(5.5f, -0.2f), 3.4f, new Color(1f, 0.3f, 0.8f));
-                    Float(root, new Vector2(0f, 2.0f), 4f, new Color(0.2f, 0.95f, 1f));
+                    NeonCityBackdrop(root, s);
+                    Main(root, s);
+                    NeonCityMain(root, s);
+                    NeonCityPlatform(Float(root, new Vector2(-5.5f, -0.2f), 3.4f), 3.4f, 0);
+                    NeonCityPlatform(Float(root, new Vector2(5.5f, -0.2f), 3.4f), 3.4f, 1);
+                    NeonCityPlatform(Float(root, new Vector2(0f, 2.0f), 4f), 4f, 2);
                     break;
                 case 2:
                     s = Info("Lava Forge", 7f, -2.5f, new Color(0.22f, 0.07f, 0.05f));
-                    Decor(root, new Color(1f, 0.4f, 0.1f, 0.25f), new Color(1f, 0.8f, 0.2f, 0.15f), false);
-                    Art.Sprite(root, "Lava", Art.Soft, new Color(1f, 0.35f, 0.05f, 0.8f), new Vector2(0f, -9f), new Vector2(40f, 8f), -50);
-                    Main(root, s, new Color(0.25f, 0.2f, 0.2f), new Color(1f, 0.45f, 0.1f));
-                    Float(root, new Vector2(-3.6f, 0.6f), 3f, new Color(1f, 0.6f, 0.2f));
-                    Float(root, new Vector2(3.6f, 0.6f), 3f, new Color(1f, 0.6f, 0.2f));
+                    LavaForgeBackdrop(root, s);
+                    Main(root, s);
+                    LavaForgeMain(root, s);
+                    LavaForgePlatform(Float(root, new Vector2(-3.6f, 0.6f), 3f), 3f, 0);
+                    LavaForgePlatform(Float(root, new Vector2(3.6f, 0.6f), 3f), 3f, 1);
                     break;
                 default:
                     s = Info("Sky Dojo", 8f, -2.5f, new Color(0.45f, 0.72f, 1f));
-                    Decor(root, new Color(1f, 1f, 1f, 0.55f), new Color(1f, 0.95f, 0.8f, 0.5f), false);
-                    Main(root, s, new Color(0.55f, 0.4f, 0.3f), new Color(0.45f, 0.85f, 0.4f));
-                    Float(root, new Vector2(-4.2f, 0.4f), 3.4f, new Color(0.95f, 0.85f, 0.6f));
-                    Float(root, new Vector2(4.2f, 0.4f), 3.4f, new Color(0.95f, 0.85f, 0.6f));
-                    Float(root, new Vector2(0f, 2.9f), 3f, new Color(0.95f, 0.85f, 0.6f));
+                    SkyDojoBackdrop(root, s);
+                    Main(root, s);
+                    SkyDojoMain(root, s);
+                    SkyDojoPlatform(Float(root, new Vector2(-4.2f, 0.4f), 3.4f), 3.4f, 0);
+                    SkyDojoPlatform(Float(root, new Vector2(4.2f, 0.4f), 3.4f), 3.4f, 1);
+                    SkyDojoPlatform(Float(root, new Vector2(0f, 2.9f), 3f), 3f, 2);
                     break;
             }
             var cam = Camera.main;
@@ -71,19 +86,18 @@ namespace ChibiClash
             };
         }
 
-        static void Main(Transform root, StageInfo s, Color body, Color top)
+        /// <summary>Solid main-stage collider (top at groundY). Art is drawn separately (StageMaps.cs).</summary>
+        static void Main(Transform root, StageInfo s)
         {
             var go = new GameObject("MainStage");
             go.transform.SetParent(root, false);
             go.transform.position = new Vector2(0f, s.groundY - 0.6f);
             var col = go.AddComponent<BoxCollider2D>();
             col.size = new Vector2(s.halfWidth * 2f, 1.2f);
-            Art.Sprite(go.transform, "Body", Art.Rounded, body, new Vector2(0f, -0.4f), new Vector2(s.halfWidth * 2f, 2f), -10);
-            Art.Sprite(go.transform, "Underside", Art.Soft, Color.Lerp(body, Color.black, 0.4f), new Vector2(0f, -1.5f), new Vector2(s.halfWidth * 1.6f, 2.2f), -11);
-            Art.Sprite(go.transform, "Top", Art.Rounded, top, new Vector2(0f, 0.5f), new Vector2(s.halfWidth * 2f + 0.2f, 0.32f), -9);
         }
 
-        static void Float(Transform root, Vector2 pos, float width, Color c)
+        /// <summary>One-way floating platform collider; the platform art goes on the returned transform.</summary>
+        static Transform Float(Transform root, Vector2 pos, float width)
         {
             var go = new GameObject("Platform");
             go.transform.SetParent(root, false);
@@ -94,30 +108,8 @@ namespace ChibiClash
             var eff = go.AddComponent<PlatformEffector2D>();
             eff.useOneWay = true;
             eff.surfaceArc = 170f;
-            Art.Sprite(go.transform, "Slab", Art.Rounded, c, Vector2.zero, new Vector2(width, 0.3f), -8);
             Art.Sprite(go.transform, "Shadow", Art.Soft, new Color(0f, 0f, 0f, 0.2f), new Vector2(0f, -0.35f), new Vector2(width * 0.9f, 0.4f), -12);
-        }
-
-        static void Decor(Transform root, Color a, Color b, bool city)
-        {
-            var rnd = new System.Random(7);
-            for (int i = 0; i < 14; i++)
-            {
-                float x = (float)rnd.NextDouble() * 50f - 25f;
-                float y = (float)rnd.NextDouble() * 14f - 2f;
-                float s = 1.5f + (float)rnd.NextDouble() * 4f;
-                if (city)
-                {
-                    float h = 3f + (float)rnd.NextDouble() * 9f;
-                    Art.Sprite(root, "Tower", Art.Square, new Color(0.12f, 0.1f, 0.25f), new Vector2(x, -6f + h * 0.5f), new Vector2(1.5f + s * 0.4f, h), -40);
-                    Art.Sprite(root, "Neon", Art.Square, i % 2 == 0 ? a : b, new Vector2(x, -6f + h), new Vector2(1.5f + s * 0.4f, 0.12f), -39);
-                }
-                else
-                {
-                    Art.Sprite(root, "Cloud", Art.Soft, i % 2 == 0 ? a : b, new Vector2(x, y), new Vector2(s * 1.8f, s), -45);
-                }
-            }
-            Art.Sprite(root, "Sun", Art.Soft, b, new Vector2(9f, 9f), new Vector2(8f, 8f), -48);
+            return go.transform;
         }
     }
 
