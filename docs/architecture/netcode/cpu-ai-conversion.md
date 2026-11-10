@@ -33,3 +33,27 @@ Presses are edges in the sim, so a press requested on consecutive ticks is sent 
 - The original turns with `MoveX = ±0.2` (a creep); the sim stick is digital, so one tick of full input turns the CPU.
 - Repeated per-frame "pressed" requests (for example Jump every frame while falling) become one press every other tick;
   the outcome is the same because the sim acts on the first.
+
+## Addendum (2026-11-10, rules v19): the CPU uses the character movesets
+
+The CPU is still a deterministic input source (own seeded RNG, integers only, reads the state read-only, difficulty 0 =
+neutral dummy). Since the character movesets (design/gdd/movesets/) it presses direction + button combinations:
+
+- **Per-character option table** in `ChibiCpuInputSource.cs` (`Options` / `Profile`): situation, button, direction,
+  weight, minimum difficulty, hold ticks. A move is only chosen if it exists, can start (cooldown, once-per-airtime,
+  reload, SpearOut) and its own row says it would connect (hitbox, lunge distance, projectile range).
+- **Smashes** punish (opponent in hitstun / endlag) or kill (low HP, near the edge); charged only while the hitstun
+  allows (difficulty 2+). **Aerials** by relative position (fair/bair by side, uair above, dair below; more often when
+  edge-guarding). **Counters / reflectors** (difficulty 2+) only when the opponent's hit would land inside the window.
+- **Charge holds:** Heavy, Special or Skill3 may be held as one press (capped at 48 ticks) for charge moves; every other
+  button is released for at least one tick between presses.
+- **Frozen ticks (hitstop / cinematic):** until a game step has consumed the last press, the CPU keeps that stick
+  direction and presses nothing new, because the step reads the stick on the tick it actually runs.
+- **Recovery:** air jump below stage level, air dash for distance, up-special timed from its own rise speed so it clears
+  the stage top; Kaia's original Dash & Thrust recovery is kept but only used while facing the stage (facing is locked
+  in the air since OD-1).
+- **Tests:** `ChibiCpuMovesetTests` (determinism per character, >= 8 distinct new moves per match, every move family
+  used, difficulty 0 neutral, recovery from 2 start positions per character, press/hold discipline) plus the updated
+  `ChibiCpuAiTests`; CPU-vs-CPU pairings also run in `ChibiSyncVerificationTests`.
+- **Known limit:** starts deep beside the stage's side wall are not survivable for Kaia, Bruna and Taro (no wall jump or
+  ledge grab exists in the sim).

@@ -42,7 +42,10 @@ namespace ChibiClash.Tests
                 // Gestures change every 40 samples: held long enough to pass the 9-tick ult hold.
                 uint g = ((uint)(n / 40) * 2246822519u + (uint)seed) >> 7;
                 var gesture = (Gesture)(g % 4);
-                if ((g >> 4) % 3 == 0) b |= ChibiButtons.PoseVerified;   // never read by the sim (rule 1)
+                // Protocol 3 / rules v18 (intended): bit 15 is the Special button now, a real gameplay input, so the
+                // fuzz presses it like any other button instead of flipping the retired PoseVerified hint.
+                if (h % 7 == 6) b |= ChibiButtons.Special;
+                if ((h >> 9) % 4 == 0 && y == 0) y = 1;   // aim up (up tilts / smashes / specials)
                 return ChibiInputPacket.Make(ChibiInputPacket.DirFromAxes(x, y), b, gesture);
             }
         }

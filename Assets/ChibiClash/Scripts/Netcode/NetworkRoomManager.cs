@@ -77,7 +77,10 @@ namespace ChibiClash.Netcode
         /// </summary>
         public string RoomName { get; private set; } = "";
         /// <summary>The anonymous player id once signed in.</summary>
-        public string PlayerId => AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : "";
+        /// <remarks>Guarded on the services state: AuthenticationService.Instance throws before UnityServices is initialized.</remarks>
+        public string PlayerId => Unity.Services.Core.UnityServices.State == Unity.Services.Core.ServicesInitializationState.Initialized &&
+                                  AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn
+            ? AuthenticationService.Instance.PlayerId : "";
 
         /// <summary>Raised once when the UDP link to the opponent is up. The receiver owns the transport from then on.</summary>
         public event Action<ChibiUtpTransport, bool> OnConnected;
@@ -382,6 +385,14 @@ namespace ChibiClash.Netcode
             {
                 var lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(code);
                 if (flow != _flow) { _ = LeaveLobby(lobby, false); return; }
+                // Version gate at join time (network review 2026-11-10): refuse a room from another build at once.
+                string roomTag = lobby?.Data != null && lobby.Data.TryGetValue(KeyProto, out var proto) ? proto?.Value : null;
+                if (!ChibiRoomRules.SameBuild(roomTag, ProtocolTag))
+                {
+                    _ = LeaveLobby(lobby, false);
+                    Fail("That room was made with a different version of Chibi Clash. Both players need the same version.");
+                    return;
+                }
                 RoomName = ChibiSocialRules.SafeRoomName(lobby?.Name);   // the host's text: sanitised
                 await ConnectAsJoiner(lobby, flow);
             }

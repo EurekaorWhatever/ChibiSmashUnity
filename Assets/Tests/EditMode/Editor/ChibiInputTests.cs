@@ -9,7 +9,8 @@ using NUnit.Framework;
 namespace ChibiClash.Tests
 {
     /// <summary>
-    /// ChibiPlayerInputSource: render-frame polling, one-shot latching, held state, gesture and PoseVerified bits.
+    /// ChibiPlayerInputSource: render-frame polling, one-shot latching, held state, gesture bits and (protocol 3) the
+    /// Special button on bit 15, aim Up, and the held level of the charge buttons.
     /// Uses a scripted FighterInput so no Unity input or time is involved.
     /// </summary>
     public class ChibiInputTests
@@ -47,12 +48,12 @@ namespace ChibiClash.Tests
         {
             public readonly FakeDevice Device = new FakeDevice();
             public Gesture CurrentGesture = Gesture.None;
-            public bool Verified;
+            public ChibiButtons Held;
             public readonly ChibiPlayerInputSource Source;
 
             public Rig()
             {
-                Source = new ChibiPlayerInputSource(Device, () => CurrentGesture, () => Verified, () => FrameDt);
+                Source = new ChibiPlayerInputSource(Device, () => CurrentGesture, () => FrameDt, () => Held);
             }
 
             /// <summary>Queue one frame, poll it, then sample.</summary>
@@ -66,9 +67,9 @@ namespace ChibiClash.Tests
 
         const ChibiButtons AllOneShots =
             ChibiButtons.Jump | ChibiButtons.Light | ChibiButtons.Heavy | ChibiButtons.Dash |
-            ChibiButtons.Skill1 | ChibiButtons.Skill2 | ChibiButtons.Skill3 | ChibiButtons.Ultimate;
+            ChibiButtons.Skill1 | ChibiButtons.Skill2 | ChibiButtons.Skill3 | ChibiButtons.Ultimate | ChibiButtons.Special;
 
-        const ChibiButtons AllButtonBits = AllOneShots | ChibiButtons.Shield | ChibiButtons.PoseVerified;
+        const ChibiButtons AllButtonBits = AllOneShots | ChibiButtons.Shield;
 
         static ChibiButtons ButtonsOf(ChibiInputPacket p) => (ChibiButtons)p.Raw & AllButtonBits;
 
@@ -85,6 +86,7 @@ namespace ChibiClash.Tests
             yield return new TestCaseData((Action<FakeDevice>)(d => d.Skill[2] = true), ChibiButtons.Skill3).SetName("EachButton_MapsToItsOwnBit(Skill3)");
             yield return new TestCaseData((Action<FakeDevice>)(d => d.Ult = true), ChibiButtons.Ultimate).SetName("EachButton_MapsToItsOwnBit(Ult)");
             yield return new TestCaseData((Action<FakeDevice>)(d => d.Dash = true), ChibiButtons.Dash).SetName("EachButton_MapsToItsOwnBit(Dash)");
+            yield return new TestCaseData((Action<FakeDevice>)(d => d.Special = true), ChibiButtons.Special).SetName("EachButton_MapsToItsOwnBit(Special)");
         }
 
         [TestCaseSource(nameof(ButtonCases))]
@@ -117,6 +119,24 @@ namespace ChibiClash.Tests
 
             // Act
             var p = rig.PollThenSample(d => { d.MoveX = moveX; d.Down = down; });
+
+            // Assert
+            Assert.AreEqual(expected, p.Direction);
+            Assert.AreEqual(ChibiButtons.None, ButtonsOf(p));
+        }
+
+        [TestCase(Neutral, true, false, ChibiDir.N)]
+        [TestCase(Left, true, false, ChibiDir.NW)]
+        [TestCase(Right, true, false, ChibiDir.NE)]
+        [TestCase(Neutral, true, true, ChibiDir.S)]
+        [TestCase(Right, true, true, ChibiDir.SE)]
+        public void Direction_AimUp_MapsToUpDirections_DownWins(float moveX, bool up, bool down, ChibiDir expected)
+        {
+            // Arrange: aim Up (CH-3, IN-1) never jumps; with Up and Down both held, Down wins.
+            var rig = new Rig();
+
+            // Act
+            var p = rig.PollThenSample(d => { d.MoveX = moveX; d.Up = up; d.Down = down; });
 
             // Assert
             Assert.AreEqual(expected, p.Direction);
@@ -217,19 +237,57 @@ namespace ChibiClash.Tests
             Assert.AreEqual(ChibiDir.Neutral, p.Direction);
         }
 
-        [TestCase(Gesture.None, true, false)]
-        [TestCase(Gesture.CrossArms, false, false)]
-        [TestCase(Gesture.CrossArms, true, true)]
-        public void PoseVerified_OnlyWithGestureAndVerified(Gesture gesture, bool verified, bool expectBit)
+        [TestCase(Gesture.None)]
+        [TestCase(Gesture.CrossArms)]
+        [TestCase(Gesture.RaiseHands)]
+        public void Bit15_IsNeverSetByAGesture_OnlyBySpecial(Gesture gesture)
         {
+            // Protocol 3 (CH-3): bit 15 is the Special button. The retired PoseVerified hint must never reappear there.
             // Arrange
-            var rig = new Rig { CurrentGesture = gesture, Verified = verified };
+            var rig = new Rig { CurrentGesture = gesture };
 
             // Act
             var p = rig.PollThenSample(_ => { });
 
             // Assert
-            Assert.AreEqual(expectBit, p.Has(ChibiButtons.PoseVerified));
+            Assert.IsFalse(p.Has(ChibiButtons.Special));
+            Assert.AreEqual(gesture, p.Gesture);
+        }
+
+        // ---------------------------------------------------------------- held level (charge / hold moves, rules v18)
+
+        [Test]
+        public void HeldChargeButtons_StaySetWhileHeld_PressOnlyOnce()
+        {
+            // Arrange: Heavy pressed on frame 1, then held for two more ticks, then released.
+            var rig = new Rig();
+            rig.Held = ChibiButtons.Heavy;
+
+            // Act
+            var press = rig.PollThenSample(d => d.Heavy = true);
+            var held1 = rig.PollThenSample(_ => { });
+            var held2 = rig.PollThenSample(_ => { });
+            rig.Held = ChibiButtons.None;
+            var released = rig.PollThenSample(_ => { });
+
+            // Assert: the level stays on (the sim sees ONE edge on the press tick, then the level).
+            Assert.IsTrue(press.Has(ChibiButtons.Heavy));
+            Assert.IsTrue(held1.Has(ChibiButtons.Heavy));
+            Assert.IsTrue(held2.Has(ChibiButtons.Heavy));
+            Assert.IsFalse(released.Has(ChibiButtons.Heavy));
+        }
+
+        [Test]
+        public void HeldLevel_OnlyChargeButtonsPassThrough()
+        {
+            // Arrange: a held provider claiming Light / Jump / Ultimate as held must not leak them (they stay one-shot).
+            var rig = new Rig { Held = ChibiButtons.Light | ChibiButtons.Jump | ChibiButtons.Ultimate | ChibiButtons.Special };
+
+            // Act
+            var p = rig.PollThenSample(_ => { });
+
+            // Assert
+            Assert.AreEqual(ChibiButtons.Special, ButtonsOf(p));
         }
 
         // ---------------------------------------------------------------- wire
@@ -237,14 +295,14 @@ namespace ChibiClash.Tests
         [Test]
         public void Packet_SurvivesWireMask()
         {
-            // Arrange: everything pressed at once, plus a verified gesture and a diagonal.
-            var rig = new Rig { CurrentGesture = Gesture.RaiseHands, Verified = true };
+            // Arrange: everything pressed at once (Special on bit 15 included), plus a gesture and a diagonal.
+            var rig = new Rig { CurrentGesture = Gesture.RaiseHands };
 
             // Act
             var p = rig.PollThenSample(d =>
             {
                 d.MoveX = Left; d.Down = true;
-                d.Jump = d.Light = d.Heavy = d.Block = d.Dash = d.Ult = true;
+                d.Jump = d.Light = d.Heavy = d.Block = d.Dash = d.Ult = d.Special = true;
                 d.Skill[0] = d.Skill[1] = d.Skill[2] = true;
             });
 

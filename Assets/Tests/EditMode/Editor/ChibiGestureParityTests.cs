@@ -362,41 +362,38 @@ namespace ChibiClash.Tests
 
         // ================================================================== security (security-gesture-review.md section 2)
 
+        // Rules v18 / protocol 3 (CH-3), INTENDED change: bit 15 is no longer the cosmetic PoseVerified hint but the
+        // Special (B) button, a real gameplay input. The old "bit 15 never changes the simulation" and "bit 15 cleared
+        // without a gesture" tests encoded the retired meaning and were replaced by these two.
+
         [Test]
-        public void PoseVerifiedBit_NeverChangesTheSimulation()
+        public void SpecialBit_IsIndependentOfTheGestureBits()
         {
-            // Rule 1: two matches with identical inputs except bit 15 must end in identical checksums (minus PrevInput,
-            // which carries the raw bit and is the only state that may differ; so compare gameplay, not the hash).
-            var a = Arena(FighterClass.Ranged, FighterClass.Heavy);
-            var b = Arena(FighterClass.Ranged, FighterClass.Heavy);
-            a.F[0].Ult = b.F[0].Ult = ChibiSimConst.UltMax;
-            var rng = new Random(7);
-            for (int t = 0; t < 600; t++)
-            {
-                ushort raw = (ushort)rng.Next(0, 0x8000);
-                if ((raw & 0xF) > 8) raw &= 0xFFF0;
-                var pa = new ChibiInputPacket { Raw = raw };
-                var pb = new ChibiInputPacket { Raw = (ushort)(raw | (ushort)ChibiButtons.PoseVerified) };
-                Step(a, pa, N);
-                Step(b, pb, N);
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                b.F[i].PrevInput = a.F[i].PrevInput;
-                b.F[i].LatchedEdges = a.F[i].LatchedEdges;
-            }
-            Assert.AreEqual(a.ComputeChecksum(), b.ComputeChecksum(), "PoseVerified (bit 15) must have no gameplay effect");
+            // Arrange / Act: Special with gesture None must survive sanitising (it is no longer tied to a pose).
+            var bare = new ChibiInputPacket { Raw = (ushort)ChibiButtons.Special }.Sanitized();
+            var withGesture = G(Gesture.RaiseHands, ChibiButtons.Special).Sanitized();
+
+            // Assert
+            Assert.AreEqual((ushort)ChibiButtons.Special, bare.Raw);
+            Assert.IsTrue(withGesture.Has(ChibiButtons.Special));
+            Assert.AreEqual(Gesture.RaiseHands, withGesture.Gesture);
         }
 
         [Test]
-        public void Sanitized_PoseVerifiedWithoutGesture_IsCleared_WithGestureKept()
+        public void SpecialPress_StartsAMove_AGestureDoesNotSetSpecial()
         {
-            // SEC-002: canonical form. Bit 15 with gesture None is not a meaningful state.
-            var bare = new ChibiInputPacket { Raw = (ushort)ChibiButtons.PoseVerified }.Sanitized();
-            Assert.AreEqual(0, bare.Raw);
-            var withGesture = G(Gesture.RaiseHands, ChibiButtons.PoseVerified).Sanitized();
-            Assert.IsTrue(withGesture.Has(ChibiButtons.PoseVerified));
-            Assert.AreEqual(Gesture.RaiseHands, withGesture.Gesture);
+            // Arrange: a gesture alone (no Special) must start no Special move; a Special press must start one.
+            var a = Arena(FighterClass.Ranged, FighterClass.Heavy);
+            var b = Arena(FighterClass.Ranged, FighterClass.Heavy);
+            for (int t = 0; t < 30; t++) { Step(a, N, N); Step(b, N, N); }
+
+            // Act
+            Step(a, G(Gesture.CrossArms), N);
+            Step(b, new ChibiInputPacket { Raw = (ushort)ChibiButtons.Special }, N);
+
+            // Assert
+            Assert.AreEqual(-1, a.F[0].MoveSlot, "a gesture is not a Special press");
+            Assert.GreaterOrEqual(b.F[0].MoveSlot, 7, "Special (bit 15) starts a new-moveset slot (>= 7)");
         }
 
         [Test]

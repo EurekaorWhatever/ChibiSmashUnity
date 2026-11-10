@@ -48,7 +48,7 @@ namespace ChibiClash
         {
             new ClassDef
             {
-                type = FighterClass.Melee, heroName = "Kira", className = "Melee", weapon = "Rapier",
+                type = FighterClass.Melee, heroName = "Kaia", className = "Melee", weapon = "Rapier",
                 attack = 20, health = 500, defense = 20, moveSpeed = 7.6f, patternLength = 4, reach = 1.35f,
                 passiveNames = new[] { "Swift Blade", "Blood Edge" },
                 passiveDescs = new[] { "+15% attack speed", "5% life steal" },
@@ -60,7 +60,7 @@ namespace ChibiClash
             },
             new ClassDef
             {
-                type = FighterClass.Heavy, heroName = "Brutus", className = "Heavy", weapon = "Hammer",
+                type = FighterClass.Heavy, heroName = "Bruna", className = "Heavy", weapon = "Hammer",
                 attack = 35, health = 600, defense = 30, moveSpeed = 6.3f, patternLength = 5, reach = 1.55f,
                 passiveNames = new[] { "Crusher", "Juggernaut" },
                 passiveDescs = new[] { "+20% damage, -15% attack speed", "+20% damage, -15% move speed" },
@@ -72,7 +72,7 @@ namespace ChibiClash
             },
             new ClassDef
             {
-                type = FighterClass.Ranged, heroName = "Pip", className = "Ranged", weapon = "Bow",
+                type = FighterClass.Ranged, heroName = "Ren", className = "Ranged", weapon = "Bow",
                 attack = 15, health = 400, defense = 10, moveSpeed = 7.3f, patternLength = 4, reach = 0.9f, rangedNormals = true,
                 passiveNames = new[] { "Eagle Eye", "Tailwind" },
                 passiveDescs = new[] { "+20% crit rate", "+10% move speed for 10s (30s cooldown)" },
@@ -84,7 +84,7 @@ namespace ChibiClash
             },
             new ClassDef
             {
-                type = FighterClass.Magic, heroName = "Luma", className = "Magic", weapon = "Staff",
+                type = FighterClass.Magic, heroName = "Lyra", className = "Magic", weapon = "Staff",
                 attack = 20, health = 375, defense = 10, moveSpeed = 6.9f, patternLength = 4, reach = 0.9f, rangedNormals = true,
                 passiveNames = new[] { "Hex", "Ward" },
                 passiveDescs = new[] { "10% chance on hit: -15% move, -10% dmg, -15% atk speed", "20% chance to block damage" },
@@ -96,7 +96,7 @@ namespace ChibiClash
             },
             new ClassDef
             {
-                type = FighterClass.Polearm, heroName = "Ren", className = "Polearm", weapon = "Spear",
+                type = FighterClass.Polearm, heroName = "Taro", className = "Polearm", weapon = "Spear",
                 attack = 25, health = 500, defense = 20, moveSpeed = 7.0f, patternLength = 4, reach = 2.0f,
                 passiveNames = new[] { "Armor Break", "Patience" },
                 passiveDescs = new[] { "10% chance on hit: -15% enemy defense", "After 3s without attacking, next hit +50%" },

@@ -36,6 +36,9 @@ namespace ChibiClash.Tests
             public void Run(int ticks) { for (int t = 0; t < ticks && Session.Tick(); t++) { } }
         }
 
+        const ChibiButtons AttackButtons = ChibiButtons.Light | ChibiButtons.Heavy | ChibiButtons.Special |
+                                           ChibiButtons.Skill1 | ChibiButtons.Skill2 | ChibiButtons.Skill3;
+
         static void Place(ChibiFighterSim f, int x, int facing)
         {
             f.X = x; f.Y = 0; f.Vx = 0; f.Vy = 0; f.XRem = 0; f.YRem = 0; f.Grounded = true; f.Facing = facing;
@@ -147,7 +150,8 @@ namespace ChibiClash.Tests
                 r.S.F[1].X = 1000; r.S.F[1].Facing = -1;
                 r.Run(1);
                 var p = r.Sent[r.Sent.Count - 1];
-                if (p.Has(ChibiButtons.Light) || p.Has(ChibiButtons.Heavy)) attacks++;
+                // Rules v18: close range also picks specials and Skill+Up/Down techniques (ChibiCpuInputSource.Options).
+                if ((p.Raw & (ushort)AttackButtons) != 0) attacks++;
             }
             Assert.Greater(attacks, 5, "inMelee and facing: attack chance (6% + 12%·skill) per tick");
         }
@@ -158,7 +162,10 @@ namespace ChibiClash.Tests
             var r = new Rig(Cfg(FighterClass.Melee, FighterClass.Melee), 2);
             r.Run(90);
             var f = r.S.F[1];
-            f.X = 9500; f.Y = -2000; f.Vy = -60000; f.Grounded = false;
+            // Facing the stage: in the original the stick toward the centre turned the fighter, so FI:168's thrust always
+            // went back; rules v18 lock facing in the air (OD-1), and the port thrusts only when it faces the stage.
+            f.X = 9500; f.Y = -2000; f.Vy = -60000; f.Grounded = false; f.Facing = -1;
+            r.S.HitstopRealTicks = 0;
             r.Run(1);
             var p = r.Sent[r.Sent.Count - 1];
             Assert.AreEqual(-1, p.MoveX, "move back toward the centre (FI:166)");
@@ -167,14 +174,37 @@ namespace ChibiClash.Tests
         }
 
         [Test]
+        public void OffStage_FacingAway_NoDashAndThrustOffTheStage()
+        {
+            var r = new Rig(Cfg(FighterClass.Melee, FighterClass.Melee), 2);
+            r.Run(90);
+            var f = r.S.F[1];
+            f.X = 9500; f.Y = -2000; f.Vy = -60000; f.Grounded = false; f.Facing = 1;   // air facing locked outward (OD-1)
+            r.S.HitstopRealTicks = 0;
+            r.Run(1);
+            var p = r.Sent[r.Sent.Count - 1];
+            Assert.AreEqual(-1, p.MoveX, "still drifts toward the centre");
+            Assert.IsFalse(p.Has(ChibiButtons.Skill1), "Dash & Thrust goes along Facing: pressed now it would carry the CPU away");
+        }
+
+        [Test]
         public void Presses_AlwaysReleaseBetweenTicks()
         {
             var r = new Rig(Cfg(FighterClass.Magic, FighterClass.Melee), 3, new ChibiCpuInputSource(0, 3, Seed));
             r.Run(4000);
-            const ushort pressMask = (ushort)(ChibiButtons.Light | ChibiButtons.Heavy | ChibiButtons.Jump | ChibiButtons.Skill1 |
-                                              ChibiButtons.Skill2 | ChibiButtons.Skill3 | ChibiButtons.Ultimate);
+            // Tap buttons are never held two ticks (two presses would merge into one). Heavy / Special / Skill3 may be held
+            // on purpose: that is ONE press charging a smash / Focus Shot / Charged Cross Cut or holding a stance
+            // (rules v18 charge / hold read the level), bounded by MaxHoldTicks. See ChibiCpuMovesetTests for every class.
+            const ushort pressMask = (ushort)(ChibiButtons.Light | ChibiButtons.Jump | ChibiButtons.Skill1 |
+                                              ChibiButtons.Skill2 | ChibiButtons.Ultimate | ChibiButtons.Dash);
             for (int i = 1; i < r.Sent.Count; i++)
                 Assert.AreEqual(0, r.Sent[i - 1].Raw & r.Sent[i].Raw & pressMask, "a press bit held two ticks would be one press");
+            int run = 0;
+            foreach (var p in r.Sent)
+            {
+                run = (p.Raw & (ushort)(ChibiButtons.Heavy | ChibiButtons.Special | ChibiButtons.Skill3)) != 0 ? run + 1 : 0;
+                Assert.LessOrEqual(run, ChibiCpuInputSource.MaxHoldTicks + 1, "a deliberate charge hold is bounded");
+            }
         }
 
         // ================================================================== ult gesture (FI:207, FI:210-227)

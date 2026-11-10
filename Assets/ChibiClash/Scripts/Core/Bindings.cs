@@ -5,31 +5,37 @@ using UnityEngine.InputSystem.Controls;
 
 namespace ChibiClash
 {
-    public enum BindAction { Left, Right, Down, Jump, JumpAlt, Light, Heavy, Block, Dash, Skill1, Skill2, Skill3, Ultimate }
+    /// <summary>Rebindable actions. New actions are appended (Up, Special: version 3) so saved indices stay meaningful.</summary>
+    public enum BindAction { Left, Right, Down, Jump, JumpAlt, Light, Heavy, Block, Dash, Skill1, Skill2, Skill3, Ultimate, Up, Special }
 
     /// <summary>
     /// Rebindable controls for both players, stored in the save profile as strings: a keyboard Key enum name
     /// ("A", "Space", "RightShift"...) or a mouse button ("Mouse0" left, "Mouse1" right, "Mouse2" middle).
     /// A missing or unreadable entry falls back to the default, so old saves keep working.
+    /// Version 3 (character movesets, decision CH-3): "Aim up" (held direction for up-tilt / up-smash / up-special,
+    /// Brawlhalla-style: W aims, Space jumps) and "Special" (the B button).
     /// </summary>
     public static class Bindings
     {
-        public const int Count = 13;
-        public const int Version = 2;           // 2 = light/heavy default to the mouse
+        public const int Count = 15;
+        /// <summary>2 = light/heavy default to the mouse. 3 = Up + Special added; W becomes aim-up, Space jumps.</summary>
+        public const int Version = 3;
+        /// <summary>Actions per player before version 3 (layout of older saves).</summary>
+        const int CountV2 = 13;
 
         public const string MouseLeft = "Mouse0", MouseRight = "Mouse1", MouseMiddle = "Mouse2";
 
         public static readonly string[] Names =
         {
             "Move left", "Move right", "Drop / fast-fall", "Jump", "Jump (alt)", "Light attack", "Heavy attack",
-            "Block", "Dash", "Skill 1", "Skill 2", "Skill 3", "Ultimate"
+            "Block", "Dash", "Skill 1", "Skill 2", "Skill 3", "Ultimate", "Aim up", "Special"
         };
 
         static readonly string[][] Defaults =
         {
-            new[] { "A", "D", "S", "W", "Space", MouseLeft, MouseRight, "F", "Q", "U", "I", "O", "R" },
-            new[] { "LeftArrow", "RightArrow", "DownArrow", "UpArrow", "None", "Period", "Slash",
-                    "RightShift", "Comma", "Semicolon", "Quote", "RightBracket", "Enter" },
+            new[] { "A", "D", "S", "Space", "None", MouseLeft, MouseRight, "F", "Q", "U", "I", "O", "R", "W", "E" },
+            new[] { "LeftArrow", "RightArrow", "DownArrow", "RightCtrl", "None", "Period", "Slash",
+                    "RightShift", "Comma", "Semicolon", "Quote", "RightBracket", "Enter", "UpArrow", "Backslash" },
         };
 
         /// <summary>The active profile; set by GameManager.</summary>
@@ -69,6 +75,7 @@ namespace ChibiClash
         /// <summary>Fill missing entries with defaults and upgrade old saves (light/heavy move from J/K to the mouse).</summary>
         public static void Normalize(SaveData d)
         {
+            if (d.keybindVersion < 3 && d.keybinds.Count > 0) UpgradeToV3(d);
             while (d.keybinds.Count < 2 * Count)
             {
                 int i = d.keybinds.Count;
@@ -80,6 +87,39 @@ namespace ChibiClash
                 if (d.keybinds[Index(0, BindAction.Heavy)] == "K") d.keybinds[Index(0, BindAction.Heavy)] = MouseRight;
             }
             d.keybindVersion = Version;
+        }
+
+        /// <summary>
+        /// v2 saves hold 13 actions per player in one flat list. Re-lay them out at 15 per player (keeping every custom
+        /// key), then move the old default jump key to the new aim-up action: P1 W/Space becomes aim-up W + jump Space,
+        /// P2 UpArrow becomes aim-up UpArrow + jump RightCtrl. Custom jump keys are kept as they were.
+        /// </summary>
+        static void UpgradeToV3(SaveData d)
+        {
+            var old = new System.Collections.Generic.List<string>(d.keybinds);
+            d.keybinds.Clear();
+            for (int p = 0; p < 2; p++)
+            {
+                for (int a = 0; a < Count; a++)
+                {
+                    int src = p * CountV2 + a;
+                    d.keybinds.Add(a < CountV2 && src < old.Count ? old[src] : Defaults[p][a]);
+                }
+                int jump = Index(p, BindAction.Jump), alt = Index(p, BindAction.JumpAlt), up = Index(p, BindAction.Up);
+                if (p == 0 && d.keybinds[jump] == "W")
+                {
+                    // Jump moves to the alt key if one is bound (default Space), else to Space; the alt slot is freed.
+                    string a2 = d.keybinds[alt];
+                    d.keybinds[jump] = string.IsNullOrEmpty(a2) || a2 == "None" || a2 == "W" ? "Space" : a2;
+                    d.keybinds[alt] = "None";
+                    d.keybinds[up] = "W";
+                }
+                else if (p == 1 && d.keybinds[jump] == "UpArrow")
+                {
+                    d.keybinds[jump] = "RightCtrl";
+                    d.keybinds[up] = "UpArrow";
+                }
+            }
         }
 
         public static void ResetDefaults(SaveData d)

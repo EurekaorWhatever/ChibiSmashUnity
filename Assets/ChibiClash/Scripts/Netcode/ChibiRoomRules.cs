@@ -145,5 +145,16 @@ namespace ChibiClash.Netcode
 
         /// <summary>A short random token for launch / start presses (not a secret: only "is it new").</summary>
         public static string NewNonce() => Guid.NewGuid().ToString("N").Substring(0, 12);
+
+        /// <summary>
+        /// True when a room published by another build can host a match with ours: the room's protocol tag
+        /// ("p&lt;protocol&gt;r&lt;rules&gt;", NetworkRoomManager.ProtocolTag) must equal ours exactly. A missing tag (very old
+        /// build, or tampered data) is refused. Checked right after joining by code, so a version mismatch is reported
+        /// at once instead of after both players press OK and the handshake refuses (network review 2026-11-10, finding 1).
+        /// </summary>
+        /// <example><code>if (!ChibiRoomRules.SameBuild(roomTag, NetworkRoomManager.ProtocolTag)) LeaveWithVersionMessage();</code></example>
+        public static bool SameBuild(string roomProtocolTag, string myProtocolTag)
+            => !string.IsNullOrEmpty(roomProtocolTag) && !string.IsNullOrEmpty(myProtocolTag) &&
+               string.Equals(roomProtocolTag, myProtocolTag, StringComparison.Ordinal);
     }
 }

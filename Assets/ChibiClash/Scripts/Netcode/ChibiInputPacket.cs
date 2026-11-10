@@ -21,10 +21,10 @@ namespace ChibiClash.Netcode
         /// <summary>Dash request (bit 12, press edge). Consumed by the simulation since RulesVersion 6; never enters the attack input buffer.</summary>
         Dash = 1 << 12,
         /// <summary>
-        /// Bit 15: set by the input side when the gesture (bits 13-14) came from a live, telemetry-validated
-        /// camera pose. A hint for the receiver, not proof: the peer can set it freely.
+        /// Special (B) button, bit 15 (protocol 3, rules v18, decision CH-3). Held level like every button: the sim takes
+        /// press edges for the four directional specials and reads the level for charge / hold moves.
         /// </summary>
-        PoseVerified = 1 << 15,
+        Special = 1 << 15,
     }
 
     /// <summary>
@@ -37,9 +37,9 @@ namespace ChibiClash.Netcode
     ///   bit  7      shield              bit 11   ultimate
     ///   bit 12      dash
     ///   bit 13..14  gesture id (ChibiClash.Gesture: 0 None, 1 CrossArms, 2 PunchForward, 3 RaiseHands)
-    ///   bit 15      pose verified (hint from the camera input side, not proof)
+    ///   bit 15      special (B), protocol 3 / rules v18 (was the cosmetic PoseVerified hint in protocol 2)
     /// Since RulesVersion 15 the simulation reads the gesture id (bits 13..14) as a held input: ult window, CrossArms
-    /// block, poses. It never reads bit 15.
+    /// block, poses. Since RulesVersion 18 bit 15 is the Special button, an ordinary gameplay button.
     ///
     /// The struct holds *state* (what is held), never events. Press edges are derived inside the simulation
     /// from the previous frame's value, so nothing extra travels over the network and rollback stays exact.
@@ -95,13 +95,12 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>Drop bits outside <see cref="WireMask"/> and illegal direction values (never trust the wire).
-        /// Dash, gesture and PoseVerified bits are kept, except that PoseVerified is cleared when the gesture is None
-        /// (canonical form, security-gesture-review.md SEC-002). The simulation never reads PoseVerified.</summary>
+        /// Every button bit is kept, including Special (bit 15, protocol 3): unlike the retired PoseVerified hint it is
+        /// independent of the gesture bits, so it is never cleared here.</summary>
         public ChibiInputPacket Sanitized()
         {
             ushort r = (ushort)(Raw & WireMask);
             if ((r & DirMask) > 8) r = (ushort)(r & ~DirMask);
-            if ((r & GestureMask) == 0) r = (ushort)(r & ~(ushort)ChibiButtons.PoseVerified);
             return new ChibiInputPacket { Raw = r };
         }
 
@@ -157,9 +156,10 @@ namespace ChibiClash.Netcode
         /// <summary>
         /// Wire protocol version, checked in the handshake and in the Lobby filter. Bump on ANY change to this layout,
         /// the control messages or the rollback rules. 1: 3-bit count / 8 inputs. 2: 4-bit count / 16 inputs, oldest-
-        /// unacked resend window, control channel 0xC9.
+        /// unacked resend window, control channel 0xC9. 3: input bit 15 is the Special (B) button instead of the
+        /// PoseVerified hint (CH-3); same layout, new meaning, so old builds must refuse new ones.
         /// </summary>
-        public const int ProtocolVersion = 2;
+        public const int ProtocolVersion = 3;
         /// <summary>
         /// Capacity of every send/receive BitBuffer. Worst case is 392 bits = 49 bytes; 64 leaves headroom for a later
         /// field without another wire break, and stays far below Relay's 1400-byte limit.

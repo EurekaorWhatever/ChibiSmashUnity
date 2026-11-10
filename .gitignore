@@ -122,3 +122,7 @@ production/session-state/
 .scratch/
 .claude/agent-memory/
 .claude/worktrees/
+
+# Python bytecode from tools/*.py
+__pycache__/
+*.pyc

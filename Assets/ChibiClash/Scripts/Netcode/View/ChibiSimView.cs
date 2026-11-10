@@ -48,6 +48,19 @@ namespace ChibiClash.Netcode
             { 0.5f, 1.2f, 0.3f, 0.3f },
         };
 
+        /// <summary>
+        /// Signature sheet clip for non-program skills, slots 2..5 per class (null = keep the generic tween clip).
+        /// Skill1 / Skill2 were drawn for these kits by tools/art/gen_cutout_anims.py (class_moves).
+        /// </summary>
+        static readonly string[,] SkillClip =
+        {
+            { "Skill1", "Skill2", null,     null },   // Kaia: Dash and Thrust, Parry, (Thrust Barrage: program)
+            { null,     null,     null,     null },   // Bruna: Grab, Tornado, Smash are programs (see ProgramFx)
+            { null,     "Skill2", null,     null },   // Ren: (Backstep: program), Choke
+            { "Skill1", "Cast",   "Cast",   null },   // Lyra: magic projectile, minions, cloud
+            { null,     null,     "Thrust", null },   // Taro: (Leap Slam, Spin Guard: programs), Throw Spear
+        };
+
         IChibiSimFeed _loop;   // offline ChibiLocalLoop or online ChibiOnlineMatchRunner
         readonly ChibiSimState _before = new ChibiSimState();   // state one tick before _seen (interpolation start)
         readonly ChibiSimState _seen = new ChibiSimState();     // latest tick the view has processed
@@ -71,6 +84,7 @@ namespace ChibiClash.Netcode
         static readonly Color FireballColor = new Color(1f, 0.45f, 0.1f), FireballTrail = new Color(1f, 0.8f, 0.2f);
         static readonly Color PoseFireballColor = new Color(1f, 0.55f, 0.15f);   // Fighter.cs:388-389
         static readonly Color SpearColor = new Color(0.85f, 0.88f, 0.95f);
+        static readonly Color GrappleColor = new Color(0.92f, 0.86f, 0.7f), GroundWaveDust = new Color(0.86f, 0.8f, 0.72f, 0.8f);
 
         /// <summary>Per-slot projectile visual: Glow + Core sprites under one root, plus the identity they were built for.</summary>
         sealed class ProjVis
@@ -108,6 +122,22 @@ namespace ChibiClash.Netcode
         readonly List<PendingBurst> _bursts = new List<PendingBurst>(16);
         StageInfo _stage;
         Camera _cam;
+
+        // ---- Moveset presentation (rules v18 slots >= ChibiMovesetData.FirstNewSlot), captured per sim step in
+        // OnSimFrame from (shown, now) so a rollback re-sim never fires twice, played in LateUpdate.
+        struct NewMove { public int Fighter, Cls, Slot, Facing; public float Startup, Active, Total; }
+        struct NewHit { public int Attacker, Cls, Slot; public Vector2 At; }
+        struct KoFly { public int Fighter; public Vector2 From, Vel; }
+        readonly List<NewMove> _newMoves = new List<NewMove>(8);
+        readonly List<NewHit> _newHits = new List<NewHit>(8);
+        readonly List<KoFly> _koFly = new List<KoFly>(2);
+        readonly Color[] _fx = new Color[2];          // CharacterRoster Fx colour per fighter (move VFX, popups, trails)
+        readonly Color[] _accent = new Color[2];
+        ChibiMoveVfx _moveFx;
+        bool _victoryShown;
+        // Moveset zones (rune fields): one ring + glow per pool slot, built once.
+        sealed class ZoneVis { public Transform Root; public SpriteRenderer Ring, Glow; public bool Live; public int SpawnTick, Owner; }
+        ZoneVis[] _zones;
         float _shake;
         int _focus = -1;           // fighter the camera is focused on during the ult cinematic, -1 none
         float _focusUntil;         // unscaled time the focus ends
@@ -166,6 +196,9 @@ namespace ChibiClash.Netcode
                 go.transform.SetParent(transform, false);
                 _vis[i] = go.AddComponent<FighterVisual>();
                 _vis[i].Build(_def[i], _skin[i], 10 + i * 20, weapons != null && weapons[i] != null ? weapons[i] : WeaponDef.Get(cls, 0));
+                var ch = CharacterRoster.Of(cls);
+                _fx[i] = ch.Fx;
+                _accent[i] = ch.Accent;
                 _vis[i].SetFacing(state.F[i].Facing >= 0 ? 1 : -1);
                 go.transform.position = WorldPos(state.F[i].X, state.F[i].Y);
 
@@ -219,8 +252,22 @@ namespace ChibiClash.Netcode
                 _cloud[i] = v;
             }
 
+            _zones = new ZoneVis[state.Zones.Length];
+            for (int i = 0; i < _zones.Length; i++)
+            {
+                var root = new GameObject("SimZone" + i).transform;
+                root.SetParent(transform, false);
+                var z = new ZoneVis { Root = root };
+                z.Glow = Art.Sprite(root, "Glow", Art.Soft, Color.clear, Vector2.zero, Vector2.one, 7);
+                z.Ring = Art.Sprite(root, "Ring", Art.Ring, Color.clear, Vector2.zero, Vector2.one, 8);
+                root.gameObject.SetActive(false);
+                _zones[i] = z;
+            }
+            _moveFx = new ChibiMoveVfx(transform, _vis);
+
             _cam = Camera.main;
             loop.OnFrame += OnSimFrame;
+            ChibiAudio.BeginMatch(loop);   // [audio hook] SFX player binds this match (presentation only)
         }
 
         Vector3 WorldPos(int x, int y) => new Vector3(x * MilliToWorld, GroundY + FeetToPivot + y * MilliToWorld, 0f);
@@ -239,6 +286,7 @@ namespace ChibiClash.Netcode
             }
             int first = _events.Count;
             ChibiSimEvents.Diff(_seen, cur, _events);
+            ChibiAudio.OnSimStep(_seen, cur, _events, first);   // [audio hook] reads prev/cur + this step's events, before _seen moves on
             // Thousand Arrows lead expiry burst (Fighter.cs:1021): the event carries no position, so read it from the
             // state that still holds the lead before _seen is overwritten.
             for (int i = first; i < _events.Count; i++)
@@ -277,8 +325,150 @@ namespace ChibiClash.Netcode
                     }
                 }
             }
+            CaptureMoveset(cur, first);
             _before.CopyFrom(_seen);
             _seen.CopyFrom(cur);
+        }
+
+        /// <summary>
+        /// This step's moveset starts and hits, and ring-out flights, with positions from the states of the step
+        /// (_seen = shown before, cur = now). View only: reads both states, writes neither.
+        /// </summary>
+        void CaptureMoveset(ChibiSimState cur, int first)
+        {
+            int firstNew = ChibiMovesetData.FirstNewSlot;
+            for (int k = first; k < _events.Count; k++)
+            {
+                var e = _events[k];
+                switch (e.Kind)
+                {
+                    case ChibiSimEventKind.MoveStarted:
+                    {
+                        if (e.Value < firstNew) break;
+                        var f = cur.F[e.Index];
+                        float tr = ChibiSimConst.TickRate;
+                        _newMoves.Add(new NewMove
+                        {
+                            Fighter = e.Index, Cls = f.Class, Slot = e.Value, Facing = f.Facing >= 0 ? 1 : -1,
+                            Startup = f.MoveStartup / tr, Active = f.MoveActive / tr,
+                            Total = (f.MoveStartup + f.MoveActive + f.MoveRecovery) / tr,
+                        });
+                        break;
+                    }
+                    case ChibiSimEventKind.Damaged:
+                    {
+                        int d = e.Index, a = 1 - d;
+                        int slot = NewMoveSlotOfHit(cur, a);
+                        if (slot < firstNew) break;
+                        var fd = cur.F[d];
+                        float side = cur.F[a].X >= fd.X ? 1f : -1f;
+                        Vector2 at = (Vector2)WorldPos(fd.X, fd.Y) + new Vector2(side * 0.35f, 0.25f);
+                        _newHits.Add(new NewHit { Attacker = a, Cls = cur.F[a].Class, Slot = slot, At = at });
+                        break;
+                    }
+                    case ChibiSimEventKind.RingOut:
+                    {
+                        // The respawned state is already in cur; the flight starts where the fighter left (_seen).
+                        var f = _seen.F[e.Index];
+                        var vel = new Vector2(f.Vx, f.Vy) * (ChibiSimConst.TickRate * MilliToWorld / ChibiSimConst.VelSub);
+                        _koFly.Add(new KoFly { Fighter = e.Index, From = WorldPos(f.X, f.Y), Vel = vel });
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Moveset slot that landed a hit on fighter 1 - <paramref name="a"/> this step: the attacker's current (or just
+        /// ended) move, else a moveset projectile of the attacker that hit or vanished this step; -1 if none.
+        /// </summary>
+        int NewMoveSlotOfHit(ChibiSimState cur, int a)
+        {
+            int firstNew = ChibiMovesetData.FirstNewSlot;
+            if (cur.F[a].MoveSlot >= firstNew) return cur.F[a].MoveSlot;
+            if (_seen.F[a].MoveSlot >= firstNew) return _seen.F[a].MoveSlot;
+            int n = Mathf.Min(cur.Proj.Length, _seen.Proj.Length);
+            for (int i = 0; i < n; i++)
+            {
+                var p = _seen.Proj[i];
+                if (!p.Active || p.Owner != a || p.SrcSlot < firstNew) continue;
+                var c = cur.Proj[i];
+                bool gone = !c.Active || !ChibiSimEvents.SameProjectile(p, c);
+                bool hitNow = !gone && (c.Flags & ChibiProjectileSim.FHasHit) != 0 && (p.Flags & ChibiProjectileSim.FHasHit) == 0;
+                if (gone || hitNow) return p.SrcSlot;
+            }
+            return -1;
+        }
+
+        /// <summary>Plays the moves / hits / ring-out flights captured this frame (LateUpdate, after Apply).</summary>
+        void PlayMoveset()
+        {
+            for (int k = 0; k < _newMoves.Count; k++)
+            {
+                var m = _newMoves[k];
+                var info = ChibiMoveInfo.Get(m.Cls, m.Slot);
+                var v = _vis[m.Fighter];
+                v.PlayClip(ChibiMoveFxTable.ClipFor(info.AnimKind), m.Total);
+                if (info.Valid && !string.IsNullOrEmpty(info.SfxStart)) ChibiAudio.Play(info.SfxStart, m.Fighter);   // [audio hook] move start
+                ChibiMoveFxTable.Get(m.Cls, m.Slot, out var fa, out var fb, out bool dual, out bool accent);
+                var c = accent ? _accent[m.Fighter] : _fx[m.Fighter];
+                _moveFx.PlayMove(m.Fighter, fa, c, m.Facing, m.Startup, m.Active, dual);
+                if (fb != MoveFx.None) _moveFx.PlayMove(m.Fighter, fb, _fx[m.Fighter], m.Facing, m.Startup, m.Active, dual);
+            }
+            _newMoves.Clear();
+
+            for (int k = 0; k < _newHits.Count; k++)
+            {
+                var h = _newHits[k];
+                var info = ChibiMoveInfo.Get(h.Cls, h.Slot);
+                if (!info.Valid) continue;
+                if (!string.IsNullOrEmpty(info.SfxHit)) ChibiAudio.Play(info.SfxHit, h.Attacker);                  // [audio hook] move hit
+                var c = _fx[h.Attacker];
+                _moveFx.PlayHit(h.At, c);
+                Fx.Burst(h.At, c, 10, 5f, 0.25f);
+                // Comic onomatopoeia from the sheet ("KRA-THUD!") above the damage number; the HUD pops and fades it.
+                if (!string.IsNullOrEmpty(info.Onomatopoeia))
+                    Fx.Comic(h.At + new Vector2(0f, 0.45f), info.Onomatopoeia, c, OnomatopoeiaSize);
+            }
+            _newHits.Clear();
+
+            for (int k = 0; k < _koFly.Count; k++)
+            {
+                var f = _koFly[k];
+                _vis[f.Fighter].SpawnKoGhost(f.From, f.Vel);
+            }
+            _koFly.Clear();
+        }
+
+        const float OnomatopoeiaSize = 1.45f;
+
+        /// <summary>Moveset rune fields: a flat ring + glow on the floor under each live zone, in the owner's colour.</summary>
+        void UpdateZones()
+        {
+            var zs = _seen.Zones;
+            for (int i = 0; i < _zones.Length && i < zs.Length; i++)
+            {
+                var z = zs[i];
+                var v = _zones[i];
+                if (!z.Active)
+                {
+                    if (v.Live) { v.Live = false; v.Root.gameObject.SetActive(false); }
+                    continue;
+                }
+                if (!v.Live || v.SpawnTick != z.SpawnTick || v.Owner != z.Owner)
+                {
+                    v.Live = true; v.SpawnTick = z.SpawnTick; v.Owner = z.Owner;
+                    v.Root.gameObject.SetActive(true);
+                }
+                var c = _fx[Mathf.Clamp(z.Owner, 0, 1)];
+                float w = Mathf.Max(0.3f, (z.X1 - z.X0) * MilliToWorld);
+                float pulse = 0.8f + 0.2f * Mathf.Sin(Time.time * 6f + i);
+                v.Root.position = ProjPos((z.X0 + z.X1) / 2, z.Y0) + new Vector3(0f, 0.05f, 0f);
+                v.Ring.transform.localScale = new Vector3(w, w * 0.22f, 1f);
+                v.Ring.color = new Color(c.r, c.g, c.b, 0.85f * pulse);
+                v.Glow.transform.localScale = new Vector3(w * 1.1f, w * 0.3f, 1f);
+                v.Glow.color = new Color(c.r, c.g, c.b, 0.35f * pulse);
+            }
         }
 
         /// <summary>Presentation time scale for this frame, mirroring MatchController.cs:111-116.</summary>
@@ -310,6 +500,12 @@ namespace ChibiClash.Netcode
 
             for (int i = 0; i < _events.Count; i++) Apply(_events[i]);
             _events.Clear();
+            PlayMoveset();
+            if (!_victoryShown && _seen.MatchOver)
+            {
+                _victoryShown = true;
+                if (_seen.Winner >= 0 && _seen.Winner < 2) _vis[_seen.Winner].SetVictory(true);
+            }
             for (int i = 0; i < _leadBurstPos.Count; i++)
                 Fx.Burst(_leadBurstPos[i], _skin[_leadBurstOwner[i]].ultFx, LeadBurstCount, LeadBurstSpeed, LeadBurstSize);
             _leadBurstPos.Clear();
@@ -392,6 +588,8 @@ namespace ChibiClash.Netcode
             }
 
             UpdateMinionsAndClouds(alpha);
+            UpdateZones();
+            _moveFx.Tick(Time.deltaTime);   // scaled, like FighterVisual and Fx
 
             Fx.Tick(Time.deltaTime);   // scaled, like MatchController.cs:118
             FlashAlpha = Mathf.MoveTowards(FlashAlpha, 0f, Time.unscaledDeltaTime * FlashDecay);   // MatchController.cs:119
@@ -462,6 +660,7 @@ namespace ChibiClash.Netcode
                 {
                     var f = _seen.F[e.Index];
                     var v = _vis[e.Index];
+                    if (e.Value >= ChibiMovesetData.FirstNewSlot) break;   // moveset rows: PlayMoveset (captured per step)
                     if (e.Value <= 1)
                     {
                         float dur = (f.MoveStartup + f.MoveActive + f.MoveRecovery) / (float)ChibiSimConst.TickRate;
@@ -478,7 +677,14 @@ namespace ChibiClash.Netcode
                         int cls = Mathf.Clamp(f.Class, 0, SkillAnim.GetLength(0) - 1);
                         int col = Mathf.Clamp(e.Value - 2, 0, SkillAnim.GetLength(1) - 1);
                         // Program moves animate per frame from ProgramFrame (their frame 0 follows in the same diff).
-                        if (!ChibiSimEvents.IsProgram(f.Class, e.Value)) Play(v, SkillAnim[cls, col], SkillDur[cls, col]);
+                        if (!ChibiSimEvents.IsProgram(f.Class, e.Value))
+                        {
+                            Play(v, SkillAnim[cls, col], SkillDur[cls, col]);
+                            // Signature sheet clip where the character has one for this skill (natural speed, locked
+                            // against the generic tween clips); the procedural tween above still drives the fallback.
+                            var sig = SkillClip[cls, col];
+                            if (sig != null) v.PlayClipLocked(sig, 0f);
+                        }
                         if (e.Value >= 2 && e.Value <= 4)
                         {
                             var names = _def[e.Index].skillNames;
@@ -491,7 +697,7 @@ namespace ChibiClash.Netcode
                 }
                 case ChibiSimEventKind.Damaged:
                     _vis[e.Index].Flash();
-                    if (_seen.F[e.Index].MoveSlot < 0) _vis[e.Index].PlayRecoil(0.25f);
+                    if (_seen.F[e.Index].MoveSlot < 0) _vis[e.Index].Hurt();   // Hit sheet (or the recoil squash)
                     Fx.Burst(Center(e.Index), Color.white, 12, 5f, 0.25f);
                     Fx.Text(Center(e.Index) + Vector2.up * 0.9f, e.Value.ToString(), Gui.Yellow, 1f);
                     _shake = Mathf.Max(_shake, ShakeOnHit);
@@ -518,11 +724,13 @@ namespace ChibiClash.Netcode
                     Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 8, 3f, 0.3f);   // Fighter.cs dash start
                     break;
                 case ChibiSimEventKind.KO:
+                    _vis[e.Index].PlayClipLocked("KO", 0f);
                     Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 40, 8f, 0.5f);
                     Fx.Text(Center(e.Index) + Vector2.up * 1.4f, "K.O.", Gui.Red, 1.5f);
                     break;
                 case ChibiSimEventKind.CinematicStarted:
                     StartCinematic(e.Index);
+                    _vis[e.Index].PlayClipLocked("Ultimate", 0f);   // the character's ultimate sheet; program tweens cannot replace it
                     // FireUltimate common burst (F:962). Here, not in MoveStarted: Sword Aura / Fire Ring start with MoveSlot -1.
                     Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 40, 8f, 0.5f);
                     break;
@@ -590,13 +798,14 @@ namespace ChibiClash.Netcode
                     else if (slot == 3)
                     {
                         // Tornado F:820-842: PlaySpin(1.0) at start, wind burst on every hit tick (0, 12, .., 48).
-                        if (frame == 0) v.PlaySpin(1.0f);
+                        if (frame == 0) { v.PlaySpin(1.0f); v.PlayClipLocked("Skill2", 1.0f); }   // Bruna tornado sheet
                         if (frame % ChibiSimConst.TornadoPeriod == 0 && frame <= ChibiSimConst.TornadoLastHit)
                             Fx.Burst(Center(i), TornadoWind, 6, 4f, 0.3f);
                     }
                     break;
                 case FighterClass.Ranged:
                     if (slot == 5) { if (frame == 0) v.PlayRecoil(0.3f); }   // ULT Thousand Arrows F:1014 (split burst: lead expiry)
+                    else if (slot == 2 && frame == 0) v.PlayClipLocked("Skill1", 0f);                     // Ren backstep-shot sheet
                     else if (slot == 2 && frame == ChibiSimConst.BackstepShotFrame) v.PlayRecoil(0.2f);   // Backstep F:853
                     else if (slot == 4 && frame % ChibiSimConst.BarragePeriod == 0 &&
                              frame < ChibiSimConst.BarragePeriod * ChibiSimConst.BarrageShots)
@@ -606,7 +815,7 @@ namespace ChibiClash.Netcode
                     if (slot == 5) { KickFx(i, frame); break; }
                     if (frame != 0) break;
                     if (slot == 2) v.PlaySwing(0.5f);        // Leap Slam F:905 (slam: MovePhaseChanged)
-                    else if (slot == 3) v.PlaySpin(1.2f);    // Spin Guard F:923 (no per-hit effects in the original)
+                    else if (slot == 3) { v.PlaySpin(1.2f); v.PlayClipLocked("Skill2", 1.2f); }   // Spin Guard F:923 + Taro spin sheet
                     break;
             }
         }
@@ -694,6 +903,7 @@ namespace ChibiClash.Netcode
         void Configure(ProjVis v, ChibiProjectileSim b)
         {
             var ult = _skin[Mathf.Clamp(b.Owner, 0, 1)].ultFx;
+            var fx = _fx[Mathf.Clamp(b.Owner, 0, 1)];
             UnityEngine.Sprite sprite = Art.Rounded;
             Color c, trail = Color.clear;
             Vector2 size;
@@ -714,8 +924,14 @@ namespace ChibiClash.Netcode
                 case ChibiProjKind.SmashWave: c = ult; size = new Vector2(0.5f, 1.1f); break;                       // Fighter.cs:999-1000
                 case ChibiProjKind.VolleyLead: c = ult; size = new Vector2(1f, 0.18f); break;                       // Fighter.cs:1014-1015
                 case ChibiProjKind.VolleyArrow: c = ArrowColor; size = new Vector2(0.55f, 0.07f); trail = ult; break;   // Fighter.cs:1025-1028
+                // Rules v18 moveset projectiles, in the owner's character palette.
+                case ChibiProjKind.WindBlade: sprite = ChibiMoveVfx.Crescent; c = Color.Lerp(fx, Color.white, 0.25f); size = new Vector2(0.55f, 0.95f); trail = fx; break;
+                case ChibiProjKind.GroundWave: c = fx; size = new Vector2(0.45f, 0.9f); trail = GroundWaveDust; break;
+                case ChibiProjKind.Grapple: c = GrappleColor; size = new Vector2(0.7f, 0.07f); trail = fx; break;
+                case ChibiProjKind.LanceArrow: c = Color.Lerp(fx, Color.white, 0.4f); size = new Vector2(1.0f, 0.12f); trail = fx; break;
                 default: sprite = Art.Circle; c = Color.white; size = new Vector2(0.35f, 0.35f); break;
             }
+            if (b.SrcSlot >= ChibiMovesetData.FirstNewSlot) trail = fx;   // any shot of a moveset row trails its palette colour
             v.Glow.color = new Color(c.r, c.g, c.b, ProjGlowAlpha);
             v.Glow.transform.localScale = new Vector3(size.x * ProjGlowScale, size.y * ProjGlowScale, 1f);
             v.Core.sprite = sprite;
@@ -783,9 +999,14 @@ namespace ChibiClash.Netcode
         void OnDestroy()
         {
             if (_loop != null && !(_loop is Object o && o == null)) _loop.OnFrame -= OnSimFrame;
+            ChibiAudio.EndMatch(_loop);   // [audio hook] stop this match's loops
             _events.Clear();
             _leadBurstPos.Clear();
             _leadBurstOwner.Clear();
+            _newMoves.Clear();
+            _newHits.Clear();
+            _koFly.Clear();
+            _moveFx?.Clear();
             Fx.Popups.Clear();
         }
     }

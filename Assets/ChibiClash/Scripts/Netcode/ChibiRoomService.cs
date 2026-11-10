@@ -86,7 +86,14 @@ namespace ChibiClash.Netcode
         public Func<bool> ScreenOpen = () => true;
 
         /// <summary>Our player id ("" before sign-in).</summary>
-        public string MyId => AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : "";
+        /// <remarks>
+        /// AuthenticationService.Instance THROWS (ServicesInitializationException) until UnityServices.InitializeAsync has
+        /// completed, which never happens in a project not linked to Unity Gaming Services; Update reads this every
+        /// frame, so check the services state first (found in Play Mode 2026-11-10: exception spam every frame).
+        /// </remarks>
+        public string MyId => Unity.Services.Core.UnityServices.State == Unity.Services.Core.ServicesInitializationState.Initialized &&
+                              AuthenticationService.Instance != null && AuthenticationService.Instance.IsSignedIn
+            ? AuthenticationService.Instance.PlayerId : "";
         /// <summary>We host the open room.</summary>
         public bool IsHost => Current != null && Current.HostId.Length > 0 && Current.HostId == MyId;
         /// <summary>The fighter we published with OK (the match uses exactly this).</summary>
@@ -218,6 +225,14 @@ namespace ChibiClash.Netcode
                 if (err != null) { SetStatus(err, true); return; }
                 await LeaveCurrentSeat();
                 var lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(c, new JoinLobbyByCodeOptions { Player = MyPlayer() });
+                // Version gate at join time (network review 2026-11-10): the room's protocol tag is member data, readable now.
+                string roomTag = lobby.Data != null && lobby.Data.TryGetValue(KeyProto, out var proto) ? proto?.Value : null;
+                if (!ChibiRoomRules.SameBuild(roomTag, NetworkRoomManager.ProtocolTag))
+                {
+                    try { await LobbyService.Instance.RemovePlayerAsync(lobby.Id, MyId); } catch (Exception) { /* best effort */ }
+                    SetStatus("That room was made with a different version of Chibi Clash. Both players need the same version.", true);
+                    return;
+                }
                 Open(lobby, synced: false);   // an older launch may be in the lobby: baseline from the first poll
                 SetStatus("You joined \"" + Current.Name + "\". Choose your fighter and press OK.", false);
             }

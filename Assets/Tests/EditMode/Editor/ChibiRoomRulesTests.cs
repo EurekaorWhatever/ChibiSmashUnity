@@ -129,5 +129,22 @@ namespace ChibiClash.Tests
             Assert.AreNotEqual(a, b);
             Assert.LessOrEqual(a.Length, ChibiRoomRules.MaxNonce);
         }
+
+        // ------------------------------------------------------------------ version gate at join (network review finding 1)
+
+        [TestCase("p3r18", "p3r18", true)]
+        [TestCase("p2r17", "p3r18", false)]   // old build's room
+        [TestCase("p3r17", "p3r18", false)]   // same wire, other rules
+        [TestCase("P3R18", "p3r18", false)]   // exact match only
+        [TestCase(null, "p3r18", false)]      // no tag published
+        [TestCase("", "p3r18", false)]
+        public void SameBuild_OnlyExactProtocolTagMatches(string room, string mine, bool expected)
+        {
+            // Arrange + Act
+            bool same = ChibiRoomRules.SameBuild(room, mine);
+
+            // Assert
+            Assert.AreEqual(expected, same);
+        }
     }
 }
