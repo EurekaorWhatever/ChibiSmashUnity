@@ -27,6 +27,9 @@ server". That is false in this topology (doc §4 already flags this).
 Rules the sim MUST follow when gestures go live (step 15). Each forged bit must buy no more than a keyboard player gets:
 1. **The sim never reads PoseVerified (bit 15).** No damage, meter, cooldown or unlock may depend on it. In P2P, a sim branch on a
    forgeable bit is an authority bypass (HIGH, so CRITICAL in multiplayer). If design wants "camera-only" perks, they cannot be enforced. Say so in the GDD.
+   *Addendum (protocol 3, rules v18, 2026-11-10):* bit 15 is the Special button; no camera claim travels in the packet; the
+   HUD's verified tick is local only. Special is an ordinary button with the same gates as the others, so the rule's intent
+   (no gameplay from a self-reported camera claim) still holds.
 2. Treat a gesture as a held button. Derive the onset edge in Step from PrevInput, the same way buttons already work.
    Apply the stability window (GestureTracker's 0.1 s, Pose.cs:190) on the input side only, as a UX filter, never as a security gate.
 3. Every gesture action has the same resource gate as its button twin, checked in the sim from state: Ult meter (:452), Cd[k] (:456),

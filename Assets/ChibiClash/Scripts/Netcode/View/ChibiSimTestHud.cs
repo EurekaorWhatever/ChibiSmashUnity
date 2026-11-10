@@ -84,7 +84,10 @@ namespace ChibiClash.Netcode
             if (pk.Gesture != Gesture.None)
             {
                 _gesture[p] = pk.Gesture;
-                _verified[p] = pk.Has(ChibiButtons.PoseVerified);
+                // Bit 15 is the Special button since protocol 3 (the self-reported PoseVerified hint was retired), so the
+                // "camera verified" tick comes from the LOCAL tracker of player 1 only, never from the packet.
+                var tr = p == 0 ? ChibiSimTestMatch.P1Input?.Tracker : null;
+                _verified[p] = tr != null && tr.IsLive && tr.TelemetryValid;
                 _gestureSeen[p] = now;
             }
         }

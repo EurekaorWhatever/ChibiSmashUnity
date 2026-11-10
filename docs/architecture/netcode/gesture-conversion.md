@@ -7,8 +7,9 @@ Tests: `Assets/Tests/EditMode/Editor/ChibiGestureParityTests.cs`.
 
 A gesture is a **held input** in packet bits 13-14 (`Gesture` id 0-3), exactly like a held button. The input side sends
 `GestureTracker.Stable` (the 0.1 s candidate filter stays on the input side as a UX filter). A gesture the
-`TelemetryValidator` rejects is sent as `None` (the original ignores it at F:261, F:373, F:413). Bit 15 (PoseVerified)
-is a self-reported HUD hint: **the sim never reads it** (rule 1, pinned by `PoseVerifiedBit_NeverChangesTheSimulation`).
+`TelemetryValidator` rejects is sent as `None` (the original ignores it at F:261, F:373, F:413). Bit 15 was the
+self-reported PoseVerified HUD hint until protocol 2; since protocol 3 / rules v18 it is the **Special button** (CH-3), and
+no camera claim travels in the packet at all (rule 1 addendum in security-gesture-review.md).
 
 | Original | Sim (rollback state, hashed) | Clock |
 |---|---|---|
@@ -49,7 +50,7 @@ Only when able to act and no ult window is open. An onset on cooldown is lost (J
 
 | Rule | How |
 |---|---|
-| 1 never read bit 15 | Sim never references `PoseVerified`; `Sanitized` clears it when gesture is None (SEC-002). Test with bit 15 flipped on every tick. |
+| 1 no camera claim on the wire | Protocol 3: bit 15 is the Special button, an ordinary gameplay input independent of the gesture bits (`Sanitized` keeps it). No bit says "the pose came from a camera"; the HUD's verified tick is computed locally. |
 | 2 gesture = held button | Edges and hold counts derived from `PrevInput` inside the sim; stability filter only on the input side. |
 | 3 same gates as buttons | Ult needs the full meter and the window; poses need canAct, no window, cooldowns, actionLock; CrossArms block needs the same gates as Shield. Gesture + Ult button on the same tick fire once. |
 | 4 windows are sim counters | Every counter above is rollback state and hashed. |

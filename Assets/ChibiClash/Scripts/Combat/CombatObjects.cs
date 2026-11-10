@@ -264,6 +264,10 @@ namespace ChibiClash
             public string text;
             public Color color;
             public float size, t;
+            /// <summary>Comic onomatopoeia ("KRA-THUD!"): drawn outlined and tilted, like the character sheets' SFX lettering.</summary>
+            public bool comic;
+            /// <summary>Tilt in degrees for comic popups.</summary>
+            public float tilt;
         }
 
         public static readonly List<Popup> Popups = new List<Popup>();
@@ -311,6 +315,13 @@ namespace ChibiClash
         public static void Text(Vector2 pos, string text, Color c, float size = 1f)
         {
             Popups.Add(new Popup { pos = pos, text = text, color = c, size = size });
+        }
+
+        /// <summary>Comic-book sound word for a move hit (presentation only), outlined and tilted -8..8 degrees.</summary>
+        /// <example><code>Fx.Comic(hitPoint, "KRA-THUD!", roster.Fx, 1.45f);</code></example>
+        public static void Comic(Vector2 pos, string text, Color c, float size = 1.45f)
+        {
+            Popups.Add(new Popup { pos = pos, text = text, color = c, size = size, comic = true, tilt = FxRandom.Range(-8f, 8f) });
         }
 
         public static void Tick(float dt)

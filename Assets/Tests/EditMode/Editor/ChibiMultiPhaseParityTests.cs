@@ -488,8 +488,11 @@ namespace ChibiClash.Tests
             Assert.AreEqual(expectRingOut, ringTick, "Test 11: victim ring-out tick");
             Assert.IsFalse(Held(s.F[1]), "Test 11: ringed-out victim not held");
             Assert.AreEqual(-1, s.F[0].MoveSlot, "Test 11: holder Interrupted at once");
+            // Rules v18 (OD-2 = A, intended): a neutral Light in the air is the neutral air, so "free" = the slot the
+            // press resolves to from this state (light combo on the ground, nair in the air).
+            int expect = s.F[0].Grounded ? 0 : ChibiMovesetData.SlotFor(s.F[0].Class, 0, 0, true);
             Game(s, In(ChibiButtons.Light), N);
-            Assert.AreEqual(0, s.F[0].MoveSlot, "Test 11: holder free on the next tick");
+            Assert.AreEqual(expect, s.F[0].MoveSlot, "Test 11: holder free on the next tick");
         }
 
         // Test 12 -- F:695, F:681: holder rings out while holding: victim released in place, V 0, Stun kept.

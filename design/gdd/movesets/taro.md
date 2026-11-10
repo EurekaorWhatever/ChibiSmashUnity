@@ -21,7 +21,7 @@ S3 Throw Spear, ult Kick. `SpearOut` blocks all of Taro's Light and Heavy moves 
 | 13 | Down Air | L+D | A | 10/5/38 | 10.5 | 2180 | Spike (H) | taro_dair |
 | 14 | Wind Lance | B | GA | 11/3/36 | 8.0 | 1910 | M -> | taro_nspec, wind blade 9000 milli |
 | 15 | Piercing Dash | B+F | GA | 9/6/40 | 11.0 | 2240 | M -> | taro_sspec, self_vx 200, level, aironce |
-| 16 | Jade Stance | B+D | G | 5/14/26 | - (8 est) | 1910 | M -> | taro_dspec, counter incl. projectiles |
+| 16 | Jade Stance | B+D | G | 5/14/26 | - (8 est) | 1910 | M -> | taro_dspec, counter incl. projectiles, cd 240 shared with Jade Counter (SEC-101) |
 | 17 | Staff Vault | B+U | GA | 6/12/28 | 6.0 | 1650 | M ^ | taro_uspec, self_vy 260, aironce |
 | 18 | Skyhook | S1+U | G | 7/5/32 | 9.5 | 2080 | M ^ (launcher) | taro_skyhook, cd 240 |
 | 19 | Crescent Reaper | S2+U | GA | 12/8/42 | 13.0 | 2430 | H, circle r 1600 | taro_reaper, cd 300 |
@@ -37,6 +37,9 @@ S1+D, S3+U, S3+D are empty: they fall back to Leap Slam / Throw Spear.
 - **Two counters**: Jade Stance (down+B) is the long 14-tick stance that also absorbs projectiles and answers with
   an M slash (sheet damage "-": 8 % assumed, `est`); Jade Counter (S2+D) is the precise 6-tick melee-only parry
   with an H strike. Existing Spin Guard (S2) stays the third defensive tool.
+- **Counter cooldown (SEC-101, lead decision, rules v19)**: Jade Stance gets `cd:240` and shares Jade Counter's
+  technique cooldown slot (`techslot:S2+D`, TechCd index 3): using either counter locks both for 4 s, so a bot cannot
+  counter every projectile / smash for free by alternating the two.
 - **Falling Spear** takes air down+B (Jade Stance is ground only), sheet "Aerial Spike / Finisher". Straight
   dive at -330 milli/tick; landing burst 1350, M ^.
 - **Staff Vault** "can catch ledges": no ledges in the sim; it is a high jump with a spinning hitbox

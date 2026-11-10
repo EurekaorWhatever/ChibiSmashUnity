@@ -154,11 +154,18 @@ namespace ChibiClash.Tests
             var light = In(ChibiButtons.Light);
             var c = Clone(s);
             if (i == 0) Game(c, light, N); else Game(c, N, light);
-            Assert.AreNotEqual(0, c.F[i].MoveSlot, label + ": Light on tick L-1 is lost (still locked)");
+            Assert.AreNotEqual(LightSlotFor(c.F[i]), c.F[i].MoveSlot, label + ": Light on tick L-1 is lost (still locked)");
             Game(s, N, N);
+            int expect = LightSlotFor(s.F[i]);
             if (i == 0) Game(s, light, N); else Game(s, N, light);
-            Assert.AreEqual(0, s.F[i].MoveSlot, label + ": Light on tick L starts (free)");
+            Assert.AreEqual(expect, s.F[i].MoveSlot, label + ": Light on tick L starts (free)");
         }
+
+        /// <summary>
+        /// Slot a neutral Light starts from this state: the light combo (0) on the ground, the class neutral air in the air
+        /// (rules v18, OD-2 = A: aerials replace the air light; intended change, the lock timing under test is unchanged).
+        /// </summary>
+        static int LightSlotFor(ChibiFighterSim f) => f.Grounded ? 0 : ChibiMovesetData.SlotFor(f.Class, 0, 0, true);
 
         static void Game(ChibiSimState s, ChibiInputPacket a, ChibiInputPacket b) => ChibiTestTime.StepGame(s, a, b);
 

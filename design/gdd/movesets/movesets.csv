@@ -101,7 +101,7 @@ taro,Polearm,taro_uair,Up Air,L+U,A,7,5,36,7.5,1850,36000,135000,30,0,1600,1100,
 taro,Polearm,taro_dair,Down Air,L+D,A,10,5,38,10.5,2180,30000,-150000,38,0,1000,-1000,1200,0,0,0,0,0,0,centered|spike,thrust,Downward burst,Thud!,taro_swoon,taro_boom
 taro,Polearm,taro_nspec,Wind Lance,B,GA,11,3,36,8.0,1910,120000,90000,30,700,0,775,0,0,270000,30,350,0,0,pk:WindBlade,thrust,Wind lance,Fwoom!,taro_wind_lance,taro_shrak
 taro,Polearm,taro_sspec,Piercing Dash,B+F,GA,9,6,40,11.0,2240,120000,90000,30,0,2300,200,1000,0,0,0,0,200,0,level|aironce,rush,Piercing trail,Zaa!,taro_zaa,taro_shrak
-taro,Polearm,taro_dspec,Jade Stance,B+D,G,5,14,26,8.0,1910,120000,90000,30,0,2400,100,1300,0,0,0,0,0,0,counter:proj|est,guard,Jade aura,Kriii!,taro_ting,taro_shrak
+taro,Polearm,taro_dspec,Jade Stance,B+D,G,5,14,26,8.0,1910,120000,90000,30,0,2400,100,1300,0,0,0,0,0,0,counter:proj|cd:240|techslot:S2+D|est,guard,Jade aura,Kriii!,taro_ting,taro_shrak
 taro,Polearm,taro_uspec,Staff Vault,B+U,GA,6,12,28,6.0,1650,36000,135000,30,0,0,675,0,1200,0,0,0,60,260,centered|aironce,launch,Wind spiral,Whoosh!,taro_whrr,taro_shrak
 taro,Polearm,taro_skyhook,Skyhook,S1+U,G,7,5,32,9.5,2080,36000,135000,30,0,2300,0,1400,0,0,0,0,0,0,cd:240,uppercut,Hook arc,Clang!,taro_clang,taro_shrak
 taro,Polearm,taro_reaper,Crescent Reaper,S2+U,GA,12,8,42,13.0,2430,150000,112500,38,0,0,675,0,1600,0,0,0,0,100,centered|cd:300,spin,Crescent whirlwind,Rasha!,taro_whrr,taro_crash

@@ -362,16 +362,20 @@ namespace ChibiClash.Tests
             var s = NewMatch(x1: 0, facing1: 1, p2: FighterClass.Heavy, x2: victimX, facing2: -1);
             int p2Hp0 = s.F[1].Hp;
 
-            // Act: Light + Dash on the same tick (dash start runs before attack selection, Fighter.cs:309-318)
-            Tick(s, Hold(ChibiDir.Neutral, ChibiButtons.Light | ChibiButtons.Dash));
+            // Act: Light, then Dash on the next tick while the swing runs (dash start is outside the actionLock gate,
+            // Fighter.cs:309). Rules v18 (README 1.2, intended): Light + Dash on the SAME tick is now the dash attack
+            // (dash window rule 2), so the "attack keeps running through a dash" property is tested with the dash one
+            // tick after the press instead; see DashWindow_LightOnDashTick_StartsDashAttack in ChibiMovesetResolutionTests.
+            Tick(s, Hold(ChibiDir.Neutral, ChibiButtons.Light));
+            Tick(s, Hold(ChibiDir.Neutral, ChibiButtons.Dash));
             int x0 = s.F[0].X;
-            bool moveRunning = s.F[0].MoveSlot >= 0;
+            bool moveRunning = s.F[0].MoveSlot == 0;
             Idle(s, DashMotionTicks);
             int x7 = s.F[0].X;
             Idle(s, 3);
 
             // Assert
-            Assert.IsTrue(moveRunning, "the light attack starts on the dash tick");
+            Assert.IsTrue(moveRunning, "the light attack is still running on the dash tick");
             Assert.AreEqual(GroundDashDistance, x7 - x0, PosTol, "the dash moves the fighter while the swing continues");
             Assert.Less(s.F[1].Hp, p2Hp0, "the attack is not interrupted: it still arms and hits");
         }

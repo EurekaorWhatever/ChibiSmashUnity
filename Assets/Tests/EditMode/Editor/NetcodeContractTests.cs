@@ -15,17 +15,31 @@ namespace ChibiClash.Tests
         // ------------------------------------------------------------------ pinned values (update ONLY with a version bump)
 
         /// <summary>The rules version these golden values were recorded with.</summary>
-        const int PinnedRulesVersion = 17;
+        /// <remarks>
+        /// 18: re-recorded ON PURPOSE with the character movesets (design/gdd/movesets, CH-3/CH-4). Causes, all intended:
+        /// the config hash now mixes RulesVersion 18 and every moveset row / resolution table / constant; the fixture
+        /// scripts press Light / Heavy with a horizontal direction, which rules v18 resolves to forward tilts and forward
+        /// smashes (and aerials in the air) instead of the jab / heavy; new rollback fields (TechCd, charge, air mask, pull,
+        /// zones, projectile SrcSlot / Bounces / Rearm) are in the checksum. Neutral inputs are proven unchanged against
+        /// the v17 build by ChibiMovesetRegressionTests.
+        /// 19: re-recorded ON PURPOSE with the security fixes SEC-101..106 (Jade Stance cooldown, reflect growth cap with
+        /// the new hashed projectile field Reflects, teleport clamp, stale move flags cleared). Fixture A is unchanged
+        /// (no live projectile at its end, no affected move); fixture B (Magic vs Polearm) moves because its live bolts now
+        /// hash Reflects. The config hash moves with RulesVersion, Jade Stance's cd / slot and the three new constants.
+        /// </remarks>
+        const int PinnedRulesVersion = 19;
         /// <summary>The wire protocol version the wire golden values were recorded with.</summary>
-        const int PinnedProtocolVersion = 2;
+        /// <remarks>3: re-recorded ON PURPOSE (CH-3) - input bit 15 changed meaning from PoseVerified to Special.</remarks>
+        const int PinnedProtocolVersion = 3;
         /// <summary>Hash of every gameplay constant table + the fixture config (ChibiMatchConfig.ComputeHash).</summary>
-        const uint GoldenConfigHash = 0x301DD73Fu;
+        const uint GoldenConfigHash = 0xDEAB6580u;
         /// <summary>Final state checksum of fixture match A after <see cref="Ticks"/> ticks.</summary>
-        const uint GoldenChecksumA = 0x72D7A5BCu;
+        const uint GoldenChecksumA = 0x82977C46u;
         /// <summary>Final state checksum of fixture match B (other fighters, stage, intro off).</summary>
-        const uint GoldenChecksumB = 0x0A167CF4u;
+        const uint GoldenChecksumB = 0xCE8D3A22u;
         /// <summary>Bytes of a Hello control datagram (protocol, rules, class, passive, name "Kira").</summary>
-        const string GoldenHelloHex = "c9211001208922ae1a";
+        /// <remarks>Re-recorded on purpose: protocol 3 (bit 15 = Special) and rules 19 (same layout, the two version fields).</remarks>
+        const string GoldenHelloHex = "c9313001208922ae1a";
 
         const int Ticks = 1800;   // 30 s of play: movement, attacks, skills, jumps, hits, KOs
 

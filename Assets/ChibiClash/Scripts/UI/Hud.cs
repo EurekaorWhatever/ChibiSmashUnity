@@ -314,7 +314,26 @@ namespace ChibiClash
                 var g = Gui.WorldToGui(p.pos);
                 float a = 1f - Mathf.Clamp01((p.t - 0.6f) / 0.5f);
                 float pop = 1f + Mathf.Max(0f, 0.3f - p.t) * 1.5f;
-                Gui.Text(new Rect(g.x - 150f, g.y - 20f, 300f, 40f), p.text, Mathf.RoundToInt(20f * p.size * pop), new Color(p.color.r, p.color.g, p.color.b, a));
+                int size = Mathf.RoundToInt(20f * p.size * pop);
+                var rect = new Rect(g.x - 150f, g.y - 20f, 300f, 40f);
+                if (p.comic)
+                {
+                    // Comic SFX lettering (character sheets): thick dark outline, slight tilt, colour fill on top.
+                    var saved = GUI.matrix;
+                    GUIUtility.RotateAroundPivot(p.tilt, g);
+                    var ink = new Color(0.08f, 0.06f, 0.1f, a);
+                    const float o = 2.5f;
+                    for (int k = 0; k < 8; k++)
+                    {
+                        float ang = k * Mathf.PI / 4f;
+                        Gui.Text(new Rect(rect.x + Mathf.Cos(ang) * o, rect.y + Mathf.Sin(ang) * o, rect.width, rect.height),
+                                 p.text, size, ink);
+                    }
+                    Gui.Text(rect, p.text, size, new Color(p.color.r, p.color.g, p.color.b, a));
+                    GUI.matrix = saved;
+                    continue;
+                }
+                Gui.Text(rect, p.text, size, new Color(p.color.r, p.color.g, p.color.b, a));
             }
         }
 

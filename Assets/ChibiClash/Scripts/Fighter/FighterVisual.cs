@@ -44,6 +44,9 @@ namespace ChibiClash
         /// <summary>True when the character's full-body drawing was found (tier 1 or 2).</summary>
         public bool HasArt => hasArt;
 
+        /// <summary>The renderer that shows the body (drawing / sheet frame, or the procedural torso): afterimage source.</summary>
+        public SpriteRenderer BodyRenderer => artSr != null ? artSr : bodySr;
+
         /// <summary>
         /// Builds the visual. <paramref name="characterId"/> overrides the roster id (default: the character that plays
         /// <paramref name="def"/>'s class), so a future roster with several characters per class needs no other change.
@@ -327,7 +330,7 @@ namespace ChibiClash
             else if (cls == FighterClass.Melee) a = heavy || idx % 2 == 1 ? Anim.Swing : Anim.Thrust;
             else a = heavy ? Anim.Slam : Anim.Swing;
             Play(a, duration);
-            PlayClip(NormalClip(heavy, idx), duration);
+            AutoClip(NormalClip(heavy, idx), duration);
         }
 
         /// <summary>Sheet clip used for a normal attack (falls back to the procedural tween when the sheet is missing).</summary>
@@ -343,16 +346,34 @@ namespace ChibiClash
             }
         }
 
-        public void PlaySwing(float d) { Play(Anim.Swing, d); PlayClip("Swing", d); }
-        public void PlayThrust(float d) { Play(Anim.Thrust, d); PlayClip("Thrust", d); }
-        public void PlaySpin(float d) { Play(Anim.Spin, d); PlayClip("Spin", d); }
-        public void PlaySlam(float d) { Play(Anim.Slam, d); PlayClip("Slam", d); }
+        public void PlaySwing(float d) { Play(Anim.Swing, d); AutoClip("Swing", d); }
+        public void PlayThrust(float d) { Play(Anim.Thrust, d); AutoClip("Thrust", d); }
+        public void PlaySpin(float d) { Play(Anim.Spin, d); AutoClip("Spin", d); }
+        public void PlaySlam(float d) { Play(Anim.Slam, d); AutoClip("Slam", d); }
+
+        /// <summary>Clip picked by a Play* call: skipped while a locked clip (<see cref="PlayClipLocked"/>) is showing.</summary>
+        void AutoClip(string clip, float d)
+        {
+            if (lockT <= 0f) PlayClip(clip, d);
+        }
+
+        /// <summary>
+        /// Like <see cref="PlayClip"/>, but the generic Play* calls (PlaySwing, PlayThrust...) cannot replace it until it
+        /// ends: a signature clip (Skill1 / Skill2 / Ultimate / KO) survives the per-frame tweens of a program move.
+        /// <see cref="Hurt"/> and <see cref="PlayClip"/> still interrupt it.
+        /// </summary>
+        public void PlayClipLocked(string clip, float duration)
+        {
+            PlayClip(clip, duration);
+            var c = hasArt ? SpriteAnimLibrary.Get(CharacterId, clip) : null;
+            lockT = duration > 0f ? duration : c != null ? c.Length : 0f;
+        }
 
         /// <summary>Release snap (shots / casts). Melee classes use it as a flinch, so their sheet shows Hit.</summary>
         public void PlayRecoil(float d)
         {
             Play(Anim.Recoil, d);
-            PlayClip(cls == FighterClass.Ranged ? "Shoot" : cls == FighterClass.Magic ? "Cast" : "Hit", d);
+            AutoClip(cls == FighterClass.Ranged ? "Shoot" : cls == FighterClass.Magic ? "Cast" : "Hit", d);
         }
 
         void Play(Anim a, float d)
@@ -373,6 +394,7 @@ namespace ChibiClash
             oneShot = clip;
             oneShotT = 0f;
             oneShotDur = duration;
+            lockT = 0f;
         }
 
         /// <summary>Hand-drawn move to play once at its natural speed (Skill1 / Skill2 / Ultimate / Hit).</summary>
@@ -382,11 +404,16 @@ namespace ChibiClash
         public void Hurt()
         {
             hurtT = 0.3f;
+            lockT = 0f;
             PlayClip("Hit", 0f);
         }
 
         /// <summary>Cancels the current one-shot clip (e.g. a move was interrupted).</summary>
-        public void StopClip() => oneShot = null;
+        public void StopClip()
+        {
+            oneShot = null;
+            lockT = 0f;
+        }
 
         public void SetVictory(bool on) => victory = on;
 
@@ -419,7 +446,7 @@ namespace ChibiClash
         Sprite artBase;
         Vector3 artBaseScale, artBasePos, bodyBase;
         string oneShot;
-        float oneShotT, oneShotDur;
+        float oneShotT, oneShotDur, lockT;
         string clipName;
         float clipT;
         bool victory, wasGrounded = true;
@@ -469,6 +496,7 @@ namespace ChibiClash
 
             // ---- pick the clip: victory > one-shot move > guard > airborne > run > idle
             if (oneShot != null) oneShotT += dt;
+            if (lockT > 0f) lockT -= dt;
             string loco = !grounded ? "Jump" : moving ? "Run" : "Idle";
             if (blocking && grounded && hasArt && SpriteAnimLibrary.Get(CharacterId, "Guard") != null) loco = "Guard";
             string want = victory ? "Victory" : oneShot ?? loco;

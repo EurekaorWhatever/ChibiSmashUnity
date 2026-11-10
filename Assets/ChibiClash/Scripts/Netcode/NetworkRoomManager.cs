@@ -385,6 +385,14 @@ namespace ChibiClash.Netcode
             {
                 var lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(code);
                 if (flow != _flow) { _ = LeaveLobby(lobby, false); return; }
+                // Version gate at join time (network review 2026-11-10): refuse a room from another build at once.
+                string roomTag = lobby?.Data != null && lobby.Data.TryGetValue(KeyProto, out var proto) ? proto?.Value : null;
+                if (!ChibiRoomRules.SameBuild(roomTag, ProtocolTag))
+                {
+                    _ = LeaveLobby(lobby, false);
+                    Fail("That room was made with a different version of Chibi Clash. Both players need the same version.");
+                    return;
+                }
                 RoomName = ChibiSocialRules.SafeRoomName(lobby?.Name);   // the host's text: sanitised
                 await ConnectAsJoiner(lobby, flow);
             }

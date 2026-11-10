@@ -111,7 +111,7 @@ Until then the ONLINE screen shows exactly this instruction, and LAN play works 
 
 ## 6. Security notes (P2P, no authority)
 
-- The sim never reads the self-reported PoseVerified bit; every gesture action has the same gates as buttons (gesture-conversion.md).
+- No camera claim travels in the packet (protocol 3: bit 15 is the Special button, the old self-reported PoseVerified bit is gone); every gesture action has the same gates as buttons (gesture-conversion.md).
 - Inputs are sanitised on receive; datagrams with a wrong magic, truncated, oversize or acking frames we never sent are dropped.
 - A desync is a no contest, so a modified client cannot convert a forged checksum into a win.
 - Honest limit: with two peers and no server, a player who pulls their own cable makes the OTHER player win (Q4),
