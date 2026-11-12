@@ -1,0 +1,1552 @@
+{
+  "schema": 1,
+  "about": "Stage art <-> sim geometry (ST-4). Written by tools/art/stages/build_stages.py; do not hand-edit.",
+  "conventions": {
+    "px": "illustration pixels, origin top-left of Full.png / Backdrop.png, y down",
+    "milli": "world milli-units (1000 = 1 unit), x right, y up; (0,0) = centre of MAIN's walkable top = sim feet-relative milli (MAIN top = 0)",
+    "pxToMilli": "xMilli = round((xPx - originPx[0]) * 1000 / pxPerUnit); yMilli = round((originPx[1] - yPx) * 1000 / pxPerUnit)",
+    "platform": "topPx/topMilli = walkable top (first ink row of the slab); left/right = outer edge of the slab outline; cxMilli/topMilli/halfWMilli feed ChibiPlatform(cx, top, halfW)",
+    "sprite": "Resources.Load<Sprite>(file) is imported with pixelsPerUnit = ppu and a custom pivot (pivotNorm, bottom-left normalized). Place the transform at worldMilli / 1000 with scale 1 (parallax layers: scale = 'scale') and the art lands exactly on the colliders. Moving platforms: worldMilli is the art (home) position; the view adds the sim's offset."
+  },
+  "stages": {
+    "Mountain": {
+      "stageIndex": 3,
+      "source": "design/art/maps/01-mountain-of-the-beginning.jpg",
+      "panelPagePx": [
+        143,
+        578,
+        3840,
+        2160
+      ],
+      "imagePx": [
+        3840,
+        2160
+      ],
+      "pxPerUnit": 106,
+      "originPx": [
+        1918,
+        1374
+      ],
+      "imageWorldMilli": {
+        "left": -18094,
+        "right": 18132,
+        "top": 12962,
+        "bottom": -7415
+      },
+      "platforms": [
+        {
+          "id": "MAIN",
+          "topPx": 1374,
+          "leftPx": 1072,
+          "rightPx": 2764,
+          "topMilli": 0,
+          "leftMilli": -7981,
+          "rightMilli": 7981,
+          "cxMilli": 0,
+          "halfWMilli": 7981,
+          "widthMilli": 15962,
+          "moves": false
+        },
+        {
+          "id": "A",
+          "topPx": 1034,
+          "leftPx": 370,
+          "rightPx": 972,
+          "topMilli": 3208,
+          "leftMilli": -14604,
+          "rightMilli": -8925,
+          "cxMilli": -11765,
+          "halfWMilli": 2839,
+          "widthMilli": 5679,
+          "moves": true
+        },
+        {
+          "id": "B",
+          "topPx": 1033,
+          "leftPx": 2870,
+          "rightPx": 3465,
+          "topMilli": 3217,
+          "leftMilli": 8981,
+          "rightMilli": 14594,
+          "cxMilli": 11787,
+          "halfWMilli": 2806,
+          "widthMilli": 5613,
+          "moves": true
+        },
+        {
+          "id": "C",
+          "topPx": 784,
+          "leftPx": 1594,
+          "rightPx": 2249,
+          "topMilli": 5566,
+          "leftMilli": -3057,
+          "rightMilli": 3123,
+          "cxMilli": 33,
+          "halfWMilli": 3090,
+          "widthMilli": 6180,
+          "moves": false
+        },
+        {
+          "id": "D",
+          "topPx": 494,
+          "leftPx": 894,
+          "rightPx": 1384,
+          "topMilli": 8302,
+          "leftMilli": -9660,
+          "rightMilli": -5038,
+          "cxMilli": -7349,
+          "halfWMilli": 2311,
+          "widthMilli": 4622,
+          "moves": true
+        }
+      ],
+      "sprites": [
+        {
+          "file": "Stages/Mountain/Full",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            1918,
+            1374
+          ],
+          "pivotNorm": [
+            0.499479,
+            0.363889
+          ],
+          "layer": "full",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 0,
+          "note": "whole illustration; fallback when the layered art is not used"
+        },
+        {
+          "file": "Stages/Mountain/Plat_MAIN",
+          "sizePx": [
+            1693,
+            318
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            846.0,
+            3.0
+          ],
+          "pivotNorm": [
+            0.499705,
+            0.990566
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 10,
+          "platform": "MAIN",
+          "moves": false
+        },
+        {
+          "file": "Stages/Mountain/Plat_A",
+          "sizePx": [
+            604,
+            265
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            300.91,
+            2.95
+          ],
+          "pivotNorm": [
+            0.498195,
+            0.98886
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            -11765,
+            3208
+          ],
+          "order": 10,
+          "platform": "A",
+          "moves": true
+        },
+        {
+          "file": "Stages/Mountain/Plat_B",
+          "sizePx": [
+            596,
+            271
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            298.42,
+            3.0
+          ],
+          "pivotNorm": [
+            0.500708,
+            0.988937
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            11787,
+            3217
+          ],
+          "order": 10,
+          "platform": "B",
+          "moves": true
+        },
+        {
+          "file": "Stages/Mountain/Plat_C",
+          "sizePx": [
+            655,
+            259
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            327.5,
+            3.0
+          ],
+          "pivotNorm": [
+            0.499997,
+            0.988402
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            33,
+            5566
+          ],
+          "order": 10,
+          "platform": "C",
+          "moves": false
+        },
+        {
+          "file": "Stages/Mountain/Plat_D",
+          "sizePx": [
+            492,
+            247
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            246.01,
+            -0.01
+          ],
+          "pivotNorm": [
+            0.500012,
+            1.000049
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            -7349,
+            8302
+          ],
+          "order": 10,
+          "platform": "D",
+          "moves": true
+        },
+        {
+          "file": "Stages/Mountain/Backdrop",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            1918,
+            1374
+          ],
+          "pivotNorm": [
+            0.499479,
+            0.363889
+          ],
+          "layer": "backdrop",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": -10
+        },
+        {
+          "file": "Stages/Mountain/Foreground",
+          "sizePx": [
+            3840,
+            640
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            1918,
+            -146
+          ],
+          "pivotNorm": [
+            0.499479,
+            1.228125
+          ],
+          "layer": "front",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 50,
+          "opacity": 0.4,
+          "parallaxFactor": 1.1,
+          "note": "drawn over fighters; never covers the MAIN top band"
+        },
+        {
+          "file": "Stages/Mountain/Far",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 63.6,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "far",
+          "worldMilli": [
+            19,
+            2774
+          ],
+          "order": -30,
+          "pivot": "centre",
+          "parallaxFactor": 0.15,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        },
+        {
+          "file": "Stages/Mountain/Mid",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 84.8,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "mid",
+          "worldMilli": [
+            19,
+            2774
+          ],
+          "order": -20,
+          "pivot": "centre",
+          "parallaxFactor": 0.4,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        }
+      ],
+      "hazards": {}
+    },
+    "Plain": {
+      "stageIndex": 4,
+      "source": "design/art/maps/02-plain-of-unity.jpg",
+      "panelPagePx": [
+        143,
+        578,
+        3840,
+        2160
+      ],
+      "imagePx": [
+        3840,
+        2160
+      ],
+      "pxPerUnit": 113,
+      "originPx": [
+        1920,
+        1580
+      ],
+      "imageWorldMilli": {
+        "left": -16991,
+        "right": 16991,
+        "top": 13982,
+        "bottom": -5133
+      },
+      "platforms": [
+        {
+          "id": "MAIN",
+          "topPx": 1580,
+          "leftPx": 0,
+          "rightPx": 3840,
+          "topMilli": 0,
+          "leftMilli": -16991,
+          "rightMilli": 16991,
+          "cxMilli": 0,
+          "halfWMilli": 16991,
+          "widthMilli": 33982,
+          "moves": false
+        }
+      ],
+      "sprites": [
+        {
+          "file": "Stages/Plain/Full",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 113,
+          "pivotPx": [
+            1920,
+            1580
+          ],
+          "pivotNorm": [
+            0.5,
+            0.268519
+          ],
+          "layer": "full",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 0,
+          "note": "whole illustration; fallback when the layered art is not used"
+        },
+        {
+          "file": "Stages/Plain/Plat_MAIN",
+          "sizePx": [
+            3840,
+            583
+          ],
+          "ppu": 113,
+          "pivotPx": [
+            1920.0,
+            3.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.994854
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 10,
+          "platform": "MAIN",
+          "moves": false
+        },
+        {
+          "file": "Stages/Plain/Backdrop",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 113,
+          "pivotPx": [
+            1920,
+            1580
+          ],
+          "pivotNorm": [
+            0.5,
+            0.268519
+          ],
+          "layer": "backdrop",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": -10
+        },
+        {
+          "file": "Stages/Plain/Foreground",
+          "sizePx": [
+            3840,
+            400
+          ],
+          "ppu": 113,
+          "pivotPx": [
+            1920,
+            -180
+          ],
+          "pivotNorm": [
+            0.5,
+            1.45
+          ],
+          "layer": "front",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 50,
+          "opacity": 0.4,
+          "parallaxFactor": 1.1,
+          "note": "drawn over fighters; never covers the MAIN top band"
+        },
+        {
+          "file": "Stages/Plain/Far",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 67.8,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "far",
+          "worldMilli": [
+            0,
+            4425
+          ],
+          "order": -30,
+          "pivot": "centre",
+          "parallaxFactor": 0.15,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        },
+        {
+          "file": "Stages/Plain/Mid",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 90.4,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "mid",
+          "worldMilli": [
+            0,
+            4425
+          ],
+          "order": -20,
+          "pivot": "centre",
+          "parallaxFactor": 0.4,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        }
+      ],
+      "hazards": {}
+    },
+    "Volcano": {
+      "stageIndex": 5,
+      "source": "design/art/maps/03-volcano-abyss.jpg",
+      "panelPagePx": [
+        143,
+        578,
+        3840,
+        2160
+      ],
+      "imagePx": [
+        3840,
+        2160
+      ],
+      "pxPerUnit": 106,
+      "originPx": [
+        1918,
+        1433
+      ],
+      "imageWorldMilli": {
+        "left": -18094,
+        "right": 18132,
+        "top": 13519,
+        "bottom": -6858
+      },
+      "platforms": [
+        {
+          "id": "MAIN",
+          "topPx": 1433,
+          "leftPx": 1113,
+          "rightPx": 2724,
+          "topMilli": 0,
+          "leftMilli": -7594,
+          "rightMilli": 7604,
+          "cxMilli": 5,
+          "halfWMilli": 7599,
+          "widthMilli": 15198,
+          "moves": false
+        },
+        {
+          "id": "L1",
+          "topPx": 1113,
+          "leftPx": 2433,
+          "rightPx": 2925,
+          "topMilli": 3019,
+          "leftMilli": 4858,
+          "rightMilli": 9500,
+          "cxMilli": 7179,
+          "halfWMilli": 2321,
+          "widthMilli": 4642,
+          "moves": false
+        },
+        {
+          "id": "L2",
+          "topPx": 853,
+          "leftPx": 1793,
+          "rightPx": 2245,
+          "topMilli": 5472,
+          "leftMilli": -1179,
+          "rightMilli": 3085,
+          "cxMilli": 953,
+          "halfWMilli": 2132,
+          "widthMilli": 4264,
+          "moves": false
+        },
+        {
+          "id": "L3",
+          "topPx": 583,
+          "leftPx": 2253,
+          "rightPx": 2667,
+          "topMilli": 8019,
+          "leftMilli": 3160,
+          "rightMilli": 7066,
+          "cxMilli": 5113,
+          "halfWMilli": 1953,
+          "widthMilli": 3906,
+          "moves": false
+        },
+        {
+          "id": "L4",
+          "topPx": 323,
+          "leftPx": 1722,
+          "rightPx": 2085,
+          "topMilli": 10472,
+          "leftMilli": -1849,
+          "rightMilli": 1575,
+          "cxMilli": -137,
+          "halfWMilli": 1712,
+          "widthMilli": 3424,
+          "moves": false
+        }
+      ],
+      "sprites": [
+        {
+          "file": "Stages/Volcano/Full",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            1918,
+            1433
+          ],
+          "pivotNorm": [
+            0.499479,
+            0.336574
+          ],
+          "layer": "full",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 0,
+          "note": "whole illustration; fallback when the layered art is not used"
+        },
+        {
+          "file": "Stages/Volcano/Haz_PillarLeft",
+          "sizePx": [
+            263,
+            1530
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            135.54,
+            1541.03
+          ],
+          "pivotNorm": [
+            0.515354,
+            -0.007208
+          ],
+          "layer": "hazard",
+          "worldMilli": [
+            -10127,
+            -4538
+          ],
+          "order": 20,
+          "pivot": "base centre on the lava surface",
+          "note": "fire cone only (polygon + fire-hue matte, 2 px ink); the Backdrop keeps a dormant vent at the same place; scale Y for burst height"
+        },
+        {
+          "file": "Stages/Volcano/Haz_PillarRight",
+          "sizePx": [
+            241,
+            1287
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            130.51,
+            1298.03
+          ],
+          "pivotNorm": [
+            0.541544,
+            -0.008569
+          ],
+          "layer": "hazard",
+          "worldMilli": [
+            11052,
+            -4538
+          ],
+          "order": 20,
+          "pivot": "base centre on the lava surface",
+          "note": "fire cone only (polygon + fire-hue matte, 2 px ink); the Backdrop keeps a dormant vent at the same place; scale Y for burst height"
+        },
+        {
+          "file": "Stages/Volcano/Haz_Ember",
+          "sizePx": [
+            64,
+            96
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            32,
+            48
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "particle",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 25,
+          "note": "ember particle; worldMilli unused"
+        },
+        {
+          "file": "Stages/Volcano/Plat_MAIN",
+          "sizePx": [
+            1612,
+            401
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            805.53,
+            0.0
+          ],
+          "pivotNorm": [
+            0.499708,
+            1.0
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            5,
+            0
+          ],
+          "order": 10,
+          "platform": "MAIN",
+          "moves": false
+        },
+        {
+          "file": "Stages/Volcano/Plat_L1",
+          "sizePx": [
+            493,
+            205
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            245.97,
+            -0.01
+          ],
+          "pivotNorm": [
+            0.498933,
+            1.000068
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            7179,
+            3019
+          ],
+          "order": 10,
+          "platform": "L1",
+          "moves": false
+        },
+        {
+          "file": "Stages/Volcano/Plat_L2",
+          "sizePx": [
+            453,
+            199
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            226.02,
+            -0.03
+          ],
+          "pivotNorm": [
+            0.498936,
+            1.000161
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            953,
+            5472
+          ],
+          "order": 10,
+          "platform": "L2",
+          "moves": false
+        },
+        {
+          "file": "Stages/Volcano/Plat_L3",
+          "sizePx": [
+            435,
+            250
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            206.98,
+            2.99
+          ],
+          "pivotNorm": [
+            0.475811,
+            0.988056
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            5113,
+            8019
+          ],
+          "order": 10,
+          "platform": "L3",
+          "moves": false
+        },
+        {
+          "file": "Stages/Volcano/Plat_L4",
+          "sizePx": [
+            369,
+            198
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            186.48,
+            -0.03
+          ],
+          "pivotNorm": [
+            0.50536,
+            1.000162
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            -137,
+            10472
+          ],
+          "order": 10,
+          "platform": "L4",
+          "moves": false
+        },
+        {
+          "file": "Stages/Volcano/Backdrop",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            1918,
+            1433
+          ],
+          "pivotNorm": [
+            0.499479,
+            0.336574
+          ],
+          "layer": "backdrop",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": -10
+        },
+        {
+          "file": "Stages/Volcano/Foreground",
+          "sizePx": [
+            3840,
+            338
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            1918,
+            -389
+          ],
+          "pivotNorm": [
+            0.499479,
+            2.150888
+          ],
+          "layer": "front",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 50,
+          "opacity": 1.0,
+          "parallaxFactor": 1.0,
+          "note": "GL-3 magma lake, opaque, drawn over fighters so a fall sinks into the lava; gameplay plane (no parallax); lava surface = hazards.lavaTopMilli"
+        },
+        {
+          "file": "Stages/Volcano/Far",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 63.6,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "far",
+          "worldMilli": [
+            19,
+            3330
+          ],
+          "order": -30,
+          "pivot": "centre",
+          "parallaxFactor": 0.15,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        },
+        {
+          "file": "Stages/Volcano/Mid",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 84.8,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "mid",
+          "worldMilli": [
+            19,
+            3330
+          ],
+          "order": -20,
+          "pivot": "centre",
+          "parallaxFactor": 0.4,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        }
+      ],
+      "hazards": {
+        "lavaTopMilli": -4066,
+        "artPillarXMilli": [
+          -10127,
+          11052
+        ]
+      }
+    },
+    "BirdLair": {
+      "stageIndex": 6,
+      "source": "design/art/maps/04-giant-bird-lair.jpg",
+      "panelPagePx": [
+        143,
+        578,
+        3840,
+        2160
+      ],
+      "imagePx": [
+        3840,
+        2160
+      ],
+      "pxPerUnit": 160,
+      "originPx": [
+        1895,
+        1441
+      ],
+      "imageWorldMilli": {
+        "left": -11844,
+        "right": 12156,
+        "top": 9006,
+        "bottom": -4494
+      },
+      "platforms": [
+        {
+          "id": "MAIN",
+          "topPx": 1441,
+          "leftPx": 653,
+          "rightPx": 3138,
+          "topMilli": 0,
+          "leftMilli": -7762,
+          "rightMilli": 7769,
+          "cxMilli": 3,
+          "halfWMilli": 7765,
+          "widthMilli": 15531,
+          "moves": false
+        },
+        {
+          "id": "L",
+          "topPx": 1164,
+          "leftPx": 994,
+          "rightPx": 1524,
+          "topMilli": 1731,
+          "leftMilli": -5631,
+          "rightMilli": -2319,
+          "cxMilli": -3975,
+          "halfWMilli": 1656,
+          "widthMilli": 3312,
+          "moves": false
+        },
+        {
+          "id": "R",
+          "topPx": 1164,
+          "leftPx": 2254,
+          "rightPx": 2784,
+          "topMilli": 1731,
+          "leftMilli": 2244,
+          "rightMilli": 5556,
+          "cxMilli": 3900,
+          "halfWMilli": 1656,
+          "widthMilli": 3312,
+          "moves": false
+        }
+      ],
+      "sprites": [
+        {
+          "file": "Stages/BirdLair/Full",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 160,
+          "pivotPx": [
+            1895,
+            1441
+          ],
+          "pivotNorm": [
+            0.49349,
+            0.33287
+          ],
+          "layer": "full",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 0,
+          "note": "whole illustration; fallback when the layered art is not used"
+        },
+        {
+          "file": "Stages/BirdLair/Haz_BirdSilhouette",
+          "sizePx": [
+            1671,
+            541
+          ],
+          "ppu": 160,
+          "pivotPx": [
+            835.48,
+            270.48
+          ],
+          "pivotNorm": [
+            0.499988,
+            0.500037
+          ],
+          "layer": "far-creature",
+          "worldMilli": [
+            153,
+            5622
+          ],
+          "order": -25,
+          "note": "circling background bird (art position); not a hitbox"
+        },
+        {
+          "file": "Stages/BirdLair/Haz_BirdSwipe",
+          "sizePx": [
+            3481,
+            1305
+          ],
+          "ppu": 160,
+          "pivotPx": [
+            1740.5,
+            652.5
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "event",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 30,
+          "pivot": "centre",
+          "note": "swooping bird facing right, rescaled to illustration px (x1.597); flip X for a leftward pass; the sim drives its position"
+        },
+        {
+          "file": "Stages/BirdLair/Plat_MAIN",
+          "sizePx": [
+            2535,
+            527
+          ],
+          "ppu": 160,
+          "pivotPx": [
+            1265.48,
+            3.0
+          ],
+          "pivotNorm": [
+            0.499203,
+            0.994307
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            3,
+            0
+          ],
+          "order": 10,
+          "platform": "MAIN",
+          "moves": false
+        },
+        {
+          "file": "Stages/BirdLair/Plat_L",
+          "sizePx": [
+            576,
+            283
+          ],
+          "ppu": 160,
+          "pivotPx": [
+            287.0,
+            0.04
+          ],
+          "pivotNorm": [
+            0.498264,
+            0.999859
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            -3975,
+            1731
+          ],
+          "order": 9,
+          "platform": "L",
+          "moves": false
+        },
+        {
+          "file": "Stages/BirdLair/Plat_R",
+          "sizePx": [
+            576,
+            283
+          ],
+          "ppu": 160,
+          "pivotPx": [
+            287.0,
+            0.04
+          ],
+          "pivotNorm": [
+            0.498264,
+            0.999859
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            3900,
+            1731
+          ],
+          "order": 9,
+          "platform": "R",
+          "moves": false
+        },
+        {
+          "file": "Stages/BirdLair/Backdrop",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 160,
+          "pivotPx": [
+            1895,
+            1441
+          ],
+          "pivotNorm": [
+            0.49349,
+            0.33287
+          ],
+          "layer": "backdrop",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": -10
+        },
+        {
+          "file": "Stages/BirdLair/Foreground",
+          "sizePx": [
+            3840,
+            560
+          ],
+          "ppu": 160,
+          "pivotPx": [
+            1895,
+            -159
+          ],
+          "pivotNorm": [
+            0.49349,
+            1.283929
+          ],
+          "layer": "front",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 50,
+          "opacity": 0.4,
+          "parallaxFactor": 1.1,
+          "note": "drawn over fighters; never covers the MAIN top band"
+        },
+        {
+          "file": "Stages/BirdLair/Far",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 96.0,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "far",
+          "worldMilli": [
+            156,
+            2256
+          ],
+          "order": -30,
+          "pivot": "centre",
+          "parallaxFactor": 0.15,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        },
+        {
+          "file": "Stages/BirdLair/Mid",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 128.0,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "mid",
+          "worldMilli": [
+            156,
+            2256
+          ],
+          "order": -20,
+          "pivot": "centre",
+          "parallaxFactor": 0.4,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        }
+      ],
+      "hazards": {}
+    },
+    "Ocean": {
+      "stageIndex": 7,
+      "source": "design/art/maps/05-abandoned-ocean-monument.jpg",
+      "panelPagePx": [
+        143,
+        578,
+        3840,
+        2160
+      ],
+      "imagePx": [
+        3840,
+        2160
+      ],
+      "pxPerUnit": 106,
+      "originPx": [
+        1920,
+        1033
+      ],
+      "imageWorldMilli": {
+        "left": -18113,
+        "right": 18113,
+        "top": 9745,
+        "bottom": -10632
+      },
+      "platforms": [
+        {
+          "id": "MAIN",
+          "topPx": 1033,
+          "leftPx": 1113,
+          "rightPx": 2727,
+          "topMilli": 0,
+          "leftMilli": -7613,
+          "rightMilli": 7613,
+          "cxMilli": 0,
+          "halfWMilli": 7613,
+          "widthMilli": 15226,
+          "moves": false
+        },
+        {
+          "id": "T1",
+          "topPx": 1443,
+          "leftPx": 674,
+          "rightPx": 1446,
+          "topMilli": -3868,
+          "leftMilli": -11755,
+          "rightMilli": -4472,
+          "cxMilli": -8114,
+          "halfWMilli": 3641,
+          "widthMilli": 7283,
+          "moves": false
+        },
+        {
+          "id": "T2",
+          "topPx": 1443,
+          "leftPx": 2392,
+          "rightPx": 3164,
+          "topMilli": -3868,
+          "leftMilli": 4453,
+          "rightMilli": 11736,
+          "cxMilli": 8094,
+          "halfWMilli": 3641,
+          "widthMilli": 7283,
+          "moves": false
+        },
+        {
+          "id": "T3",
+          "topPx": 1803,
+          "leftPx": 1453,
+          "rightPx": 2385,
+          "topMilli": -7264,
+          "leftMilli": -4406,
+          "rightMilli": 4387,
+          "cxMilli": -10,
+          "halfWMilli": 4396,
+          "widthMilli": 8793,
+          "moves": false
+        }
+      ],
+      "sprites": [
+        {
+          "file": "Stages/Ocean/Full",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            1920,
+            1033
+          ],
+          "pivotNorm": [
+            0.5,
+            0.521759
+          ],
+          "layer": "full",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 0,
+          "note": "whole illustration; fallback when the layered art is not used"
+        },
+        {
+          "file": "Stages/Ocean/Haz_Whale",
+          "sizePx": [
+            2333,
+            790
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            1160.46,
+            354.99
+          ],
+          "pivotNorm": [
+            0.497413,
+            0.550651
+          ],
+          "layer": "hazard",
+          "worldMilli": [
+            844,
+            7519
+          ],
+          "order": 30,
+          "pivot": "centre of the original art cut",
+          "note": "worldMilli = art (resting) position; fluke rebuilt above the frame; the sim drives the descent"
+        },
+        {
+          "file": "Stages/Ocean/Plat_MAIN",
+          "sizePx": [
+            1592,
+            136
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            797.0,
+            87.0
+          ],
+          "pivotNorm": [
+            0.500628,
+            0.360294
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": 10,
+          "platform": "MAIN",
+          "moves": false
+        },
+        {
+          "file": "Stages/Ocean/Plat_T1",
+          "sizePx": [
+            752,
+            97
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            374.92,
+            54.01
+          ],
+          "pivotNorm": [
+            0.498559,
+            0.443216
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            -8114,
+            -3868
+          ],
+          "order": 10,
+          "platform": "T1",
+          "moves": false
+        },
+        {
+          "file": "Stages/Ocean/Plat_T2",
+          "sizePx": [
+            763,
+            101
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            379.96,
+            54.01
+          ],
+          "pivotNorm": [
+            0.497987,
+            0.465267
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            8094,
+            -3868
+          ],
+          "order": 10,
+          "platform": "T2",
+          "moves": false
+        },
+        {
+          "file": "Stages/Ocean/Plat_T3",
+          "sizePx": [
+            914,
+            100
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            455.94,
+            53.98
+          ],
+          "pivotNorm": [
+            0.49884,
+            0.46016
+          ],
+          "layer": "platform",
+          "worldMilli": [
+            -10,
+            -7264
+          ],
+          "order": 10,
+          "platform": "T3",
+          "moves": false
+        },
+        {
+          "file": "Stages/Ocean/Backdrop",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 106,
+          "pivotPx": [
+            1920,
+            1033
+          ],
+          "pivotNorm": [
+            0.5,
+            0.521759
+          ],
+          "layer": "backdrop",
+          "worldMilli": [
+            0,
+            0
+          ],
+          "order": -10
+        },
+        {
+          "file": "Stages/Ocean/Far",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 63.6,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "far",
+          "worldMilli": [
+            0,
+            -443
+          ],
+          "order": -30,
+          "pivot": "centre",
+          "parallaxFactor": 0.15,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        },
+        {
+          "file": "Stages/Ocean/Mid",
+          "sizePx": [
+            3840,
+            2160
+          ],
+          "ppu": 84.8,
+          "pivotPx": [
+            1920.0,
+            1080.0
+          ],
+          "pivotNorm": [
+            0.5,
+            0.5
+          ],
+          "layer": "mid",
+          "worldMilli": [
+            0,
+            -443
+          ],
+          "order": -20,
+          "pivot": "centre",
+          "parallaxFactor": 0.4,
+          "note": "shows only outside the opaque Backdrop; centred on the illustration centre"
+        }
+      ],
+      "hazards": {}
+    }
+  }
+}

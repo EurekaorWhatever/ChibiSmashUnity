@@ -283,3 +283,73 @@ Recommended Unity import: Load Type "Decompress On Load" for everything under 1 
 2. Confirm the naming convention `<owner>_<word>` before the generator bakes file names in.
 3. Victory / draw stings: keep as SFX, or reserve for composed music cues?
 4. Music bus: this spec ducks a `MUS` bus (sfx-events.md section 4) that does not exist yet.
+
+---
+
+## 8. Stages, hazards and the stocks loop (rules v20, tools-programmer, 2026-11-11)
+
+Sources: `design/gdd/stages/0*.md` (Audio tables; the level-designer's proposed `stage_*` ids are kept), `design/gdd/stages/README.md`
+3.3 (hazard phases), `design/gdd/percent-knockback.md` 3.4 / 4.6 (KO, stocks, launch). Mapping and triggers: `sfx-events.md` section 8.
+Quality bar (user, 2026-11-11): beds loop with no click, hazards big and cinematic (sub + body + air layers), KO blast punchy.
+
+### 8.0 Notation additions (generator: `tools/audio/gen_sfx.py`)
+
+| Token / cell | Meaning |
+|---|---|
+| `drops R F` | bubbles / droplets: R per second, each an 18-45 ms sine rising F..2.2F (F x 0.7..1.4), exponential decay |
+| `crackle R` | R noise ticks per second, 1-3 ms, amplitude squared-uniform (mostly small, a few loud): lava / fire spatter |
+| `chirp R F` | R bird calls per second, each 2-4 Hann-shaped syllables of 35-70 ms gliding 35 % up or down around F |
+| `chime R F` | R wind-chime strikes per second: `bell` partials on a random pentatonic degree of F (1, 9/8, 5/4, 3/2, 5/3, 2), 1.6 s ring |
+| `flap R F` | R flutters per second, each 5-9 noise puffs at F flaps per second (feathers, wings; F is a rate, not pitch-scaled) |
+| Peak cell `rms -24` | (section 8.1 only) the bed is normalised to this **RMS** level instead of a peak; its peak must stay at or below -3 dBFS |
+
+Event times are drawn from the layer's seeded RNG, so they are deterministic like everything else.
+
+**Beds (8.1) are seamless loops.** The row's Dur is the loop length. Only the sustain is rendered: ADSR envelopes sit at their
+sustain level (write `{0/0/1/0}`), sweeps at their end value, every oscillator and tremolo rate is rounded to a whole number of
+cycles per loop, noise is generated at the loop length (FFT-shaped noise is circular), filters are applied circularly, event
+sources wrap around the loop end and reverbs run on three tiles of the loop (steady state). The seam then gets a 120 ms
+crossfade from the next period (linear when both sides correlate, equal power otherwise), and the file starts on its quietest
+upward zero crossing. Validation: RMS within 0.2 dB of the cell and inside -26..-22 dBFS, peak <= -3 dBFS, the wrap step no
+larger than the file's own 99.9th-percentile sample step (+64 LSB). Files: `<id>_01.wav`, played by a dedicated looping
+source (`ChibiAudio.PlayAmbience`), not the voice pool.
+
+### 8.1 Stage ambience beds (bus AMB, loops)
+
+| id | Use | Dur | Recipe | Var | Peak | Pri | Max | CD | Pitch |
+|---|---|---|---|---|---|---|---|---|---|
+| stage_mountain_amb | Mountain of the Beginning (stage 3): low-passed waterfall, wind through pines, distant birds | 10000 | `pn -> bp 1.4k Q0.6 -> am 0.3 0.12 {0/0/1/0} 0 (falls) + bn -> lp 300 -> am 0.2 0.2 {0/0/1/0} -3 (roar) + wn -> hp 4k -> lp 8k -> am 0.5 0.15 {0/0/1/0} -12 (spray) + wn -> bp 650 Q3 -> am 0.1 0.7 {0/0/1/0} -9 (pines) + chirp 0.7 3.4k -> hp 1.5k -> rev 700 0.4 {0/0/1/0} -10 (distant birds)` | V1 | rms -24 | 10 | 1 | - | 0 |
+| stage_plain_amb | Plain of Unity (stage 4): breeze over grass, light chimes, skylarks | 10000 | `pn -> bp 500 Q0.7 -> am 0.2 0.5 {0/0/1/0} 0 (breeze) + wn -> bp 5k Q0.8 -> am 0.3 0.7 {0/0/1/0} -8 (grass) + chime 0.5 1568 -> rev 900 0.3 {0/0/1/0} -6 (chimes) + chirp 0.4 4.2k -> rev 500 0.3 {0/0/1/0} -12 (skylarks)` | V1 | rms -25 | 10 | 1 | - | 0 |
+| stage_volcano_amb | The Volcano Abyss (stage 5): deep magma rumble, boiling lake, crackle, distant hiss | 10000 | `bn -> lp 110 -> am 0.2 0.3 {0/0/1/0} 0 (magma) + sin 41 -> am 0.3 0.4 {0/0/1/0} -6 (sub) + pn -> bp 260 Q0.9 -> am 0.5 0.35 {0/0/1/0} -5 (boil) + drops 2.5 90 -> lp 500 {0/0/1/0} -6 (lava blorps) + crackle 16 -> hp 1.8k {0/0/1/0} -9 (crackle) + wn -> bp 4k Q1 -> am 0.1 0.6 {0/0/1/0} -20 (distant hiss)` | V1 | rms -23 | 10 | 1 | - | 0 |
+| stage_birdlair_amb | The Giant Bird Lair (stage 6): steady high wind, whistle, feather flutter, distant cries | 10000 | `wn -> bp 2.2k Q1.2 -> am 0.2 0.6 {0/0/1/0} 0 (high wind) + pn -> bp 800 Q0.7 -> am 0.1 0.4 {0/0/1/0} -3 (wind body) + wn -> bp 1.3k Q8 -> am 0.3 0.8 {0/0/1/0} -10 (whistle) + flap 0.4 14 -> bp 1.4k Q0.9 {0/0/1/0} -6 (feathers) + chirp 0.15 1.9k -> lp 3k -> rev 900 0.5 {0/0/1/0} -12 (distant cries)` | V1 | rms -24 | 10 | 1 | - | 0 |
+| stage_ocean_amb | The Abandoned Ocean Monument (stage 7): muffled underwater drone, bubbles, slow sonar pings | 10000 | `bn -> lp 220 -> am 0.1 0.3 {0/0/1/0} 0 (muffled water) + pn -> lp 600 -> am 0.2 0.35 {0/0/1/0} -6 (current) + sin 55 -> am 0.1 0.5 {0/0/1/0} -9 (drone) + sin 82.5 -> am 0.2 0.5 {0/0/1/0} -12 (fifth) + drops 3 600 -> lp 2.5k {0/0/1/0} -8 (bubbles) + chime 0.2 392 -> lp 1.5k {0/0/1/0} -10 (sonar pings) + rev 1800 0.35` | V1 | rms -24 | 10 | 1 | - | 0 |
+
+### 8.2 Stage hazards (bus PRJ: world objects)
+
+Every hazard sound is three-band: a **sub** layer (30-70 Hz), a **body** layer (the event's character) and an **air** layer
+(hiss / spray above 3 kHz). Triggered on hazard phase changes only (sfx-events.md 8.2).
+
+| id | Use | Dur | Recipe | Var | Peak | Pri | Max | CD | Pitch |
+|---|---|---|---|---|---|---|---|---|---|
+| stage_volcano_burst_warn | Volcano Telegraph start (75 ticks), per active lane, panned to the lane: sub swell, bubbling magma, rising hiss | 1300 | `sin 32>48/1200 -> dist 1.4 {500/0/1/150} -5 (sub swell) + bn -> lp 150>400/1200 -> am 7>14/1200 0.5 {400/0/1/150} 0 (rumble) + drops 26 140 -> lp 900 {300/0/1/150} -1 (bubbling) + wn -> bp 2k>6k Q0.8/1200 {900/0/1/120} -5 (rising hiss)` | V2: p±4% | -4 | 70 | 2 | 300 | 3 |
+| stage_volcano_burst | Volcano Erupt start, per active lane, panned to the lane: boom, fire roar, spatter, hiss | 1400 | click-onset `sin 75>30/500 -> dist 2.5 {p 0/1100} 0 (sub boom) + wn -> bp 700>2.2k>600 Q0.6/1000 -> dist 2 {p 15/1200} -1 (roar) + bn -> lp 350 -> am 11 0.35 {p 10/1300} -3 (body) + crackle 60 -> hp 2.5k {p 0/1000} -7 (spatter) + wn -> hp 5k {p 30/700} -12 (air hiss) + rev 700 0.2` | V2: p±4% | -2 | 80 | 2 | 300 | 3 |
+| stage_birdlair_screech | Bird Lair Telegraph start: distant raptor screech, wing whump | 1200 | `saw 2400>1500/900 -> bp 2.2k Q2 -> am 26 0.45 {40/0/1/500} 0 (screech) + fm 1800:1.5 I2>0.5/900 -> bp 2.5k Q1.5 {40/0/1/500} -6 (rasp) + bn -> lp 200 {p 50/600} -4 (wing whump) + sin 50>35/400 {p 20/500} -6 (sub) + wn -> bp 3k Q2 {40/0/1/400} -14 (air) + rev 1100 0.5` | V2: p±4% | -8 | 65 | 1 | 1000 | 3 |
+| stage_birdlair_gust | Bird Lair Swipe start (gust window), panned toward the gust direction | 2000 | `wn -> bp 350>1.4k>500 Q0.7/1900 {450/0/1/800} 0 (gust) + bn -> lp 250 -> am 3 0.4 {500/0/1/900} -2 (sub buffet) + wn -> hp 5k -> am 9 0.4 {600/0/1/700} -10 (air hiss) + flap 2 11 -> bp 1.2k Q0.8 {400/0/1/800} -8 (feathers)` | V2: p±4% | -4 | 70 | 1 | 1000 | 2 |
+| stage_birdlair_pass | Bird Lair body pass (swipe tick 30): doppler drop, pan sweeps across the stage with the body | 1400 | `saw 190>95/1300 -> lp 900 -> am 6 0.6 {450/0/1/650} 0 (wing beats) + wn -> bp 3.5k>450 Q1/1300 {400/0/1/650} -2 (air rush) + sin 70>38/1300 -> dist 1.5 {500/0/1/600} -4 (sub) + flap 1 12 -> bp 1.6k Q0.9 {300/0/1/700} -9 (feathers)` | V2: p±4% | -3 | 75 | 1 | 1000 | 2 |
+| stage_ocean_whale_call | Ocean Telegraph start: whale song, two falling tones, underwater reverb | 2800 | `sin 210>160/1100 -> am 5 0.25 {p 400/1600} 0 (call 1) + sin 420>320/1100 -> lp 1k {p 400/1300} -12 + sin 140>105/1200 -> am 4 0.3 {p 450/1700} 0 @1050 (call 2) + sin 280>210/1200 -> lp 1k {p 450/1400} -12 @1050 + sin 40 {600/0/1/900} -8 (sub swell) + pn -> lp 400 {500/0/1/900} -16 (water) + drops 8 1200 -> hp 2k {400/0/1/900} -14 (air bubbles) + rev 1600 0.45` | V1 | -5 | 75 | 1 | 1000 | 0 |
+| stage_ocean_whale_descend | Ocean Descend start: pressure swell, low-pass opens as the whale nears | 3200 | `sin 42>32/3000 -> dist 1.6 {700/0/1/1500} -5 (sub pressure) + bn -> lp 120>500/3000 -> am 0.8 0.3 {700/0/1/1500} 0 (swell) + pn -> bp 300>900 Q0.7/3000 {900/0/1/1300} -3 (water push) + drops 5 280 -> lp 1.8k {600/0/1/1400} -7 (bubbles) + wn -> hp 4k {1200/0/1/1300} -16 (air) + rev 1200 0.25` | V1 | -3 | 75 | 1 | 1000 | 0 |
+| stage_ocean_whale_rise | Ocean Rise start: lift, wash and a column of bubbles | 2600 | `sin 34>52/2400 {400/0/1/1300} -5 (sub lift) + bn -> lp 200>700/2400 {400/0/1/1300} 0 (wash) + drops 28 450 -> lp 3k {300/0/1/1200} -1 (bubble column) + pn -> bp 600>2k Q0.8/2400 {600/0/1/1100} -5 (air) + rev 1000 0.25` | V1 | -4 | 70 | 1 | 1000 | 0 |
+
+### 8.3 Percent and stocks loop
+
+| id | Use | Dur | Recipe | Var | Peak | Pri | Max | CD | Pitch |
+|---|---|---|---|---|---|---|---|---|---|
+| core_launch_heavy | heavy launch whoosh: a hit's launch speed reaches KB 100 at 60 %+ (sfx-events.md 8.3) | 520 | `wn -> bp 700>5k>1.8k Q1.4/450 {p 15/480} 0 (whoosh) + pn -> hp 5k {p 10/300} -8 (air) + sin 110>55/300 {p 0/250} -8 (sub kick) + saw 180>520/350 -> lp 2k {p 10/350} -16 (zip)` | V3: p±5% t±8% | -5 | 70 | 2 | 150 | 3 |
+| core_ko_blast | stock lost (bus STG): fighting-game finisher boom, blast crack, crowd burst; panned to the KO point | 1600 | click-onset `click 2.5k {p 0/6} -2 (snap) + sin 110>32/350 -> dist 3 {p 0/900} 0 (sub punch) + wn -> dist 3 -> bp 3k>500 Q0.6/500 {p 0/700} -1 (blast crack) + bn -> lp 300 {p 0/1300} -3 (boom tail) + metal 330 {p 0/900} -14 (ring) + pn -> bp 1.1k Q0.5 -> am 9>4/1300 0.35 {120/0/1/900} -10 @150 (crowd) + wn -> hp 6k {p 0/400} -12 (air) + rev 1100 0.25` | V2: p±3% | -1 | 95 | 2 | 400 | 0 |
+| core_respawn_chime | respawn hover starts (bus STG): rising bell triad and halo | 900 | `bell 1568 {p 2/700} 0 + bell 2093 {p 2/650} -3 @80 + bell 2637 {p 2/600} -5 @160 + sin 784 -> am 6 0.3 {40/0/1/500} -16 (halo) + wn -> hp 7k {p 60/500} -18 + rev 700 0.25` | V1 | -9 | 60 | 2 | 500 | 0 |
+| core_last_stock | a fighter is down to the last stock (bus STG): two-beat warning | 1000 | `sq 988 -> lp 3.5k {p 3/260} 0 + sq 988 -> lp 3.5k {p 3/260} 0 @300 + sq 494 -> lp 2k {p 3/260} -8 + sq 494 -> lp 2k {p 3/260} -8 @300 + sin 62 {p 0/400} -10 + rev 500 0.2` | V1 | -6 | 85 | 1 | 1000 | 0 |
+| core_final_stock | final stock taken = match won by KO (bus STG; replaces `core_ko` in the match end and carries its own blast, so the final KO plays no `core_ko_blast`) | 1600 | click-onset `click 2.5k {p 0/6} -4 (snap) + wn -> dist 3 -> bp 3k>500 Q0.6/500 {p 0/600} -2 (blast crack) + saw 220+330+440 -> lp 6k>1.5k/1200 {8/0/1/1100} 0 (each -3) + sin 55>30/600 -> dist 2.5 {p 0/1000} -1 + bell 880 {p 2/1400} -6 + pn -> bp 1.2k Q0.5 -> am 7>3/1400 0.3 {150/0/1/1100} -8 (crowd roar) + wn -> bp 6k Q0.7 {p 20/900} -14 (cymbal) + rev 1400 0.3` | V1 | -1 | 100 | 1 | - | 0 |
+
+Section 8 budget: 5 beds (10 s, about 0.88 MB each as 16-bit WAV; Vorbis in the build) + 8 hazard ids (12 files) + 5 loop ids
+(7 files). `core_ko`, `core_ringout` and `core_respawn` stay in the library (Classic callers, `ChibiAudio.Play`), but the
+router no longer plays them in v20 (sfx-events.md 8.3).

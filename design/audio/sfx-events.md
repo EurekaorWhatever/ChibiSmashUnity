@@ -221,3 +221,60 @@ and a multi-step diff attributes every change to the newest frame. The player mu
 | DedupeFrames | 3 | rollback dedupe tolerance |
 | PanWidth | 0.5 | stereo spread of fighter sounds |
 | Bus faders and duck amounts | section 5 | mix |
+
+---
+
+## 8. Stages, hazards and the stocks loop (rules v20, tools-programmer, 2026-11-11)
+
+Sounds: `sfx-spec.md` section 8. Code: `ChibiStageSfx` and `ChibiSfxRouter.StocksLoop` (`Netcode/View/ChibiAudioRules.cs`),
+`ChibiAudio.PlayAmbience / StopAmbience / StageHazard`, calls in `Game/StageDesign.cs`. Tests: `ChibiAudioTests` (stocks loop,
+stage audio). Everything reads the sim and never writes it.
+
+### 8.1 Ambience beds (bus AMB)
+
+| When | Call | Sound |
+|---|---|---|
+| `ChibiDesignStage.Build(stage)` | `ChibiAudio.PlayAmbience(stage)` (keeps the token) | `stage_mountain_amb` / `stage_plain_amb` / `stage_volcano_amb` / `stage_birdlair_amb` / `stage_ocean_amb` (stages 3..7); Classic stages 0..2 have none |
+| the stage view is destroyed | `ChibiAudio.StopAmbience(token)` | fade out 1 s, only if no newer stage started its own bed |
+
+Beds play on two dedicated looping AudioSources (not the 24-voice pool, never stolen): fade in 1.5 s, equal-power crossfade
+between stages, random start offset, bus fader -2 dB. Same stage again (rematch): the running bed continues. Ducks: KO -8 dB,
+stock KO -6 dB, ult cinematic -6 dB.
+
+### 8.2 Hazards (bus PRJ), on phase changes only
+
+`ChibiAudio.StageHazard(tracker, state)` is called at the top of `SyncFire`, `SyncBird` and `SyncWhale` every rendered frame;
+the per-stage `ChibiStageSfx` tracker plays each **(HazCount, phase)** once:
+
+1. A phase plays the first time its bit is seen for the newest event number (`HazCount`).
+2. Rollback re-showing the same phase, or an older `HazCount`, plays nothing. (Hazards use their own RNG stream and game steps,
+   not inputs, so a rollback never moves them; the dedupe is a safety net.)
+3. A phase first seen more than `LateTicks` = 20 game ticks in (stage built mid-event, long catch-up) is marked, not played.
+
+| Stage | Phase (HazPhase) | Sound | Pan |
+|---|---|---|---|
+| Volcano | Telegraph (75 ticks) | `stage_volcano_burst_warn`, once per active lane (HazArg 0 left, 1 right, 2 both) | lane X |
+| Volcano | Erupt | `stage_volcano_burst`, per active lane | lane X |
+| Bird Lair | Telegraph (90) | `stage_birdlair_screech` | start side (-dir) |
+| Bird Lair | Swipe start | `stage_birdlair_gust` | a quarter toward dir |
+| Bird Lair | Swipe tick 30 (body pass, pseudo phase 7) | `stage_birdlair_pass` | **sweeps** -dir to +dir over 80 ticks (`SfxRequest.PanSweepSec`) |
+| Ocean | Telegraph (120) | `stage_ocean_whale_call` | centre |
+| Ocean | Descend | `stage_ocean_whale_descend` | centre |
+| Ocean | Hold | (none: the descend swell is still ringing) | |
+| Ocean | Rise | `stage_ocean_whale_rise` | centre |
+
+### 8.3 Percent and stocks loop (derived in `ChibiSfxRouter.Step`, prev vs cur)
+
+| Condition (fighter i) | Sound | Dedupe key |
+|---|---|---|
+| `KosTaken` rose and stocks remain (or training) | `core_ko_blast` at the KO point (X stays at the crossing), duck StockKo: CMB/PRJ/MOV -8 dB, AMB -6 dB, 10 / 600 / 400 ms | (KO, i, KosTaken), no frame drift |
+| ... and `Stocks` is now 1 (not training) | `core_last_stock`, 0.7 s later (`LastStockDelaySec`) | same |
+| ... and `Stocks` is now 0 | nothing here: the match ends that tick and `EmitEnd` plays **`core_final_stock`** (replaces `core_ko`, Ko duck) then the victory / draw sting 0.9 s later. Online it waits for confirmation (section 6.3), so a rolled-back final KO is never announced | |
+| `HoverTicks` rose from 0 (respawn platform) | `core_respawn_chime` | (respawn, i, KosTaken) |
+| `PctM` rose to >= 60 % (`HeavyLaunchPctM`) and the launch speed sqrt(Vx²+Vy²) reached KB 100 x 1530 sub (`HeavyLaunchSub`) with a jump of at least half that | `core_launch_heavy`, pitch 1.0 down to 0.9 as the speed doubles | (launch, i, PctM) +-3 frames |
+| `RingOut` event | nothing in v20 (KO and respawn come from the rows above, so they can never double) | |
+
+`core_ko`, `core_ringout`, `core_respawn` stay in the library for direct `ChibiAudio.Play` callers.
+
+Tuning knobs added: `HeavyLaunchSub` (153 000), `HeavyLaunchPctM` (60 000), `LastStockDelaySec` (0.7), `HazardLateTicks` (20),
+AMB fader (-2 dB), bed fades (1.5 s in, 1 s out).

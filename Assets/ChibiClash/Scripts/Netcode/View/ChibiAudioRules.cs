@@ -6,11 +6,11 @@ namespace ChibiClash.Netcode
     // Pure audio rules for ChibiAudio (design/audio/sfx-events.md). Presentation only: reads ChibiSimState / events,
     // never writes them, no UnityEngine (EditMode-testable without an AudioListener). Real time is passed in as seconds.
 
-    /// <summary>Mixer bus of a sound (sfx-events.md 5.1).</summary>
-    public enum SfxBus : byte { STG, CMB, PRJ, MOV, UI }
+    /// <summary>Mixer bus of a sound (sfx-events.md 5.1). AMB = stage ambience beds (dedicated looping source, 8.1).</summary>
+    public enum SfxBus : byte { STG, CMB, PRJ, MOV, UI, AMB }
 
-    /// <summary>Duck triggered when a request starts playing (sfx-events.md 5.3).</summary>
-    public enum SfxDuck : byte { None, Ko, Cinematic, HitAccent, RingOut }
+    /// <summary>Duck triggered when a request starts playing (sfx-events.md 5.3; StockKo = a stock lost mid-match, 8.3).</summary>
+    public enum SfxDuck : byte { None, Ko, Cinematic, HitAccent, RingOut, StockKo }
 
     /// <summary>One row of Resources/Audio/sfx_meta.txt (generated from sfx-spec.md by tools/audio/gen_sfx.py).</summary>
     public struct SfxMeta
@@ -77,6 +77,10 @@ namespace ChibiClash.Netcode
         public bool Loop;
         /// <summary>Duck started together with this sound.</summary>
         public SfxDuck Duck;
+        /// <summary>Pan sweep (sfx-events.md 8.2, bird pass): when &gt; 0 the pan moves from PanX to PanEndX over this many seconds.</summary>
+        public float PanSweepSec;
+        /// <summary>End of the pan sweep, sim milli units.</summary>
+        public int PanEndX;
 
         /// <summary>Request for <paramref name="id"/> at pitch 1, 0 dB.</summary>
         public static SfxRequest Of(string id, int fighter = -1, float pitch = 1f, float gainDb = 0f) =>
@@ -335,8 +339,17 @@ namespace ChibiClash.Netcode
         public static int SpinLoopTag(int i) => 200 + i;
         public static int ShieldLoopTag(int i) => 210 + i;
 
+        // ---- rules v20 stocks loop knobs (sfx-events.md 8.3)
+        /// <summary>Launch speed (velocity sub-units per tick) at or above which a hit plays core_launch_heavy: KB 100 x LsSubPerKb.</summary>
+        public int HeavyLaunchSub = 100 * ChibiPercentConst.LsSubPerKb;
+        /// <summary>Defender percent (milli) at or above which a strong launch counts as heavy (60 %).</summary>
+        public int HeavyLaunchPctM = 60_000;
+        /// <summary>Delay of core_last_stock after the KO blast that left a fighter on its last stock, seconds.</summary>
+        public float LastStockDelaySec = 0.7f;
+
         // Derived event kinds for the dedupe ring (outside ChibiSimEventKind's range).
-        const int DJump = 100, DDouble = 101, DLand = 102, DGuardBreak = 103, DUltReady = 104, DCrit = 105, DProgram = 106;
+        const int DJump = 100, DDouble = 101, DLand = 102, DGuardBreak = 103, DUltReady = 104, DCrit = 105, DProgram = 106,
+                  DStockKo = 107, DRespawn = 108, DLaunch = 109;
 
         public readonly ChibiSfxDedupe Dedupe = new ChibiSfxDedupe();
         readonly float[] _lastHit = { -10f, -10f }, _lastStringHit = { -10f, -10f };
@@ -448,6 +461,7 @@ namespace ChibiClash.Netcode
                     var r = SfxRequest.Of("core_ult_ready", i, 1f, LocalPlayer >= 0 && i != LocalPlayer ? -8f : 0f);
                     output.Add(r);
                 }
+                StocksLoop(prev, cur, i, frame, output);
                 // Loops follow the (possibly re-simulated) state: stop when the move / shield is gone (6.4).
                 if (_spinLoop[i] && !(cls == (int)FighterClass.Polearm && c.MoveSlot == 3))
                 {
@@ -490,6 +504,50 @@ namespace ChibiClash.Netcode
             if (!prev.MatchOver && cur.MatchOver && !_endDone && PendingEndFrame < 0) MatchEnded(cur, output);
         }
 
+        /// <summary>
+        /// Rules v20 percent / stocks loop (sfx-events.md 8.3), read from prev/cur only. KO and respawn are keyed on the KO
+        /// number (KosTaken) with no frame drift, so a rollback that re-shows the same KO a few frames later stays silent.
+        ///   - KosTaken rose (stock lost, or a training KO): core_ko_blast at the KO point (StockKo duck); when it leaves the
+        ///     fighter on its last stock, core_last_stock follows. The FINAL stock plays nothing here: the confirmed match
+        ///     end plays core_final_stock (which carries its own blast).
+        ///   - HoverTicks rose from 0 (respawn platform): core_respawn_chime.
+        ///   - Percent rose and the launch speed jumped to HeavyLaunchSub or more at HeavyLaunchPctM or more:
+        ///     core_launch_heavy, pitched down up to 10 % for stronger launches.
+        /// </summary>
+        void StocksLoop(ChibiSimState prev, ChibiSimState cur, int i, int frame, List<SfxRequest> output)
+        {
+            var p = prev.F[i];
+            var c = cur.F[i];
+            bool ko = c.KosTaken > p.KosTaken;
+            if (ko && !Dedupe.Seen(DStockKo, i, c.KosTaken, 0, 0))
+            {
+                bool final = !cur.Training && c.Stocks <= 0;
+                if (!final)
+                {
+                    var r = At("core_ko_blast", i, c.X); r.Duck = SfxDuck.StockKo;
+                    output.Add(r);
+                    if (!cur.Training && c.Stocks == 1)
+                    {
+                        var w = SfxRequest.Of("core_last_stock", i); w.Delay = LastStockDelaySec;
+                        output.Add(w);
+                    }
+                }
+            }
+            if (p.HoverTicks == 0 && c.HoverTicks > 0 && !Dedupe.Seen(DRespawn, i, c.KosTaken, 0, 0))
+                output.Add(At("core_respawn_chime", i, c.X));
+            if (!ko && c.PctM > p.PctM && c.PctM >= HeavyLaunchPctM)
+            {
+                double vNow = Speed(c.Vx, c.Vy), vWas = Speed(p.Vx, p.Vy);
+                if (vNow >= HeavyLaunchSub && vNow - vWas >= HeavyLaunchSub * 0.5 && !Dedupe.Seen(DLaunch, i, c.PctM, 0, frame))
+                {
+                    float strength = (float)Math.Min(1.0, (vNow - HeavyLaunchSub) / HeavyLaunchSub);
+                    output.Add(At("core_launch_heavy", i, c.X, 1f - 0.1f * strength));
+                }
+            }
+        }
+
+        static double Speed(int vx, int vy) => Math.Sqrt((double)vx * vx + (double)vy * vy);
+
         static bool ProgramQualifies(int cls, int slot, int f)
         {
             if (cls == (int)FighterClass.Melee && slot == 4)
@@ -506,8 +564,9 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>
-        /// Play the match-end sounds once: core_ko (if a fighter is at 0 HP) then, 0.9 s later, the victory or draw
-        /// sting (winner -1 = draw). Online, call it once the end frame is confirmed (ConfirmedState.MatchOver).
+        /// Play the match-end sounds once: core_final_stock (the final stock was taken: finisher blast, crowd and chord)
+        /// then, 0.9 s later, the victory or draw sting (winner -1 = draw). Online, call it once the end frame is confirmed
+        /// (ConfirmedState.MatchOver). Rules v20: core_final_stock replaces core_ko (sfx-events.md 8.3).
         /// </summary>
         public void ConfirmEnd(int winner, bool ko, List<SfxRequest> output) => EmitEnd(winner, ko, output);
 
@@ -521,7 +580,7 @@ namespace ChibiClash.Netcode
             PendingEndFrame = -1;
             if (ko)
             {
-                var r = SfxRequest.Of("core_ko"); r.Duck = SfxDuck.Ko;
+                var r = SfxRequest.Of("core_final_stock"); r.Duck = SfxDuck.Ko;
                 output.Add(r);
             }
             var s = SfxRequest.Of(winner < 0 ? "core_draw_sting" : "core_victory_sting");
@@ -579,14 +638,9 @@ namespace ChibiClash.Netcode
                     o.Add(At(ChibiSfxMap.ParryLayer[cls], i, x));
                     break;
                 case ChibiSimEventKind.RingOut:
-                {
-                    if (!fighter) break;
-                    var r = At("core_ringout", i, x); r.Duck = SfxDuck.RingOut;
-                    o.Add(r);
-                    var sp = At("core_respawn", i, x); sp.Delay = 0.09f;
-                    o.Add(sp);
+                    // Rules v20: KO and respawn are derived from Stocks / KosTaken / HoverTicks in StocksLoop (8.3), so the
+                    // RingOut event (whatever its v20 definition) plays nothing here and can never double them.
                     break;
-                }
                 case ChibiSimEventKind.KO:
                     if (!_endDone && PendingEndFrame < 0) MatchEnded(cur, o);
                     break;
@@ -807,6 +861,114 @@ namespace ChibiClash.Netcode
             o.Add(At(weaponId, a, x, weaponPitch, weaponDb));
             if (crit) { var c = At("core_hit_crit", d, x); c.Duck = SfxDuck.HitAccent; o.Add(c); }
             if (TakeContact(a, cur, now)) o.Add(At(ChibiSfxMap.Contact[acls], a, x));
+        }
+    }
+
+    /// <summary>
+    /// Stage audio rules (sfx-events.md 8.1 / 8.2): the ambience bed of a stage and the hazard sounds keyed on the sim's
+    /// hazard event machine. One instance per built stage (ChibiDesignStage); pure C#, reads only.
+    ///
+    /// Dedupe: a sound plays once per (HazCount, phase). Rollback can re-show a phase (or an older event): the tracker
+    /// remembers the newest event number and a bit per phase already sounded, and ignores older event numbers. A phase
+    /// first seen more than <see cref="LateTicks"/> into its length is marked but not played (no stale sounds after a
+    /// stage is built mid-event or a long catch-up).
+    /// </summary>
+    public sealed class ChibiStageSfx
+    {
+        /// <summary>Pseudo phase of the bird's body pass (starts BirdBodyStart ticks into the swipe).</summary>
+        public const int PhaseBirdBody = 7;
+        /// <summary>Game ticks into a phase after which its sound is skipped (tuning knob HazardLateTicks).</summary>
+        public int LateTicks = 20;
+
+        int _count = -1, _mask;
+
+        /// <summary>Ambience bed id of sim stage <paramref name="stage"/> (3..7), null for stages without a bed (Classic 0..2).</summary>
+        /// <example><code>ChibiStageSfx.AmbienceId(ChibiStageTable.Ocean)   // "stage_ocean_amb"</code></example>
+        public static string AmbienceId(int stage)
+        {
+            switch (stage)
+            {
+                case ChibiStageTable.Mountain: return "stage_mountain_amb";
+                case ChibiStageTable.Plain: return "stage_plain_amb";
+                case ChibiStageTable.Volcano: return "stage_volcano_amb";
+                case ChibiStageTable.BirdLair: return "stage_birdlair_amb";
+                case ChibiStageTable.Ocean: return "stage_ocean_amb";
+                default: return null;
+            }
+        }
+
+        /// <summary>Forget what played (new match on the same stage object).</summary>
+        public void Reset() { _count = -1; _mask = 0; }
+
+        /// <summary>Hazard sounds for the displayed state <paramref name="s"/> (call every rendered frame).</summary>
+        /// <example><code>stageSfx.Step(shownState, requests);</code></example>
+        public void Step(ChibiSimState s, List<SfxRequest> output)
+        {
+            if (s == null) return;
+            Step(ChibiStageTable.Get(s.Stage).Hazard, s.HazCount, s.HazPhase, s.HazElapsed, s.HazArg, output);
+        }
+
+        /// <summary>
+        /// Raw-value form: <paramref name="hazard"/> = ChibiStageTable.Hazard*, <paramref name="count"/> = HazCount,
+        /// <paramref name="phase"/> = HazPhase, <paramref name="elapsed"/> = HazElapsed, <paramref name="arg"/> = HazArg
+        /// (fire lane 0 / 1 / 2 both, bird direction +1 / -1).
+        /// </summary>
+        public void Step(int hazard, int count, int phase, int elapsed, int arg, List<SfxRequest> output)
+        {
+            if (hazard == ChibiStageTable.HazardNone || phase == ChibiHazardConst.Idle) return;
+            if (count < _count) return;                       // rolled back to an event that already sounded
+            if (count > _count) { _count = count; _mask = 0; }
+            Fire(hazard, phase, elapsed, arg, output);
+            if (hazard == ChibiStageTable.HazardBird && phase == ChibiHazardConst.PhaseBirdSwipe && elapsed >= ChibiHazardConst.BirdBodyStart)
+                Fire(hazard, PhaseBirdBody, elapsed - ChibiHazardConst.BirdBodyStart, arg, output);
+        }
+
+        void Fire(int hazard, int phase, int elapsed, int arg, List<SfxRequest> o)
+        {
+            int bit = 1 << phase;
+            if ((_mask & bit) != 0) return;
+            _mask |= bit;
+            if (elapsed > LateTicks) return;
+            switch (hazard)
+            {
+                case ChibiStageTable.HazardFire:
+                    if (phase == ChibiHazardConst.Telegraph) Lanes("stage_volcano_burst_warn", arg, o);
+                    else if (phase == ChibiHazardConst.PhaseFireErupt) Lanes("stage_volcano_burst", arg, o);
+                    break;
+                case ChibiStageTable.HazardBird:
+                {
+                    int dir = arg >= 0 ? 1 : -1;
+                    if (phase == ChibiHazardConst.Telegraph) o.Add(At("stage_birdlair_screech", -dir * ChibiHazardConst.BirdBodyStartX));
+                    else if (phase == ChibiHazardConst.PhaseBirdSwipe) o.Add(At("stage_birdlair_gust", dir * ChibiHazardConst.BirdBodyStartX / 4));
+                    else if (phase == PhaseBirdBody)
+                    {
+                        // The body flies from -dir x 17000 to +dir x 17000: the pan follows it (doppler across the field).
+                        var r = At("stage_birdlair_pass", -dir * ChibiHazardConst.BirdBodyStartX);
+                        r.PanEndX = dir * ChibiHazardConst.BirdBodyStartX;
+                        r.PanSweepSec = ChibiHazardConst.BirdBodyTicks / (float)ChibiSimConst.TickRate;
+                        o.Add(r);
+                    }
+                    break;
+                }
+                case ChibiStageTable.HazardWhale:
+                    if (phase == ChibiHazardConst.Telegraph) o.Add(SfxRequest.Of("stage_ocean_whale_call"));
+                    else if (phase == ChibiHazardConst.PhaseWhaleDescend) o.Add(SfxRequest.Of("stage_ocean_whale_descend"));
+                    else if (phase == ChibiHazardConst.PhaseWhaleRise) o.Add(SfxRequest.Of("stage_ocean_whale_rise"));
+                    break;
+            }
+        }
+
+        static void Lanes(string id, int lanes, List<SfxRequest> o)
+        {
+            if (lanes != 1) o.Add(At(id, ChibiHazardConst.FireLaneLeftX));
+            if (lanes != 0) o.Add(At(id, ChibiHazardConst.FireLaneRightX));
+        }
+
+        static SfxRequest At(string id, int x)
+        {
+            var r = SfxRequest.Of(id);
+            r.PanX = x; r.Panned = true;
+            return r;
         }
     }
 }

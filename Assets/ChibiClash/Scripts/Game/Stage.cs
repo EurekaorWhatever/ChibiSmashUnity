@@ -11,6 +11,8 @@ namespace ChibiClash
         public Vector2[] spawns;
         public Vector2 respawn;
         public Color sky;
+        /// <summary>Live art of a design stage (3..7): bind it to the displayed sim state. Null for the classic stages.</summary>
+        public ChibiDesignStage design;
     }
 
     /// <summary>
@@ -20,22 +22,78 @@ namespace ChibiClash
     /// </summary>
     public static partial class StageBuilder
     {
-        public static readonly string[] Names = { "Sky Dojo", "Neon City", "Lava Forge" };
+        /// <summary>
+        /// Stage names by sim index (ChibiStageTable): 0..2 the classic arenas, 3..7 the map design sheet's five stages
+        /// (decision ST-1). Every menu loops over this array, so a new stage only needs entries here and in the sim table.
+        /// </summary>
+        public static readonly string[] Names =
+        {
+            "Sky Dojo", "Neon City", "Lava Forge",
+            ChibiDesignStage.Names[0], ChibiDesignStage.Names[1], ChibiDesignStage.Names[2], ChibiDesignStage.Names[3], ChibiDesignStage.Names[4],
+        };
+        /// <summary>Compact names for stage buttons.</summary>
+        public static readonly string[] ShortNames =
+        {
+            "Sky Dojo", "Neon City", "Lava Forge",
+            ChibiDesignStage.ShortNames[0], ChibiDesignStage.ShortNames[1], ChibiDesignStage.ShortNames[2], ChibiDesignStage.ShortNames[3], ChibiDesignStage.ShortNames[4],
+        };
+        /// <summary>Order stages are offered in menus: the five design stages first, then the classics (ST-1).</summary>
+        public static readonly int[] MenuOrder = { 3, 4, 5, 6, 7, 0, 1, 2 };
+        /// <summary>Default stage for new matches (Mountain of the Beginning).</summary>
+        public const int DefaultStage = 3;
 
         // Stage-select preview palette (sky, main platform, trim) and a one-line description; mirrors Build below.
-        public static readonly Color[] PreviewSky = { new Color(0.42f, 0.68f, 0.95f), new Color(0.07f, 0.05f, 0.16f), new Color(0.22f, 0.07f, 0.05f) };
-        public static readonly Color[] PreviewGround = { new Color(0.64f, 0.61f, 0.55f), new Color(0.22f, 0.19f, 0.34f), new Color(0.17f, 0.14f, 0.16f) };
-        public static readonly Color[] PreviewTrim = { new Color(0.3f, 0.82f, 0.6f), new Color(0.2f, 0.95f, 1f), new Color(1f, 0.45f, 0.1f) };
+        // Design stages (3..7) draw their real illustration instead (StagePreview), these colours are only the fallback.
+        public static readonly Color[] PreviewSky =
+        {
+            new Color(0.42f, 0.68f, 0.95f), new Color(0.07f, 0.05f, 0.16f), new Color(0.22f, 0.07f, 0.05f),
+            ChibiDesignStage.Sky[0], ChibiDesignStage.Sky[1], ChibiDesignStage.Sky[2], ChibiDesignStage.Sky[3], ChibiDesignStage.Sky[4],
+        };
+        public static readonly Color[] PreviewGround =
+        {
+            new Color(0.64f, 0.61f, 0.55f), new Color(0.22f, 0.19f, 0.34f), new Color(0.17f, 0.14f, 0.16f),
+            new Color(0.71f, 0.66f, 0.55f), new Color(0.1f, 0.6f, 0.29f), new Color(0.11f, 0.06f, 0.13f),
+            new Color(0.54f, 0.35f, 0.23f), new Color(0.73f, 0.87f, 0.89f),
+        };
+        public static readonly Color[] PreviewTrim =
+        {
+            new Color(0.3f, 0.82f, 0.6f), new Color(0.2f, 0.95f, 1f), new Color(1f, 0.45f, 0.1f),
+            new Color(0.49f, 1f, 0.82f), new Color(0.79f, 0.95f, 0.37f), new Color(1f, 0.6f, 0.12f),
+            new Color(1f, 0.75f, 0.41f), new Color(0.49f, 0.97f, 1f),
+        };
         public static readonly string[] Taglines =
         {
             "Mountain shrine above the clouds", "Rooftop arena under neon rain", "Molten foundry over a lava sea",
+            ChibiDesignStage.Taglines[0], ChibiDesignStage.Taglines[1], ChibiDesignStage.Taglines[2], ChibiDesignStage.Taglines[3], ChibiDesignStage.Taglines[4],
         };
+
+        /// <summary>Illustration thumbnail of a design stage (3..7), loaded once; null for the classic stages.</summary>
+        public static Texture2D Thumbnail(int index)
+        {
+            if (!ChibiDesignStage.IsDesign(index)) return null;
+            int k = index - 3;
+            if (_thumbs[k] == null)
+            {
+                string[] ids = { "Mountain", "Plain", "Volcano", "BirdLair", "Ocean" };
+                _thumbs[k] = Resources.Load<Texture2D>("Stages/" + ids[k] + "/Full");
+            }
+            return _thumbs[k];
+        }
+        static readonly Texture2D[] _thumbs = new Texture2D[5];
 
         public static StageInfo Build(int index, Transform parent)
         {
             var root = new GameObject("Stage").transform;
             root.SetParent(parent, false);
             StageInfo s;
+            if (ChibiDesignStage.IsDesign(index))
+            {
+                // The map design sheet's stages: layered art synced to the sim (StageDesign.cs). Sim Y 0 = world 0.
+                s = ChibiDesignStage.Build(index, root);
+                var c = Camera.main;
+                if (c != null) c.backgroundColor = s.sky;
+                return s;
+            }
             switch (index)
             {
                 case 1:

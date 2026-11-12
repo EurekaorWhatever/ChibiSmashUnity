@@ -42,6 +42,8 @@ namespace ChibiClash.Netcode
     public sealed class ChibiRoomService : MonoBehaviour, IChibiInviteRooms
     {
         const string KeyStage = "stage", KeyGo = "go", KeyRelay = "relay", KeyProto = "proto";
+        /// <summary>Rules v20 (ST-5): the host's stage hazards switch, member-visible ("1" on, "0" off).</summary>
+        const string KeyHazards = "hz";
         const string PName = "n", PClass = "c", PPassive = "p", PReady = "r", PStart = "s", PAck = "a";
         const float PollSeconds = 2f, HeartbeatSeconds = 15f, ListRefreshMinSeconds = 10f;
         /// <summary>A launch that has not connected after this long is cancelled.</summary>
@@ -99,8 +101,10 @@ namespace ChibiClash.Netcode
         /// <summary>The fighter we published with OK (the match uses exactly this).</summary>
         public FighterClass PickClass => _class;
         public int PickPassive => _passive;
-        /// <summary>The host's stage choice for the next fight (0..2).</summary>
+        /// <summary>The host's stage choice for the next fight (0..7).</summary>
         public int Stage => Current != null ? Current.Stage : 0;
+        /// <summary>The host's hazards choice for the next fight (ST-5; true = on, the default).</summary>
+        public bool HazardsOn => Current == null || !Current.HazardsOff;
 
         NetworkRoomManager _link;
         FighterClass _class;
@@ -174,7 +178,7 @@ namespace ChibiClash.Netcode
         // ================================================================== create / join / enter / leave
 
         /// <summary>Create a named room (validated) and open it.</summary>
-        public async void Create(string roomName, int stage)
+        public async void Create(string roomName, int stage, bool hazardsOn = true)
         {
             if (Working || !Allowed()) return;
             string name = (roomName ?? "").Trim();
@@ -198,6 +202,7 @@ namespace ChibiClash.Netcode
                     {
                         [KeyProto] = new DataObject(DataObject.VisibilityOptions.Member, NetworkRoomManager.ProtocolTag),
                         [KeyStage] = new DataObject(DataObject.VisibilityOptions.Member, ChibiRoomRules.ParseStage(stage.ToString()).ToString()),
+                        [KeyHazards] = new DataObject(DataObject.VisibilityOptions.Member, ChibiRoomRules.HazardsValue(hazardsOn)),
                         [KeyGo] = new DataObject(DataObject.VisibilityOptions.Member, ""),
                         [KeyRelay] = new DataObject(DataObject.VisibilityOptions.Member, ""),
                     },
@@ -315,8 +320,18 @@ namespace ChibiClash.Netcode
             if (!IsHost || Working || Current == null || !Allowed()) return;
             stage = ChibiRoomRules.ParseStage(stage.ToString());
             if (stage == Current.Stage) return;
-            Current.Stage = stage;
+            // SEC-001b: no optimistic local write; Current changes only from the lobby the service returns (Apply on success).
             await UpdateLobbyData(new Dictionary<string, DataObject> { [KeyStage] = Member(stage.ToString()) }, "change the stage");
+        }
+
+        /// <summary>Host: turn the stage hazards of the next fight on or off (ST-5).</summary>
+        public async void SetHazards(bool on)
+        {
+            if (!IsHost || Working || Current == null || !Allowed()) return;
+            if (on == !Current.HazardsOff) return;
+            // SEC-001b: no optimistic local write; Current changes only from the lobby the service returns (Apply on success).
+            await UpdateLobbyData(new Dictionary<string, DataObject> { [KeyHazards] = Member(ChibiRoomRules.HazardsValue(on)) },
+                                  "change the hazards");
         }
 
         /// <summary>START FIGHT: only when both players are ready (else the reason is shown). Either player may press it.</summary>
@@ -443,7 +458,17 @@ namespace ChibiClash.Netcode
             if (lobby == null) return;
             var snap = ToSnapshot(lobby);
             for (int i = 0; i < MyRooms.Count; i++) if (MyRooms[i].Id == snap.Id) MyRooms[i] = snap;
-            if (snap.Id == CurrentId) Current = snap;
+            if (snap.Id != CurrentId) return;
+            // F4: a guest that already pressed OK agreed to the old stage / hazards: a host change clears its ready flag.
+            bool changed = Current != null && (Current.Stage != snap.Stage || Current.HazardsOff != snap.HazardsOff);
+            Current = snap;
+            if (changed && !IsHost && LocalReady && !Launching)
+            {
+                LocalReady = false;
+                _myStartNonce = "";
+                _ = PushPlayer();
+                SetStatus("The host changed the stage settings. Press OK again.", false);
+            }
         }
 
         void RoomGone()
@@ -470,7 +495,7 @@ namespace ChibiClash.Netcode
                         Ready = PVal(p?.Data, PReady), Start = PVal(p?.Data, PStart), Ack = PVal(p?.Data, PAck),
                     });
             return ChibiRoomRules.Snapshot(l.Id, l.Name, l.LobbyCode, l.HostId, Val(l.Data, KeyStage), Val(l.Data, KeyGo),
-                                           Val(l.Data, KeyRelay), raw);
+                                           Val(l.Data, KeyRelay), raw, Val(l.Data, KeyHazards));
         }
 
         /// <summary>Host: start the fight (both ready). Un-readies first, so a failed start never repeats by itself.</summary>

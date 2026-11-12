@@ -127,7 +127,7 @@ namespace ChibiClash
         /// </summary>
         void RoomDialog()
         {
-            var r = DialogRect(680f, 360f);
+            var r = DialogRect(680f, 392f);
             Gui.Box(r, Gui.P1);
             Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), "CREATE A ROOM", 36, Gui.Paper, TextAnchor.MiddleCenter);
             Gui.Text(new Rect(r.x + 30f, r.y + 60f, r.width - 60f, 22f),
@@ -141,14 +141,13 @@ namespace ChibiClash
             if (GUI.GetNameOfFocusedControl() != "RoomName") GUI.FocusControl("RoomName");
 
             Gui.Text(new Rect(r.x + 60f, r.y + 152f, 200f, 24f), "STAGE", 14, Gui.Gold, TextAnchor.MiddleLeft);
-            float sw = (r.width - 120f - 20f) / 3f;
-            for (int st = 0; st < StageBuilder.Names.Length; st++)
-                if (Gui.Button(new Rect(r.x + 60f + st * (sw + 10f), r.y + 178f, sw, 40f), StageBuilder.Names[st].ToUpper(), Gui.Gold, 14, true, pending.stage == st))
-                    pending.stage = st;
+            if (HazardsButton(new Rect(r.xMax - 60f - 132f, r.y + 151f, 132f, 26f), pending.hazards, true)) pending.hazards = !pending.hazards;
+            int pick = StageGrid(new Rect(r.x + 60f, r.y + 184f, r.width - 120f, StageGridHeight(34f)), pending.stage, true, 14);
+            if (pick >= 0) pending.stage = pick;
 
-            Gui.Text(new Rect(r.x + 30f, r.y + 228f, r.width - 60f, 24f), roomError, 14, Gui.Red);
+            Gui.Text(new Rect(r.x + 30f, r.y + 264f, r.width - 60f, 24f), roomError, 14, Gui.Red);
 
-            if (Gui.Button(new Rect(r.x + r.width * 0.5f - 230f, r.y + 270f, 220f, 56f), "CREATE ROOM", Gui.P1, 20) || enter)
+            if (Gui.Button(new Rect(r.x + r.width * 0.5f - 230f, r.y + 300f, 220f, 56f), "CREATE ROOM", Gui.P1, 20) || enter)
             {
                 string n = (roomNameInput ?? "").Trim();
                 string err = Netcode.ChibiSocialRules.ValidateRoomName(n);
@@ -161,12 +160,13 @@ namespace ChibiClash
                     pending.training = false;
                     onlineNote = "";
                     social.ClearMatchFriend();
-                    roomsSvc.Create(n, pending.stage);
+                    // ST-5: the room carries the host's hazards pick (key "hz") next to the stage.
+                    roomsSvc.Create(n, pending.stage, pending.hazards);
                     Enter(Page.Room);
                 }
                 if (enter) Event.current.Use();
             }
-            if (Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 270f, 220f, 56f), "CANCEL", Gui.Steel, 18))
+            if (Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 300f, 220f, 56f), "CANCEL", Gui.Steel, 18))
             {
                 roomDialog = false;
                 UiSound.Back();
@@ -300,13 +300,18 @@ namespace ChibiClash
                 pending.cls[0] = roomsSvc.PickClass;
                 pending.passive[0] = roomsSvc.PickPassive;
                 pending.stage = roomsSvc.Stage;
+                pending.hazards = roomsSvc.HazardsOn;   // ST-5: the room's hazards pick
             }
+            // ST-5: the host's hazards pick travels in the handshake Start message (protocol 4) and becomes HazardsOff on
+            // both peers (the joiner takes it from Start).
             var online = isHost
                 ? Netcode.ChibiOnlineMatch.Host(transport, input, pending.cls[0], pending.passive[0], pending.stage,
                                                 (uint)System.Environment.TickCount ^ 0xC1B1u, settings,
-                                                Netcode.ChibiHandshake.DefaultTimeoutTicks, me)
+                                                Netcode.ChibiHandshake.DefaultTimeoutTicks, me, !pending.hazards)
                 : Netcode.ChibiOnlineMatch.Join(transport, input, pending.cls[0], pending.passive[0],
-                                                Netcode.ChibiHandshake.DefaultTimeoutTicks, me);
+                                                Netcode.ChibiHandshake.DefaultTimeoutTicks, me,
+                                                roomsSvc.OwnsLink ? pending.stage : -1,                  // SEC-001: the room's
+                                                roomsSvc.OwnsLink ? !pending.hazards : (bool?)null);      // agreed settings
             var go = new GameObject("OnlineMatch");
             var runner = go.AddComponent<Netcode.ChibiOnlineMatchRunner>();
             runner.Begin(online, input);
@@ -341,8 +346,10 @@ namespace ChibiClash
             else if (m.Phase == Netcode.ChibiOnlinePhase.Closed)
             {
                 var r = m.Result;
-                onlineNote = r.RejectReason == Netcode.ChibiRejectReason.RulesMismatch || r.RejectReason == Netcode.ChibiRejectReason.ProtocolMismatch ||
-                             r.RejectReason == Netcode.ChibiRejectReason.ContentMismatch
+                onlineNote = r.RejectReason == Netcode.ChibiRejectReason.InvalidConfig && roomsSvc.OwnsLink && !m.Handshake.RejectedByPeer
+                    ? "The host's settings changed \u2014 rejoin the room."                                                       // SEC-001
+                    : r.RejectReason == Netcode.ChibiRejectReason.RulesMismatch || r.RejectReason == Netcode.ChibiRejectReason.ProtocolMismatch ||
+                      r.RejectReason == Netcode.ChibiRejectReason.ContentMismatch
                     ? "Your opponent runs a different version of the game. Both players need the same build."
                     : "The match could not start (" + r.HandshakeState + ").";
                 Destroy(pendingOnline.gameObject);
@@ -413,12 +420,13 @@ namespace ChibiClash
         {
             float x = r.x + 24f, w = r.width - 48f, y = r.y + 8f;
             Gui.Text(new Rect(x, y, w, 26f), "STAGE (the room host's pick is used)", 13, Gui.Gold, TextAnchor.MiddleLeft);
-            y += 28f;
-            float sw = (w - 20f) / 3f;
-            for (int s = 0; s < StageBuilder.Names.Length; s++)
-                if (Gui.Button(new Rect(x + s * (sw + 10f), y, sw, 38f), StageBuilder.Names[s].ToUpper(), Gui.Gold, 13, !busy, pending.stage == s) && !busy)
-                    pending.stage = s;
-            y += 54f;
+            // F2: in quick play the host's hazards switch is used too; the toggle sets only what we use when we host.
+            if (HazardsButton(new Rect(x + w - 128f, y + 1f, 128f, 24f), pending.hazards, !busy) && !busy) pending.hazards = !pending.hazards;
+            Gui.Text(new Rect(x + w - 330f, y + 1f, 196f, 24f), "host's pick is used", 11, Gui.Muted, TextAnchor.MiddleRight, true, false);
+            y += 30f;
+            int pick = StageGrid(new Rect(x, y, w, StageGridHeight(32f)), pending.stage, !busy);
+            if (pick >= 0) pending.stage = pick;
+            y += StageGridHeight(32f) + 14f;
 
             // Private rooms live on the ROOMS page (named rooms, OK / START FIGHT).
             if (Gui.Button(new Rect(x, y, w, 48f), "MY ROOMS  (create / join a private room)", Gui.Gold, 16, !busy) && !busy)
@@ -734,13 +742,23 @@ namespace ChibiClash
 
             // Stage (host chooses; the guest sees it).
             Gui.Text(new Rect(x, y, 220f, 22f), host ? "STAGE (you choose)" : "STAGE (host chooses)", 13, Gui.Gold, TextAnchor.MiddleLeft);
-            y += 24f;
-            float sw = (w - 20f) / 3f;
-            for (int st = 0; st < StageBuilder.Names.Length; st++)
-                if (Gui.Button(new Rect(x + st * (sw + 10f), y, sw, 34f), StageBuilder.Names[st].ToUpper(), Gui.Gold, 13, host && !ready && !launching, cur.Stage == st)
-                    && host && !ready && !launching)
-                    roomsSvc.SetStage(st);
-            y += 48f;
+            bool canPick = host && !ready && !launching;
+            // Host option (ST-5), stored in the room next to the stage (key "hz"); the guest reads the host's value.
+            if (host)
+            {
+                pending.hazards = roomsSvc.HazardsOn;
+                if (HazardsButton(new Rect(x + w - 128f, y - 1f, 128f, 24f), pending.hazards, canPick) && canPick)
+                {
+                    pending.hazards = !pending.hazards;
+                    roomsSvc.SetHazards(pending.hazards);
+                }
+            }
+            else Gui.Text(new Rect(x + w - 200f, y, 200f, 22f), (roomsSvc.HazardsOn ? "HAZARDS ON" : "HAZARDS OFF") + " · HOST'S PICK",
+                          12, Gui.Muted, TextAnchor.MiddleRight, true, false);
+            y += 26f;
+            int pick = StageGrid(new Rect(x, y, w, StageGridHeight(30f)), cur.Stage, canPick);
+            if (pick >= 0 && canPick) roomsSvc.SetStage(pick);
+            y += StageGridHeight(30f) + 14f;
 
             // OK / CHANGE, then START FIGHT (only when both are ready; either player may press it).
             if (!ready)
@@ -783,6 +801,41 @@ namespace ChibiClash
             EndPage();
             NavHints("ONLINE  ·  ROOM");
         }
+
+        // ---------------------------------------------------------------- shared stage grid (create room / lobby / room)
+
+        const int StageGridCols = 4;
+        const float StageGridGap = 8f;
+
+        /// <summary>Height of the stage grid for a given button row height (StageCount buttons, 4 per row).</summary>
+        static float StageGridHeight(float rowH)
+        {
+            int rows = (StageCount + StageGridCols - 1) / StageGridCols;
+            return rows * rowH + (rows - 1) * StageGridGap;
+        }
+
+        /// <summary>
+        /// Stage picker used by every online screen: <see cref="StageBuilder.ShortNames"/> as a 4-column grid in
+        /// <see cref="StageBuilder.MenuOrder"/> (design stages first). Returns the clicked SIM stage index, or -1.
+        /// </summary>
+        int StageGrid(Rect area, int selected, bool enabled, int size = 13)
+        {
+            int n = StageCount, rows = (n + StageGridCols - 1) / StageGridCols;
+            float bw = (area.width - StageGridGap * (StageGridCols - 1)) / StageGridCols;
+            float bh = (area.height - StageGridGap * (rows - 1)) / rows;
+            int picked = -1;
+            for (int k = 0; k < n; k++)
+            {
+                int st = StageAt(k);
+                var b = new Rect(area.x + (k % StageGridCols) * (bw + StageGridGap), area.y + (k / StageGridCols) * (bh + StageGridGap), bw, bh);
+                if (Gui.Button(b, StageBuilder.ShortNames[st].ToUpperInvariant(), Gui.Gold, size, enabled, selected == st) && enabled) picked = st;
+            }
+            return picked;
+        }
+
+        /// <summary>HAZARDS ON / OFF toggle button (ST-5). Returns true when pressed; the caller flips its own value.</summary>
+        static bool HazardsButton(Rect r, bool on, bool enabled) =>
+            Gui.Button(r, on ? "HAZARDS  ON" : "HAZARDS  OFF", on ? Gui.P1 : Gui.Steel, 12, enabled, on);
 
         // ---------------------------------------------------------------- compact fighter picker (lobby / room)
 

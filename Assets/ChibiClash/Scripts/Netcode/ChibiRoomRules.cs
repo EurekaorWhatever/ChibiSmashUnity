@@ -22,6 +22,9 @@ namespace ChibiClash.Netcode
     {
         public string Id = "", Name = "", Code = "", HostId = "";
         public int Stage;
+        /// <summary>Rules v20 (ST-5): the host's stage hazards switch, from the member key "hz" ("0" = off; anything else or
+        /// absent = on, the design default).</summary>
+        public bool HazardsOff;
         /// <summary>Host's launch counter: a NEW value tells the guest to connect to <see cref="RelayCode"/> now.</summary>
         public string Go = "";
         public string RelayCode = "";
@@ -59,13 +62,15 @@ namespace ChibiClash.Netcode
         public const int MaxNonce = 16;
 
         /// <summary>Build the snapshot from raw lobby values; drops malformed players, host first, max 2 seats.</summary>
+        /// <param name="hazards">Room key "hz" (rules v20, ST-5): "0" = hazards off; null / anything else = on.</param>
         public static ChibiRoomSnapshot Snapshot(string id, string roomName, string code, string hostId, string stage, string go,
-                                                 string relayCode, IList<ChibiRoomRawPlayer> players)
+                                                 string relayCode, IList<ChibiRoomRawPlayer> players, string hazards = null)
         {
             var s = new ChibiRoomSnapshot
             {
                 Id = id ?? "", Name = ChibiSocialRules.SafeRoomName(roomName), Code = ChibiSocialRules.NormalizeCode(code) ?? "",
                 HostId = hostId ?? "", Stage = ParseStage(stage), Go = Nonce(go), RelayCode = ValidRelayCode(relayCode) ? relayCode : "",
+                HazardsOff = ParseHazardsOff(hazards),
             };
             if (players == null) return s;
             // Host seat first, then everyone else in lobby order.
@@ -104,8 +109,25 @@ namespace ChibiClash.Netcode
             return true;
         }
 
-        /// <summary>Stage index 0..2 (anything else -> 0).</summary>
-        public static int ParseStage(string stage) => int.TryParse(stage, out int v) && v >= 0 && v <= 2 ? v : 0;
+        /// <summary>Stage index 0..7 (rules v20, ST-1; anything else -> 0).</summary>
+        /// <remarks>SEC-001: strict: 1-2 ASCII digits only (no sign, spaces or overflow); anything else is 0.</remarks>
+        public static int ParseStage(string stage)
+        {
+            if (string.IsNullOrEmpty(stage) || stage.Length > 2) return 0;
+            int v = 0;
+            foreach (char c in stage)
+            {
+                if (c < '0' || c > '9') return 0;
+                v = v * 10 + (c - '0');
+            }
+            return v < ChibiStageTable.Count ? v : 0;
+        }
+
+        /// <summary>Room hazards key "hz" (ST-5): exactly "0" means off; anything else (absent, "1", garbage) means on.</summary>
+        public static bool ParseHazardsOff(string hz) => hz == "0";
+
+        /// <summary>Value written to the room's "hz" key.</summary>
+        public static string HazardsValue(bool hazardsOn) => hazardsOn ? "1" : "0";
 
         static string Nonce(string n) => string.IsNullOrEmpty(n) || n.Length > MaxNonce ? "" : n;
 

@@ -26,20 +26,33 @@ namespace ChibiClash.Tests
         /// the new hashed projectile field Reflects, teleport clamp, stale move flags cleared). Fixture A is unchanged
         /// (no live projectile at its end, no affected move); fixture B (Magic vs Polearm) moves because its live bolts now
         /// hash Reflects. The config hash moves with RulesVersion, Jade Stance's cd / slot and the three new constants.
+        /// 20: re-recorded ON PURPOSE with damage percent + stocks and the five new stages (percent-knockback.md, stages
+        /// README, GL-1..GL-3, ST-1..ST-5). Causes, all intended: HpU left the fighter state and PctM / Stocks / OutTicks /
+        /// HoverTicks / LaunchDecX / LaunchDecY / LaunchGravP / KosTaken joined it, the state hashes the hazard machine and
+        /// its own RNG stream; every landed hit now launches by the knockback formula (decay, gravity fade, KB-based
+        /// hitstun), so both fixtures play differently; the config hash mixes RulesVersion 20, the percent / knockback /
+        /// stock constants, HazardsOff, the selected stage's geometry and the hazard constants. Fixtures stay on classic
+        /// stages 0 and 2 (unchanged geometry); determinism on stages 3..7 is covered by ChibiStagesV20Tests and the
+        /// 8-stage hostile-link matrix in ChibiSyncVerificationTests.
+        /// 21: re-recorded ON PURPOSE (lead: GL-2 applied consistently, Sword Aura waves are not ult hits). Only the config
+        /// hash moves (RulesVersion 21 and the stage hash now mixing the floor fields); both fixtures run on classic stages
+        /// and never fire a Sword Aura wave, so their checksums are unchanged, as expected.
         /// </remarks>
-        const int PinnedRulesVersion = 19;
+        const int PinnedRulesVersion = 21;
         /// <summary>The wire protocol version the wire golden values were recorded with.</summary>
-        /// <remarks>3: re-recorded ON PURPOSE (CH-3) - input bit 15 changed meaning from PoseVerified to Special.</remarks>
-        const int PinnedProtocolVersion = 3;
+        /// <remarks>3: re-recorded ON PURPOSE (CH-3) - input bit 15 changed meaning from PoseVerified to Special.
+        /// 4: re-recorded ON PURPOSE (rules v20, ST-5) - the Start message carries a 1-bit HazardsOff after the stage and the
+        /// stage range is 0..7; Hello keeps its layout, only its protocol byte (and the rules field) change.</remarks>
+        const int PinnedProtocolVersion = 4;
         /// <summary>Hash of every gameplay constant table + the fixture config (ChibiMatchConfig.ComputeHash).</summary>
-        const uint GoldenConfigHash = 0xDEAB6580u;
+        const uint GoldenConfigHash = 0x81DE0FB7u;
         /// <summary>Final state checksum of fixture match A after <see cref="Ticks"/> ticks.</summary>
-        const uint GoldenChecksumA = 0x82977C46u;
+        const uint GoldenChecksumA = 0x059A90E1u;
         /// <summary>Final state checksum of fixture match B (other fighters, stage, intro off).</summary>
-        const uint GoldenChecksumB = 0xCE8D3A22u;
+        const uint GoldenChecksumB = 0x37CEB603u;
         /// <summary>Bytes of a Hello control datagram (protocol, rules, class, passive, name "Kira").</summary>
-        /// <remarks>Re-recorded on purpose: protocol 3 (bit 15 = Special) and rules 19 (same layout, the two version fields).</remarks>
-        const string GoldenHelloHex = "c9313001208922ae1a";
+        /// <remarks>Re-recorded on purpose: protocol 4 and rules 21 (same Hello layout, only the two version fields).</remarks>
+        const string GoldenHelloHex = "c9415001208922ae1a";
 
         const int Ticks = 1800;   // 30 s of play: movement, attacks, skills, jumps, hits, KOs
 

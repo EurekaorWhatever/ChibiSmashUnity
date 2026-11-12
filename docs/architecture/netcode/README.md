@@ -9,6 +9,14 @@ Drafted by studio agents and reviewed in session. **The user decisions below ove
 | Q2 | Private rooms: players join with the **Lobby** code (not the Relay code). |
 | Q3 | Input packet grows to 16 bits so Dash and gesture inputs go online. |
 | Q4 | Mid-match disconnect: the opponent wins automatically. |
+| GL-1 (2026-11-11) | Damage percent + 3 stocks replace the HP win condition (design/gdd/percent-knockback.md, [ADR-0001](../adr-0001-damage-percent-and-stocks.md)): existing damage pipeline unchanged, integer Smash knockback from percent / hit percent / weight / base + growth derived from KbX-KbY, KO only on an active stage edge. RulesVersion 20. |
+| GL-2 (2026-11-11) | Percent spec choices: one rule Pct = HP x 0.2 for every hit; Ren / Lyra knockback x0.85 (was x0.5); 300 s timer, 3 stocks; final timeout tie = draw; hit percent capped at 15 % inside the formula. Blast lines: sides 8000-10000 beyond the ledge, top = max(10000 above MAIN, highest platform + 5000). |
+| ST-1 (2026-11-11) | Five design stages added as indices 3..7 (Mountain, Plain, Volcano, Bird Lair, Ocean); 0..2 stay as "Classic" for tests and replays. |
+| ST-2 (2026-11-11) | KO edges follow the sheet matrix; a "no KO" edge is solid (Mountain side walls; Plain / Bird Lair: no top line with a sky cap, solid floor). Per-edge flags in `ChibiStageDef` ([ADR-0002](../adr-0002-stages-as-data-and-deterministic-hazards.md)). |
+| ST-3 (2026-11-11) | Moving platforms (pure F1 of GameTicks) and hazards (fire, bird swipe, whale) run in the deterministic sim, state hashed. |
+| ST-4 (2026-11-11) | Stage art = the sheet illustration cut into layers; sprite positions from the same art-measured geometry (`stage-geometry.json`) the sim uses; drift check `tools/ci/check_stage_geometry.py`. |
+| ST-5 (2026-11-11) | Hazards use their own RNG stream (Seed XOR "STAG"); ON by default; `HazardsOff` in the config hash and the Start message (protocol 4), host decides; platforms move with hazards off; bird alternates direction; symmetric spawns. |
+| AN-1 (2026-11-11) | Move animations use the sheet's side-view pose drawings as key frames (view only, green zone); cutout tweens stay as fallback. |
 | — | Rollback engine: keep the existing `ChibiRollbackSession`; no second rollback engine. |
 | D-G1 (2026-11-09) | Gesture controls (gesture-conversion.md): Ult button opens the 3 s window (180 real ticks, 1.5 s retry); class gesture held 9 real ticks fires the ult even while stunned or held (holder keeps holding, like the original); CrossArms blocks like Shield; RaiseHands Super Jump; PunchForward Pose Fireball; sim never reads PoseVerified. Replaces D-U1's stand-in. RulesVersion 15. |
 | D-F1 (2026-11-09) | Double KO on the same tick is a draw (user choice). |
@@ -41,10 +49,17 @@ content), the determinism rules for gameplay, and the tripwire tests that protec
 | [cpu-ai-conversion.md](cpu-ai-conversion.md) | step 17 | CPU as a deterministic input source |
 | [verification-report.md](verification-report.md) | step 19 | Sync, replay, state-coverage and per-class verification results |
 | [online-rooms.md](online-rooms.md) | online | Lobby code rooms, matchmaking, Relay, LAN, results on disconnect, setup steps |
+| [../adr-0001-damage-percent-and-stocks.md](../adr-0001-damage-percent-and-stocks.md) | technical-director | ADR: percent + stocks replace HP, integer Smash formula, RulesVersion 20, risks and knobs |
+| [../adr-0002-stages-as-data-and-deterministic-hazards.md](../adr-0002-stages-as-data-and-deterministic-hazards.md) | technical-director | ADR: stages as data rows, per-edge KO flags, F1 moving platforms, hazard RNG stream, HazardsOff, geometry drift check |
+| [../../../design/gdd/percent-knockback.md](../../../design/gdd/percent-knockback.md) | game-designer | Percent, knockback, weight, hitstun, stocks spec (formulas, tuning knobs, acceptance criteria) |
+| [../../../design/gdd/stages/](../../../design/gdd/stages/README.md) | level-designer, technical-artist | Shared stage rules (README) + one file per stage; `stage-geometry.json` = art-measured geometry (generated) |
 
 ## Known bugs (both fixed)
 - ~~Packets over 32 bytes silently truncated~~: fixed in online part 1 (codec throws, receivers reject, transport drops oversize). See online-rooms.md section 4.
 - ~~Resend window only the newest 8 inputs (lag stall)~~: fixed in online part 1 (oldest unacked first, up to 16). See online-rooms.md section 4.
+
+## Known issues (deferred)
+- SEC-002 (deferred by the lead until ranked / wagers exist): the host alone picks the match seed (crits, hazard timing); a joiner nonce mixed into the seed needs protocol 5.
 
 ## Superseded in these docs
 - Any recommendation to show the **Relay** join code (Q2 chose Lobby).

@@ -1,0 +1,26 @@
+# Fast checks: no Unity licence needed, runs on every push and pull request.
+name: fast-checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  fast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generated moveset data is up to date
+        run: python tools/gameplay/gen_movesets.py --check
+      - name: Stage geometry JSON matches ChibiStageTable.cs (stages 3..7)
+        run: python tools/ci/check_stage_geometry.py
+      - name: Python syntax check (tools/**/*.py)
+        run: python -m compileall -q tools
+      # A C# compile check is intentionally absent here: it needs the UnityEngine/UnityEditor reference assemblies, which
+      # ship only with a licensed editor install (not redistributable, no usable NuGet package). It runs locally via
+      # tools/ci/compile_check.py and in the Unity test job. See tools/ci/README.md.

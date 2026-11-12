@@ -31,13 +31,13 @@ namespace ChibiClash.Tests
 
             state.F[0].X = 0; state.F[0].Facing = 1;
             state.F[1].X = distance; state.F[1].Facing = -1;
-            int hp0 = state.F[1].Hp;
+            int hp0 = state.F[1].HpLike();
             for (int t = 0; t < WatchTicks; t++)
             {
                 var p1 = t < 2 ? ChibiInputPacket.Make(ChibiDir.Neutral, button) : default;
                 ChibiSimulation.Step(state, p1, default);
             }
-            return hp0 - state.F[1].Hp;
+            return hp0 - state.F[1].HpLike();
         }
 
         // ------------------------------------------------------------------ melee normals reach (Fighter.NormalStrike)

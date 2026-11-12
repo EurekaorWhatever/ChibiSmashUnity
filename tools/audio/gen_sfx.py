@@ -6,6 +6,7 @@ recipe notation of spec section 1.1, and writes
 
     Assets/ChibiClash/Resources/Audio/Sfx/<id>_<nn>.wav     44 100 Hz, mono, 16-bit PCM (fmt + data chunks only)
     Assets/ChibiClash/Resources/Audio/Sfx/<id>_loop.wav     the two loop exports (lyra_vmm, taro_whrr)
+    Assets/ChibiClash/Resources/Audio/Sfx/stage_*_amb_01.wav  seamless stage ambience beds (spec 8.1, RMS-normalised)
     Assets/ChibiClash/Resources/Audio/Sfx/*.wav.meta        AudioImporter settings (written BEFORE the wav, stable GUID)
     Assets/ChibiClash/Resources/Audio/sfx_meta.txt          runtime mix table (bus, priority, max voices, cooldown...)
 
@@ -29,6 +30,11 @@ Implementation notes (where the notation needed an interpretation; see tools/aud
   * Variant time factor stretches durations, envelope times, glides, sweeps and layer offsets.
   * Trailing-silence trim (-70 dBFS) runs before the 6 ms fade-out so the file always ends on a fade, and the peak is
     normalised once more after the fades so every file meets its Peak column exactly.
+  * Event sources (spec 8.0: drops / crackle / chirp / chime / flap) scatter short synthetic events at random times from
+    the layer's seeded RNG; in a bed they wrap around the loop end.
+  * Beds (spec 8.1) are periodic by construction (integer cycles, circular filters, wrapped events, reverb and
+    distortion on three tiles), then the loop seam gets a crossfade from the next period and the file is normalised to
+    its RMS target (the "rms -24" Peak cell).
 """
 import argparse
 import math
@@ -61,7 +67,14 @@ LOOPS = {"lyra_vmm": 1000, "taro_whrr": 500}
 # Spec parsing
 # ----------------------------------------------------------------------------------------------------------------------
 
-SECTION_BUS = {"4.1": "UI", "4.2": "STG", "4.3": "CMB", "4.4": "MOV", "4.5": "PRJ", "4.6": "STG"}
+SECTION_BUS = {"4.1": "UI", "4.2": "STG", "4.3": "CMB", "4.4": "MOV", "4.5": "PRJ", "4.6": "STG", "8.1": "AMB", "8.2": "PRJ"}
+# Spec 8.1: stage ambience beds (loop-only ids; the Peak cell holds the RMS target as "rms -24").
+BED_SECTION = "8.1"
+BED_RMS_RANGE = (-26.0, -22.0)
+BED_MAX_PEAK = -3.0
+BED_XFADE_MS = 120.0
+# Spec 8.0: event-stream sources (events per second, then a frequency where it applies).
+EVENT_SOURCES = ("drops", "crackle", "chirp", "chime", "flap")
 # Use-cell "bus X" mentions that describe a secondary use (the main id stays on its default bus).
 BUS_NOTE_SECONDARY = {"kaia_ult", "bruna_smash"}
 
@@ -104,10 +117,15 @@ def parse_spec(path=SPEC):
             if section in SECTION_BUS:
                 bus = SECTION_BUS[section]
             else:
-                bm = re.search(r"\bbus (UI|CMB|MOV|PRJ|STG)\b", use)
+                bm = re.search(r"\bbus (UI|CMB|MOV|PRJ|STG|AMB)\b", use)
                 bus = bm.group(1) if bm and sid not in BUS_NOTE_SECONDARY else "CMB"
+            pm = re.match(r"rms\s+(-?[\d.]+)$", peak.strip())
+            rms = float(pm.group(1)) if pm else None
+            if rms is not None:
+                peak = pm.group(1)
             sounds.append(SoundDef(
-                id=sid, section=section, use=use, dur=float(dur), recipe=rm.group(1),
+                id=sid, section=section, use=use, dur=float(dur), recipe=rm.group(1), rms=rms,
+                bed=section == BED_SECTION,
                 click_onset=recipe_cell.lstrip().startswith("click-onset"),
                 variants=int(vm.group(1)), pitch_var=float(vm.group(2) or 0) / 100.0,
                 time_var=float(vm.group(3) or 0) / 100.0,
@@ -174,6 +192,8 @@ def parse_recipe(text):
         srcs = []
         if kind in ("wn", "pn", "bn"):
             srcs.append(Src(kind, None))
+        elif kind in EVENT_SOURCES:
+            srcs.append(Src(kind, tuple(num(x) for x in src_tok[1:])))
         elif kind == "fm":
             c, r = src_tok[1].split(":")
             itok = src_tok[2][1:]
@@ -464,6 +484,8 @@ def render_source(src, n, rng, pf, tf, env):
     k = src.kind
     if k in ("wn", "pn", "bn"):
         return shaped_noise(rng, n, k), False
+    if k in EVENT_SOURCES:
+        return event_stream(k, src.args, n, rng, pf, False), False
     if k == "fm":
         c, ratio, ipts, it = src.args
         os_ = 4
@@ -505,6 +527,95 @@ def render_source(src, n, rng, pf, tf, env):
             out += db(gdb) * np.sin(2 * np.pi * f * t + ph) * e
         return out, True
     raise ValueError("unknown source " + k)
+
+
+PENTA = (1.0, 9.0 / 8.0, 5.0 / 4.0, 3.0 / 2.0, 5.0 / 3.0, 2.0)
+
+
+def _place(out, ev, t0, wrap):
+    """Add event ev at sample t0; wraps around the end when wrap (seamless beds), else clips."""
+    n = len(out)
+    m = len(ev)
+    if wrap:
+        idx = (t0 + np.arange(m)) % n
+        np.add.at(out, idx, ev)
+    else:
+        e = min(n, t0 + m)
+        if e > t0:
+            out[t0:e] += ev[:e - t0]
+
+
+def _tone_glide(f_a, f_b, dur, rng=None):
+    m = max(2, int(round(dur * SR)))
+    t = np.arange(m) / SR
+    freq = f_a * (f_b / f_a) ** (t / dur)
+    return np.sin(2 * np.pi * phase_of(freq, SR)), t, m
+
+
+def event_stream(kind, args, n, rng, pf, wrap):
+    """
+    Spec 8.0 event sources. args = (rate per second[, F Hz]). Count = max(1, round(rate x seconds)); times uniform.
+      drops R F    bubbles / droplets: 18-45 ms sine rising F..2.2F (F x 0.7..1.4), exponential decay
+      crackle R    1-3 ms noise ticks, amplitude squared-uniform (mostly small, a few loud)
+      chirp R F    bird call: 2-4 syllables of 35-70 ms sine glides around F (up or down 35 %), Hann shaped
+      chime R F    wind chime: bell partials on a pentatonic degree of F, 1.6 s ring
+      flap R F     wing / feather flutter: 5-9 noise puffs at F flaps per second (rate not pitch-scaled)
+    """
+    out = np.zeros(n)
+    secs = n / SR
+    rate = args[0]
+    f0 = (args[1] if len(args) > 1 else 0.0)
+    count = max(1, int(round(rate * secs)))
+    for _ in range(count):
+        t0 = int(rng.uniform(0, n))
+        amp = rng.uniform(0.3, 1.0)
+        if kind == "drops":
+            d = rng.uniform(0.018, 0.045)
+            f = f0 * pf * rng.uniform(0.7, 1.4)
+            s, t, m = _tone_glide(f, f * 2.2, d)
+            env = np.exp(math.log(1e-2) * t / d) * np.clip(t / 0.001, 0.0, 1.0)
+            ev = amp * s * env
+        elif kind == "crackle":
+            d = rng.uniform(0.0005, 0.003)
+            m = max(2, int(round(d * SR * 3)))
+            t = np.arange(m) / SR
+            ev = (rng.uniform(0.05, 1.0) ** 2) * rng.uniform(-1.0, 1.0, m) * np.exp(math.log(1e-3) * t / (d * 3))
+        elif kind == "chirp":
+            parts = []
+            for _s in range(int(rng.integers(2, 5))):
+                d = rng.uniform(0.035, 0.07)
+                f = f0 * pf * rng.uniform(0.85, 1.2)
+                g = f * (1.35 if rng.random() < 0.6 else 1.0 / 1.35)
+                s, t, m = _tone_glide(f, g, d)
+                parts.append(s * np.sin(np.pi * np.arange(m) / m) ** 2)
+                parts.append(np.zeros(int(rng.uniform(0.03, 0.06) * SR)))
+            ev = amp * np.concatenate(parts)
+        elif kind == "chime":
+            f = f0 * pf * PENTA[int(rng.integers(len(PENTA)))]
+            d = 1.6
+            m = int(d * SR)
+            t = np.arange(m) / SR
+            ev = np.zeros(m)
+            for mul, gdb, dec in BELL:
+                if f * mul < MAX_PARTIAL:
+                    ev += db(gdb) * np.sin(2 * np.pi * f * mul * t) * np.exp(math.log(1e-3) * t / (d * dec))
+            ev *= amp * np.clip(t / 0.002, 0.0, 1.0)
+        elif kind == "flap":
+            k = int(rng.integers(5, 10))
+            period = 1.0 / (f0 * rng.uniform(0.85, 1.15))
+            pm = int(period * SR)
+            ev = np.zeros(pm * k + int(0.03 * SR))
+            for j in range(k):
+                d = rng.uniform(0.012, 0.02)
+                m = int(d * SR * 2)
+                t = np.arange(m) / SR
+                puff = rng.uniform(-1.0, 1.0, m) * np.exp(math.log(1e-2) * t / (d * 2)) * np.clip(t / 0.002, 0.0, 1.0)
+                ev[j * pm:j * pm + m] += puff * (1.0 - 0.6 * j / k)
+            ev *= amp
+        else:
+            raise ValueError("unknown event source " + kind)
+        _place(out, ev, t0, wrap)
+    return out
 
 
 def render_layer(lay, n, rng, pf, tf):
@@ -646,6 +757,100 @@ def render_loop(sd, loop_ms):
     return mix, approximations
 
 
+# ---- beds (spec 8.1): long seamless ambience loops ------------------------------------------------------------------
+
+def tiled(x, fn, extra):
+    """Run a stateful process fn on three copies of the period x and return the middle period plus `extra` samples of
+    the next one (steady state: the tail of the previous period is already in, so the result is periodic)."""
+    n = len(x)
+    y = fn(np.tile(x, 3))
+    return y[n:2 * n + extra]
+
+
+def render_bed(sd):
+    """
+    Seamless bed of sd.dur ms. Periodic by construction: every oscillator / tremolo rate is rounded to whole cycles per
+    loop, noise is generated at the loop length (FFT-shaped noise is circular), filters are applied circularly at their
+    end value, event sources wrap around the end, reverb / distortion run on three tiles. The seam then gets a
+    BED_XFADE_MS crossfade from the next period (linear when the two sides correlate, equal power otherwise) as a safety
+    net, the bed is soft-clipped and set to its RMS target.
+    """
+    layers, rev = parse_recipe(sd.recipe)
+    rng = np.random.default_rng(zlib.crc32(sd.id.encode("ascii")))
+    n = int(round(sd.dur * SR / 1000.0))
+    secs = n / SR
+    whole = lambda f: max(1.0, round(f * secs)) / secs     # noqa: E731
+    t = np.arange(n, dtype=np.float64) / SR
+    mix = np.zeros(n)
+    for lay in layers:
+        sig = np.zeros(n)
+        for src in lay.sources:
+            k = src.kind
+            if k == "wn":
+                s = rng.uniform(-1.0, 1.0, n)
+            elif k in ("pn", "bn"):
+                s = shaped_noise(rng, n, k)
+            elif k in EVENT_SOURCES:
+                s = event_stream(k, src.args, n, rng, 1.0, True)
+            elif k == "sin":
+                s = np.sin(2 * np.pi * whole(src.args[0][-1]) * t)
+            elif k in ("saw", "sq", "tri"):
+                s = additive(k, np.full(n, whole(src.args[0][-1])), SR)
+            elif k == "fm":
+                c, ratio, ipts, _ = src.args
+                s = np.sin(2 * np.pi * whole(c) * t + ipts[-1] * np.sin(2 * np.pi * whole(c * ratio) * t))
+            else:
+                raise ValueError("bed source %s unsupported in %s" % (k, sd.id))
+            sig += db(lay.each_db) * norm_peak(s)
+        sig = norm_peak(sig)
+        for name, params in lay.chain:
+            if name in ("lp", "hp", "bp"):
+                pts, _, q = params
+                sig = circular_filter(sig, name, pts[-1], q)
+            elif name == "am":
+                pts, _, depth = params
+                sig = sig * (1.0 - depth * 0.5 * (1.0 - np.cos(2 * np.pi * whole(pts[-1]) * t)))
+            elif name == "dist":
+                sig = np.tanh(params * norm_peak(sig)) / math.tanh(params)
+            elif name == "rev":
+                sig = tiled(sig, lambda x, p=params: reverb(x, p[0], p[1]), 0)
+        sustain = lay.env[3] if lay.env is not None and lay.env[0] == "adsr" else 1.0
+        mix += norm_peak(sig) * sustain * db(lay.gain_db)
+    xf = int(round(BED_XFADE_MS * SR / 1000.0))
+    if rev is not None:
+        z = tiled(mix, lambda x: reverb(x, rev[0], rev[1]), xf)
+    else:
+        z = np.concatenate((mix, mix[:xf]))
+    # Seam crossfade: the head is blended with the start of the next period, so loop end -> loop start continues
+    # exactly into the next period and the blend ends on the head itself.
+    head, nxt = z[:xf].copy(), z[n:n + xf]
+    u = (np.arange(xf) + 0.5) / xf
+    den = math.sqrt(float(np.sum(head * head)) * float(np.sum(nxt * nxt)))
+    rho = float(np.sum(head * nxt)) / den if den > 1e-12 else 1.0
+    w_in, w_out = (u, 1.0 - u) if rho > 0.5 else (np.sin(0.5 * np.pi * u), np.cos(0.5 * np.pi * u))
+    out = z[:n].copy()
+    out[:xf] = head * w_in + nxt * w_out
+    out = out - float(np.mean(out))
+    out = norm_peak(out)
+    out = np.tanh(SOFT_DRIVE * out) / math.tanh(SOFT_DRIVE)
+    out = out - float(np.mean(out))
+    rms = float(np.sqrt(np.mean(out * out)))
+    out = out * (db(sd.rms) / rms)
+    # Start on the quietest upward zero crossing (a rotation keeps the loop seamless).
+    cross = np.nonzero((np.roll(out, 1) < 0) & (out >= 0))[0]
+    if cross.size:
+        out = np.roll(out, -int(cross[np.argmin(np.abs(out[cross]))]))
+    return out
+
+
+def seam_ok(pcm):
+    """Loop seam check: the wrap step must look like an ordinary step of the file (<= its 99.9th percentile + 64)."""
+    steps = np.abs(np.diff(pcm.astype(np.int32)))
+    seam = abs(int(pcm[-1]) - int(pcm[0]))
+    lim = float(np.percentile(steps, 99.9)) + 64.0
+    return seam, lim, seam <= lim
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 # Output
 # ----------------------------------------------------------------------------------------------------------------------
@@ -744,6 +949,30 @@ def main():
     for sd in sounds:
         if args.only and args.only not in sd.id:
             continue
+        if sd.bed:
+            x = render_bed(sd)
+            pcm = to_pcm(x)
+            st = stats(pcm, sd.rms)
+            name = "%s_01.wav" % sd.id
+            produced.add(name)
+            seam, lim, ok = seam_ok(pcm)
+            if not ok:
+                problems.append("%s: loop seam jump %d (limit %.0f)" % (name, seam, lim))
+            if st["clip"] or st["peak_db"] > BED_MAX_PEAK:
+                problems.append("%s: bed peak %.2f dBFS above %.0f" % (name, st["peak_db"], BED_MAX_PEAK))
+            if abs(st["rms_db"] - sd.rms) > 0.2 or not BED_RMS_RANGE[0] <= st["rms_db"] <= BED_RMS_RANGE[1]:
+                problems.append("%s: bed RMS %.2f dBFS, target %.1f (allowed %g..%g)" % (name, st["rms_db"], sd.rms, *BED_RMS_RANGE))
+            if st["dc"] > 0.005:
+                problems.append("%s: DC offset %.4f" % (name, st["dc"]))
+            if abs(st["ms"] - sd.dur) > 0.5:
+                problems.append("%s: %.0f ms, expected %.0f" % (name, st["ms"], sd.dur))
+            if not args.check:
+                path = os.path.join(OUT_DIR, name)
+                write_if_changed(path + ".meta", meta_for(path, st["ms"] / 1000.0))
+                written += write_if_changed(path, wav_bytes(pcm))
+            rows.append((sd.id, 1, sd.bus, "%.0f" % st["ms"], "%.0f" % st["ms"], st["peak_db"], sd.rms, st["dc"],
+                         st["rms_db"], "bed, seam %d/%.0f" % (seam, lim)))
+            continue
         per = []
         for nn in range(1, sd.variants + 1):
             x, pf, tf = render(sd, nn)
@@ -792,6 +1021,7 @@ def main():
 
     # Runtime mix table.
     table = ["# Generated by tools/audio/gen_sfx.py from design/audio/sfx-spec.md. Do not edit by hand.",
+             "# AMB rows (stage ambience beds, spec 8.1): peak_dbfs holds the RMS target.",
              "# id\tbus\tpri\tmax\tcd_ms\tpitch_pct\tpeak_dbfs\tvariants"]
     for sd in sounds:
         table.append("%s\t%s\t%d\t%d\t%d\t%g\t%g\t%d" % (sd.id, sd.bus, sd.pri, sd.max, sd.cd, sd.pitch, sd.peak, sd.variants))
@@ -823,7 +1053,8 @@ def main():
         for p in problems:
             print("  " + p)
         return 1
-    print("validation OK: no clipping, |DC| <= 0.005, peaks within 0.1 dB of target, durations within spec, no silent files")
+    print("validation OK: no clipping, |DC| <= 0.005, peaks within 0.1 dB of target, durations within spec, no silent files,"
+          " beds at their RMS target with seamless seams")
     return 0
 
 

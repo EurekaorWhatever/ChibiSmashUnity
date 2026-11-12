@@ -47,12 +47,12 @@ namespace ChibiClash.Tests
         }
 
         [Test]
-        public void HpDecrease_EmitsOneDamagedOnce()
+        public void PercentIncrease_EmitsOneDamagedOnce()
         {
             const int Amount = 37;
             var a = NewState();
             var b = Copy(a);
-            b.F[1].Hp -= Amount;
+            b.F[1].PctM += Amount * 1000;   // rules v20: damage = percent delta (ui-programmer: ChibiSimEvents reads PctM)
             var ev = new List<ChibiSimEvent>();
             ChibiSimEvents.Diff(a, b, ev);
             Assert.AreEqual(1, Count(ev, ChibiSimEventKind.Damaged));
@@ -62,6 +62,33 @@ namespace ChibiClash.Tests
             ev.Clear();
             ChibiSimEvents.Diff(b, Copy(b), ev);   // next frame, nothing new
             Assert.AreEqual(0, ev.Count);
+        }
+
+        [Test]
+        public void KosTakenRises_StockLost_EmitsKoNotRevivedNotRingOut()
+        {
+            // Rules v20: a KO is a blast-line crossing (KosTaken), one KO event per fighter; RingOut is no longer emitted.
+            var a = NewState();
+            var b = Copy(a);
+            b.F[1].KosTaken++; b.F[1].Stocks--; b.F[1].OutTicks = ChibiPercentConst.RespawnDelay;
+            var ev = new List<ChibiSimEvent>();
+            ChibiSimEvents.Diff(a, b, ev);
+            Assert.AreEqual(1, Count(ev, ChibiSimEventKind.KO, 1));
+            Assert.AreEqual(0, Count(ev, ChibiSimEventKind.Revived));
+            Assert.AreEqual(0, Count(ev, ChibiSimEventKind.RingOut));
+        }
+
+        [Test]
+        public void KosTakenRises_StocksKept_EmitsKoAndRevived()
+        {
+            // Training: the KO keeps the stock, so the view also shows "REVIVED".
+            var a = NewState();
+            var b = Copy(a);
+            b.F[0].KosTaken++;
+            var ev = new List<ChibiSimEvent>();
+            ChibiSimEvents.Diff(a, b, ev);
+            Assert.AreEqual(1, Count(ev, ChibiSimEventKind.KO, 0));
+            Assert.AreEqual(1, Count(ev, ChibiSimEventKind.Revived, 0));
         }
 
         [Test]

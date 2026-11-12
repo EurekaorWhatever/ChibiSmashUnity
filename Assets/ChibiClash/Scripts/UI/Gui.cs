@@ -649,6 +649,8 @@ namespace ChibiClash
         }
 
         /// <summary>Camera feed panel with tracked skeleton, posture and telemetry readouts (GDD 5).</summary>
+        static readonly string[] PostureText = new string[202];
+
         public static void CvPanel(Rect r, GestureTracker tracker, Color stateColor, bool showFeed, string title)
         {
             Rect(r, new Color(0.02f, 0.03f, 0.06f, 0.9f));
@@ -671,7 +673,10 @@ namespace ChibiClash
             Text(new Rect(r.x + 8f, r.y + 1f, r.width - 16f, 20f), g, 12, Accent2, TextAnchor.MiddleRight);
             float posture = tracker.Posture;
             var pc = posture >= 0.6f ? Green : Yellow;
-            Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), "Posture " + Mathf.RoundToInt(posture * 100f) + "%" + (posture < 0.6f ? " - sit up!" : ""), 11, pc, TextAnchor.MiddleLeft);
+            int pp = Mathf.Clamp(Mathf.RoundToInt(posture * 100f), 0, 100);
+            int pk = pp * 2 + (posture < 0.6f ? 1 : 0);
+            string pt = PostureText[pk] ?? (PostureText[pk] = "Posture " + pp + "%" + (posture < 0.6f ? " - sit up!" : ""));   // cached (perf audit P4)
+            Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), pt, 11, pc, TextAnchor.MiddleLeft);
             Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), tracker.TelemetryValid ? "Telemetry OK" : tracker.Validator.Reason, 11, tracker.TelemetryValid ? Muted : Red, TextAnchor.MiddleRight);
         }
 

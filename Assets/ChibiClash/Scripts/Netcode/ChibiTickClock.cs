@@ -71,6 +71,26 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>
+        /// Frame-pacing helper (performance audit 2026-11-11, docs/performance/2026-11-11-smoothness-audit.md F2):
+        /// with vSync on, frames are shown at exact multiples of the display refresh period, but the measured delta
+        /// jitters by a few hundred microseconds around it. Fed raw into the accumulator, that jitter flips frames
+        /// between 0 and 2 ticks at 60 Hz and makes the interpolation alpha wobble at 120/144 Hz. This returns the
+        /// nearest whole number of refresh periods when <paramref name="deltaSeconds"/> is within
+        /// <paramref name="toleranceSeconds"/> of it (1..4 periods), otherwise the delta unchanged (vSync off, real
+        /// hitches). Pure function: the caller supplies the refresh period, so this stays Unity-free.
+        /// Offline only: snapping trades a tiny wall-clock drift for even pacing, which online time sync must not do.
+        /// </summary>
+        /// <example><code>float dt = ChibiTickClock.SnapToRefresh(0.01702f, 1f / 60f);   // 0.016667 (one 60 Hz frame)</code></example>
+        public static float SnapToRefresh(float deltaSeconds, float refreshSeconds, float toleranceSeconds = 0.0005f)
+        {
+            if (refreshSeconds <= 0f || deltaSeconds <= 0f) return deltaSeconds;
+            float periods = (float)Math.Round(deltaSeconds / refreshSeconds);
+            if (periods < 1f || periods > 4f) return deltaSeconds;
+            float snapped = periods * refreshSeconds;
+            return Math.Abs(deltaSeconds - snapped) <= toleranceSeconds ? snapped : deltaSeconds;
+        }
+
+        /// <summary>
         /// Constant-dilation variant: add <paramref name="deltaSeconds"/> and return how many ticks the caller
         /// should run now. Same arithmetic as <see cref="Run"/> when dilation does not change between ticks.
         /// </summary>

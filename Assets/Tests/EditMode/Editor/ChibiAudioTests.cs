@@ -190,7 +190,7 @@ namespace ChibiClash.Tests
             var over = Copy(s);
             over.MatchOver = true;
             over.Winner = 0;
-            over.F[1].HpU = 0;
+            over.F[1].Stocks = 0;
             var router = new ChibiSfxRouter { NeedsConfirm = true };
             var first = Run(router, s, over, T0, new ChibiSimEvent(ChibiSimEventKind.KO, 1));
             Assert.IsEmpty(Ids(first));
@@ -198,7 +198,7 @@ namespace ChibiClash.Tests
 
             var output = new List<SfxRequest>();
             router.ConfirmEnd(0, true, output);
-            CollectionAssert.AreEqual(new[] { "core_ko", "core_victory_sting" }, Ids(output));
+            CollectionAssert.AreEqual(new[] { "core_final_stock", "core_victory_sting" }, Ids(output));   // v20: replaces core_ko (8.3)
             Assert.AreEqual(SfxDuck.Ko, output[0].Duck);
             Assert.AreEqual(0.9f, output[1].Delay, 1e-6f);
 
@@ -214,11 +214,11 @@ namespace ChibiClash.Tests
             var over = Copy(s);
             over.MatchOver = true;
             over.Winner = -1;
-            over.F[0].HpU = 0;
-            over.F[1].HpU = 0;
+            over.F[0].Stocks = 0;
+            over.F[1].Stocks = 0;
             var ids = Ids(Run(new ChibiSfxRouter(), s, over, T0,
                 new ChibiSimEvent(ChibiSimEventKind.KO, 0), new ChibiSimEvent(ChibiSimEventKind.KO, 1)));
-            CollectionAssert.AreEqual(new[] { "core_ko", "core_draw_sting" }, ids);
+            CollectionAssert.AreEqual(new[] { "core_final_stock", "core_draw_sting" }, ids);
         }
 
         [Test]
@@ -297,6 +297,185 @@ namespace ChibiClash.Tests
             Assert.IsFalse(cd.TryPass("kaia_shk", 0, 1.03f, 50));
             Assert.IsTrue(cd.TryPass("kaia_shk", 1, 1.03f, 50), "other fighter");
             Assert.IsTrue(cd.TryPass("kaia_shk", 0, 1.06f, 50));
+        }
+
+        // ------------------------------------------------------------------ rules v20 stocks loop (sfx-events.md 8.3)
+
+        /// <summary>prev -> cur where fighter <paramref name="i"/> lost a stock (KosTaken + 1, Stocks - 1).</summary>
+        static ChibiSimState AfterKo(ChibiSimState prev, int i)
+        {
+            var cur = Copy(prev);
+            cur.F[i].KosTaken = prev.F[i].KosTaken + 1;
+            if (!cur.Training) cur.F[i].Stocks = prev.F[i].Stocks - 1;
+            cur.F[i].OutTicks = ChibiPercentConst.RespawnDelay;
+            return cur;
+        }
+
+        [Test]
+        public void StockLost_NotLast_PlaysKoBlastWithStockKoDuck()
+        {
+            var s = NewState(FighterClass.Melee, FighterClass.Heavy);
+            var output = Run(new ChibiSfxRouter(), s, AfterKo(s, 1), T0);
+            CollectionAssert.AreEqual(new[] { "core_ko_blast" }, Ids(output));
+            Assert.AreEqual(SfxDuck.StockKo, output[0].Duck);
+        }
+
+        [Test]
+        public void StockLost_LeavingLastStock_AddsDelayedWarning()
+        {
+            var s = NewState(FighterClass.Melee, FighterClass.Heavy);
+            s.F[0].Stocks = 2;
+            s.F[0].KosTaken = 1;
+            var router = new ChibiSfxRouter();
+            var output = Run(router, s, AfterKo(s, 0), T0);
+            CollectionAssert.AreEqual(new[] { "core_ko_blast", "core_last_stock" }, Ids(output));
+            Assert.AreEqual(router.LastStockDelaySec, output[1].Delay, 1e-6f);
+        }
+
+        [Test]
+        public void FinalStockLost_DerivedStepPlaysNothing_MatchEndOwnsIt()
+        {
+            var s = NewState(FighterClass.Melee, FighterClass.Heavy);
+            s.F[1].Stocks = 1;
+            s.F[1].KosTaken = 2;
+            Assert.IsEmpty(Ids(Run(new ChibiSfxRouter(), s, AfterKo(s, 1), T0)), "core_final_stock comes from the (confirmed) match end");
+        }
+
+        [Test]
+        public void TrainingKo_PlaysKoBlast_NoLastStockWarning()
+        {
+            var s = NewState(FighterClass.Melee, FighterClass.Heavy);
+            s.Training = true;
+            s.F[1].Stocks = 1;   // frozen in training
+            CollectionAssert.AreEqual(new[] { "core_ko_blast" }, Ids(Run(new ChibiSfxRouter(), s, AfterKo(s, 1), T0)));
+        }
+
+        [Test]
+        public void StockKo_ReShownByRollbackFramesLater_PlaysOnce()
+        {
+            var s = NewState(FighterClass.Melee, FighterClass.Heavy);
+            var router = new ChibiSfxRouter();
+            var ko = AfterKo(s, 1);
+            CollectionAssert.AreEqual(new[] { "core_ko_blast" }, Ids(Run(router, s, ko, T0)));
+            var reShown = Copy(ko);
+            reShown.Frame = Frame + 6;   // the re-simulation put the same KO six frames later (beyond the 3-frame drift)
+            Assert.IsEmpty(Ids(Run(router, s, reShown, T0 + 0.1f)));
+        }
+
+        [Test]
+        public void RespawnHoverStarts_PlaysChimeOnce()
+        {
+            var s = NewState(FighterClass.Melee, FighterClass.Heavy);
+            s.F[0].KosTaken = 1;
+            var hover = Copy(s);
+            hover.F[0].HoverTicks = ChibiPercentConst.RespawnHoverMax;
+            var router = new ChibiSfxRouter();
+            CollectionAssert.AreEqual(new[] { "core_respawn_chime" }, Ids(Run(router, s, hover, T0)));
+            Assert.IsEmpty(Ids(Run(router, s, hover, T0 + 0.05f)), "rollback re-show of the same respawn");
+        }
+
+        [Test]
+        public void HeavyLaunch_AtHighPercent_PlaysWhoosh_LowPercentDoesNot()
+        {
+            var s = NewState(FighterClass.Melee, FighterClass.Heavy);
+            var router = new ChibiSfxRouter();
+            s.F[1].PctM = router.HeavyLaunchPctM;
+            var launched = Copy(s);
+            launched.F[1].PctM = s.F[1].PctM + 12_000;
+            launched.F[1].Vx = router.HeavyLaunchSub;
+            launched.F[1].Vy = router.HeavyLaunchSub / 2;
+            var output = Run(router, s, launched, T0);
+            CollectionAssert.AreEqual(new[] { "core_launch_heavy" }, Ids(output));
+            Assert.Less(output[0].Pitch, 1f, "stronger launch, lower pitch");
+
+            var low = NewState(FighterClass.Melee, FighterClass.Heavy);
+            var lowHit = Copy(low);
+            lowHit.F[1].PctM = 12_000;
+            lowHit.F[1].Vx = router.HeavyLaunchSub * 2;
+            Assert.IsEmpty(Ids(Run(new ChibiSfxRouter(), low, lowHit, T0)), "low percent: no heavy launch");
+        }
+
+        [Test]
+        public void RingOutEvent_V20_PlaysNothing()
+        {
+            var s = NewState(FighterClass.Melee, FighterClass.Heavy);
+            Assert.IsEmpty(Ids(Run(new ChibiSfxRouter(), s, Copy(s), T0, new ChibiSimEvent(ChibiSimEventKind.RingOut, 0))));
+        }
+
+        // ------------------------------------------------------------------ stage audio (sfx-events.md 8.1 / 8.2)
+
+        static List<SfxRequest> Haz(ChibiStageSfx t, int hazard, int count, int phase, int elapsed, int arg)
+        {
+            var o = new List<SfxRequest>();
+            t.Step(hazard, count, phase, elapsed, arg, o);
+            return o;
+        }
+
+        [Test]
+        public void AmbienceId_DesignStagesHaveBeds_ClassicStagesNone()
+        {
+            Assert.AreEqual("stage_mountain_amb", ChibiStageSfx.AmbienceId(ChibiStageTable.Mountain));
+            Assert.AreEqual("stage_plain_amb", ChibiStageSfx.AmbienceId(ChibiStageTable.Plain));
+            Assert.AreEqual("stage_volcano_amb", ChibiStageSfx.AmbienceId(ChibiStageTable.Volcano));
+            Assert.AreEqual("stage_birdlair_amb", ChibiStageSfx.AmbienceId(ChibiStageTable.BirdLair));
+            Assert.AreEqual("stage_ocean_amb", ChibiStageSfx.AmbienceId(ChibiStageTable.Ocean));
+            Assert.IsNull(ChibiStageSfx.AmbienceId(0));
+            var meta = SfxMetaTable.Parse("stage_ocean_amb\tAMB\t10\t1\t0\t0\t-24\t1\n");
+            Assert.AreEqual(SfxBus.AMB, meta["stage_ocean_amb"].Bus);
+        }
+
+        [Test]
+        public void VolcanoHazard_RollbackReShowsPhases_EachSoundPlaysOnce()
+        {
+            var t = new ChibiStageSfx();
+            const int Fire = ChibiStageTable.HazardFire, Both = 2;
+            var tele = Haz(t, Fire, 5, ChibiHazardConst.Telegraph, 0, Both);
+            CollectionAssert.AreEqual(new[] { "stage_volcano_burst_warn", "stage_volcano_burst_warn" }, Ids(tele));
+            Assert.AreEqual(ChibiHazardConst.FireLaneLeftX, tele[0].PanX);
+            Assert.AreEqual(ChibiHazardConst.FireLaneRightX, tele[1].PanX);
+            Assert.IsEmpty(Haz(t, Fire, 5, ChibiHazardConst.Telegraph, 1, Both), "same phase next frame");
+            CollectionAssert.AreEqual(new[] { "stage_volcano_burst", "stage_volcano_burst" },
+                Ids(Haz(t, Fire, 5, ChibiHazardConst.PhaseFireErupt, 0, Both)));
+
+            // Rollback: the view re-shows the telegraph, then the eruption again; then an older event number.
+            Assert.IsEmpty(Haz(t, Fire, 5, ChibiHazardConst.Telegraph, 74, Both));
+            Assert.IsEmpty(Haz(t, Fire, 5, ChibiHazardConst.PhaseFireErupt, 0, Both));
+            Assert.IsEmpty(Haz(t, Fire, 4, ChibiHazardConst.PhaseFireErupt, 3, Both));
+
+            CollectionAssert.AreEqual(new[] { "stage_volcano_burst_warn" }, Ids(Haz(t, Fire, 6, ChibiHazardConst.Telegraph, 0, 1)),
+                "next event, right lane only");
+        }
+
+        [Test]
+        public void BirdHazard_BodyPass_SweepsPanAcrossInFlightDirection()
+        {
+            var t = new ChibiStageSfx();
+            const int Bird = ChibiStageTable.HazardBird;
+            CollectionAssert.AreEqual(new[] { "stage_birdlair_screech" }, Ids(Haz(t, Bird, 1, ChibiHazardConst.Telegraph, 0, -1)));
+            CollectionAssert.AreEqual(new[] { "stage_birdlair_gust" }, Ids(Haz(t, Bird, 1, ChibiHazardConst.PhaseBirdSwipe, 0, -1)));
+            Assert.IsEmpty(Haz(t, Bird, 1, ChibiHazardConst.PhaseBirdSwipe, ChibiHazardConst.BirdBodyStart - 1, -1));
+            var pass = Haz(t, Bird, 1, ChibiHazardConst.PhaseBirdSwipe, ChibiHazardConst.BirdBodyStart, -1);
+            CollectionAssert.AreEqual(new[] { "stage_birdlair_pass" }, Ids(pass));
+            Assert.AreEqual(ChibiHazardConst.BirdBodyStartX, pass[0].PanX, "flying left: starts on the right");
+            Assert.AreEqual(-ChibiHazardConst.BirdBodyStartX, pass[0].PanEndX);
+            Assert.Greater(pass[0].PanSweepSec, 0f);
+            Assert.IsEmpty(Haz(t, Bird, 1, ChibiHazardConst.PhaseBirdSwipe, ChibiHazardConst.BirdBodyStart + 1, -1));
+        }
+
+        [Test]
+        public void WhaleHazard_PhasesMapToCallDescendRise_LatePhaseIsSkipped()
+        {
+            var t = new ChibiStageSfx();
+            const int Whale = ChibiStageTable.HazardWhale;
+            CollectionAssert.AreEqual(new[] { "stage_ocean_whale_call" }, Ids(Haz(t, Whale, 1, ChibiHazardConst.Telegraph, 0, 0)));
+            CollectionAssert.AreEqual(new[] { "stage_ocean_whale_descend" }, Ids(Haz(t, Whale, 1, ChibiHazardConst.PhaseWhaleDescend, 0, 0)));
+            Assert.IsEmpty(Haz(t, Whale, 1, ChibiHazardConst.PhaseWhaleHold, 0, 0));
+            CollectionAssert.AreEqual(new[] { "stage_ocean_whale_rise" }, Ids(Haz(t, Whale, 1, ChibiHazardConst.PhaseWhaleRise, 0, 0)));
+
+            var late = new ChibiStageSfx();
+            Assert.IsEmpty(Haz(late, Whale, 2, ChibiHazardConst.PhaseWhaleDescend, late.LateTicks + 1, 0), "stage built mid-descent");
+            Assert.IsEmpty(Haz(late, Whale, 2, ChibiHazardConst.PhaseWhaleDescend, 0, 0), "and it stays marked");
+            Assert.IsEmpty(Haz(t, ChibiStageTable.HazardNone, 9, ChibiHazardConst.Telegraph, 0, 0));
         }
     }
 }

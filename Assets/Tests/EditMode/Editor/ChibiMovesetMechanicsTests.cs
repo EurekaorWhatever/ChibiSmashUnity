@@ -50,19 +50,21 @@ namespace ChibiClash.Tests
             // Arrange: Kaia ftilt (startup 5) vs Bruna 1200 ahead.
             var s = Arena(FighterClass.Melee, FighterClass.Heavy, 0, 1200);
             var row = Row(FighterClass.Melee, "kaia_ftilt");
-            int hp0 = s.F[1].HpU;
+            int hp0 = s.F[1].HpLike();
 
             // Act
             Game(s, P(ChibiDir.E, ChibiButtons.Light));
             Idle(s, row.Startup);
-            int hpBefore = s.F[1].HpU;
+            int hpBefore = s.F[1].HpLike();
             Idle(s, 1);
 
             // Assert
             Assert.AreEqual(hp0, hpBefore, "no hit during startup");
-            Assert.Less(s.F[1].HpU, hp0, "hit on move tick 5");
+            Assert.Less(s.F[1].HpLike(), hp0, "hit on move tick 5");
             Assert.AreEqual(row.Stun, s.F[1].Stun, "row stun");
-            Assert.AreEqual(row.KbX, s.F[1].Vx, "row kb toward Facing");
+            // Rules v20: the row's KbX/KbY sets the launch angle and tier; speed from the knockback formula.
+            Assert.AreEqual(ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], row.KbX, row.KbY, 1, row.Stun).Vx, s.F[1].Vx,
+                            "row launch toward Facing");
         }
 
         [Test]
@@ -85,14 +87,14 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Melee, FighterClass.Heavy);
             Place(s.F[0], 0, 10000, 1);
             Place(s.F[1], gap, 10000, -1);      // hurtbox near edge at gap - 375 from the centre (above every platform)
-            int hp0 = s.F[1].HpU;
+            int hp0 = s.F[1].HpLike();
 
             // Act
             Game(s, P(ChibiDir.Neutral, ChibiButtons.Light));
             Idle(s, Row(FighterClass.Melee, "kaia_nair").Startup + 1);
 
             // Assert
-            Assert.AreEqual(expectHit, s.F[1].HpU < hp0);
+            Assert.AreEqual(expectHit, s.F[1].HpLike() < hp0);
         }
 
         // ================================================================== knockback kinds
@@ -107,8 +109,10 @@ namespace ChibiClash.Tests
             Place(s.F[0], 0, 1500, 1);
             Game(s, P(ChibiDir.S, ChibiButtons.Light));
             Idle(s, row.Startup + 1);
-            Assert.Less(s.F[1].HpU, s.F[1].Stats.MaxHp * ChibiCombatStats.HpScale, "precondition: dair hit");
-            Assert.AreEqual(-row.KbY / 2, s.F[1].Vy, "grounded victim: KbY = -KbY / 2 (pop-up)");
+            Assert.Less(s.F[1].HpLike(), 0, "precondition: dair hit");
+            Assert.AreEqual(ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], row.KbX, -row.KbY / 2, 1, row.Stun).Vy, s.F[1].Vy,
+                            "grounded victim: KbY = -KbY / 2 (pop-up), then the formula launch (v20)");
+            Assert.Greater(s.F[1].Vy, 0, "pop-up goes up");
 
             // Arrange B: airborne victim (both fall together, above every platform).
             s = Arena(FighterClass.Melee, FighterClass.Heavy, 0, 0);
@@ -116,7 +120,9 @@ namespace ChibiClash.Tests
             Place(s.F[1], 0, 9000, -1);
             Game(s, P(ChibiDir.S, ChibiButtons.Light));
             Idle(s, row.Startup + 1);
-            Assert.AreEqual(row.KbY, s.F[1].Vy, "airborne victim: spiked down");
+            Assert.AreEqual(ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], row.KbX, row.KbY, 1, row.Stun).Vy, s.F[1].Vy,
+                            "airborne victim: spiked down (v20 formula launch)");
+            Assert.Less(s.F[1].Vy, 0, "spike goes down");
         }
 
         [Test]
@@ -127,15 +133,17 @@ namespace ChibiClash.Tests
             Game(s, P(ChibiDir.S, ChibiButtons.Light));
             Idle(s, row.Startup + 1);
             Assert.AreEqual(ChibiMovesetConst.TripStun, s.F[1].Stun, "grounded: trip stun 34");
-            Assert.AreEqual(ChibiMovesetConst.TripKbX, s.F[1].Vx);
+            Assert.AreEqual(ChibiMovesetConst.TripKbX, s.F[1].Vx, "grounded trip = set knockback (v20, spec 4.5)");
 
             s = Arena(FighterClass.Heavy, FighterClass.Melee, 0, 1200);
             Place(s.F[1], 1200, 300, -1);
             Game(s, P(ChibiDir.S, ChibiButtons.Light));
             Idle(s, row.Startup + 1);
             Assert.IsFalse(s.F[1].Grounded && s.F[1].Stun == ChibiMovesetConst.TripStun, "airborne victim is not tripped");
-            Assert.AreEqual(ChibiMovesetConst.TripAirStun, s.F[1].Stun, "airborne: L tier stun 22");
-            Assert.AreEqual(ChibiMovesetConst.TripAirKbX, s.F[1].Vx);
+            var air = ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], ChibiMovesetConst.TripAirKbX, ChibiMovesetConst.TripAirKbY,
+                                                     1, ChibiMovesetConst.TripAirStun);
+            Assert.AreEqual(air.Stun, s.F[1].Stun, "airborne: L tier (legacy stun 22 is the floor, v20)");
+            Assert.AreEqual(air.Vx, s.F[1].Vx, "airborne: L tier launch (v20 formula)");
         }
 
         [Test]
@@ -147,7 +155,9 @@ namespace ChibiClash.Tests
             Place(s.F[1], -1200, 10000, 1);
             Game(s, P(ChibiDir.W, ChibiButtons.Light));
             Idle(s, row.Startup + 1);
-            Assert.AreEqual(-row.KbX, s.F[1].Vx, "Dir = -Facing");
+            Assert.AreEqual(ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], row.KbX, row.KbY, -1, row.Stun).Vx, s.F[1].Vx,
+                            "Dir = -Facing (v20 formula launch)");
+            Assert.Less(s.F[1].Vx, 0, "knocked backward");
         }
 
         [Test]
@@ -157,7 +167,8 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Melee, FighterClass.Heavy, 0, -1200);
             Game(s, P(ChibiDir.S, ChibiButtons.Heavy));
             Idle(s, row.Startup + 1);
-            Assert.AreEqual(-row.KbX, s.F[1].Vx, "victim behind is pushed away (positional Dir)");
+            Assert.AreEqual(ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], row.KbX, row.KbY, -1, row.Stun).Vx, s.F[1].Vx,
+                            "victim behind is pushed away (positional Dir, v20 formula launch)");
         }
 
         // ================================================================== charge / hold / multi
@@ -250,8 +261,9 @@ namespace ChibiClash.Tests
             // Assert
             Assert.AreEqual(row.Rehit + ChibiMovesetConst.LinkStunPad, firstStun, "hit 1 = LINK stun (rehit + 4)");
             Assert.AreEqual(4, s.F[0].HitsLanded, "exactly 4 hits");
-            Assert.AreEqual(row.Stun, s.F[1].Stun, "hit 4 uses the row stun");
-            Assert.AreEqual(row.KbX, s.F[1].Vx, "hit 4 uses the row kb");
+            Assert.AreEqual(4, s.F[0].HitsLanded, "hit 4 landed");
+            Assert.IsTrue(s.F[1].Vx > ChibiMovesetConst.LinkKbX, "hit 4 uses the row kb: a real launch, faster than a link hit");
+            Assert.GreaterOrEqual(s.F[1].Stun, row.Stun - 9, "hit 4: row stun as the legacy floor (minus the 9 ticks since)");
         }
 
         // ================================================================== armor / invuln / counter / reflect
@@ -266,14 +278,14 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Melee, FighterClass.Heavy, 0, 6000);
             Game(s, P(ChibiDir.S, ChibiButtons.Skill2));
             Idle(s, moveTick);
-            int hp0 = s.F[0].HpU;
+            int hp0 = s.F[0].HpLike();
             InjectShot(s, 1);
 
             // Act
             Game(s, N, N);
 
             // Assert
-            Assert.Less(s.F[0].HpU, hp0, "armor still takes the damage");
+            Assert.Less(s.F[0].HpLike(), hp0, "armor still takes the damage");
             Assert.AreEqual(expectInterrupted, s.F[0].MoveSlot < 0);
             Assert.AreEqual(expectInterrupted ? 20 : 0, s.F[0].Stun);
         }
@@ -288,14 +300,14 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Melee, FighterClass.Heavy, 0, 6000);
             Game(s, P(ChibiDir.S, ChibiButtons.Skill1));
             Idle(s, moveTick);
-            int hp0 = s.F[0].HpU;
+            int hp0 = s.F[0].HpLike();
             InjectShot(s, 1);
 
             // Act
             Game(s, N, N);
 
             // Assert
-            Assert.AreEqual(expectDamage, s.F[0].HpU < hp0);
+            Assert.AreEqual(expectDamage, s.F[0].HpLike() < hp0);
         }
 
         [Test]
@@ -305,28 +317,28 @@ namespace ChibiClash.Tests
             int hitStep = -1;
             {
                 var probe = Arena(FighterClass.Melee, FighterClass.Heavy, 0, 1200);
-                int hp = probe.F[0].HpU;
+                int hp = probe.F[0].HpLike();
                 for (int k = 0; k < 30 && hitStep < 0; k++)
                 {
                     Game(probe, N, k == 0 ? P(ChibiDir.Neutral, ChibiButtons.Light) : N);
-                    if (probe.F[0].HpU < hp) hitStep = k;
+                    if (probe.F[0].HpLike() < hp) hitStep = k;
                 }
             }
             Assert.Greater(hitStep, 4, "fixture: Bruna light lands later than the riposte startup");
             var s = Arena(FighterClass.Melee, FighterClass.Heavy, 0, 1200);
-            int kaiaHp = s.F[0].HpU, brunaHp = s.F[1].HpU;
+            int kaiaHp = s.F[0].HpLike(), brunaHp = s.F[1].HpLike();
 
             // Act: Kaia presses S2+U so that the light lands on her move tick 4 (active 2..7).
             for (int k = 0; k <= hitStep; k++)
                 Game(s, k == hitStep - 5 ? P(ChibiDir.N, ChibiButtons.Skill2) : N, k == 0 ? P(ChibiDir.Neutral, ChibiButtons.Light) : N);
-            bool caught = s.F[0].HpU == kaiaHp && s.F[0].CounterStrike == 1;
+            bool caught = s.F[0].HpLike() == kaiaHp && s.F[0].CounterStrike == 1;
             int invuln = s.F[0].Invuln;
             Game(s, N, N);
 
             // Assert
             Assert.IsTrue(caught, "the light is cancelled and the counter armed");
             Assert.AreEqual(ChibiMovesetConst.CounterInvuln, invuln);
-            Assert.Less(s.F[1].HpU, brunaHp, "riposte lands on the next tick");
+            Assert.Less(s.F[1].HpLike(), brunaHp, "riposte lands on the next tick");
             Assert.AreEqual(0, s.F[0].CounterStrike);
         }
 
@@ -337,19 +349,19 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Melee, FighterClass.Heavy, 0, 6000);
             Game(s, P(ChibiDir.N, ChibiButtons.Skill2));
             Idle(s, 3);
-            int hp0 = s.F[0].HpU;
+            int hp0 = s.F[0].HpLike();
             InjectShot(s, 1);
             Game(s, N, N);
-            Assert.Less(s.F[0].HpU, hp0, "plain counter ignores projectiles");
+            Assert.Less(s.F[0].HpLike(), hp0, "plain counter ignores projectiles");
 
             // Taro Jade Stance (counter:proj): the shot is cancelled and removed.
             s = Arena(FighterClass.Polearm, FighterClass.Heavy, 0, 6000);
             Game(s, P(ChibiDir.S, ChibiButtons.Special));
             Idle(s, Row(FighterClass.Polearm, "taro_dspec").Startup + 1);
-            hp0 = s.F[0].HpU;
+            hp0 = s.F[0].HpLike();
             InjectShot(s, 1);
             Game(s, N, N);
-            Assert.AreEqual(hp0, s.F[0].HpU, "counter:proj cancels the shot");
+            Assert.AreEqual(hp0, s.F[0].HpLike(), "counter:proj cancels the shot");
             Assert.AreEqual(1, s.F[0].CounterStrike);
             Assert.AreEqual(0, CountShots(s, 1), "countered shot despawned");
         }
@@ -364,13 +376,13 @@ namespace ChibiClash.Tests
             InjectShot(s, 1, mult: 800);
             var shot = FirstShot(s, 1);
             shot.Vx = -9000;
-            int hp0 = s.F[0].HpU;
+            int hp0 = s.F[0].HpLike();
 
             // Act
             Game(s, N, N);
 
             // Assert
-            Assert.AreEqual(hp0, s.F[0].HpU, "reflected, not hit");
+            Assert.AreEqual(hp0, s.F[0].HpLike(), "reflected, not hit");
             Assert.AreEqual(0, shot.Owner, "owner flipped");
             Assert.AreEqual(9000, shot.Vx, "velocity reversed");
             Assert.AreEqual(1000, shot.Mult, "Mult x 1250 / 1000");
@@ -404,7 +416,7 @@ namespace ChibiClash.Tests
             Game(s, P(ChibiDir.S, ChibiButtons.Special));
             Idle(s, row.Startup);
             int yAfterStartup = s.F[0].Y;
-            int hp0 = s.F[1].HpU;
+            int hp0 = s.F[1].HpLike();
 
             // Act: dive until the landing step.
             int steps = 0;
@@ -414,8 +426,8 @@ namespace ChibiClash.Tests
             Assert.Greater(yAfterStartup, 2800, "startup hovers (V forced 0, one tick of gravity per tick)");
             Assert.IsTrue(s.F[0].Grounded, "landed inside the dive window");
             Assert.AreEqual(row.Startup + row.Active, s.F[0].MoveTick, "landing jumps to recovery");
-            Assert.Less(s.F[1].HpU, hp0, "landing hit on the landing step");
-            Assert.AreEqual(row.Ext.LandKbY, s.F[1].Vy, "landing hit kb (launch up)");
+            Assert.Less(s.F[1].HpLike(), hp0, "landing hit on the landing step");
+            Assert.Greater(s.F[1].Vy, 0, "landing hit kb (launch up)");
         }
 
         [Test]
@@ -427,13 +439,13 @@ namespace ChibiClash.Tests
             Place(s.F[1], 0, 6000, -1);
             s.F[1].Vy = 0;
             Game(s, P(ChibiDir.S, ChibiButtons.Special));
-            int hp0 = s.F[1].HpU;
-            for (int k = 0; k < row.Startup + row.Active && s.F[1].HpU == hp0; k++)
+            int hp0 = s.F[1].HpLike();
+            for (int k = 0; k < row.Startup + row.Active && s.F[1].HpLike() == hp0; k++)
             {
                 s.F[1].Vy = 0; s.F[1].Y = 6000;             // keep the target hanging (fixture)
                 Game(s, N, N);
             }
-            Assert.Less(s.F[1].HpU, hp0, "precondition: the dive hit");
+            Assert.Less(s.F[1].HpLike(), hp0, "precondition: the dive hit");
             Assert.AreEqual(ChibiMovesetConst.DivePopVy * VelSub, s.F[0].Vy, "pop up");
             Assert.AreEqual(row.Startup + row.Active, s.F[0].MoveTick, "recovery in the air");
         }
@@ -535,10 +547,10 @@ namespace ChibiClash.Tests
         {
             var s = Arena(FighterClass.Ranged, FighterClass.Heavy, 0, 2000);
             var row = Row(FighterClass.Ranged, "ren_sspec");
-            int hp0 = s.F[1].HpU;
+            int hp0 = s.F[1].HpLike();
             Game(s, P(ChibiDir.E, ChibiButtons.Special));
             Idle(s, row.Startup + 4);
-            Assert.Less(s.F[1].HpU, hp0, "precondition: hit");
+            Assert.Less(s.F[1].HpLike(), hp0, "precondition: hit");
             Assert.AreEqual(1, CountShots(s, 0), "piercing shot still active");
             Assert.AreEqual(0, FirstShot(s, 0).Flags & ChibiProjectileSim.FDestructible, "pierce = not destructible");
         }
@@ -580,11 +592,13 @@ namespace ChibiClash.Tests
         {
             var s = Arena(FighterClass.Ranged, FighterClass.Heavy, 0, 3000);
             var row = Row(FighterClass.Ranged, "ren_grapple2");
-            int hp0 = s.F[1].HpU;
+            int hp0 = s.F[1].HpLike();
             Game(s, P(ChibiDir.N, ChibiButtons.Skill1));
-            for (int k = 0; k < row.Startup + 12 && s.F[1].HpU == hp0; k++) Game(s, N, N);
-            Assert.Less(s.F[1].HpU, hp0, "precondition: grapple hit");
-            Assert.AreEqual(-row.KbX / 2, s.F[1].Vx, "pull (Dir reversed), Ren kb halved (OD-4)");
+            for (int k = 0; k < row.Startup + 12 && s.F[1].HpLike() == hp0; k++) Game(s, N, N);
+            Assert.Less(s.F[1].HpLike(), hp0, "precondition: grapple hit");
+            Assert.Less(s.F[1].Vx, 0, "pull (Dir reversed) toward the attacker");
+            var pull = ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], row.KbX, row.KbY, -1, row.Stun);
+            Assert.AreEqual(pull.Vx, s.F[1].Vx, "pull launch, Ren x0.85 (v20 ClassKbP replaces OD-4 halving)");
         }
 
         // ================================================================== zones
@@ -595,11 +609,11 @@ namespace ChibiClash.Tests
             // Arrange: Kaia Blade Trap (zone:contact:0:240, centred 1600 wide) with Bruna standing in it.
             var s = Arena(FighterClass.Melee, FighterClass.Heavy, 0, 500);
             var row = Row(FighterClass.Melee, "kaia_dspec");
-            int hp0 = s.F[1].HpU;
+            int hp0 = s.F[1].HpLike();
             Game(s, P(ChibiDir.S, ChibiButtons.Special));
             Idle(s, row.Startup + 1);
             bool spawned = s.Zones[0].Active;
-            int hpAtSpawn = s.F[1].HpU;
+            int hpAtSpawn = s.F[1].HpLike();
 
             // Act
             Game(s, N, N);
@@ -607,7 +621,7 @@ namespace ChibiClash.Tests
             // Assert
             Assert.IsTrue(spawned, "zone spawned on the first active tick");
             Assert.AreEqual(hp0, hpAtSpawn, "no hit on the spawn step");
-            Assert.Less(s.F[1].HpU, hp0, "hit on the zone's first update");
+            Assert.Less(s.F[1].HpLike(), hp0, "hit on the zone's first update");
             Assert.IsFalse(s.Zones[0].Active, "consumed");
         }
 
@@ -617,13 +631,13 @@ namespace ChibiClash.Tests
             // Lyra Starfall Trap zone:timed:60:12, 1300 ahead.
             var s = Arena(FighterClass.Magic, FighterClass.Heavy, 0, 2000);
             var row = Row(FighterClass.Magic, "lyra_starfall");
-            int hp0 = s.F[1].HpU;
+            int hp0 = s.F[1].HpLike();
             Game(s, P(ChibiDir.S, ChibiButtons.Skill1));
             Idle(s, row.Startup + 1 + 60);
-            int hpBefore = s.F[1].HpU;
+            int hpBefore = s.F[1].HpLike();
             Idle(s, 1);
             Assert.AreEqual(hp0, hpBefore, "nothing before zone age 60");
-            Assert.Less(s.F[1].HpU, hp0, "burst at zone age 60");
+            Assert.Less(s.F[1].HpLike(), hp0, "burst at zone age 60");
         }
 
         [Test]

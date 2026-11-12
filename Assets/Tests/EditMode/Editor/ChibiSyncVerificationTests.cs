@@ -55,7 +55,7 @@ namespace ChibiClash.Tests
         static IEnumerable<TestCaseData> SyncMatrix()
         {
             for (int c = 0; c < Classes.Length; c++)
-                for (int stage = 0; stage < 3; stage++)
+                for (int stage = 0; stage < ChibiStageTable.Count; stage++)   // rules v20: stages 3..7 with hazards on
                     yield return new TestCaseData(Classes[c], Classes[(c + 2) % Classes.Length], stage)
                         .SetName($"TwoPeers_HostileLink_{Classes[c]}_vs_{Classes[(c + 2) % Classes.Length]}_Stage{stage}_StayInSync");
         }
@@ -316,8 +316,8 @@ namespace ChibiClash.Tests
             Assert.AreEqual(0, s.DroppedSummons, "summon pool overflow");
             for (int i = 0; i < 2; i++)
             {
-                Assert.GreaterOrEqual(s.F[i].HpU, 0);
-                Assert.LessOrEqual(s.F[i].HpU, s.F[i].Stats.MaxHp * ChibiCombatStats.HpScale);
+                Assert.That(s.F[i].PctM >= 0 && s.F[i].PctM <= ChibiPercentConst.PctCapM, "percent in range (rules v20)");
+                Assert.That(s.F[i].Stocks >= 0 && s.F[i].Stocks <= ChibiPercentConst.StocksStart, "stocks in range (rules v20)");
                 Assert.That(s.F[i].Ult >= 0 && s.F[i].Ult <= ChibiSimConst.UltMax);
                 Assert.IsFalse(s.F[i].Held && !s.F[1 - i].Holding, "held invariant");
             }

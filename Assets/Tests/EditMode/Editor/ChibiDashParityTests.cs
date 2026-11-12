@@ -102,11 +102,11 @@ namespace ChibiClash.Tests
         static int MeleeLightFirstHitTick()
         {
             var s = NewMatch(x1: 0, p2: FighterClass.Melee, x2: OverlapOffset, facing2: -1);
-            int hp0 = s.F[0].Hp;
+            int hp0 = s.F[0].HpLike();
             for (int n = 0; n < 30; n++)
             {
                 Tick(s, Neutral, n == 0 ? Hold(ChibiDir.Neutral, ChibiButtons.Light) : Neutral);
-                if (s.F[0].Hp < hp0) return n;
+                if (s.F[0].HpLike() < hp0) return n;
             }
             return -1;
         }
@@ -281,13 +281,13 @@ namespace ChibiClash.Tests
             var s = NewMatch(x1: 0, p2: FighterClass.Melee, x2: OverlapOffset, facing2: -1);
             int dashTick = startup;                         // so the P2 press tick (dashTick + k - startup) is >= 0
             int p2Press = dashTick + hitTick - startup;
-            int hp0 = s.F[0].Hp;
+            int hp0 = s.F[0].HpLike();
 
             // Act
             int hpBefore = hp0;
             for (int t = 0; t <= dashTick + hitTick; t++)
             {
-                if (t == dashTick + hitTick) hpBefore = s.F[0].Hp;
+                if (t == dashTick + hitTick) hpBefore = s.F[0].HpLike();
                 Tick(s, t == dashTick ? DashPress() : Neutral,
                         t == p2Press ? Hold(ChibiDir.Neutral, ChibiButtons.Light) : Neutral);
             }
@@ -295,9 +295,9 @@ namespace ChibiClash.Tests
             // Assert
             Assert.AreEqual(hp0, hpBefore, "fixture: no hit before dash tick " + hitTick);
             if (expectLand)
-                Assert.Less(s.F[0].Hp, hpBefore, "dash tick 6: invulnerability (6 ticks) has expired, the hit lands");
+                Assert.Less(s.F[0].HpLike(), hpBefore, "dash tick 6: invulnerability (6 ticks) has expired, the hit lands");
             else
-                Assert.AreEqual(hpBefore, s.F[0].Hp, "dash tick " + hitTick + ": invulnerable, the hit misses");
+                Assert.AreEqual(hpBefore, s.F[0].HpLike(), "dash tick " + hitTick + ": invulnerable, the hit misses");
         }
 
         // ------------------------------------------------------------------ shield (section 2 shield rows)
@@ -360,7 +360,7 @@ namespace ChibiClash.Tests
             Assert.GreaterOrEqual(startup, 0, "fixture: the Melee light must hit an idle overlapping victim");
             int victimX = (int)(startup * DashStepMilli) + 1000;
             var s = NewMatch(x1: 0, facing1: 1, p2: FighterClass.Heavy, x2: victimX, facing2: -1);
-            int p2Hp0 = s.F[1].Hp;
+            int p2Hp0 = s.F[1].HpLike();
 
             // Act: Light, then Dash on the next tick while the swing runs (dash start is outside the actionLock gate,
             // Fighter.cs:309). Rules v18 (README 1.2, intended): Light + Dash on the SAME tick is now the dash attack
@@ -377,7 +377,7 @@ namespace ChibiClash.Tests
             // Assert
             Assert.IsTrue(moveRunning, "the light attack is still running on the dash tick");
             Assert.AreEqual(GroundDashDistance, x7 - x0, PosTol, "the dash moves the fighter while the swing continues");
-            Assert.Less(s.F[1].Hp, p2Hp0, "the attack is not interrupted: it still arms and hits");
+            Assert.Less(s.F[1].HpLike(), p2Hp0, "the attack is not interrupted: it still arms and hits");
         }
 
         // ------------------------------------------------------------------ hit cancels (section 2 "Hit during the dash")
@@ -391,7 +391,7 @@ namespace ChibiClash.Tests
             var s = NewMatch(x1: 0, p2: FighterClass.Melee, x2: OverlapOffset, facing2: -1);
             int dashTick = startup;
             int p2Press = dashTick + DashInvulnTicks - startup;
-            int hp0 = s.F[0].Hp;
+            int hp0 = s.F[0].HpLike();
             int x0 = 0;
 
             // Act: run through dash tick 6
@@ -402,7 +402,7 @@ namespace ChibiClash.Tests
                 if (t == dashTick) x0 = s.F[0].X;
             }
             int x6 = s.F[0].X;
-            bool hit = s.F[0].Hp < hp0;
+            bool hit = s.F[0].HpLike() < hp0;
             int maxStepAfter = int.MinValue;
             for (int k = 0; k < 4; k++)
             {

@@ -286,9 +286,9 @@ namespace ChibiClash.Tests
             const int tx = 3000, py = 725;                     // target feet (3000, 0); point y 725 inside the box height
             var s = Arena(FighterClass.Ranged, RangedBase, -7500, tx);
             var p = Place(s, 0, new Spec { X = px, Y = py, Vx = 0, Vy = 0 });   // stationary probe, r 250
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             Update(s, Hold(s, tx, 0));
-            Assert.AreEqual(expectHit, s.F[1].HpU < hp, $"P1: r 250 at ({px}, {py}) vs box edge {tx - HurtHalfW}: hit");
+            Assert.AreEqual(expectHit, s.F[1].HpLike() < hp, $"P1: r 250 at ({px}, {py}) vs box edge {tx - HurtHalfW}: hit");
             Assert.AreEqual(!expectHit, p.Active, "P1: a hitting non-pierce arrow is despawned, a miss stays");
         }
 
@@ -298,9 +298,9 @@ namespace ChibiClash.Tests
         {
             for (int n = 1; n <= ArrowLife; n++)
             {
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Update(s, Hold(s, tx, 0));
-                if (s.F[1].HpU < hp) { xAtHit = s.Proj[slot].X; return n; }
+                if (s.F[1].HpLike() < hp) { xAtHit = s.Proj[slot].X; return n; }
             }
             xAtHit = 0;
             return -1;
@@ -464,9 +464,9 @@ namespace ChibiClash.Tests
             int outHits = 0, backHits = 0;
             for (int n = 1; n <= LongRun && p.Active; n++)
             {
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Update(s, hold);
-                if (s.F[1].HpU >= hp) continue;
+                if (s.F[1].HpLike() >= hp) continue;
                 if (n < SpearReturnTicks)
                 {
                     outHits++;
@@ -528,14 +528,14 @@ namespace ChibiClash.Tests
             const int tx = 3000;
             var s = Arena(FighterClass.Ranged, RangedBase, -7500, tx);
             var p = Place(s, 0, new Spec { X = tx, Y = CenterY + dist });
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             Update(s, () =>
             {
                 Put(s.F[1], tx, 0, -1);
                 if (guard) s.F[1].GuardTicks = GuardHold; else s.F[1].RingTicks = RingHold;
             });
             Assert.AreEqual(survives, p.Active, $"{(guard ? "P10" : "P11")}: arrow {dist} above the target centre: survives");
-            Assert.AreEqual(hp, s.F[1].HpU, "probe must not hit (it is outside the 250 circle)");
+            Assert.AreEqual(hp, s.F[1].HpLike(), "probe must not hit (it is outside the 250 circle)");
         }
 
         // ================================================================== P12 / P13 growth + pierce
@@ -557,9 +557,9 @@ namespace ChibiClash.Tests
             var hits = new List<int>();
             for (int n = 1; n <= WaveLife; n++)
             {
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Update(s, Hold(s, tx, 0));
-                if (s.F[1].HpU < hp) hits.Add(n);
+                if (s.F[1].HpLike() < hp) hits.Add(n);
                 Assert.AreEqual(WaveR + WaveGrowPerTick * n, GetInt(p, "Radius"), $"P12: Radius after update {n}");
                 if (n < WaveLife) Assert.IsTrue(p.Active, $"P12: wave gone on update {n} (Pierce, Life 66)");
             }
@@ -709,13 +709,13 @@ namespace ChibiClash.Tests
             const int tx = 1000;                               // lead (650, 1175) on update 1 is inside the target box
             var s = Arena(FighterClass.Ranged, RangedBase, -7000, tx);
             var lead = Place(s, 0, Lead());
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             Action before = () => { Put(s.F[1], tx, 0, -1); s.F[1].RingTicks = RingHold; };
             for (int n = 1; n < LeadLife; n++)
             {
                 Update(s, before);
                 Assert.IsTrue(lead.Active, $"P16: lead removed on update {n} (Harmless: never hit-tested or destroyed)");
-                Assert.AreEqual(hp, s.F[1].HpU, $"P16: lead damaged the target on update {n}");
+                Assert.AreEqual(hp, s.F[1].HpLike(), $"P16: lead damaged the target on update {n}");
             }
         }
 
@@ -730,11 +730,11 @@ namespace ChibiClash.Tests
             Action before = () => { Put(s.F[1], tx, 0, -1); s.F[1].Invuln = DashInvuln; };
             int slot = Fire(s, ChibiButtons.Light, before);
             var p = s.Proj[slot];
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             for (int n = 1; n < contactUpdate; n++) { Update(s, before); Assert.IsTrue(p.Active, $"P17: arrow gone on update {n}"); }
             Update(s, before);
             Assert.IsFalse(p.Active, "P17: arrow must be consumed on contact even though the hit misses (HasHit + despawn)");
-            Assert.AreEqual(hp, s.F[1].HpU, "P17: invulnerable target took damage");
+            Assert.AreEqual(hp, s.F[1].HpLike(), "P17: invulnerable target took damage");
         }
 
         // P18 -- CO:101: kb direction = Vel.x >= 0 ? +1 : -1, so a vertical shot (Vx = 0) knocks toward +X.
@@ -745,11 +745,12 @@ namespace ChibiClash.Tests
             const int kbX = 22500;
             var s = Arena(FighterClass.Ranged, RangedBase, -7500, tx);
             Place(s, 0, new Spec { X = tx, Y = -1000, Vx = 0, Vy = ArrowLightSpeed, KbX = kbX });
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             for (int n = 1; n < contactUpdate; n++) Update(s, Hold(s, tx, 0));
             Update(s, Hold(s, tx, 0));
-            Assert.Less(s.F[1].HpU, hp, "P18: precondition, the vertical arrow hit on update 3");
-            Assert.AreEqual(kbX / 2, s.F[1].Vx, "P18: knockback Vx = +KbX x 0.5 (Ranged) -- Dir must be +1 for Vx = 0");
+            Assert.Less(s.F[1].HpLike(), hp, "P18: precondition, the vertical arrow hit on update 3");
+            // Rules v20: no Ranged halving; (22500, 0) is set knockback (magnitude < 30 000, spec 4.5), so Vx = +KbX exactly.
+            Assert.AreEqual(kbX, s.F[1].Vx, "P18: knockback Vx = +KbX (set knockback) -- Dir must be +1 for Vx = 0");
         }
 
         // ================================================================== P19 pool + A1 / A4
@@ -990,7 +991,8 @@ namespace ChibiClash.Tests
         // ================================================================== P22 ring-out (A7)
 
         // P22 -- A7, F:670-710: the owner's ring-out keeps the returning spear and SpearOut; the next update the spear
-        // retargets the owner's respawned Center; it still despawns at the owner and clears SpearOut.
+        // retargets the owner's current Center; it still despawns at the owner and clears SpearOut. Rules v20: a KO keeps
+        // the owner Out at the crossing point for 60 ticks before the respawn, so "current" is that point.
         [Test]
         public void P22_OwnerRingOut_ReturningSpearRetargetsRespawn()
         {
@@ -1001,20 +1003,21 @@ namespace ChibiClash.Tests
             var p = s.Proj[slot];
             for (int n = 1; n <= returningAt; n++) Update(s);
             Update(s, () => Put(s.F[0], st.BlastX + 500, 0, 1));          // ring-out at the end of this game step
-            Assert.AreEqual(st.RespawnX, s.F[0].X, "P22: precondition, the owner rang out and respawned");
+            Assert.AreEqual(1, s.F[0].KosTaken, "P22: precondition, the owner was KO'd (rules v20)");
             Assert.IsTrue(p.Active, "P22: ring-out removed the returning spear");
             Assert.IsTrue(SpearOut(s.F[0]), "P22: ring-out cleared SpearOut (Interrupt / RingOut never reset it)");
             int px = p.X, py = p.Y;
             Update(s);
             ScaleToRef(s.F[0].X - px, s.F[0].Y + CenterY - py, SpearReturnSpeed, out int evx, out int evy);
-            Assert.That(p.Vx, Is.InRange(evx - VelTol, evx + VelTol), "P22: return Vx toward the respawned owner");
-            Assert.That(p.Vy, Is.InRange(evy - VelTol, evy + VelTol), "P22: return Vy toward the respawned owner");
+            Assert.That(p.Vx, Is.InRange(evx - VelTol, evx + VelTol), "P22: return Vx toward the owner's current Center");
+            Assert.That(p.Vy, Is.InRange(evy - VelTol, evy + VelTol), "P22: return Vy toward the owner's current Center");
             for (int n = 0; n < LongRun && p.Active; n++) Update(s);
-            Assert.IsFalse(p.Active, "P22: spear never reached the respawned owner");
+            Assert.IsFalse(p.Active, "P22: spear never reached the owner");
             Assert.IsFalse(SpearOut(s.F[0]), "P22: SpearOut still set after the spear despawned");
         }
 
-        // P22 -- A7: homing retargets the opponent after its ring-out (next update steers toward the respawned Center).
+        // P22 -- A7: homing retargets the opponent after its ring-out (next update steers toward its current Center; rules
+        // v20: the KO'd target waits Out at the crossing point).
         [Test]
         public void P22_TargetRingOut_FireballRetargetsRespawn()
         {
@@ -1025,13 +1028,13 @@ namespace ChibiClash.Tests
             var p = s.Proj[slot];
             for (int n = 1; n < ringOutAt; n++) Update(s, Hold(s, tx, 0));
             Update(s, () => Put(s.F[1], -(st.BlastX + 500), 0, 1));
-            Assert.AreEqual(st.RespawnX, s.F[1].X, "P22: precondition, the target rang out and respawned");
+            Assert.AreEqual(1, s.F[1].KosTaken, "P22: precondition, the target was KO'd (rules v20)");
             Assert.IsTrue(p.Active, "P22: fireball removed by the target's ring-out");
             int px = p.X, py = p.Y, vx = p.Vx, vy = p.Vy;
             Update(s);
             SteerRef(ref vx, ref vy, FireballSpeed, s.F[1].X - px, s.F[1].Y + CenterY - py);
-            Assert.That(p.Vx, Is.InRange(vx - VelTol, vx + VelTol), "P22: homing Vx toward the respawned target");
-            Assert.That(p.Vy, Is.InRange(vy - VelTol, vy + VelTol), "P22: homing Vy toward the respawned target");
+            Assert.That(p.Vx, Is.InRange(vx - VelTol, vx + VelTol), "P22: homing Vx toward the target's current Center");
+            Assert.That(p.Vy, Is.InRange(vy - VelTol, vy + VelTol), "P22: homing Vy toward the target's current Center");
         }
     }
 }

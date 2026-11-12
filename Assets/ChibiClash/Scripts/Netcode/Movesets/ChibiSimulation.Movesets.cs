@@ -307,11 +307,9 @@ namespace ChibiClash.Netcode
             var st = ChibiStageTable.Get(s.Stage);
             int dx = DirXOf(f.MoveDir), dy = DirYOf(f.MoveDir), d = mv.Ext.TeleportDist;
             if (dx != 0 && dy != 0) d = d * ChibiMovesetConst.TeleportDiag / 1000;
-            int lim = st.BlastX - ChibiMovesetConst.TeleportMargin;
-            int nx = Math.Max(-lim, Math.Min(lim, f.X + dx * d));
-            // SEC-105: never into a blast zone: under the ceiling and above the kill line by TeleportMargin.
-            int ny = Math.Max(st.KillY + ChibiMovesetConst.TeleportMargin,
-                              Math.Min(st.CeilingY - ChibiMovesetConst.TeleportMargin, f.Y + dy * d));
+            // SEC-105 / rules v20: never into a blast zone: inside every edge (active or solid) by TeleportMargin.
+            int nx = f.X + dx * d, ny = f.Y + dy * d;
+            st.ClampInside(ref nx, ref ny, ChibiMovesetConst.TeleportMargin);
             f.X = nx; f.Y = ny; f.XRem = 0; f.YRem = 0;
             if (ny < 0 && Math.Abs(nx) < st.HalfWidth + ChibiStageTable.SupportHalfW)
             {
@@ -355,7 +353,7 @@ namespace ChibiClash.Netcode
         {
             var f = s.F[i];
             if (f.PullTicks <= 0) return;
-            if (f.Stun > 0 || f.HpU <= 0) { f.PullTicks = 0; return; }
+            if (f.Stun > 0 || !f.InPlay) { f.PullTicks = 0; return; }
             int dx = f.AnchorX - f.X, dy = f.AnchorY - f.Y;
             int m = Math.Max(Math.Abs(dx), Math.Abs(dy));
             if (m <= ChibiMovesetConst.PullArrive) { f.PullTicks = 0; f.Vx /= 2; f.Vy /= 2; return; }
@@ -420,6 +418,7 @@ namespace ChibiClash.Netcode
         static void AdjustKb(ref PendingHit h, ChibiFighterSim victim, ChibiMoveExt e)
         {
             if (e.Has(ChibiMoveExt.FSpike) && victim.Grounded) h.KbY = -h.KbY / 2;
+            if (e.Has(ChibiMoveExt.FTrip) && victim.Grounded) h.Trip = true;   // rules v20: grounded trip = set knockback
             if (e.Has(ChibiMoveExt.FTrip) && !victim.Grounded)
             {
                 h.KbX = ChibiMovesetConst.TripAirKbX; h.KbY = ChibiMovesetConst.TripAirKbY; h.Stun = ChibiMovesetConst.TripAirStun;
@@ -527,9 +526,10 @@ namespace ChibiClash.Netcode
 
         /// <summary>
         /// <c>armor</c> (README 5): during move ticks A..B a non-unblockable hit sets no stun and no Interrupt; with KBP &gt; 0
-        /// the knockback is scaled by KBP / 1000 (still gated by KbMinSq), else the velocity is unchanged. Damage already ran.
+        /// the launch velocity is scaled by KBP / 1000 (still gated by KbMinSq), else the velocity is unchanged. Damage already
+        /// ran. Rules v20 (percent-knockback.md 3.2 step 7): a hit with knockback &gt;= ArmorBreakKbM breaks the armor (false).
         /// </summary>
-        static bool ArmorAbsorbs(ChibiSimState s, int d, in PendingHit h)
+        static bool ArmorAbsorbs(ChibiSimState s, int d, in PendingHit h, int kbM, int vx, int vy)
         {
             var D = s.F[d];
             if (h.Unblockable || D.MoveSlot < FirstNew || D.Charging) return false;
@@ -538,8 +538,9 @@ namespace ChibiClash.Netcode
             int t = D.MoveTick - 1;
             int to = e.ArmorTo < 0 ? D.MoveStartup + D.MoveActive - 1 : e.ArmorTo;
             if (t < e.ArmorFrom || t > to) return false;
+            if (kbM >= ChibiPercentConst.ArmorBreakKbM) return false;
             if (e.ArmorKbPermille > 0)
-                SetKnockback(D, (int)((long)h.Dir * h.KbX * e.ArmorKbPermille / 1000), (int)((long)h.KbY * e.ArmorKbPermille / 1000));
+                SetKnockback(D, (int)((long)vx * e.ArmorKbPermille / 1000), (int)((long)vy * e.ArmorKbPermille / 1000));
             return true;
         }
 
@@ -560,11 +561,14 @@ namespace ChibiClash.Netcode
             var st = ChibiStageTable.Get(s.Stage);
             int best = int.MinValue;
             if (prevY >= 0 && y <= 0 && Math.Abs(x) < st.HalfWidth) best = 0;
+            if (st.HasFloor && st.FloorY > best && prevY >= st.FloorY && y <= st.FloorY && Math.Abs(x) < st.FloorHalfW)
+                best = st.FloorY;                                                                         // v21 floor
             var plats = st.Platforms;
+            int t = s.GameTicks;
             for (int k = 0; k < plats.Length; k++)
             {
-                int top = plats[k].Top;
-                if (top > best && prevY >= top && y <= top && Math.Abs(x - plats[k].Cx) < plats[k].HalfW) best = top;
+                int top = plats[k].TopAt(t);
+                if (top > best && prevY >= top && y <= top && Math.Abs(x - plats[k].CxAt(t)) < plats[k].HalfW) best = top;
             }
             return best;
         }
@@ -579,7 +583,7 @@ namespace ChibiClash.Netcode
         static void Anchor(ChibiSimState s, int owner, int x, int y, ChibiMoveExt e)
         {
             var f = s.F[owner];
-            if (f.HpU <= 0) return;
+            if (!f.InPlay) return;
             f.PullTicks = e.TetherMax; f.PullSpeed = e.TetherSpeed; f.AnchorX = x; f.AnchorY = y;
         }
 
@@ -713,7 +717,7 @@ namespace ChibiClash.Netcode
                 var o = s.F[1 - z.Owner];
                 int age = z.Age++;
                 bool over = Overlaps(o, z.X0, z.X1, z.Y0, z.Y1);
-                if (e.ZoneSlow > 0 && over && o.HpU > 0) o.SlowTicks = Math.Max(o.SlowTicks, e.ZoneSlow);
+                if (e.ZoneSlow > 0 && over && o.InPlay) o.SlowTicks = Math.Max(o.SlowTicks, e.ZoneSlow);
                 bool live, once = true;
                 switch (e.ZoneKind)
                 {
@@ -724,7 +728,7 @@ namespace ChibiClash.Netcode
                         live = e.ZoneA > 0 && age % e.ZoneA == 0; once = false;
                         break;
                 }
-                if (!live || !over || o.Invuln > 0 || o.HpU <= 0) continue;
+                if (!live || !over || o.Invuln > 0 || !o.InPlay) continue;
                 int sx = Sign(o.X - (z.X0 + z.X1) / 2);
                 var h = new PendingHit
                 {

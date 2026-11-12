@@ -61,7 +61,7 @@ namespace ChibiClash.Tests
             Assert.AreEqual(0, s.F[0].PullTicks, "pull over");
             Assert.AreEqual(0, s.DroppedShots, "projectile pool");
             Assert.AreEqual(0, s.DroppedSummons, "zone / summon pool");
-            Assert.Greater(s.F[0].HpU, 0);
+            Assert.Greater(s.F[0].Stocks, 0);   // rules v20: stocks replace HP
         }
 
         // ================================================================== bot that presses the new inputs
@@ -209,7 +209,7 @@ namespace ChibiClash.Tests
                 Assert.IsTrue(r.Inputs[k].Has(ChibiButtons.Special));
                 Assert.AreEqual(m.Inputs[k], m.Inputs[k].Sanitized(), "Special is canonical (never cleared)");
             }
-            Assert.AreEqual(3, ChibiPacketCodec.ProtocolVersion, "bit 15 changed meaning: protocol 3");
+            Assert.GreaterOrEqual(ChibiPacketCodec.ProtocolVersion, 3, "bit 15 changed meaning in protocol 3 (4 since rules v20 / HazardsOff)");
         }
 
         // ================================================================== zone pool state coverage

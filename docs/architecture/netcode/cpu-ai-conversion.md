@@ -57,3 +57,20 @@ neutral dummy). Since the character movesets (design/gdd/movesets/) it presses d
   `ChibiCpuAiTests`; CPU-vs-CPU pairings also run in `ChibiSyncVerificationTests`.
 - **Known limit:** starts deep beside the stage's side wall are not survivable for Kaia, Bruna and Taro (no wall jump or
   ledge grab exists in the sim).
+
+## Addendum (2026-11-12, rules v20/v21): percent loop, stages and hazards
+
+- **Kill reads by percent:** each candidate move's knockback comes from the sim's own `ChibiSimulation.KnockbackM` (same
+  formula, no copy); launch distance ~ 0.44·KB² is compared with the ACTIVE KO edges of `ChibiStageTable.Get(stage)` only
+  (walls never KO). Smashes are saved for kill percent, tilts/aerials build percent; on Mountain (walls, vertical KO) the
+  finisher is an up smash. Ult use rises with the opponent's percent.
+- **Survival:** at its own kill percent the CPU shields more, keeps wider ledge margins and stops chasing off-stage.
+- **Ledges (v21):** the end of the walkable ground (MAIN half-width, or the finite floor on Bird Lair) is the ledge on every
+  stage; recovery targets it, and side / lower / moving platforms are landing candidates (moving ones predicted from
+  `PlatformCx/Top` at the arrival tick).
+- **Hazards (only when `s.HazardsOn`):** Volcano — leave an announced fire lane (or wait outside it if too late to cross);
+  Bird Lair — drop off the mesas and hold upwind during the gust, never stand in the body band; Ocean — drop to T1/T2/T3 when
+  the whale telegraphs and stay below until it rises.
+- **Respawn:** no input while `OutTicks`/`HoverTicks`, then one stick tick to leave the hover platform when safe.
+- **Tests:** `ChibiCpuStageTests` (20 cases: determinism per stage, fire-lane avoidance, whale shelter, no fall-off on Plain,
+  Bird Lair body band, respawn, kill-percent smash bias); all behaviour cases were watched failing against the pre-v20 CPU.

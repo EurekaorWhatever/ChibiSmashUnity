@@ -97,9 +97,8 @@ namespace ChibiClash.Netcode
             if (cur.CinematicRealTicks > prev.CinematicRealTicks && cur.CinematicFighter >= 0 && cur.CinematicFighter < 2)
                 output.Add(new ChibiSimEvent(ChibiSimEventKind.CinematicStarted, cur.CinematicFighter));
 
-            if (!prev.MatchOver && cur.MatchOver)
-                for (int i = 0; i < 2; i++)
-                    if (cur.F[i].HpU <= 0) output.Add(new ChibiSimEvent(ChibiSimEventKind.KO, i));
+            // Rules v20 (damage percent + stocks): a KO is any blast-line KO, emitted per fighter in DiffFighter from KosTaken.
+            // HP no longer exists in the match, so the old "HpU <= 0 at MatchOver" test would never fire.
 
             int n = cur.Proj.Length < prev.Proj.Length ? cur.Proj.Length : prev.Proj.Length;
             for (int i = 0; i < n; i++)
@@ -218,10 +217,11 @@ namespace ChibiClash.Netcode
                     output.Add(new ChibiSimEvent(ChibiSimEventKind.MovePhaseChanged, i, c.MovePhase, c.MoveSlot));
             }
 
-            // Fires on any micro-HP decrease (even 0.4 HP); Value is the loss rounded half-up to whole HP for the popup (F:438).
-            if (c.HpU < p.HpU)
-                output.Add(new ChibiSimEvent(ChibiSimEventKind.Damaged, i,
-                    (int)(((long)p.HpU - c.HpU + ChibiCombatStats.HpScale / 2) / ChibiCombatStats.HpScale)));
+            // Rules v20: damage is a PERCENT increase (PctM, milli-percent). Fires on any increase; Value is the gain rounded
+            // half-up to whole percent for the popup / sounds (a tiny burn tick rounds to 0 and stays silent, like before).
+            // A KO resets PctM to 0 (a decrease), which is the KO event below, never a Damaged.
+            if (c.PctM > p.PctM)
+                output.Add(new ChibiSimEvent(ChibiSimEventKind.Damaged, i, (c.PctM - p.PctM + 500) / 1000));
 
             if (c.Shielding != p.Shielding) output.Add(new ChibiSimEvent(ChibiSimEventKind.ShieldChanged, i, on: c.Shielding));
 
@@ -230,9 +230,9 @@ namespace ChibiClash.Netcode
             bool ps = p.Stun > 0, cs = c.Stun > 0;
             if (ps != cs) output.Add(new ChibiSimEvent(ChibiSimEventKind.StunChanged, i, on: cs));
 
-            if (c.Invuln == ChibiSimConst.RespawnInvuln && p.Invuln != ChibiSimConst.RespawnInvuln &&
-                c.X == 0 && c.Y == ChibiSimConst.RespawnY)
-                output.Add(new ChibiSimEvent(ChibiSimEventKind.RingOut, i));
+            // Rules v20: every KO crosses an active blast line (KosTaken counts them, training included). The old HP-era
+            // ring-out signature (respawn invuln at (0, RespawnY)) no longer exists, so RingOut is not emitted any more.
+            if (c.KosTaken > p.KosTaken) output.Add(new ChibiSimEvent(ChibiSimEventKind.KO, i));
 
             if (c.DashTicks > 0 && (p.DashTicks == 0 || c.DashTicks > p.DashTicks))
                 output.Add(new ChibiSimEvent(ChibiSimEventKind.DashStarted, i, c.DashDir));
@@ -240,7 +240,8 @@ namespace ChibiClash.Netcode
             // Rules v15: SuperJumpCd is set to its full value only on the pose tick and otherwise only counts down.
             if (c.SuperJumpCd > p.SuperJumpCd) output.Add(new ChibiSimEvent(ChibiSimEventKind.PoseSuperJump, i));
             if (c.UltPrompt != p.UltPrompt) output.Add(new ChibiSimEvent(ChibiSimEventKind.UltPromptChanged, i, c.UltPrompt));
-            if (c.Revives > p.Revives) output.Add(new ChibiSimEvent(ChibiSimEventKind.Revived, i));
+            // Training: a KO costs no stock ("revive"); in versus the same KO is just the KO event above.
+            if (c.KosTaken > p.KosTaken && c.Stocks == p.Stocks) output.Add(new ChibiSimEvent(ChibiSimEventKind.Revived, i));
         }
     }
 }

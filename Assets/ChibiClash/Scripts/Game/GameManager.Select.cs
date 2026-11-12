@@ -53,7 +53,7 @@ namespace ChibiClash
             if (HiddenRival) slotState[1] = SlotState.Ready;
             if (arcade) pending.stage = ArcadeStage(arcadeRound);
             pending.stage = Mathf.Clamp(pending.stage, 0, StageBuilder.Names.Length - 1);
-            stageTarget = stageAnim = pending.stage;
+            stageTarget = stageAnim = StagePos(pending.stage);   // the carousel scrolls menu positions, not sim indices
             selectMouse = false;
         }
 
@@ -74,6 +74,7 @@ namespace ChibiClash
                 bool Pressed(NavCmd c) => MenuInput.Player(0, c, solo) || (!solo && MenuInput.Player(1, c, false));
                 if (Pressed(NavCmd.Left)) StageStep(-1);
                 if (Pressed(NavCmd.Right)) StageStep(1);
+                if (Pressed(NavCmd.Alt)) ToggleHazards();
                 if (VsAiSelect && MenuInput.Player(0, NavCmd.Up, solo)) CpuLevel(1);
                 if (VsAiSelect && MenuInput.Player(0, NavCmd.Down, solo)) CpuLevel(-1);
                 if (Pressed(NavCmd.Confirm)) Confirm();
@@ -206,7 +207,14 @@ namespace ChibiClash
             if (arcade) { UiSound.Error(); return; }
             UiSound.Navigate();
             stageTarget += d;
-            pending.stage = Mod(Mathf.RoundToInt(stageTarget), StageBuilder.Names.Length);
+            pending.stage = StageAt(Mathf.RoundToInt(stageTarget));
+        }
+
+        /// <summary>Stage hazards on / off for the next match (ST-5; moving platforms move either way).</summary>
+        void ToggleHazards()
+        {
+            pending.hazards = !pending.hazards;
+            UiSound.Step();
         }
 
         void LeaveSelect()
@@ -288,7 +296,8 @@ namespace ChibiClash
             FightButton(new Rect(cx - 150f, 586f, 300f, 54f));
 
             if (AllReady)
-                Gui.HintBar(ml, Gui.Key(Solo ? "A / D" : "A D / ARROWS", "D-PAD"), "STAGE", Gui.Key(Solo ? "SPACE" : "SPACE / ENTER", "A"), "FIGHT", Gui.Key(Solo ? "ESC" : "ESC / BKSP", "B"), "CHANGE");
+                Gui.HintBar(ml, Gui.Key(Solo ? "A / D" : "A D / ARROWS", "D-PAD"), "STAGE", Gui.Key(Solo ? "R" : "R / DEL", "Y"), "HAZARDS",
+                            Gui.Key(Solo ? "SPACE" : "SPACE / ENTER", "A"), "FIGHT", Gui.Key(Solo ? "ESC" : "ESC / BKSP", "B"), "CHANGE");
             else if (Solo)
                 Gui.HintBar(ml, Gui.Key("WASD", "D-PAD"), "MOVE", Gui.Key("SPACE", "A"), "CONFIRM", Gui.Key("R", "Y"), "RANDOM", Gui.Key("ESC", "B"), "BACK");
             else
@@ -602,7 +611,7 @@ namespace ChibiClash
                 bool done = i < arcadeRound, current = i == arcadeRound;
                 Gui.Skew(row, current ? WithA(Gui.P2, 0.85f) : new Color(0.07f, 0.11f, 0.2f, 0.9f), 0.25f);
                 Gui.Text(new Rect(row.x + 12f, row.y, 90f, row.height), i == ArcadeRounds - 1 ? "FINAL" : "ROUND " + (i + 1), 12, current ? Gui.Paper : Gui.Muted, TextAnchor.MiddleLeft, true, false);
-                Gui.Text(new Rect(row.x + 100f, row.y, 120f, row.height), StageBuilder.Names[ArcadeStage(i)].ToUpper(), 12, Gui.Paper, TextAnchor.MiddleLeft, true, false);
+                Gui.Text(new Rect(row.x + 100f, row.y, 120f, row.height), StageLabel(ArcadeStage(i), 116f, 12), 12, Gui.Paper, TextAnchor.MiddleLeft, true, false);
                 string rival = done ? Hud.CharNameUpper(arcadeLadder[i]) + "  DEFEATED" : "???";
                 Gui.Text(new Rect(row.x, row.y, row.width - 12f, row.height), rival, 12, done ? Gui.Gold : Gui.Paper, TextAnchor.MiddleRight, true, false);
             }
@@ -612,7 +621,7 @@ namespace ChibiClash
 
         void StageCarousel(float cx, float y)
         {
-            int n = StageBuilder.Names.Length;
+            int n = StageCount;
             bool focus = AllReady;
             Gui.Text(new Rect(cx - 250f, y, 500f, 18f), arcade ? "ARCADE ROUTE  ·  STAGE " + (arcadeRound + 1) + " / " + ArcadeRounds : "SELECT STAGE", 13, focus ? Gui.Gold : Gui.Muted, TextAnchor.MiddleCenter, true, false);
             float py = y + 24f;
@@ -629,7 +638,7 @@ namespace ChibiClash
                     float sc = Mathf.Lerp(1f, 0.5f, Mathf.Clamp01(ao));
                     float w = bigW * sc, h = bigH * sc;
                     var r = new Rect(cx + off * spread - w * 0.5f, py + (bigH - h) * 0.5f, w, h);
-                    int idx = Mod(v, n);
+                    int idx = StageAt(v);   // carousel position -> sim stage (MenuOrder)
                     float alpha = Mathf.Clamp01(1.3f - ao * 0.55f);
                     bool hot = false;
                     if (!center && !arcade && Gui.Hit(r, out hot)) StageStep(off > 0f ? 1 : -1);
@@ -650,8 +659,12 @@ namespace ChibiClash
                 }
 
             float ny = py + bigH + 6f;
-            int cur = Mathf.Clamp(pending.stage, 0, n - 1);
-            Gui.Display(new Rect(cx - 200f, ny, 400f, 34f), StageBuilder.Names[cur].ToUpper(), 30, Gui.Paper, TextAnchor.MiddleCenter);
+            int cur = Mathf.Clamp(pending.stage, 0, StageBuilder.Names.Length - 1);
+            int curPos = StagePos(cur);
+            string stageName = StageBuilder.Names[cur].ToUpperInvariant();
+            int nameSize = 30;
+            while (nameSize > 20 && Gui.Measure(stageName, nameSize, true) > 270f) nameSize -= 2;   // long design-stage names shrink between the chevrons
+            Gui.Display(new Rect(cx - 200f, ny, 400f, 34f), stageName, nameSize, Gui.Paper, TextAnchor.MiddleCenter);
             Gui.Text(new Rect(cx - 200f, ny + 32f, 400f, 16f), StageBuilder.Taglines[cur], 12, Gui.Muted, TextAnchor.MiddleCenter, false, false);
             if (!arcade)
             {
@@ -661,7 +674,27 @@ namespace ChibiClash
                 Gui.Chevron(new Rect(cx + 150f, ny + 8f, 12f, 18f), hr ? Gui.Paper : Gui.Gold);
             }
             for (int i = 0; i < n; i++)
-                Gui.Skew(new Rect(cx - n * 11f + i * 22f + 3f, ny + 52f, 16f, 4f), i == cur ? Gui.Gold : WithA(Gui.Paper, 0.25f), 0.6f);
+                Gui.Skew(new Rect(cx - n * 11f + i * 22f + 3f, ny + 52f, 16f, 4f), i == curPos ? Gui.Gold : WithA(Gui.Paper, 0.25f), 0.6f);
+            HazardsChip(new Rect(cx + 116f, py, 112f, 20f), focus);   // above the right-hand side preview
+        }
+
+        /// <summary>
+        /// HAZARDS ON / OFF chip at the top right of the carousel (ST-5). Click, or R / DEL / gamepad Y once everyone is
+        /// ready. Writes only the menu's pending match config.
+        /// </summary>
+        void HazardsChip(Rect r, bool focus)
+        {
+            bool on = pending.hazards;
+            if (Gui.Hit(r, out bool hot)) ToggleHazards();
+            var c = on ? Gui.P1 : Gui.Steel;
+            Gui.Skew(new Rect(r.x + 3f, r.y + 3f, r.width, r.height), new Color(0f, 0f, 0f, 0.45f), 0.3f);
+            Gui.Skew(r, hot ? Color.Lerp(c, Gui.Paper, 0.2f) : c, 0.3f);
+            Gui.SkewFrame(r, hot ? Gui.Paper : WithA(Gui.Paper, on ? 0.6f : 0.3f), 1f, 0.3f);
+            Gui.Text(r, on ? "HAZARDS  ON" : "HAZARDS  OFF", 11, on ? Gui.Paper : Gui.Muted, TextAnchor.MiddleCenter, true, false);
+            if (focus)
+            {
+                Gui.KeyCap(r.xMax + 6f, r.y + 2f, Gui.Key("R", "Y"), 16f);
+            }
         }
 
         /// <summary>Procedural thumbnail of a stage: sky, backdrop, main platform and floating platforms (matches Stage.cs).</summary>
@@ -670,6 +703,19 @@ namespace ChibiClash
             float a0 = Gui.Alpha;
             Gui.Alpha = a0 * alpha;
             idx = Mathf.Clamp(idx, 0, StageBuilder.Names.Length - 1);
+            var thumb = StageBuilder.Thumbnail(idx);
+            if (thumb != null)
+            {
+                // Design stages show their real illustration (cropped to the slot's aspect around the arena).
+                float ta = (float)thumb.width / thumb.height, ra = r.width / r.height;
+                var uv = ta > ra ? new Rect((1f - ra / ta) * 0.5f, 0f, ra / ta, 1f) : new Rect(0f, (1f - ta / ra) * 0.5f, 1f, ta / ra);
+                var col = GUI.color;
+                GUI.color = new Color(1f, 1f, 1f, Gui.Alpha);
+                GUI.DrawTextureWithTexCoords(r, thumb, uv);
+                GUI.color = col;
+                Gui.Alpha = a0;
+                return;
+            }
             var sky = StageBuilder.PreviewSky[idx];
             var ground = StageBuilder.PreviewGround[idx];
             var trim = StageBuilder.PreviewTrim[idx];

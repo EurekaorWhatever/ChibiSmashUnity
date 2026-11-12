@@ -157,9 +157,10 @@ namespace ChibiClash.Netcode
         /// Wire protocol version, checked in the handshake and in the Lobby filter. Bump on ANY change to this layout,
         /// the control messages or the rollback rules. 1: 3-bit count / 8 inputs. 2: 4-bit count / 16 inputs, oldest-
         /// unacked resend window, control channel 0xC9. 3: input bit 15 is the Special (B) button instead of the
-        /// PoseVerified hint (CH-3); same layout, new meaning, so old builds must refuse new ones.
+        /// PoseVerified hint (CH-3); same layout, new meaning, so old builds must refuse new ones. 4: the handshake Start
+        /// message carries a 1-bit HazardsOff after the stage, and the stage range is 0..7 (rules v20 / v21, ST-1 / ST-5).
         /// </summary>
-        public const int ProtocolVersion = 3;
+        public const int ProtocolVersion = 4;
         /// <summary>
         /// Capacity of every send/receive BitBuffer. Worst case is 392 bits = 49 bytes; 64 leaves headroom for a later
         /// field without another wire break, and stays far below Relay's 1400-byte limit.

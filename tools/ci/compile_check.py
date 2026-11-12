@@ -17,9 +17,39 @@ import subprocess
 import sys
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-UNITY = r"C:\Program Files\Unity\Hub\Editor\6000.6.7f1\Editor\Data"
-DOTNET = os.path.join(UNITY, "NetCoreRuntime", "dotnet.exe")
-CSC = os.path.join(UNITY, "DotNetSdk", "sdk", "8.0.318", "Roslyn", "bincore", "csc.dll")
+
+
+def find_unity_data():
+    """Editor Data dir: $UNITY_EDITOR_DATA, else the version in ProjectSettings/ProjectVersion.txt under the standard
+    Hub install locations (Windows, macOS)."""
+    env = os.environ.get("UNITY_EDITOR_DATA")
+    if env:
+        return env
+    ver = None
+    pv = os.path.join(ROOT, "ProjectSettings", "ProjectVersion.txt")
+    if os.path.exists(pv):
+        m = re.search(r"m_EditorVersion:\s*(\S+)", open(pv, encoding="utf-8").read())
+        ver = m.group(1) if m else None
+    cands = []
+    if ver:
+        cands += [
+            os.path.join(os.environ.get("ProgramFiles", r"C:\Program Files"), "Unity", "Hub", "Editor", ver, "Editor", "Data"),
+            os.path.join(os.environ.get("ProgramFiles", r"C:\Program Files"), "Unity", "Editor", "Data"),
+            "/Applications/Unity/Hub/Editor/%s/Unity.app/Contents" % ver,
+            os.path.expanduser("~/Unity/Hub/Editor/%s/Editor/Data" % ver),
+        ]
+    for c in cands:
+        if os.path.isdir(c):
+            return c
+    sys.exit("Unity editor %s not found (tried %s). Set UNITY_EDITOR_DATA to the editor's Data folder." % (ver, cands))
+
+
+UNITY = find_unity_data()
+EXE = ".exe" if os.name == "nt" else ""
+DOTNET = os.path.join(UNITY, "NetCoreRuntime", "dotnet" + EXE)
+import glob
+_csc = sorted(glob.glob(os.path.join(UNITY, "DotNetSdk", "sdk", "*", "Roslyn", "bincore", "csc.dll")))
+CSC = _csc[-1] if _csc else os.path.join(UNITY, "DotNetSdk", "sdk", "8.0.318", "Roslyn", "bincore", "csc.dll")
 OUT = os.path.join(ROOT, "Temp", "compile_check")
 SCRIPT_ASSEMBLIES = os.path.join(ROOT, "Library", "ScriptAssemblies")
 

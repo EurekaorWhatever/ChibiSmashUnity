@@ -42,7 +42,7 @@ namespace ChibiClash.Tests
                 P(Host, "<size=500>Kira</size>", "99", ready: true, start: new string('x', 500)),
                 P(Guest, "Pip"), P("third", "Extra"),
             };
-            var s = ChibiRoomRules.Snapshot("id", "<color=red>Evil</color> Room", "../x", Host, "7", new string('g', 200), "r", raw);
+            var s = ChibiRoomRules.Snapshot("id", "<color=red>Evil</color> Room", "../x", Host, "9", new string('g', 200), "r", raw);   // 9: out of 0..7
 
             Assert.AreEqual(2, s.Slots.Count, "never more than 2 seats");
             Assert.IsFalse(s.Slots[0].Name.Contains("<"), s.Slots[0].Name);
@@ -120,7 +120,20 @@ namespace ChibiClash.Tests
         }
 
         [TestCase(null, 0)] [TestCase("1", 1)] [TestCase("2", 2)] [TestCase("-1", 0)] [TestCase("abc", 0)]
+        [TestCase("3", 3)] [TestCase("7", 7)] [TestCase("8", 0)]   // rules v20: stages 0..7 (ST-1)
+        [TestCase(" 3", 0)] [TestCase("99999999999", 0)] [TestCase("+3", 0)] [TestCase("03", 3)]   // SEC-001: strict digits
         public void ParseStage_Range(string raw, int expected) => Assert.AreEqual(expected, ChibiRoomRules.ParseStage(raw));
+
+        [TestCase(null, false)] [TestCase("1", false)] [TestCase("0", true)] [TestCase("off", false)] [TestCase("", false)]
+        public void Snapshot_HazardsKey_OnlyZeroTurnsThemOff(string hz, bool expectedOff)
+        {
+            var raw = new List<ChibiRoomRawPlayer> { P(Host, "Kira") };
+            var s = ChibiRoomRules.Snapshot("id", "Room", "ABCD", Host, "5", "", "", raw, hz);
+            Assert.AreEqual(expectedOff, s.HazardsOff, "ST-5: absent / garbage = hazards on (the default)");
+            Assert.AreEqual(5, s.Stage);
+            Assert.AreEqual("0", ChibiRoomRules.HazardsValue(false));
+            Assert.AreEqual("1", ChibiRoomRules.HazardsValue(true));
+        }
 
         [Test]
         public void NewNonce_ShortAndDifferent()

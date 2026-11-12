@@ -508,7 +508,7 @@ namespace ChibiClash
                 switch (i)
                 {
                     case 0: rule = "Fight all " + ArcadeRounds + " characters in a row, in a random order."; break;
-                    case 1: rule = "The stage changes every round: Sky Dojo, Neon City, Lava Forge."; break;
+                    case 1: rule = "The stage changes every round, from the Mountain of the Beginning to the Ocean Monument."; break;
                     case 2: rule = "Lost a round? Continue and retry it."; break;
                     case 3: rule = "CPU difficulty: " + DifficultyUpper[Save.settings.cpuDifficulty] + " (change it in Settings)."; break;
                     default: rule = "Wins earn coins and quest progress, the same as VS CPU."; break;
@@ -535,7 +535,7 @@ namespace ChibiClash
                 int st = ArcadeStage(i);
                 var prev = new Rect(row.x + 230f, row.y + 8f, (row.height - 16f) * 2f, row.height - 16f);
                 StagePreview(prev, st, 1f);
-                Gui.Text(new Rect(prev.xMax + 16f, row.y, 220f, row.height), StageBuilder.Names[st].ToUpper(), 15, Gui.Paper, TextAnchor.MiddleLeft);
+                Gui.Text(new Rect(prev.xMax + 16f, row.y, 220f, row.height), StageLabel(st, 216f, 15), 15, Gui.Paper, TextAnchor.MiddleLeft);
                 Gui.Display(new Rect(row.x, row.y, row.width - 30f, row.height), "RIVAL  ???", 26, Gui.Muted, TextAnchor.MiddleRight);
                 Gui.Alpha = 1f;
             }

@@ -70,6 +70,7 @@ namespace ChibiClash.Netcode
                 Session.OnFrame += Replay.Add;
             }
             _clock.Reset();
+            _skipDelta = true;   // perf audit F3: no catch-up burst for the match-build frame
         }
 
         /// <summary>
@@ -101,8 +102,34 @@ namespace ChibiClash.Netcode
             _p0.PollRenderFrame();
             _p1.PollRenderFrame();
 
-            int n = _clock.Advance(Time.unscaledDeltaTime, Dilation);
+            int n = _clock.Advance(PacedDelta(), Dilation);
             for (int i = 0; i < n; i++) Session.Tick();
+        }
+
+        // ------------------------------------------------------------------ frame pacing (perf audit 2026-11-11)
+        // docs/performance/2026-11-11-smoothness-audit.md F2/F3. Offline only: ChibiOnlineMatch / ChibiP2PPeerLoop
+        // must stay locked to wall time for rollback time sync, so they keep the raw delta.
+
+        /// <summary>
+        /// Most wall time one rendered frame may feed the offline clock: 3 ticks (50 ms). Down to 20 fps the game still
+        /// runs at full speed; a longer hitch (texture upload, GC, window drag) becomes a brief slowdown instead of a
+        /// 4-5 tick jump that teleports fighters and eats inputs. Frame-locked console fighters behave the same way.
+        /// </summary>
+        const float MaxFrameSeconds = 3f * ChibiTickClock.TickSeconds;
+
+        bool _skipDelta = true;   // the first frame after Begin carries the match-build / load hitch: ignore it
+
+        /// <summary>This frame's wall delta for the offline clock: load frame skipped, vSync jitter snapped, hitches capped.</summary>
+        float PacedDelta()
+        {
+            if (_skipDelta) { _skipDelta = false; return 0f; }
+            float dt = Time.unscaledDeltaTime;
+            if (QualitySettings.vSyncCount > 0)
+            {
+                double hz = Screen.currentResolution.refreshRateRatio.value;
+                if (hz >= 30.0) dt = ChibiTickClock.SnapToRefresh(dt, (float)(QualitySettings.vSyncCount / hz));
+            }
+            return Mathf.Min(dt, MaxFrameSeconds);
         }
     }
 }

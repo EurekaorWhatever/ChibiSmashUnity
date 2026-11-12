@@ -18,10 +18,13 @@ namespace ChibiClash.Tests
         const int Ticks = 1500;
 
         /// <summary>
-        /// Recorded by compiling the committed rules v17 sources (git HEAD 73de00f, a worktree) together with this exact file
-        /// and running it outside Unity, per pairing c0 vs (c0 + 2) % 5. NOT values printed by the v18 code.
+        /// Rules v20 re-pin, ON PURPOSE (percent-knockback.md, GL-1..GL-3): every landed hit now launches by the percent
+        /// formula and the fingerprint reads PctM instead of the retired HpU, so the v17 trace (git 73de00f: 0x66970CB8u,
+        /// 0x6FF11880u, 0x2CC7FBFBu, 0xC5BD08EDu, 0xC6965F65u) cannot hold any more. v18/v19 kept it bit for bit, which
+        /// proved the moveset port left neutral inputs alone; these values pin the v20 trace so a later change to the
+        /// neutral kit still shows up here. Recorded by running this file against the rules v20 build outside Unity.
         /// </summary>
-        static readonly uint[] GoldenV17 = { 0x66970CB8u, 0x6FF11880u, 0x2CC7FBFBu, 0xC5BD08EDu, 0xC6965F65u };
+        static readonly uint[] GoldenV20 = { 0x89FC7AFFu, 0x833EAAF2u, 0x382E95DCu, 0x46F72735u, 0xD56F4841u };
 
         static ChibiInputPacket Bot(ChibiSimState s, int i, int n, int seed)
         {
@@ -57,7 +60,7 @@ namespace ChibiClash.Tests
             for (int i = 0; i < 2; i++)
             {
                 var f = s.F[i];
-                Mix(ref h, f.X); Mix(ref h, f.Y); Mix(ref h, f.Vx); Mix(ref h, f.Vy); Mix(ref h, f.HpU); Mix(ref h, f.Facing);
+                Mix(ref h, f.X); Mix(ref h, f.Y); Mix(ref h, f.Vx); Mix(ref h, f.Vy); Mix(ref h, f.PctM); Mix(ref h, f.Facing);
                 Mix(ref h, f.MoveSlot); Mix(ref h, f.MoveTick); Mix(ref h, f.MoveMult); Mix(ref h, f.Stun); Mix(ref h, f.Invuln);
                 Mix(ref h, f.Ult); Mix(ref h, f.Cd[0]); Mix(ref h, f.Cd[1]); Mix(ref h, f.Cd[2]); Mix(ref h, f.ComboIdx);
                 Mix(ref h, f.GuardU); Mix(ref h, f.Shielding ? 1 : 0); Mix(ref h, f.Grounded ? 1 : 0); Mix(ref h, f.SetCd);
@@ -94,17 +97,17 @@ namespace ChibiClash.Tests
         static IEnumerable<TestCaseData> Pairings()
         {
             for (int c = 0; c < 5; c++)
-                yield return new TestCaseData(c).SetName($"NeutralInputs_{(FighterClass)c}_vs_{(FighterClass)((c + 2) % 5)}_MatchTheV17TraceBitForBit");
+                yield return new TestCaseData(c).SetName($"NeutralInputs_{(FighterClass)c}_vs_{(FighterClass)((c + 2) % 5)}_MatchThePinnedTraceBitForBit");
         }
 
         [TestCaseSource(nameof(Pairings))]
-        public void NeutralInputs_MatchTheV17TraceBitForBit(int c0)
+        public void NeutralInputs_MatchThePinnedTraceBitForBit(int c0)
         {
             // Arrange / Act
             uint h = Play(c0);
 
             // Assert
-            Assert.AreEqual(GoldenV17[c0], h, $"v17 fingerprint changed: now 0x{h:X8}u (neutral inputs must keep the old moves)");
+            Assert.AreEqual(GoldenV20[c0], h, $"pinned v20 fingerprint changed: now 0x{h:X8}u (neutral inputs must keep their moves)");
         }
     }
 }

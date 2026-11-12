@@ -118,6 +118,7 @@ namespace ChibiClash
                 Seed = (uint)Environment.TickCount ^ 0x5EEDC0DEu,   // offline: any seed; the match is not shared
                 Class0 = Config.cls[0], Class1 = Config.cls[1], Passive0 = Config.passive[0], Passive1 = Config.passive[1],
                 Stage = Config.stage, Intro = true, Training = Config.training,
+                HazardsOff = !Config.hazards,   // ST-5: stage events toggle (moving platforms move either way)
             };
             var src = new IChibiInputSource[2];
             for (int i = 0; i < 2; i++)
@@ -144,7 +145,7 @@ namespace ChibiClash
         {
             var hs = runner.Match.Handshake;
             var cfg = hs.Config;
-            var mc = new MatchConfig { stage = cfg.Stage, training = false };
+            var mc = new MatchConfig { stage = cfg.Stage, training = false, hazards = !cfg.HazardsOff };   // F3: the agreed switch
             mc.cls[0] = cfg.Class0; mc.cls[1] = cfg.Class1;
             mc.passive[0] = cfg.Passive0; mc.passive[1] = cfg.Passive1;
             mc.cpu[0] = mc.cpu[1] = false;

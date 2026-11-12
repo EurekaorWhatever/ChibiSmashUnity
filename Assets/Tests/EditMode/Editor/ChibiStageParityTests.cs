@@ -34,7 +34,7 @@ namespace ChibiClash.Tests
 
         // ---- stage indices (doc section 0, Stage.cs:19-51)
         const int SkyDojo = 0, NeonCity = 1, LavaForge = 2;
-        const int OutOfRangeStage = 5;          // Stage.cs `default:` builds Sky Dojo (doc section 8, row 18)
+        const int OutOfRangeStage = 9;          // Stage.cs `default:` builds Sky Dojo (doc section 8, row 18); 3..7 are real since v20
 
         // ---- geometry (doc section 1 table, sim milli; feet-relative)
         const int MainTop = 0;
@@ -469,7 +469,8 @@ namespace ChibiClash.Tests
 
         // ------------------------------------------------------------------ ring-out (doc section 6, rows 4, 15-16)
 
-        const int RingOutPenaltyPermille = 150;     // Fighter.cs:692-708, -15% max HP
+        // Rules v20 (percent-knockback.md 3.4): crossing an active edge is a KO: a stock lost, Out 60 ticks, then the respawn
+        // point and a hover. The -15 % ring-out penalty is gone; the classic ceiling is a KO edge too.
         const int ProbeHighY = 12000;               // above every surface, below the ceiling
 
         /// <summary>Feet drop of one neutral tick from rest (measured, so velocity units stay out of the test).</summary>
@@ -485,20 +486,26 @@ namespace ChibiClash.Tests
         static bool RingsOutAt(int stage, int x, int y, int drop, out ChibiSimState s, out int hp0)
         {
             s = NewMatch(stage);
-            hp0 = s.F[0].Hp;
+            hp0 = s.F[0].Stocks;
             PlaceInAir(s, x, y + drop);
             Tick(s, Neutral);
-            return s.F[0].Hp < hp0;
+            return s.F[0].KosTaken > 0;
         }
 
-        static void AssertRingOut(ChibiSimState s, int hp0, string what)
+        /// <summary>Rules v20: a stock lost, Out for RespawnDelay ticks, then the respawn point (airborne, hovering).</summary>
+        static void AssertRingOut(ChibiSimState s, int stocks0, string what)
         {
             var f = s.F[0];
-            Assert.AreEqual(hp0 - f.Stats.MaxHp * RingOutPenaltyPermille / 1000, f.Hp, what + ": -15% max HP");
+            Assert.AreEqual(stocks0 - 1, f.Stocks, what + ": one stock lost");
+            Assert.AreEqual(ChibiPercentConst.RespawnDelay, f.OutTicks, what + ": out");
+            Assert.IsFalse(s.MatchOver, what + ": stocks left, the match goes on");
+            for (int k = 0; k < ChibiPercentConst.RespawnDelay; k++) Tick(s, Neutral);
+            Assert.AreEqual(0, f.OutTicks, what + ": back");
             Assert.AreEqual(RespawnX, f.X, what + ": respawn X");
             Assert.AreEqual(RespawnY, f.Y, PosTol, what + ": respawn Y 7775 (feet)");
             Assert.IsFalse(f.Grounded, what + ": respawns airborne");
-            Assert.IsFalse(s.MatchOver, what + ": ring-out is not a KO");
+            Assert.AreEqual(ChibiPercentConst.RespawnHoverMax, f.HoverTicks, what + ": hovering");
+            Assert.AreEqual(0, f.PctM, what + ": percent reset");
         }
 
         [TestCase(SkyDojo, 17000)]     // row 15, halfWidth 8 + 9
@@ -524,7 +531,7 @@ namespace ChibiClash.Tests
 
             Assert.IsFalse(RingsOutAt(stage, 0, CeilingY, d, out _, out _), "Y = 17775 is not a ring-out");
             Assert.IsTrue(RingsOutAt(stage, 0, CeilingY + 1, d, out var st, out int ht), "Y = 17776 rings out");
-            AssertRingOut(st, ht, "ceiling (ring-out, not KO)");
+            AssertRingOut(st, ht, "ceiling (rules v20: a KO edge)");
         }
 
         // Row 4: respawn (0, 7775) lands on platform C on Sky Dojo / Neon City, on the main stage on Lava Forge.
@@ -535,13 +542,16 @@ namespace ChibiClash.Tests
         {
             // Arrange: ring out off the right edge
             var s = NewMatch(stage);
-            int hp0 = s.F[0].Hp;
+            int stocks0 = s.F[0].Stocks;
             PlaceInAir(s, blastX + 1000, ProbeHighY);
             Tick(s, Neutral);
-            AssertRingOut(s, hp0, "precondition");
+            AssertRingOut(s, stocks0, "precondition");
 
-            // Act
-            int landTick = TicksUntilGrounded(s, 90);
+            // Act: rules v20: any input ends the hover and that tick plays normally (here Shield: no horizontal drift).
+            Tick(s, ChibiInputPacket.Make(ChibiDir.Neutral, ChibiButtons.Shield));
+            Assert.AreEqual(0, s.F[0].HoverTicks, "hover ended by the input");
+            int rest = s.F[0].Grounded ? 0 : TicksUntilGrounded(s, 90);
+            int landTick = rest < 0 ? -1 : rest + 1;
 
             // Assert
             Assert.AreNotEqual(-1, landTick, "respawned fighter never landed");

@@ -20,7 +20,15 @@ namespace ChibiClash.Netcode
         const float MilliToWorld = 1f / 1000f;
         const float FeetToPivot = 0.725f;
         const float StunVisualTicks = 18f;        // Fighter.cs shows the stun stars above 0.3 s of hitstun
-        const float CamLerp = 6f, CamSizeLerp = 5f, CamMinSize = 5.5f, CamMaxSize = 10f, CamPad = 3.2f;
+        const float CamMinSize = 5.5f, CamMaxSize = 10f, CamPad = 3.2f;
+        // Critically damped springs (SmoothDamp, unscaled time): position / zoom / ult-focus smooth times in seconds.
+        const float CamSmooth = 0.22f, CamSizeSmooth = 0.3f, CamFocusSmooth = 0.12f;
+        // Classic framing keeps the centre >= ground + 3 (was the fixed 0.5 at ground -2.5); below the ground (Ocean
+        // tiers, recoveries) it follows the lowest fighter + 2.275 instead.
+        const float CamGroundLift = 3f, CamLowLift = 2.275f;
+        // Launched fighter: lean toward the blast line (velocity x 0.3 s, max 4 u) and zoom out up to +1.2 at full
+        // strength. Everyone else: a slight lead in the direction of motion (velocity x 0.12 s, max 1.2 u).
+        const float CamLeadSec = 0.3f, CamLeadMax = 4f, CamLaunchZoom = 1.2f, CamMoveLeadSec = 0.12f, CamMoveLeadMax = 1.2f;
         const float ShakeOnHit = 0.25f, ShakeDecay = 2.5f, ShakeScale = 0.6f;
         // Ult cinematic, MatchController.Cinematic (MatchController.cs:184-193) and CameraController (Stage.cs:161-164).
         const float CinematicFocusSec = 0.8f, CinematicFocusSize = 3.6f, CinematicShake = 0.3f;
@@ -134,6 +142,14 @@ namespace ChibiClash.Netcode
         readonly Color[] _fx = new Color[2];          // CharacterRoster Fx colour per fighter (move VFX, popups, trails)
         readonly Color[] _accent = new Color[2];
         ChibiMoveVfx _moveFx;
+        ChibiLaunchFx _launchFx;   // launch trails, KO blasts, respawn hover / blink (presentation only)
+        int _stageIndex;           // camera bounds are read from ChibiStageTable every frame (KO lines may move)
+        Vector2 _camGoal;          // last framing goal / size, kept while nobody is in play
+        float _camGoalSize;
+        bool _camGoalSet;
+        Vector2 _camBase, _camVel; // spring state: camera centre without shake, and its velocity
+        float _camSizeVel;
+        bool _camBaseSet;
         bool _victoryShown;
         // Moveset zones (rune fields): one ring + glow per pool slot, built once.
         sealed class ZoneVis { public Transform Root; public SpriteRenderer Ring, Glow; public bool Live; public int SpawnTick, Owner; }
@@ -184,8 +200,13 @@ namespace ChibiClash.Netcode
             _seen.CopyFrom(state);
 
             Fx.Init(transform);
-            // Stage chosen by cfg.Stage (0 Sky Dojo, 1 Neon City, 2 Lava Forge); sim Y 0 maps to _stage.groundY.
+            // Stage chosen by cfg.Stage (0..2 classic, 3..7 the map design sheet); sim Y 0 maps to _stage.groundY.
             _stage = StageBuilder.Build(cfg.Stage, transform);
+            // Design stages move platforms and play stage events from the displayed sim state (read-only).
+            if (_stage.design != null) _stage.design.Bind(() => _loop != null ? _loop.State : null);
+            // Cinematic post FX (bloom, stage grade, vignette, KO / ult punches); off when the player disabled it.
+            ChibiPostFx.Attach(transform, cfg.Stage, () => _loop != null ? _loop.State : null);
+            ChibiBladeTrails.Attach(transform, GroundY, () => _loop != null ? _loop.State : null);   // [blade-trails hook] HDR blade ribbons, hit sparks, muzzle flares, afterimages (reads state only)
 
             for (int i = 0; i < 2; i++)
             {
@@ -264,6 +285,8 @@ namespace ChibiClash.Netcode
                 _zones[i] = z;
             }
             _moveFx = new ChibiMoveVfx(transform, _vis);
+            _launchFx = new ChibiLaunchFx(transform, _vis, _fx, GroundY, FeetToPivot);
+            _stageIndex = cfg.Stage;
 
             _cam = Camera.main;
             loop.OnFrame += OnSimFrame;
@@ -326,6 +349,7 @@ namespace ChibiClash.Netcode
                 }
             }
             CaptureMoveset(cur, first);
+            _launchFx.OnSimStep(_seen, cur);   // launches / KOs / respawns of this step (reads both states)
             _before.CopyFrom(_seen);
             _seen.CopyFrom(cur);
         }
@@ -367,6 +391,7 @@ namespace ChibiClash.Netcode
                         break;
                     }
                     case ChibiSimEventKind.RingOut:
+                    case ChibiSimEventKind.KO:   // rules v20: every KO is a blast-line KO (ChibiSimEvents emits KO per stock)
                     {
                         // The respawned state is already in cur; the flight starts where the fighter left (_seen).
                         var f = _seen.F[e.Index];
@@ -408,7 +433,8 @@ namespace ChibiClash.Netcode
                 var m = _newMoves[k];
                 var info = ChibiMoveInfo.Get(m.Cls, m.Slot);
                 var v = _vis[m.Fighter];
-                v.PlayClip(ChibiMoveFxTable.ClipFor(info.AnimKind), m.Total);
+                // AN-1 sheet poses (strike frame on the first active tick), else the kind clip
+                v.PlayMoveClip(info.Id, ChibiMoveFxTable.ClipFor(info.AnimKind), m.Startup, m.Active, m.Total - m.Startup - m.Active);
                 if (info.Valid && !string.IsNullOrEmpty(info.SfxStart)) ChibiAudio.Play(info.SfxStart, m.Fighter);   // [audio hook] move start
                 ChibiMoveFxTable.Get(m.Cls, m.Slot, out var fa, out var fb, out bool dual, out bool accent);
                 var c = accent ? _accent[m.Fighter] : _fx[m.Fighter];
@@ -529,6 +555,7 @@ namespace ChibiClash.Netcode
 
                 // Sim velocities are sub-units (1/VelSub milli per tick): convert to world units per second.
                 var vel = new Vector2(f.Vx, f.Vy) * (ChibiSimConst.TickRate * MilliToWorld / ChibiSimConst.VelSub);
+                v.SetAlpha(_launchFx.BodyAlpha(i));   // hidden while KO'd, blinking during respawn invulnerability
                 v.Tick(vel, f.Grounded, f.Shielding);
 
                 bool parry = f.ParryTicks > 0;
@@ -590,10 +617,19 @@ namespace ChibiClash.Netcode
             UpdateMinionsAndClouds(alpha);
             UpdateZones();
             _moveFx.Tick(Time.deltaTime);   // scaled, like FighterVisual and Fx
+            _launchFx.Tick(Time.deltaTime);
+            _shake = Mathf.Max(_shake, _launchFx.TakeShake());
+            if (_launchFx.TakeFlash(out var koFlashColor, out float koFlash) && koFlash > FlashAlpha)
+            {
+                FlashAlpha = koFlash;
+                FlashColor = koFlashColor;
+            }
 
             Fx.Tick(Time.deltaTime);   // scaled, like MatchController.cs:118
             FlashAlpha = Mathf.MoveTowards(FlashAlpha, 0f, Time.unscaledDeltaTime * FlashDecay);   // MatchController.cs:119
             UpdateCamera();
+            // Design stages: after the camera (parallax), with the fighters' own game-step alpha (moving platforms, hazards).
+            if (_stage != null && _stage.design != null) _stage.design.Sync(alpha);
         }
 
         void AddBurst(Vector2 pos, Color c, int count, float speed, float size) =>
@@ -724,9 +760,9 @@ namespace ChibiClash.Netcode
                     Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 8, 3f, 0.3f);   // Fighter.cs dash start
                     break;
                 case ChibiSimEventKind.KO:
+                    // Rules v20: the KO'd body is already off-screen (out / respawn); the KO blast at the blast line comes from
+                    // ChibiLaunchFx and the flying ghost from the KoFly above, so no burst / text at the (hidden) body here.
                     _vis[e.Index].PlayClipLocked("KO", 0f);
-                    Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 40, 8f, 0.5f);
-                    Fx.Text(Center(e.Index) + Vector2.up * 1.4f, "K.O.", Gui.Red, 1.5f);
                     break;
                 case ChibiSimEventKind.CinematicStarted:
                     StartCinematic(e.Index);
@@ -968,32 +1004,88 @@ namespace ChibiClash.Netcode
             if (_cam == null) return;
             _cam.orthographic = true;
             float dt = Time.unscaledDeltaTime;
+            float aspect = Mathf.Max(0.1f, _cam.aspect);
+            var t = _cam.transform;
+            if (!_camBaseSet) { _camBase = t.position; _camBaseSet = true; }
+            // Camera rect from the stage's KO lines / walls, read live (GL-3 may move the lines): never far past a blast
+            // line, wall edges visible, floor kept low in frame.
+            Rect bounds = ChibiCameraFraming.Bounds(ChibiStageTable.Get(_stageIndex), GroundY);
             Vector2 goal;
-            float size;
+            float size, smooth = CamSmooth;
             if (_focus >= 0 && Time.unscaledTime < _focusUntil)
             {
                 goal = Center(_focus);                                       // Stage.cs:161-164
                 size = CinematicFocusSize;
+                smooth = CamFocusSmooth;
+            }
+            else if (FrameFighters(aspect, out goal, out size))
+            {
+                _camGoal = goal; _camGoalSize = size; _camGoalSet = true;
             }
             else
             {
-                Vector2 a = Center(0), b = Center(1);
-                goal = (a + b) * 0.5f;
-                goal.y = Mathf.Max(goal.y, 0.5f);
-                float dist = Mathf.Max(Mathf.Abs(a.x - b.x) * 0.5f / Mathf.Max(0.1f, _cam.aspect), Mathf.Abs(a.y - b.y) * 0.5f);
-                size = Mathf.Clamp(dist + CamPad, CamMinSize, CamMaxSize);
+                goal = _camGoalSet ? _camGoal : _camBase;                    // nobody in play: hold the last framing
+                size = _camGoalSet ? _camGoalSize : _cam.orthographicSize;
             }
-            var t = _cam.transform;
-            Vector3 basePos = Vector3.Lerp(t.position, new Vector3(goal.x, goal.y, -10f), 1f - Mathf.Exp(-dt * CamLerp));
-            basePos.z = -10f;
-            _cam.orthographicSize = Mathf.Lerp(_cam.orthographicSize, size, 1f - Mathf.Exp(-dt * CamSizeLerp));
+            size = Mathf.Min(size, ChibiCameraFraming.MaxSize(bounds, aspect, CamMaxSize));
+            float cur = Mathf.SmoothDamp(_cam.orthographicSize, size, ref _camSizeVel, CamSizeSmooth, Mathf.Infinity, dt);
+            _cam.orthographicSize = cur;
+            goal = ChibiCameraFraming.ClampCentre(goal, cur, aspect, bounds);
+            Vector2 p = Vector2.SmoothDamp(_camBase, goal, ref _camVel, smooth, Mathf.Infinity, dt);
+            _camBase = ChibiCameraFraming.ClampCentre(p, cur, aspect, bounds);
             Vector3 offset = Vector3.zero;
             if (_shake > 0f)
             {
                 offset = (Vector3)(FxRandom.InsideUnitCircle * _shake * ShakeScale);
                 _shake = Mathf.MoveTowards(_shake, 0f, dt * ShakeDecay);
             }
-            t.position = basePos + offset;
+            t.position = new Vector3(_camBase.x, _camBase.y, -10f) + offset;   // shake never leaks into the spring
+        }
+
+        /// <summary>
+        /// Framing goal and size for the fighters on screen (KO'd ones are skipped; a hovering one counts): their bounding
+        /// box, plus a launched fighter's lean point toward the blast line, plus the KO point for a moment after a KO;
+        /// centre kept above the floor (CamGroundLift / CamLowLift), a slight lead in the direction of motion, and a
+        /// gentle zoom-out on strong launches. False when nobody is on screen.
+        /// </summary>
+        bool FrameFighters(float aspect, out Vector2 goal, out float size)
+        {
+            float minX = float.MaxValue, maxX = float.MinValue, minY = float.MaxValue, maxY = float.MinValue;
+            float lowest = float.MaxValue, launch = 0f;
+            Vector2 motion = Vector2.zero;
+            int n = 0;
+            for (int i = 0; i < 2; i++)
+            {
+                if (_vis[i] == null || _launchFx.IsOut(i)) continue;
+                Vector2 c = Center(i);
+                Encapsulate(c, ref minX, ref maxX, ref minY, ref maxY);
+                lowest = Mathf.Min(lowest, c.y);
+                n++;
+                bool launched = _launchFx.LaunchLead(i, out var v, out float s);
+                float m = v.magnitude;
+                if (launched && m > 0.01f)
+                {
+                    Encapsulate(c + v / m * Mathf.Min(m * CamLeadSec, CamLeadMax) * Mathf.Lerp(0.5f, 1f, s), ref minX, ref maxX, ref minY, ref maxY);
+                    launch = Mathf.Max(launch, s);
+                }
+                else motion += v;
+            }
+            if (n == 0) { goal = Vector2.zero; size = 0f; return false; }
+            if (_launchFx.KoFocus(out var ko)) Encapsulate(ko, ref minX, ref maxX, ref minY, ref maxY);
+            goal = new Vector2((minX + maxX) * 0.5f, (minY + maxY) * 0.5f);
+            goal.y = Mathf.Max(goal.y, Mathf.Min(GroundY + CamGroundLift, lowest + CamLowLift));
+            goal += Vector2.ClampMagnitude(motion / n * CamMoveLeadSec, CamMoveLeadMax);
+            float dist = Mathf.Max((maxX - minX) * 0.5f / aspect, (maxY - minY) * 0.5f);
+            size = Mathf.Clamp(dist + CamPad + CamLaunchZoom * launch, CamMinSize, CamMaxSize);
+            return true;
+        }
+
+        static void Encapsulate(Vector2 p, ref float minX, ref float maxX, ref float minY, ref float maxY)
+        {
+            if (p.x < minX) minX = p.x;
+            if (p.x > maxX) maxX = p.x;
+            if (p.y < minY) minY = p.y;
+            if (p.y > maxY) maxY = p.y;
         }
 
         void OnDestroy()
@@ -1007,6 +1099,7 @@ namespace ChibiClash.Netcode
             _newHits.Clear();
             _koFly.Clear();
             _moveFx?.Clear();
+            _launchFx?.Clear();
             Fx.Popups.Clear();
         }
     }

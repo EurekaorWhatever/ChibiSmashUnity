@@ -72,7 +72,15 @@ namespace ChibiClash
         {
             Save = SaveData.Load();
             Bindings.Data = Save;
-            Application.targetFrameRate = 120;
+            // Perf audit P4 #6: every widget is GUI.* (no GUILayout / GUI.Window anywhere), so skip the Layout event pass;
+            // halves OnGUI calls per frame. GUI.TextField / FocusControl do not need it (verify text fields in Play Mode).
+            useGUILayout = false;
+            // Frame pacing (perf audit 2026-11-11, docs/performance/2026-11-11-smoothness-audit.md F1): present on every
+            // display refresh (60/120/144/165 Hz) whatever quality level is active (Very Low / Low ship vSyncCount 0).
+            // targetFrameRate is ignored while vSync is on; it only caps the frame rate at the refresh rate when a GPU
+            // driver forces vSync off (the old fixed 120 tore on 60 Hz and judders 120-on-144 Hz).
+            QualitySettings.vSyncCount = 1;
+            Application.targetFrameRate = Mathf.Max(60, Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value));
             menuInput = new HumanInput(0);
             var sim = new SimulatedPoseSource("P1 simulated", () => menuInput.SimulatedGesture, () => menuInput.Slouching);
             menuPose = new AutoPoseSource(0, sim, () => Save.settings.useWebcam);
@@ -557,7 +565,33 @@ namespace ChibiClash
             pending.stage = ArcadeStage(r);
         }
 
-        static int ArcadeStage(int round) => round % StageBuilder.Names.Length;
+        /// <summary>Arcade round stage: the menu order (design stages first, ST-1), so a 5-round run visits all five.</summary>
+        static int ArcadeStage(int round) => StageAt(round);
+
+        /// <summary>Number of stages offered in menus.</summary>
+        static int StageCount => StageBuilder.MenuOrder.Length;
+
+        /// <summary>Sim stage index shown at menu position <paramref name="pos"/> (wraps), per <see cref="StageBuilder.MenuOrder"/>.</summary>
+        static int StageAt(int pos)
+        {
+            int n = StageBuilder.MenuOrder.Length;
+            return StageBuilder.MenuOrder[((pos % n) + n) % n];
+        }
+
+        /// <summary>Menu position of sim stage index <paramref name="stage"/> (0 when it is not offered).</summary>
+        static int StagePos(int stage)
+        {
+            for (int k = 0; k < StageBuilder.MenuOrder.Length; k++)
+                if (StageBuilder.MenuOrder[k] == stage) return k;
+            return 0;
+        }
+
+        /// <summary>Stage name that fits <paramref name="width"/> at <paramref name="size"/>: full name, else the short one.</summary>
+        static string StageLabel(int stage, float width, int size, bool display = false)
+        {
+            string full = StageBuilder.Names[stage].ToUpperInvariant();
+            return Gui.Measure(full, size, display) <= width ? full : StageBuilder.ShortNames[stage].ToUpperInvariant();
+        }
 
         /// <summary>Label of the results screen's first button (arcade continues the ladder instead of a rematch).</summary>
         public string RematchLabel

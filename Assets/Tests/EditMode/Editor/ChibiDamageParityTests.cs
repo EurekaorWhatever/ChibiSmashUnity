@@ -105,21 +105,19 @@ namespace ChibiClash.Tests
         // ------------------------------------------------------------------ unit-agnostic HP / guard (contract item 2)
 
         const BindingFlags Pub = BindingFlags.Public | BindingFlags.Instance;
-        static readonly FieldInfo HpUField = typeof(ChibiFighterSim).GetField("HpU", Pub);
-        static readonly FieldInfo HpField = typeof(ChibiFighterSim).GetField("Hp", Pub);
         static readonly FieldInfo GuardUField = typeof(ChibiFighterSim).GetField("GuardU", Pub);
         static readonly FieldInfo Guard10Field = typeof(ChibiFighterSim).GetField("GuardHp10", Pub);
         const double MicroPerHp = 1_000_000.0;            // HpScale (contract item 3)
         const double TenthsPerHp = 10.0;                  // today's GuardHp10
 
-        static double HpOf(ChibiFighterSim f) =>
-            HpUField != null ? Convert.ToDouble(HpUField.GetValue(f)) / MicroPerHp : Convert.ToDouble(HpField.GetValue(f));
+        // Rules v20 (percent-knockback.md 4.1): HP left the state. The damage pipeline is unchanged and every hit's micro-HP
+        // becomes percent through Pct (5 HP = 1 %, half-up to 0.005 HP), so these tests keep checking exact damage through an
+        // HP-equivalent view: HP = MaxHp - PctM / 200. Every expected value here is a multiple of 0.005 HP.
+        const double MilliPctPerHp = 200.0;
 
-        static void SetHp(ChibiFighterSim f, double hp)
-        {
-            if (HpUField != null) HpUField.SetValue(f, (int)Math.Round(hp * MicroPerHp));
-            else HpField.SetValue(f, (int)Math.Round(hp));
-        }
+        static double HpOf(ChibiFighterSim f) => f.Stats.MaxHp - f.PctM / MilliPctPerHp;
+
+        static void SetHp(ChibiFighterSim f, double hp) => f.PctM = (int)Math.Round((f.Stats.MaxHp - hp) * MilliPctPerHp);
 
         static double GuardOf(ChibiFighterSim f) =>
             GuardUField != null ? Convert.ToDouble(GuardUField.GetValue(f)) / MicroPerHp
@@ -410,7 +408,7 @@ namespace ChibiClash.Tests
 
         // a, ap, defender, expected Vx, Vy (sub units) = (Dir * KbX / 4, KbY / 4), C# truncation (section 2)
         [TestCase(FighterClass.Melee, BloodEdge, FighterClass.Melee, 9375, 7500)]
-        [TestCase(FighterClass.Ranged, RangedOther, FighterClass.Heavy, 2812, 2250)]   // halved 11250 / 9000 first (CA:40)
+        [TestCase(FighterClass.Ranged, RangedOther, FighterClass.Heavy, 5625, 4500)]   // v20: no HalfKnockback any more (shield push never scales)
         public void Block_ChipKnockback_XAndY_QuarterNoStun(FighterClass a, int ap, FighterClass d, int vx, int vy)
         {
             var s = Arena(a, ap, d, DefPassive(d));
@@ -486,8 +484,12 @@ namespace ChibiClash.Tests
             Assert.AreEqual(GuardBreakStun, D.Stun, "stun = max(spec 30, 60)");
             Assert.AreEqual(GuardBrokenTicks, D.GuardBrokenTicks, "GuardBrokenTicks at end of the break tick");
             Assert.IsFalse(D.Shielding, "shield dropped");
-            Assert.AreEqual(120_000, D.Vx, "full kb X (8 u/s)");
-            Assert.AreEqual(90_000, D.Vy, "full kb Y (6 u/s)");
+            // Rules v20: an unblocked (guard-broken) hit launches by the knockback formula (percent-knockback.md 4.2-4.6):
+            // Heavy heavy kb (8, 6) u/s -> magnitude 150 000, d = Pct(73.6 HP), defender percent after the hit.
+            int kb = ChibiSimulation.KnockbackM(D.PctM, ChibiSimulation.Pct(73_600_000), D.Weight, 150_000, false, 1000);
+            long ls = (long)kb * ChibiPercentConst.LsSubPerKb / 1000;
+            Assert.AreEqual((int)(ls * 120_000 / 150_000), D.Vx, "launch X (formula, 4:3 split)");
+            Assert.AreEqual((int)(ls * 90_000 / 150_000), D.Vy, "launch Y (formula, 4:3 split)");
             Assert.AreEqual(landed + 1, s.F[0].HitsLanded, "break counts as a landed hit");
 
             // Keep the defender on stage for the 3 s window (arrangement only)
@@ -611,17 +613,18 @@ namespace ChibiClash.Tests
 
         // ------------------------------------------------------------------ ult (doc section 4 items 4 + 6)
 
-        [TestCase(0, 500.0, UltPerHit)]            // 3
-        [TestCase(2, 500.0, UltPerComboHit)]       // ComboHits reaches 3: 5
-        [TestCase(0, 149.0, 2 * UltPerHit)]        // HP < 30 % of 500: x2
-        [TestCase(0, 150.0, UltPerHit)]            // exactly 30 %: no bonus
-        [TestCase(2, 149.0, 2 * UltPerComboHit)]
-        public void Ult_GainPerHit_AndWhenHit(int priorCombo, double attackerHp, int expectedGain)
+        // Rules v20 (percent-knockback.md 3.2 step 8): the comeback x2 is now "attacker percent >= 100 %" (was HP < 30 %).
+        [TestCase(0, 0, UltPerHit)]                // 3
+        [TestCase(2, 0, UltPerComboHit)]           // ComboHits reaches 3: 5
+        [TestCase(0, 100_000, 2 * UltPerHit)]      // 100 %: x2
+        [TestCase(0, 99_999, UltPerHit)]           // just under 100 %: no bonus
+        [TestCase(2, 100_000, 2 * UltPerComboHit)]
+        public void Ult_GainPerHit_AndWhenHit(int priorCombo, int attackerPctM, int expectedGain)
         {
             var s = Arena(FighterClass.Melee, SwiftBlade, FighterClass.Melee, DefPassive(FighterClass.Melee));
             var A = s.F[0];
             A.ComboHits = priorCombo; A.ComboTimer = priorCombo > 0 ? LongTimer : 0;
-            SetHp(A, attackerHp);
+            A.PctM = attackerPctM;
 
             StrikeDamage(s, On(ChibiButtons.Light, 0), Idle, Quiet);
 
@@ -696,7 +699,7 @@ namespace ChibiClash.Tests
         public void BloodEdge_LifeSteal_ExactDecimal(bool crit, bool blocked, double heal)
         {
             var s = Arena(FighterClass.Melee, BloodEdge, FighterClass.Melee, DefPassive(FighterClass.Melee));
-            SetHp(s.F[0], 300);                          // HpU 3 * 10^8 (doc row), above 30 %
+            SetHp(s.F[0], 300);                          // 40 % (v20: lifesteal lowers it; HP view = 300)
             if (blocked) RaiseShield(s);
             var a = On(ChibiButtons.Light, 0);
             var d = blocked ? Hold(ChibiButtons.Shield) : Idle;
@@ -807,25 +810,27 @@ namespace ChibiClash.Tests
         [Test]
         public void MatchOver_HitDoesNothing()
         {
-            // Same-tick trade: F0's hit (h0) KOs F1; F1's hit (h1) that tick must be ignored (!Match.Running).
+            // Rules v20: a KO only happens at the end of a step (stage edges), so a same-tick trade always resolves both
+            // hits; once the match is over nothing lands any more.
             var s = NewMatch(FighterClass.Melee, BloodEdge, FighterClass.Melee, BloodEdge);
             Put(s.F[0], MeleeAX, 0, 1);
             Put(s.F[1], MeleeVX, 0, -1);
             for (int t = 0; t < 3; t++) Tick(s, ChibiButtons.None, ChibiButtons.None);
-            SetHp(s.F[1], 1);
-            double hp0 = HpOf(s.F[0]);
-            int stun0 = s.F[0].Stun;
-
-            for (int t = 0; t < 30 && !s.MatchOver; t++)
+            s.F[1].Stocks = 1;
+            s.F[1].X = ChibiStageTable.Get(0).BlastX + 1000;     // last stock lost at the end of this step
+            Tick(s, ChibiButtons.None, ChibiButtons.None);
+            Assert.IsTrue(s.MatchOver, "precondition: F1 lost its last stock");
+            Assert.AreEqual(0, s.Winner, "F0 wins");
+            Put(s.F[1], MeleeVX, 0, -1);
+            int pct1 = s.F[1].PctM, pct0 = s.F[0].PctM, stun0 = s.F[0].Stun;
+            for (int t = 0; t < 30; t++)
             {
                 var b = t == 0 ? ChibiButtons.Light : ChibiButtons.None;
                 Tick(s, b, b);
             }
-
-            Assert.IsTrue(s.MatchOver, "precondition: F1 was KO'd");
-            Assert.AreEqual(0, s.Winner, "F0 wins");
-            Assert.AreEqual(hp0, HpOf(s.F[0]), HpTol, "the trade hit after the KO does nothing");
-            Assert.AreEqual(stun0, s.F[0].Stun, "no stun from the ignored hit");
+            Assert.AreEqual(pct1, s.F[1].PctM, "no hit after the match ended");
+            Assert.AreEqual(pct0, s.F[0].PctM, "no hit after the match ended");
+            Assert.AreEqual(stun0, s.F[0].Stun, "no stun from an ignored hit");
         }
     }
 }

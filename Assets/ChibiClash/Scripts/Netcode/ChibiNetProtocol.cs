@@ -191,14 +191,14 @@ namespace ChibiClash.Netcode
     /// Wire format of control datagrams (bits, LSB first, via <see cref="BitBuffer"/>):
     ///   8 magic 0xC9, 4 type, then
     ///   Hello : 8 protocol, 16 rules, 4 class, 1 passive, [name]
-    ///   Start : 8 protocol, 16 rules, 32 seed, 4 class0, 1 passive0, 4 class1, 1 passive1, 4 stage,
+    ///   Start : 8 protocol, 16 rules, 32 seed, 4 class0, 1 passive0, 4 class1, 1 passive1, 4 stage, 1 hazardsOff (protocol 4),
     ///           4 inputDelay, 4 maxPrediction, 16 disconnectTicks, 32 matchHash, [name]
     ///   Ready : 32 matchHash
     ///   Reject/Leave : 8 reason
     ///   [name] (optional trailer, cosmetic): 5 length (0..24), then 6 bits per character, an index into
     ///          NameAlphabet. A datagram that ends before the trailer means "no name" (older builds), so adding
     ///          it did not change the protocol version. A length above 24 is malformed.
-    /// Largest (Start + 24-char name) = 138 + 5 + 144 = 287 bits = 36 bytes.
+    /// Largest (Start + 24-char name) = 139 + 5 + 144 = 288 bits = 36 bytes.
     /// </summary>
     public static class ChibiControlCodec
     {
@@ -267,6 +267,7 @@ namespace ChibiClash.Netcode
                     b.Write((uint)m.Config.Class1, ClassBits);
                     b.Write((uint)m.Config.Passive1, 1);
                     b.Write((uint)m.Config.Stage, StageBits);
+                    b.Write(m.Config.HazardsOff ? 1u : 0u, 1);   // protocol 4 (rules v21, ST-5)
                     b.Write((uint)m.Settings.InputDelay, 4);
                     b.Write((uint)m.Settings.MaxPrediction, 4);
                     b.Write((uint)m.Settings.DisconnectTicks, 16);
@@ -310,6 +311,7 @@ namespace ChibiClash.Netcode
                     m.Config.Class1 = (FighterClass)b.Read(ClassBits);
                     m.Config.Passive1 = (int)b.Read(1);
                     m.Config.Stage = (int)b.Read(StageBits);
+                    m.Config.HazardsOff = b.Read(1) != 0;          // protocol 4 (rules v21, ST-5)
                     m.Settings.InputDelay = (int)b.Read(4);
                     m.Settings.MaxPrediction = (int)b.Read(4);
                     m.Settings.DisconnectTicks = (int)b.Read(16);
@@ -402,12 +404,17 @@ namespace ChibiClash.Netcode
         // host side
         readonly FighterClass _hostClass;
         readonly int _hostPassive, _stage;
+        readonly bool _hazardsOff;
         readonly uint _seed;
         bool _haveJoiner;
 
         // joiner side
         readonly FighterClass _myClass;
         readonly int _myPassive;
+        /// <summary>SEC-001: the stage the joiner agreed to in the room (-1 = any, e.g. quick play).</summary>
+        readonly int _expectStage = -1;
+        /// <summary>SEC-001: the hazards switch the joiner agreed to in the room (null = any).</summary>
+        readonly bool? _expectHazardsOff;
 
         ChibiMatchConfig _cfg;
         ChibiRollbackSettings _settings;
@@ -436,20 +443,30 @@ namespace ChibiClash.Netcode
 
         /// <summary>Host (sim player 0): decides seed, stage and settings.</summary>
         /// <example><code>var hs = ChibiHandshake.ForHost(mux.Control, FighterClass.Melee, 0, stage: 1, seed, ChibiRollbackSettings.Default);</code></example>
+        /// <param name="hazardsOff">Rules v20 (ST-5): stage hazards off for this match (host's choice; travels in Start).</param>
         public static ChibiHandshake ForHost(IChibiTransport control, FighterClass myClass, int myPassive, int stage, uint seed,
                                              ChibiRollbackSettings settings, int timeoutTicks = DefaultTimeoutTicks,
-                                             string localName = "")
-            => new ChibiHandshake(true, control, myClass, myPassive, stage, seed, settings, timeoutTicks, localName);
+                                             string localName = "", bool hazardsOff = false)
+            => new ChibiHandshake(true, control, myClass, myPassive, stage, seed, settings, timeoutTicks, localName, hazardsOff);
 
         /// <summary>Joiner (sim player 1): sends its fighter, accepts the host's config if it hashes the same locally.</summary>
         /// <example><code>var hs = ChibiHandshake.ForJoiner(mux.Control, FighterClass.Magic, 1);</code></example>
+        /// <param name="expectStage">SEC-001: the room's stage the joiner agreed to; a Start with another stage is refused
+        /// (InvalidConfig). -1 = accept any stage (quick play, where the host's pick is used).</param>
+        /// <param name="expectHazardsOff">SEC-001: the room's hazards switch; a Start that differs is refused. null = any.</param>
         public static ChibiHandshake ForJoiner(IChibiTransport control, FighterClass myClass, int myPassive,
-                                               int timeoutTicks = DefaultTimeoutTicks, string localName = "")
-            => new ChibiHandshake(false, control, myClass, myPassive, 0, 0, default, timeoutTicks, localName);
+                                               int timeoutTicks = DefaultTimeoutTicks, string localName = "",
+                                               int expectStage = -1, bool? expectHazardsOff = null)
+            => new ChibiHandshake(false, control, myClass, myPassive, 0, 0, default, timeoutTicks, localName, false,
+                                  expectStage, expectHazardsOff);
 
         ChibiHandshake(bool isHost, IChibiTransport control, FighterClass myClass, int myPassive, int stage, uint seed,
-                       ChibiRollbackSettings settings, int timeoutTicks, string localName)
+                       ChibiRollbackSettings settings, int timeoutTicks, string localName, bool hazardsOff,
+                       int expectStage = -1, bool? expectHazardsOff = null)
         {
+            _hazardsOff = hazardsOff;
+            _expectStage = expectStage;
+            _expectHazardsOff = expectHazardsOff;
             _isHost = isHost;
             LocalName = localName ?? "";
             _control = control ?? throw new ArgumentNullException(nameof(control));
@@ -516,6 +533,7 @@ namespace ChibiClash.Netcode
                     {
                         Seed = _seed, Class0 = _hostClass, Passive0 = _hostPassive, Class1 = m.Class, Passive1 = m.Passive,
                         Stage = _stage, Intro = true,   // online matches always play the 2.2 s intro, never training (rules v16)
+                        HazardsOff = _hazardsOff,      // rules v21: the host decides (ST-5), sent in Start
                     };
                     _hash = ChibiControlCodec.MatchHash(_cfg, _settings);
                     _haveJoiner = true;
@@ -572,7 +590,10 @@ namespace ChibiClash.Netcode
         {
             if (!ChibiControlCodec.ValidClass(m.Config.Class0) || !ChibiControlCodec.ValidClass(m.Config.Class1)) return false;
             if (m.Config.Class1 != _myClass || m.Config.Passive1 != _myPassive) return false;   // host must echo our pick
-            if (m.Config.Stage < 0 || m.Config.Stage > 2) return false;
+            if (m.Config.Stage < 0 || m.Config.Stage >= ChibiStageTable.Count) return false;   // rules v21: stages 0..7
+            // SEC-001: in a room the joiner agreed to a stage and a hazards switch; the host cannot swap them in Start.
+            if (_expectStage >= 0 && m.Config.Stage != _expectStage) return false;
+            if (_expectHazardsOff.HasValue && m.Config.HazardsOff != _expectHazardsOff.Value) return false;
             try { m.Settings.Validate(); } catch (ArgumentOutOfRangeException) { return false; }
             return true;
         }

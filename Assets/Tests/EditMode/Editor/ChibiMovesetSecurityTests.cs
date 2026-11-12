@@ -176,7 +176,7 @@ namespace ChibiClash.Tests
 
             // Assert
             Assert.GreaterOrEqual(s.F[0].Y, st.KillY + ChibiMovesetConst.TeleportMargin - 50, "clamped above the kill line");
-            Assert.AreEqual(s.F[0].Stats.MaxHp * ChibiCombatStats.HpScale, s.F[0].HpU, "no ring-out penalty");
+            Assert.AreEqual(0, s.F[0].KosTaken, "no KO (rules v20: crossing the kill line would cost a stock)");
         }
 
         // ================================================================== SEC-106 stale move state

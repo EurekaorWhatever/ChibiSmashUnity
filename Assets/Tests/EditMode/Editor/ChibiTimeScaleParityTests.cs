@@ -188,9 +188,9 @@ namespace ChibiClash.Tests
             var c = Clone(s);
             for (int t = 0; t < MaxHitSearch; t++)
             {
-                int hp = c.F[1].HpU, parries = c.F[1].Parries;
+                int hp = c.F[1].HpLike(), parries = c.F[1].Parries;
                 Tick(c, a(t), d(t));
-                if (c.F[1].HpU < hp || c.F[1].Parries > parries) return t;
+                if (c.F[1].HpLike() < hp || c.F[1].Parries > parries) return t;
             }
             Assert.Fail($"precondition: no hit resolved within {MaxHitSearch} ticks");
             return -1;
@@ -214,7 +214,7 @@ namespace ChibiClash.Tests
         {
             var sb = new System.Text.StringBuilder();
             foreach (var f in s.F)
-                sb.Append($"{f.X},{f.Y},{f.Vx},{f.Vy},{f.XRem},{f.YRem},{f.HpU},{f.GuardU},{f.Stun},{f.Invuln},{f.MoveSlot}," +
+                sb.Append($"{f.X},{f.Y},{f.Vx},{f.Vy},{f.XRem},{f.YRem},{f.HpLike()},{f.GuardU},{f.Stun},{f.Invuln},{f.MoveSlot}," +
                           $"{f.MoveTick},{f.Shielding},{f.ShieldTick},{f.ParryTicks},{f.ComboTimer},{f.DashCd},{f.Ult}|");
             foreach (var p in s.Proj)
                 if (p != null && p.Active) sb.Append($"P{p.X},{p.Y},{p.Life}|");
@@ -262,20 +262,20 @@ namespace ChibiClash.Tests
 
             int h = Prime(s, a, d);
             Assert.AreEqual(0, Get(s, AccumF), "fixture: section 6 cases start from TimeAccum = 0");
-            int vHp = s.F[1].HpU, parries = s.F[1].Parries;
+            int vHp = s.F[1].HpLike(), parries = s.F[1].Parries;
             ChibiSimState normal = kind == HitKind.Crit ? Clone(s) : null;
             Resolve(s, a, d, h, rng);
 
             switch (kind)
             {
                 case HitKind.Normal:
-                    Assert.Less(s.F[1].HpU, vHp, "precondition: normal hit landed"); break;
+                    Assert.Less(s.F[1].HpLike(), vHp, "precondition: normal hit landed"); break;
                 case HitKind.Crit:
                     Resolve(normal, a, d, h, Quiet);
-                    Assert.Less(s.F[1].HpU, normal.F[1].HpU, "precondition: forced crit deals more than the quiet hit"); break;
+                    Assert.Less(s.F[1].HpLike(), normal.F[1].HpLike(), "precondition: forced crit deals more than the quiet hit"); break;
                 case HitKind.PerfectParry:
                     Assert.AreEqual(parries + 1, s.F[1].Parries, "precondition: perfect parry");
-                    Assert.AreEqual(vHp, s.F[1].HpU, "precondition: parry, no damage"); break;
+                    Assert.AreEqual(vHp, s.F[1].HpLike(), "precondition: parry, no damage"); break;
                 case HitKind.Reflect:
                     Assert.AreEqual(parries + 1, s.F[1].Parries, "precondition: parry stance consumed");
                     Assert.AreEqual(ReflectStun, s.F[0].Stun, "precondition: reflect stunned the attacker"); break;
@@ -416,9 +416,9 @@ namespace ChibiClash.Tests
             int h = -1;
             for (int t = 0; t < MaxHitSearch && h < 0; t++)
             {
-                int h0 = c.F[0].HpU, h1 = c.F[1].HpU;
+                int h0 = c.F[0].HpLike(), h1 = c.F[1].HpLike();
                 Tick(c, a(t), d(t));
-                bool l0 = c.F[0].HpU < h0, l1 = c.F[1].HpU < h1;
+                bool l0 = c.F[0].HpLike() < h0, l1 = c.F[1].HpLike() < h1;
                 if (l0 || l1) { Assert.IsTrue(l0 && l1, "precondition: the lights trade on one tick"); h = t; }
             }
             Assert.GreaterOrEqual(h, 0, "precondition: a trade happened");
@@ -441,7 +441,7 @@ namespace ChibiClash.Tests
             var s = FireUlt(a0);
             Assert.AreEqual(CinematicTicks, Get(s, CinematicF), "CinematicRealTicks = 48 after c (MC:188)");
             Assert.AreEqual(0, Get(s, CinFighterF), "CinematicFighter = ult user");
-            int hp1 = s.F[1].HpU;
+            int hp1 = s.F[1].HpLike();
 
             // expected step ticks from the section 3 formula steps(n) = floor((A0 + sum scale) / 1000)
             var expected = new List<int>();
@@ -466,7 +466,7 @@ namespace ChibiClash.Tests
             }
 
             // Assert
-            Assert.AreEqual(hp1, s.F[1].HpU, "precondition: ult did not hit the invulnerable opponent");
+            Assert.AreEqual(hp1, s.F[1].HpLike(), "precondition: ult did not hit the invulnerable opponent");
             CollectionAssert.AreEqual(expected, actual, "game steps on c+5, c+10, ... (T5) / A0 carry (T6)");
             Assert.AreEqual(expectedCarry, Get(s, AccumF), "TimeAccum after c+48");
             Assert.AreEqual(0, Get(s, CinematicF), "cinematic over after 48 real ticks");
@@ -510,13 +510,13 @@ namespace ChibiClash.Tests
             Set(s, CinFighterF, 0);
             Set(s, AccumF, (T12CritAt - 1) * ScaleCinematic % StepCost);
             int g0 = Get(s, GameTicksF);
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
 
             // Act: the crit lands on the game step at c+20
             Resolve(s, a, Idle, h, CritFirst);
 
             // Assert
-            Assert.Less(s.F[1].HpU, hp, "precondition: hit landed on the step at c+20");
+            Assert.Less(s.F[1].HpLike(), hp, "precondition: hit landed on the step at c+20");
             Assert.AreEqual(g0 + 1, Get(s, GameTicksF), "c+20 is a game step");
             Assert.AreEqual(HitstopCrit, Get(s, HitstopF));
             for (int j = 1; j <= HitstopCrit; j++)
@@ -672,7 +672,7 @@ namespace ChibiClash.Tests
             }
             var s = new ChibiSimState();
             ChibiSimulation.Init(s, cfg);
-            int hp0 = s.F[0].HpU, hp1 = s.F[1].HpU;
+            int hp0 = s.F[0].HpLike(), hp1 = s.F[1].HpLike();
 
             // Act
             for (int t = 0; t < T14Ticks; t++)
@@ -690,8 +690,8 @@ namespace ChibiClash.Tests
                     Assert.AreEqual(0, FGet(s.F[i], LatchedHeldF), "held latch consumed on the same tick");
                 }
             }
-            Assert.AreEqual(hp0, s.F[0].HpU, "precondition: no contact");
-            Assert.AreEqual(hp1, s.F[1].HpU, "precondition: no contact");
+            Assert.AreEqual(hp0, s.F[0].HpLike(), "precondition: no contact");
+            Assert.AreEqual(hp1, s.F[1].HpLike(), "precondition: no contact");
 
             // Assert: identical final checksum to the plain replay path (derived, not hard-coded)
             Assert.AreEqual(ChibiReplay.Simulate(cfg, p0, p1).ComputeChecksum(), s.ComputeChecksum());

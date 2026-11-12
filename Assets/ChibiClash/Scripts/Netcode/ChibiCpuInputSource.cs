@@ -26,6 +26,14 @@ namespace ChibiClash.Netcode
     /// (difficulty 2+), Skill+Up / Skill+Down techniques mixed into those pools. Whether a move connects is read from
     /// its own row (hitbox, lunge, projectile range), so the AI follows the data.
     ///
+    /// Rules v20/v21 loop (design/gdd/percent-knockback.md, design/gdd/stages/): kill reads by percent (each reachable
+    /// option's knockback from <see cref="ChibiSimulation.KnockbackM"/> and a rough launch distance against the stage's
+    /// ACTIVE KO edges, so smashes are saved for kill percent and Mountain finishes upward), tilts first at low percent,
+    /// a survival mode at its own kill percent (more shield, wider ledge margins, no off-stage chasing), ledge discipline
+    /// on every stage (the end of the walkable ground is the ledge), side / lower platforms (moving ones predicted) as
+    /// landing targets, and the stage events when hazards are on: Volcano fire lanes, Bird Lair gust and body band, Ocean
+    /// whale (down to the tiers until it has risen). No input while KO'd or hovering, except one tick that leaves the hover.
+    ///
     /// Determinism: integer math only, one decision per 60 Hz tick, and its own <see cref="ChibiRng"/> seeded from the
     /// match seed and the player index. It never touches <c>state.Rng</c> and never writes the state, so replays
     /// (which store inputs only) stay exact. Difficulty 0 is the still training dummy (always neutral).
@@ -146,10 +154,32 @@ namespace ChibiClash.Netcode
             new[] { 2000, 150, 25, 12, 0, 25, 500, -1 },     // Taro
         };
 
-        /// <summary>Opponent HP at or below this permille of max counts as killable (smash pressure).</summary>
-        const int KillHpPermille = 300;
         /// <summary>Total live projectiles above which no new projectile move is started (pool is 64).</summary>
         const int ProjSoftCap = 40;
+
+        // Rules v20 (percent, stocks, stages, hazards). Distances milli, chances permille, times ticks.
+        /// <summary>Launch travel along the launch ~ KB² x 0.44 milli (percent-knockback.md 4.8, KB in units).</summary>
+        const int TravelPerKb2P = 440;
+        /// <summary>Chance per close-range decision to take a kill move when one is estimated to KO: base + per difficulty.</summary>
+        const int KillTakeBase = 300, KillTakePerDiff = 200;
+        /// <summary>Weight multiplier of ground smashes among the kill moves (smashes are the finishers).</summary>
+        const int KillSmashBoost = 2;
+        /// <summary>Ground smash appetite outside kill range: permille at 0 %, rising linearly to 1000 at 100 % (tilts first at low percent).</summary>
+        const int SmashScaleLowP = 250, SmashScaleFullPctM = 100_000;
+        /// <summary>Distance kept from a ledge / from an active side KO line while walking, plus the extra when in danger.</summary>
+        const int LedgeMargin = 300, WalkOffMargin = 2500, DangerLedgeExtra = 600, DangerWalkOffExtra = 2000;
+        /// <summary>Extra shield chance (permille) when the CPU's own percent is in KO range.</summary>
+        const int DangerBlockBonus = 200;
+        /// <summary>Fight-for-centre stages: past this permille of the main half-width with the opponent between us and the centre = cornered.</summary>
+        const int CorneredP = 450, CorneredJumpP = 350;
+        /// <summary>Volcano: margin around a fire lane's danger band (lane half-width + hurtbox).</summary>
+        const int FireMargin = 300;
+        /// <summary>Ocean: feet stay at or below MainBottom - this on a tier during the whale; the whale is clear once its bottom is above this.</summary>
+        const int TierBelowMain = 300, WhaleClearY = 5500;
+        /// <summary>Bird Lair: during the telegraph / gust, stand at least this far upwind of the centre.</summary>
+        const int BirdUpwindX = 2000;
+        /// <summary>Respawn hover: minimum wait before leaving (ticks, + Range), and how near below an opponent must be to keep waiting.</summary>
+        const int HoverWaitBase = 10, HoverWaitSpan = 30, HoverCampX = 2500, HoverCampMinLeft = 30;
 
         // ================================================================== state
 
@@ -178,6 +208,13 @@ namespace ChibiClash.Netcode
         int _pendingStep = -1;                                  // GameTicks when the last press was sent (-1 = consumed)
         ushort _pendingDir;                                     // stick of that press
 
+        // Rules v20 situation of this decision.
+        int _hoverWait = -1;                                    // ticks still to wait on the respawn point (-1 = not drawn)
+        bool _danger;                                           // own percent: the opponent's smash from here would KO us
+        bool _noJump;                                           // whale: holding a tier under MAIN, never jump up
+        bool _allowOff;                                         // this decision may walk off the footing (edge-guard hop)
+        int _smashScaleP = 1000;                                // ground smash weight outside kill range (percent appetite)
+
         /// <summary>Create a CPU for fighter <paramref name="player"/> (0 or 1) at <paramref name="difficulty"/> (0 dummy .. 3 hard).</summary>
         public ChibiCpuInputSource(int player, int difficulty, uint matchSeed)
         {
@@ -204,6 +241,20 @@ namespace ChibiClash.Netcode
         public ChibiInputPacket SampleTick()
         {
             if (_state == null) throw new InvalidOperationException("ChibiCpuInputSource: Bind(state) was never called");
+
+            // KO'd (off-screen) or hovering on the respawn point: nothing at all (any direction, button or gesture bit ends
+            // the hover in the sim), except one stick tick that leaves the hover once it is safe (percent-knockback.md 3.4).
+            var me = _state.F[_player];
+            if (me.OutTicks > 0 || me.HoverTicks > 0)
+            {
+                _planLen = 0; _prevEmitted = 0; _pendingStep = -1;
+                if (me.OutTicks > 0 || _difficulty <= 0 || !_state.Running || !HoverLeaveSafe(me)) return default;
+                _hoverWait = -1;
+                var opp0 = _state.F[1 - _player];
+                int away = opp0.X > me.X ? -1 : (opp0.X < me.X ? 1 : (me.X > 0 ? -1 : 1));
+                return ChibiInputPacket.Make(ChibiInputPacket.DirFromAxes(away, 0), ChibiButtons.None);
+            }
+            _hoverWait = -1;
 
             // Hitstop / cinematic / slow motion: real ticks without a game step. The sim latches a press edge but resolves
             // it with the stick of the tick whose game step runs, so until a step has consumed the last press the CPU
@@ -264,6 +315,44 @@ namespace ChibiClash.Netcode
                 }
             }
 
+            var st = ChibiStageTable.Get(_state.Stage);
+            _noJump = false; _allowOff = false;
+            _danger = InDanger(self, opp, st);
+            _smashScaleP = SmashScale(opp);
+
+            // Ocean whale (hazards on): get under MAIN onto a tier before it lands and stay there until it has risen.
+            if (WhaleThreat(st))
+            {
+                if (!(self.Grounded && self.Y <= st.MainBottom - TierBelowMain)) { WhaleDescend(self, opp, st, ref press); return false; }
+                _noJump = true;                                       // on a tier: fight here, never jump up into it
+            }
+
+            // Recover to the stage when knocked off (FI:163-171). Pivot = feet + 0.725, so pivot.y < groundY - 0.5
+            // is feet Y < -1225; |pivot.x| > halfWidth - 0.3 is the same on the feet. Grounded: only a surface below the
+            // main top or a platform beside the main stage counts (rules v20 tiers, cloud-sea floor, Mountain A / B).
+            if (!_noJump && OffStage(self, st))
+            {
+                Recover(self, st, ref press);
+                AvoidFire(self, st, ref press);
+                return false;
+            }
+
+            // Bird Lair telegraph / gust: grounded, upwind, out of the body band.
+            if (BirdAlert(st))
+            {
+                BirdBrace(self, opp, st, ref block, ref press);
+                return false;
+            }
+
+            // Opponent KO'd or hovering on the respawn point: take the centre, never chase off-screen.
+            if (!opp.InPlay)
+            {
+                int toward = st.RespawnX - self.X;
+                _dx = Math.Abs(toward) > 3000 ? Math.Sign(toward) : 0;
+                FinishTick(self, st, ref press);
+                return false;
+            }
+
             int dx = opp.X - self.X, dy = opp.Y - self.Y;
             int sdx = dx > 0 ? 1 : (dx < 0 ? -1 : 0);
             int adx = Math.Abs(dx);
@@ -271,15 +360,6 @@ namespace ChibiClash.Netcode
             var prof = Profile[cls];
             bool ranged = cls == (int)FighterClass.Ranged || cls == (int)FighterClass.Magic;
             int reach = prof[PReach];
-
-            // Recover to the stage when knocked off (FI:163-171). Pivot = feet + 0.725, so pivot.y < groundY - 0.5
-            // is feet Y < -1225; |pivot.x| > halfWidth - 0.3 is the same on the feet.
-            var st = ChibiStageTable.Get(_state.Stage);
-            if (Math.Abs(self.X) > st.HalfWidth - 300 || self.Y < -1225)
-            {
-                Recover(self, st, ref press);
-                return false;
-            }
 
             // A cross-up (the opponent changed sides since the last think) is re-evaluated at once.
             if (sdx != 0 && sdx != _thinkSide) _think = 0;
@@ -294,13 +374,22 @@ namespace ChibiClash.Netcode
                 else if (ranged && adx < preferred - 1500) _wantMove = -sdx;
                 else _wantMove = 0;
                 bool oppAttacking = opp.MoveSlot >= 0;                              // IsAttacking = actionLock > 0
-                _wantBlock = oppAttacking && adx < 2500 && _rng.Roll(150 + 350 * _skillPermille / 1000);
+                _wantBlock = oppAttacking && adx < 2500 &&
+                             _rng.Roll(150 + 350 * _skillPermille / 1000 + (_danger ? DangerBlockBonus : 0));
                 if (dy > 1500 && _rng.Roll(600)) press |= ChibiButtons.Jump;
                 // Approach jump into an aerial (moveset layer): from just outside reach, at the opponent's height.
-                else if (self.Grounded && adx > reach && adx < reach + 2600 && Math.Abs(dy) < 1500 && _rng.Roll(prof[PJump]))
+                else if (self.Grounded && adx > reach && adx < reach + 2600 && Math.Abs(dy) < 1500 &&
+                         _rng.Roll(_danger ? prof[PJump] / 2 : prof[PJump]))
                 {
                     press |= ChibiButtons.Jump;
                     _wantMove = sdx;
+                }
+                // Fight-for-centre stages (Plain, Bird Lair): cornered (nearer the ledge, the opponent between us and the
+                // centre): jump over toward the centre instead of fighting with the back to the ledge.
+                else if (adx < 3500 && Cornered(self, opp, st) && _rng.Roll(CorneredJumpP))
+                {
+                    press |= ChibiButtons.Jump;
+                    _wantMove = self.X > 0 ? -1 : 1;
                 }
             }
 
@@ -309,12 +398,21 @@ namespace ChibiClash.Netcode
             bool free = self.MoveSlot < 0 && self.Stun == 0 && self.DashTicks == 0 && !self.Held;
 
             // Counters / reflectors (difficulty 2+) replace the shield when the timing fits.
-            if (free && _difficulty >= 2 && TryDefend(self, opp, dx, dy, ref press)) { block = false; return false; }
+            if (free && _difficulty >= 2 && TryDefend(self, opp, dx, dy, ref press))
+            {
+                block = false;
+                FinishTick(self, st, ref press);
+                return false;
+            }
             if (_wantBlock) return false;
 
             bool facingOpp = sdx == self.Facing || adx < 200;
             // The original creeps at MoveX 0.2 to turn; the sim's stick is digital, so one tick of full input turns it.
             if (_wantMove == 0 && !facingOpp && self.Grounded) _dx = sdx;
+
+            // Edge-guard hop (difficulty 2+, not in danger): the opponent is off the stage close by, not far below.
+            _allowOff = !OnStageArea(opp, st) && !_danger && _difficulty >= 2 && st.KoBottom && self.AirJumps > 0 && !_noJump &&
+                        adx < 3500 && dy > -1500;
 
             if (free && press == ChibiButtons.None)
             {
@@ -322,21 +420,47 @@ namespace ChibiClash.Netcode
                 else AirAttack(self, opp, st, dx, dy, ref press);
             }
 
-            // Random existing skill (FI:201-205), neutral stick so the sim resolves the old skill.
+            // Random existing skill (FI:201-205), neutral stick so the sim resolves the old skill. Never toward a ledge:
+            // the old skills lunge along Facing.
             if (press == ChibiButtons.None && _rng.Roll(12 * _skillPermille / 1000))
             {
                 int count = SkillCount(cls);
                 int k = _rng.Range(Math.Max(1, count));
                 bool inMelee = adx < reach + 400 && Math.Abs(dy) < 1200;
-                if (k < count && SkillReady(self, k) && (inMelee || ranged || adx < 5000))
+                if (k < count && SkillReady(self, k) && (inMelee || ranged || adx < 5000) &&
+                    (self.Grounded ? SafeGround(st, self.X + self.Facing * 2500, self.Y)
+                                   : Math.Abs(self.X + self.Facing * 2500) < st.HalfWidth - LedgeMargin))
                 {
                     var b = (ChibiButtons)((int)ChibiButtons.Skill1 << k);
                     if (CanPress(b)) { press |= b; _dy = 0; }
                 }
             }
 
-            if (self.Ult >= ChibiSimConst.UltMax && self.UltWindowTicks == 0 && _rng.Roll(20)) press |= ChibiButtons.Ultimate;
+            // Ult: more eager when the opponent sits at kill percent (spec 3.5 CPU rule; ult hits get the base bonus).
+            if (self.Ult >= ChibiSimConst.UltMax && self.UltWindowTicks == 0 && _rng.Roll(HighPercent(opp) ? 60 : 20))
+                press |= ChibiButtons.Ultimate;
+            FinishTick(self, st, ref press);
             return false;
+        }
+
+        /// <summary>Last filters of a normal decision: no jumping up under the whale, keep the footing, stay out of fire lanes.</summary>
+        void FinishTick(ChibiFighterSim self, ChibiStageDef st, ref ChibiButtons press)
+        {
+            if (_noJump)
+            {
+                press &= ~ChibiButtons.Jump;
+                if (_dy > 0)
+                {
+                    _dy = 0;
+                    press &= ~(ChibiButtons.Light | ChibiButtons.Heavy | ChibiButtons.Special |
+                               ChibiButtons.Skill1 | ChibiButtons.Skill2 | ChibiButtons.Skill3);
+                }
+            }
+            // A move press keeps its stick (it selects the move; lunges were checked against the footing in Eligible).
+            const ChibiButtons moves = ChibiButtons.Light | ChibiButtons.Heavy | ChibiButtons.Special | ChibiButtons.Skill1 |
+                                       ChibiButtons.Skill2 | ChibiButtons.Skill3 | ChibiButtons.Dash;
+            if (!_allowOff && (press & moves) == 0) KeepFooting(self, st);
+            AvoidFire(self, st, ref press);
         }
 
         // ================================================================== recovery
@@ -350,13 +474,25 @@ namespace ChibiClash.Netcode
         void Recover(ChibiFighterSim self, ChibiStageDef st, ref ChibiButtons press)
         {
             int toCentre = self.X > 0 ? -1 : (self.X < 0 ? 1 : 0);
+            if (self.Grounded) { RecoverFromGround(self, st, toCentre, ref press); return; }
+
+            // A platform beside the main stage (moving ones at their predicted landing position) that we can drift onto
+            // without a jump is a landing target too (Mountain A / B, the Ocean tiers, Volcano L1's overhang).
+            if (PlatformLanding(self, st, out int landX))
+            {
+                int d = landX - self.X;
+                _dx = Math.Abs(d) > 250 ? Math.Sign(d) : 0;
+                return;
+            }
+
             bool under = self.Y < -300 && Math.Abs(self.X) < st.HalfWidth - 200;   // truly beneath, not at the side wall
             _dx = under ? (toCentre != 0 ? -toCentre : 1) : toCentre;
             int outside = Math.Abs(self.X) - st.HalfWidth;             // > 0: beyond the edge
             bool canAct = self.MoveSlot < 0 && self.Stun == 0 && !self.Held && self.DashTicks == 0 && !self.Grounded;
 
             if (self.Vy < 0 && self.Y < 500 && (self.AirJumps > 0 || !canAct)) press |= ChibiButtons.Jump;
-            else if (canAct && !under && outside > 1200 && self.DashCd == 0 && CanPress(ChibiButtons.Dash))
+            // Air dash for distance only over a void (a solid floor below makes it a waste of the dash).
+            else if (canAct && !under && !OverFloor(st, self.X) && outside > 1200 && self.DashCd == 0 && CanPress(ChibiButtons.Dash))
             {
                 press = ChibiButtons.Dash;
                 return;
@@ -487,13 +623,20 @@ namespace ChibiClash.Netcode
             int skill = _skillPermille;
             var prof = Profile[self.Class];
 
-            // Close quarters (FI:196-200 rate): tilts / jab, up moves when above, smashes when it punishes or kills.
+            // Close quarters (FI:196-200 rate): tilts / jab, up moves when above. Rules v20: a move estimated to KO from
+            // the opponent's percent, weight and position against the ACTIVE edges is taken first (smashes saved for that);
+            // below kill range punishes lean on tilts, more so the lower the opponent's percent.
             if (adx < reach + 1800 && dy > -1200 && dy < 3500)
             {
                 if (_rng.Roll(60 + 120 * skill / 1000))
                 {
+                    if (_rng.Roll(KillTakeBase + KillTakePerDiff * _difficulty) && FindKillRow(self, opp, st, dx, dy, out int krow))
+                    {
+                        Execute(krow, self, opp, dx, ref press);
+                        return;
+                    }
                     int ctx = dy > 900 && adx < 1800 ? CtxAbove : CtxClose;
-                    if ((Vulnerable(opp) || Killable(opp, st, dx)) && _rng.Roll(250 * _difficulty)) ctx = CtxPunish;
+                    if (Vulnerable(opp) && _rng.Roll(250 * _difficulty * _smashScaleP / 1000)) ctx = CtxPunish;
                     if (TryContext(ctx, self, opp, dx, dy, ref press)) return;
                     if (ctx != CtxClose && TryContext(CtxClose, self, opp, dx, dy, ref press)) return;
                 }
@@ -533,7 +676,7 @@ namespace ChibiClash.Netcode
 
             if (adx > 3200 || Math.Abs(dy) > 3200) return;
             int rate = 80 + 150 * _skillPermille / 1000;
-            if (oppOff) rate *= 2;                                     // edge-guard: swing harder (dair spikes)
+            if (oppOff && !_danger) rate *= 2;                         // edge-guard: swing harder (dair spikes), not at our own kill percent
             if (!_rng.Roll(rate)) return;
 
             if (_rng.Roll(250) && TryContext(CtxAir, self, opp, dx, dy, ref press)) return;
@@ -578,13 +721,13 @@ namespace ChibiClash.Netcode
                 if (opts[r] != ctx || opts[r + 4] > _difficulty) continue;
                 if (!Eligible(opts, r, self, opp, dx, dy, window)) continue;
                 _pick[n++] = r;
-                total += opts[r + 3];
+                total += RowWeight(opts, r, self);
             }
             if (n == 0 || total <= 0) return false;
             int roll = _rng.Range(total);
             for (int k = 0; k < n; k++)
             {
-                roll -= opts[_pick[k] + 3];
+                roll -= RowWeight(opts, _pick[k], self);
                 if (roll < 0) { row = _pick[k]; return true; }
             }
             row = _pick[n - 1];
@@ -628,7 +771,8 @@ namespace ChibiClash.Netcode
             int fx = dx * face;
 
             // Never lunge off the stage: a self-propelled row (or the dash + dash attack) must end over the stage.
-            int half = ChibiStageTable.Get(_state.Stage).HalfWidth - 300;
+            var stg = ChibiStageTable.Get(_state.Stage);
+            int half = Math.Min(stg.HalfWidth - 300, stg.KoSides ? stg.BlastX - WalkOffMargin : int.MaxValue);
             if (btn == BtnDash)
                 return self.DashCd == 0 && Math.Abs(dy) < 600 && Math.Abs(dx) > Profile[cls][PReach] + 300 && Math.Abs(dx) < 5000
                        && Math.Abs(self.X + sdx * (Math.Abs(dx) + mv.SelfVx * (mv.Startup + mv.Active) / 2)) < half;
@@ -785,14 +929,414 @@ namespace ChibiClash.Netcode
             return opp.MoveSlot >= 0 && opp.MoveTick >= opp.MoveStartup + opp.MoveActive && opp.MoveLockEnd - opp.MoveTick > 12;
         }
 
-        /// <summary>Kill pressure: low HP, or near the edge with us between them and the centre.</summary>
-        static bool Killable(ChibiFighterSim opp, ChibiStageDef st, int dx)
+        // ================================================================== rules v20: percent kill reads and survival
+
+        /// <summary>
+        /// Option weight in a pick: ground smashes (Heavy + direction on the ground) are scaled by the percent appetite
+        /// (<see cref="SmashScale"/>) so tilts and jabs dominate at low percent; kill moves are chosen by
+        /// <see cref="FindKillRow"/> before any pick.
+        /// </summary>
+        int RowWeight(int[] opts, int r, ChibiFighterSim self)
         {
-            if ((long)opp.HpU * 1000 <= (long)opp.Stats.MaxHp * ChibiCombatStats.HpScale * KillHpPermille) return true;
-            int side = opp.X > 0 ? 1 : -1;
-            return Math.Abs(opp.X) > st.HalfWidth - 2500 && (dx > 0 ? 1 : -1) == side;
+            int w = opts[r + 3];
+            if (opts[r + 1] == BtnH && opts[r + 2] != DN && self.Grounded) w = Math.Max(1, w * _smashScaleP / 1000);
+            return w;
         }
 
+        /// <summary>Kill-move weight: the row's weight, doubled for ground smashes (the moves the CPU saves for the kill).</summary>
+        static int KillWeight(int[] opts, int r, ChibiFighterSim self) =>
+            opts[r + 3] * (opts[r + 1] == BtnH && opts[r + 2] != DN && self.Grounded ? KillSmashBoost : 1);
+
+        /// <summary>Smash appetite (permille) outside kill range: 250 at 0 % rising to 1000 at 100 %.</summary>
+        static int SmashScale(ChibiFighterSim opp)
+        {
+            int p = Math.Min(opp.PctM, SmashScaleFullPctM);
+            return SmashScaleLowP + (1000 - SmashScaleLowP) * p / SmashScaleFullPctM;
+        }
+
+        /// <summary>The spec's CPU kill-percent rule (percent-knockback.md 3.5): percent &gt;= weight + CpuKillPctOffset.</summary>
+        static bool HighPercent(ChibiFighterSim f) =>
+            f.PctM >= (f.Weight + ChibiPercentConst.CpuKillPctOffset) * 1000;
+
+        /// <summary>
+        /// A close-range option (punish, close or above rows the CPU may use) that can start, reaches, and is estimated to
+        /// KO the opponent from here (<see cref="WouldKo"/>). Weighted pick among them, one RNG draw when any exists.
+        /// </summary>
+        bool FindKillRow(ChibiFighterSim self, ChibiFighterSim opp, ChibiStageDef st, int dx, int dy, out int row)
+        {
+            row = -1;
+            if (!opp.InPlay || opp.Invuln > 0) return false;
+            var opts = Options[self.Class];
+            int n = 0, total = 0;
+            int dir = dx > 0 ? 1 : (dx < 0 ? -1 : self.Facing);
+            for (int r = 0; r + OptW <= opts.Length && n < _pick.Length; r += OptW)
+            {
+                int ctx = opts[r];
+                if (ctx != CtxPunish && ctx != CtxClose && ctx != CtxAbove) continue;
+                if (opts[r + 4] > _difficulty || opts[r + 1] == BtnDash) continue;
+                if (!Eligible(opts, r, self, opp, dx, dy, 0)) continue;
+                int slot = SlotOf(self.Class, opts[r + 1], opts[r + 2], !self.Grounded);
+                if (!WouldKo(self.Class, self.Stats, opp, ChibiMoveTable.Get(self.Class, slot), dir, st)) continue;
+                _pick[n++] = r;
+                total += KillWeight(opts, r, self);
+            }
+            if (n == 0 || total <= 0) return false;
+            int roll = _rng.Range(total);
+            for (int k = 0; k < n; k++)
+            {
+                roll -= KillWeight(opts, _pick[k], self);
+                if (roll < 0) { row = _pick[k]; return true; }
+            }
+            row = _pick[n - 1];
+            return true;
+        }
+
+        /// <summary>
+        /// Rough KO estimate of one uncharged, non-crit hit of <paramref name="mv"/> (attacker class / stats) on
+        /// <paramref name="victim"/> launched toward <paramref name="dir"/>: knockback from the sim's own formula
+        /// (<see cref="ChibiSimulation.KnockbackM"/> with the victim's percent after the hit, the hit's percent, weight, the
+        /// row's KbX/KbY magnitude and the class factor), travel ~ 0.44 KB² milli along the launch (spec 4.8; gravity trims
+        /// the rise below KB 120), compared with the stage's ACTIVE KO edges only (walls, the sky cap and solid floors
+        /// never KO). Set-knockback hits never KO.
+        /// </summary>
+        static bool WouldKo(int atkCls, in ChibiCombatStats atk, ChibiFighterSim victim, in ChibiMove mv, int dir, ChibiStageDef st)
+        {
+            long kx = mv.KbX, ky = mv.KbY;
+            if (mv.Ext != null && mv.Ext.Has(ChibiMoveExt.FBack)) dir = -dir;
+            int mag = (int)ChibiFixed.ISqrt(kx * kx + ky * ky);
+            if (mag < ChibiPercentConst.SetKbMag || mv.Mult <= 0) return false;
+            if (ky < 0 && victim.Grounded) ky = -ky / 2;               // a spike on the ground pops up (Movesets 420)
+            int hit = EstimateHitPct(atk, victim, mv.Mult);
+            int after = (int)Math.Min(ChibiPercentConst.PctCapM, (long)victim.PctM + hit);
+            int kb = ChibiSimulation.KnockbackM(after, hit, victim.Weight, mag, false, ChibiSimulation.ClassKbP(atkCls));
+            long kb2 = (long)kb * kb / 1_000_000;                      // KB² in units
+            long along = kb2 * TravelPerKb2P / 1000;                   // milli along the launch
+            long tx = along * Math.Abs(kx) / mag, ty = along * ky / mag;
+            if (ty > 0) ty = ty * (1000 - ChibiSimulation.LaunchGravityP(kb) / 2) / 1000;
+            long nx = victim.X + dir * tx, ny = victim.Y + ty;
+            if (st.KoSides && (nx > st.BlastX || nx < -st.BlastX)) return true;
+            if (st.KoTop && ny > st.CeilingY) return true;
+            // Spike on an opponent already off the stage: it will not come back from below the stage.
+            if (st.KoBottom && ty < 0 && Math.Abs(victim.X) > st.HalfWidth && ny < st.KillY / 2) return true;
+            return false;
+        }
+
+        /// <summary>The hit's percent (milli) without crit: the sim's damage pipeline (Attack x Mult, damage bonus, defense) x 0.2.</summary>
+        static int EstimateHitPct(in ChibiCombatStats atk, ChibiFighterSim victim, int mult)
+        {
+            long n = (long)atk.Attack * ChibiCombatStats.NanoPerHp * mult / 1000;
+            n = n * (1000 + atk.DamageBonusPermille) / 1000;
+            int dmgU = ChibiCombatStats.FinalDamageMicro(n, ChibiCombatStats.DefenseH(victim.Stats, victim.ArmorBreakTicks > 0), false);
+            return ChibiSimulation.Pct(dmgU);
+        }
+
+        /// <summary>
+        /// Survival read: the opponent's forward or up smash would KO us from here (same estimate), or our percent passed the
+        /// spec's kill-percent rule. In danger the CPU shields more, approach-jumps less, keeps further from ledges and KO
+        /// lines and does not chase off the stage.
+        /// </summary>
+        static bool InDanger(ChibiFighterSim self, ChibiFighterSim opp, ChibiStageDef st)
+        {
+            if (!self.InPlay) return false;
+            if (HighPercent(self)) return true;
+            int dir = self.X >= opp.X ? 1 : -1;
+            int fs = ChibiMovesetData.SlotFor(opp.Class, BtnH, DF, false), us = ChibiMovesetData.SlotFor(opp.Class, BtnH, DU, false);
+            return (fs >= 0 && WouldKo(opp.Class, opp.Stats, self, ChibiMoveTable.Get(opp.Class, fs), dir, st)) ||
+                   (us >= 0 && WouldKo(opp.Class, opp.Stats, self, ChibiMoveTable.Get(opp.Class, us), dir, st));
+        }
+
+        // ================================================================== rules v20: stage awareness
+
+        /// <summary>
+        /// Needs to recover: airborne past the ledge zone or below the stage (the original's rule), or standing on a surface
+        /// that is not the main stage top: under it (Ocean tiers, Bird Lair's cloud sea) or beside it (Mountain A / B).
+        /// </summary>
+        static bool OffStage(ChibiFighterSim self, ChibiStageDef st)
+        {
+            if (!self.Grounded) return Math.Abs(self.X) > st.HalfWidth - 300 || self.Y < -1225;
+            return self.Y < -300 || Math.Abs(self.X) > st.HalfWidth + 200;
+        }
+
+        /// <summary>On the main stage or a platform above its level, over the stage's width (not off the side, not below).</summary>
+        static bool OnStageArea(ChibiFighterSim f, ChibiStageDef st) => Math.Abs(f.X) <= st.HalfWidth && f.Y >= -300;
+
+        /// <summary>
+        /// Recovery while standing on a lower or side surface: beside the main stage (or on a platform above its level) jump
+        /// toward the centre; under the main stage walk out from under it first, jumping off the end of the surface.
+        /// </summary>
+        void RecoverFromGround(ChibiFighterSim self, ChibiStageDef st, int toCentre, ref ChibiButtons press)
+        {
+            int ax = Math.Abs(self.X);
+            bool under = self.Y < -300 && ax < st.HalfWidth + ChibiSimConst.HurtHalfW + 100;
+            if (!under)
+            {
+                _dx = toCentre;
+                if (CanPress(ChibiButtons.Jump)) press |= ChibiButtons.Jump;
+                return;
+            }
+            _dx = toCentre != 0 ? -toCentre : 1;
+            if (!SafeGround(st, self.X + _dx * 500, self.Y) && CanPress(ChibiButtons.Jump)) press |= ChibiButtons.Jump;
+        }
+
+        /// <summary>
+        /// Landing target beside the main stage: a platform that extends past the ledge, below us, that we can reach by
+        /// drifting while we fall to its top (moving platforms at their predicted position at that time, F1 via
+        /// <see cref="ChibiPlatform.CxAt"/> / <see cref="ChibiPlatform.TopAt"/>, starting from
+        /// <see cref="ChibiSimulation.PlatformCx"/> / <see cref="ChibiSimulation.PlatformTop"/>). The main stage wins when it
+        /// can be drifted onto the same way.
+        /// </summary>
+        bool PlatformLanding(ChibiFighterSim self, ChibiStageDef st, out int landX)
+        {
+            landX = 0;
+            var plats = st.Platforms;
+            if (plats.Length == 0 || self.Vy > 0) return false;
+            int speed = Math.Max(1, ChibiCombatStats.EffectiveMoveSpeed(self.Stats, self.SlowTicks > 0, self.TailwindTicks > 0) / ChibiSimConst.VelSub);
+            int g = Math.Max(1, ChibiSimConst.Gravity / ChibiSimConst.VelSub);
+            if (self.Y > 200)
+            {
+                int tMain = (int)ChibiFixed.ISqrt(2L * self.Y / g);
+                if (Math.Abs(self.X) - st.HalfWidth + 300 <= tMain * speed * 7 / 10) return false;
+            }
+            int clock = ChibiSimulation.PlatformClock(_state);
+            int best = int.MaxValue;
+            for (int p = 0; p < plats.Length; p++)
+            {
+                var q = plats[p];
+                int cx = ChibiSimulation.PlatformCx(_state, p), top = ChibiSimulation.PlatformTop(_state, p);
+                if (Math.Abs(cx) + q.HalfW <= st.HalfWidth + 400) continue;    // over the main stage: not a side target
+                if (self.Y < top + 150) continue;
+                int t = (int)ChibiFixed.ISqrt(2L * (self.Y - top) / g) + 1;
+                if (q.Moves) { cx = q.CxAt(clock + t); top = q.TopAt(clock + t); if (self.Y < top + 150) continue; }
+                int edge = Math.Max(0, Math.Abs(self.X - cx) - (q.HalfW - 400));
+                if (edge > t * speed * 7 / 10) continue;
+                if (edge < best)
+                {
+                    best = edge;
+                    int lo = cx - q.HalfW + 500, hi = cx + q.HalfW - 500;
+                    landX = Math.Max(lo, Math.Min(hi, self.X));
+                }
+            }
+            return best != int.MaxValue;
+        }
+
+        /// <summary>
+        /// Footing check for walking: feet x at height y still stand on something wanted, never near an active side KO line
+        /// (margin), on the main stage top short of its ledge (the end of the walkable ground on every stage, rules v21),
+        /// on the solid floor short of its end, on the same platform, or with the
+        /// main stage / a platform close below to drop onto. Margins grow in danger.
+        /// </summary>
+        bool SafeGround(ChibiStageDef st, int x, int y)
+        {
+            int ax = Math.Abs(x);
+            int koMargin = WalkOffMargin + (_danger ? DangerWalkOffExtra : 0);
+            int ledge = LedgeMargin + (_danger ? DangerLedgeExtra : 0);
+            if (st.KoSides && ax > st.BlastX - koMargin) return false;
+            if (!st.KoSides && ax > st.WallClampX) return false;
+            if (y > -200 && y < 200 && ax <= st.HalfWidth - ledge) return true;
+            if (st.HasFloor && y <= st.FloorY + 200 && y >= st.FloorY - 200 && ax <= st.FloorHalfW - ledge) return true;
+            if (!st.KoBottom && y <= st.KillY + 200) return true;
+            var plats = st.Platforms;
+            for (int p = 0; p < plats.Length; p++)
+            {
+                int cx = ChibiSimulation.PlatformCx(_state, p), top = ChibiSimulation.PlatformTop(_state, p);
+                if (Math.Abs(x - cx) <= plats[p].HalfW - 150 && top <= y + 200 && top >= y - 2500) return true;
+            }
+            return y > 200 && ax <= st.HalfWidth - ledge;              // dropping off a platform onto the main stage
+        }
+
+        /// <summary>Grounded walking never steps where <see cref="SafeGround"/> fails (stopping distance included); a turn tick passes.</summary>
+        void KeepFooting(ChibiFighterSim self, ChibiStageDef st)
+        {
+            if (!self.Grounded)
+            {
+                // Also never drift (momentum included) past the ledge over a KO bottom (past the floor's end where there is
+                // one) or toward an active side line; steer back instead.
+                long av = self.Vx;
+                int airStop = (int)(av * Math.Abs(av) / (2L * ChibiSimConst.AirAccel * ChibiSimConst.VelSub));
+                int lim = st.KoSides ? st.BlastX - WalkOffMargin - (_danger ? DangerWalkOffExtra : 0) : st.WallClampX;
+                if (st.KoBottom && self.Y > -300) lim = Math.Min(lim, st.HasFloor ? st.FloorHalfW - 500 : st.HalfWidth + 300);
+                int px = self.X + airStop + _dx * 300;
+                if (px > lim && _dx >= 0) _dx = -1;
+                else if (px < -lim && _dx <= 0) _dx = 1;
+                return;
+            }
+            if (_dx == 0 || self.Facing != _dx) return;
+            long v = self.Vx;
+            int stop = (int)(v * v / (2L * ChibiSimConst.GroundAccel * ChibiSimConst.VelSub));
+            if (!SafeGround(st, self.X + _dx * (350 + stop), self.Y)) _dx = 0;
+        }
+
+        /// <summary>
+        /// Fight-for-centre stages (side KO, no top KO: Plain, Bird Lair): we stand past 45 % of the main stage's half-width
+        /// (and within 3000 of its ledge or further out) with the opponent between us and the centre.
+        /// </summary>
+        static bool Cornered(ChibiFighterSim self, ChibiFighterSim opp, ChibiStageDef st)
+        {
+            if (!st.KoSides || st.KoTop || !self.Grounded) return false;
+            int side = self.X > 0 ? 1 : -1;
+            int from = Math.Max(st.HalfWidth * CorneredP / 1000, Math.Min(st.HalfWidth - 3000, st.HalfWidth * 3 / 4));
+            return Math.Abs(self.X) > from && opp.X * side < self.X * side && opp.X * side > -2000;
+        }
+
+        /// <summary>A solid floor (rules v21, Bird Lair's cloud shelf) lies below feet X <paramref name="x"/>.</summary>
+        static bool OverFloor(ChibiStageDef st, int x) => st.HasFloor && Math.Abs(x) < st.FloorHalfW;
+
+        // ================================================================== rules v20: hazards (only when s.HazardsOn)
+
+        /// <summary>Ocean whale is coming or holding (Telegraph..Hold), or rising but still low enough to catch a jump.</summary>
+        bool WhaleThreat(ChibiStageDef st)
+        {
+            if (!_state.HazardsOn || st.Hazard != ChibiStageTable.HazardWhale) return false;
+            int ph = _state.HazPhase;
+            if (ph == ChibiHazardConst.Idle) return false;
+            if (ph == ChibiHazardConst.PhaseWhaleRise) return ChibiSimulation.WhaleBottom(_state) < WhaleClearY;
+            return true;
+        }
+
+        /// <summary>
+        /// Gets under the main stage before the whale: off a platform (Down + Jump drops through), off the main stage's
+        /// nearer edge, then steer onto that side's lower tier (fast fall over it), air jump back up to it if we fell past.
+        /// </summary>
+        void WhaleDescend(ChibiFighterSim self, ChibiFighterSim opp, ChibiStageDef st, ref ChibiButtons press)
+        {
+            int side = self.X > 0 ? 1 : (self.X < 0 ? -1 : (opp.X > 0 ? -1 : 1));
+            int tier = LowTier(st, side);
+            if (tier < 0) { Recover(self, st, ref press); return; }
+            int cx = ChibiSimulation.PlatformCx(_state, tier), top = ChibiSimulation.PlatformTop(_state, tier);
+            int hw = st.Platforms[tier].HalfW;
+            int clearX = st.HalfWidth + ChibiSimConst.HurtHalfW + 300;    // past the main stage's side
+            if (self.Grounded)
+            {
+                if (self.Y > 300 && CanPress(ChibiButtons.Jump)) { press |= ChibiButtons.Jump; _dx = 0; _dy = -1; return; }
+                _dx = side;                                               // walk off the main stage's edge
+                return;
+            }
+            int tx = side * Math.Max(Math.Abs(cx), clearX + 200);
+            if (self.Y > st.MainBottom && Math.Abs(self.X) < clearX) tx = side * (clearX + 600);
+            int d = tx - self.X;
+            _dx = Math.Abs(d) > 250 ? Math.Sign(d) : 0;
+            bool overTier = Math.Abs(self.X - cx) < hw - 400 && Math.Abs(self.X) > clearX - 300;
+            if (self.Y < top - 200)
+            {
+                if (self.Vy < 0 && self.AirJumps > 0 && CanPress(ChibiButtons.Jump)) press |= ChibiButtons.Jump;
+                else if (self.AirJumps == 0 && self.Y < top - 1500) Recover(self, st, ref press);
+                return;
+            }
+            if (overTier && self.Y > top + 300) _dy = -1;                 // fast fall onto it
+        }
+
+        /// <summary>The highest platform under the main stage's underside on <paramref name="side"/> (else any), -1 when none.</summary>
+        int LowTier(ChibiStageDef st, int side)
+        {
+            int best = -1, bestTop = int.MinValue, any = -1, anyTop = int.MinValue;
+            var plats = st.Platforms;
+            for (int p = 0; p < plats.Length; p++)
+            {
+                int top = ChibiSimulation.PlatformTop(_state, p), cx = ChibiSimulation.PlatformCx(_state, p);
+                if (top > st.MainBottom - 1000) continue;
+                if (top > anyTop) { any = p; anyTop = top; }
+                if (cx * side > 0 && top > bestTop) { best = p; bestTop = top; }
+            }
+            return best >= 0 ? best : any;
+        }
+
+        /// <summary>Bird Lair telegraph or swipe (gust + body pass).</summary>
+        bool BirdAlert(ChibiStageDef st) =>
+            _state.HazardsOn && st.Hazard == ChibiStageTable.HazardBird &&
+            (_state.HazPhase == ChibiHazardConst.Telegraph || _state.HazPhase == ChibiHazardConst.PhaseBirdSwipe);
+
+        /// <summary>
+        /// Bird Lair: drop off a mesa (Down + Jump, the body band starts just above a standing head on MAIN), land (fast fall,
+        /// drift upwind), stand at least <see cref="BirdUpwindX"/> upwind of the centre and hold against the gust there;
+        /// shield a close attacker. No jumps, no attacks while it lasts.
+        /// </summary>
+        void BirdBrace(ChibiFighterSim self, ChibiFighterSim opp, ChibiStageDef st, ref bool block, ref ChibiButtons press)
+        {
+            int up = _state.HazArg > 0 ? -1 : 1;                          // gust pushes toward HazArg
+            if (self.Grounded)
+            {
+                if (self.Y > 300)
+                {
+                    if (CanPress(ChibiButtons.Jump)) { press |= ChibiButtons.Jump; _dy = -1; }
+                    _dx = 0;
+                    return;
+                }
+                _dx = self.X * up < BirdUpwindX ? up : 0;
+                if (opp.InPlay && opp.MoveSlot >= 0 && Math.Abs(opp.X - self.X) < 2500 && Math.Abs(opp.Y - self.Y) < 2000) { block = true; _dx = 0; }
+                KeepFooting(self, st);
+                return;
+            }
+            _dx = up;
+            if (self.Vy < ChibiSimConst.FastFallTriggerVy) _dy = -1;
+        }
+
+        /// <summary>
+        /// Volcano fire lanes (Telegraph and Erupt of an active lane, below the column top): leave a lane we are in (toward
+        /// the stage unless the outer side is much nearer), cross from the outer side only if the telegraph leaves time,
+        /// otherwise hold outside (air jump to stall over the lava) and never drift into it from the stage side. The
+        /// position used includes the momentum's stopping distance.
+        /// </summary>
+        void AvoidFire(ChibiFighterSim self, ChibiStageDef st, ref ChibiButtons press)
+        {
+            if (!_state.HazardsOn || st.Hazard != ChibiStageTable.HazardFire) return;
+            int ph = _state.HazPhase;
+            if (ph != ChibiHazardConst.Telegraph && ph != ChibiHazardConst.PhaseFireErupt) return;
+            if (self.Y > ChibiHazardConst.FireBottom + ChibiHazardConst.FireRise + 300) return;   // above the column top
+            int speed = Math.Max(1, ChibiCombatStats.EffectiveMoveSpeed(self.Stats, self.SlowTicks > 0, self.TailwindTicks > 0) / ChibiSimConst.VelSub);
+            int accel = self.Grounded ? ChibiSimConst.GroundAccel : ChibiSimConst.AirAccel;
+            int px = self.X + (int)((long)self.Vx * Math.Abs(self.Vx) / (2L * accel * ChibiSimConst.VelSub));
+            int left = ph == ChibiHazardConst.Telegraph ? _state.HazTimer : 0;
+            const ChibiButtons moving = ChibiButtons.Special | ChibiButtons.Dash | ChibiButtons.Skill1 | ChibiButtons.Skill2 |
+                                        ChibiButtons.Skill3 | ChibiButtons.Light | ChibiButtons.Heavy;
+            for (int lane = 0; lane < 2; lane++)
+            {
+                if (!ChibiSimulation.FireLaneOn(_state, lane)) continue;
+                int lx = lane == 0 ? ChibiHazardConst.FireLaneLeftX : ChibiHazardConst.FireLaneRightX;
+                int outward = lx > 0 ? 1 : -1;
+                int band = ChibiHazardConst.FireLaneHalfW + ChibiSimConst.HurtHalfW + FireMargin;
+                int rel = (self.X - lx) * outward, relP = (px - lx) * outward;   // > 0: beyond the lane, < 0: stage side
+                bool low = self.Y < st.KillY + 2500;                             // about to fall out: go in anyway
+                if (Math.Abs(rel) < band || Math.Abs(relP) < band && rel * relP <= 0 || Math.Abs(relP) < band && Math.Abs(rel) < band + 600)
+                {
+                    int toIn = band + rel, toOut = band - rel;
+                    _dx = toIn <= toOut + 900 ? -outward : outward;
+                    press &= ~moving;
+                    if (!self.Grounded && self.Vy < 0 && self.Y < 0 && self.AirJumps > 0 && CanPress(ChibiButtons.Jump)) press |= ChibiButtons.Jump;
+                }
+                else if (rel > 0 && !low)
+                {
+                    int dist = rel + band;
+                    if (ph == ChibiHazardConst.Telegraph && dist / speed + 12 < left) _dx = -outward;   // time to cross now
+                    else
+                    {
+                        _dx = rel < band + 1500 ? outward : 0;
+                        press &= ~moving;
+                        if (!self.Grounded && self.Vy < 0 && self.Y < 0 && self.AirJumps > 0 && CanPress(ChibiButtons.Jump)) press |= ChibiButtons.Jump;
+                    }
+                }
+                else if (rel < 0 && _dx == outward && -relP < band + 1200)
+                {
+                    _dx = 0;
+                    press &= ~(ChibiButtons.Dash | ChibiButtons.Special);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Respawn hover: leave after a short random wait, not while the Bird Lair gust is coming or blowing, and not while
+        /// the opponent waits right below (until the hover is nearly over).
+        /// </summary>
+        bool HoverLeaveSafe(ChibiFighterSim me)
+        {
+            if (_hoverWait < 0) _hoverWait = HoverWaitBase + _rng.Range(HoverWaitSpan) * (4 - Math.Min(3, _difficulty)) / 2;
+            if (_hoverWait > 0) { _hoverWait--; return false; }
+            var st = ChibiStageTable.Get(_state.Stage);
+            if (BirdAlert(st) || WhaleThreat(st) && me.Y > 0) return false;
+            var opp = _state.F[1 - _player];
+            if (opp.InPlay && me.HoverTicks > HoverCampMinLeft && Math.Abs(opp.X - me.X) < HoverCampX && opp.Y < me.Y && opp.Stun == 0)
+                return false;
+            return true;
+        }
         bool ZoneFree()
         {
             int live = 0;

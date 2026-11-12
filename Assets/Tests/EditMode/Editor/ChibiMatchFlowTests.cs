@@ -30,8 +30,6 @@ namespace ChibiClash.Tests
             for (int t = 0; t < ticks; t++) ChibiSimulation.Step(s, N, N);
         }
 
-        static int MaxHpU(ChibiFighterSim f) => f.Stats.MaxHp * ChibiCombatStats.HpScale;
-
         // ================================================================== intro (MC:26, MC:121-127)
 
         [Test]
@@ -59,17 +57,18 @@ namespace ChibiClash.Tests
         }
 
         [Test]
-        public void Intro_NoMatchClockAndNoRingOut()
+        public void Intro_NoMatchClockAndNoKo()
         {
+            // Rules v20: crossing a KO edge costs a stock, but only while running (MC:121-127 returns before the bounds check).
             var s = NewMatch(intro: true);
             s.F[1].X = 40000;                       // past the blast line during the intro (fixture injection)
-            int hp = s.F[1].HpU;
             Run(s, 10);
             Assert.AreEqual(0, s.MatchClock, "the timer does not run in the intro");
-            Assert.AreEqual(hp, s.F[1].HpU, "no ring-out while not running (MC:121-127 returns before the bounds check)");
+            Assert.AreEqual(ChibiPercentConst.StocksStart, s.F[1].Stocks, "no KO while not running");
+            Assert.AreEqual(0, s.F[1].OutTicks);
             Run(s, ChibiSimConst.IntroTicks);
-            Assert.Less(System.Math.Abs(s.F[1].X), 1000, "ring-out resolves once running: respawned at the centre");
-            Assert.Less(s.F[1].HpU, hp, "ring-out penalty applied");
+            Assert.AreEqual(ChibiPercentConst.StocksStart - 1, s.F[1].Stocks, "the KO resolves once running");
+            Assert.AreEqual(1, s.F[1].KosTaken);
         }
 
         [Test]
@@ -81,7 +80,7 @@ namespace ChibiClash.Tests
             Assert.AreEqual(ChibiSimConst.MatchTicks - 300, s.TimeLeftTicks);
         }
 
-        // ================================================================== timeout (MC:135-141)
+        // ================================================================== timeout (rules v20: stocks, then percent, then draw)
 
         [Test]
         public void Timeout_EndsOnTheLastClockStep()
@@ -91,62 +90,67 @@ namespace ChibiClash.Tests
             ChibiSimulation.Step(s, N, N);
             Assert.IsFalse(s.MatchOver, "one step left");
             ChibiSimulation.Step(s, N, N);
-            Assert.IsTrue(s.MatchOver, "ends on step 10800");
-            Assert.AreEqual(-1, s.Winner, "full HP both: draw");
+            Assert.IsTrue(s.MatchOver, "ends on the last clock step (300 s)");
+            Assert.AreEqual(-1, s.Winner, "equal stocks and percent: draw");
         }
 
         [Test]
-        public void Timeout_OneMicroHpAhead_Wins_NotADraw()
+        public void Timeout_LowerPercentWins_ByOneMilliPercent()
         {
-            // Regression: the pre-v16 permille ratio called anything within 0.1% a draw; Mathf.Approximately does not.
             var s = NewMatch();
-            // Both are 500 permille under the old rule (draw); exactly, F[0] is 1 micro-HP ahead.
-            s.F[0].HpU = MaxHpU(s.F[0]) / 2 + 1;
-            s.F[1].HpU = MaxHpU(s.F[1]) / 2;
+            s.F[0].PctM = 40_000;
+            s.F[1].PctM = 40_001;
             s.MatchClock = ChibiSimConst.MatchTicks - 1;
             ChibiSimulation.Step(s, N, N);
             Assert.IsTrue(s.MatchOver);
-            Assert.AreEqual(0, s.Winner, "the higher exact HP fraction wins");
+            Assert.AreEqual(0, s.Winner, "equal stocks: the lower percent wins");
         }
 
         [Test]
-        public void Timeout_EqualFractionsAcrossClasses_Draw()
+        public void Timeout_StocksBeatPercent_EqualIsDraw()
         {
+            // percent-knockback.md AC 12.
             var s = NewMatch(c0: FighterClass.Heavy, c1: FighterClass.Ranged);
-            Assert.AreNotEqual(s.F[0].Stats.MaxHp, s.F[1].Stats.MaxHp, "precondition: different max HP");
-            s.F[0].HpU = MaxHpU(s.F[0]) / 4;
-            s.F[1].HpU = MaxHpU(s.F[1]) / 4;
-            Assert.AreEqual(-1, ChibiSimulation.TimeoutWinner(s.F[0], s.F[1]));
+            s.F[0].Stocks = 2; s.F[0].PctM = 150_000;
+            s.F[1].Stocks = 1; s.F[1].PctM = 0;
+            Assert.AreEqual(0, ChibiSimulation.TimeoutWinner(s.F[0], s.F[1]), "(2, 150 %) beats (1, 0 %)");
+            s.F[0].Stocks = 1; s.F[0].PctM = 40_000; s.F[1].PctM = 41_000;
+            Assert.AreEqual(0, ChibiSimulation.TimeoutWinner(s.F[0], s.F[1]), "(1, 40 %) beats (1, 41 %)");
+            s.F[1].PctM = 40_000;
+            Assert.AreEqual(-1, ChibiSimulation.TimeoutWinner(s.F[0], s.F[1]), "(1, 40 %) vs (1, 40 %): draw");
         }
 
-        // ================================================================== KO (MC:154-166, D-F1)
+        // ================================================================== KO (rules v20 stocks, D-F1)
 
         [Test]
-        public void KO_OneFighter_OpponentWins()
+        public void KO_LastStock_OpponentWins()
         {
             var s = NewMatch();
-            s.F[1].HpU = 0;
+            s.F[1].Stocks = 1;
+            s.F[1].X = 40000;
             ChibiSimulation.Step(s, N, N);
             Assert.IsTrue(s.MatchOver);
             Assert.AreEqual(0, s.Winner);
+            Assert.AreEqual(0, s.F[1].Stocks);
         }
 
         [Test]
-        public void KO_BothSameTick_Draw()
+        public void KO_BothLastStocksSameTick_Draw()
         {
             var s = NewMatch();
-            s.F[0].HpU = 0;
-            s.F[1].HpU = 0;
+            s.F[0].Stocks = 1; s.F[0].X = -40000;
+            s.F[1].Stocks = 1; s.F[1].X = 40000;
             ChibiSimulation.Step(s, N, N);
             Assert.IsTrue(s.MatchOver);
-            Assert.AreEqual(-1, s.Winner, "D-F1: a same-tick double KO is a draw");
+            Assert.AreEqual(-1, s.Winner, "D-F1: a same-tick double last-stock KO is a draw");
         }
 
         [Test]
         public void KO_MatchOver_StopsSimulating()
         {
             var s = NewMatch();
-            s.F[1].HpU = 0;
+            s.F[1].Stocks = 1;
+            s.F[1].X = 40000;
             ChibiSimulation.Step(s, N, N);
             uint h = s.ComputeChecksum();
             int g = s.GameTicks;
@@ -156,31 +160,22 @@ namespace ChibiClash.Tests
             Assert.AreNotEqual(h, s.ComputeChecksum(), "only Frame advances");
         }
 
-        // ================================================================== training (MC:68, MC:129-132, MC:157-162)
+        // ================================================================== training (MC:68, MC:129-132, rules v20)
 
         [Test]
-        public void Training_KO_RevivesFullHp_MatchContinues()
+        public void Training_KO_KeepsStocks_RespawnsAtZeroPercent()
         {
             var s = NewMatch(training: true);
-            s.F[1].HpU = 0;
-            s.F[1].Stun = 40;
+            s.F[1].PctM = 120_000;
+            s.F[1].X = 40000;
             ChibiSimulation.Step(s, N, N);
             Assert.IsFalse(s.MatchOver);
-            Assert.AreEqual(MaxHpU(s.F[1]), s.F[1].HpU, "Revive: full HP");
-            Assert.AreEqual(0, s.F[1].Stun, "Revive: hitstun cleared");
-            Assert.AreEqual(1, s.F[1].Revives);
-        }
-
-        [Test]
-        public void Training_RingOutToZeroHp_RespawnsAndRevives()
-        {
-            var s = NewMatch(training: true);
-            s.F[0].HpU = 1;
-            s.F[0].X = 40000;
-            ChibiSimulation.Step(s, N, N);
-            Assert.IsFalse(s.MatchOver);
-            Assert.AreEqual(ChibiSimConst.RespawnY, s.F[0].Y, "respawned");
-            Assert.AreEqual(MaxHpU(s.F[0]), s.F[0].HpU, "revived after the ring-out penalty took the last HP");
+            Assert.AreEqual(ChibiPercentConst.StocksStart, s.F[1].Stocks, "training: no stock loss");
+            Assert.AreEqual(1, s.F[1].KosTaken);
+            Run(s, ChibiPercentConst.RespawnDelay);
+            Assert.AreEqual(0, s.F[1].OutTicks, "respawned");
+            Assert.AreEqual(0, s.F[1].PctM, "percent reset");
+            Assert.AreEqual(ChibiStageTable.Get(0).RespawnY, s.F[1].Y, "on the respawn point");
         }
 
         [Test]

@@ -39,7 +39,10 @@ namespace ChibiClash.Netcode
     {
         public int Class;                 // ChibiClash.FighterClass as int
         public int Passive;               // 0 or 1
+        /// <summary>Class HP of the old HP bar. Rules v20: no HP in the match any more; only the source of <see cref="Weight"/>.</summary>
         public int MaxHp;
+        /// <summary>Knockback weight = MaxHp / 5 (percent-knockback.md 4.3): Lyra 75, Ren 80, Kaia 100, Taro 100, Bruna 120.</summary>
+        public int Weight => MaxHp / 5;
         public int Attack;
         public int Defense;
         public int CritRatePermille;      // base 50 = 5%
@@ -123,8 +126,7 @@ namespace ChibiClash.Netcode
         /// <summary>Life steal heal in micro-HP: dmg·permille/1000, half-up (Blood Edge 5 %: 18 HP -> 0.9 HP, section 5).</summary>
         public static int LifestealMicro(int dmgU, int permille) => (int)(((long)dmgU * permille + 500) / 1000);
 
-        /// <summary>Archer and mage knockback is halved (balance).</summary>
-        public static bool HalfKnockback(int cls) => cls == (int)FighterClass.Ranged || cls == (int)FighterClass.Magic;
+        // Rules v20: HalfKnockback (Ranged / Magic x0.5) is replaced by ChibiSimulation.ClassKbP (x0.85, GL-2).
 
         /// <summary>Build stats from the GDD tables. 'passive' is the player's 1-of-2 pick.</summary>
         public static ChibiCombatStats Create(FighterClass cls, int passive)

@@ -126,17 +126,24 @@ namespace ChibiClash.Netcode
 
         /// <summary>Host side (sim player 0). The host decides seed, stage and rollback settings.</summary>
         /// <example><code>var m = ChibiOnlineMatch.Host(transport, input, FighterClass.Melee, 0, stage: 0, seed, ChibiRollbackSettings.Default);</code></example>
+        /// <param name="hazardsOff">Rules v20 (ST-5): the host's hazards switch, sent in the handshake Start message.</param>
         public static ChibiOnlineMatch Host(IChibiTransport transport, IChibiInputSource input, FighterClass myClass, int myPassive,
                                             int stage, uint seed, ChibiRollbackSettings settings,
-                                            int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks, string localName = "")
+                                            int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks, string localName = "",
+                                            bool hazardsOff = false)
             => new ChibiOnlineMatch(transport,
-                c => ChibiHandshake.ForHost(c, myClass, myPassive, stage, seed, settings, handshakeTimeoutTicks, localName), input);
+                c => ChibiHandshake.ForHost(c, myClass, myPassive, stage, seed, settings, handshakeTimeoutTicks, localName,
+                                            hazardsOff), input);
 
         /// <summary>Joiner side (sim player 1).</summary>
         /// <example><code>var m = ChibiOnlineMatch.Join(transport, input, FighterClass.Magic, 1);</code></example>
+        /// <param name="expectStage">SEC-001: room stage the joiner agreed to (-1 = any).</param>
+        /// <param name="expectHazardsOff">SEC-001: room hazards switch the joiner agreed to (null = any).</param>
         public static ChibiOnlineMatch Join(IChibiTransport transport, IChibiInputSource input, FighterClass myClass, int myPassive,
-                                            int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks, string localName = "")
-            => new ChibiOnlineMatch(transport, c => ChibiHandshake.ForJoiner(c, myClass, myPassive, handshakeTimeoutTicks, localName), input);
+                                            int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks, string localName = "",
+                                            int expectStage = -1, bool? expectHazardsOff = null)
+            => new ChibiOnlineMatch(transport, c => ChibiHandshake.ForJoiner(c, myClass, myPassive, handshakeTimeoutTicks, localName,
+                                                                             expectStage, expectHazardsOff), input);
 
         // ================================================================== tick
 

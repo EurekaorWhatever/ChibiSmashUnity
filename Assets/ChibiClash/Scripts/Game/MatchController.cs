@@ -10,7 +10,9 @@ namespace ChibiClash
         public int[] passive = new int[2];
         public int[] weapon = new int[2];     // cosmetic weapon variant per player (index into WeaponDef.ForClass)
         public bool[] cpu = { false, true };
-        public int stage;
+        public int stage = StageBuilder.DefaultStage;
+        /// <summary>Stage events (fire, bird, whale) on; moving platforms move either way (ST-5). Host decides online.</summary>
+        public bool hazards = true;
         public int timeLimit = MatchController.MatchSeconds;
         public int difficulty = 2;
         public bool training;

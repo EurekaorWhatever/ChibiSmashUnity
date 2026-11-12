@@ -126,3 +126,6 @@ production/session-state/
 # Python bytecode from tools/*.py
 __pycache__/
 *.pyc
+
+# Studio hook logs written when an agent ran from a subfolder
+**/production/session-logs/

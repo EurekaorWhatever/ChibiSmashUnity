@@ -61,11 +61,9 @@ namespace ChibiClash.Tests
         const int LightStun = 17, FinisherStun = 27, HeavyStun = 30;
 
         // ---- knockback displacement (doc section 10 rows "Melee light/heavy kb", "Finisher", "Ranged light", "Magic heavy")
-        const double LightDisp16 = 666.7;       // 16 * 41.667 milli/tick (2.5 u/s)
-        const double HeavyDisp29 = 3866.7;      // 29 * 133.33 (8 u/s)
-        const double FinisherDisp26 = 3033.3;   // 26 * 116.67 (7 u/s)
-        const double RangedLightDisp16 = 200;   // 11250 sub = 12.5 milli/t after KnockbackScale 0.5 (CA:40)
-        const double MagicHeavyDisp29 = 1160;   // 36000 sub = 40 milli/t
+        // Rules v20: the normals' kb rows are the launch angle / tier of the percent formula (percent-knockback.md 4.4).
+        const int MeleeLightKbX = 37500, MeleeLightKbY = 30000, MeleeHeavyKbX = 120000, MeleeHeavyKbY = 90000,
+                  FinisherKb = 105000, ShotLightKbX = 22500, ShotLightKbY = 18000, ShotHeavyKbX = 72000, ShotHeavyKbY = 54000;
 
         // ---- combo (doc section 3)
         const int ComboWindowTicks = 55;        // elapsed > 0.9 s resets; j = 54 chains, j = 55 resets
@@ -147,10 +145,45 @@ namespace ChibiClash.Tests
 
         static Func<int, ChibiButtons> Or(Func<int, ChibiButtons> a, Func<int, ChibiButtons> b) => t => a(t) | b(t);
 
+        static Trace LastTrace;
+
+        /// <summary>Rules v20 oracle per hit of the last HitStuns run: light (2.5, 2) u/s stun 17; the finisher (index
+        /// <paramref name="finisherIdx"/>, -1 = none) (7, 7) u/s stun 27.</summary>
+        static List<int> ExpectedComboStuns(FighterClass cls, int finisherIdx)
+        {
+            var tr = LastTrace;
+            var e = new List<int>();
+            for (int i = 0; i < tr.Hits.Count; i++)
+            {
+                int h = tr.Hits[i], before = h > 0 ? tr.VictimPct[h - 1] : 0;
+                bool fin = i == finisherIdx;
+                e.Add(ChibiPercentTestKit.Expected(tr.VictimPct[h], tr.VictimPct[h] - before, tr.VictimWeight, (int)cls,
+                    fin ? FinisherKb : MeleeLightKbX, fin ? FinisherKb : MeleeLightKbY, 1, fin ? FinisherStun : LightStun).Stun);
+            }
+            return e;
+        }
+
+        /// <summary>Rules v20 oracle per hit of the last HitStuns run; kinds: 0 light, 1 heavy, 2 finisher.</summary>
+        static List<int> ExpectedStunsOf(FighterClass cls, params int[] kinds)
+        {
+            var tr = LastTrace;
+            var e = new List<int>();
+            for (int i = 0; i < tr.Hits.Count && i < kinds.Length; i++)
+            {
+                int h = tr.Hits[i], before = h > 0 ? tr.VictimPct[h - 1] : 0, k = kinds[i];
+                int kx = k == 0 ? MeleeLightKbX : k == 1 ? MeleeHeavyKbX : FinisherKb;
+                int ky = k == 0 ? MeleeLightKbY : k == 1 ? MeleeHeavyKbY : FinisherKb;
+                int st = k == 0 ? LightStun : k == 1 ? HeavyStun : FinisherStun;
+                e.Add(ChibiPercentTestKit.Expected(tr.VictimPct[h], tr.VictimPct[h] - before, tr.VictimWeight, (int)cls, kx, ky, 1, st).Stun);
+            }
+            return e;
+        }
+
         /// <summary>Per-tick observations, all sampled at the END of each tick.</summary>
         sealed class Trace
         {
-            public int[] VictimX, VictimStun, AttackerSlot;
+            public int[] VictimX, VictimStun, AttackerSlot, VictimPct, VictimVx;
+            public int VictimWeight;
             public readonly List<int> Hits = new List<int>();     // ticks on which the victim's Hp dropped
         }
 
@@ -160,16 +193,19 @@ namespace ChibiClash.Tests
         /// </summary>
         static Trace Run(ChibiSimState s, int ticks, Func<int, ChibiButtons> btn, Action<int> before = null)
         {
-            var tr = new Trace { VictimX = new int[ticks], VictimStun = new int[ticks], AttackerSlot = new int[ticks] };
+            var tr = new Trace { VictimX = new int[ticks], VictimStun = new int[ticks], AttackerSlot = new int[ticks],
+                                 VictimPct = new int[ticks], VictimVx = new int[ticks], VictimWeight = s.F[1].Weight };
             for (int t = 0; t < ticks; t++)
             {
                 before?.Invoke(t);
-                int hp = s.F[1].Hp;
+                int hp = s.F[1].HpLike();
                 ChibiTestTime.StepGame(s, ChibiInputPacket.Make(ChibiDir.Neutral, btn(t)), Neutral);   // counts game steps (D10)
                 tr.VictimX[t] = s.F[1].X;
                 tr.VictimStun[t] = s.F[1].Stun;
                 tr.AttackerSlot[t] = s.F[0].MoveSlot;
-                if (s.F[1].Hp < hp) tr.Hits.Add(t);
+                tr.VictimPct[t] = s.F[1].PctM;
+                tr.VictimVx[t] = s.F[1].Vx;
+                if (s.F[1].HpLike() < hp) tr.Hits.Add(t);
             }
             return tr;
         }
@@ -341,7 +377,7 @@ namespace ChibiClash.Tests
             // counts game steps (D10)
             var s = Arena(FighterClass.Melee, MeleeBase, MeleeAX, MeleeVX);
             var tr = Run(s, 60, On(ChibiButtons.Light, 0));
-            AssertKnockback(tr, LightStrike, LightStun, LightDisp16);
+            AssertKnockback(tr, LightStrike, LightStun, MeleeLightKbX, MeleeLightKbY, FighterClass.Melee);
         }
 
         [Test]
@@ -350,7 +386,7 @@ namespace ChibiClash.Tests
             // counts game steps (D10)
             var s = Arena(FighterClass.Melee, MeleeBase, MeleeAX, MeleeVX);
             var tr = Run(s, 60, On(ChibiButtons.Heavy, 0));
-            AssertKnockback(tr, HeavyStrike, HeavyStun, HeavyDisp29);
+            AssertKnockback(tr, HeavyStrike, HeavyStun, MeleeHeavyKbX, MeleeHeavyKbY, FighterClass.Melee);
         }
 
         [Test]
@@ -361,7 +397,7 @@ namespace ChibiClash.Tests
             int[] presses = { 0, LightLock, 2 * LightLock, 3 * LightLock };
             var s = Arena(FighterClass.Melee, MeleeBase, MeleeAX, MeleeVX);
             var tr = Run(s, 100, On(ChibiButtons.Light, presses), RestandVictimOn(s, MeleeVX, presses));
-            AssertKnockback(tr, presses[3] + LightStrike, FinisherStun, FinisherDisp26);
+            AssertKnockback(tr, presses[3] + LightStrike, FinisherStun, FinisherKb, FinisherKb, FighterClass.Melee);
         }
 
         [Test]
@@ -371,7 +407,7 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Ranged, RangedBase, ShotAX, ShotVX);
             var tr = Run(s, 60, On(ChibiButtons.Light, 0));
             Assert.AreEqual(1, tr.Hits.Count, "arrow must hit the victim once");
-            AssertKnockback(tr, tr.Hits[0], LightStun, RangedLightDisp16);
+            AssertKnockback(tr, tr.Hits[0], LightStun, ShotLightKbX, ShotLightKbY, FighterClass.Ranged);
         }
 
         [Test]
@@ -381,21 +417,29 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Magic, MagicBase, ShotAX, ShotVX);
             var tr = Run(s, 70, On(ChibiButtons.Heavy, 0));
             Assert.AreEqual(1, tr.Hits.Count, "bolt must hit the victim once");
-            AssertKnockback(tr, tr.Hits[0], HeavyStun, MagicHeavyDisp29);
+            AssertKnockback(tr, tr.Hits[0], HeavyStun, ShotHeavyKbX, ShotHeavyKbY, FighterClass.Magic);
         }
 
         /// <summary>
-        /// Hit on tick <paramref name="h"/>; victim Stun = stun at end of h, still stunned at end of h+stun-1, free (0) at
-        /// end of h+stun; X(h+stun-1) - X(h) = <paramref name="disp"/> +-1 milli (F:179-190: no friction in hitstun).
+        /// Rules v20: hit on tick <paramref name="h"/>; the victim's Stun and launch Vx equal the spec oracle (legacy stun as
+        /// the weak-hit floor, KB x 0.4 for strong hits); still stunned at end of h+stun-1, free (0) at end of h+stun; the
+        /// launch carries it away (X grows) and the per-tick decay keeps the travel at or below the undecayed launch.
         /// </summary>
-        static void AssertKnockback(Trace tr, int h, int stun, double disp)
+        static void AssertKnockback(Trace tr, int h, int legacyStun, int kbX, int kbY, FighterClass attacker)
         {
             CollectionAssert.Contains(tr.Hits, h, $"victim must be hit on tick {h}");
+            int before = h > 0 ? tr.VictimPct[h - 1] : 0;
+            var l = ChibiPercentTestKit.Expected(tr.VictimPct[h], tr.VictimPct[h] - before, tr.VictimWeight, (int)attacker,
+                                                 kbX, kbY, 1, legacyStun);
+            int stun = l.Stun;
             Assert.AreEqual(stun, tr.VictimStun[h], $"victim Stun at end of hit tick {h}");
+            Assert.AreEqual(l.Vx, tr.VictimVx[h], $"victim launch Vx at end of hit tick {h}");
             Assert.Greater(tr.VictimStun[h + stun - 1], 0, $"victim still in hitstun on tick {h + stun - 1}");
             Assert.AreEqual(0, tr.VictimStun[h + stun], $"victim acts on tick {h + stun}");
             int window = stun - 1;
-            Assert.AreEqual(disp, tr.VictimX[h + window] - tr.VictimX[h], PosTol, $"X(H+{window}) - X(H)");
+            double disp = tr.VictimX[h + window] - tr.VictimX[h];
+            Assert.Greater(disp, 0, $"X(H+{window}) - X(H): launched away");
+            Assert.LessOrEqual(disp, (double)l.Vx * window / 900 + PosTol, $"X(H+{window}) - X(H): decay never speeds it up");
         }
 
         // ------------------------------------------------------------------ combo (doc section 3, section 10 combo rows)
@@ -408,6 +452,7 @@ namespace ChibiClash.Tests
             var tr = Run(s, ticks, btn, RestandVictimOn(s, MeleeVX, presses));
             var stuns = new List<int>();
             foreach (int h in tr.Hits) stuns.Add(tr.VictimStun[h]);
+            LastTrace = tr;
             return stuns;
         }
 
@@ -430,9 +475,8 @@ namespace ChibiClash.Tests
 
             var stuns = HitStuns(cls, presses, Lights(patternLength), patternLength * LightLock + 40);
 
-            var expected = new List<int>();
-            for (int i = 0; i < patternLength; i++) expected.Add(i == patternLength - 1 ? FinisherStun : LightStun);
-            CollectionAssert.AreEqual(expected, stuns, $"{cls}: only light #{patternLength} is the finisher (stun 27)");
+            CollectionAssert.AreEqual(ExpectedComboStuns(cls, patternLength - 1), stuns,
+                $"{cls}: only light #{patternLength} is the finisher (v20: finisher kb (7, 7) is a strong hit, stun KB x 0.4)");
         }
 
         [TestCase(ComboWindowTicks - 1, FinisherStun)]  // 54 ticks after the previous start: still chained
@@ -444,8 +488,8 @@ namespace ChibiClash.Tests
 
             var stuns = HitStuns(FighterClass.Melee, presses, Lights(4), presses[3] + 40);
 
-            CollectionAssert.AreEqual(new[] { LightStun, LightStun, LightStun, expectedFourthStun }, stuns,
-                $"4th light {gap} ticks after the 3rd");
+            bool chained = expectedFourthStun == FinisherStun;
+            CollectionAssert.AreEqual(ExpectedComboStuns(FighterClass.Melee, chained ? 3 : -1), stuns, $"4th light {gap} ticks after the 3rd");
         }
 
         [Test]
@@ -459,7 +503,8 @@ namespace ChibiClash.Tests
 
             var stuns = HitStuns(FighterClass.Melee, presses, b, 150);
 
-            CollectionAssert.AreEqual(new[] { LightStun, LightStun, HeavyStun, LightStun, LightStun, LightStun, FinisherStun }, stuns);
+            // Rules v20: stuns from the spec oracle (light / heavy / finisher kb rows, legacy stun as the weak-hit floor).
+            CollectionAssert.AreEqual(ExpectedStunsOf(FighterClass.Melee, 0, 0, 1, 0, 0, 0, 2), stuns);
         }
 
         // ------------------------------------------------------------------ projectiles (doc section 0 rows 7-9, 14; section 10)

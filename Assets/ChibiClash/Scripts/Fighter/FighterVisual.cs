@@ -395,7 +395,32 @@ namespace ChibiClash
             oneShotT = 0f;
             oneShotDur = duration;
             lockT = 0f;
+            phS = phA = phR = 0f;
         }
+
+        /// <summary>
+        /// Plays a moveset move: its sheet-pose clip Move_&lt;<paramref name="moveId"/>&gt; when the character has one, else
+        /// the generic <paramref name="animKindFallback"/> clip (Swing, Thrust...), else (no sheet at all) the procedural
+        /// cutout tween. A sheet-pose clip with phase data is time-remapped so its strike frame lands on the move's first
+        /// active frame (startup / active / recovery in seconds, i.e. sim ticks / TickRate); other clips are stretched
+        /// over the whole move like <see cref="PlayClip"/>. Allocation-free after the first call per move id.
+        /// </summary>
+        public void PlayMoveClip(string moveId, string animKindFallback, float startupSec, float activeSec, float recoverySec)
+        {
+            string name = SpriteAnimLibrary.MoveClipName(moveId);
+            var posed = name != null && hasArt ? SpriteAnimLibrary.Get(CharacterId, name) : null;
+            float total = Mathf.Max(0f, startupSec) + Mathf.Max(0f, activeSec) + Mathf.Max(0f, recoverySec);
+            PlayClip(posed != null ? name : animKindFallback, total);
+            if (posed != null && posed.HasPhases && total > 0f)
+            {
+                phS = Mathf.Max(0f, startupSec);
+                phA = Mathf.Max(0f, activeSec);
+                phR = Mathf.Max(0f, recoverySec);
+            }
+        }
+
+        // phase lengths of the playing sheet-pose move (0 = stretch linearly); reset by PlayClip
+        float phS, phA, phR;
 
         /// <summary>Hand-drawn move to play once at its natural speed (Skill1 / Skill2 / Ultimate / Hit).</summary>
         public void PlayMove(string clip) => PlayClip(clip, 0f);
@@ -520,8 +545,11 @@ namespace ChibiClash
             {
                 // frame-by-frame art: the drawing already contains the weapon, squash and follow-through
                 bool isOneShot = oneShot != null && clipName == oneShot;
-                artSr.sprite = isOneShot && oneShotDur > 0f ? clip.FrameNormalized(oneShotT / oneShotDur)
-                             : clip.Frame(isOneShot ? oneShotT : clipT);
+                if (isOneShot && phS + phA + phR > 0f && clip.HasPhases)
+                    artSr.sprite = clip.FramePhased(oneShotT, phS, phA, phR);   // strike frame on the first active frame
+                else
+                    artSr.sprite = isOneShot && oneShotDur > 0f ? clip.FrameNormalized(oneShotT / oneShotDur)
+                                 : clip.Frame(isOneShot ? oneShotT : clipT);
                 float s = ArtHeight / SpriteAnimLibrary.FigureFill;
                 artSr.transform.localScale = new Vector3(s, s, 1f);
                 artSr.transform.localPosition = Vector3.zero;

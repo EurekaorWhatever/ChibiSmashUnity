@@ -59,3 +59,16 @@ seam jump.
 - Loops: sustain only (sweeps held at their end value, envelope at sustain), every oscillator / tremolo rate rounded to a
   whole number of cycles per loop, filters applied circularly, start rotated to an upward zero crossing.
   `lyra_vmm` 148.5 Hz becomes 148 Hz in the loop (1 Hz beat instead of 1.5 Hz).
+
+## Stage ambience beds and event sources (spec section 8)
+
+- **Beds** (spec 8.1, bus AMB): `<id>_01.wav`, 10 s seamless loops. The Peak cell is `rms -24`: the bed is normalised to that
+  RMS (allowed -26..-22 dBFS) and its peak must stay at or below -3 dBFS. Write `{0/0/1/0}` as the envelope of every bed
+  layer (a layer with no envelope and no gain joins the next one). How the loop stays seamless: whole cycles per loop, noise
+  generated at the loop length, circular filters, event sources wrapped around the end, reverb run on three tiles, then a
+  120 ms crossfade of the head with the next period. The run fails when the wrap step is larger than the file's own
+  99.9th-percentile sample step (+64 LSB).
+- **Event sources** (spec 8.0): `drops R F` bubbles, `crackle R` spatter, `chirp R F` birds, `chime R F` wind chimes,
+  `flap R F` feathers / wings. R = events per second; times come from the layer's seeded RNG (deterministic).
+- Quick listen-free QA used for section 8: band energy (sub < 90 Hz, body 90 Hz-2.5 kHz, air > 3 kHz) per hazard so each
+  has all three layers, and the second difference at the bed's wrap compared with the rest of the loop (no click).

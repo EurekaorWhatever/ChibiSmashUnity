@@ -24,9 +24,11 @@ namespace ChibiClash.Netcode
         const float StopFadeSec = 0.08f;          // loop / replaced voice stop fade (sfx-events.md 6.4)
         const float EndConfirmTimeoutSec = 1.5f;  // play the match end anyway if confirmation never arrives
         const float PanWidth = 0.5f;              // sfx-events.md 7
-        // Bus order = SfxBus: STG, CMB, PRJ, MOV, UI (sfx-events.md 5.1).
-        static readonly int[] BusCap = { 3, 12, 6, 4, 3 };
-        static readonly float[] BusFaderDb = { 0f, 0f, -2f, -4f, -3f };
+        // Bus order = SfxBus: STG, CMB, PRJ, MOV, UI, AMB (sfx-events.md 5.1, 8.1). AMB never uses the pool (own sources).
+        static readonly int[] BusCap = { 3, 12, 6, 4, 3, 1 };
+        static readonly float[] BusFaderDb = { 0f, 0f, -2f, -4f, -3f, -2f };
+        const int BusCount = 6;
+        const float AmbFadeInSec = 1.5f, AmbFadeOutSec = 1.0f;   // sfx-events.md 8.1
         const string MasterKey = "ChibiClash.Audio.Master", SfxKey = "ChibiClash.Audio.Sfx";
 
         static ChibiAudio _inst;
@@ -42,6 +44,7 @@ namespace ChibiClash.Netcode
             public bool Exempt;
             public int Tag;
             public float FadeStart = -1f;
+            public float PanFrom, PanTo, PanStart, PanDur;   // pan sweep (PanDur 0 = static)
         }
 
         sealed class Duck
@@ -49,7 +52,7 @@ namespace ChibiClash.Netcode
             public float Start, Attack, Hold, Release, ReleaseAt = -1f;
             public bool Held;
             public SfxDuck Kind;
-            public readonly float[] Db = new float[5];
+            public readonly float[] Db = new float[BusCount];
         }
 
         readonly Voice[] _voices = new Voice[VoiceCount];
@@ -58,7 +61,11 @@ namespace ChibiClash.Netcode
         readonly List<SfxRequest> _pending = new List<SfxRequest>(16);
         readonly List<float> _pendingDue = new List<float>(16);
         readonly List<Duck> _ducks = new List<Duck>(4);
-        readonly float[] _duckDb = new float[5];
+        readonly float[] _duckDb = new float[BusCount];
+        // Stage ambience: two looping sources for crossfades, current gain / target per source (0..1).
+        readonly AudioSource[] _amb = new AudioSource[2];
+        readonly float[] _ambGain = new float[2], _ambTarget = new float[2];
+        int _ambCur, _ambToken;
         readonly Dictionary<string, int> _lastVariant = new Dictionary<string, int>();
         readonly ChibiSfxCooldowns _cooldowns = new ChibiSfxCooldowns();
         readonly ChibiSfxRouter _router = new ChibiSfxRouter();
@@ -208,6 +215,79 @@ namespace ChibiClash.Netcode
             a.Flush(now);
         }
 
+        // ------------------------------------------------------------------------------------------------- stage audio
+
+        /// <summary>
+        /// Start the ambience bed of sim stage <paramref name="stage"/> (sfx-events.md 8.1): a seamless loop on its own
+        /// source, faded in over 1.5 s, crossfading from any bed already playing. Stages without a bed fade the current one
+        /// out. Returns a token for <see cref="StopAmbience(int)"/>; 0 outside Play Mode.
+        /// </summary>
+        /// <example><code>_ambToken = ChibiAudio.PlayAmbience(ChibiStageTable.Volcano);</code></example>
+        public static int PlayAmbience(int stage)
+        {
+            var a = Instance;
+            if (a == null) return 0;
+            a._ambToken++;
+            string id = ChibiStageSfx.AmbienceId(stage);
+            AudioClip clip = null;
+            if (id != null)
+            {
+                if (_clips != null && _clips.TryGetValue(id, out var clips) && clips.Length > 0) clip = clips[0];
+                else a.WarnOnce(id);
+            }
+            var cur = a._amb[a._ambCur];
+            if (clip != null && cur.clip == clip && cur.isPlaying)
+            {
+                a._ambTarget[a._ambCur] = 1f;   // same bed (rematch on the same stage): keep it running
+                return a._ambToken;
+            }
+            a._ambTarget[a._ambCur] = 0f;
+            if (clip == null) return a._ambToken;
+            a._ambCur ^= 1;
+            var src = a._amb[a._ambCur];
+            src.Stop();
+            src.clip = clip;
+            src.loop = true;
+            src.volume = 0f;
+            src.time = FxRandom.Value * clip.length * 0.99f;   // random start: two visits never sound identical
+            src.Play();
+            a._ambGain[a._ambCur] = 0f;
+            a._ambTarget[a._ambCur] = 1f;
+            return a._ambToken;
+        }
+
+        /// <summary>Fade the ambience bed out (1 s).</summary>
+        public static void StopAmbience()
+        {
+            if (_inst == null) return;
+            _inst._ambTarget[0] = _inst._ambTarget[1] = 0f;
+        }
+
+        /// <summary>
+        /// Fade the bed out only if <paramref name="token"/> (from <see cref="PlayAmbience"/>) is still the latest one, so a
+        /// stage destroyed after its replacement was built does not silence the new bed.
+        /// </summary>
+        public static void StopAmbience(int token)
+        {
+            if (_inst != null && token != 0 && token == _inst._ambToken) StopAmbience();
+        }
+
+        /// <summary>
+        /// Stage hazard sounds for the displayed state (sfx-events.md 8.2). <paramref name="tracker"/> belongs to the stage
+        /// view and dedupes per (HazCount, phase), so calling this every frame plays each phase change once, rollback included.
+        /// </summary>
+        /// <example><code>ChibiAudio.StageHazard(_stageSfx, state);</code></example>
+        public static void StageHazard(ChibiStageSfx tracker, ChibiSimState s)
+        {
+            if (tracker == null || s == null) return;
+            var a = Instance;
+            if (a == null) return;
+            float now = Time.unscaledTime;
+            a._requests.Clear();
+            tracker.Step(s, a._requests);
+            a.Flush(now);
+        }
+
         // ------------------------------------------------------------------------------------------------- lifetime
 
         void Awake()
@@ -226,6 +306,15 @@ namespace ChibiClash.Netcode
                 src.spatialBlend = 0f;           // 2D, no distance attenuation (sfx-spec.md 1.3)
                 src.ignoreListenerPause = false;
                 _voices[i] = new Voice { Src = src };
+            }
+            for (int k = 0; k < _amb.Length; k++)
+            {
+                var src = gameObject.AddComponent<AudioSource>();
+                src.playOnAwake = false;
+                src.spatialBlend = 0f;
+                src.loop = true;
+                src.priority = 16;               // a bed is never culled by Unity's real-voice limit
+                _amb[k] = src;
             }
         }
 
@@ -306,6 +395,28 @@ namespace ChibiClash.Netcode
                 int b = (int)v.Bus;
                 float duck = v.Exempt ? 0f : _duckDb[b];
                 v.Src.volume = v.BaseLin * Db(BusFaderDb[b] + duck) * master * fade;
+                if (v.PanDur > 0f) v.Src.panStereo = Mathf.Lerp(v.PanFrom, v.PanTo, (now - v.PanStart) / v.PanDur);
+            }
+            UpdateAmbience(master);
+        }
+
+        void UpdateAmbience(float master)
+        {
+            float dt = Time.unscaledDeltaTime;
+            float bus = Db(BusFaderDb[(int)SfxBus.AMB] + _duckDb[(int)SfxBus.AMB]);
+            for (int k = 0; k < _amb.Length; k++)
+            {
+                var src = _amb[k];
+                if (src == null || src.clip == null) continue;
+                float target = _ambTarget[k];
+                _ambGain[k] = Mathf.MoveTowards(_ambGain[k], target, dt / (target > _ambGain[k] ? AmbFadeInSec : AmbFadeOutSec));
+                if (_ambGain[k] <= 0f && target <= 0f)
+                {
+                    if (src.isPlaying) src.Stop();
+                    continue;
+                }
+                // Equal-power fade curve, so a crossfade between two beds keeps the bed loudness steady.
+                src.volume = Mathf.Sin(_ambGain[k] * Mathf.PI * 0.5f) * bus * master;
             }
         }
 
@@ -401,6 +512,16 @@ namespace ChibiClash.Netcode
             float jitter = m.PitchPct > 0f ? FxRandom.Range(-m.PitchPct, m.PitchPct) / 100f : 0f;
             src.pitch = Mathf.Max(0.1f, (r.Pitch <= 0f ? 1f : r.Pitch) * (1f + jitter));
             src.panStereo = PanOf(r);
+            voice.PanDur = 0f;
+            if (r.PanSweepSec > 0f && r.Panned)
+            {
+                var end = r;
+                end.PanX = r.PanEndX;
+                voice.PanFrom = src.panStereo;
+                voice.PanTo = PanOf(end);
+                voice.PanStart = now;
+                voice.PanDur = r.PanSweepSec;
+            }
             voice.Bus = bus;
             voice.BaseLin = Db(r.GainDb);
             voice.Exempt = r.Exempt;
@@ -440,11 +561,16 @@ namespace ChibiClash.Netcode
                 case SfxDuck.Ko:          // CMB/PRJ/MOV -12, UI -6, 20 / 1400 / 600 ms
                     d.Attack = 0.02f; d.Hold = 1.4f; d.Release = 0.6f;
                     d.Db[(int)SfxBus.CMB] = d.Db[(int)SfxBus.PRJ] = d.Db[(int)SfxBus.MOV] = -12f; d.Db[(int)SfxBus.UI] = -6f;
+                    d.Db[(int)SfxBus.AMB] = -8f;
+                    break;
+                case SfxDuck.StockKo:     // a stock lost mid-match (8.3): CMB/PRJ/MOV -8, AMB -6, 10 / 600 / 400 ms
+                    d.Attack = 0.01f; d.Hold = 0.6f; d.Release = 0.4f;
+                    d.Db[(int)SfxBus.CMB] = d.Db[(int)SfxBus.PRJ] = d.Db[(int)SfxBus.MOV] = -8f; d.Db[(int)SfxBus.AMB] = -6f;
                     break;
                 case SfxDuck.Cinematic:   // CMB/PRJ/MOV -9, 30 ms / until CinematicRealTicks = 0 / 250 ms
                     ReleaseDuck(SfxDuck.Cinematic, now);
                     d.Attack = 0.03f; d.Held = true; d.Release = 0.25f;
-                    d.Db[(int)SfxBus.CMB] = d.Db[(int)SfxBus.PRJ] = d.Db[(int)SfxBus.MOV] = -9f;
+                    d.Db[(int)SfxBus.CMB] = d.Db[(int)SfxBus.PRJ] = d.Db[(int)SfxBus.MOV] = -9f; d.Db[(int)SfxBus.AMB] = -6f;
                     break;
                 case SfxDuck.HitAccent:   // guard break / crit: MOV/PRJ -4, 10 / 100 / 150 ms
                     d.Attack = 0.01f; d.Hold = 0.1f; d.Release = 0.15f;

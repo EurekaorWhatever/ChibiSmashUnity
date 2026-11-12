@@ -15,7 +15,7 @@
 //
 // Tick convention: "tick f" = the f-th GAME step (ChibiTestTime.StepGame) counted from the press step (f = 0); values are
 // read at the END of that step. Amendment 6: the ult cinematic and the Kick's first hit (hitstop) stretch real time, so
-// every count here is in game steps, never in ChibiSimulation.Step calls. A hit "on tick f" = the victim's HpU dropped
+// every count here is in game steps, never in ChibiSimulation.Step calls. A hit "on tick f" = the victim's HpLike() (-PctM, rules v20) dropped
 // during step f.
 //
 // Real input path: the meter is filled by the fixture (f.Ult = UltMax) and the Ultimate BUTTON is pressed (the step-14
@@ -329,7 +329,7 @@ namespace ChibiClash.Tests
             Assert.Greater(before, 500, "precondition: buff running on tick 4");
             s.F[0].X = 20000;                                       // fixture: past BlastX 17000
             Game(s, N, N);
-            Assert.AreEqual(ChibiStageTable.Get(SkyDojo).RespawnX, s.F[0].X, "precondition: ring-out on tick 5");
+            Assert.AreEqual(1, s.F[0].KosTaken, "precondition: KO on tick 5 (rules v20)");
             int after = c == FighterClass.Melee ? s.F[0].AuraTicks : s.F[0].RingTicks;
             Assert.AreEqual(before - 1, after, "TD item 5: buff keeps counting down through the ring-out");
         }
@@ -425,11 +425,11 @@ namespace ChibiClash.Tests
             ChibiProjectileSim wave = null;
             for (int t = 1; t <= 160; t++)
             {
-                int hp = v.HpU;
+                int hp = v.HpLike();
                 Game(s, N, N);
                 if (wave == null)
                     foreach (var p in OfKind(s, ChibiProjKind.SmashWave)) if (Math.Sign(p.Vx) == Math.Sign(victimX)) wave = p;
-                if (v.HpU < hp) { hits++; if (firstHit < 0) firstHit = t; }
+                if (v.HpLike() < hp) { hits++; if (firstHit < 0) firstHit = t; }
                 if (firstHit > 0 && t == firstHit + 1)
                     Assert.IsTrue(wave != null && wave.Active && wave.Kind == ChibiProjKind.SmashWave, "A5: wave still flying after its hit (Pierce)");
             }
@@ -504,10 +504,10 @@ namespace ChibiClash.Tests
             Assert.AreNotEqual(0, l.Flags & ChibiProjectileSim.FHarmless, "R6: harmless");
             Assert.AreEqual(0, l.Flags & ChibiProjectileSim.FDestructible, "R6: indestructible");
             Assert.AreEqual(0, OfKind(s, ChibiProjKind.VolleyArrow).Count, "R6: no stream arrows (stand-in removed)");
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             for (int t = 1; t < LeadLife; t++) Game(s, N, N);
             Assert.AreEqual(0, OfKind(s, ChibiProjKind.VolleyArrow).Count, "TD item 4: no split before tick 27");
-            Assert.AreEqual(hp, s.F[1].HpU, "R6: the lead does no damage");
+            Assert.AreEqual(hp, s.F[1].HpLike(), "R6: the lead does no damage");
             Game(s, N, N);
             Assert.AreEqual(VolleyCount, OfKind(s, ChibiProjKind.VolleyArrow).Count, "TD item 4: 18 arrows on tick 27");
             Assert.AreEqual(0, OfKind(s, ChibiProjKind.VolleyLead).Count, "TD item 4: lead gone on tick 27");
@@ -580,9 +580,9 @@ namespace ChibiClash.Tests
             int hits = 0;
             for (int t = 1; t <= 9; t++)
             {
-                int hp = v.HpU;
+                int hp = v.HpLike();
                 GameFor(s, who, N);
-                if (v.HpU < hp) { hits++; Assert.AreEqual(9, t, "R7: first hit on tick 9"); }
+                if (v.HpLike() < hp) { hits++; Assert.AreEqual(9, t, "R7: first hit on tick 9"); }
                 if (t <= 8) Assert.AreEqual(LerpX(0, toX, t), k.X, $"R7 lerp X on tick {t}");
                 HeldInvariant(s, t);
             }
@@ -600,9 +600,9 @@ namespace ChibiClash.Tests
             var shield = In(ChibiButtons.Shield);
             ChibiTestTime.ArmUltFire(s, 0);
             Game(s, N, shield);
-            int hp = v.HpU;
+            int hp = v.HpLike();
             for (int t = 1; t <= 9; t++) Game(s, N, shield);
-            Assert.Less(v.HpU, hp, "test 15: Kick hit 1 is unblockable");
+            Assert.Less(v.HpLike(), hp, "test 15: Kick hit 1 is unblockable");
         }
 
         // Test 16 -- F:1065: victim held in place ticks 9..49 (V 0, no gravity), its inputs ignored.
@@ -639,13 +639,15 @@ namespace ChibiClash.Tests
             Assert.AreEqual(0, k.Vx, "test 17: rise Vx 0");
             for (int t = KickRiseFrame + 1; t < KickReleaseFrame; t++) Game(s, N, N);
             Assert.IsTrue(v.Held, "test 17: still held on tick 49");
-            int hp = v.HpU;
+            int hp = v.HpLike();
             Game(s, N, N);
             Assert.IsFalse(v.Held, "test 17: released on tick 50");
             Assert.IsFalse(k.Holding, "test 17: not holding on tick 50");
-            Assert.Less(v.HpU, hp, "test 17: second hit on tick 50");
-            Assert.AreEqual(KickHit2KbX, v.Vx, "test 17: kb X F·180000");   // TBD-verify (kb scaling / friction on the hit tick)
-            AssertVyWritten(KickHit2KbY, v.Vy, "test 17: kb Y 135000");
+            Assert.Less(v.HpLike(), hp, "test 17: second hit on tick 50");
+            // Rules v20: kb (F·180000, 135000) is the launch angle / tier; ult hit = base + 80 000 (spec 4.4).
+            var l = ChibiPercentTestKit.ExpectedOn(v, -hp, k, KickHit2KbX, KickHit2KbY, 1, 48, ult: true);
+            Assert.AreEqual(l.Vx, v.Vx, "test 17: kb X (v20 formula, ult bonus)");
+            Assert.AreEqual(l.Vy, v.Vy, "test 17: kb Y (v20 formula, ult bonus)");
             Assert.That(v.Stun > 0, "TD item 6: victim stun kept by max");
             for (int t = KickReleaseFrame + 1; t < KickLock - 1; t++) Game(s, N, N);
             AssertLockEndsOn(s, k == s.F[0] ? 0 : 1, "test 17: lock ends on tick 114");
@@ -685,10 +687,11 @@ namespace ChibiClash.Tests
             }
             Assert.AreEqual(4993, k.X - KickStartX, "R8: dash distance after tick 14 (pinned by the step-14 sim run)");
             Pin(v, k.X + KickBoxBw / 2, 0);                        // fixture: victim inside the box
-            int hp = v.HpU;
+            int hp = v.HpLike();
             Game(s, N, N);
-            Assert.Less(v.HpU, hp, "R8: box hit on tick 15");
-            Assert.That(v.Stun >= 29 && v.Stun <= 30, $"R8: box stun 30 (got {v.Stun})");   // TBD-verify decrement order
+            Assert.Less(v.HpLike(), hp, "R8: box hit on tick 15");
+            var box = ChibiPercentTestKit.ExpectedOn(v, -hp, k, ChibiSimConst.KickBoxKbX, ChibiSimConst.KickBoxKbY, 1, ChibiSimConst.KickBoxStun, ult: true);
+            Assert.That(v.Stun >= box.Stun - 1 && v.Stun <= box.Stun, $"R8: box stun {box.Stun} (v20: strong ult hit, KB x 0.4; got {v.Stun})");
             Assert.IsFalse(v.Held, "R8: out-of-range branch does not hold");
             for (int t = KickDashFrames + 1; t < KickLock - 1; t++) Game(s, N, N);
             Assert.AreEqual(0, k.Y, "fixture: Polearm stayed on the stage for the whole lock");
@@ -714,12 +717,12 @@ namespace ChibiClash.Tests
             else Assert.AreEqual(KickDashVel - MoveFriction, s.F[0].Vx, "R9: out of range -> dash branch");
         }
 
-        // Test 21 -- F:1041: a dead opponent in range -> out-of-range branch.
+        // Test 21 -- F:1041: a dead opponent in range -> out-of-range branch. Rules v20: "dead" = KO'd and Out (not InPlay).
         [Test]
         public void T26_Kick_DeadOpponentInRange_DashBranch()
         {
             var s = KickArena(5000);
-            s.F[1].HpU = 0;
+            s.F[1].OutTicks = 30;
             PressUlt(s);
             Assert.AreEqual(KickDashVel - MoveFriction, s.F[0].Vx, "test 21: dead opponent -> dash branch");
             Assert.IsFalse(s.F[1].Held, "test 21: no hold");
@@ -732,13 +735,13 @@ namespace ChibiClash.Tests
             var s = KickArena(5000);
             var v = s.F[1];
             v.Invuln = 200;
-            int hp = v.HpU;
+            int hp = v.HpLike();
             PressUlt(s);
             for (int t = 1; t <= 9; t++) Game(s, N, N);
             Assert.IsTrue(v.Held, "D-U4 A: held despite invuln");
             Assert.That(v.Stun > KickHit1Stun, $"D-U4 A: Stun(96) applied despite invuln (got {v.Stun})");
             for (int t = 10; t <= 60; t++) Game(s, N, N);
-            Assert.AreEqual(hp, v.HpU, "D-U4 A: no damage from hit 1 or hit 2");
+            Assert.AreEqual(hp, v.HpLike(), "D-U4 A: no damage from hit 1 or hit 2");
         }
 
         // Test 23 + amendment 7 -- victim rings out mid-hold: Polearm free at once (MoveSlot -1, lock 0), no hit 2.
@@ -756,9 +759,9 @@ namespace ChibiClash.Tests
             Assert.IsFalse(k.Holding, "test 23: Polearm not holding");
             Assert.AreEqual(-1, k.MoveSlot, "A7: Polearm free on the ring-out tick");
             Assert.AreEqual(0, k.MoveLockEnd, "A7: lock 0");
-            int hp = v.HpU;
+            int hp = v.HpLike();
             for (int t = 21; t <= 60; t++) Game(s, N, N);
-            Assert.AreEqual(hp, v.HpU, "test 23: no hit 2 after the ring-out");
+            Assert.AreEqual(hp, v.HpLike(), "test 23: no hit 2 after the ring-out");
         }
 
         // Test 23 -- attacker rings out mid-hold: victim released, no hit 2.
@@ -774,9 +777,9 @@ namespace ChibiClash.Tests
             Game(s, N, N);
             Assert.IsFalse(v.Held, "test 23: victim released");
             Assert.IsFalse(k.Holding, "test 23: not holding");
-            int hp = v.HpU;
+            int hp = v.HpLike();
             for (int t = 21; t <= 60; t++) Game(s, N, N);
-            Assert.AreEqual(hp, v.HpU, "test 23: no hit 2");
+            Assert.AreEqual(hp, v.HpLike(), "test 23: no hit 2");
         }
 
         // Amendment 2 -- same-tick Jump + Ult, Kick out of range: the jump's vy wins over the dash's vy 0.

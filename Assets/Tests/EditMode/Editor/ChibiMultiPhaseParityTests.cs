@@ -14,7 +14,7 @@
 // ("... missing") when absent. Nothing here names a v12 member at compile time.
 //
 // Tick convention: "tick f" = the f-th game step (ChibiTestTime.StepGame) counted from the press step (f = 0); values are
-// read at the END of that step. A hit "on tick f" = the victim's HpU dropped during step f.
+// read at the END of that step. A hit "on tick f" = the victim's HpLike() (-PctM, rules v20) dropped during step f.
 //
 // FIXTURE INJECTION (documented): interrupts of a running move (tests 2, 10, 26) and aura probes (25, 26) write a
 // projectile straight into a pool slot (Shot) with SpawnFrame = GameTicks - 1, so it updates on the next step. Pool-full
@@ -64,7 +64,7 @@ namespace ChibiClash.Tests
         const int ThrustKbX = 12000, ThrustKbY = 7500, ThrustLastKbX = 90000, ThrustLastKbY = 60000, ThrustStun = 15;
 
         // ---- 2.2 Grab
-        const int GrabStun = 72, GrabSlamKbX = 60000, GrabSlamKbY = 120000, GrabStunAt26 = 46;
+        const int GrabStun = 72, GrabSlamKbX = 60000, GrabSlamKbY = 120000, GrabStunAt26 = 46, GrabSlamStun = 42;
         const int GrabTopDx = 200, GrabTopDy = 1500, GrabSlamDx = 1000;
         const int GrabReleaseFrame = 26, GrabLiftN = 18, GrabSlamDen = 36;
 
@@ -183,10 +183,10 @@ namespace ChibiClash.Tests
             for (int t = 0; t <= last; t++)
             {
                 before?.Invoke(t);
-                int hp = v.HpU;
+                int hp = v.HpLike();
                 var mine = t == 0 ? In(b) : (extra != null ? extra(t) : N);
                 if (who == 0) Game(s, mine, N); else Game(s, N, mine);
-                if (v.HpU < hp) { hits.Add(t); onHit?.Invoke(t); }
+                if (v.HpLike() < hp) { hits.Add(t); onHit?.Invoke(t); }
             }
             return hits;
         }
@@ -242,14 +242,20 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Melee, BloodEdge, 0, FighterClass.Melee, BloodEdge, 1000);
             var kb = new List<int[]>();
             var hits = HitTicks(s, ChibiButtons.Skill3, LockThrust, t => Pin(s.F[1], 1000, 0),
-                                t => kb.Add(new[] { s.F[1].Vx, s.F[1].Vy, s.F[1].Stun }));
+                                t => kb.Add(new[] { s.F[1].Vx, s.F[1].Vy, s.F[1].Stun, s.F[1].PctM }));
             CollectionAssert.AreEqual(ThrustHits, hits, "Test 1/R1: Thrust Barrage hit ticks (sim today: 5, 11, 17, 23, 29, 35)");
             for (int n = 0; n < kb.Count; n++)
             {
+                // Rules v20: pulses (12000, 7500) are set knockback (magnitude < 30 000, spec 4.5); the last hit (90000, 60000)
+                // launches by the formula with the strong-hit hitstun (GL-3 R2).
                 bool last = n == ThrustHits.Length - 1;
-                Assert.AreEqual(last ? ThrustLastKbX : ThrustKbX, kb[n][0], $"R1: hit {n} kb X");
-                Assert.AreEqual(last ? ThrustLastKbY : ThrustKbY, kb[n][1], $"R1: hit {n} kb Y");
-                Assert.AreEqual(ThrustStun, kb[n][2], $"R1: hit {n} victim Stun");
+                int before = n == 0 ? 0 : kb[n - 1][3];
+                var l = ChibiPercentTestKit.Expected(kb[n][3], kb[n][3] - before, s.F[1].Weight, s.F[0].Class,
+                    last ? ThrustLastKbX : ThrustKbX, last ? ThrustLastKbY : ThrustKbY, 1, ThrustStun);
+                if (!last) Assert.IsTrue(l.Set, "pulses are set knockback");
+                Assert.AreEqual(l.Vx, kb[n][0], $"R1: hit {n} kb X");
+                Assert.AreEqual(l.Vy, kb[n][1], $"R1: hit {n} kb Y");
+                Assert.AreEqual(l.Stun, kb[n][2], $"R1: hit {n} victim Stun");
             }
         }
 
@@ -310,7 +316,7 @@ namespace ChibiClash.Tests
         {
             var s = GrabArena(1000);
             var v = s.F[1];
-            int hp = v.HpU;
+            int hp = v.HpLike();
             for (int t = 0; t <= GrabReleaseFrame; t++)
             {
                 Game(s, t == 0 ? In(ChibiButtons.Skill1) : N, N);
@@ -322,7 +328,7 @@ namespace ChibiClash.Tests
                     Assert.AreEqual(ey, v.Y, $"R3/R4: victim Y on tick {t}");
                     Assert.AreEqual(0, v.Vx, $"held victim Vx on tick {t}");
                     Assert.AreEqual(0, v.Vy, $"held victim Vy on tick {t}");
-                    Assert.AreEqual(hp, v.HpU, $"no damage before the slam (tick {t})");
+                    Assert.AreEqual(hp, v.HpLike(), $"no damage before the slam (tick {t})");
                 }
                 if (t == 9) { Assert.AreEqual(600, v.X, "R3 f9 X"); Assert.AreEqual(750, v.Y, "R3 f9 Y"); }
                 if (t == 17) { Assert.AreEqual(244, v.X, "R3 f17 X"); Assert.AreEqual(1417, v.Y, "R3 f17 Y"); }
@@ -333,9 +339,10 @@ namespace ChibiClash.Tests
             }
             Assert.AreEqual(978, v.X, "R4: release X on tick 26 (no Physics on the release tick)");
             Assert.AreEqual(42, v.Y, "R4: release Y on tick 26");
-            Assert.AreEqual(GrabSlamKbX, v.Vx, "R4: slam kb X");
-            Assert.AreEqual(GrabSlamKbY, v.Vy, "R4: slam kb Y");
-            Assert.Less(v.HpU, hp, "R4: slam damages on tick 26");
+            var slam = ChibiPercentTestKit.ExpectedOn(v, 0, s.F[0], GrabSlamKbX, GrabSlamKbY, 1, GrabSlamStun);
+            Assert.AreEqual(slam.Vx, v.Vx, "R4: slam kb X (v20 formula launch)");
+            Assert.AreEqual(slam.Vy, v.Vy, "R4: slam kb Y (v20 formula launch)");
+            Assert.Less(v.HpLike(), hp, "R4: slam damages on tick 26");
             Assert.AreEqual(GrabStunAt26, v.Stun, "R5: victim Stun after the slam (0.7 s absorbed)");
             Assert.IsFalse(Held(v), "victim released on tick 26");
             for (int t = GrabReleaseFrame + 1; t < GrabStun; t++) { Game(s, N, N); HeldInvariant(s, t); }
@@ -483,7 +490,7 @@ namespace ChibiClash.Tests
                 Game(s, t == 0 ? In(ChibiButtons.Skill1) : N, N);
                 if (t == 0) Assert.AreEqual(GrabStun, s.F[1].Stun, "precondition: airborne grab at the edge connects");
                 HeldInvariant(s, t);
-                if (s.F[1].X == RespawnX && s.F[1].Y == RespawnY) { ringTick = t; break; }
+                if (s.F[1].KosTaken > 0) { ringTick = t; break; }   // rules v20: KO = a stock lost, Out for 60 ticks
             }
             Assert.AreEqual(expectRingOut, ringTick, "Test 11: victim ring-out tick");
             Assert.IsFalse(Held(s.F[1]), "Test 11: ringed-out victim not held");
@@ -506,9 +513,9 @@ namespace ChibiClash.Tests
             Assert.AreEqual(GrabStun, s.F[1].Stun, "precondition: grab connects on tick 0");
             HeldInvariant(s, 0);
             Game(s, N, N);
-            Assert.AreEqual(RespawnX, s.F[0].X, "precondition: holder rang out on tick 1");
+            Assert.AreEqual(1, s.F[0].KosTaken, "precondition: holder KO'd on tick 1 (rules v20)");
             Assert.IsFalse(Held(s.F[1]), "Test 12: victim released");
-            Assert.AreNotEqual(RespawnY, s.F[1].Y, "Test 12: victim not respawned");
+            Assert.AreEqual(0, s.F[1].KosTaken, "Test 12: victim not KO'd");
             Assert.AreEqual(0, s.F[1].Vx, "Test 12: victim Vx 0");
             Assert.AreEqual(0, s.F[1].Vy, "Test 12: victim Vy 0");
             Assert.AreEqual(GrabStun - 1, s.F[1].Stun, "Test 12: victim keeps Stun");
@@ -535,13 +542,13 @@ namespace ChibiClash.Tests
                 var r = s.Rng;
                 bool ward = r.Roll(WardPermille);
                 if (ward ? sawWard : sawHit) continue;
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Game(s, N, N);
                 Assert.IsFalse(Held(s.F[1]), $"Test 13: victim released on tick 26 (seed {seed}, ward {ward})");
                 if (ward)
                 {
                     sawWard = true;
-                    Assert.AreEqual(hp, s.F[1].HpU, "Test 13: Ward negates the slam");
+                    Assert.AreEqual(hp, s.F[1].HpLike(), "Test 13: Ward negates the slam");
                     Assert.AreEqual(r.State, s.Rng.State, "Test 13: exactly one draw (Ward) on a negated slam");
                     Assert.AreEqual(0, s.F[1].Vx, "Test 13: no kb on a negated slam");
                 }
@@ -549,7 +556,7 @@ namespace ChibiClash.Tests
                 {
                     sawHit = true;
                     r.NextU32();                              // crit draw
-                    Assert.Less(s.F[1].HpU, hp, "Test 13: slam damages without Ward");
+                    Assert.Less(s.F[1].HpLike(), hp, "Test 13: slam damages without Ward");
                     Assert.AreEqual(r.State, s.Rng.State, "Test 13: Ward + crit = 2 draws");
                 }
             }
@@ -587,16 +594,16 @@ namespace ChibiClash.Tests
             int strike = -1;
             for (int t = 0; t < 30 && strike < 0; t++)
             {
-                int hp = dry.F[0].HpU;
+                int hp = dry.F[0].HpLike();
                 Game(dry, N, t == 0 ? In(ChibiButtons.Light) : N);
-                if (dry.F[0].HpU < hp) strike = t;
+                if (dry.F[0].HpLike() < hp) strike = t;
             }
             Assert.GreaterOrEqual(strike, 1, "precondition: victim Light strikes the Heavy");
-            int hp0 = s.F[0].HpU;
+            int hp0 = s.F[0].HpLike();
             for (int t = 0; t <= strike; t++)
                 Game(s, t == strike ? In(ChibiButtons.Skill1) : N, t == 0 ? In(ChibiButtons.Light) : N);
             Assert.AreEqual(GrabStun, s.F[1].Stun, "A8a: grab started on the strike tick connects");
-            Assert.AreEqual(hp0, s.F[0].HpU, "A8a: the victim's same-tick strike does not land (grab before MeleeProbe)");
+            Assert.AreEqual(hp0, s.F[0].HpLike(), "A8a: the victim's same-tick strike does not land (grab before MeleeProbe)");
             HeldInvariant(s, strike);
         }
 
@@ -605,10 +612,10 @@ namespace ChibiClash.Tests
         public void Grab_VsSameTickTornadoFrame0_GrabWins()
         {
             var s = Arena(FighterClass.Heavy, HeavyP1, 0, FighterClass.Heavy, HeavyP1, 1000);
-            int hp0 = s.F[0].HpU;
+            int hp0 = s.F[0].HpLike();
             Game(s, In(ChibiButtons.Skill1), In(ChibiButtons.Skill2));
             Assert.AreEqual(GrabStun, s.F[1].Stun, "A8b: grab connects");
-            Assert.AreEqual(hp0, s.F[0].HpU, "A8b: Tornado frame-0 hit cancelled by the grab");
+            Assert.AreEqual(hp0, s.F[0].HpLike(), "A8b: Tornado frame-0 hit cancelled by the grab");
             HeldInvariant(s, 0);
         }
 
@@ -634,7 +641,8 @@ namespace ChibiClash.Tests
             }
             Assert.AreEqual(978, v.X, "A8d: release X");
             Assert.AreEqual(42, v.Y, "A8d: release Y");
-            Assert.AreEqual(GrabSlamKbX, v.Vx, "A8d: slam kb X");
+            Assert.AreEqual(ChibiPercentTestKit.ExpectedOn(v, 0, s.F[0], GrabSlamKbX, GrabSlamKbY, 1, GrabSlamStun).Vx, v.Vx,
+                            "A8d: slam kb X (v20 formula launch)");
         }
 
         // Amendment 8f / 4 -- holder and victim ring out on the same tick: idempotent release, both respawn, nobody held.
@@ -651,23 +659,28 @@ namespace ChibiClash.Tests
             var h = s.F[0];
             h.X = 16999; h.Y = 5000; h.Vx = 180000; h.Vy = 0; h.Grounded = false;
             SetInt(h, "GrabSX", 17500); SetInt(h, "GrabTX", 17500);
-            int hp0 = s.F[0].HpU, hp1 = s.F[1].HpU;
             Game(s, N, N);
-            Assert.AreEqual(RespawnY, s.F[0].Y, "A8f: holder respawned");
-            Assert.AreEqual(RespawnY, s.F[1].Y, "A8f: victim respawned");
-            Assert.Less(s.F[0].HpU, hp0, "A8f: holder ring-out penalty");
-            Assert.Less(s.F[1].HpU, hp1, "A8f: victim ring-out penalty");
-            Assert.IsFalse(Held(s.F[1]) || Holding(s.F[0]), "A8f: nobody held after a double ring-out");
+            // Rules v20: both cross the side line on the same tick: both lose a stock and go Out (no HP penalty any more).
+            Assert.AreEqual(ChibiPercentConst.StocksStart - 1, s.F[0].Stocks, "A8f: holder KO'd");
+            Assert.AreEqual(ChibiPercentConst.StocksStart - 1, s.F[1].Stocks, "A8f: victim KO'd");
+            Assert.AreEqual(ChibiPercentConst.RespawnDelay, s.F[0].OutTicks, "A8f: holder out");
+            Assert.AreEqual(ChibiPercentConst.RespawnDelay, s.F[1].OutTicks, "A8f: victim out");
+            Assert.IsFalse(Held(s.F[1]) || Holding(s.F[0]), "A8f: nobody held after a double KO");
             Assert.AreEqual(-1, s.F[0].MoveSlot, "A8f: holder move cancelled");
             HeldInvariant(s, 5);
+            for (int k = 0; k < ChibiPercentConst.RespawnDelay; k++) Game(s, N, N);
+            Assert.AreEqual(RespawnY, s.F[0].Y, "A8f: holder respawned");
+            Assert.AreEqual(RespawnY, s.F[1].Y, "A8f: victim respawned");
+            Assert.Greater(s.F[1].HoverTicks, 0, "A8f: hovering on the respawn point");
+            Game(s, N, In(ChibiButtons.None, ChibiDir.E));
             int y = s.F[1].Y;
             Game(s, N, N);
-            Assert.AreNotEqual(y, s.F[1].Y, "A8f: victim moves under its own Physics after respawn");
+            Assert.AreNotEqual(y, s.F[1].Y, "A8f: victim moves under its own Physics once the hover ends");
         }
 
         // Amendment 8g -- slam KO: match ends, Held cleared.
         [Test]
-        public void Grab_SlamKo_MatchEndsHeldCleared()
+        public void Grab_Slam_LandsAndClearsHeld()
         {
             var s = GrabArena(1000);
             for (int t = 0; t < GrabReleaseFrame; t++)
@@ -675,10 +688,11 @@ namespace ChibiClash.Tests
                 Game(s, t == 0 ? In(ChibiButtons.Skill1) : N, N);
                 if (t == 0) Assert.AreEqual(GrabStun, s.F[1].Stun, "precondition: grab connects");
             }
-            s.F[1].HpU = 1;
+            int pct = s.F[1].PctM;
             Game(s, N, N);
-            Assert.IsTrue(s.MatchOver, "A8g: slam KO ends the match");
-            Assert.AreEqual(0, s.Winner, "A8g: holder wins");
+            // Rules v20: the slam adds percent and launches; it no longer KOs a 1-HP victim (no HP).
+            Assert.Greater(s.F[1].PctM, pct, "A8g: slam lands");
+            Assert.IsFalse(s.MatchOver, "A8g: a hit never ends the match by itself");
             Assert.IsFalse(Held(s.F[1]), "A8g: Held cleared");
             Assert.IsFalse(Holding(s.F[0]), "A8g: Holding cleared");
         }
@@ -692,13 +706,16 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Heavy, HeavyP1, 0, FighterClass.Melee, BloodEdge, 1000);
             var kb = new List<int[]>();
             var hits = HitTicks(s, ChibiButtons.Skill2, LockTornado, t => Pin(s.F[1], s.F[0].X + 1000, 0),
-                                t => kb.Add(new[] { s.F[1].Vx, s.F[1].Vy, s.F[1].Stun }));
+                                t => kb.Add(new[] { s.F[1].Vx, s.F[1].Vy, s.F[1].Stun, s.F[1].PctM }));
             CollectionAssert.AreEqual(TornadoHits, hits, "Test 15/R6: Tornado hit ticks (sim today: 7, 19, 31, 43, 55)");
-            foreach (var k in kb)
+            for (int n = 0; n < kb.Count; n++)
             {
-                Assert.AreEqual(TornadoKb, k[0], "R6: kb X");
-                Assert.AreEqual(TornadoKb, k[1], "R6: kb Y");
-                Assert.AreEqual(TornadoStun, k[2], "R6: stun");
+                var k = kb[n];
+                int before = n == 0 ? 0 : kb[n - 1][3];
+                var l = ChibiPercentTestKit.Expected(k[3], k[3] - before, s.F[1].Weight, s.F[0].Class, TornadoKb, TornadoKb, 1, TornadoStun);
+                Assert.AreEqual(l.Vx, k[0], "R6: kb X (v20 formula, 45 degrees)");
+                Assert.AreEqual(l.Vy, k[1], "R6: kb Y");
+                Assert.AreEqual(l.Stun, k[2], "R6: stun (legacy 15 is the floor)");
             }
         }
 
@@ -729,10 +746,12 @@ namespace ChibiClash.Tests
         {
             var s = Arena(FighterClass.Heavy, HeavyP1, 0, FighterClass.Melee, BloodEdge, 0, -1);
             Pin(s.F[1], s.F[0].X, 0);
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             Game(s, In(ChibiButtons.Skill2), N);
-            Assert.Less(s.F[1].HpU, hp, "precondition: Tornado frame-0 hit at equal X");
-            Assert.AreEqual(TornadoKb, s.F[1].Vx, "Test 17: kb Vx sign at equal X (+1)");
+            Assert.Less(s.F[1].HpLike(), hp, "precondition: Tornado frame-0 hit at equal X");
+            Assert.AreEqual(ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], TornadoKb, TornadoKb, 1, TornadoStun).Vx, s.F[1].Vx,
+                            "Test 17: kb Vx sign at equal X (+1)");
+            Assert.Greater(s.F[1].Vx, 0, "Test 17: +1");
         }
 
         // Test 18 -- F:291, F:828: Jump on tick 20 during the spin sets Vy; steering continues.
@@ -839,9 +858,9 @@ namespace ChibiClash.Tests
             {
                 Pin(s.F[1], a.X + a.Facing * 1000, a.Y);
                 groundedAtStart.Add(a.Grounded);
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Game(s, t == 0 ? In(ChibiButtons.Skill1) : (extra != null ? extra(t) : N), N);
-                if (slam < 0 && s.F[1].HpU < hp) slam = t;
+                if (slam < 0 && s.F[1].HpLike() < hp) slam = t;
                 after?.Invoke(t);
             }
             return slam;
@@ -889,9 +908,9 @@ namespace ChibiClash.Tests
                 var a = s.F[0];
                 Pin(s.F[1], a.X + 1000, a.Y);
                 g.Add(a.Grounded);
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Game(s, N, N);
-                if (s.F[1].HpU < hp) slam2 = t;
+                if (s.F[1].HpLike() < hp) slam2 = t;
             }
             AssertLeapStructure(s, slam2, g, "Test 22/R12");
             Assert.AreEqual(LeapPinnedSlamTick, slam2, "R12 (amendment 9): pinned slam tick");
@@ -933,9 +952,9 @@ namespace ChibiClash.Tests
             {
                 Pin(s.F[1], a.X + 1000, a.Y);
                 g.Add(a.Grounded);
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Game(s, t == 0 ? In(ChibiButtons.Skill1) : N, N);
-                if (s.F[1].HpU < hp) slam = t;
+                if (s.F[1].HpLike() < hp) slam = t;
             }
             AssertLeapStructure(s, slam, g, "Test 23");
         }
@@ -956,9 +975,9 @@ namespace ChibiClash.Tests
             {
                 Pin(s.F[1], a.X - 1000, a.Y);
                 g.Add(a.Grounded);
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Game(s, t == 0 ? In(ChibiButtons.Skill1) : N, N);
-                if (s.F[1].HpU < hp) slam = t;
+                if (s.F[1].HpLike() < hp) slam = t;
             }
             Assert.AreNotEqual(RespawnY, a.Y, "precondition: attacker did not ring out");
             Assert.AreEqual(LeapTimeout, slam, "Test 24: timeout slam on tick 78");
@@ -978,9 +997,9 @@ namespace ChibiClash.Tests
             for (int t = 0; t < SpinAuraLastTick; t++)
             {
                 Pin(s.F[1], 1000, 0);
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Game(s, t == 0 ? In(ChibiButtons.Skill2) : N, N);
-                if (s.F[1].HpU < hp) hits.Add(t);
+                if (s.F[1].HpLike() < hp) hits.Add(t);
                 if (t == 0) Assert.AreEqual(SpinGuardTicks, s.F[0].GuardTicks, "R13: GuardTicks 72 on tick 0");
             }
             at71 = Clone(s);
@@ -1008,9 +1027,9 @@ namespace ChibiClash.Tests
             {
                 Pin(s.F[1], 1000, 0);
                 if (t == 10) InterruptShot(s, 0);   // Flags 0: not Destructible, the aura cannot eat it
-                int hp = s.F[1].HpU;
+                int hp = s.F[1].HpLike();
                 Game(s, t == 0 ? In(ChibiButtons.Skill2) : N, N);
-                if (s.F[1].HpU < hp) hits.Add(t);
+                if (s.F[1].HpLike() < hp) hits.Add(t);
                 if (t == 10) Assert.AreEqual(-1, s.F[0].MoveSlot, "precondition: Spin Guard interrupted on tick 10");
             }
             CollectionAssert.AreEqual(new[] { 0 }, hits, "Test 26: only hit 1 before the interrupt");

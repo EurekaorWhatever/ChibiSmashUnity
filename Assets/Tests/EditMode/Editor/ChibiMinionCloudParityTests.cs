@@ -65,9 +65,9 @@ namespace ChibiClash.Tests
         const int CloudLife = 276, CloudFirstStrike = 48, CloudPeriod = 66, CloudBolt = 9, CloudStrikeDx = 750;
         static readonly int[] StrikeTicks = { 48, 114, 180, 246 };
 
-        // ---- hit specs after HalfKnockback(Magic) (R11 / R12)
-        const int BonkKbHalf = 15000, BonkStun = 9;
-        const int CloudKbYHalf = -22500, CloudStun = 21;
+        // ---- hit specs (R11 / R12). Rules v20: no HalfKnockback; the kb is the launch angle / tier of the percent formula.
+        const int BonkKb = 30000, BonkStun = 9;
+        const int CloudKbY = -45000, CloudStun = 21;
 
         const int StageHW = 8000, MainBottom = -1200;
         const int RulesVersion13 = 13;
@@ -399,10 +399,10 @@ namespace ChibiClash.Tests
         {
             var s = Arena(-6000, 4200);
             PutMinion(s, 0, 0, 4200, MinionR, attackCd: 1, life: 300);
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             var b = BonkTicks(s, 0, 120, -6000, 4200, 3050);
             Assert.IsEmpty(b, "T8: dy = 3050 + 675 - 220 >= 900 -> never bonks");
-            Assert.AreEqual(hp, s.F[1].HpU, "T8: opponent HP unchanged");
+            Assert.AreEqual(hp, s.F[1].HpLike(), "T8: opponent HP unchanged");
         }
 
         // Test 9 / R6 -- CO:169: bonk tick Vx = -dir 30000 and the hop; next tick Vx back to walk; lands bonk + 19.
@@ -433,13 +433,15 @@ namespace ChibiClash.Tests
         {
             var s = Arena(-6000, 1000);
             PutMinion(s, 0, 0, 600, MinionR, attackCd: 1);
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             Pin(s.F[0], -6000, 0); Pin(s.F[1], 1000, 0);
             Game(s, N, N);
-            Assert.Less(s.F[1].HpU, hp, "R12: bonk damaged the opponent");
-            Assert.AreEqual(BonkKbHalf, s.F[1].Vx, "R12: kb x = dir x 30000 / 2");                             // TBD-verify
-            Assert.AreEqual(BonkKbHalf, s.F[1].Vy, "R12: kb y = 30000 / 2");                                   // TBD-verify
-            Assert.AreEqual(BonkStun, s.F[1].Stun, "R12: stun 0.15 s = 9");
+            Assert.Less(s.F[1].HpLike(), hp, "R12: bonk damaged the opponent");
+            var l = ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], BonkKb, BonkKb, 1, BonkStun);
+            Assert.AreEqual(l.Vx, s.F[1].Vx, "R12: kb (dir 30000, 30000) -> v20 formula launch, Magic x0.85");
+            Assert.AreEqual(l.Vy, s.F[1].Vy, "R12: launch y");
+            Assert.AreEqual(l.Stun, s.F[1].Stun, "R12: stun 0.15 s = 9 as the weak-hit floor");
+            Assert.AreEqual(BonkStun, s.F[1].Stun, "R12: a bonk at 0 % keeps its legacy 9");
         }
 
         // Test 10 (ratio) -- Mult 350 vs the cloud's 800 on identical seeds: damage ratio 0.35 / 0.8 within the roll's rounding.
@@ -448,20 +450,20 @@ namespace ChibiClash.Tests
         {
             var a = Arena(-6000, 1000);
             PutMinion(a, 0, 0, 600, MinionR, attackCd: 1);
-            int hpA = a.F[1].HpU;
+            int hpA = a.F[1].HpLike();
             Pin(a.F[0], -6000, 0); Pin(a.F[1], 1000, 0);
             Game(a, N, N);
             var b = Arena(-6000, 1000);
             PutCloud(b, 0, 0, 1000 * 1000L, 5000 * 1000L, strike: 1);
-            int hpB = b.F[1].HpU;
+            int hpB = b.F[1].HpLike();
             Pin(b.F[0], -6000, 0); Pin(b.F[1], 1000, 0);
             Game(b, N, N);
-            int dA = hpA - a.F[1].HpU, dB = hpB - b.F[1].HpU;
+            int dA = hpA - a.F[1].HpLike(), dB = hpB - b.F[1].HpLike();
             Assert.Greater(dA, 0, "T10: bonk dealt damage"); Assert.Greater(dB, 0, "T23: strike dealt damage");
             // CA:52-54: damage after defence = raw - floor(DEF/10) HP, so add the flat part back before comparing the multipliers.
-            // Defender is Heavy (DEF 30 -> 3 HP = 3 000 000 micro-HP).
-            const int HeavyFlatDefenseMicro = 3 * 1000000;
-            Assert.AreEqual(350.0 / 800.0, (double)(dA + HeavyFlatDefenseMicro) / (dB + HeavyFlatDefenseMicro), 0.01,
+            // Defender is Heavy (DEF 30 -> 3 HP). Rules v20: damage is read in milli-percent (5 HP = 1000), so 3 HP = 600.
+            const int HeavyFlatDefense = 600;
+            Assert.AreEqual(350.0 / 800.0, (double)(dA + HeavyFlatDefense) / (dB + HeavyFlatDefense), 0.01,
                 "T10/T23: raw bonk / strike damage = 350 / 800 (same seed, same roll)");
         }
 
@@ -471,10 +473,10 @@ namespace ChibiClash.Tests
         {
             var s = Arena(-6000, 1000);
             var m = PutMinion(s, 0, 0, 600, MinionR, attackCd: 1);
-            int hp = s.F[1].HpU;
+            int hp = s.F[1].HpLike();
             s.F[1].Invuln = 90;
             RunPinned(s, 1, -6000, 1000);
-            Assert.AreEqual(hp, s.F[1].HpU, "T11: no damage while invulnerable");
+            Assert.AreEqual(hp, s.F[1].HpLike(), "T11: no damage while invulnerable");
             Assert.AreEqual(MinionCd, GetInt(m, "AttackCd"), "T11: cd still 60");
             Assert.AreEqual(-MinionHopVx, GetInt(m, "Vx"), "T11: hop back still happens");
             Assert.Greater(GetInt(m, "Vy"), 0, "T11: hop up still happens");
@@ -486,10 +488,10 @@ namespace ChibiClash.Tests
         {
             var s = Arena(-6000, 1000, 1, FighterClass.Melee, MeleeBase);
             var m = PutMinion(s, 0, 0, 600, MinionR, attackCd: 1);
-            int hpMage = s.F[0].HpU, hpOpp = s.F[1].HpU;
+            int hpMage = s.F[0].HpLike(), hpOpp = s.F[1].HpLike();
             RunPinned(s, 1, -6000, 1000, before: _ => s.F[1].ParryTicks = 30);
-            Assert.AreEqual(hpOpp, s.F[1].HpU, "T12: parrying opponent takes no damage");
-            Assert.Less(s.F[0].HpU, hpMage, "T12 (D-C4 A): reflect damages the Mage across the stage");
+            Assert.AreEqual(hpOpp, s.F[1].HpLike(), "T12: parrying opponent takes no damage");
+            Assert.Less(s.F[0].HpLike(), hpMage, "T12 (D-C4 A): reflect damages the Mage across the stage");
             Assert.AreEqual(ChibiSimConst.ReflectStun, s.F[0].Stun, "T12: Mage gets ReflectStun 30");          // TBD-verify
             Assert.IsTrue(Active(m), "T12: minion stays");
             Assert.AreEqual(MinionCd, GetInt(m, "AttackCd"), "T12: cd set even when parried");
@@ -501,10 +503,10 @@ namespace ChibiClash.Tests
         {
             var s = Arena(-6000, 1000);
             PutCloud(s, 0, 0, 1000 * 1000L, 5000 * 1000L, strike: 5);
-            int hpOpp = s.F[1].HpU;
+            int hpOpp = s.F[1].HpLike();
             var shield = In(ChibiButtons.Shield);
             RunPinned(s, 5, -6000, 1000, in1: _ => shield);
-            Assert.AreEqual(hpOpp, s.F[1].HpU, "T13: perfect parry: no damage to the opponent");
+            Assert.AreEqual(hpOpp, s.F[1].HpLike(), "T13: perfect parry: no damage to the opponent");
             Assert.AreEqual(ChibiSimConst.PerfectParryStun, s.F[0].Stun, "T13 (D-C4 A): Mage stunned 27 by a perfect parry"); // TBD-verify
         }
 
@@ -637,22 +639,22 @@ namespace ChibiClash.Tests
             Assert.Less(clingY, MinionR, "A2 ledge: clings below the stage top");
         }
 
-        // TD missing test / D-C3 = A -- two minions bonk on the same tick: slot order decides. Both fighters at 1 micro-HP:
-        // the lower slot's hit KOs its target first, the second hit's attacker is then KO'd (ApplyHit returns), so the
-        // owner of the lower slot wins.
+        // TD missing test / D-C3 = A -- two minions bonk on the same tick, in slot order. Rules v20 (percent-knockback.md):
+        // a hit never KOs by itself any more, so both bonks land on the same tick and nobody is KO'd (was: the lower slot's
+        // bonk KO'd its 1-micro-HP target first and its owner won).
         [TestCase(0)]
         [TestCase(1)]
-        public void TD_TwoMinionsSameTick_SlotOrderDecides(int lowSlotOwner)
+        public void TD_TwoMinionsSameTick_BothLand_NoKo(int lowSlotOwner)
         {
             var s = Arena(-3000, 3000, 1, FighterClass.Magic, MagicHex);
-            s.F[0].HpU = 1; s.F[1].HpU = 1;
             int victimLow = 1 - lowSlotOwner;
             PutMinion(s, 0, lowSlotOwner, s.F[victimLow].X + 300, MinionR, attackCd: 1);
             PutMinion(s, 1, victimLow, s.F[lowSlotOwner].X + 300, MinionR, attackCd: 1);
             Pin(s.F[0], -3000, 0); Pin(s.F[1], 3000, 0);
             Game(s, N, N);
-            Assert.IsTrue(s.MatchOver, "D-C3: a KO ended the match");
-            Assert.AreEqual(lowSlotOwner, s.Winner, "D-C3 A: slot 0's bonk lands first; its owner wins");
+            Assert.IsFalse(s.MatchOver, "v20: a hit is never a KO");
+            Assert.Greater(s.F[0].PctM, 0, "D-C3: both bonks land (F[0])");
+            Assert.Greater(s.F[1].PctM, 0, "D-C3: both bonks land (F[1])");
         }
 
         // TD missing test -- owner rings out mid-life: minions and cloud keep acting, attacker is still the owner.
@@ -667,7 +669,7 @@ namespace ChibiClash.Tests
             Assert.AreEqual(1, ActiveCount(s, "Clouds"), "TD ring-out: cloud cast");
             s.F[0].X = BlastX() + 1000;                           // owner leaves the blast zone
             Game(s, N, N);
-            int hits0 = s.F[0].HitsLanded, hp1 = s.F[1].HpU;
+            int hits0 = s.F[0].HitsLanded, hp1 = s.F[1].HpLike();
             for (int t = 0; t < 120; t++)
             {
                 Pin(s.F[1], 3000, 0);
@@ -676,7 +678,7 @@ namespace ChibiClash.Tests
             Assert.AreEqual(3, ActiveCount(s, "Minions"), "TD ring-out: minions live on after the owner's ring-out");
             for (int k = 0; k < 3; k++) Assert.AreEqual(0, GetInt(Minion(s, k), "Owner"), "TD ring-out: still owned by F[0]");
             Assert.AreEqual(0, GetInt(Cloud(s, 0), "Owner"), "TD ring-out: cloud still owned by F[0]");
-            Assert.Less(s.F[1].HpU, hp1, "TD ring-out: summons still damage the opponent");
+            Assert.Less(s.F[1].HpLike(), hp1, "TD ring-out: summons still damage the opponent");
             Assert.Greater(s.F[0].HitsLanded, hits0, "TD ring-out: hits credited to the owner");               // TBD-verify
         }
 
@@ -752,8 +754,8 @@ namespace ChibiClash.Tests
             PressPinned(s, ChibiButtons.Skill3, 0, 500);
             var hits = new List<int>();
             int before = 0;
-            RunPinned(s, 280, 0, 500, t => { if (s.F[1].HpU < before) hits.Add(t); },
-                      before: t => before = s.F[1].HpU);
+            RunPinned(s, 280, 0, 500, t => { if (s.F[1].HpLike() < before) hits.Add(t); },
+                      before: t => before = s.F[1].HpLike());
             CollectionAssert.AreEqual(StrikeTicks, hits, "R10: hits only on 48, 114, 180, 246");
         }
 
@@ -783,11 +785,11 @@ namespace ChibiClash.Tests
             long e = OffsetForMilliAfterStep(dxMilli);
             long cy = oppY == 0 ? 3875_000L : -500_000L;
             var c = PutCloud(s, 0, 0, e, cy, strike: 1);
-            int hp1 = s.F[1].HpU;
+            int hp1 = s.F[1].HpLike();
             RunPinned(s, 1, -6000, 0, y1: oppY);
             Assert.AreEqual(dxMilli, CloudX(c), "fixture: cloud X after the follow");
             Assert.AreEqual(CloudBolt, GetInt(c, "BoltTicks"), "T22: strike check ran");
-            Assert.AreEqual(hit, s.F[1].HpU < hp1, $"T22: |dx| = {Math.Abs(dxMilli)} -> hit = {hit}");
+            Assert.AreEqual(hit, s.F[1].HpLike() < hp1, $"T22: |dx| = {Math.Abs(dxMilli)} -> hit = {hit}");
         }
 
         // Test 23 / R11 -- CO:218: Mult 800, KbY -45000 halved -> -22500, KbX 0, stun 21.
@@ -796,12 +798,13 @@ namespace ChibiClash.Tests
         {
             var s = Arena(-6000, 1000);
             PutCloud(s, 0, 0, 1000 * 1000L, 5000 * 1000L, strike: 1);
-            int hp1 = s.F[1].HpU;
+            int hp1 = s.F[1].HpLike();
             RunPinned(s, 1, -6000, 1000);
-            Assert.Less(s.F[1].HpU, hp1, "R11: strike damaged the opponent");
-            Assert.AreEqual(0, s.F[1].Vx, "R11: kb x 0");                                                     // TBD-verify
-            Assert.AreEqual(CloudKbYHalf, s.F[1].Vy, "R11: kb y -45000 / 2 = -22500");                          // TBD-verify
-            Assert.AreEqual(CloudStun, s.F[1].Stun, "R11: stun 0.35 s = 21");
+            Assert.Less(s.F[1].HpLike(), hp1, "R11: strike damaged the opponent");
+            var l = ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], 0, CloudKbY, 1, CloudStun);
+            Assert.AreEqual(0, s.F[1].Vx, "R11: kb x 0");
+            Assert.AreEqual(l.Vy, s.F[1].Vy, "R11: kb (0, -45000) -> v20 formula launch straight down");
+            Assert.AreEqual(CloudStun, s.F[1].Stun, "R11: stun 0.35 s = 21 (weak-hit floor)");
         }
 
         // Test 23 -- blockable: shield held past the parry window -> chip + guard damage, Mage not stunned.
@@ -812,10 +815,10 @@ namespace ChibiClash.Tests
             PutCloud(s, 0, 0, 1000 * 1000L, 5000 * 1000L, strike: 40);
             var shield = In(ChibiButtons.Shield);
             int hp1 = 0, guard = 0;
-            RunPinned(s, 40, -6000, 1000, in1: _ => shield, before: t => { if (t == 40) { hp1 = s.F[1].HpU; guard = s.F[1].GuardU; } });
+            RunPinned(s, 40, -6000, 1000, in1: _ => shield, before: t => { if (t == 40) { hp1 = s.F[1].HpLike(); guard = s.F[1].GuardU; } });
             Assert.IsTrue(s.F[1].Shielding, "fixture: opponent shielding");
             Assert.Less(s.F[1].GuardU, guard, "T23: blocked strike drains guard");
-            Assert.Less(s.F[1].HpU, hp1, "T23: blocked strike deals chip damage");
+            Assert.Less(s.F[1].HpLike(), hp1, "T23: blocked strike deals chip damage");
             Assert.AreEqual(0, s.F[0].Stun, "T23: no parry (outside the 11-tick window)");
         }
 
@@ -1075,9 +1078,9 @@ namespace ChibiClash.Tests
         {
             var s = Arena(0, 600);
             PressPinned(s, ChibiButtons.Skill3, 0, 600);
-            int hp1 = s.F[1].HpU;
+            int hp1 = s.F[1].HpLike();
             RunPinned(s, 47, 0, 600);
-            Assert.AreEqual(hp1, s.F[1].HpU, "3.3: no hit before the first cloud strike (old stand-in hit on tick 40)");
+            Assert.AreEqual(hp1, s.F[1].HpLike(), "3.3: no hit before the first cloud strike (old stand-in hit on tick 40)");
             Assert.AreEqual(1, ActiveCount(s, "Clouds"), "3.3: cloud present");
         }
     }

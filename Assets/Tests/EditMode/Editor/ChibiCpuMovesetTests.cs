@@ -40,8 +40,8 @@ namespace ChibiClash.Tests
             public ChibiSimState S => Session.State;
         }
 
-        static bool JustRingedOut(ChibiFighterSim f, ChibiStageDef st) =>
-            f.X == st.RespawnX && f.Y == st.RespawnY && f.Invuln == ChibiSimConst.RespawnInvuln;
+        /// <summary>Rules v20: crossing an active edge is a KO (Out, then the respawn hover).</summary>
+        static bool JustRingedOut(ChibiFighterSim f, ChibiStageDef st) => f.OutTicks > 0 || f.HoverTicks > 0;
 
         static string SlotNames(FighterClass c, IEnumerable<int> slots)
         {

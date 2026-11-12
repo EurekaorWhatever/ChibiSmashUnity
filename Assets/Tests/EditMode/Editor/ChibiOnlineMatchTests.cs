@@ -92,6 +92,47 @@ namespace ChibiClash.Tests
             Assert.AreEqual(1, d.Joiner.LocalIndex);
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Handshake_HostHazardsChoice_ReachesTheJoinerAndTheHash(bool hazardsOff)
+        {
+            // Arrange: rules v20 / protocol 4 (ST-5): the host's switch travels in Start; both peers hash it.
+            var link = new ChibiLoopbackLink(3, 1, 5);
+            var host = ChibiOnlineMatch.Host(link.A, new ChibiScriptedInputSource(n => Bot(1, n)), FighterClass.Melee, 0,
+                                             ChibiStageTable.Volcano, Seed, ChibiRollbackSettings.Default,
+                                             ChibiHandshake.DefaultTimeoutTicks, "", hazardsOff);
+            var join = ChibiOnlineMatch.Join(link.B, new ChibiScriptedInputSource(n => Bot(2, n)), FighterClass.Heavy, 1);
+
+            // Act
+            for (int t = 0; t < 600 && !(host.Phase == ChibiOnlinePhase.Playing && join.Phase == ChibiOnlinePhase.Playing); t++)
+            {
+                link.Advance(); host.Tick(); join.Tick();
+            }
+
+            // Assert
+            Assert.AreEqual(ChibiOnlinePhase.Playing, join.Phase);
+            Assert.AreEqual(hazardsOff, join.Handshake.Config.HazardsOff, "joiner took the host's switch from Start");
+            Assert.AreEqual(ChibiStageTable.Volcano, join.Handshake.Config.Stage, "stage 5 accepted (0..7)");
+            Assert.AreEqual(host.Handshake.MatchHash, join.Handshake.MatchHash);
+        }
+
+        [Test]
+        public void StartCodec_RoundTripsHazardsOffAndNewStages()
+        {
+            var m = new ChibiControlMessage { Type = ChibiControlType.Start, Protocol = ChibiPacketCodec.ProtocolVersion,
+                                              Rules = ChibiMatchConfig.RulesVersion };
+            m.Config.Stage = ChibiStageTable.Ocean; m.Config.HazardsOff = true; m.Config.Class0 = FighterClass.Melee;
+            m.Settings = ChibiRollbackSettings.Default;
+            var b = new BitBuffer(ChibiControlCodec.MaxBytes);
+            ChibiControlCodec.Write(b, m);
+            var r = new BitBuffer(ChibiControlCodec.MaxBytes);
+            r.LoadFrom(b.Bytes, b.ByteLength);
+            var o = new ChibiControlMessage();
+            Assert.IsTrue(ChibiControlCodec.TryRead(r, o));
+            Assert.AreEqual(ChibiStageTable.Ocean, o.Config.Stage);
+            Assert.IsTrue(o.Config.HazardsOff);
+        }
+
         /// <summary>Raw control-message sender, playing a peer from another build.</summary>
         static void SendControl(IChibiTransport t, ChibiControlMessage m)
         {
@@ -152,6 +193,77 @@ namespace ChibiClash.Tests
             // Assert
             Assert.AreEqual(ChibiMatchOutcome.Aborted, joiner.Result.Outcome);
             Assert.AreEqual(ChibiRejectReason.ContentMismatch, joiner.Result.RejectReason);
+        }
+
+        // ------------------------------------------------------------------ SEC-001 (rules v21 / protocol 4)
+
+        static ChibiOnlineMatch RawStartToJoiner(ChibiMatchConfig cfg, int expectStage = -1, bool? expectHazardsOff = null)
+        {
+            var link = new ChibiLoopbackLink(1, 0, 0);
+            var joiner = ChibiOnlineMatch.Join(link.B, new ChibiScriptedInputSource(n => default), FighterClass.Ranged, 0,
+                                               ChibiHandshake.DefaultTimeoutTicks, "", expectStage, expectHazardsOff);
+            var host = new ChibiChannelMux(link.A);
+            SendControl(host.Control, new ChibiControlMessage
+            {
+                Type = ChibiControlType.Start, Protocol = ChibiPacketCodec.ProtocolVersion, Rules = ChibiMatchConfig.RulesVersion,
+                Config = cfg, Settings = ChibiRollbackSettings.Default,
+                MatchHash = ChibiControlCodec.MatchHash(cfg, ChibiRollbackSettings.Default),   // a correct hash: only the field is wrong
+            });
+            for (int i = 0; i < 10; i++) { link.Advance(); joiner.Tick(); }
+            return joiner;
+        }
+
+        [TestCase(8)]
+        [TestCase(15)]
+        public void Handshake_StartWithStageOutOfRange_InvalidConfig_NoThrow(int stage)
+        {
+            var cfg = new ChibiMatchConfig { Seed = 1, Class0 = FighterClass.Melee, Class1 = FighterClass.Ranged, Stage = stage };
+            ChibiOnlineMatch joiner = null;
+            Assert.DoesNotThrow(() => joiner = RawStartToJoiner(cfg));
+            Assert.AreEqual(ChibiMatchOutcome.Aborted, joiner.Result.Outcome);
+            Assert.AreEqual(ChibiRejectReason.InvalidConfig, joiner.Result.RejectReason);
+        }
+
+        [Test]
+        public void Handshake_RoomJoinerExpectingHazardsOff_RejectsStartWithHazardsOn()
+        {
+            var cfg = new ChibiMatchConfig { Seed = 1, Class0 = FighterClass.Melee, Class1 = FighterClass.Ranged,
+                                             Stage = ChibiStageTable.Volcano, HazardsOff = false };
+            var joiner = RawStartToJoiner(cfg, ChibiStageTable.Volcano, expectHazardsOff: true);
+            Assert.AreEqual(ChibiRejectReason.InvalidConfig, joiner.Result.RejectReason, "SEC-001: host flipped the hazards switch");
+        }
+
+        [Test]
+        public void Handshake_RoomJoiner_RejectsAStartWithAnotherStage_AcceptsTheAgreedOne()
+        {
+            var cfg = new ChibiMatchConfig { Seed = 1, Class0 = FighterClass.Melee, Class1 = FighterClass.Ranged,
+                                             Stage = ChibiStageTable.Ocean, HazardsOff = true, Intro = true };   // online: intro on
+            Assert.AreEqual(ChibiRejectReason.InvalidConfig, RawStartToJoiner(cfg, ChibiStageTable.Volcano, true).Result.RejectReason,
+                            "SEC-001: host swapped the stage");
+            var ok = RawStartToJoiner(cfg, ChibiStageTable.Ocean, true);
+            Assert.AreEqual(ChibiHandshakeState.Agreed, ok.Handshake.State, "the agreed stage and switch are accepted");
+            Assert.IsTrue(ok.Handshake.Config.HazardsOff);
+        }
+
+        [Test]
+        public void StartCodec_TruncatedBeforeTheHazardsBit_TryReadFalse()
+        {
+            // Arrange: a Start written by hand up to and including the stage, then cut (an old or hostile sender).
+            var b = new BitBuffer(ChibiControlCodec.MaxBytes);
+            b.Write(ChibiControlCodec.Magic, 8);
+            b.Write((uint)ChibiControlType.Start, 4);
+            b.Write((uint)ChibiPacketCodec.ProtocolVersion, 8);
+            b.Write((uint)ChibiMatchConfig.RulesVersion, 16);
+            b.Write(1u, 32);
+            b.Write(0u, 4); b.Write(0u, 1); b.Write(2u, 4); b.Write(0u, 1);
+            b.Write(5u, 4);                                    // stage, then nothing
+            var r = new BitBuffer(ChibiControlCodec.MaxBytes);
+            r.LoadFrom(b.Bytes, b.ByteLength);
+
+            // Act / Assert
+            bool ok = true;
+            Assert.DoesNotThrow(() => ok = ChibiControlCodec.TryRead(r, new ChibiControlMessage()));
+            Assert.IsFalse(ok, "a truncated Start is malformed");
         }
 
         [Test]
