@@ -86,8 +86,13 @@ namespace ChibiClash
             art._mid = Layer(root, dir + "Mid", OrderMid, Vector3.zero);
             if (art._far != null) art._farHome = art._far.position;
             if (art._mid != null) art._midHome = art._mid.position;
-            if (Layer(root, dir + "Backdrop", OrderBackdrop, Vector3.zero) == null)
-                Layer(root, dir + "Full", OrderBackdrop, Vector3.zero);       // fallback: the whole illustration
+            var backdrop = Layer(root, dir + "Backdrop", OrderBackdrop, Vector3.zero);
+            if (backdrop == null) backdrop = Layer(root, dir + "Full", OrderBackdrop, Vector3.zero);   // fallback: the whole illustration
+            if (backdrop != null)
+            {
+                var b = backdrop.GetComponent<SpriteRenderer>().bounds;
+                art.ArtRect = Rect.MinMaxRect(b.min.x, b.min.y, b.max.x, b.max.y);
+            }
             Layer(root, dir + "Plat_MAIN", OrderPlatform, Vector3.zero);
             Layer(root, dir + "Foreground", OrderForeground, Vector3.zero);
 
@@ -160,6 +165,10 @@ namespace ChibiClash
             sr.transform.position = pos;
             return sr.transform;
         }
+
+        /// <summary>World rect of the painted backdrop (static, no parallax): the camera view is kept inside it so the edge
+        /// of the art is never shown (ChibiCameraFraming.WithinArt). Empty when the stage has no backdrop sprite.</summary>
+        public Rect ArtRect { get; private set; }
 
         /// <summary>Follow <paramref name="state"/> (the displayed sim state). Call once after Build; the view then calls Sync.</summary>
         public void Bind(Func<ChibiSimState> state) { _state = state; }

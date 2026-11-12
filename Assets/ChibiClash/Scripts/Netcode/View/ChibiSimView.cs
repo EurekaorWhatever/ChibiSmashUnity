@@ -1010,6 +1010,8 @@ namespace ChibiClash.Netcode
             // Camera rect from the stage's KO lines / walls, read live (GL-3 may move the lines): never far past a blast
             // line, wall edges visible, floor kept low in frame.
             Rect bounds = ChibiCameraFraming.Bounds(ChibiStageTable.Get(_stageIndex), GroundY);
+            if (_stage != null && _stage.design != null)                     // design stages: never past the painted art
+                bounds = ChibiCameraFraming.WithinArt(bounds, _stage.design.ArtRect);
             Vector2 goal;
             float size, smooth = CamSmooth;
             if (_focus >= 0 && Time.unscaledTime < _focusUntil)

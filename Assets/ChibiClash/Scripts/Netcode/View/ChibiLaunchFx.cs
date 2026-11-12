@@ -34,6 +34,20 @@ namespace ChibiClash.Netcode
             return Rect.MinMaxRect(-bx, bottom, bx, top);
         }
 
+        /// <summary>
+        /// The camera rect <paramref name="bounds"/> limited to the painted stage art <paramref name="art"/>, so the view
+        /// never shows past the edge of the backdrop. An empty art rect (no painted backdrop) or one that does not overlap
+        /// leaves <paramref name="bounds"/> unchanged.
+        /// </summary>
+        /// <example><code>bounds = ChibiCameraFraming.WithinArt(bounds, design.ArtRect);   // Bird Lair: x -11.8..12.2</code></example>
+        public static Rect WithinArt(Rect bounds, Rect art)
+        {
+            if (art.width <= 0f || art.height <= 0f) return bounds;
+            float xMin = Mathf.Max(bounds.xMin, art.xMin), xMax = Mathf.Min(bounds.xMax, art.xMax);
+            float yMin = Mathf.Max(bounds.yMin, art.yMin), yMax = Mathf.Min(bounds.yMax, art.yMax);
+            return xMax > xMin && yMax > yMin ? Rect.MinMaxRect(xMin, yMin, xMax, yMax) : bounds;
+        }
+
         /// <summary>Largest orthographic size whose view fits in <paramref name="r"/>: min(cap, halfH, halfW / aspect).</summary>
         public static float MaxSize(Rect r, float aspect, float cap)
         {
