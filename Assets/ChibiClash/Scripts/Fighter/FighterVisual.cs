@@ -351,21 +351,32 @@ namespace ChibiClash
         public void PlaySpin(float d) { Play(Anim.Spin, d); AutoClip("Spin", d); }
         public void PlaySlam(float d) { Play(Anim.Slam, d); AutoClip("Slam", d); }
 
-        /// <summary>Clip picked by a Play* call: skipped while a locked clip (<see cref="PlayClipLocked"/>) is showing.</summary>
+        /// <summary>
+        /// Clip picked by a Play* call: skipped while a locked clip (<see cref="PlayClipLocked"/>) is showing. In fight
+        /// mode (<see cref="SheetOnly"/>) always skipped: these are cutout clips, and the move's Move_ sheet clip comes
+        /// from <see cref="PlayMoveClip"/> / <see cref="PlayLegacyMove"/> instead.
+        /// </summary>
         void AutoClip(string clip, float d)
         {
+            if (sheetOnly) return;
             if (lockT <= 0f) PlayClip(clip, d);
         }
 
         /// <summary>
         /// Like <see cref="PlayClip"/>, but the generic Play* calls (PlaySwing, PlayThrust...) cannot replace it until it
         /// ends: a signature clip (Skill1 / Skill2 / Ultimate / KO) survives the per-frame tweens of a program move.
-        /// <see cref="Hurt"/> and <see cref="PlayClip"/> still interrupt it.
+        /// <see cref="Hurt"/> and <see cref="PlayClip"/> still interrupt it. In fight mode a cutout name is translated to
+        /// its sheet clip ("KO" -&gt; Sheet_KO chain, "Ultimate" -&gt; Sheet_Ultimate chain) or ignored (Skill1, Cast...).
         /// </summary>
         public void PlayClipLocked(string clip, float duration)
         {
+            if (sheetOnly)
+            {
+                clip = ToSheetClip(clip);
+                if (clip == null) return;
+            }
             PlayClip(clip, duration);
-            var c = hasArt ? SpriteAnimLibrary.Get(CharacterId, clip) : null;
+            var c = !hasArt ? null : sheetOnly ? SpriteAnimLibrary.GetSheet(CharacterId, clip) : SpriteAnimLibrary.Get(CharacterId, clip);
             lockT = duration > 0f ? duration : c != null ? c.Length : 0f;
         }
 
@@ -391,6 +402,11 @@ namespace ChibiClash
         /// </summary>
         public void PlayClip(string clip, float duration)
         {
+            if (sheetOnly)
+            {
+                clip = ToSheetClip(clip);   // fight mode: sheet clips only; a cutout request without a sheet stand-in is ignored
+                if (clip == null) return;
+            }
             oneShot = clip;
             oneShotT = 0f;
             oneShotDur = duration;
@@ -407,6 +423,12 @@ namespace ChibiClash
         /// </summary>
         public void PlayMoveClip(string moveId, string animKindFallback, float startupSec, float activeSec, float recoverySec)
         {
+            if (sheetOnly)
+            {
+                // fight mode: Move_<id>, else the nearest Move_ clip of this character, else Idle_Sheet (never the cutout)
+                PlayPosed(SheetMoveClip(moveId, animKindFallback), startupSec, activeSec, recoverySec);
+                return;
+            }
             string name = SpriteAnimLibrary.MoveClipName(moveId);
             var posed = name != null && hasArt ? SpriteAnimLibrary.Get(CharacterId, name) : null;
             float total = Mathf.Max(0f, startupSec) + Mathf.Max(0f, activeSec) + Mathf.Max(0f, recoverySec);
@@ -428,6 +450,13 @@ namespace ChibiClash
         /// <summary>Took a hit: recoil squash (procedural) or the Hit sheet.</summary>
         public void Hurt()
         {
+            if (sheetOnly)
+            {
+                // fight mode: the hitstun clip comes from the sim's Stun (FightFlags.Hitstun); a new hit replays it
+                lockT = 0f;
+                restartLoco = true;
+                return;
+            }
             hurtT = 0.3f;
             lockT = 0f;
             PlayClip("Hit", 0f);
@@ -463,6 +492,191 @@ namespace ChibiClash
         }
 
         public void SetStunned(bool on) => stunSr.enabled = on;
+
+        // ---------------------------------------------------------------- fight mode: moveset-sheet clips only
+
+        bool sheetOnly;
+        string charKey;
+        System.Func<string, bool> hasSheet;
+        readonly string[] stateClips = new string[FightClips.StateCount];
+        readonly bool[] stateResolved = new bool[FightClips.StateCount];
+        const int LegacySlots = 7;   // pre-v18 slots 0..6 (ChibiMovesetData.FirstNewSlot)
+        readonly string[] legacyClips = new string[LegacySlots];
+        readonly bool[] legacyResolved = new bool[LegacySlots];
+        System.Collections.Generic.Dictionary<string, string> moveClips;
+        FightAnimState fightState = FightAnimState.Intro;
+        bool restartLoco;
+
+        /// <summary>
+        /// True once <see cref="EnableSheetOnly"/> ran (the fight view): every frame shown comes from a moveset-sheet clip
+        /// (Idle_Sheet, Sheet_*, Move_*), never from a costume cutout or the static body drawing.
+        /// </summary>
+        public bool SheetOnly => sheetOnly;
+
+        /// <summary>Fight state used for the last <see cref="Tick(Vector2, bool, bool, FightFlags)"/> (diagnostics / tests).</summary>
+        public FightAnimState FightState => fightState;
+
+        /// <summary>
+        /// Fight mode (call right after <see cref="Build"/> in the fight view): from now on only moveset-sheet clips are
+        /// shown (<see cref="FightClips"/>); cutout clip requests are translated or ignored, and the body drawing is never
+        /// drawn again (with no sheet clip at all the body is hidden instead). Shows Idle_Sheet at once, so even the very
+        /// first frame of the READY intro is a sheet pose. No effect without drawn art (procedural chibi body).
+        /// Menus, select screen and portraits never call it and keep the cutouts.
+        /// </summary>
+        public void EnableSheetOnly()
+        {
+            if (!hasArt) return;
+            sheetOnly = true;
+            charKey = FightClips.CharKey(CharacterId);
+            hasSheet = HasSheet;
+            moveClips = new System.Collections.Generic.Dictionary<string, string>(System.StringComparer.Ordinal);
+            System.Array.Clear(stateResolved, 0, stateResolved.Length);
+            System.Array.Clear(legacyResolved, 0, legacyResolved.Length);
+            oneShot = null;
+            lockT = 0f;
+            anim = Anim.None;
+            fightState = FightAnimState.Intro;
+            if (trailSr != null) trailSr.enabled = false;
+            string idle = StateClip(FightAnimState.Intro);
+            var c = idle != null ? SpriteAnimLibrary.GetSheet(CharacterId, idle) : null;
+            if (c != null) ShowSheetSprite(c.frames[0]);
+            else HideBodyArt();
+            clipName = idle;
+            clipT = 0f;
+        }
+
+        bool HasSheet(string name) => hasArt && SpriteAnimLibrary.GetSheet(CharacterId, name) != null;
+
+        /// <summary>Sheet clip this character shows for fight state <paramref name="s"/> (resolved once, then cached); null = none.</summary>
+        public string StateClip(FightAnimState s)
+        {
+            int k = (int)s;
+            if (!stateResolved[k])
+            {
+                string ultMove = s == FightAnimState.Ultimate
+                    ? SpriteAnimLibrary.MoveClipName(charKey + "_" + FightClips.UltimateFallbackRow) : null;
+                stateClips[k] = hasSheet != null ? FightClips.Resolve(s, hasSheet, ultMove) : null;
+                stateResolved[k] = true;
+            }
+            return stateClips[k];
+        }
+
+        /// <summary>Sheet clip this character shows for move <paramref name="moveId"/> (<see cref="FightClips.ResolveMove"/>, cached per id).</summary>
+        public string SheetMoveClip(string moveId, string animKind)
+        {
+            if (hasSheet == null) return null;
+            string key = moveId ?? "";
+            if (!moveClips.TryGetValue(key, out var n))
+            {
+                n = FightClips.ResolveMove(moveId, animKind, charKey, hasSheet);
+                moveClips[key] = n;
+            }
+            return n;
+        }
+
+        /// <summary>
+        /// Fight mode: plays the Move_ sheet clip standing in for pre-v18 slot <paramref name="slot"/> (neutral light /
+        /// heavy, class skills, pose fireball; <see cref="FightClips.LegacyMoveId"/>), strike frame on the first active
+        /// frame when the timing is known. Slot 5 (ultimate) is left to the Ultimate state clip. No-op outside fight mode.
+        /// </summary>
+        public void PlayLegacyMove(int slot, float startupSec, float activeSec, float recoverySec)
+        {
+            if (!sheetOnly || slot < 0 || slot >= LegacySlots) return;
+            if (!legacyResolved[slot])
+            {
+                string id = FightClips.LegacyMoveId(cls, slot, charKey);
+                legacyClips[slot] = id != null ? FightClips.ResolveMove(id, null, charKey, hasSheet) : null;
+                legacyResolved[slot] = true;
+            }
+            if (legacyClips[slot] != null) PlayPosed(legacyClips[slot], startupSec, activeSec, recoverySec);
+        }
+
+        /// <summary>Plays sheet clip <paramref name="name"/> over the move, time-remapped on its strike / recover frames when it has them.</summary>
+        void PlayPosed(string name, float startupSec, float activeSec, float recoverySec)
+        {
+            if (name == null) return;
+            float total = Mathf.Max(0f, startupSec) + Mathf.Max(0f, activeSec) + Mathf.Max(0f, recoverySec);
+            PlayClip(name, total);
+            var posed = SpriteAnimLibrary.GetSheet(CharacterId, name);
+            if (posed != null && posed.HasPhases && total > 0f && activeSec > 0f)
+            {
+                phS = Mathf.Max(0f, startupSec);
+                phA = Mathf.Max(0f, activeSec);
+                phR = Mathf.Max(0f, recoverySec);
+            }
+        }
+
+        /// <summary>Fight mode: a sheet clip name stays, a cutout name becomes its state's sheet clip, anything else null.</summary>
+        string ToSheetClip(string clip)
+        {
+            if (clip == null) return null;
+            if (FightClips.IsSheetClip(clip)) return clip;
+            return FightClips.TryStateForLegacyClip(clip, out var s) ? StateClip(s) : null;
+        }
+
+        /// <summary>Shows one sheet frame on the art renderer (1 unit tall frames, feet pivot) with the weapon sprite hidden.</summary>
+        void ShowSheetSprite(Sprite s)
+        {
+            if (!artSr.enabled) artSr.enabled = true;
+            artSr.sprite = s;
+            float k = ArtHeight / SpriteAnimLibrary.FigureFill;
+            artSr.transform.localScale = new Vector3(k, k, 1f);
+            artSr.transform.localPosition = Vector3.zero;
+            if (weaponPivot.gameObject.activeSelf) weaponPivot.gameObject.SetActive(false);
+            body.localScale = Vector3.one;
+            body.localPosition = bodyBase;
+            root.localRotation = Quaternion.identity;
+        }
+
+        /// <summary>No sheet clip at all: keep the last sheet frame, but never fall back to the body drawing.</summary>
+        void HideBodyArt()
+        {
+            if (artSr.sprite == null || artSr.sprite == artBase) artSr.enabled = false;
+            if (weaponPivot.gameObject.activeSelf) weaponPivot.gameObject.SetActive(false);
+        }
+
+        static Sprite LocoFrame(SpriteClip c, float t, bool loop)
+        {
+            int n = c.frames.Length;
+            int i = Mathf.FloorToInt(t * c.fps);
+            i = loop ? ((i % n) + n) % n : Mathf.Clamp(i, 0, n - 1);
+            return c.frames[i];
+        }
+
+        /// <summary>Fight-mode clip pick and frame for this render frame (state from read-only sim facts, one-shot moves on top).</summary>
+        void TickSheetOnly(float dt, Vector2 velocity, bool grounded, bool blocking, FightFlags flags)
+        {
+            var st = FightClips.StateOf(victory, flags, grounded, blocking, velocity, fightState);
+            fightState = st;
+            if (oneShot != null && FightClips.Overrides(st) && !ReferenceEquals(oneShot, StateClip(st)))
+            {
+                oneShot = null;   // hit / launch / KO / victory end the playing move clip
+                lockT = 0f;
+            }
+            SpriteClip clip = null;
+            if (oneShot != null)
+            {
+                clip = SpriteAnimLibrary.GetSheet(CharacterId, oneShot);
+                if (clip == null || OneShotDone(clip)) { oneShot = null; clip = null; }
+            }
+            string want = oneShot ?? StateClip(st);
+            if (clip == null && want != null) clip = SpriteAnimLibrary.GetSheet(CharacterId, want);
+            if (restartLoco || (!ReferenceEquals(want, clipName) && want != clipName))
+            {
+                clipName = want;
+                clipT = 0f;
+                restartLoco = false;
+            }
+            clipT += dt;
+            if (clip == null) { HideBodyArt(); return; }
+
+            bool isOneShot = oneShot != null && clipName == oneShot;
+            Sprite fr;
+            if (isOneShot && phS + phA + phR > 0f && clip.HasPhases) fr = clip.FramePhased(oneShotT, phS, phA, phR);
+            else if (isOneShot) fr = oneShotDur > 0f ? clip.FrameNormalized(oneShotT / oneShotDur) : clip.Frame(oneShotT);
+            else fr = LocoFrame(clip, clipT, clip.loop || FightClips.LoopsClip(clipName));
+            ShowSheetSprite(fr);
+        }
 
         // ---------------------------------------------------------------- animation state
 
@@ -508,7 +722,13 @@ namespace ChibiClash
         /// <summary>One-shot clip finished? (natural length, or the requested duration when one was given).</summary>
         bool OneShotDone(SpriteClip clip) => oneShotDur > 0f ? oneShotT >= oneShotDur : oneShotT >= clip.Length;
 
-        public void Tick(Vector2 velocity, bool grounded, bool blocking)
+        public void Tick(Vector2 velocity, bool grounded, bool blocking) => Tick(velocity, grounded, blocking, FightFlags.None);
+
+        /// <summary>
+        /// Per-frame animation. <paramref name="flags"/> carries read-only fight facts (hitstun, launch, KO, respawn
+        /// hover, READY intro) that pick the sheet clip in fight mode (<see cref="SheetOnly"/>); ignored otherwise.
+        /// </summary>
+        public void Tick(Vector2 velocity, bool grounded, bool blocking, FightFlags flags)
         {
             float dt = Time.deltaTime;
             float now = Time.time;
@@ -522,51 +742,60 @@ namespace ChibiClash
             // ---- pick the clip: victory > one-shot move > guard > airborne > run > idle
             if (oneShot != null) oneShotT += dt;
             if (lockT > 0f) lockT -= dt;
-            string loco = !grounded ? "Jump" : moving ? "Run" : "Idle";
-            if (blocking && grounded && hasArt && SpriteAnimLibrary.Get(CharacterId, "Guard") != null) loco = "Guard";
-            string want = victory ? "Victory" : oneShot ?? loco;
-            var clip = hasArt ? SpriteAnimLibrary.Get(CharacterId, want) : null;
-            if (oneShot != null && want == oneShot && (clip == null || OneShotDone(clip)))
+            bool sheet;
+            if (sheetOnly)
             {
-                // finished, or no sheet for it (keep the procedural tween running for its duration instead)
-                if (clip != null || oneShotT > Mathf.Max(0.5f, oneShotDur)) oneShot = null;
-                want = victory ? "Victory" : loco;
-                clip = hasArt ? SpriteAnimLibrary.Get(CharacterId, want) : null;
-            }
-            if (!ReferenceEquals(want, clipName) && want != clipName)
-            {
-                clipName = want;
-                clipT = 0f;
-            }
-            clipT += dt;
-            bool sheet = clip != null;
-
-            if (sheet)
-            {
-                // frame-by-frame art: the drawing already contains the weapon, squash and follow-through
-                bool isOneShot = oneShot != null && clipName == oneShot;
-                if (isOneShot && phS + phA + phR > 0f && clip.HasPhases)
-                    artSr.sprite = clip.FramePhased(oneShotT, phS, phA, phR);   // strike frame on the first active frame
-                else
-                    artSr.sprite = isOneShot && oneShotDur > 0f ? clip.FrameNormalized(oneShotT / oneShotDur)
-                                 : clip.Frame(isOneShot ? oneShotT : clipT);
-                float s = ArtHeight / SpriteAnimLibrary.FigureFill;
-                artSr.transform.localScale = new Vector3(s, s, 1f);
-                artSr.transform.localPosition = Vector3.zero;
-                if (weaponPivot.gameObject.activeSelf) weaponPivot.gameObject.SetActive(false);
-                body.localScale = Vector3.one;
-                body.localPosition = bodyBase;
-                root.localRotation = Quaternion.identity;
+                TickSheetOnly(dt, velocity, grounded, blocking, flags);
+                sheet = true;   // fight mode never shows the body drawing, the cutouts or the procedural weapon
             }
             else
             {
-                if (hasArt && artSr.sprite != artBase)
+                string loco = !grounded ? "Jump" : moving ? "Run" : "Idle";
+                if (blocking && grounded && hasArt && SpriteAnimLibrary.Get(CharacterId, "Guard") != null) loco = "Guard";
+                string want = victory ? "Victory" : oneShot ?? loco;
+                var clip = hasArt ? SpriteAnimLibrary.Get(CharacterId, want) : null;
+                if (oneShot != null && want == oneShot && (clip == null || OneShotDone(clip)))
                 {
-                    artSr.sprite = artBase;
-                    artSr.transform.localScale = artBaseScale;
-                    artSr.transform.localPosition = artBasePos;
+                    // finished, or no sheet for it (keep the procedural tween running for its duration instead)
+                    if (clip != null || oneShotT > Mathf.Max(0.5f, oneShotDur)) oneShot = null;
+                    want = victory ? "Victory" : loco;
+                    clip = hasArt ? SpriteAnimLibrary.Get(CharacterId, want) : null;
                 }
-                if (!weaponPivot.gameObject.activeSelf) weaponPivot.gameObject.SetActive(true);
+                if (!ReferenceEquals(want, clipName) && want != clipName)
+                {
+                    clipName = want;
+                    clipT = 0f;
+                }
+                clipT += dt;
+                sheet = clip != null;
+
+                if (sheet)
+                {
+                    // frame-by-frame art: the drawing already contains the weapon, squash and follow-through
+                    bool isOneShot = oneShot != null && clipName == oneShot;
+                    if (isOneShot && phS + phA + phR > 0f && clip.HasPhases)
+                        artSr.sprite = clip.FramePhased(oneShotT, phS, phA, phR);   // strike frame on the first active frame
+                    else
+                        artSr.sprite = isOneShot && oneShotDur > 0f ? clip.FrameNormalized(oneShotT / oneShotDur)
+                                     : clip.Frame(isOneShot ? oneShotT : clipT);
+                    float s = ArtHeight / SpriteAnimLibrary.FigureFill;
+                    artSr.transform.localScale = new Vector3(s, s, 1f);
+                    artSr.transform.localPosition = Vector3.zero;
+                    if (weaponPivot.gameObject.activeSelf) weaponPivot.gameObject.SetActive(false);
+                    body.localScale = Vector3.one;
+                    body.localPosition = bodyBase;
+                    root.localRotation = Quaternion.identity;
+                }
+                else
+                {
+                    if (hasArt && artSr.sprite != artBase)
+                    {
+                        artSr.sprite = artBase;
+                        artSr.transform.localScale = artBaseScale;
+                        artSr.transform.localPosition = artBasePos;
+                    }
+                    if (!weaponPivot.gameObject.activeSelf) weaponPivot.gameObject.SetActive(true);
+                }
             }
 
             // ---- procedural body: breathing, run bounce, jump stretch, landing squash, hit recoil, victory hop
@@ -707,11 +936,14 @@ namespace ChibiClash
             go.transform.position = from;
             Sprite spr = null;
             Vector3 scale = Vector3.one;
-            var ko = hasArt ? SpriteAnimLibrary.Get(CharacterId, "KO") : null;
+            // fight mode: the KO state's sheet clip (Sheet_KO chain), else the last sheet frame shown; never the body drawing
+            var ko = !hasArt ? null
+                   : sheetOnly ? SpriteAnimLibrary.GetSheet(CharacterId, StateClip(FightAnimState.KO))
+                   : SpriteAnimLibrary.Get(CharacterId, "KO");
             if (hasArt)
             {
-                spr = ko != null ? ko.frames[0] : artBase;
-                float s = ko != null ? ArtHeight / SpriteAnimLibrary.FigureFill : artBaseScale.x;
+                spr = ko != null ? ko.frames[0] : sheetOnly ? (artSr.sprite != artBase ? artSr.sprite : null) : artBase;
+                float s = ko != null || sheetOnly ? ArtHeight / SpriteAnimLibrary.FigureFill : artBaseScale.x;
                 scale = new Vector3(s * facing, s, 1f);
             }
             else if (bodySr != null)

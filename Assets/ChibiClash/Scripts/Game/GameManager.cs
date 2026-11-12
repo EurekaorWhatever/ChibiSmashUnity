@@ -395,7 +395,11 @@ namespace ChibiClash
                 wipeSwapped = true;
                 var a = wipeAction;
                 wipeAction = null;
+                float t0 = Time.realtimeSinceStartup;
                 a?.Invoke();
+                // Perf: the action may block (match build + asset preload, ~0.2-0.6 s). Push the wipe's clock forward by
+                // that time so the reveal half still plays in full instead of the wipe vanishing on the next frame.
+                if (wipeStart >= 0f) wipeStart += Time.realtimeSinceStartup - t0;
             }
             if (t >= 1f) wipeStart = -1f;
         }

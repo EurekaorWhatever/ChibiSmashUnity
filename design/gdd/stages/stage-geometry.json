@@ -816,17 +816,17 @@
         {
           "file": "Stages/Volcano/Plat_L4",
           "sizePx": [
-            369,
-            198
+            367,
+            218
           ],
           "ppu": 106,
           "pivotPx": [
-            186.48,
+            184.48,
             -0.03
           ],
           "pivotNorm": [
-            0.50536,
-            1.000162
+            0.502665,
+            1.000147
           ],
           "layer": "platform",
           "worldMilli": [

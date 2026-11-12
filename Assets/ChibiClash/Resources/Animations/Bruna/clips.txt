@@ -21,3 +21,15 @@ Move_bruna_fortressguard 18 30 6 12 6
 Move_bruna_meteor 18 30 6 12 6
 Move_bruna_seismic 18 30 6 12 6
 Move_bruna_rocketstrike 18 30 6 12 6
+Move_bruna_jab 18 30 2 14 6
+Move_bruna_jab1 18 30 6 12 6
+Move_bruna_jab2 18 30 6 12 6
+Move_bruna_jab3 18 30 6 12 6
+Sheet_Run 12 30 -1 -1 6
+Sheet_Jump 8 30 -1 -1 6
+Sheet_Fall 8 30 -1 -1 6
+Sheet_Guard 16 15 -1 -1 6
+Sheet_Hit 8 30 -1 -1 6
+Sheet_Launch 12 30 -1 -1 6
+Sheet_KO 14 30 -1 -1 6
+Sheet_Ultimate 24 30 12 18 6

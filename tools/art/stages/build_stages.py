@@ -19,6 +19,8 @@ pixels: page pixel minus the PANEL origin. The table is the measurement record; 
 import json
 import os
 import sys
+import tempfile
+import time
 
 import cv2
 import numpy as np
@@ -85,7 +87,46 @@ def page(sid):
     return _page_cache[sid]
 
 
-def illustration(sid):
+def atomic_write(path, data):
+    """Write bytes to path via a temp file outside Assets/ + os.replace, retrying while the open Unity editor holds
+    the target (PermissionError on Windows). Unity never sees a half-written file or a stray temp asset."""
+    fd, tmp = tempfile.mkstemp(prefix="stagebuild_", suffix=".tmp")
+    with os.fdopen(fd, "wb") as f:
+        f.write(data)
+    for _ in range(40):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError:
+            time.sleep(0.25)
+    os.remove(tmp)
+    raise PermissionError("could not replace %s (locked)" % path)
+
+
+def write_png(path, img):
+    ok, buf = cv2.imencode(".png", img, [cv2.IMWRITE_PNG_COMPRESSION, 6])
+    assert ok, path
+    atomic_write(path, buf.tobytes())
+
+
+_illus_cache = {}
+
+
+def illustration(sid, raw=False):
+    """The main illustration. raw=False applies the source repairs every layer shares (Volcano embers, Plain edge
+    fade); raw=True is the untouched crop (the fire-cone hazard sprites are cut from it)."""
+    key = (sid, raw)
+    if key not in _illus_cache:
+        im = _illustration_raw(sid)
+        if not raw and sid == "Volcano":
+            im = tame_embers(im)
+        if not raw and sid == "Plain":
+            im = fix_plain_edges(im)
+        _illus_cache[key] = im
+    return _illus_cache[key].copy()
+
+
+def _illustration_raw(sid):
     x, y, w, h = PANEL
     im = page(sid)[y:y + h, x:x + w].copy()
     # The panel's rounded corners leave a few page-background pixels in the four 8 x 8 corner squares: inpaint them.
@@ -123,8 +164,7 @@ def write_meta(path, ppu, pivot_norm):
     text = text.replace("    filterMode: 1\n", "    filterMode: 2\n")
     text = text.replace(old, "  alignment: 9\n  spritePivot: {x: %.6f, y: %.6f}\n  spritePixelsToUnits: %s\n"
                         % (pivot_norm[0], pivot_norm[1], ppu))
-    with open(path + ".meta", "w", encoding="utf-8", newline="\n") as f:
-        f.write(text)
+    atomic_write(path + ".meta", text.encode("utf-8"))
 
 
 def save_sprite(sid, name, img, pivot_px, ppu=None):
@@ -139,7 +179,7 @@ def save_sprite(sid, name, img, pivot_px, ppu=None):
     h, w = img.shape[:2]
     pn = (pivot_px[0] / float(w), 1.0 - pivot_px[1] / float(h))
     write_meta(path, ppu, pn)
-    cv2.imwrite(path, img, [cv2.IMWRITE_PNG_COMPRESSION, 6])
+    write_png(path, img)
     return {"file": "Stages/%s/%s" % (sid, name), "sizePx": [w, h], "ppu": ppu,
             "pivotPx": [round(pivot_px[0], 2), round(pivot_px[1], 2)],
             "pivotNorm": [round(pn[0], 6), round(pn[1], 6)]}
@@ -196,9 +236,7 @@ def write_json(stage_recs):
         "stages": stage_recs,
     }
     os.makedirs(os.path.dirname(JSON_PATH), exist_ok=True)
-    with open(JSON_PATH, "w", encoding="utf-8", newline="\n") as f:
-        json.dump(doc, f, indent=2)
-        f.write("\n")
+    atomic_write(JSON_PATH, (json.dumps(doc, indent=2) + "\n").encode("utf-8"))
 
 
 # ---------------------------------------------------------------------------------------------- platform sprites
@@ -829,21 +867,77 @@ def pillar_matte(img, side):
     return bgra, (int(x0), int(y0)), full
 
 
-def dormant_vents(back, masks):
-    """Volcano backdrop: the painted pillars become dormant vents (desaturated, darkened; ink kept) so the bright
-    Haz_Pillar overlay reads as the eruption. The glow halo around them is calmed with a softer falloff."""
-    m = np.zeros(back.shape[:2], bool)
-    for mm in masks:
-        m |= mm
-    k = cv2.GaussianBlur(m.astype(np.float32), (0, 0), 3)
-    k = np.maximum(k, m.astype(np.float32))
-    halo = cv2.GaussianBlur(m.astype(np.float32), (0, 0), 45) * 1.6
-    k_s = np.clip(np.maximum(k, halo * 0.45), 0, 1)
-    k_v = np.clip(np.maximum(k * 0.62, halo * 0.30), 0, 1)
-    hsv = cv2.cvtColor(back, cv2.COLOR_BGR2HSV).astype(np.float32)
-    hsv[..., 1] *= (1 - 0.75 * k_s)
-    hsv[..., 2] *= (1 - k_v)
-    return cv2.cvtColor(np.clip(hsv, 0, 255).astype(np.uint8), cv2.COLOR_HSV2BGR)
+# Sheet palette (art review pass 2, item 1): obsidian cel fill, ink, cooled-lava cracks, base ember glow. BGR.
+OBSIDIAN_DARK, OBSIDIAN_LIT = (0x22, 0x10, 0x1B), (0x2A, 0x1A, 0x3A)
+VENT_INK, VENT_CRACK, VENT_GLOW = (0x10, 0x08, 0x0D), (0x10, 0x2A, 0x6A), (0x18, 0x22, 0xA0)
+# Cracks per cone as (t along the axis apex 0 .. base 1, u across the cone -1 .. 1) zig-zag polylines.
+VENT_CRACKS = [[(0.22, 0.0), (0.30, 0.25), (0.37, -0.1), (0.45, 0.15)],
+               [(0.50, -0.45), (0.56, -0.15), (0.63, -0.35), (0.70, -0.05)],
+               [(0.62, 0.45), (0.70, 0.2), (0.77, 0.4), (0.86, 0.1)],
+               [(0.80, -0.6), (0.86, -0.3), (0.93, -0.5)]]
+
+
+def _aa_poly(shape, pts, ss=4):
+    """Anti-aliased polygon coverage 0..1 (supersampled)."""
+    H, W = shape
+    big = np.zeros((H * ss, W * ss), np.uint8)
+    cv2.fillPoly(big, [np.round(np.array(pts) * ss).astype(np.int32)], 255, lineType=cv2.LINE_AA)
+    return cv2.resize(big, (W, H), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
+
+
+def dormant_vents(back, _masks=None):
+    """Volcano backdrop, dormant state (pass 2 item 1): each painted fire cone is redrawn as cooled basalt in the
+    sheet's obsidian, 2-tone cel (the facet facing the light shaft is lit), 3 px ink outline, 4 dim cooled-lava
+    cracks and a small dark-red glow at the base only. The warm wall glow around it is dimmed, never greyed."""
+    out = back.astype(np.float32)
+    for side, (apex, bl, br) in PILLAR_TRI.items():
+        ax, ay = apex
+        cone = [(ax, ay - 4), (bl[0] - 3, bl[1]), (br[0] + 3, br[1])]
+        x0, x1 = min(p[0] for p in cone) - 120, max(p[0] for p in cone) + 120
+        y0, y1 = ay - 120, bl[1] + 40
+        sub = out[y0:y1, x0:x1]
+        loc = lambda pts: [(px - x0, py - y0) for px, py in pts]
+        cov = _aa_poly(sub.shape[:2], loc(cone))
+        # calm the painted fire glow around the cone (hue kept, value lowered), strongest next to the cone
+        near = cv2.GaussianBlur(cov, (0, 0), 40)
+        near = np.clip(near / max(float(near.max()), 1e-6), 0, 1)[..., None]
+        sub *= 1 - 0.35 * near
+        # cel fill: dark body + lit facet on the side facing the light shaft (stage centre)
+        mid_x = (bl[0] + br[0]) / 2.0
+        split = (mid_x + (12 if side == "Left" else -12), bl[1])
+        if side == "Left":
+            lit_poly = [(ax, ay - 4), split, (br[0] + 3, br[1])]
+        else:
+            lit_poly = [(ax, ay - 4), (bl[0] - 3, bl[1]), split]
+        lit = _aa_poly(sub.shape[:2], loc(lit_poly)) * cov
+        fill = np.empty_like(sub)
+        fill[:] = OBSIDIAN_DARK
+        fill = fill * (1 - lit[..., None]) + np.array(OBSIDIAN_LIT, np.float32) * lit[..., None]
+        sub[:] = sub * (1 - cov[..., None]) + fill * cov[..., None]
+        # dim cooled-lava cracks (~2 px)
+        crack = np.zeros((sub.shape[0] * 4, sub.shape[1] * 4), np.uint8)
+        for poly in VENT_CRACKS:
+            pts = []
+            for t, u in poly:
+                cy = ay + t * (bl[1] - ay)
+                half = t * (br[0] - bl[0]) / 2.0
+                cx = ax + (mid_x - ax) * t
+                pts.append(((cx + u * half * 0.8 - x0) * 4, (cy - y0) * 4))
+            cv2.polylines(crack, [np.round(np.array(pts)).astype(np.int32)], False, 255, 9, cv2.LINE_AA)
+        crack = cv2.resize(crack, (sub.shape[1], sub.shape[0]), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
+        crack *= cov
+        sub[:] = sub * (1 - crack[..., None]) + np.array(VENT_CRACK, np.float32) * crack[..., None]
+        # small dark-red glow at the base only
+        gl = np.zeros(sub.shape[:2], np.float32)
+        cv2.ellipse(gl, (int(mid_x - x0), int(bl[1] - y0)), (int((br[0] - bl[0]) * 0.75), 70), 0, 0, 360, 1.0, -1)
+        gl = cv2.GaussianBlur(gl, (0, 0), 28) * 0.55
+        sub[:] = sub * (1 - gl[..., None]) + np.array(VENT_GLOW, np.float32) * gl[..., None]
+        # 3 px ink outline
+        ink = np.zeros((sub.shape[0] * 4, sub.shape[1] * 4), np.uint8)
+        cv2.polylines(ink, [np.round(np.array(loc(cone)) * 4).astype(np.int32)], True, 255, 12, cv2.LINE_AA)
+        ink = cv2.resize(ink, (sub.shape[1], sub.shape[0]), interpolation=cv2.INTER_AREA).astype(np.float32) / 255.0
+        sub[:] = sub * (1 - ink[..., None]) + np.array(VENT_INK, np.float32) * ink[..., None]
+    return np.clip(out, 0, 255).astype(np.uint8)
 
 
 WHALE_PLEATS = [(930, 340), (1850, 295), (1860, 610), (930, 580)]   # pleat lines run below the belly
@@ -961,7 +1055,7 @@ def build_sprites(sid):
     if sid == "Volcano":
         vents = []
         for side in ("Left", "Right"):
-            bgra, off, fm = pillar_matte(img, side)
+            bgra, off, fm = pillar_matte(illustration(sid, raw=True), side)   # fire cones unchanged (raw art)
             vents.append(fm)
             name = "Haz_Pillar" + side
             recs.append(_place(sid, name, bgra, off, anchor_px(sid, name), "hazard", 20,
@@ -1107,6 +1201,192 @@ def fill_rows(back, img, hole):
     k = np.maximum(k, cv2.erode(hole.astype(np.uint8), np.ones((9, 9), np.uint8))[..., None].astype(np.float32))
     res = back.astype(np.float32) * (1 - k) + sm * k
     return np.clip(res, 0, 255).astype(np.uint8)
+
+
+# ------------------------------------------------------------------------- pass-2 source repairs (Volcano, Plain)
+EMBER_CAP_PX = 26               # ~24 px on screen at the default match zoom (pass 2 item 2)
+EMBER_PLAY_BAND = (280, 1470)   # illustration y: L4 top (323) .. MAIN lip (1433)
+EMBER_PLAY_CUT = 0.4
+
+
+def find_embers(im):
+    """Painted ember diamonds: compact bright warm blobs whose shape matches a diamond (IoU with the ideal diamond
+    in their bounding box), outside the fire cones and the lava. Drip segments and lip highlights fail the shape
+    test."""
+    v = im.max(2)
+    bg = cv2.medianBlur(v, 61)
+    i = im.astype(int)
+    b, g, r = i[..., 0], i[..., 1], i[..., 2]
+    hot = ((v.astype(int) - bg.astype(int)) > 45) & (r > 200) & ((r - b) > 40)
+    hot = cv2.morphologyEx(hot.astype(np.uint8), cv2.MORPH_OPEN, np.ones((7, 1), np.uint8))  # drops lip highlights
+    excl = np.zeros(v.shape, np.uint8)
+    for apex, bl, br in PILLAR_TRI.values():
+        cv2.fillConvexPoly(excl, np.array([apex, bl, br], np.int32), 1)
+    excl = cv2.dilate(excl, np.ones((25, 25), np.uint8))
+    excl[VOLCANO_LAVA_TOP_PX - 30:] = 1
+    n, lab, st, cen = cv2.connectedComponentsWithStats(hot, connectivity=8)
+    out = []
+    for k in range(1, n):
+        x, y, w, h, a = st[k]
+        if not (9 <= h <= 100 and 4 <= w <= 60 and 1.05 <= h / float(w) <= 4.0):
+            continue
+        cx, cy = cen[k]
+        if excl[int(cy), int(cx)]:
+            continue
+        ideal = np.zeros((h, w), np.uint8)
+        cv2.fillConvexPoly(ideal, np.array([(w // 2, 0), (w - 1, h // 2), (w // 2, h - 1), (0, h // 2)], np.int32), 1)
+        comp = lab[y:y + h, x:x + w] == k
+        iou = (comp & (ideal > 0)).sum() / float((comp | (ideal > 0)).sum())
+        if iou < 0.55:
+            continue
+        out.append(dict(x=int(x), y=int(y), w=int(w), h=int(h), cx=float(cx), cy=float(cy), lab=k))
+    return out, lab
+
+
+def _row_fill(sub, mask):
+    """Per row, linear interpolation between the pixels just left and right of each masked run. Lips, the light
+    shaft and the cave gradient are near-uniform horizontally, so this rebuilds them cleanly (no blur blotch)."""
+    out = sub.astype(np.float32)
+    H, W = mask.shape
+    for y in range(H):
+        xs = np.flatnonzero(mask[y])
+        if xs.size == 0:
+            continue
+        br = np.flatnonzero(np.diff(xs) > 1)
+        for a, b in zip(np.r_[xs[0], xs[br + 1]], np.r_[xs[br], xs[-1]]):
+            cl = out[y, a - 1] if a > 0 else out[y, min(W - 1, b + 1)]
+            cr = out[y, b + 1] if b < W - 1 else cl
+            t = np.linspace(0, 1, b - a + 3, dtype=np.float32)[1:-1, None]
+            out[y, a:b + 1] = cl * (1 - t) + cr * t
+    return out
+
+
+def _median_bg(src, cores):
+    """Large-window median background (edge-preserving, ignores the small ember glows), computed at 1/4 size."""
+    q = cv2.inpaint(src, cv2.dilate(cores * 255, np.ones((7, 7), np.uint8)), 3, cv2.INPAINT_TELEA)
+    small = cv2.resize(q, (src.shape[1] // 4, src.shape[0] // 4), interpolation=cv2.INTER_AREA)
+    med = cv2.medianBlur(small, 41)
+    return cv2.resize(med, (src.shape[1], src.shape[0]), interpolation=cv2.INTER_LINEAR).astype(np.float32)
+
+
+def _erase_ember(im, e, lab, bgmed):
+    """Core: row-wise fill of the diamond (dilated 2 px). Glow: subtract only its smooth excess over the median
+    background inside a 1.7 h disk, with a radial falloff (no ring)."""
+    H, W = im.shape[:2]
+    h = e["h"]
+    R = h * 3.0
+    x0, y0 = max(0, int(e["cx"] - R * 1.2) - 3), max(0, int(e["cy"] - R * 1.2) - 3)
+    x1, y1 = min(W, int(e["cx"] + R * 1.2) + 4), min(H, int(e["cy"] + R * 1.2) + 4)
+    sub = im[y0:y1, x0:x1]
+    if "rect" in e:                      # lip ember: an explicit rectangle (the part over the lip is not "hot")
+        core = np.zeros(sub.shape[:2], bool)
+        rx0, ry0, rx1, ry1 = e["rect"]
+        core[max(0, ry0 - y0):max(0, ry1 - y0), max(0, rx0 - x0):max(0, rx1 - x0)] = True
+    else:
+        core = cv2.dilate((lab[y0:y1, x0:x1] == e["lab"]).astype(np.uint8), np.ones((7, 7), np.uint8)) > 0
+    f = _row_fill(sub, core)
+    soft = cv2.GaussianBlur(f, (0, 0), 1.5)
+    f[core] = soft[core]                                          # no row-fill dashes
+    yy, xx = np.mgrid[y0:y1, x0:x1]
+    rr = np.hypot(xx - e["cx"], yy - e["cy"])
+    low = cv2.GaussianBlur(f, (0, 0), max(2.0, h * 0.45))
+    # min(f, low): the blur must not push the glow outward (that over-subtracts at the glow edge = dark rim);
+    # detail brighter than the smooth glow (crack lines) stays
+    excess = np.clip(np.minimum(f, low) - bgmed[y0:y1, x0:x1], 0, None)
+    fall = np.clip((R - rr) / (R * 0.5), 0, 1)[..., None]
+    f = f - excess * fall
+    im[y0:y1, x0:x1] = np.clip(f, 0, 255).astype(np.uint8)
+
+
+def _draw_ember(im, cx, cy, h, core_bgr):
+    """Redraw a diamond at cap size: anti-aliased core in its own colour + a soft orange glow."""
+    H, W = im.shape[:2]
+    w = h * 0.5
+    pad = int(h * 1.6) + 4
+    x0, y0 = max(0, int(cx) - pad), max(0, int(cy) - pad)
+    x1, y1 = min(W, int(cx) + pad), min(H, int(cy) + pad)
+    sub = im[y0:y1, x0:x1].astype(np.float32)
+    pts = [(cx - x0, cy - h / 2.0 - y0), (cx + w / 2.0 - x0, cy - y0), (cx - x0, cy + h / 2.0 - y0),
+           (cx - w / 2.0 - x0, cy - y0)]
+    cov = _aa_poly(sub.shape[:2], pts)
+    glow = cv2.GaussianBlur(cov, (0, 0), h * 0.45) * 1.4
+    orange = np.array([0x1F, 0x9A, 0xFF], np.float32)
+    sub = sub + glow[..., None] * orange * 0.4
+    sub = sub * (1 - cov[..., None]) + np.array(core_bgr, np.float32) * cov[..., None]
+    im[y0:y1, x0:x1] = np.clip(sub, 0, 255).astype(np.uint8)
+
+
+def tame_embers(im):
+    """Pass 2 items 2 and 8. Painted embers on a platform's walkable lip are removed (they read as pickups); 40 % of
+    the other embers in the play band (MAIN lip .. L4) are removed; every kept ember taller than the cap is redrawn
+    at the cap. Deterministic (fixed seed)."""
+    im = im.copy()
+    src = im.copy()
+    embers, lab = find_embers(im)
+    cores = np.isin(lab, [e["lab"] for e in embers]).astype(np.uint8)
+    bgmed = _median_bg(src, cores)
+    plats = list(STAGES["Volcano"]["plats"].values())
+    plats_top = {k: v[0] for k, v in STAGES["Volcano"]["plats"].items()}
+    for e in embers:
+        e["lip"] = any(l - 10 <= e["cx"] <= r + 10 and top - 30 <= e["y"] + e["h"] and e["y"] <= top + 20
+                       for top, l, r in plats)
+        # baked on a platform face (m2): inside a platform cut rectangle, below the lip
+        e["lip"] = e["lip"] or any(rx0 <= e["cx"] <= rx1 and plats_top[name] + 20 < e["cy"] <= ry1
+                                   for name, (rx0, ry0, rx1, ry1) in CUTS["Volcano"]["rois"].items())
+    rng = np.random.RandomState(1234)
+    order = rng.permutation(len(embers))
+    band = [k for k in order if EMBER_PLAY_BAND[0] <= embers[k]["cy"] <= EMBER_PLAY_BAND[1] and not embers[k]["lip"]]
+    cut = set(band[:int(round(len(band) * EMBER_PLAY_CUT))])
+    stats = dict(found=len(embers), play_band=len(band), lip=0, cut=0, shrunk=0)
+    for k, e in enumerate(embers):
+        if e["lip"] or k in cut:
+            _erase_ember(im, e, lab, bgmed)
+            stats["lip" if e["lip"] else "cut"] += 1
+        elif e["h"] > EMBER_CAP_PX:
+            sel = lab[e["y"]:e["y"] + e["h"], e["x"]:e["x"] + e["w"]] == e["lab"]
+            core = np.median(src[e["y"]:e["y"] + e["h"], e["x"]:e["x"] + e["w"]][sel].reshape(-1, 3), axis=0)
+            _erase_ember(im, e, lab, bgmed)
+            _draw_ember(im, e["cx"], e["cy"], EMBER_CAP_PX, core)
+            stats["shrunk"] += 1
+    # embers merged with a walkable lip (the diamond test misses them): pixels brighter than their own row's median
+    # along the platform (the lip highlight is uniform along the row, a diamond is not), lip band only
+    for top, l, r in plats:
+        y0, y1 = top - 42, top + 24
+        zone = im[y0:y1, l:r]
+        vv = zone.max(2).astype(np.float32)
+        lift = vv - np.median(vv, axis=1, keepdims=True)
+        zi = zone.astype(int)
+        hot = (lift > 45) & (zi[..., 2] > 190) & ((zi[..., 2] - zi[..., 0]) > 50)
+        hot = cv2.morphologyEx(hot.astype(np.uint8), cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
+        n, lb, st, cen = cv2.connectedComponentsWithStats(hot)
+        for k in range(1, n):
+            x, y, w, h, a = st[k]
+            if a < 10 or w > 70 or h > 90:
+                continue
+            ex = dict(cx=float(l + x + w / 2.0), cy=float(y0 + y + h / 2.0), h=max(12, int(h)), lab=-1,
+                      rect=(l + x - 5, y0 + y - 5, l + x + w + 5, y0 + y + h + 5))
+            _erase_ember(im, ex, lab, bgmed)
+            stats["lip"] += 1
+    print("   Volcano embers:", stats)
+    return im
+
+
+PLAIN_FADE_Y, PLAIN_FADE_W = 1376, 720
+
+
+def fix_plain_edges(im):
+    """Pass 2 item 3 (M11): the sheet paints a cream fade over the outer ~700 px of the ground band (below the hill
+    line). Replace each side with a mirror of the unfaded ground next to it (seamless at the seam by construction),
+    feathered in over 24 rows at the top so the hill ink line is untouched."""
+    im = im.copy()
+    H, W = im.shape[:2]
+    y0, fw = PLAIN_FADE_Y, PLAIN_FADE_W
+    left = im[:, fw:2 * fw][:, ::-1].copy()
+    right = im[:, W - 2 * fw:W - fw][:, ::-1].copy()
+    ramp = np.clip((np.arange(H, dtype=np.float32) - y0) / 24.0, 0, 1)[:, None, None]
+    im[:, :fw] = (im[:, :fw] * (1 - ramp) + left * ramp).astype(np.uint8)
+    im[:, W - fw:] = (im[:, W - fw:] * (1 - ramp) + right * ramp).astype(np.uint8)
+    return im
 
 
 def load_json():

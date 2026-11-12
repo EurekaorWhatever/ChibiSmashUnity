@@ -754,6 +754,19 @@ namespace ChibiClash.Netcode
         /// <summary>Eight-point flash star (four long, four short points) with a hot centre.</summary>
         static Sprite Star => _star != null ? _star : (_star = MakeSprite("LfxStar", 128, StarPixel));
 
+        /// <summary>
+        /// Builds the procedural streak / puff / star sprites and the additive material now (call while the match is built,
+        /// behind the wipe) so the first launch trail or KO blast of a fight does not generate three 128x128 textures on
+        /// that frame. Idempotent: they are built once per session.
+        /// </summary>
+        public static void WarmShared()
+        {
+            _ = Streak;
+            _ = Puff;
+            _ = Star;
+            _ = LightMat;
+        }
+
         delegate Color32 PixelFn(float u, float v);
 
         static Sprite MakeSprite(string name, int n, PixelFn fn)

@@ -37,6 +37,7 @@ namespace ChibiClash
             if (s == null) return Action.None;
             var settings = gm.Save.settings;
             Track(m);
+            BuildPlates(m, settings.showCvOverlay);
             Tags(m);
             Popups();
 
@@ -48,8 +49,8 @@ namespace ChibiClash
             }
 
             bool motion = settings.screenShake;   // the player's motion preference also calms the HUD's shake
-            PlayerPanel(m, 0, new Rect(16f, 14f, 440f, 130f), false, motion);
-            PlayerPanel(m, 1, new Rect(Gui.W - 456f, 14f, 440f, 130f), true, motion);
+            PlayerPanel(m, 0, PanelRect(0), false, motion);
+            PlayerPanel(m, 1, PanelRect(1), true, motion);
             Timer(m);
             if (m.Config.training) TrainingReadout(m);
 
@@ -59,8 +60,7 @@ namespace ChibiClash
                 {
                     var tr = m.Tracker(i);
                     if (tr == null) continue;
-                    var r = i == 0 ? new Rect(16f, Gui.H - 196f, 230f, 172f) : new Rect(Gui.W - 246f, Gui.H - 196f, 230f, 172f);
-                    Gui.CvPanel(r, tr, StateColor(m, i), i == 0 && settings.useWebcam, CvTitles[i * 2 + (tr.IsLive ? 1 : 0)]);
+                    Gui.CvPanel(CvRect(i), tr, StateColor(m, i), i == 0 && settings.useWebcam, CvTitles[i * 2 + (tr.IsLive ? 1 : 0)]);
                 }
             }
 
@@ -193,8 +193,8 @@ namespace ChibiClash
             var ch = CharacterRoster.Of(def.type);
             var pc = Gui.PlayerColor(i);
 
-            const float k = 0.12f;
-            Gui.Skew(new Rect(r.x + 5f, r.y + 5f, r.width, r.height), new Color(0f, 0f, 0f, 0.4f), k);
+            const float k = PanelSkew;
+            Gui.Skew(new Rect(r.x + PanelShadow, r.y + PanelShadow, r.width, r.height), new Color(0f, 0f, 0f, 0.4f), k);
             Gui.Skew(r, new Color(0.055f, 0.09f, 0.16f, 0.93f), k);
             Gui.Skew(new Rect(r.x, r.y, r.width, 4f), pc, k);
             Gui.SkewFrame(r, new Color(ch.Primary.r, ch.Primary.g, ch.Primary.b, 0.7f), 1.5f, k);
@@ -490,10 +490,10 @@ namespace ChibiClash
         {
             int t = m.IsCpu(1) ? 1 : m.IsCpu(0) ? 0 : 1;
             var f = m.State.F[t];
-            var r = new Rect(Gui.W * 0.5f - 150f, 92f, 300f, 62f);
-            Gui.Skew(new Rect(r.x + 4f, r.y + 4f, r.width, r.height), new Color(0f, 0f, 0f, 0.35f), 0.12f);
-            Gui.Skew(r, new Color(0.055f, 0.09f, 0.16f, 0.88f), 0.12f);
-            Gui.Skew(new Rect(r.x, r.y, r.width, 3f), Gui.Gold, 0.12f);
+            var r = TrainingRect();
+            Gui.Skew(new Rect(r.x + TrainShadow, r.y + TrainShadow, r.width, r.height), new Color(0f, 0f, 0f, 0.35f), TrainSkew);
+            Gui.Skew(r, new Color(0.055f, 0.09f, 0.16f, 0.88f), TrainSkew);
+            Gui.Skew(new Rect(r.x, r.y, r.width, 3f), Gui.Gold, TrainSkew);
             int pctTenths = Mathf.Min(f.PctM, ChibiPercentConst.PctCapM) / 100;
             float pct = pctTenths / 10f;
             // every line is rebuilt only when its number changes (audit P4)
@@ -607,11 +607,11 @@ namespace ChibiClash
         static void Timer(ChibiMatch m)
         {
             var s = m.State;
-            var r = new Rect(Gui.W * 0.5f - 62f, 12f, 124f, 72f);
-            Gui.Skew(new Rect(r.x + 4f, r.y + 4f, r.width, r.height), new Color(0f, 0f, 0f, 0.4f), 0.15f);
-            Gui.Skew(r, new Color(0.055f, 0.09f, 0.16f, 0.95f), 0.15f);
-            Gui.Skew(new Rect(r.x, r.y, r.width * 0.5f, 4f), Gui.P1, 0.15f);
-            Gui.Skew(new Rect(r.center.x, r.y, r.width * 0.5f, 4f), Gui.P2, 0.15f);
+            var r = TimerRect();
+            Gui.Skew(new Rect(r.x + TimerShadow, r.y + TimerShadow, r.width, r.height), new Color(0f, 0f, 0f, 0.4f), TimerSkew);
+            Gui.Skew(r, new Color(0.055f, 0.09f, 0.16f, 0.95f), TimerSkew);
+            Gui.Skew(new Rect(r.x, r.y, r.width * 0.5f, 4f), Gui.P1, TimerSkew);
+            Gui.Skew(new Rect(r.center.x, r.y, r.width * 0.5f, 4f), Gui.P2, TimerSkew);
             float left = s.TimeLeftTicks / (float)ChibiSimConst.TickRate;
             int secs = Mathf.CeilToInt(left);
             if (secs != clockSecs) { clockSecs = secs; clockText = secs / 60 + ":" + (secs % 60).ToString("00"); }
@@ -695,6 +695,59 @@ namespace ChibiClash
             Gui.Text(new Rect(band.x, band.y + 58f, band.width, 26f), cinematicSub, 15, new Color(c.r, c.g, c.b, k));
         }
 
+        // ================================================================ HUD plates + world label layout (art review pass 2 #4)
+        // The plate geometry below is shared by the drawing code above and the label layout, so the keep-out rects are
+        // always the rects actually drawn. All values are Gui virtual-canvas units (scaled with the resolution by Gui).
+
+        const float PanelInset = 16f, PanelTop = 14f, PanelW = 440f, PanelH = 130f, PanelSkew = 0.12f, PanelShadow = 5f;
+        const float TimerTop = 12f, TimerW = 124f, TimerH = 72f, TimerSkew = 0.15f, TimerShadow = 4f;
+        const float TrainTop = 92f, TrainW = 300f, TrainH = 62f, TrainSkew = 0.12f, TrainShadow = 4f;
+        const float CvW = 230f, CvH = 172f, CvFromBottom = 196f;
+
+        // Name tag (above the fighter's body centre) and its pointer.
+        const float TagLiftWorld = 1.25f, TagLift = 24f, TagH = 18f, TagPadX = 16f, TagSkew = 0.3f;
+        const int TagFont = 13;
+        const float PointerW = 12f, PointerH = 8f, PointerGap = 2f;
+        const float PointerReach = PointerGap + PointerH;   // room a tag keeps above and below itself for its pointer
+        // Popups: draw box (body text wraps past its width) and the line height the display lettering uses (Outlined).
+        const float PopupW = 300f, PopupH = 40f, PopupLineH = 1.2f, ComicOutline = 2.5f;
+        /// <summary>Minimum space between a world label and a plate or another label.</summary>
+        const float LabelGap = 6f;
+
+        // Keep-out rects: up to 6 plates, then the placed name tags (tag + pointer room) appended after them.
+        const int MaxPlates = 6;
+        static readonly Rect[] labelBlockers = new Rect[MaxPlates + 2];
+        static int plateCount, blockerCount;
+        static Rect labelArea;
+
+        static Rect PanelRect(int i) => new Rect(i == 0 ? PanelInset : Gui.W - PanelInset - PanelW, PanelTop, PanelW, PanelH);
+        static Rect TimerRect() => new Rect(Gui.W * 0.5f - TimerW * 0.5f, TimerTop, TimerW, TimerH);
+        static Rect TrainingRect() => new Rect(Gui.W * 0.5f - TrainW * 0.5f, TrainTop, TrainW, TrainH);
+        static Rect CvRect(int i) => new Rect(i == 0 ? PanelInset : Gui.W - PanelInset - CvW, Gui.H - CvFromBottom, CvW, CvH);
+
+        /// <summary>
+        /// Once per OnGUI pass, before any world label: the screen extents of this frame's HUD plates (player panels,
+        /// timer, training readout, camera panels) and the safe area under the top band that labels may use.
+        /// </summary>
+        static void BuildPlates(ChibiMatch m, bool cvOverlay)
+        {
+            int n = 0;
+            labelBlockers[n++] = HudLabelLayout.SkewedPlate(PanelRect(0), PanelSkew, PanelShadow);
+            labelBlockers[n++] = HudLabelLayout.SkewedPlate(PanelRect(1), PanelSkew, PanelShadow);
+            labelBlockers[n++] = HudLabelLayout.SkewedPlate(TimerRect(), TimerSkew, TimerShadow);
+            if (m.Config.training) labelBlockers[n++] = HudLabelLayout.SkewedPlate(TrainingRect(), TrainSkew, TrainShadow);
+            if (cvOverlay)
+                for (int i = 0; i < 2; i++)
+                    if (m.Tracker(i) != null) labelBlockers[n++] = CvRect(i);
+            plateCount = blockerCount = n;
+            float band = HudLabelLayout.BandBottom(labelBlockers, plateCount, Gui.H);
+            labelArea = HudLabelLayout.SafeArea(Gui.W, Gui.H, PanelInset, band, LabelGap);
+        }
+
+        /// <summary>
+        /// Name tags: over each fighter, kept below the top HUD band, out of the plates and off the other fighter's tag.
+        /// The pointer always points at the fighter (up when the tag had to drop below a plate the fighter is behind).
+        /// </summary>
         static void Tags(ChibiMatch m)
         {
             for (int i = 0; i < 2; i++)
@@ -703,16 +756,34 @@ namespace ChibiClash
                 if (f.OutTicks > 0) continue;   // KO'd: the body sits off-screen at the blast line until the respawn
                 var c = Gui.PlayerColor(i);
                 if (f.HoverTicks > 0) RespawnHalo(m, i, f, c);
-                var p = Gui.WorldToGui(m.Center(i) + Vector2.up * 1.25f);
+                var p = Gui.WorldToGui(m.Center(i) + Vector2.up * TagLiftWorld);
                 string who = Who(m, i);
-                float w = Gui.Measure(who, 13) + 16f;
-                var tag = new Rect(p.x - w * 0.5f, p.y - 24f, w, 18f);
-                Gui.Skew(tag, c, 0.3f);
-                Gui.Text(tag, who, 13, Gui.Paper, TextAnchor.MiddleCenter, true, false);
-                Gui.Chevron(new Rect(p.x - 6f, p.y - 4f, 12f, 8f), c);
+                float w = Gui.Measure(who, TagFont) + TagPadX;
+                // Layout box = tag plus pointer room on both sides, so a stacked tag never lands on another's pointer.
+                var want = new Rect(p.x - w * 0.5f, p.y - TagLift - PointerReach, w, TagH + 2f * PointerReach);
+                var box = HudLabelLayout.Place(want, labelArea, labelBlockers, blockerCount, LabelGap, false);
+                if (blockerCount < labelBlockers.Length) labelBlockers[blockerCount++] = box;
+                var tag = new Rect(box.x, box.y + PointerReach, w, TagH);
+                Gui.Skew(tag, c, TagSkew);
+                Gui.Text(tag, who, TagFont, Gui.Paper, TextAnchor.MiddleCenter, true, false);
+                var ptr = HudLabelLayout.Pointer(tag, p, PointerW, PointerH, PointerGap, out bool down);
+                Pointer(ptr, c, down);
             }
         }
 
+        /// <summary>Tag pointer: <see cref="Gui.Chevron"/> turned to point down (or up) inside <paramref name="r"/>.</summary>
+        static void Pointer(Rect r, Color c, bool down)
+        {
+            var saved = GUI.matrix;
+            GUIUtility.RotateAroundPivot(down ? 90f : -90f, r.center * Gui.Scale);   // pivot in screen pixels (as Gui.Line)
+            Gui.Chevron(new Rect(r.center.x - r.height * 0.5f, r.center.y - r.width * 0.5f, r.height, r.width), c);
+            GUI.matrix = saved;
+        }
+
+        /// <summary>
+        /// Floating text (move callouts, comic SFX, damage): each one is kept on screen, out of the HUD plates and off
+        /// both name tags, stacking above a tag it would cover (below it when the tag is already under the top band).
+        /// </summary>
         static void Popups()
         {
             foreach (var p in Fx.Popups)
@@ -721,14 +792,22 @@ namespace ChibiClash
                 float a = 1f - Mathf.Clamp01((p.t - 0.6f) / 0.5f);
                 float pop = 1f + Mathf.Max(0f, 0.3f - p.t) * 1.5f;
                 int size = Mathf.RoundToInt(20f * p.size * pop);
-                var rect = new Rect(g.x - 150f, g.y - 20f, 300f, 40f);
+                float tw = Gui.Measure(p.text, size);
+                float pad = p.comic ? 2f * ComicOutline : 0f;
+                var ext = p.comic ? HudLabelLayout.RotatedSize(tw + pad, size * PopupLineH + pad, p.tilt)
+                                  : new Vector2(tw, size * PopupLineH);
+                var placed = HudLabelLayout.Place(new Rect(g.x - ext.x * 0.5f, g.y - ext.y * 0.5f, ext.x, ext.y), labelArea,
+                                                  labelBlockers, blockerCount, LabelGap, true);
+                g = placed.center;
+                float dw = Mathf.Max(PopupW, tw + pad);   // never narrower than the text: body text would wrap
+                var rect = new Rect(g.x - dw * 0.5f, g.y - PopupH * 0.5f, dw, PopupH);
                 if (p.comic)
                 {
                     // Comic SFX lettering (character sheets): thick dark outline, slight tilt, colour fill on top.
                     var saved = GUI.matrix;
-                    GUIUtility.RotateAroundPivot(p.tilt, g);
+                    GUIUtility.RotateAroundPivot(p.tilt, g * Gui.Scale);   // pivot in screen pixels (as Gui.Line)
                     var ink = new Color(0.08f, 0.06f, 0.1f, a);
-                    const float o = 2.5f;
+                    const float o = ComicOutline;
                     for (int k = 0; k < 8; k++)
                     {
                         float ang = k * Mathf.PI / 4f;

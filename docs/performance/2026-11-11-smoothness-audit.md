@@ -158,3 +158,80 @@ Use a Development Build with Autoconnect Profiler for real numbers; the Editor a
 10. **Online sanity:** one online match after F2/F3: confirm nothing changed there (online loops keep the raw delta).
 
 Record results in `docs/performance/` as a dated report against the budgets in section 1.
+
+## 6. 2026-11-12: animation and texture loading hitches (performance-analyst, static, compile_check green)
+
+User report: "graphics getting weird and delays" in fights. Code and asset reading only, Unity not launched.
+
+### Measured from the assets (Resources/Animations, PNG headers + .meta)
+
+| Character | Sheets (Move_/Idle_Sheet, BC7 + mips, max 4096) | Cutouts (BC7, no mips, max 16384) | GPU (BC7 1 B/px, mips x1.33) | Disk |
+|---|---|---|---|---|
+| Bruna | 22 (21 x 3840x768, 1 x 3840x1024) | 24 | 83.8 + 23.6 = **107 MiB** | 46 MiB |
+| Kaia | 23 | 24 | 87.5 + 23.6 = **111 MiB** | 30 MiB |
+| Lyra | 22 | 24 | 83.8 + 23.6 = **107 MiB** | 32 MiB |
+| Ren | 25 | 24 | 95.0 + 23.6 = **119 MiB** | 27 MiB |
+| Taro | 21 | 24 | 80.0 + 23.6 = **104 MiB** | 27 MiB |
+
+- 45-49 textures per character; all dimensions are multiples of 4, so all BC7 (no RGBA32 fallback).
+- One match (2 different fighters): **~215-230 MiB** of animation textures, plus the stage. Over the 250 MB budget
+  (section 1) once the 3840x2160 stage layers are added.
+- Before this fix the cache never released: after all five characters were played **~548 MiB** stayed resident. On 2-4 GB
+  GPUs or integrated graphics that overcommits VRAM; driver paging gives stutter and missing / late textures, a likely
+  cause of "graphics getting weird".
+- Load path before the fix: nothing loaded at match build. The first `FighterVisual` clip lookup (first LateUpdate of
+  the match, and online: a sim that is already Playing) ran a synchronous `Resources.LoadAll` of the whole folder plus
+  ~650 `Sprite.Create` calls per character, for both fighters. Estimate 100-300 ms per character, so **0.2-0.6 s**
+  frozen on the first visible frames. Offline F3 hid it from the sim clock; online it was not hidden (raw delta, catch-up
+  burst + rollbacks).
+- `Slice()` sprites are created once per character and cached; `Get` / `MoveClipName` are allocation-free. OK.
+- Lazy first-use FX textures built on a fight frame: `ChibiLaunchFx` Streak / Puff / Star (3 x 128x128 RGBA32 built
+  pixel by pixel + additive material via `Shader.Find`) on the first launch or KO; `ChibiMoveVfx.Crescent` (128x128) on
+  the first moveset slash; `ChibiFxTextures` Ray / Glow / Ring / Line on the first hit spark. Estimate 1-5 ms each.
+- Per-frame GC in SpriteAnim, ChibiSimView, ChibiBladeTrails, ChibiHitSparks, ChibiLaunchFx, ChibiPostFx,
+  StageAtmosphere*: **none found** in the steady state (pools, cached arrays, closures built once). Event-only:
+  `int.ToString` of every damage number (fixed), `Fx.Text` / `Fx.Comic` allocate a `Popup` per hit (CombatObjects.cs,
+  not changed), `FighterVisual.SpawnKoGhost` creates GameObjects per KO (not changed, FighterVisual was being edited).
+- Stage textures (`StageBuilder.Build`, `AtmosFx` atlas) already load synchronously inside `ChibiSimView.Begin`, i.e.
+  inside `ChibiMatch.Create`, behind the wipe. Not mid-fight.
+
+### Fixed
+
+| ID | File | Change |
+|---|---|---|
+| F4 | `Fighter/SpriteAnim.cs` | `SpriteAnimLibrary.Preload(id, warmGpu)` builds the clip table once and warms the textures; `WarmGpu(id)` blits each sheet into a 4x4 temporary RT so the render thread finishes uploads now (no-op with a null device); `Release(id)` / `ReleaseAllExcept(a, b)` destroy the sliced sprites and `Resources.UnloadAsset` the sheets; `LoadCount` / `IsLoaded` diagnostics. `Get` behaviour unchanged (still lazy-loads if nothing preloaded). |
+| F5 | `Game/ChibiMatch.cs` | `PreloadAssets(c0, c1)` called at the top of `Create` and before `BuildView` in `CreateOnline`: both fighters' sheets + GPU warm + the shared FX textures. `Start()` (first frame, old match destroyed) releases characters not in this match. |
+| F6 | `Game/GameManager.Online.cs` `OnRoomConnected` | Preloads the local fighter before the handshake, so `CreateOnline` (already Playing) only loads the opponent. |
+| F7 | `Game/GameManager.cs` `UpdateWipe` | The wipe clock is pushed forward by the time the mid-wipe action blocked, so the reveal half still plays after the preload instead of the wipe vanishing in one frame. |
+| F8 | `Netcode/View/ChibiLaunchFx.cs` | `WarmShared()` builds Streak / Puff / Star / additive material (called by F5). |
+| F9 | `Netcode/View/ChibiSimView.cs` | Damage popup text from a cached 0..999 string table (`DamageText`), same strings as `int.ToString`. |
+
+Tests: `Assets/Tests/EditMode/Editor/SpriteAnimLibraryTests.cs` (8 tests). Not yet run in Unity.
+
+### Verify with the Profiler (Play Mode, Deep Profile off)
+
+1. Frame that runs `ChibiMatch.Create`: record ms for `Resources.LoadAll`, `Sprite.Create`, `Graphics.Blit` (warm) and
+   `Texture.AwakeFromLoad` / upload markers. Expect the whole cost on that one frame, under the covered wipe.
+2. First 5 s of the match and the first use of every move, launch and KO: no frame > 2x budget, and no
+   `Resources.LoadAll` or `Texture2D.Apply` sample after the match-build frame. `SpriteAnimLibrary.LoadCount` must not
+   change after the build frame.
+3. Wipe: the reveal half (0.3 s) plays smoothly after the build frame.
+4. Memory Profiler: after one match ~215-230 MiB of `Animations/*` textures; after playing all five characters in a
+   row it must stay at two characters' worth (was ~548 MiB).
+5. Online: frame of `CreateOnline`, ticks run on the next frame (catch-up size) and rollback count during the intro.
+6. GPU warm: compare first-draw spikes with `warmGpu: false` (Profiler GPU / render thread). If the Blit shows no gain on
+   D3D11/D3D12, it can be dropped; it costs ~47 tiny blits per character.
+
+### Not fixed (owners)
+
+- Cutouts: fights now draw only sheet clips (`FightClips` / `GetSheet`, gameplay-programmer). The 24 cutouts per
+  character (23.6 MiB GPU, ~10 MB disk) are still loaded by `Resources.LoadAll`. If fights never draw them, move them to a
+  separate folder or load sheets by name (technical-artist + gameplay-programmer).
+- Sheet size: ~85-95 MiB of mipmapped 3840x768 sheets per character. Mips on an orthographic 2D game at fixed zoom are
+  33% of that; consider mips off or trimmed atlases (P5, technical-artist).
+- First KO / ult enables URP chromatic aberration (`ChibiPostFx` punch from 0 to > 0), which switches the UberPost shader
+  variant mid-fight. In the Editor that can compile asynchronously (cyan placeholder for a frame); in builds the first
+  PSO creation can hitch. Warm with a ShaderVariantCollection / Unity 6 GraphicsStateCollection or keep the keyword on
+  (technical-artist, profile first).
+- Async loading (`Resources.LoadAsync` per sheet during the wipe and the READY intro) would remove the build-frame
+  freeze entirely; needs a known name list (clips.txt + `Clips`), engine-programmer.

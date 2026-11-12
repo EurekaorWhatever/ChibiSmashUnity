@@ -217,6 +217,7 @@ namespace ChibiClash.Netcode
                 go.transform.SetParent(transform, false);
                 _vis[i] = go.AddComponent<FighterVisual>();
                 _vis[i].Build(_def[i], _skin[i], 10 + i * 20, weapons != null && weapons[i] != null ? weapons[i] : WeaponDef.Get(cls, 0));
+                _vis[i].EnableSheetOnly();   // fight: moveset-sheet clips only (FightClips), never cutouts or the body drawing
                 var ch = CharacterRoster.Of(cls);
                 _fx[i] = ch.Fx;
                 _accent[i] = ch.Accent;
@@ -556,7 +557,14 @@ namespace ChibiClash.Netcode
                 // Sim velocities are sub-units (1/VelSub milli per tick): convert to world units per second.
                 var vel = new Vector2(f.Vx, f.Vy) * (ChibiSimConst.TickRate * MilliToWorld / ChibiSimConst.VelSub);
                 v.SetAlpha(_launchFx.BodyAlpha(i));   // hidden while KO'd, blinking during respawn invulnerability
-                v.Tick(vel, f.Grounded, f.Shielding);
+                // Fight-mode clip facts, read-only from the shown state (FightClips.StateOf picks the sheet clip).
+                var ff = FightFlags.None;
+                if (f.Stun > 0) ff |= FightFlags.Hitstun;
+                if (f.Stun > 0 && !f.Grounded && _launchFx.LaunchLead(i, out _, out _)) ff |= FightFlags.Launched;
+                if (f.OutTicks > 0) ff |= FightFlags.Out;
+                if (f.HoverTicks > 0) ff |= FightFlags.Hover;
+                if (_seen.IntroRealTicks > 0) ff |= FightFlags.Intro;
+                v.Tick(vel, f.Grounded, f.Shielding, ff);
 
                 bool parry = f.ParryTicks > 0;
                 float guard = 1f;
@@ -697,6 +705,9 @@ namespace ChibiClash.Netcode
                     var f = _seen.F[e.Index];
                     var v = _vis[e.Index];
                     if (e.Value >= ChibiMovesetData.FirstNewSlot) break;   // moveset rows: PlayMoveset (captured per step)
+                    // Fight mode: the Move_ sheet clip standing in for this pre-v18 slot (the cutout Play* calls below are ignored).
+                    v.PlayLegacyMove(e.Value, f.MoveStartup / (float)ChibiSimConst.TickRate, f.MoveActive / (float)ChibiSimConst.TickRate,
+                                     f.MoveRecovery / (float)ChibiSimConst.TickRate);
                     if (e.Value <= 1)
                     {
                         float dur = (f.MoveStartup + f.MoveActive + f.MoveRecovery) / (float)ChibiSimConst.TickRate;
@@ -735,7 +746,7 @@ namespace ChibiClash.Netcode
                     _vis[e.Index].Flash();
                     if (_seen.F[e.Index].MoveSlot < 0) _vis[e.Index].Hurt();   // Hit sheet (or the recoil squash)
                     Fx.Burst(Center(e.Index), Color.white, 12, 5f, 0.25f);
-                    Fx.Text(Center(e.Index) + Vector2.up * 0.9f, e.Value.ToString(), Gui.Yellow, 1f);
+                    Fx.Text(Center(e.Index) + Vector2.up * 0.9f, DamageText(e.Value), Gui.Yellow, 1f);
                     _shake = Mathf.Max(_shake, ShakeOnHit);
                     break;
                 case ChibiSimEventKind.Parried:
@@ -794,6 +805,16 @@ namespace ChibiClash.Netcode
                     }
                     break;
             }
+        }
+
+        // Damage-number strings, built once per value (perf: was one int.ToString allocation per hit).
+        static readonly string[] DamageStrings = new string[1000];
+
+        /// <summary>The popup text of a damage value: the same string int.ToString gives, cached for 0..999.</summary>
+        public static string DamageText(int value)
+        {
+            if ((uint)value >= (uint)DamageStrings.Length) return value.ToString();
+            return DamageStrings[value] ??= value.ToString();
         }
 
         // Program-move effect colours, Fighter.cs:816 (grab slam), :832 (tornado), :914 (leap slam).

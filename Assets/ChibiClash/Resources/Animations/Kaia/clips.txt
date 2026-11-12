@@ -22,3 +22,16 @@ Move_kaia_riposte 18 30 6 12 6
 Move_kaia_reversal 18 30 6 12 6
 Move_kaia_wallkick 18 30 6 12 6
 Move_kaia_roll 18 30 6 12 6
+Move_kaia_jab 18 30 2 14 6
+Move_kaia_jab1 18 30 6 12 6
+Move_kaia_jab2 18 30 6 12 6
+Move_kaia_jab3 18 30 6 12 6
+Move_kaia_airdodge 18 30 6 12 6
+Sheet_Run 12 30 -1 -1 6
+Sheet_Jump 8 30 -1 -1 6
+Sheet_Fall 8 30 -1 -1 6
+Sheet_Guard 16 15 -1 -1 6
+Sheet_Hit 8 30 -1 -1 6
+Sheet_Launch 12 30 -1 -1 6
+Sheet_KO 14 30 -1 -1 6
+Sheet_Ultimate 24 30 12 18 6

@@ -50,6 +50,10 @@ namespace ChibiClash.Netcode
         // Bloom only on genuinely bright pixels (white-hot trail cores, sparks, lava, glows), never on the whole painted stage.
         const float BloomThreshold = 0.82f, BloomScatter = 0.68f, VignetteIntensity = 0.24f, VignetteSmooth = 0.45f;
         const float PunchKoSec = 0.45f, PunchUltSec = 0.6f, PunchBloomAdd = 1.6f, PunchAberration = 0.55f;
+        /// <summary>Resting chromatic aberration: invisible, but above 0 so URP keeps the aberration shader variant in use
+        /// from the first frame. At 0 URP switches the pass off, and the first KO punch would then switch variants mid-fight
+        /// (an Editor placeholder flash / first-use hitch; performance audit 2026-11-12 section 6).</summary>
+        const float AberrationRest = 0.002f;
 
         Volume _volume;
         VolumeProfile _profile;
@@ -108,7 +112,7 @@ namespace ChibiClash.Netcode
             _vignette.rounded.Override(false);
 
             _aberration = _profile.Add<ChromaticAberration>(true);
-            _aberration.intensity.Override(0f);
+            _aberration.intensity.Override(AberrationRest);
 
             _volume = gameObject.AddComponent<Volume>();
             _volume.isGlobal = true;
@@ -151,7 +155,7 @@ namespace ChibiClash.Netcode
                 if (t >= 1f) _punchLen = 0f;
             }
             if (_bloom != null) _bloom.intensity.value = _baseBloom + PunchBloomAdd * k;
-            if (_aberration != null) _aberration.intensity.value = PunchAberration * k;
+            if (_aberration != null) _aberration.intensity.value = AberrationRest + PunchAberration * k;
             if (_vignette != null) _vignette.intensity.value = VignetteIntensity + 0.12f * k;
         }
 

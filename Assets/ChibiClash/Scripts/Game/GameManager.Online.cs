@@ -302,6 +302,9 @@ namespace ChibiClash
                 pending.stage = roomsSvc.Stage;
                 pending.hazards = roomsSvc.HazardsOn;   // ST-5: the room's hazards pick
             }
+            // Perf: load + GPU-warm our own fighter's sheets now, before the handshake and its rollback clock start, so
+            // ChibiMatch.CreateOnline (already Playing) only has the opponent left to load.
+            SpriteAnimLibrary.Preload(CharacterRoster.Of(pending.cls[0]).Id);
             // ST-5: the host's hazards pick travels in the handshake Start message (protocol 4) and becomes HazardsOff on
             // both peers (the joiner takes it from Start).
             var online = isHost
