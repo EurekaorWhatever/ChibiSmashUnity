@@ -452,9 +452,11 @@ namespace ChibiClash
         {
             if (sheetOnly)
             {
-                // fight mode: the hitstun clip comes from the sim's Stun (FightFlags.Hitstun); a new hit replays it
+                // fight mode: the hitstun clip comes from the sim's Stun (FightFlags.Hitstun); a new hit replays it, but
+                // only when the next Tick's state is Hitstun / Launched (a shielded or armoured hit keeps the looping
+                // Guard / Idle / Run clip running instead of restarting it)
                 lockT = 0f;
-                restartLoco = true;
+                hurtPending = true;
                 return;
             }
             hurtT = 0.3f;
@@ -471,7 +473,21 @@ namespace ChibiClash
 
         public void SetVictory(bool on) => victory = on;
 
-        public void Flash() => flashT = 0.1f;
+        /// <summary>
+        /// Hit flash: every body renderer turns white for 0.1 s (offline view, cutout / procedural bodies).
+        /// No-op in fight mode (<see cref="SheetOnly"/>): the sheet art is already drawn with a white tint, so a white
+        /// renderer colour would be invisible, and the netcode view's ChibiImpactFx already draws an additive silhouette
+        /// copy of <see cref="BodyRenderer"/> on every Damaged event (ChibiSimView calls Flash() and then
+        /// OnHitFeel -> ChibiImpactFx.Hit for the same event). A second overlay here would only double-flash.
+        /// </summary>
+        public void Flash()
+        {
+            if (sheetOnly) return;
+            flashT = 0.1f;
+        }
+
+        /// <summary>Seconds of hit flash left (diagnostics / tests).</summary>
+        public float FlashTime => flashT;
 
         public void SetShield(bool on, bool parry, float guard = 1f)
         {
@@ -505,7 +521,13 @@ namespace ChibiClash
         readonly bool[] legacyResolved = new bool[LegacySlots];
         System.Collections.Generic.Dictionary<string, string> moveClips;
         FightAnimState fightState = FightAnimState.Intro;
-        bool restartLoco;
+        bool restartLoco, hurtPending;
+
+        /// <summary>
+        /// Victory hop (fight and procedural modes): hop frequency (rad/s of the |sin| bounce), height (local units),
+        /// and the squash / stretch amplitudes applied to the body at the feet pivot. View-only tunables.
+        /// </summary>
+        const float VictoryHopRate = 6f, VictoryHopHeight = 0.22f, VictoryStretch = 0.07f, VictorySquash = 0.04f;
 
         /// <summary>
         /// True once <see cref="EnableSheetOnly"/> ran (the fight view): every frame shown comes from a moveset-sheet clip
@@ -515,6 +537,12 @@ namespace ChibiClash
 
         /// <summary>Fight state used for the last <see cref="Tick(Vector2, bool, bool, FightFlags)"/> (diagnostics / tests).</summary>
         public FightAnimState FightState => fightState;
+
+        /// <summary>Clip the last Tick showed (state clip or the playing one-shot; diagnostics / tests).</summary>
+        public string ClipName => clipName;
+
+        /// <summary>Seconds the current state clip has been playing (reset when the clip changes or restarts; diagnostics / tests).</summary>
+        public float ClipTime => clipT;
 
         /// <summary>
         /// Fight mode (call right after <see cref="Build"/> in the fight view): from now on only moveset-sheet clips are
@@ -537,6 +565,10 @@ namespace ChibiClash
             anim = Anim.None;
             fightState = FightAnimState.Intro;
             if (trailSr != null) trailSr.enabled = false;
+            flashT = 0f;
+            // warm the KO ghost now (match build) so a KO never creates objects or loads its clip
+            EnsureKoGhost();
+            SpriteAnimLibrary.GetSheet(CharacterId, StateClip(FightAnimState.KO));
             string idle = StateClip(FightAnimState.Intro);
             var c = idle != null ? SpriteAnimLibrary.GetSheet(CharacterId, idle) : null;
             if (c != null) ShowSheetSprite(c.frames[0]);
@@ -648,6 +680,11 @@ namespace ChibiClash
         {
             var st = FightClips.StateOf(victory, flags, grounded, blocking, velocity, fightState);
             fightState = st;
+            if (hurtPending)
+            {
+                hurtPending = false;
+                if (st == FightAnimState.Hitstun || st == FightAnimState.Launched) restartLoco = true;
+            }
             if (oneShot != null && FightClips.Overrides(st) && !ReferenceEquals(oneShot, StateClip(st)))
             {
                 oneShot = null;   // hit / launch / KO / victory end the playing move clip
@@ -728,10 +765,16 @@ namespace ChibiClash
         /// Per-frame animation. <paramref name="flags"/> carries read-only fight facts (hitstun, launch, KO, respawn
         /// hover, READY intro) that pick the sheet clip in fight mode (<see cref="SheetOnly"/>); ignored otherwise.
         /// </summary>
-        public void Tick(Vector2 velocity, bool grounded, bool blocking, FightFlags flags)
+        public void Tick(Vector2 velocity, bool grounded, bool blocking, FightFlags flags) =>
+            Tick(velocity, grounded, blocking, flags, Time.deltaTime, Time.time);
+
+        /// <summary>
+        /// <see cref="Tick(Vector2, bool, bool, FightFlags)"/> on an explicit clock: <paramref name="dt"/> seconds since the
+        /// last tick and <paramref name="now"/> the current time (seconds). For tests (Time.deltaTime is 0 in EditMode) and
+        /// any caller that drives the view on its own clock. View only: never feeds the simulation.
+        /// </summary>
+        public void Tick(Vector2 velocity, bool grounded, bool blocking, FightFlags flags, float dt, float now)
         {
-            float dt = Time.deltaTime;
-            float now = Time.time;
             bool moving = grounded && Mathf.Abs(velocity.x) > 0.6f;
             if (grounded && !wasGrounded) landT = 0.18f;
             wasGrounded = grounded;
@@ -802,10 +845,10 @@ namespace ChibiClash
             float sx = 1f, sy = 1f, lean = 0f, yOff = 0f;
             if (victory)
             {
-                float h = Mathf.Abs(Mathf.Sin(now * 6f));
-                yOff = h * 0.22f;
-                sy = 1f + 0.07f * (h - 0.5f);
-                sx = 1f - 0.04f * (h - 0.5f);
+                float h = Mathf.Abs(Mathf.Sin(now * VictoryHopRate));
+                yOff = h * VictoryHopHeight;
+                sy = 1f + VictoryStretch * (h - 0.5f);
+                sx = 1f - VictorySquash * (h - 0.5f);
             }
             else if (!grounded)
             {
@@ -899,6 +942,13 @@ namespace ChibiClash
                 head.localPosition = new Vector2(0f, 0.3f + Mathf.Sin(bob) * 0.025f);
                 root.localRotation = Quaternion.Euler(0, 0, blocking ? 0f : lean * facing);   // + = lean back
             }
+            else if (sheetOnly && victory)
+            {
+                // fight mode: the winner's sheet pose hops and squashes too (the body pivots at the feet; ShowSheetSprite
+                // reset it this frame, so the offset never accumulates)
+                body.localScale = new Vector3(sx, sy, 1f);
+                body.localPosition = bodyBase + new Vector3(0f, yOff, 0f);
+            }
             if (spinT >= 0f && !sheet)
                 root.localScale = new Vector3(Mathf.Cos(spinT * Mathf.PI * 8f) * facing * SizeMul, SizeMul, 1f);
             else root.localScale = new Vector3(facing * SizeMul, SizeMul, 1f);
@@ -928,12 +978,38 @@ namespace ChibiClash
             }
         }
 
-        /// <summary>KO: a copy of the fighter spins off toward the blast zone with star sparkles (the real fighter respawns).</summary>
-        public void SpawnKoGhost(Vector2 from, Vector2 velocity)
+        KoGhost koGhost;
+
+        /// <summary>This visual's pooled KO ghost (null until fight mode or the first KO; diagnostics / tests).</summary>
+        public KoGhost KoGhostInstance => koGhost;
+
+        /// <summary>Creates the one pooled KO ghost of this visual (inactive) if it does not exist yet.</summary>
+        void EnsureKoGhost()
         {
+            if (koGhost != null) return;
             var go = new GameObject("KO Ghost");
             go.transform.SetParent(transform.parent, false);
-            go.transform.position = from;
+            koGhost = go.AddComponent<KoGhost>();
+            koGhost.Create();
+        }
+
+        void OnDestroy()
+        {
+            // the ghost is a sibling (it must not follow the respawning fighter): it goes with its owner
+            if (koGhost != null) Destroy(koGhost.gameObject);
+        }
+
+        /// <summary>
+        /// KO: a copy of the fighter spins off toward the blast zone with star sparkles (the real fighter respawns).
+        /// Uses one pooled ghost per visual (built at <see cref="EnableSheetOnly"/>, else at the first KO): a KO after
+        /// that allocates nothing; a KO while the previous ghost still flies restarts it.
+        /// </summary>
+        public void SpawnKoGhost(Vector2 from, Vector2 velocity)
+        {
+            EnsureKoGhost();
+            var gt = koGhost.transform;
+            if (gt.parent != transform.parent) gt.SetParent(transform.parent, false);
+            gt.position = from;
             Sprite spr = null;
             Vector3 scale = Vector3.one;
             // fight mode: the KO state's sheet clip (Sheet_KO chain), else the last sheet frame shown; never the body drawing
@@ -951,46 +1027,72 @@ namespace ChibiClash
                 spr = bodySr.sprite;
                 scale = bodySr.transform.lossyScale;
             }
-            var ghost = go.AddComponent<KoGhost>();
-            ghost.Init(spr, scale, velocity, ko);
+            koGhost.Launch(spr, scale, velocity, ko);
         }
     }
 
-    /// <summary>The flying, spinning KO copy plus star sparkles; destroys itself.</summary>
+    /// <summary>
+    /// The flying, spinning KO copy plus star sparkles. Pooled: <see cref="Create"/> builds the body and stars once,
+    /// <see cref="Launch"/> resets and shows it, and it deactivates itself when the flight ends (never destroyed per KO).
+    /// </summary>
     public class KoGhost : MonoBehaviour
     {
+        /// <summary>Flight length in seconds (fade-out over the whole flight).</summary>
+        public const float Duration = 0.9f;
+
         SpriteRenderer sr;
         SpriteClip clip;
         Vector2 vel;
         float t;
         readonly SpriteRenderer[] stars = new SpriteRenderer[5];
 
-        public void Init(Sprite spr, Vector3 scale, Vector2 velocity, SpriteClip ko)
+        /// <summary>True while the ghost is flying (active).</summary>
+        public bool Playing => gameObject.activeSelf;
+
+        /// <summary>Builds the body renderer and the star sparkles once and leaves the ghost inactive.</summary>
+        public void Create()
         {
-            clip = ko;
-            vel = velocity.sqrMagnitude > 1f ? velocity.normalized * 16f : Vector2.up * 16f;
+            if (sr != null) return;
             var body = new GameObject("Body");
             body.transform.SetParent(transform, false);
             sr = body.AddComponent<SpriteRenderer>();
-            sr.sprite = spr;
             sr.sharedMaterial = Art.SpriteMat;
             sr.sortingOrder = 70;
-            body.transform.localScale = scale;
             for (int i = 0; i < stars.Length; i++)
             {
                 stars[i] = Art.Sprite(transform, "Star", Art.Square, i % 2 == 0 ? new Color(1f, 0.9f, 0.4f) : Color.white, Vector2.zero, new Vector2(0.18f, 0.18f), 71);
                 stars[i].transform.localRotation = Quaternion.Euler(0f, 0f, 45f);
             }
+            gameObject.SetActive(false);
         }
 
-        void Update()
+        /// <summary>Resets the flight (time, sprite, scale, spin, fade) and shows the ghost; position is set by the caller.</summary>
+        public void Launch(Sprite spr, Vector3 scale, Vector2 velocity, SpriteClip ko)
         {
-            float dt = Time.unscaledDeltaTime;
+            Create();
+            clip = ko;
+            vel = velocity.sqrMagnitude > 1f ? velocity.normalized * 16f : Vector2.up * 16f;
+            t = 0f;
+            sr.sprite = spr;
+            sr.color = Color.white;
+            var bt = sr.transform;
+            bt.localScale = scale;
+            bt.localRotation = Quaternion.identity;
+            gameObject.SetActive(true);
+            Step(0f);
+        }
+
+        void Update() => Step(Time.unscaledDeltaTime);
+
+        /// <summary>Advances the flight by <paramref name="dt"/> unscaled seconds; deactivates the ghost when it ends.</summary>
+        public void Step(float dt)
+        {
+            if (sr == null) return;
             t += dt;
             transform.position += (Vector3)(vel * dt);
             if (clip == null) sr.transform.localRotation = Quaternion.Euler(0f, 0f, t * 900f);
             else sr.sprite = clip.Frame(t);
-            float k = Mathf.Clamp01(1f - t / 0.9f);
+            float k = Mathf.Clamp01(1f - t / Duration);
             sr.color = new Color(1f, 1f, 1f, k);
             for (int i = 0; i < stars.Length; i++)
             {
@@ -999,7 +1101,7 @@ namespace ChibiClash
                 var c = stars[i].color;
                 stars[i].color = new Color(c.r, c.g, c.b, k);
             }
-            if (t >= 0.9f) Destroy(gameObject);
+            if (t >= Duration) gameObject.SetActive(false);
         }
     }
 }

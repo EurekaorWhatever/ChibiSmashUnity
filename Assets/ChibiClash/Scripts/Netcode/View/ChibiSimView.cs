@@ -9,9 +9,13 @@ namespace ChibiClash.Netcode
     /// Positions are interpolated between the last two GAME steps (timescale-conversion.md 8.3(2)); presentation events
     /// come from ChibiSimEvents, diffed once per game step (frozen real ticks are skipped so nothing re-fires).
     /// Presentation speed follows the original MatchController.Update (MatchController.cs:112-116): Time.timeScale is
-    /// set to the sim's current scale (hitstop 0.05, cinematic 0.2) and to 0.3 for 1.2 s after the match ends. The
-    /// sim clock runs on Time.unscaledDeltaTime (ChibiLocalLoop.cs:54) and never reads Time.timeScale, so this only
-    /// slows Fx, FighterVisual animation and anything else on scaled time.
+    /// set to the sim's current scale (hitstop 0.05, cinematic 0.2) and, after the final KO, to the
+    /// <see cref="ChibiFeel.FinishTimeScale"/> slow-mo curve (with a camera zoom on the KO). The sim clock runs on
+    /// Time.unscaledDeltaTime (ChibiLocalLoop.cs:54) and never reads Time.timeScale, so this only slows Fx,
+    /// FighterVisual animation and anything else on scaled time.
+    /// Game feel (all tunables in <see cref="ChibiFeel"/>): during the sim's own hitstop the hit fighter vibrates and
+    /// flashes, heavy hits punch the camera in with a directional kick and a radial burst (<see cref="ChibiImpactFx"/>),
+    /// camera shake is smooth trauma noise capped at <see cref="ChibiFeel.CamMaxOffset"/>.
     /// </summary>
     public sealed class ChibiSimView : MonoBehaviour
     {
@@ -29,12 +33,10 @@ namespace ChibiClash.Netcode
         // Launched fighter: lean toward the blast line (velocity x 0.3 s, max 4 u) and zoom out up to +1.2 at full
         // strength. Everyone else: a slight lead in the direction of motion (velocity x 0.12 s, max 1.2 u).
         const float CamLeadSec = 0.3f, CamLeadMax = 4f, CamLaunchZoom = 1.2f, CamMoveLeadSec = 0.12f, CamMoveLeadMax = 1.2f;
-        const float ShakeOnHit = 0.25f, ShakeDecay = 2.5f, ShakeScale = 0.6f;
         // Ult cinematic, MatchController.Cinematic (MatchController.cs:184-193) and CameraController (Stage.cs:161-164).
         const float CinematicFocusSec = 0.8f, CinematicFocusSize = 3.6f, CinematicShake = 0.3f;
         const float CinematicFlash = 0.8f, FlashDecay = 2.5f;          // MatchController.cs:189 / :119
-        // Finish slow-mo, MatchController.cs:114 (view only; the sim has already stopped at MatchOver).
-        const float FinishScale = 0.3f, FinishSec = 1.2f;
+        // Finish slow-mo (view only; the sim has already stopped at MatchOver): ChibiFeel.FinishTimeScale / FinishZoom01.
 
         enum Anim : byte { Swing, Thrust, Spin, Slam, Recoil }
 
@@ -154,8 +156,18 @@ namespace ChibiClash.Netcode
         // Moveset zones (rune fields): one ring + glow per pool slot, built once.
         sealed class ZoneVis { public Transform Root; public SpriteRenderer Ring, Glow; public bool Live; public int SpawnTick, Owner; }
         ZoneVis[] _zones;
-        float _shake;
-        int _focus = -1;           // fighter the camera is focused on during the ult cinematic, -1 none
+        ChibiImpactFx _impactFx;   // silhouette flash, radial burst, speed lines, dust (presentation only)
+        readonly ChibiCameraFeel _camFeel = new ChibiCameraFeel();   // trauma shake, punch-in, directional kick
+        float _camSize;            // ortho-size spring state (without the punch-in)
+        bool _camSizeSet;
+        // Hitstop decoration: strength of the last hit per fighter (0 = none) and the sim hitstop length it started with.
+        readonly float[] _hitShakeS = new float[2];
+        int _hitStopTotal = 1;
+        Vector2 _finishFocus;      // final-KO camera focus, captured on the first frame after MatchOver
+        bool _finishFocusSet;
+        // Cinematic band strings per fighter, built once in Begin (no per-ult string concatenation).
+        readonly string[] _cinTitle = new string[2], _cinSub = new string[2];
+        int _focus = -1;          // fighter the camera is focused on during the ult cinematic, -1 none
         float _focusUntil;         // unscaled time the focus ends
         bool _finished;            // MatchOver seen
         float _finishedTime;       // unscaled time MatchOver was first seen
@@ -286,8 +298,17 @@ namespace ChibiClash.Netcode
                 _zones[i] = z;
             }
             _moveFx = new ChibiMoveVfx(transform, _vis);
+            ChibiImpactFx.WarmShared();   // also ChibiLaunchFx.WarmShared: textures + light materials before the first fight frame
             _launchFx = new ChibiLaunchFx(transform, _vis, _fx, GroundY, FeetToPivot);
+            _impactFx = new ChibiImpactFx(transform, _vis, _fx, GroundY);
             _stageIndex = cfg.Stage;
+            for (int i = 0; i < 2; i++)
+            {
+                // Hud.cs:186, :192-194; built once here, not per cinematic.
+                var def = _def[i];
+                _cinTitle[i] = _skin[i].goldCinematic ? "★ " + def.ultName + " ★" : def.ultName;
+                _cinSub[i] = def.heroName.ToUpper() + " · " + def.ultDesc;
+            }
 
             _cam = Camera.main;
             loop.OnFrame += OnSimFrame;
@@ -351,6 +372,7 @@ namespace ChibiClash.Netcode
             }
             CaptureMoveset(cur, first);
             _launchFx.OnSimStep(_seen, cur);   // launches / KOs / respawns of this step (reads both states)
+            _impactFx.OnSimStep(_seen, cur);   // dashes / landings / take-offs / bounces of this step (reads both states)
             _before.CopyFrom(_seen);
             _seen.CopyFrom(cur);
         }
@@ -503,7 +525,7 @@ namespace ChibiClash.Netcode
         {
             // MatchController.cs:114 overrides hitstop/cinematic once the match is finished. The sim stops stepping
             // at MatchOver (its timers freeze), so its scale is ignored from then on.
-            if (_finished) return Time.unscaledTime - _finishedTime < FinishSec ? FinishScale : 1f;
+            if (_finished) return ChibiFeel.FinishTimeScale(Time.unscaledTime - _finishedTime);
             return ChibiSimulation.CurrentScalePermille(live) / 1000f;   // 1 / 0.2 / 0.05, the same values as :112-113
         }
 
@@ -551,7 +573,16 @@ namespace ChibiClash.Netcode
                 var v = _vis[i];
                 bool teleport = System.Math.Abs(f.X - a.X) > 2000 || System.Math.Abs(f.Y - a.Y) > 2000;   // respawn
                 Vector3 p0 = WorldPos(a.X, a.Y), p1 = WorldPos(f.X, f.Y);
-                v.transform.position = teleport ? p1 : Vector3.Lerp(p0, p1, alpha);
+                Vector3 shown = teleport ? p1 : Vector3.Lerp(p0, p1, alpha);
+                // Impact freeze decoration: the sim's hitstop already freezes the world (time scale 0.05); the fighter
+                // that was hit vibrates sideways for exactly that freeze, fading out as it ends (never moves the sim).
+                if (_hitShakeS[i] > 0f)
+                {
+                    if (live.HitstopRealTicks > 0)
+                        shown.x += ChibiFeel.HitShake(_hitShakeS[i], live.HitstopRealTicks / (float)_hitStopTotal, Time.unscaledTime);
+                    else _hitShakeS[i] = 0f;
+                }
+                v.transform.position = shown;
                 v.SetFacing(f.Facing >= 0 ? 1 : -1);
 
                 // Sim velocities are sub-units (1/VelSub milli per tick): convert to world units per second.
@@ -560,7 +591,8 @@ namespace ChibiClash.Netcode
                 // Fight-mode clip facts, read-only from the shown state (FightClips.StateOf picks the sheet clip).
                 var ff = FightFlags.None;
                 if (f.Stun > 0) ff |= FightFlags.Hitstun;
-                if (f.Stun > 0 && !f.Grounded && _launchFx.LaunchLead(i, out _, out _)) ff |= FightFlags.Launched;
+                // Tumble from sim data only (hitstun, airborne, launch gravity / speed), never from view FX state.
+                if (ChibiFeel.IsTumble(f.Stun, f.Grounded, f.InPlay, f.LaunchGravP, f.Vx, f.Vy)) ff |= FightFlags.Launched;
                 if (f.OutTicks > 0) ff |= FightFlags.Out;
                 if (f.HoverTicks > 0) ff |= FightFlags.Hover;
                 if (_seen.IntroRealTicks > 0) ff |= FightFlags.Intro;
@@ -626,7 +658,8 @@ namespace ChibiClash.Netcode
             UpdateZones();
             _moveFx.Tick(Time.deltaTime);   // scaled, like FighterVisual and Fx
             _launchFx.Tick(Time.deltaTime);
-            _shake = Mathf.Max(_shake, _launchFx.TakeShake());
+            _impactFx.Tick(Time.deltaTime, Time.unscaledDeltaTime);   // speed lines / dust scaled (hitstop freezes them), flash + burst unscaled
+            _camFeel.AddTrauma(_launchFx.TakeShake());
             if (_launchFx.TakeFlash(out var koFlashColor, out float koFlash) && koFlash > FlashAlpha)
             {
                 FlashAlpha = koFlash;
@@ -747,7 +780,7 @@ namespace ChibiClash.Netcode
                     if (_seen.F[e.Index].MoveSlot < 0) _vis[e.Index].Hurt();   // Hit sheet (or the recoil squash)
                     Fx.Burst(Center(e.Index), Color.white, 12, 5f, 0.25f);
                     Fx.Text(Center(e.Index) + Vector2.up * 0.9f, DamageText(e.Value), Gui.Yellow, 1f);
-                    _shake = Mathf.Max(_shake, ShakeOnHit);
+                    OnHitFeel(e.Index, e.Value);
                     break;
                 case ChibiSimEventKind.Parried:
                     Fx.Text(Center(e.Index) + Vector2.up * 1.2f, "PARRY", Color.white, 1.1f);
@@ -792,7 +825,7 @@ namespace ChibiClash.Netcode
                         _vis[e.Index].PlaySlam(0.2f);
                         var feet = new Vector2(f.X * MilliToWorld + f.Facing * 1.2f, GroundY + f.Y * MilliToWorld);
                         Fx.Burst(feet, LeapDust, 18, 5f, 0.35f);
-                        _shake = Mathf.Max(_shake, 0.25f);                    // Match.Shake(0.25f)
+                        _camFeel.AddTrauma(0.25f);                    // Match.Shake(0.25f)
                     }
                     else if (_seen.F[e.Index].Class == (int)FighterClass.Heavy && e.Value2 == 5 && e.Value == 1)
                     {
@@ -801,9 +834,45 @@ namespace ChibiClash.Netcode
                         _vis[e.Index].PlaySlam(0.2f);
                         var feet = new Vector2(f.X * MilliToWorld, GroundY + f.Y * MilliToWorld);
                         Fx.Burst(feet, _skin[e.Index].ultFx, 50, 9f, 0.5f);
-                        _shake = Mathf.Max(_shake, 0.6f);                     // Match.Shake(0.6f)
+                        _camFeel.AddTrauma(0.6f);                     // Match.Shake(0.6f)
                     }
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Impact feel for a hit on <paramref name="d"/> worth <paramref name="pct"/> percent: hitstop vibration (timed by
+        /// the sim's HitstopRealTicks), silhouette flash, camera trauma, and on heavy hits a punch-in toward the impact,
+        /// a kick along the launch and a radial burst. Strength from the shown state (read only).
+        /// </summary>
+        void OnHitFeel(int d, int pct)
+        {
+            int a = 1 - d;
+            var fd = _seen.F[d];
+            var launch = new Vector2(fd.Vx, fd.Vy) * ChibiFeel.SubToUps;
+            float s = ChibiFeel.HitStrength(pct, launch.magnitude);
+            // Remaining sim hitstop (real ticks). Above the normal 3 (a tick may already have run) = crit / parry: reads heavy.
+            int stop = _loop.State.HitstopRealTicks;
+            if (stop > ChibiSimConst.HitstopNormal) s = Mathf.Max(s, ChibiFeel.HeavyHit);
+            if (stop > 0)
+            {
+                _hitShakeS[d] = Mathf.Max(_hitShakeS[d], s);
+                _hitStopTotal = Mathf.Max(1, stop);
+            }
+
+            Vector2 dc = Center(d), ac = Center(a);
+            float side = ac.x >= dc.x ? 1f : -1f;
+            Vector2 at = dc + new Vector2(side * 0.3f, 0.15f);
+            var flash = Color.Lerp(Color.white, _fx[a], ChibiFeel.FlashTint);
+            float camSize = _cam != null ? _cam.orthographicSize : CamMinSize;
+            _impactFx.Hit(d, at, _fx[a], flash, s, camSize);
+
+            _camFeel.AddTrauma(ChibiFeel.HitTrauma(s));
+            if (s >= ChibiFeel.HeavyHit)
+            {
+                _camFeel.Punch(ChibiFeel.PunchZoom(s), at);
+                Vector2 dir = launch.sqrMagnitude > 1f ? launch : new Vector2(-side, 0f);
+                _camFeel.Kick(dir, s);
             }
         }
 
@@ -849,7 +918,7 @@ namespace ChibiClash.Netcode
                         else if (phase && frame == ChibiSimConst.GrabReleaseFrame)
                         {
                             Fx.Burst(WorldPos(f.GrabLX, f.GrabLY), GrabDust, 20, 5f, 0.4f);   // at `slam` (F:806, F:816)
-                            _shake = Mathf.Max(_shake, 0.35f);                               // Match.Shake(0.35f)
+                            _camFeel.AddTrauma(0.35f);                               // Match.Shake(0.35f)
                         }
                     }
                     else if (slot == 3)
@@ -934,7 +1003,7 @@ namespace ChibiClash.Netcode
             {
                 v.PlaySwing(0.2f);                                                          // F:1075
                 Fx.Burst(Center(1 - i), ult, 45, 9f, 0.5f);                                 // F:1078 at o.Center
-                _shake = Mathf.Max(_shake, 0.55f);                                          // Match.Shake(0.55f)
+                _camFeel.AddTrauma(0.55f);                                          // Match.Shake(0.55f)
             }
         }
 
@@ -949,11 +1018,11 @@ namespace ChibiClash.Netcode
             FlashColor = skin.ultFx;                                         // :190
             _focus = i;                                                      // :191 cam.Focus(f, 0.8f)
             _focusUntil = Time.unscaledTime + CinematicFocusSec;
-            _shake = Mathf.Max(_shake, CinematicShake);                      // :192 Shake(0.3f)
+            _camFeel.AddTrauma(CinematicShake);                      // :192 Shake(0.3f)
             // Hud.cs:186, :192-194; strings built once here, not per OnGUI.
             CinematicColor = skin.goldCinematic ? Gui.Gold : skin.ultFx;
-            CinematicTitle = skin.goldCinematic ? "★ " + def.ultName + " ★" : def.ultName;
-            CinematicSubtitle = def.heroName.ToUpper() + " · " + def.ultDesc;
+            CinematicTitle = _cinTitle[i];
+            CinematicSubtitle = _cinSub[i];
         }
 
         /// <summary>Re-skin slot visual <paramref name="v"/> for projectile <paramref name="b"/> (new identity).</summary>
@@ -1050,19 +1119,46 @@ namespace ChibiClash.Netcode
                 goal = _camGoalSet ? _camGoal : _camBase;                    // nobody in play: hold the last framing
                 size = _camGoalSet ? _camGoalSize : _cam.orthographicSize;
             }
-            size = Mathf.Min(size, ChibiCameraFraming.MaxSize(bounds, aspect, CamMaxSize));
-            float cur = Mathf.SmoothDamp(_cam.orthographicSize, size, ref _camSizeVel, CamSizeSmooth, Mathf.Infinity, dt);
-            _cam.orthographicSize = cur;
-            goal = ChibiCameraFraming.ClampCentre(goal, cur, aspect, bounds);
-            Vector2 p = Vector2.SmoothDamp(_camBase, goal, ref _camVel, smooth, Mathf.Infinity, dt);
-            _camBase = ChibiCameraFraming.ClampCentre(p, cur, aspect, bounds);
-            Vector3 offset = Vector3.zero;
-            if (_shake > 0f)
+            // Final KO: slow-mo (ViewTimeScale) plus a zoom onto the KO blast, leaning toward the winner, then back out.
+            if (_finished)
             {
-                offset = (Vector3)(FxRandom.InsideUnitCircle * _shake * ShakeScale);
-                _shake = Mathf.MoveTowards(_shake, 0f, dt * ShakeDecay);
+                float w = ChibiFeel.FinishZoom01(Time.unscaledTime - _finishedTime);
+                if (!_finishFocusSet) CaptureFinishFocus(goal);
+                if (w > 0f)
+                {
+                    goal = Vector2.Lerp(goal, _finishFocus, w);
+                    size = Mathf.Lerp(size, ChibiFeel.FinishKoSize, w);
+                    smooth = Mathf.Lerp(smooth, CamFocusSmooth, w);
+                }
             }
-            t.position = new Vector3(_camBase.x, _camBase.y, -10f) + offset;   // shake never leaks into the spring
+            size = Mathf.Min(size, ChibiCameraFraming.MaxSize(bounds, aspect, CamMaxSize));
+            if (!_camSizeSet) { _camSize = _cam.orthographicSize; _camSizeSet = true; }
+            // Springs carry the framing only; the punch-in and shake are layered on top and never fed back (no jitter).
+            _camSize = Mathf.SmoothDamp(_camSize, size, ref _camSizeVel, CamSizeSmooth, Mathf.Infinity, dt);
+            goal = ChibiCameraFraming.ClampCentre(goal, _camSize, aspect, bounds);
+            Vector2 p = Vector2.SmoothDamp(_camBase, goal, ref _camVel, smooth, Mathf.Infinity, dt);
+            _camBase = ChibiCameraFraming.ClampCentre(p, _camSize, aspect, bounds);
+
+            _camFeel.Tick(dt);
+            float shown = _camSize * _camFeel.ZoomFactor;                    // heavy-hit punch-in (<= PunchZoomMax closer)
+            Vector2 centre = _camBase;
+            float pw = _camFeel.PunchWeight;
+            if (pw > 0f) centre = Vector2.Lerp(centre, _camFeel.PunchAt, ChibiFeel.PunchFocus * pw);
+            centre = ChibiCameraFraming.ClampCentre(centre, shown, aspect, bounds);
+            _cam.orthographicSize = shown;
+            Vector2 offset = _camFeel.Offset(Time.unscaledTime);             // smooth trauma shake + directional kick, capped
+            t.position = new Vector3(centre.x + offset.x, centre.y + offset.y, -10f);
+        }
+
+        /// <summary>Final-KO focus: the KO blast point (ChibiLaunchFx) leaning toward the winner; else the winner; else the framing goal.</summary>
+        void CaptureFinishFocus(Vector2 fallback)
+        {
+            _finishFocusSet = true;
+            int win = _seen.Winner;
+            bool hasWinner = win >= 0 && win < 2 && _vis[win] != null && !_launchFx.IsOut(win);
+            if (_launchFx.KoFocus(out var ko))
+                _finishFocus = hasWinner ? Vector2.Lerp(ko, Center(win), ChibiFeel.FinishFocusToWinner) : ko;
+            else _finishFocus = hasWinner ? Center(win) : fallback;
         }
 
         /// <summary>
@@ -1123,6 +1219,8 @@ namespace ChibiClash.Netcode
             _koFly.Clear();
             _moveFx?.Clear();
             _launchFx?.Clear();
+            _impactFx?.Clear();
+            _camFeel.Reset();
             Fx.Popups.Clear();
         }
     }

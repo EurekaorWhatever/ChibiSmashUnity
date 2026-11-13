@@ -85,6 +85,28 @@ namespace ChibiClash
         }
 
         /// <summary>
+        /// <see cref="Place"/>, then appends the placed rect to <paramref name="blockers"/> (when there is room) so labels
+        /// placed after it keep off it too. Returns the placed rect.
+        /// </summary>
+        public static Rect PlaceAndBlock(Rect label, Rect area, Rect[] blockers, ref int count, float gap, bool preferUp)
+        {
+            var placed = Place(label, area, blockers, count, gap, preferUp);
+            if (count < blockers.Length) blockers[count++] = placed;
+            return placed;
+        }
+
+        /// <summary>
+        /// Frame-rate independent ease of a label's drawn position toward its placed spot: moves the fraction
+        /// 1 - e^(-<paramref name="rate"/> * <paramref name="dt"/>) of the way, so it never overshoots and never snaps;
+        /// <paramref name="dt"/> &lt;= 0 (or <paramref name="rate"/> &lt;= 0) keeps it where it is.
+        /// </summary>
+        public static Vector2 Follow(Vector2 current, Vector2 target, float dt, float rate)
+        {
+            if (dt <= 0f || rate <= 0f) return current;
+            return Vector2.LerpUnclamped(current, target, 1f - Mathf.Exp(-rate * dt));
+        }
+
+        /// <summary>
         /// Where a name tag's pointer goes so it points at <paramref name="target"/>: under the tag pointing down when the
         /// target is below the tag's centre, else over it pointing up. It follows the target's x, kept within the tag.
         /// </summary>

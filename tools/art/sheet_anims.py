@@ -38,10 +38,13 @@ import sys
 import tempfile
 import time
 
-import cv2
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    import cv2
+except ImportError:            # OpenCV is optional: numpy / scipy / Pillow stand-in (tools/art/cv2compat.py)
+    import cv2compat as cv2
 from unity_meta import _TEMPLATE, _guid, in_assets, write_folder_meta  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -126,6 +129,10 @@ TWEAKS = {
     ("ren", 7): {"erase": [(636, 514, 704, 556)]},
     ("ren", 8): {"erase": [(858, 508, 930, 550)]},
     ("kaia", 23): {"keep": [0]},          # the second drawing is Kaia on the wall prop
+    # "cut": sheet points inside a paper gap the outline encloses (paper seen between the legs): the pale region
+    # around each point is removed from the figure. Paper and white cloth have the same colour statistics on these
+    # sheets, so these few gaps are marked by hand.
+    ("bruna", 5): {"cut": [(546, 370)]},
     ("ren", 13): {"keep": [1]},           # the sheet draws the dive pose ~1.3x larger than the first: strike pose only
 }
 
@@ -283,7 +290,98 @@ def segment(sheet, box, erase=()):
         else:
             figure[m & (fg > 0)] = 1
     effect[figure > 0] = 0
+    figure = restore_skin(figure, hsv)
+    figure = peel_paper(figure, hsv, wall)
     return crop, figure, effect
+
+
+def restore_skin(figure, hsv):
+    """Gives back the light skin the background flood ate: where a face or arm meets the paper with a faint outline,
+    the flood (pale = passable) bit notches into cheeks and ears, and faces lost their side. Warm, light pixels
+    (skin hue, saturation above the neutral paper's) that a closing of the figure covers are figure again."""
+    h, sat, val = hsv[..., 0].astype(np.int32), hsv[..., 1].astype(np.int32), hsv[..., 2].astype(np.int32)
+    warm = ((h <= 22) | (h >= 170)) & (sat >= 9) & (val > 150)      # paper: sat 2-6; Ren's pale skin: ~10-20
+    closed = cv2.morphologyEx(figure.astype(np.uint8), cv2.MORPH_CLOSE,
+                              cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11, 11)))
+    add = (figure == 0) & (closed > 0) & warm
+    if not add.any():
+        return figure
+    out = figure.copy()
+    out[add] = 1
+    return out
+
+
+def cut_gaps(crop, figure, box, points):
+    """TWEAKS "cut": removes the pale (paper-coloured) region of the figure around each sheet point."""
+    if not points:
+        return figure
+    hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV)
+    pale = ((hsv[..., 2] > 200) & (hsv[..., 1] < 30) & (figure > 0)).astype(np.uint8)
+    n, cc = cv2.connectedComponents(pale, connectivity=4)
+    out = figure.copy()
+    for sx, sy in points:
+        x, y = sx - box[0], sy - box[1]
+        if 0 <= y < cc.shape[0] and 0 <= x < cc.shape[1] and cc[y, x] > 0:
+            out[cc == cc[y, x]] = 0
+        else:
+            print("   warning: cut point (%d, %d) is not on a pale part of the figure" % (sx, sy))
+    return out
+
+
+def peel_paper(figure, hsv, wall):
+    """Removes paper-white pixels the figure mask picked up OUTSIDE the ink outline: the white fringe around the
+    silhouette, ground shadows / dust streaks under the feet and paper caught between legs. A pale pixel is peeled
+    only when a path of pale pixels leads to it from outside the figure without crossing ink (the closed outline is
+    the wall), so white drawn INSIDE the outline (eye whites, white cloth, highlights) always stays."""
+    sat, val = hsv[..., 1].astype(np.int32), hsv[..., 2].astype(np.int32)
+    # paper is neutral (sat < 18); light skin and cream cloth are warm (sat 25-60), so they are never peeled even
+    # where the outline has a gap
+    pale = ((val > 205) & (sat < 18)) & (figure > 0) & (wall == 0)
+    if not pale.any():
+        return figure
+    outside = cv2.dilate((figure == 0).astype(np.uint8), np.ones((3, 3), np.uint8)) > 0
+    n, cc = cv2.connectedComponents(pale.astype(np.uint8), connectivity=4)
+    if n <= 1:
+        return figure
+    touch = np.unique(cc[outside & pale])
+    out = figure.copy()
+    # only a thin rim (<= 3 sheet px from the outside) is peeled: white cloth (Taro's robe, Ren's shirt) that meets
+    # the paper through a gap in its outline would otherwise be eaten whole
+    rim = cv2.distanceTransform(figure.astype(np.uint8), cv2.DIST_L2, 3) <= 3.0
+    out[np.isin(cc, touch[touch > 0]) & rim] = 0
+    # ground slab: the sheets draw a pale dust / floor patch between and under the feet and close it with a dark
+    # ground-shadow stroke, so the outside flood above cannot reach it. A pale patch whose bottom sits on the
+    # figure's lowest rows, in the lower third of the body, is floor, not costume (no costume white reaches the
+    # ground on these five sheets: boots are dark).
+    ys = np.nonzero(out)[0]
+    if len(ys):
+        top, bot = ys.min(), ys.max()
+        # ground-shadow stroke: a long, thin horizontal band along the figure's lowest rows (feet stand on it).
+        # Boots are short and tall; the stroke is >= 16 sheet px long and <= 4 px thick.
+        band = np.zeros_like(out)
+        band[max(top, bot - 6):bot + 1] = out[max(top, bot - 6):bot + 1]
+        stroke = cv2.morphologyEx(band, cv2.MORPH_OPEN, np.ones((1, 16), np.uint8))
+        if stroke.any():
+            thick = cv2.erode(out, np.ones((5, 1), np.uint8)) > 0
+            kill = (stroke > 0) & ~thick
+            out[kill] = 0
+            ys = np.nonzero(out)[0]
+            bot = ys.max() if len(ys) else bot
+        low = ((val > 178) & (sat < 72)) & (out > 0)
+        n2, cc2, st2, _ = cv2.connectedComponentsWithStats(low.astype(np.uint8), 4)
+        for i in range(1, n2):
+            x, y, w, h, a = st2[i]
+            if a >= 16 and y + h - 1 >= bot - 5 and y >= top + 0.62 * (bot - top):
+                out[cc2 == i] = 0
+    # a peel can leave 1-px slivers of paper-grey along the outline: open them away, then drop crumbs
+    out = cv2.morphologyEx(out, cv2.MORPH_OPEN, np.ones((2, 2), np.uint8))
+    n, cc, st, _ = cv2.connectedComponentsWithStats(out, 8)
+    if n > 2:
+        big = int(np.argmax(st[1:, 4])) + 1
+        for i in range(1, n):
+            if i != big and st[i, 4] < 12:
+                out[cc == i] = 0
+    return out
 
 
 def fill_holes(mask):
@@ -371,8 +469,34 @@ _sr = None
 _esr = None
 
 
+def edge_sharpen(img, radius=2, blur=1.0, strength=1.0, min_contrast=40.0):
+    """Toggle-mapping sharpen of a 4x Lanczos image (decision 2026-11-13, replaces Real-ESRGAN as the default):
+    each pixel is pushed towards the darker or lighter extreme of its (2r+1)^2 neighbourhood, whichever it is
+    closer to, only where the neighbourhood has contrast. Edges become crisp ink steps with no ringing, flat areas
+    are left alone, and a 1-3 px dark dot (an eye on the sheet) stays a dark dot. The anime GAN upscalers painted
+    those dots over as skin, which is why the faces had no eyes."""
+    from scipy import ndimage as ndi
+    f = img.astype(np.float32)
+    if blur > 0:
+        f = ndi.gaussian_filter(f, (blur, blur, 0))
+    lum = f.mean(axis=2)
+    fp = np.ones((2 * radius + 1, 2 * radius + 1), bool)
+    mn, mx = ndi.minimum_filter(lum, footprint=fp), ndi.maximum_filter(lum, footprint=fp)
+    t = (lum - mn) / np.maximum(mx - mn, 1e-3)
+    t = t * t * (3 - 2 * t)
+    t = t * t * (3 - 2 * t)
+    w = strength * np.clip((mx - mn) / min_contrast, 0, 1)
+    cmn = np.dstack([ndi.minimum_filter(f[..., i], footprint=fp) for i in range(3)])
+    cmx = np.dstack([ndi.maximum_filter(f[..., i], footprint=fp) for i in range(3)])
+    tgt = cmn + (cmx - cmn) * t[..., None]
+    return np.clip(f + (tgt - f) * w[..., None] + 0.5, 0, 255).astype(np.uint8)
+
+
 def _sr_backend():
-    """'esrgan', 'edsr' or 'lanczos', the best one that can run here."""
+    """'esrgan', 'edsr' or 'lanczos' (Lanczos + edge_sharpen), the best one that can run here. The free, local
+    'lanczos' path is the default and the one the shipped clips use: set neither model variable."""
+    if os.environ.get("CHIBI_SR_GAN", "") != "1":
+        return "lanczos"
     if ESRGAN_MODEL and os.path.exists(ESRGAN_MODEL):
         try:
             import torch  # noqa: F401
@@ -389,7 +513,7 @@ def upscale4(crop):
     global _sr, _esr
     backend = _sr_backend()
     if backend == "lanczos":
-        return cv2.resize(crop, None, fx=4, fy=4, interpolation=cv2.INTER_LANCZOS4)
+        return edge_sharpen(cv2.resize(crop, None, fx=4, fy=4, interpolation=cv2.INTER_LANCZOS4))
     key = hashlib.md5(backend.encode() + crop.tobytes() + str(crop.shape).encode()).hexdigest()
     path = os.path.join(SR_CACHE, key + ".png")
     if os.path.exists(path):
@@ -506,12 +630,21 @@ def to_layer(crop, big, mask, scale):
     # matte: the sheet-resolution mask, upsampled once to the 4x super-resolved colour and hardened
     a4 = cv2.resize(cv2.GaussianBlur(a, (3, 3), 0.5), (w4, h4), interpolation=cv2.INTER_LINEAR)
     a4 = smoothstep(0.35, 0.65, a4)
-    # paper fringe: within ~2 sheet px of the outer edge, paper-coloured pixels are background, fade them out
+    # paper fringe: within ~2 sheet px of the outer edge the colour is a blend with the white paper. Fading those
+    # pixels out (the old fix) still left a pale rim on a dark stage, so their colour is replaced by the nearest
+    # colour from inside the outline (colour decontamination) and only the alpha keeps the soft edge.
     solid = (a4 > 0.5).astype(np.uint8)
-    band = (solid - cv2.erode(solid, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9)))).astype(np.float32)
+    inner = cv2.erode(solid, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9)))
     mn, mx = rgb4.min(axis=2), rgb4.max(axis=2)
-    paper = np.clip((mn - 0.80) / 0.10, 0, 1) * np.clip(1 - (mx - mn) / 0.16, 0, 1)
-    a4 = a4 * (1 - band * paper)
+    paper = np.clip((mn - 0.72) / 0.12, 0, 1) * np.clip(1 - (mx - mn) / 0.20, 0, 1)
+    rim = (a4 > 0) & (inner == 0)
+    if inner.any() and rim.any():
+        from scipy import ndimage as ndi
+        _, (iy, ix) = ndi.distance_transform_edt(inner == 0, return_indices=True)
+        near = rgb4[iy, ix]
+        k = (paper * rim)[..., None]
+        rgb4 = rgb4 * (1 - k) + near * k
+        a4 = a4 * (1 - 0.6 * paper * rim * (1 - solid))      # the outermost soft pixels: thinner, never white
     # one resample from the 4x colour straight to the frame scale (area filter when shrinking, as it is at 30 fps
     # frame size: about 3.3 frame px per sheet px, i.e. 0.83x of the 4x image)
     nw, nh = max(1, int(round((x1 - x0) * scale))), max(1, int(round((y1 - y0) * scale)))
@@ -708,28 +841,62 @@ def flash(c, k):
     return out
 
 
+def strike_index(poses):
+    """Which drawing of a panel is the hit: the one carrying the most drawn effect (the slash / impact is drawn on
+    the striking pose; panels read wind-up -> strike -> follow-through, but not always in that order), else the last."""
+    best, area = len(poses) - 1, 0.0
+    for i, p in enumerate(poses):
+        a = float(p.eff[0][..., 3].sum()) if p.eff is not None else 0.0
+        if a > area * 1.15:
+            best, area = i, a
+    return best
+
+
+def recovery_frames(n, baseS, tilt, idle0, w, pivS=None, follow=None):
+    """The n recovery frames, pose to pose, never a cross-dissolve (two drawings blended read as a ghost):
+    the follow-through drawing (or the strike drawing) is HELD while its lean eases out, then the idle drawing takes
+    over on a settle with a small squash that eases out (heavier = deeper, slower)."""
+    out = []
+    hold = max(1, int(round(n * 0.55)))
+    src = follow if follow is not None else baseS
+    for i in range(hold):
+        t = ease_out((i + 1) / float(hold))
+        out.append(transform(src, tilt * 0.35 * (1 - t), pivot=pivS))
+    sq = 0.03 * w
+    m = n - hold
+    for i in range(m):
+        t = (i + 1) / float(m)
+        k = 1 - ease_out(t)
+        out.append(transform(idle0, 0.0, 1 + sq * k, 1 - sq * k))
+    return out
+
+
 def move_frames(poses, idle0, w=1.0, air=False):
-    """MOVE_FRAMES premultiplied canvases from 1-3 drawn poses; idle0 = canvas of Idle_Sheet frame 0."""
-    first, strike = poses[0], poses[-1]
-    mid = poses[1] if len(poses) >= 3 else None
-    base0 = pose_canvas(first)
+    """MOVE_FRAMES premultiplied canvases from 1-3 drawn poses; idle0 = canvas of Idle_Sheet frame 0.
+    Pose to pose (decision 2026-11-13): every frame shows exactly ONE drawing, moved by an eased transform. Drawings
+    are cut between, never cross-dissolved: startup = the wind-up drawing(s) held while the body loads up against
+    the strike (or the strike drawing pulled back when the sheet has no wind-up), one smear frame, the strike held
+    through the active frames, then the follow-through drawing (if any) and a settle into idle."""
+    s = strike_index(poses)
+    pre, strike, post = poses[:s], poses[s], poses[s + 1:]
     baseS = pose_canvas(strike)
     effS = pose_canvas(strike, eff_a=1.0, fig_a=0) if strike.eff is not None else None
     vec = strike_vector(strike)
     tilt = tilt_of(vec)
-    piv0 = hips(base0) if air else None
     pivS = hips(baseS) if air else None
     sq = 0.03 * w                                  # squash depth (<= 0.045)
     frames = []
-    # startup: ease out of idle into the first drawing, then wind up against the strike direction
+    # startup (5 frames): wind up against the strike direction, eased; each wind-up drawing is held, then cut
     for i in range(5):
-        k = ease_io(i / 4.0)
-        c = transform(base0, -tilt * 1.5 * k, 1 + sq * k, 1 - sq * k, pivot=piv0)
-        if mid is not None and i >= 3:             # three drawings: the middle one is the late wind-up
-            c = mix(c, transform(pose_canvas(mid, eff_a=0.35), -tilt * 1.5, 1 + sq, 1 - sq,
-                                 pivot=hips(pose_canvas(mid)) if air else None), 0.5 if i == 3 else 1.0)
-        if i == 0:
-            c = mix(idle0, c, 0.6)                 # one blended frame out of the idle: no pop at the start
+        k = ease_io((i + 1) / 5.0)
+        if pre:
+            src = pre[min(len(pre) - 1, i * len(pre) // 5)]
+            c0 = pose_canvas(src)
+            c = transform(c0, -tilt * 1.5 * k, 1 + sq * k, 1 - sq * k, -vec[0] * 3 * k, -vec[1] * 3 * k,
+                          pivot=hips(c0) if air else None)
+        else:
+            c = transform(baseS, -tilt * 2.2 * k, 1 + sq * k, 1 - sq * k, -vec[0] * 9 * k, -vec[1] * 9 * k,
+                          pivot=pivS)
         frames.append(c)
     # smear: the strike drawing, motion-blurred back along the strike at 60 % behind a sharp, stretched copy
     sharp = transform(baseS, tilt * 0.5, 1 - sq * 0.6, 1 + sq * 0.6, pivot=pivS)
@@ -747,12 +914,10 @@ def move_frames(poses, idle0, w=1.0, air=False):
         if effS is not None:
             c = over(transform(effS, 0, es, es, vec[0] * lag, vec[1] * lag, pivot=hips(baseS)), c, ea)
         frames.append(over(transform(baseS, r, sx, sy, pivot=pivS), c))
-    # recovery: ease the strike drawing (lean returning to 0) into the idle pose; heavier = slower settle
-    n = MOVE_FRAMES - RECOVER
-    for i in range(1, n + 1):
-        t = i / n
-        body_c = transform(baseS, tilt * 0.2 * (1 - t), pivot=pivS)
-        frames.append(mix(body_c, idle0, settle(t, w)))
+    # recovery: follow-through drawing (or the strike) held, then cut to idle with a settle
+    follow = pose_canvas(post[0]) if post else None
+    frames += recovery_frames(MOVE_FRAMES - RECOVER, transform(baseS, tilt * 0.2, pivot=pivS), tilt, idle0, w,
+                              pivS, follow)
     assert len(frames) == MOVE_FRAMES
     return frames
 
@@ -764,11 +929,11 @@ def jab_frames(poses, idle0, w=1.0):
     es = [pose_canvas(p, eff_a=1.0, fig_a=0) if p.eff is not None else None for p in poses]
     sq = 0.025 * w
     frames = []
-    prev = idle0
     for h, (c, e) in enumerate(zip(cs, es)):
         vec = strike_vector(poses[h])
         tilt = tilt_of(vec)
-        frames.append(mix(prev, transform(c, -tilt, 1 + sq, 1 - sq), 0.55))         # in-between from the last pose
+        # anticipation: this hit's drawing pulled back against the strike (a cut, not a blend with the last pose)
+        frames.append(transform(c, -tilt * 1.6, 1 + sq, 1 - sq, -vec[0] * 7, -vec[1] * 7))
         frames.append(over(transform(c, -tilt * 0.5, 1 + sq * 0.5, 1 - sq * 0.5),
                            over(smear(c, (-vec[0], -vec[1]), 10), np.zeros_like(c), 0.5)))
         for k, (ea, r, sx, sy) in enumerate([(1.0, tilt, 1 - sq, 1 + sq), (0.85, tilt * 0.6, 1 + sq * 0.6, 1 - sq * 0.6),
@@ -777,10 +942,8 @@ def jab_frames(poses, idle0, w=1.0):
             if e is not None:
                 f = over(e, f, ea)
             frames.append(over(transform(c, r, sx, sy), f))
-        prev = c
-    # the last hit's tail eases into the idle pose
-    frames[-2] = mix(frames[-2], idle0, settle(0.4, w))
-    frames[-1] = mix(frames[-1], idle0, settle(0.8, w))
+    # the last hit's tail settles into the idle drawing (cut + eased squash, no blend)
+    frames[-2:] = recovery_frames(2, cs[-1], 0.0, idle0, w)[-2:]
     return frames, 2, 14
 
 
@@ -887,7 +1050,9 @@ ULT_RECOVER = 18
 def ult_frames(poses, idle0, w=1.0):
     """Ultimate: a long charge (wind-up with the effect pulsing in), smear, strike with the full effect, hold,
     eased return to idle. 24 frames; strike 12, recovery 18."""
-    first, strike = poses[0], poses[-1]
+    s = strike_index(poses)
+    strike = poses[s]
+    first = poses[0] if s > 0 else strike
     base0, baseS = pose_canvas(first), pose_canvas(strike)
     effS = pose_canvas(strike, eff_a=1.0, fig_a=0) if strike.eff is not None else None
     vec = strike_vector(strike)
@@ -895,10 +1060,9 @@ def ult_frames(poses, idle0, w=1.0):
     sq = 0.04 * w
     out = []
     for i in range(11):                                   # charge
-        k = ease_io(i / 10.0)
-        c = transform(base0, -tilt * 1.8 * k, 1 + sq * k, 1 - sq * k)
-        if i == 0:
-            c = mix(idle0, c, 0.6)
+        k = ease_io((i + 1) / 11.0)
+        pull = 0.0 if s > 0 else 10.0                     # no wind-up drawing: the strike drawing pulled back
+        c = transform(base0, -tilt * 1.8 * k, 1 + sq * k, 1 - sq * k, -vec[0] * pull * k, -vec[1] * pull * k)
         if effS is not None and i >= 3:                   # the effect gathers: small and faint -> bigger
             g = (i - 3) / 7.0
             c = over(c, transform(effS, 0, 0.5 + 0.3 * g, 0.5 + 0.3 * g, pivot=hips(baseS)),
@@ -914,9 +1078,9 @@ def ult_frames(poses, idle0, w=1.0):
             c = over(transform(effS, 0, 1 + 0.02 * k, 1 + 0.02 * k, pivot=hips(baseS)), c, ea)
         f = over(transform(baseS, r, sx, sy), c)
         out.append(flash(f, 0.5) if k == 0 else f)
-    for i in range(1, ULT_FRAMES - ULT_RECOVER + 1):
-        t = i / (ULT_FRAMES - ULT_RECOVER)
-        out.append(mix(transform(baseS, tilt * 0.2 * (1 - t)), idle0, settle(t, w)))
+    post = poses[s + 1:]
+    out += recovery_frames(ULT_FRAMES - ULT_RECOVER, transform(baseS, tilt * 0.2), tilt, idle0, w,
+                           follow=pose_canvas(post[0]) if post else None)
     assert len(out) == ULT_FRAMES
     return out
 
@@ -974,6 +1138,9 @@ def save(path, bgra):
     if in_assets(path):
         text = _TEMPLATE.format(guid=_guid(path), mip=1, size=4096)
         text = text.replace("    filterMode: 1", "    filterMode: 2")
+        # frames are drawn on screen at 0.5-0.9x: trilinear alone blends in mip 1 and softens the ink; a negative
+        # bias keeps the sharper level until the sprite is really small
+        text = text.replace("    mipBias: 0", "    mipBias: -0.6")
         _put(path + ".meta", text.encode("utf-8"))
     ok, png = cv2.imencode(".png", bgra, [cv2.IMWRITE_PNG_COMPRESSION, 9])
     assert ok, path
@@ -1086,6 +1253,7 @@ def run(chars, debug=None, only=None):
                 continue
             tw = TWEAKS.get((c, num), {})
             crop, fig, eff = segment(sheet, box, tw.get("erase", ()))
+            fig = cut_gaps(crop, fig, box, tw.get("cut", ()))
             ps = split_poses(fig, eff, tw.get("keep"), tw.get("grow", 7))
             cut[num] = (crop, ps, tw)
         flips = decide_facing(cut, c)

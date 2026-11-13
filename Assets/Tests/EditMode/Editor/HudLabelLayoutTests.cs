@@ -228,5 +228,78 @@ namespace ChibiClash.Tests
             Assert.AreEqual(30f, s.x, 1e-3f);
             Assert.AreEqual(120f, s.y, 1e-3f);
         }
+
+        // ---- popups (review 2026-11-13 item 5): a "14" damage number covered a "Woom!" callout
+
+        [Test]
+        public void PlaceAndBlock_CalloutThenDamageNumberAtSameSpot_DoNotOverlap()
+        {
+            // Arrange: plates, then three popups spawned on the same fighter (callout, damage, comic SFX)
+            var blockers = new Rect[PlateCount + 3];
+            System.Array.Copy(Plates(), blockers, PlateCount);
+            int count = PlateCount;
+            var area = Area(blockers, count);
+            var woom = new Rect(600f, 360f, 90f, 30f);
+            var dmg = new Rect(620f, 362f, 40f, 30f);
+            var sfx = new Rect(590f, 355f, 120f, 40f);
+
+            // Act
+            var a = HudLabelLayout.PlaceAndBlock(woom, area, blockers, ref count, Gap, true);
+            var b = HudLabelLayout.PlaceAndBlock(dmg, area, blockers, ref count, Gap, true);
+            var c = HudLabelLayout.PlaceAndBlock(sfx, area, blockers, ref count, Gap, true);
+
+            // Assert
+            Assert.AreEqual(PlateCount + 3, count, "each placed popup becomes a blocker");
+            Assert.AreEqual(woom.position, a.position, "the first popup keeps its spot");
+            Assert.IsFalse(Overlaps(a, b), "damage number covers the callout");
+            Assert.IsFalse(Overlaps(a, c));
+            Assert.IsFalse(Overlaps(b, c));
+            Assert.AreEqual(dmg.size, b.size);
+        }
+
+        [Test]
+        public void PlaceAndBlock_BlockerArrayFull_PlacesWithoutAppending()
+        {
+            // Arrange
+            var blockers = Plates();
+            int count = blockers.Length;
+            var area = Area(blockers, PlateCount);
+
+            // Act
+            var r = HudLabelLayout.PlaceAndBlock(new Rect(600f, 360f, 40f, 20f), area, blockers, ref count, Gap, true);
+
+            // Assert
+            Assert.AreEqual(blockers.Length, count);
+            Assert.IsTrue(area.Contains(r.min) && area.Contains(r.max));
+        }
+
+        [Test]
+        public void Follow_OneFrame_MovesPartWayWithoutSnappingOrOvershooting()
+        {
+            // Arrange
+            var from = new Vector2(100f, 100f);
+            var to = new Vector2(100f, 160f);
+
+            // Act
+            var still = HudLabelLayout.Follow(from, to, 0f, 14f);
+            var one = HudLabelLayout.Follow(from, to, 1f / 60f, 14f);
+            var p = from;
+            float prevDist = Vector2.Distance(p, to);
+            bool monotonic = true;
+            for (int i = 0; i < 120; i++)
+            {
+                p = HudLabelLayout.Follow(p, to, 1f / 60f, 14f);
+                float d = Vector2.Distance(p, to);
+                if (d > prevDist || p.y > to.y) monotonic = false;
+                prevDist = d;
+            }
+
+            // Assert
+            Assert.AreEqual(from, still, "dt 0 must not move the label");
+            Assert.Greater(one.y, from.y);
+            Assert.Less(one.y, to.y - 30f, "one frame must not snap most of the way");
+            Assert.IsTrue(monotonic, "easing overshot or moved away");
+            Assert.Less(Vector2.Distance(p, to), 0.5f, "two seconds of easing should settle on the spot");
+        }
     }
 }

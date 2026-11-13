@@ -753,11 +753,15 @@ namespace ChibiClash.Netcode
         static Sprite Puff => _puff != null ? _puff : (_puff = MakeSprite("LfxPuff", 128, PuffPixel));
         /// <summary>Eight-point flash star (four long, four short points) with a hot centre.</summary>
         static Sprite Star => _star != null ? _star : (_star = MakeSprite("LfxStar", 128, StarPixel));
+        /// <summary>The shared cel-shaded smoke puff (dust clouds in <see cref="ChibiImpactFx"/>); built by <see cref="WarmShared"/>.</summary>
+        internal static Sprite PuffSprite => Puff;
 
         /// <summary>
         /// Builds the procedural streak / puff / star sprites and the additive material now (call while the match is built,
         /// behind the wipe) so the first launch trail or KO blast of a fight does not generate three 128x128 textures on
-        /// that frame. Idempotent: they are built once per session.
+        /// that frame. Idempotent: they are built once per session. <see cref="LightMat"/> is resolved here too (its
+        /// Shader.Find + new Material run once, never lazily on the first launch / KO); ChibiMatch.PreloadAssets and
+        /// ChibiSimView.Begin both call this.
         /// </summary>
         public static void WarmShared()
         {

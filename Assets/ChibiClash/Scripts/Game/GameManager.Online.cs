@@ -302,9 +302,15 @@ namespace ChibiClash
                 pending.stage = roomsSvc.Stage;
                 pending.hazards = roomsSvc.HazardsOn;   // ST-5: the room's hazards pick
             }
-            // Perf: load + GPU-warm our own fighter's sheets now, before the handshake and its rollback clock start, so
-            // ChibiMatch.CreateOnline (already Playing) only has the opponent left to load.
-            SpriteAnimLibrary.Preload(CharacterRoster.Of(pending.cls[0]).Id);
+            // Perf: start loading the fight sheets now, before the handshake and its rollback clock start: our own fighter,
+            // plus the opponent's when the room already shows it (cosmetic hint only; the handshake's agreed config is
+            // what the match uses, and a wrong guess just loads a sheet set that is released later). Stepped in small
+            // slices every frame while handshaking (UpdatePendingOnline).
+            string mine = CharacterRoster.Of(pending.cls[0]).Id;
+            string theirs = RoomOpponentId();
+            if (match == null) SpriteAnimLibrary.ReleaseAllExcept(mine, theirs);   // nothing on screen shows the others
+            onlineLoad = new MatchAssetLoader(mine, theirs);
+            onlinePeerSeen = false;
             // ST-5: the host's hazards pick travels in the handshake Start message (protocol 4) and becomes HazardsOff on
             // both peers (the joiner takes it from Start).
             var online = isHost
@@ -324,17 +330,67 @@ namespace ChibiClash
             UiSound.LockIn();   // match found
         }
 
+        /// <summary>Online fight-sheet preload (handshake, then the READY intro); null when none is running.</summary>
+        MatchAssetLoader onlineLoad;
+        /// <summary>The host already saw the joiner's Hello (its class is known) and queued its sheets.</summary>
+        bool onlinePeerSeen;
+
+        /// <summary>
+        /// Character id of the other player's pick in the room we fight from ("" outside a room or when not shown yet).
+        /// A view-side hint for preloading only: the handshake decides the classes.
+        /// </summary>
+        string RoomOpponentId()
+        {
+            var room = roomsSvc != null && roomsSvc.OwnsLink ? roomsSvc.Current : null;
+            if (room == null) return "";
+            string me = roomsSvc.MyId;
+            foreach (var slot in room.Slots)
+                if (!string.IsNullOrEmpty(slot.PlayerId) && slot.PlayerId != me) return CharacterRoster.Of(slot.Class).Id;
+            return "";
+        }
+
+        /// <summary>
+        /// One budgeted slice of the online preload per frame. While handshaking, the host learns the joiner's class from
+        /// its Hello one round trip before the match starts (the handshake's config, and its match hash, are filled in
+        /// then; both are read only), so the opponent's sheets load before Playing. The joiner only learns the host's
+        /// class when the match starts; what is left then is finished in small slices during the READY intro (input off)
+        /// instead of one long stall, and anything shown before it is loaded is loaded on demand.
+        /// </summary>
+        void StepOnlineLoad(Netcode.ChibiOnlineMatch m)
+        {
+            if (m != null && m.Phase == Netcode.ChibiOnlinePhase.Handshaking && !onlinePeerSeen &&
+                m.Handshake.LocalIndex == 0 && m.Handshake.MatchHash != 0)
+            {
+                onlinePeerSeen = true;
+                var cfg = m.Handshake.Config;
+                onlineLoad = new MatchAssetLoader(cfg.Class0, cfg.Class1);   // resumes: progress lives in SpriteAnimLibrary
+            }
+            if (onlineLoad == null) return;
+            float budget = m != null && m.Phase == Netcode.ChibiOnlinePhase.Handshaking
+                ? MatchAssetLoader.WipeFrameBudget : MatchAssetLoader.RunningFrameBudget;
+            if (onlineLoad.Step(budget)) onlineLoad = null;
+        }
+
         /// <summary>Watch the handshake of a just-connected online match: show the match once it plays, or explain why not.</summary>
         void UpdatePendingOnline()
         {
-            if (pendingOnline == null) return;
+            if (pendingOnline == null)
+            {
+                if (page == Page.Match && match != null && match.Online) StepOnlineLoad(null);   // READY intro slices
+                else onlineLoad = null;
+                return;
+            }
             var m = pendingOnline.Match;
+            if (m.Phase == Netcode.ChibiOnlinePhase.Handshaking) StepOnlineLoad(m);
             if (m.Phase == Netcode.ChibiOnlinePhase.Playing || m.Phase == Netcode.ChibiOnlinePhase.Lingering)
             {
-                if (match != null) Destroy(match.gameObject);
+                TearDownMatch();
                 CancelWipe();
                 exitPrompt = false;
                 roomDialog = false;
+                var agreed = m.Handshake.Config;
+                ChibiMatch.ReleaseUnusedSheets(agreed.Class0, agreed.Class1);   // a wrong room guess is dropped here
+                onlineLoad = new MatchAssetLoader(agreed.Class0, agreed.Class1);   // the rest: READY intro slices
                 match = ChibiMatch.CreateOnline(this, pendingOnline, pendingOnlineInput, pending.weapon[0]);
                 match.SetVerifiedOpponentName(social.MatchFriendName);   // invite match: the friends-list name
                 social.ClearMatchFriend();

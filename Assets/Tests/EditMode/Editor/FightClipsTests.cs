@@ -206,13 +206,22 @@ namespace ChibiClash.Tests
             }
         }
 
+        /// <summary>Fixed view tick for the EditMode visual tests (Time.deltaTime is 0 there).</summary>
+        const float TestDt = 1f / 60f;
+
         [Test]
-        public void FightVisual_AllCharactersAllStates_NeverShowsBodyOrCutout()
+        public void FightVisual_AllCharactersAllStates_ShowsTheStatesContractClip()
         {
-            var flagSets = new[]
+            // (flags, grounded) -> the fight state the visual must be in; velocity (2, 0) grounded / (2, 4) airborne
+            var cases = new (FightFlags flags, bool grounded, FightAnimState state)[]
             {
-                FightFlags.Intro, FightFlags.None, FightFlags.Hitstun, FightFlags.Hitstun | FightFlags.Launched,
-                FightFlags.Out, FightFlags.Hover,
+                (FightFlags.Intro, true, FightAnimState.Intro), (FightFlags.Intro, false, FightAnimState.Intro),
+                (FightFlags.None, true, FightAnimState.Run), (FightFlags.None, false, FightAnimState.Rise),
+                (FightFlags.Hitstun, true, FightAnimState.Hitstun), (FightFlags.Hitstun, false, FightAnimState.Hitstun),
+                (FightFlags.Hitstun | FightFlags.Launched, true, FightAnimState.Launched),
+                (FightFlags.Hitstun | FightFlags.Launched, false, FightAnimState.Launched),
+                (FightFlags.Out, true, FightAnimState.KO), (FightFlags.Out, false, FightAnimState.KO),
+                (FightFlags.Hover, true, FightAnimState.Respawn), (FightFlags.Hover, false, FightAnimState.Respawn),
             };
             foreach (var cls in Classes)
             {
@@ -223,34 +232,54 @@ namespace ChibiClash.Tests
                     var v = go.AddComponent<FighterVisual>();
                     v.Build(ClassDef.Get(cls), Skin.Default(cls), 10, WeaponDef.Get(cls, 0));
                     v.EnableSheetOnly();
-                    var body = SpriteAnimLibrary.Body(v.CharacterId);
-                    AssertSheet(v, body, "first frame");
+                    string id = v.CharacterId;
+                    var has = FilesOf(id);
+                    string ultMove = SpriteAnimLibrary.MovePrefix + FightClips.CharKey(id) + "_" + FightClips.UltimateFallbackRow;
+                    var body = SpriteAnimLibrary.Body(id);
+                    AssertStateClip(v, body, FightAnimState.Intro, has, ultMove, "first frame");
 
-                    // Act / Assert: every fact combination, grounded and airborne, plus the legacy cutout requests
-                    foreach (var f in flagSets)
-                        foreach (bool grounded in new[] { true, false })
-                        {
-                            v.Tick(new Vector2(2f, grounded ? 0f : 4f), grounded, false, f);
-                            AssertSheet(v, body, f + " grounded " + grounded);
-                        }
-                    v.Tick(Vector2.zero, true, true, FightFlags.None);
-                    AssertSheet(v, body, "guard");
+                    // Act / Assert: every fact combination shows exactly its state's contract clip (Sheet_Hit for
+                    // Hitstun, Sheet_Launch for Launched, Sheet_KO for KO... when the character has the file)
+                    foreach (var c in cases)
+                    {
+                        v.Tick(new Vector2(2f, c.grounded ? 0f : 4f), c.grounded, false, c.flags, TestDt, 0f);
+                        AssertStateClip(v, body, c.state, has, ultMove, c.flags + " grounded " + c.grounded);
+                    }
+                    v.Tick(Vector2.zero, true, true, FightFlags.None, TestDt, 0f);
+                    AssertStateClip(v, body, FightAnimState.Guard, has, ultMove, "guard");
+                    v.Tick(Vector2.zero, true, false, FightFlags.None, TestDt, 0f);
+                    AssertStateClip(v, body, FightAnimState.Idle, has, ultMove, "idle");
+
+                    // legacy cutout requests and unknown moves never show a cutout or the body drawing
                     v.PlayNormal(false, 0, 0.3f); v.PlaySwing(0.3f); v.PlayRecoil(0.3f); v.Hurt();
                     v.PlayClipLocked("Skill1", 0f); v.PlayClipLocked("KO", 0f); v.PlayClipLocked("Ultimate", 0f);
-                    v.Tick(Vector2.zero, true, false, FightFlags.None);
+                    v.Tick(Vector2.zero, true, false, FightFlags.None, TestDt, 0f);
                     AssertSheet(v, body, "legacy requests");
                     v.PlayMoveClip("nope_unknown", "Swing", 0.1f, 0.1f, 0.1f);
-                    v.Tick(Vector2.zero, true, false, FightFlags.None);
+                    v.Tick(Vector2.zero, true, false, FightFlags.None, TestDt, 0f);
                     AssertSheet(v, body, "unknown move");
                     v.SetVictory(true);
-                    v.Tick(Vector2.zero, true, false, FightFlags.None);
-                    AssertSheet(v, body, "victory");
+                    v.Tick(Vector2.zero, true, false, FightFlags.None, TestDt, 0f);
+                    AssertStateClip(v, body, FightAnimState.Victory, has, ultMove, "victory");
                 }
                 finally
                 {
                     UnityEngine.Object.DestroyImmediate(go);
                 }
             }
+        }
+
+        /// <summary>The visual is in <paramref name="state"/> and shows a frame of that state's contract clip.</summary>
+        static void AssertStateClip(FighterVisual v, Sprite body, FightAnimState state, Func<string, bool> has, string ultMove,
+                                    string when)
+        {
+            string expected = FightClips.Resolve(state, has, ultMove);
+            Assert.IsNotNull(expected, v.CharacterId + " " + when + ": no contract clip for " + state);
+            Assert.AreEqual(state, v.FightState, v.CharacterId + " " + when + ": state");
+            Assert.AreEqual(expected, v.StateClip(state), v.CharacterId + " " + when + ": StateClip(" + state + ")");
+            AssertSheet(v, body, when);
+            Assert.AreEqual(expected, v.BodyRenderer.sprite.texture.name,
+                            v.CharacterId + " " + when + ": shows a frame of the wrong clip for " + state);
         }
 
         static void AssertSheet(FighterVisual v, Sprite body, string when)
@@ -261,6 +290,19 @@ namespace ChibiClash.Tests
             Assert.IsNotNull(sr.sprite, v.CharacterId + " " + when + ": no sprite");
             Assert.IsTrue(FightClips.IsSheetClip(sr.sprite.texture.name),
                           v.CharacterId + " " + when + ": frame from non-sheet texture " + sr.sprite.texture.name);
+        }
+
+        [Test]
+        public void Candidates_CallerTriesToModify_MappingIsReadOnly()
+        {
+            // Arrange
+            var chain = FightClips.Candidates(FightAnimState.Hitstun);
+
+            // Act / Assert
+            Assert.AreEqual(FightClips.Hit, chain[0]);
+            Assert.Throws<NotSupportedException>(() => ((IList<string>)chain)[0] = "Run");
+            Assert.AreEqual(FightClips.Hit, FightClips.Candidates(FightAnimState.Hitstun)[0]);
+            Assert.AreEqual(FightClips.Hit, FightClips.Resolve(FightAnimState.Hitstun, _ => true));
         }
 
         // ---- Depend on the technical artist's Sheet_* clips (fail until each file lands in Resources/Animations/<Id>/).
