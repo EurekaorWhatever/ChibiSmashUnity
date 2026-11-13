@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ChibiClash
@@ -74,8 +75,18 @@ namespace ChibiClash
             new[] { Idle },                              // Respawn hover
         };
 
-        /// <summary>The candidate chain of <paramref name="s"/> (shared array: do not modify).</summary>
-        public static string[] Candidates(FightAnimState s) => Chains[(int)s];
+        /// <summary>Read-only views of <see cref="Chains"/>, built once (callers cannot change the mapping).</summary>
+        static readonly IReadOnlyList<string>[] ReadOnlyChains = BuildReadOnlyChains();
+
+        static IReadOnlyList<string>[] BuildReadOnlyChains()
+        {
+            var r = new IReadOnlyList<string>[Chains.Length];
+            for (int i = 0; i < Chains.Length; i++) r[i] = Array.AsReadOnly(Chains[i]);
+            return r;
+        }
+
+        /// <summary>The candidate chain of <paramref name="s"/>, best first (read-only: the mapping cannot be changed through it).</summary>
+        public static IReadOnlyList<string> Candidates(FightAnimState s) => ReadOnlyChains[(int)s];
 
         /// <summary>True for a moveset-sheet clip name: Idle_Sheet, Sheet_*, Move_*. Cutout names and null are false.</summary>
         public static bool IsSheetClip(string name)

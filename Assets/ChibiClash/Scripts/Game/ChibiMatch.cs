@@ -88,11 +88,15 @@ namespace ChibiClash
         /// <summary>World position of fighter <paramref name="i"/>'s body centre.</summary>
         public Vector2 Center(int i) => View != null ? View.FighterCenter(i) : Vector2.zero;
 
-        /// <summary>Create and start an offline match (local versus, vs CPU or training) from the menu settings.</summary>
+        /// <summary>
+        /// Create and start an offline match (local versus, vs CPU or training) from the menu settings. The caller tears
+        /// the previous match down and releases unused sheets first (<see cref="ReleaseUnusedSheets"/>); when the sheets
+        /// were already loaded behind the wipe (<see cref="MatchAssetLoader"/>) the preload here is a no-op.
+        /// </summary>
         /// <example><code>var m = ChibiMatch.Create(gameManager, pendingConfig);</code></example>
         public static ChibiMatch Create(GameManager gm, MatchConfig cfg)
         {
-            PreloadAssets(cfg.cls[0], cfg.cls[1]);   // perf: the sheet load + GPU warm happen here, behind the wipe
+            PreloadAssets(cfg.cls[0], cfg.cls[1]);   // perf: whatever the wipe did not load yet, still behind the wipe
             var go = new GameObject("Match");
             var m = go.AddComponent<ChibiMatch>();
             m.GM = gm;
@@ -102,10 +106,11 @@ namespace ChibiClash
         }
 
         /// <summary>
-        /// Loads, slices and GPU-warms both fighters' animation sheets and builds the shared procedural FX textures now,
-        /// so none of it runs on a fight frame (SpriteAnimLibrary used to LoadAll a whole character, ~105-120 MB of
-        /// sheets, on the first clip lookup). Synchronous: call it where the match is built (behind the wipe, before the
-        /// READY intro). Cheap for a character already loaded. Returns the number of clips available for the two fighters.
+        /// Loads, slices and GPU-warms both fighters' fight sheets (the clips.txt sheet clips only, never the legacy strip
+        /// cutouts) and builds the shared procedural FX textures now, so none of it runs on a fight frame. Synchronous:
+        /// call it where the match is built (behind the wipe, before the READY intro); <see cref="MatchAssetLoader"/> does
+        /// the same work spread over frames. Cheap for a character already loaded. Returns the number of clips available
+        /// for the two fighters.
         /// </summary>
         /// <example><code>ChibiMatch.PreloadAssets(FighterClass.Melee, FighterClass.Heavy);</code></example>
         public static int PreloadAssets(FighterClass c0, FighterClass c1)
@@ -114,22 +119,27 @@ namespace ChibiClash
             string a = CharacterRoster.Of(c0).Id, b = CharacterRoster.Of(c1).Id;
             int n = SpriteAnimLibrary.Preload(a);
             if (!string.Equals(a, b, StringComparison.OrdinalIgnoreCase)) n += SpriteAnimLibrary.Preload(b);
+            WarmSharedFx();
+            return n;
+        }
+
+        /// <summary>Builds the shared procedural FX textures every match uses (cached statics: cheap after the first match).</summary>
+        public static void WarmSharedFx()
+        {
             ChibiLaunchFx.WarmShared();                                     // launch trails / KO blasts
             _ = ChibiMoveVfx.Crescent;                                      // moveset slash crescents
             _ = ChibiFxTextures.Ray; _ = ChibiFxTextures.Glow;              // hit sparks
             _ = ChibiFxTextures.Ring; _ = ChibiFxTextures.Line;
-            return n;
         }
 
         /// <summary>
-        /// First frame of the match: the previous match's visuals are destroyed by now, so drop the sheets of characters
-        /// that are not in this match (each ~105-120 MB of GPU memory; after all five were played the cache held ~550 MB).
+        /// Drops the sheets of every character not in a <paramref name="c0"/> vs <paramref name="c1"/> match (each ~105-120
+        /// MB of GPU memory with its strips; after all five were played the cache held ~550 MB). Call it only after the
+        /// previous match's visuals are destroyed and before the new pair is preloaded, so at most the two fighters of the
+        /// next match are ever resident and the sprite teardown never lands on a fight frame. Returns how many were released.
         /// </summary>
-        void Start()
-        {
-            if (Config == null) return;
-            SpriteAnimLibrary.ReleaseAllExcept(CharacterRoster.Of(Config.cls[0]).Id, CharacterRoster.Of(Config.cls[1]).Id);
-        }
+        public static int ReleaseUnusedSheets(FighterClass c0, FighterClass c1) =>
+            SpriteAnimLibrary.ReleaseAllExcept(CharacterRoster.Of(c0).Id, CharacterRoster.Of(c1).Id);
 
         void ResolveCosmetics(SaveData save)
         {
@@ -201,9 +211,12 @@ namespace ChibiClash
                 m._skin[i] = i == me && gm != null && gm.Save != null ? gm.Save.Equipped(m._def[i].type) : Skin.Default(m._def[i].type);
                 m._weapon[i] = WeaponDef.Get(m._def[i].type, i == me ? localWeapon : 0);
             }
-            // The local fighter was preloaded at connect (GameManager.Online); this loads the opponent before the view
-            // is built. Online keeps the raw clock, so this frame's hitch is caught up during the READY intro (input off).
-            PreloadAssets(mc.cls[0], mc.cls[1]);
+            // Both fighters' sheets were preloaded while handshaking when they were known (GameManager.Online: our own at
+            // connect, the opponent's from the room or the joiner's Hello). Whatever is left is NOT loaded here in one
+            // blocking call: the view only needs Idle_Sheet for the READY intro (loaded on demand), and GameManager
+            // finishes the rest in small per-frame slices during the intro (MatchAssetLoader), so the rollback clock never
+            // runs through a long stall.
+            WarmSharedFx();
             m.BuildView();
             return m;
         }

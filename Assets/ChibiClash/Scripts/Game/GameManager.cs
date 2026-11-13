@@ -52,8 +52,12 @@ namespace ChibiClash
         const float WipeTime = 0.6f;
         float wipeStart = -1f;
         Action wipeAction;
+        /// <summary>Optional work run once per frame while the wipe covers the screen; the wipe holds until it returns true.</summary>
+        Func<bool> wipePrepare;
         bool wipeSwapped;
         string wipeCaption;
+        /// <summary>Behind-the-wipe preload of the next offline match (null when none is running).</summary>
+        MatchAssetLoader matchLoad;
 
         // arcade ladder: all five characters, one each, in a random order
         const int ArcadeRounds = 5;
@@ -376,12 +380,17 @@ namespace ChibiClash
             Gui.ResetFocus();
         }
 
-        /// <summary>Diagonal red / navy / blue wipe; the action runs while the screen is fully covered.</summary>
-        void Wipe(string caption, Action mid)
+        /// <summary>
+        /// Diagonal red / navy / blue wipe; the action runs while the screen is fully covered. With
+        /// <paramref name="prepare"/>, the covered wipe first holds (one call per frame) until it returns true, then the
+        /// action runs on the next frame, so long loads are spread over covered frames instead of freezing one.
+        /// </summary>
+        void Wipe(string caption, Action mid, Func<bool> prepare = null)
         {
             if (wipeStart >= 0f) return;
             wipeStart = Time.unscaledTime;
             wipeAction = mid;
+            wipePrepare = prepare;
             wipeSwapped = false;
             wipeCaption = caption;
         }
@@ -390,6 +399,14 @@ namespace ChibiClash
         {
             if (wipeStart < 0f) return;
             float t = (Time.unscaledTime - wipeStart) / WipeTime;
+            if (!wipeSwapped && t >= 0.5f && wipePrepare != null)
+            {
+                // Hold the wipe fully covered (t = 0.5) while the preparation runs, one budgeted slice per frame. The
+                // action waits for the next frame so that frame does not pay the last slice and the match build together.
+                if (wipePrepare()) wipePrepare = null;
+                wipeStart = Time.unscaledTime - 0.5f * WipeTime;
+                return;
+            }
             if (!wipeSwapped && t >= 0.5f)
             {
                 wipeSwapped = true;
@@ -408,6 +425,8 @@ namespace ChibiClash
         {
             wipeStart = -1f;
             wipeAction = null;
+            wipePrepare = null;
+            matchLoad = null;
         }
 
         // ---------------------------------------------------------------- flow
@@ -416,7 +435,11 @@ namespace ChibiClash
         {
             pending.timeLimit = MatchController.MatchSeconds;
             pending.difficulty = Save.settings.cpuDifficulty;
-            if (match != null) Destroy(match.gameObject);
+            // Old match first, then its unused sheets, then the new pair: never more than two characters resident.
+            // After PrepareMatch (the wipe path) all three are already done and Create's preload is a no-op.
+            TearDownMatch();
+            ChibiMatch.ReleaseUnusedSheets(pending.cls[0], pending.cls[1]);
+            matchLoad = null;
             match = ChibiMatch.Create(this, pending);
             page = Page.Match;
             pageSince = Time.unscaledTime;
@@ -431,7 +454,39 @@ namespace ChibiClash
         void LaunchMatch()
         {
             PickAiFighter();   // VS AI: a new random opponent every fight (rematches too)
-            Wipe(VersusCaption(), StartMatch);
+            Wipe(VersusCaption(), StartMatch, PrepareMatch);
+        }
+
+        /// <summary>
+        /// Runs once per covered wipe frame before <see cref="StartMatch"/>. First frame: destroy the old match now (not
+        /// deferred) and release every character not in the next match, so the old pair's sheets are gone before the new
+        /// pair loads. Next frames: load the new pair's fight sheets and FX in <see cref="MatchAssetLoader.WipeFrameBudget"/>
+        /// slices. Returns true when everything is loaded (the match never starts before that).
+        /// </summary>
+        bool PrepareMatch()
+        {
+            if (matchLoad == null)
+            {
+                TearDownMatch();
+                ChibiMatch.ReleaseUnusedSheets(pending.cls[0], pending.cls[1]);
+                matchLoad = new MatchAssetLoader(pending.cls[0], pending.cls[1]);
+                return false;   // this frame paid the teardown; loading starts next frame
+            }
+            if (!matchLoad.Step(MatchAssetLoader.WipeFrameBudget)) return false;
+            matchLoad = null;
+            return true;
+        }
+
+        /// <summary>
+        /// Destroys the current match immediately (its view, fighters and stage go now, not at the end of the frame), so
+        /// the sheets it showed can be released right after. Only call it while the screen is covered or being replaced.
+        /// </summary>
+        void TearDownMatch()
+        {
+            if (match == null) return;
+            var go = match.gameObject;
+            match = null;
+            DestroyImmediate(go);
         }
 
         /// <summary>Skip the menus and start a match directly (editor testing / automation).</summary>

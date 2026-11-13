@@ -12,8 +12,13 @@ BEFORE the PNG by save_with_meta, so an auto-refresh never imports the texture w
 import hashlib
 import os
 import re
+import sys
 
-import cv2
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    import cv2
+except ImportError:            # OpenCV is optional: numpy / scipy / Pillow stand-in (tools/art/cv2compat.py)
+    import cv2compat as cv2
 
 _TEMPLATE = """fileFormatVersion: 2
 guid: {guid}

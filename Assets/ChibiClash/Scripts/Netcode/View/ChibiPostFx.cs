@@ -50,10 +50,18 @@ namespace ChibiClash.Netcode
         // Bloom only on genuinely bright pixels (white-hot trail cores, sparks, lava, glows), never on the whole painted stage.
         const float BloomThreshold = 0.82f, BloomScatter = 0.68f, VignetteIntensity = 0.24f, VignetteSmooth = 0.45f;
         const float PunchKoSec = 0.45f, PunchUltSec = 0.6f, PunchBloomAdd = 1.6f, PunchAberration = 0.55f;
-        /// <summary>Resting chromatic aberration: invisible, but above 0 so URP keeps the aberration shader variant in use
-        /// from the first frame. At 0 URP switches the pass off, and the first KO punch would then switch variants mid-fight
-        /// (an Editor placeholder flash / first-use hitch; performance audit 2026-11-12 section 6).</summary>
-        const float AberrationRest = 0.002f;
+        /// <summary>Resting chromatic aberration: 0, so URP skips the full-screen aberration pass for the whole fight.</summary>
+        const float AberrationRest = 0f;
+        /// <summary>
+        /// Warm-up: for the first <see cref="WarmFrames"/> rendered frames after the match is built (behind the READY intro)
+        /// the aberration runs at an invisible <see cref="AberrationWarm"/>, so URP compiles / loads the aberration variant
+        /// of the uber post shader then, not on the first KO punch mid-fight (Editor placeholder flash / first-use hitch;
+        /// performance audit 2026-11-12 section 6). Then it rests at 0 until a punch.
+        /// </summary>
+        const float AberrationWarm = 0.002f;
+        const int WarmFrames = 3;
+        /// <summary>Heavy hit (percent gained >= ChibiFeel.PctFullHit x HeavyHit): a small bloom / vignette punch.</summary>
+        const float PunchHeavySec = 0.22f, PunchHeavyAmt = 0.3f;
 
         Volume _volume;
         VolumeProfile _profile;
@@ -65,8 +73,11 @@ namespace ChibiClash.Netcode
         bool _camWasPost;
         Func<ChibiSimState> _state;
         readonly int[] _stocks = { -1, -1 };
+        readonly int[] _pct = { -1, -1 };
         int _cinematic = -1;
         float _punchT, _punchLen, _punchAmt;
+        int _warmLeft = WarmFrames;
+        float _lastK = -1f;   // last applied punch level: volume parameters are only written when it changes
 
         /// <summary>
         /// Add match post-processing for <paramref name="stage"/> under <paramref name="host"/> (destroyed with it), reading
@@ -112,7 +123,7 @@ namespace ChibiClash.Netcode
             _vignette.rounded.Override(false);
 
             _aberration = _profile.Add<ChromaticAberration>(true);
-            _aberration.intensity.Override(AberrationRest);
+            _aberration.intensity.Override(AberrationWarm);   // warm-up pulse; LateUpdate drops it to AberrationRest
 
             _volume = gameObject.AddComponent<Volume>();
             _volume.isGlobal = true;
@@ -154,19 +165,31 @@ namespace ChibiClash.Netcode
                 k = _punchAmt * (1f - t) * (1f - t);
                 if (t >= 1f) _punchLen = 0f;
             }
+            bool warming = _warmLeft > 0;
+            if (warming) _warmLeft--;
+            if (!warming && k == _lastK) return;   // resting: no per-frame volume writes
+            _lastK = warming ? -1f : k;
             if (_bloom != null) _bloom.intensity.value = _baseBloom + PunchBloomAdd * k;
-            if (_aberration != null) _aberration.intensity.value = AberrationRest + PunchAberration * k;
+            if (_aberration != null)
+                _aberration.intensity.value = Mathf.Max(warming ? AberrationWarm : AberrationRest, AberrationRest + PunchAberration * k);
             if (_vignette != null) _vignette.intensity.value = VignetteIntensity + 0.12f * k;
         }
 
-        /// <summary>KO = a fighter's stock count dropped; ult = a new cinematic started. Rollback-safe: only edges are punched.</summary>
+        /// <summary>
+        /// KO = a fighter's stock count dropped; ult = a new cinematic started; heavy hit = percent rose by a heavy amount.
+        /// Rollback-safe: only edges are punched.
+        /// </summary>
         void Detect(ChibiSimState s)
         {
+            const int heavyPctM = (int)(ChibiFeel.PctFullHit * ChibiFeel.HeavyHit * 1000f);
             for (int i = 0; i < 2; i++)
             {
                 int st = s.F[i].Stocks;
                 if (_stocks[i] >= 0 && st < _stocks[i]) Punch(1f, PunchKoSec);
                 _stocks[i] = st;
+                int pct = s.F[i].PctM;
+                if (_pct[i] >= 0 && pct - _pct[i] >= heavyPctM) Punch(PunchHeavyAmt, PunchHeavySec);
+                _pct[i] = pct;
             }
             int cin = s.CinematicRealTicks > 0 ? s.CinematicFighter : -1;
             if (cin >= 0 && _cinematic < 0) Punch(0.7f, PunchUltSec);

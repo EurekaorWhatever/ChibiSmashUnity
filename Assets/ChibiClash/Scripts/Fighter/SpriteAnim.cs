@@ -62,7 +62,13 @@ namespace ChibiClash
     /// frames. Sheet-pose clips (tools/art/sheet_anims.py) are keyed by file name, Move_&lt;moveId&gt; per move and
     /// Idle_Sheet (which also serves "Idle"), with <see cref="MoveFrameAspect"/>-wide frames.
     /// Missing clips return null and the caller falls back to the procedural animation.
-    /// Everything is loaded and sliced once per character; lookups afterwards are allocation-free.
+    /// <para>
+    /// Loading is per clip, not per folder: <see cref="Preload"/> / <see cref="PreloadStep"/> load only the sheet-pose
+    /// clips listed in the folder's clips.txt (what the fight view shows), one Resources.Load each. The legacy single-row
+    /// "strip" cutouts (Idle, Run, Cast, Ultimate...) are loaded lazily, all at once, the first time a menu / legacy
+    /// caller asks <see cref="Get"/> for one. A folder without clips.txt is loaded whole on first use (legacy layout).
+    /// Every clip is sliced once; lookups afterwards are allocation-free.
+    /// </para>
     /// </summary>
     public static class SpriteAnimLibrary
     {
@@ -95,6 +101,8 @@ namespace ChibiClash
         /// </summary>
         public const string SheetPrefix = "Sheet_";
 
+        const string Root = "Animations/";
+
         /// <summary>Every clip name the runtime understands (basic, the three class moves, then the generic attack set).</summary>
         public static readonly string[] Clips =
         {
@@ -103,12 +111,29 @@ namespace ChibiClash
             "Dive", "Uppercut", "Guard", "Rush", "Launch", "Dash",
         };
 
-        static readonly Dictionary<string, Dictionary<string, SpriteClip>> cache =
-            new Dictionary<string, Dictionary<string, SpriteClip>>(System.StringComparer.OrdinalIgnoreCase);
+        /// <summary>One character's loaded clips, the textures behind them and what is still to load.</summary>
+        sealed class Entry
+        {
+            public readonly Dictionary<string, SpriteClip> Clips =
+                new Dictionary<string, SpriteClip>(System.StringComparer.OrdinalIgnoreCase);
+            /// <summary>Every texture loaded for this character (GPU warm-up and <see cref="Release"/>).</summary>
+            public readonly List<Texture2D> Textures = new List<Texture2D>();
+            /// <summary>Names looked up and not found (so a missing optional clip is not searched for every frame).</summary>
+            public readonly HashSet<string> Missing = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+            /// <summary>clips.txt rows; null when the folder has none (it is then loaded whole).</summary>
+            public Dictionary<string, ClipRow> Table;
+            /// <summary>clips.txt clip names in load order (Idle_Sheet first); <see cref="Next"/> is the next to load.</summary>
+            public readonly List<string> Pending = new List<string>();
+            public int Next;
+            /// <summary>The whole folder (legacy strips included) was loaded with Resources.LoadAll.</summary>
+            public bool FolderLoaded;
+            public SpriteClip IdleSheet;
+            public bool Complete => Next >= Pending.Count;
+        }
+
+        static readonly Dictionary<string, Entry> cache =
+            new Dictionary<string, Entry>(System.StringComparer.OrdinalIgnoreCase);
         static readonly Dictionary<string, Sprite> bodies = new Dictionary<string, Sprite>(System.StringComparer.OrdinalIgnoreCase);
-        /// <summary>Sheet textures of each loaded character (GPU warm-up and <see cref="Release"/>).</summary>
-        static readonly Dictionary<string, Texture2D[]> sheets =
-            new Dictionary<string, Texture2D[]>(System.StringComparer.OrdinalIgnoreCase);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
@@ -116,84 +141,118 @@ namespace ChibiClash
             cache.Clear();
             bodies.Clear();
             moveNames.Clear();
-            sheets.Clear();
             LoadCount = 0;
+            FolderLoadCount = 0;
         }
 
         /// <summary>
-        /// Number of character folders loaded from Resources this session (one synchronous Resources.LoadAll each).
-        /// Diagnostic: a match that was preloaded must not raise it after its first frame.
+        /// Number of character clip tables built this session (one per character until it is released). Diagnostic: a
+        /// match that was preloaded must not raise it after its first frame.
         /// </summary>
         public static int LoadCount { get; private set; }
 
-        /// <summary>True when the clip table of <paramref name="characterId"/> is built (Get will not touch Resources).</summary>
+        /// <summary>
+        /// Number of whole-folder Resources.LoadAll calls this session: a menu / legacy caller asked for a strip cutout,
+        /// or a folder has no clips.txt. Diagnostic: the fight view (sheet clips only) never raises it.
+        /// </summary>
+        public static int FolderLoadCount { get; private set; }
+
+        /// <summary>True when the clip table of <paramref name="characterId"/> is built (Get will not read clips.txt again).</summary>
         public static bool IsLoaded(string characterId) =>
             !string.IsNullOrEmpty(characterId) && cache.ContainsKey(characterId);
 
+        /// <summary>True when every clips.txt sheet of <paramref name="characterId"/> is loaded (<see cref="Preload"/> is then a no-op).</summary>
+        public static bool IsPreloaded(string characterId) =>
+            !string.IsNullOrEmpty(characterId) && cache.TryGetValue(characterId, out var e) && e.Complete;
+
         /// <summary>
-        /// Loads and slices every sheet of <paramref name="characterId"/> now, once (later calls and every
-        /// <see cref="Get"/> are served from the cache), and when <paramref name="warmGpu"/> forces the textures onto the
-        /// GPU (<see cref="WarmGpu"/>) so the first drawn frame does not pay the upload. Call it where the match is built,
-        /// behind the wipe, so this synchronous load never lands on a fight frame. Returns the number of clips.
+        /// Loads and slices every sheet-pose clip listed in <paramref name="characterId"/>'s clips.txt now (once: later
+        /// calls and every <see cref="Get"/> are served from the cache) and, when <paramref name="warmGpu"/>, forces each
+        /// new texture onto the GPU (<see cref="WarmGpu"/>) so the first drawn frame does not pay the upload. Legacy strip
+        /// cutouts are not loaded (see the class summary). Call it where the match is built, behind the wipe, so this
+        /// synchronous load never lands on a fight frame; <see cref="PreloadStep"/> spreads the same work over frames.
+        /// Returns the number of clips available.
         /// </summary>
         /// <example><code>SpriteAnimLibrary.Preload(CharacterRoster.Of(FighterClass.Melee).Id);</code></example>
         public static int Preload(string characterId, bool warmGpu = true)
         {
             if (string.IsNullOrEmpty(characterId)) return 0;
-            bool fresh = !cache.ContainsKey(characterId);
-            var clips = Table(characterId);
-            if (fresh && warmGpu) WarmGpu(characterId);
-            return clips.Count;
+            var e = EntryOf(characterId);
+            while (!e.Complete) LoadPending(characterId, e, warmGpu);
+            return e.Clips.Count;
         }
 
         /// <summary>
-        /// Draws each loaded sheet of <paramref name="characterId"/> once into a 4x4 temporary render texture, so the
+        /// Incremental <see cref="Preload"/>: loads clips.txt sheets of <paramref name="characterId"/> until
+        /// <paramref name="budgetSeconds"/> of real time are used (at least one clip per call, so it always progresses).
+        /// Returns true once every listed sheet is loaded. Drive it once per frame behind a wipe / intro.
+        /// </summary>
+        /// <example><code>while (!SpriteAnimLibrary.PreloadStep(id, 0.02f)) yield return null;</code></example>
+        public static bool PreloadStep(string characterId, float budgetSeconds, bool warmGpu = true)
+        {
+            if (string.IsNullOrEmpty(characterId)) return true;
+            long start = System.Diagnostics.Stopwatch.GetTimestamp();
+            long limit = BudgetTicks(budgetSeconds);
+            var e = EntryOf(characterId);
+            while (!e.Complete)
+            {
+                LoadPending(characterId, e, warmGpu);
+                if (System.Diagnostics.Stopwatch.GetTimestamp() - start >= limit) break;
+            }
+            return e.Complete;
+        }
+
+        /// <summary>Seconds to Stopwatch ticks, clamped so a huge budget cannot overflow.</summary>
+        public static long BudgetTicks(float seconds)
+        {
+            double t = System.Math.Max(0.0, seconds) * System.Diagnostics.Stopwatch.Frequency;
+            return t >= long.MaxValue / 2 ? long.MaxValue / 2 : (long)t;
+        }
+
+        /// <summary>
+        /// Draws each loaded texture of <paramref name="characterId"/> once into a 4x4 temporary render texture, so the
         /// render thread finishes the texture uploads (and the driver makes them resident) now rather than on the first
         /// fight frame that shows the clip. No-op without a graphics device (batch mode). Returns textures touched.
         /// </summary>
         public static int WarmGpu(string characterId)
         {
-            if (string.IsNullOrEmpty(characterId) || !sheets.TryGetValue(characterId, out var texs) || texs.Length == 0) return 0;
-            if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return 0;
-            var prev = RenderTexture.active;
-            var rt = RenderTexture.GetTemporary(4, 4, 0, RenderTextureFormat.ARGB32);
+            if (string.IsNullOrEmpty(characterId) || !cache.TryGetValue(characterId, out var e) || e.Textures.Count == 0) return 0;
             int n = 0;
-            for (int i = 0; i < texs.Length; i++)
-            {
-                if (texs[i] == null) continue;
-                Graphics.Blit(texs[i], rt);
-                n++;
-            }
-            RenderTexture.active = prev;
-            RenderTexture.ReleaseTemporary(rt);
+            for (int i = 0; i < e.Textures.Count; i++)
+                if (WarmTexture(e.Textures[i])) n++;
             return n;
         }
 
+        static bool WarmTexture(Texture2D tex)
+        {
+            if (tex == null || SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return false;
+            var prev = RenderTexture.active;
+            var rt = RenderTexture.GetTemporary(4, 4, 0, RenderTextureFormat.ARGB32);
+            Graphics.Blit(tex, rt);
+            RenderTexture.active = prev;
+            RenderTexture.ReleaseTemporary(rt);
+            return true;
+        }
+
         /// <summary>
-        /// Drops <paramref name="characterId"/>'s clip table: destroys its sliced sprites and unloads its sheet textures
-        /// (~105-120 MB of GPU memory per character). The next <see cref="Get"/> or <see cref="Preload"/> loads it again.
-        /// Only call it when nothing on screen still shows that character.
+        /// Drops <paramref name="characterId"/>'s clip table: destroys its sliced sprites and unloads its textures
+        /// (~105-120 MB of GPU memory per character with every strip loaded). The next <see cref="Get"/> or
+        /// <see cref="Preload"/> loads it again. Only call it when nothing on screen still shows that character.
         /// </summary>
         public static void Release(string characterId)
         {
-            if (string.IsNullOrEmpty(characterId)) return;
-            if (cache.TryGetValue(characterId, out var clips))
-            {
-                foreach (var c in clips.Values)
-                    for (int i = 0; i < c.frames.Length; i++)
-                        if (c.frames[i] != null) DestroyObject(c.frames[i]);   // Idle may share Idle_Sheet's frames: a second Destroy is harmless
-                cache.Remove(characterId);
-            }
-            if (sheets.TryGetValue(characterId, out var texs))
-            {
-                foreach (var t in texs) if (t != null) Resources.UnloadAsset(t);
-                sheets.Remove(characterId);
-            }
+            if (string.IsNullOrEmpty(characterId) || !cache.TryGetValue(characterId, out var e)) return;
+            foreach (var c in e.Clips.Values)
+                for (int i = 0; i < c.frames.Length; i++)
+                    if (c.frames[i] != null) DestroyObject(c.frames[i]);   // "Idle" shares Idle_Sheet's frames: a second Destroy is harmless
+            foreach (var t in e.Textures) if (t != null) Resources.UnloadAsset(t);
+            cache.Remove(characterId);
         }
 
         /// <summary>
         /// Releases every loaded character except <paramref name="keepA"/> and <paramref name="keepB"/> (the two in the
         /// match), so playing all five characters does not keep ~550 MB of sheets resident. Returns how many were released.
+        /// Call it after the previous match's visuals are destroyed and before the next match's preload.
         /// </summary>
         public static int ReleaseAllExcept(string keepA, string keepB)
         {
@@ -205,21 +264,131 @@ namespace ChibiClash
             return drop.Count;
         }
 
+        /// <summary>Names of the textures currently loaded for <paramref name="characterId"/> (diagnostics / tests), appended to <paramref name="into"/>.</summary>
+        public static void LoadedTextureNames(string characterId, List<string> into)
+        {
+            if (into == null || string.IsNullOrEmpty(characterId) || !cache.TryGetValue(characterId, out var e)) return;
+            foreach (var t in e.Textures) if (t != null) into.Add(t.name);
+        }
+
+        /// <summary>Clip names listed in <paramref name="characterId"/>'s clips.txt, in load order (empty without one), appended to <paramref name="into"/>.</summary>
+        public static void ListedSheetClips(string characterId, List<string> into)
+        {
+            if (into == null || string.IsNullOrEmpty(characterId)) return;
+            into.AddRange(EntryOf(characterId).Pending);
+        }
+
         static void DestroyObject(Object o)
         {
             if (Application.isPlaying) Object.Destroy(o);
             else Object.DestroyImmediate(o);
         }
 
-        static Dictionary<string, SpriteClip> Table(string characterId)
+        /// <summary>The character's entry, created on first use: reads clips.txt (cheap); a folder without one is loaded whole.</summary>
+        static Entry EntryOf(string characterId)
         {
-            if (!cache.TryGetValue(characterId, out var clips))
+            if (cache.TryGetValue(characterId, out var e)) return e;
+            e = new Entry();
+            cache[characterId] = e;
+            LoadCount++;
+            e.Table = ReadClipTable(Resources.Load<TextAsset>(Root + characterId + "/" + ClipTable), e.Pending);
+            if (e.Table == null) LoadFolder(characterId, e);   // legacy layout: no table to load clip by clip
+            else
             {
-                clips = Load(characterId);
-                cache[characterId] = clips;
+                int idle = e.Pending.FindIndex(n => string.Equals(n, IdleSheet, System.StringComparison.OrdinalIgnoreCase));
+                if (idle > 0) { string first = e.Pending[idle]; e.Pending.RemoveAt(idle); e.Pending.Insert(0, first); }   // first frame shows it
             }
-            return clips;
+            return e;
         }
+
+        static void LoadPending(string characterId, Entry e, bool warmGpu)
+        {
+            string name = e.Pending[e.Next++];
+            if (e.Clips.ContainsKey(name) || e.Missing.Contains(name)) return;
+            var c = LoadSheet(characterId, e, name);
+            if (c != null && warmGpu && c.frames.Length > 0) WarmTexture(c.frames[0].texture);
+        }
+
+        /// <summary>One sheet-pose clip by file name (Resources.Load); null (and remembered as missing) when absent.</summary>
+        static SpriteClip LoadSheet(string characterId, Entry e, string name)
+        {
+            var tex = Resources.Load<Texture2D>(Root + characterId + "/" + name);
+            if (tex == null) { e.Missing.Add(name); return null; }
+            return AddSheet(e, tex);
+        }
+
+        /// <summary>Slices a sheet-pose texture: the file name is the key; frames, rate and phases from clips.txt.</summary>
+        static SpriteClip AddSheet(Entry e, Texture2D tex)
+        {
+            string name = tex.name;
+            if (e.Clips.TryGetValue(name, out var have)) return have;
+            bool idle = string.Equals(name, IdleSheet, System.StringComparison.OrdinalIgnoreCase);
+            int pf = Mathf.Max(1, Mathf.RoundToInt(tex.width / (tex.height * MoveFrameAspect)));
+            float fps = PosedFps;
+            int strike = -1, recover = -1, cols = 0;
+            if (e.Table != null && e.Table.TryGetValue(name, out var row))
+            {
+                if (row.frames > 0) pf = row.frames;
+                if (row.fps > 0f) fps = row.fps;
+                strike = row.strike;
+                recover = row.recover;
+                cols = row.cols;
+            }
+            var pc = new SpriteClip { name = name, frames = Slice(tex, pf, cols), fps = fps, loop = idle,
+                                      strikeFrame = strike, recoverFrame = recover };
+            e.Clips[name] = pc;
+            if (!e.Textures.Contains(tex)) e.Textures.Add(tex);
+            if (idle)
+            {
+                // the sheet's idle drawing wins over the front-facing cutout idle
+                e.IdleSheet = pc;
+                e.Clips["Idle"] = new SpriteClip { name = "Idle", frames = pc.frames, fps = pc.fps, loop = true };
+            }
+            return pc;
+        }
+
+        /// <summary>
+        /// Whole folder (Resources.LoadAll): sheet-pose clips not loaded yet, then the legacy strip cutouts. Only for
+        /// menu / legacy lookups of a cutout name and folders without clips.txt; the fight view never needs it.
+        /// </summary>
+        static void LoadFolder(string characterId, Entry e)
+        {
+            e.FolderLoaded = true;
+            FolderLoadCount++;
+            var textures = Resources.LoadAll<Texture2D>(Root + characterId);
+            foreach (var tex in textures)
+            {
+                if (!e.Textures.Contains(tex)) e.Textures.Add(tex);
+                if (IsSheetName(tex.name)) AddSheet(e, tex);
+            }
+            foreach (var tex in textures)
+            {
+                string name = tex.name;
+                if (IsSheetName(name)) continue;
+                int frames = 0;
+                int us = name.LastIndexOf('_');
+                if (us > 0 && int.TryParse(name.Substring(us + 1), out int n) && n > 0)
+                {
+                    frames = n;
+                    name = name.Substring(0, us);
+                }
+                string clip = Canonical(name);
+                if (clip == null)
+                {
+                    Debug.LogWarning("ChibiClash: unknown animation sheet '" + tex.name + "' for " + characterId);
+                    continue;
+                }
+                if (e.Clips.ContainsKey(clip)) continue;   // "Idle" is Idle_Sheet's alias when the sheet exists
+                if (frames <= 0) frames = DefaultFrames(clip);
+                e.Clips[clip] = new SpriteClip { name = clip, frames = Slice(tex, frames), fps = Fps, loop = Loops(clip) };
+            }
+            e.Next = e.Pending.Count;   // every listed sheet came with the folder
+        }
+
+        static bool IsSheetName(string name) =>
+            string.Equals(name, IdleSheet, System.StringComparison.OrdinalIgnoreCase)
+            || name.StartsWith(MovePrefix, System.StringComparison.OrdinalIgnoreCase)
+            || name.StartsWith(SheetPrefix, System.StringComparison.OrdinalIgnoreCase);
 
         static readonly Dictionary<string, string> moveNames = new Dictionary<string, string>(System.StringComparer.Ordinal);
 
@@ -267,28 +436,59 @@ namespace ChibiClash
             }
         }
 
+        /// <summary>True for the legacy cutout clips that loop (Idle, Run, Victory).</summary>
         public static bool Loops(string clip) => clip == "Idle" || clip == "Run" || clip == "Victory";
 
-        /// <summary>The clip, or null when no sheet exists for it (or <paramref name="characterId"/> is empty).</summary>
+        /// <summary>
+        /// The clip, or null when no sheet exists for it (or <paramref name="characterId"/> is empty). A sheet-pose name
+        /// not loaded yet is loaded alone; a cutout name loads the character's whole folder once (menus / legacy).
+        /// </summary>
         public static SpriteClip Get(string characterId, string clip)
         {
             if (string.IsNullOrEmpty(characterId) || clip == null) return null;
-            return Table(characterId).TryGetValue(clip, out var c) ? c : null;
+            var e = EntryOf(characterId);
+            return e.Clips.TryGetValue(clip, out var c) ? c : LoadOnDemand(characterId, e, clip);
+        }
+
+        static SpriteClip LoadOnDemand(string characterId, Entry e, string clip)
+        {
+            if (e.Missing.Contains(clip)) return null;
+            SpriteClip c;
+            if (IsSheetName(clip))
+            {
+                if (!e.FolderLoaded) return LoadSheet(characterId, e, clip);   // remembers a miss
+                e.Missing.Add(clip);
+                return null;
+            }
+            if (string.Equals(clip, "Idle", System.StringComparison.OrdinalIgnoreCase) && e.IdleSheet == null &&
+                e.Table != null && e.Table.ContainsKey(IdleSheet))
+            {
+                LoadSheet(characterId, e, IdleSheet);
+                if (e.Clips.TryGetValue(clip, out c)) return c;
+            }
+            if (!e.FolderLoaded)
+            {
+                LoadFolder(characterId, e);
+                if (e.Clips.TryGetValue(clip, out c)) return c;
+            }
+            e.Missing.Add(clip);
+            return null;
         }
 
         /// <summary>
         /// Fight-mode lookup: the clip only when <paramref name="clip"/> is a moveset-sheet name (Idle_Sheet, Sheet_*,
         /// Move_*; <see cref="FightClips.IsSheetClip"/>), else null. Never returns a costume cutout (not even the "Idle"
-        /// alias) or the body drawing. Same cache as <see cref="Get"/>.
+        /// alias) or the body drawing, and never loads the strip cutouts. Same cache as <see cref="Get"/>.
         /// </summary>
         public static SpriteClip GetSheet(string characterId, string clip) =>
             FightClips.IsSheetClip(clip) ? Get(characterId, clip) : null;
 
-        /// <summary>True when at least one sheet exists for the character.</summary>
+        /// <summary>True when at least one sheet exists (or is listed in clips.txt) for the character.</summary>
         public static bool HasAny(string characterId)
         {
             if (string.IsNullOrEmpty(characterId)) return false;
-            return Table(characterId).Count > 0;
+            var e = EntryOf(characterId);
+            return e.Clips.Count > 0 || e.Pending.Count > 0;
         }
 
         /// <summary>Full-body front drawing Resources/Characters/&lt;Id&gt; (1024x1024, feet at 1010 px), or null.</summary>
@@ -306,65 +506,13 @@ namespace ChibiClash
             return s;
         }
 
-        static Dictionary<string, SpriteClip> Load(string characterId)
-        {
-            var result = new Dictionary<string, SpriteClip>();
-            var textures = Resources.LoadAll<Texture2D>("Animations/" + characterId);
-            LoadCount++;
-            sheets[characterId] = textures;
-            var table = ReadClipTable(Resources.Load<TextAsset>("Animations/" + characterId + "/" + ClipTable));
-            SpriteClip idleSheet = null;
-            foreach (var tex in textures)
-            {
-                string name = tex.name;
-                bool idle = string.Equals(name, IdleSheet, System.StringComparison.OrdinalIgnoreCase);
-                if (idle || name.StartsWith(MovePrefix, System.StringComparison.OrdinalIgnoreCase)
-                         || name.StartsWith(SheetPrefix, System.StringComparison.OrdinalIgnoreCase))
-                {
-                    // sheet-pose clip: the file name is the key (Move_kaia_ftilt / Idle_Sheet); frames, rate and phases
-                    // from clips.txt, else the fixed frame aspect at PosedFps
-                    int pf = Mathf.Max(1, Mathf.RoundToInt(tex.width / (tex.height * MoveFrameAspect)));
-                    float fps = PosedFps;
-                    int strike = -1, recover = -1, cols = 0;
-                    if (table != null && table.TryGetValue(name, out var row))
-                    {
-                        if (row.frames > 0) pf = row.frames;
-                        if (row.fps > 0f) fps = row.fps;
-                        strike = row.strike;
-                        recover = row.recover;
-                        cols = row.cols;
-                    }
-                    var pc = new SpriteClip { name = name, frames = Slice(tex, pf, cols), fps = fps, loop = idle,
-                                              strikeFrame = strike, recoverFrame = recover };
-                    result[name] = pc;
-                    if (idle) idleSheet = pc;
-                    continue;
-                }
-                int frames = 0;
-                int us = name.LastIndexOf('_');
-                if (us > 0 && int.TryParse(name.Substring(us + 1), out int n) && n > 0)
-                {
-                    frames = n;
-                    name = name.Substring(0, us);
-                }
-                string clip = Canonical(name);
-                if (clip == null)
-                {
-                    Debug.LogWarning("ChibiClash: unknown animation sheet '" + tex.name + "' for " + characterId);
-                    continue;
-                }
-                if (frames <= 0) frames = DefaultFrames(clip);
-                result[clip] = new SpriteClip { name = clip, frames = Slice(tex, frames), fps = Fps, loop = Loops(clip) };
-            }
-            // the sheet's idle drawing wins over the front-facing cutout idle
-            if (idleSheet != null) result["Idle"] = new SpriteClip { name = "Idle", frames = idleSheet.frames, fps = idleSheet.fps, loop = true };
-            return result;
-        }
-
         struct ClipRow { public int frames, strike, recover, cols; public float fps; }
 
-        /// <summary>Parses clips.txt ("name frameCount fps strikeFrame recoverFrame [columns]" per line); null when absent.</summary>
-        static Dictionary<string, ClipRow> ReadClipTable(TextAsset asset)
+        /// <summary>
+        /// Parses clips.txt ("name frameCount fps strikeFrame recoverFrame [columns]" per line); null when absent. The
+        /// clip names are appended to <paramref name="order"/> in file order.
+        /// </summary>
+        static Dictionary<string, ClipRow> ReadClipTable(TextAsset asset, List<string> order)
         {
             if (asset == null) return null;
             var rows = new Dictionary<string, ClipRow>(System.StringComparer.OrdinalIgnoreCase);
@@ -381,6 +529,7 @@ namespace ChibiClash
                 int.TryParse(p[4], System.Globalization.NumberStyles.Integer, inv, out int r);
                 int c = 0;
                 if (p.Length > 5) int.TryParse(p[5], System.Globalization.NumberStyles.Integer, inv, out c);
+                if (!rows.ContainsKey(p[0])) order.Add(p[0]);
                 rows[p[0]] = new ClipRow { frames = f, fps = fps, strike = s, recover = r, cols = c };
             }
             return rows;

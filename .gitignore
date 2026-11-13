@@ -129,3 +129,6 @@ __pycache__/
 
 # Studio hook logs written when an agent ran from a subfolder
 **/production/session-logs/
+# ...and the folders (+ Unity .meta) those logs create inside Assets/
+Assets/**/production/
+Assets/**/production.meta

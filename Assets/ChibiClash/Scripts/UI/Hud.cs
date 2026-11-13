@@ -711,14 +711,30 @@ namespace ChibiClash
         const float PointerReach = PointerGap + PointerH;   // room a tag keeps above and below itself for its pointer
         // Popups: draw box (body text wraps past its width) and the line height the display lettering uses (Outlined).
         const float PopupW = 300f, PopupH = 40f, PopupLineH = 1.2f, ComicOutline = 2.5f;
+        // Popups: font size at popup size 1 (drawn at this size, the spawn "pop" is a GUI scale, so the font atlas is not
+        // re-rasterised every frame), and how fast (1/s) a popup eases to its placed spot instead of snapping there.
+        const float PopupBaseFont = 20f, PopupFollowRate = 14f;
         /// <summary>Minimum space between a world label and a plate or another label.</summary>
         const float LabelGap = 6f;
 
-        // Keep-out rects: up to 6 plates, then the placed name tags (tag + pointer room) appended after them.
-        const int MaxPlates = 6;
-        static readonly Rect[] labelBlockers = new Rect[MaxPlates + 2];
+        // Keep-out rects: up to 6 plates, then the placed name tags (tag + pointer room), then the placed popups.
+        const int MaxPlates = 6, MaxPopupBlockers = 24;
+        static readonly Rect[] labelBlockers = new Rect[MaxPlates + 2 + MaxPopupBlockers];
         static int plateCount, blockerCount;
         static Rect labelArea;
+
+        /// <summary>Per-popup layout cache: base font size and text width measured once, and the eased on-screen centre.</summary>
+        sealed class PopupLayout
+        {
+            public string Text;
+            public int Size;
+            public float Width;
+            public Vector2 Shown;
+            public int Frame;
+        }
+        static readonly Dictionary<Fx.Popup, PopupLayout> popupLayouts = new Dictionary<Fx.Popup, PopupLayout>();
+        static readonly List<Fx.Popup> popupStale = new List<Fx.Popup>(8);
+        static int popupFrame = -1;
 
         static Rect PanelRect(int i) => new Rect(i == 0 ? PanelInset : Gui.W - PanelInset - PanelW, PanelTop, PanelW, PanelH);
         static Rect TimerRect() => new Rect(Gui.W * 0.5f - TimerW * 0.5f, TimerTop, TimerW, TimerH);
@@ -781,44 +797,68 @@ namespace ChibiClash
         }
 
         /// <summary>
-        /// Floating text (move callouts, comic SFX, damage): each one is kept on screen, out of the HUD plates and off
-        /// both name tags, stacking above a tag it would cover (below it when the tag is already under the top band).
+        /// Floating text (move callouts, comic SFX, damage): each one is kept on screen, out of the HUD plates, off both
+        /// name tags and off the popups placed before it (older first, so a new damage number never covers a callout),
+        /// stacking above a tag it would cover (below it when the tag is already under the top band). The drawn
+        /// position eases toward the placed spot (no snapping when a popup crosses a tag or plate); the text is measured
+        /// once per popup at its base size and the spawn "pop" is a GUI scale, so no per-frame font sizes.
         /// </summary>
         static void Popups()
         {
+            int frame = Time.frameCount;
+            bool newFrame = frame != popupFrame;   // OnGUI runs several passes per frame: ease once per frame
+            popupFrame = frame;
+            float dt = Time.unscaledDeltaTime;
             foreach (var p in Fx.Popups)
             {
+                bool fresh = !popupLayouts.TryGetValue(p, out var lay) || !ReferenceEquals(lay.Text, p.text);
+                if (fresh)
+                {
+                    if (lay == null) popupLayouts[p] = lay = new PopupLayout();
+                    lay.Text = p.text;
+                    lay.Size = Mathf.Max(1, Mathf.RoundToInt(PopupBaseFont * p.size));
+                    lay.Width = Gui.Measure(p.text, lay.Size);
+                }
+                lay.Frame = frame;
                 var g = Gui.WorldToGui(p.pos);
                 float a = 1f - Mathf.Clamp01((p.t - 0.6f) / 0.5f);
                 float pop = 1f + Mathf.Max(0f, 0.3f - p.t) * 1.5f;
-                int size = Mathf.RoundToInt(20f * p.size * pop);
-                float tw = Gui.Measure(p.text, size);
                 float pad = p.comic ? 2f * ComicOutline : 0f;
-                var ext = p.comic ? HudLabelLayout.RotatedSize(tw + pad, size * PopupLineH + pad, p.tilt)
-                                  : new Vector2(tw, size * PopupLineH);
-                var placed = HudLabelLayout.Place(new Rect(g.x - ext.x * 0.5f, g.y - ext.y * 0.5f, ext.x, ext.y), labelArea,
-                                                  labelBlockers, blockerCount, LabelGap, true);
-                g = placed.center;
-                float dw = Mathf.Max(PopupW, tw + pad);   // never narrower than the text: body text would wrap
+                var ext = (p.comic ? HudLabelLayout.RotatedSize(lay.Width + pad, lay.Size * PopupLineH + pad, p.tilt)
+                                   : new Vector2(lay.Width, lay.Size * PopupLineH)) * pop;
+                var placed = HudLabelLayout.PlaceAndBlock(new Rect(g.x - ext.x * 0.5f, g.y - ext.y * 0.5f, ext.x, ext.y),
+                                                          labelArea, labelBlockers, ref blockerCount, LabelGap, true);
+                if (fresh) lay.Shown = placed.center;   // a new popup appears at its free spot
+                else if (newFrame) lay.Shown = HudLabelLayout.Follow(lay.Shown, placed.center, dt, PopupFollowRate);
+                g = lay.Shown;
+                float dw = Mathf.Max(PopupW, lay.Width + pad);   // never narrower than the text: body text would wrap
                 var rect = new Rect(g.x - dw * 0.5f, g.y - PopupH * 0.5f, dw, PopupH);
+                var saved = GUI.matrix;
+                var pivot = g * Gui.Scale;   // pivot in screen pixels (as Gui.Line)
+                if (pop > 1f) GUIUtility.ScaleAroundPivot(new Vector2(pop, pop), pivot);
                 if (p.comic)
                 {
                     // Comic SFX lettering (character sheets): thick dark outline, slight tilt, colour fill on top.
-                    var saved = GUI.matrix;
-                    GUIUtility.RotateAroundPivot(p.tilt, g * Gui.Scale);   // pivot in screen pixels (as Gui.Line)
+                    GUIUtility.RotateAroundPivot(p.tilt, pivot);
                     var ink = new Color(0.08f, 0.06f, 0.1f, a);
                     const float o = ComicOutline;
                     for (int k = 0; k < 8; k++)
                     {
                         float ang = k * Mathf.PI / 4f;
                         Gui.Text(new Rect(rect.x + Mathf.Cos(ang) * o, rect.y + Mathf.Sin(ang) * o, rect.width, rect.height),
-                                 p.text, size, ink);
+                                 p.text, lay.Size, ink);
                     }
-                    Gui.Text(rect, p.text, size, new Color(p.color.r, p.color.g, p.color.b, a));
-                    GUI.matrix = saved;
-                    continue;
                 }
-                Gui.Text(rect, p.text, size, new Color(p.color.r, p.color.g, p.color.b, a));
+                Gui.Text(rect, p.text, lay.Size, new Color(p.color.r, p.color.g, p.color.b, a));
+                GUI.matrix = saved;
+            }
+            if (popupLayouts.Count > Fx.Popups.Count)
+            {
+                // drop the layouts of popups that expired (or were cleared with the match); no allocation
+                popupStale.Clear();
+                foreach (var kv in popupLayouts) if (kv.Value.Frame != frame) popupStale.Add(kv.Key);
+                foreach (var k in popupStale) popupLayouts.Remove(k);
+                popupStale.Clear();
             }
         }
 
