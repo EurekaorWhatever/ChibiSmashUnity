@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -54,7 +55,31 @@ namespace ChibiClash
         }
 
         static bool IsMouse(string s) => s == MouseLeft || s == MouseRight || s == MouseMiddle;
-        static bool IsValid(string s) => IsMouse(s) || Enum.TryParse(s, out Key _);
+        static bool IsValid(string s) => IsMouse(s) || TryKey(s, out _);
+
+        /// <summary>
+        /// Binding string -> parsed <see cref="Key"/> as int, or -1 when the string is not a Key name.
+        /// <see cref="Held"/> / <see cref="Pressed"/> run ~100 times a frame, and Enum.TryParse allocates on every call
+        /// (~2.7 KB/frame measured 2026-11-14), so each distinct string is parsed once. The mapping is pure, so it never
+        /// needs invalidating when bindings change. Main thread only.
+        /// </summary>
+        static readonly Dictionary<string, int> parsedKeys = new Dictionary<string, int>();
+
+        /// <summary>Same result as <c>Enum.TryParse(s, out Key k)</c>, without allocating after the first call per string.</summary>
+        /// <example><code>if (TryKey("Space", out Key k)) control = Keyboard.current[k];</code></example>
+        static bool TryKey(string s, out Key k)
+        {
+            k = Key.None;
+            if (s == null) return false;
+            if (!parsedKeys.TryGetValue(s, out int v))
+            {
+                v = Enum.TryParse(s, out Key p) ? (int)p : -1;
+                parsedKeys[s] = v;
+            }
+            if (v < 0) return false;
+            k = (Key)v;
+            return true;
+        }
 
         static ButtonControl Control(string s)
         {
@@ -65,7 +90,7 @@ namespace ChibiClash
                 return s == MouseLeft ? m.leftButton : s == MouseRight ? m.rightButton : m.middleButton;
             }
             var kb = Keyboard.current;
-            if (kb == null || !Enum.TryParse(s, out Key k) || k == Key.None) return null;
+            if (kb == null || !TryKey(s, out Key k) || k == Key.None) return null;
             return kb[k];
         }
 
