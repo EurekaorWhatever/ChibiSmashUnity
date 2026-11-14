@@ -233,7 +233,7 @@ namespace ChibiClash.Netcode
                 var ch = CharacterRoster.Of(cls);
                 _fx[i] = ch.Fx;
                 _accent[i] = ch.Accent;
-                _vis[i].SetFacing(state.F[i].Facing >= 0 ? 1 : -1);
+                _vis[i].SnapFacing(state.F[i].Facing >= 0 ? 1 : -1);   // spawn: no turn animation
                 go.transform.position = WorldPos(state.F[i].X, state.F[i].Y);
 
                 // FireRing.Spawn (CombatObjects.cs:229-235): soft glow + ring sprite, built once and toggled by RingTicks.

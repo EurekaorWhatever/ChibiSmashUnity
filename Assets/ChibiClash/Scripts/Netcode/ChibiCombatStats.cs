@@ -197,8 +197,8 @@ namespace ChibiClash.Netcode
         /// <summary>
         /// Light/heavy timing from the original's dur = baseMs / AttackSpeed (normals-conversion.md sections 1a-1c):
         /// k_strike = ceil(24·baseMs·1000 / spPpm), k_lock = ceil(60·baseMs·1000 / spPpm);
-        /// Startup = k_strike - 1, Active = 1, Recovery = k_lock - k_strike - 1, so the hit probe runs on tick k_strike and
-        /// the next normal is accepted on tick k_lock. Example (base light, 240 ms): 5/1/8, hit tick 6, accepted on 15.
+        /// Startup = k_strike - 1, Active = 1, Recovery = (k_lock - k_strike - 1) x 3/4 (rules v22), so the hit probe runs on tick k_strike. Example (base
+        /// light, 240 ms): 5/1/6, hit tick 6, next normal accepted on tick 13 (was 15 before v22).
         /// </summary>
         /// <param name="baseMs">240 (light) or 420 (heavy).</param>
         /// <param name="spPpm">Multiplicative attack speed from <see cref="AttackSpeedPpm"/>.</param>
@@ -207,7 +207,7 @@ namespace ChibiClash.Netcode
             int kStrike = (24 * baseMs * 1000 + spPpm - 1) / spPpm;
             int kLock = (60 * baseMs * 1000 + spPpm - 1) / spPpm;
             startup = kStrike - 1;
-            recovery = kLock - kStrike - 1;
+            recovery = (kLock - kStrike - 1) * 3 / 4;   // rules v22: recovery trimmed by a quarter (integer, rounds down)
             if (recovery < 0) recovery = 0;
         }
     }

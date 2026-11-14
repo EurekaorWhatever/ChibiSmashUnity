@@ -111,7 +111,7 @@ namespace ChibiClash.Tests
             var mv = ChibiMoveTable.Get((int)FighterClass.Melee, DashThrustSlot);
             Assert.AreEqual(0, mv.Startup, "original checks for a hit from the first frame");
             Assert.AreEqual(13, mv.Active, "original dash lasts 0.22 s = 13 ticks");
-            Assert.AreEqual(24, mv.Startup + mv.Active + mv.Recovery, "original locks actions for 0.4 s = 24 ticks");
+            Assert.AreEqual(23, mv.Startup + mv.Active + mv.Recovery, "original 0.4 s = 24-tick lock, recovery trimmed 11 -> 10 in rules v22 (EL-1)");
             Assert.AreEqual(1600, mv.Mult, "original damage is 1.6x");
         }
     }

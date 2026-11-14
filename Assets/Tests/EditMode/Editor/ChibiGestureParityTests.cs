@@ -45,11 +45,18 @@ namespace ChibiClash.Tests
 
         static Gesture UltGestureOf(FighterClass c) => (Gesture)ChibiSimConst.UltGesture[(int)c];
 
-        /// <summary>Fill F[0]'s meter and press Ultimate on one tick (opens the window). Returns the state.</summary>
+        /// <summary>
+        /// Fill the meter and open the gesture window by fixture injection, in the state the v15 Ult press left it (180
+        /// real ticks, Preparing). Since rules v22 (UL-1) the Ult press fires the ult directly and nothing in play opens
+        /// the window; the window code stays for a future webcam-ult option, so these tests keep it correct.
+        /// </summary>
         static void OpenWindow(ChibiSimState s, int who = 0)
         {
-            s.F[who].Ult = ChibiSimConst.UltMax;
-            if (who == 0) Step(s, B(ChibiButtons.Ultimate)); else Step(s, N, B(ChibiButtons.Ultimate));
+            var f = s.F[who];
+            f.Ult = ChibiSimConst.UltMax;
+            f.UltWindowTicks = ChibiSimConst.UltWindowTicks;
+            f.UltPrompt = (int)ChibiUltPrompt.Preparing;
+            f.UltPromptTicks = 0;
         }
 
         static int CountProj(ChibiSimState s, ChibiProjKind k)
@@ -74,29 +81,72 @@ namespace ChibiClash.Tests
             Assert.GreaterOrEqual(ChibiMatchConfig.RulesVersion, 15);
         }
 
-        // ================================================================== ult window (F:396-434)
+        // ================================================================== Ult button (rules v22, UL-1)
 
-        [Test]
-        public void UltPress_FullMeter_OpensWindow180AndPromptPreparing_MeterKept()
+        [TestCase(FighterClass.Melee)] [TestCase(FighterClass.Heavy)] [TestCase(FighterClass.Ranged)]
+        [TestCase(FighterClass.Magic)] [TestCase(FighterClass.Polearm)]
+        public void UltPress_FullMeter_FiresOnTheSameStep_NoWindow(FighterClass c)
         {
-            var s = Arena(FighterClass.Melee, FighterClass.Melee);
-            OpenWindow(s);
+            var s = Arena(c, FighterClass.Melee, -3000, 12000);
+            s.F[0].Ult = ChibiSimConst.UltMax;
+            Step(s, B(ChibiButtons.Ultimate));
             var f = s.F[0];
-            Assert.AreEqual(ChibiSimConst.UltWindowTicks, f.UltWindowTicks, "window 3 s = 180 real ticks, not counted on the open tick");
-            Assert.AreEqual((int)ChibiUltPrompt.Preparing, f.UltPrompt);
-            Assert.AreEqual(ChibiSimConst.UltMax, f.Ult, "the press alone never spends the meter");
-            Assert.AreEqual(0, f.UltsUsed, "the press alone never fires the ult");
+            Assert.AreEqual(1, f.UltsUsed, $"{c}: the key press alone fires the ult (no gesture needed)");
+            Assert.AreEqual(0, f.Ult, "meter spent");
+            Assert.AreEqual(0, f.UltWindowTicks, "no gesture window opens");
+            Assert.AreEqual((int)ChibiUltPrompt.Hidden, f.UltPrompt, "no gesture 'move detected' panel for a key press");
+            Assert.AreEqual(0, s.CinematicFighter, "ult cinematic started");
         }
 
         [Test]
-        public void UltPress_MeterNotFull_NoWindow()
+        public void UltPress_MeterNotFull_NothingHappens()
         {
             var s = Arena(FighterClass.Melee, FighterClass.Melee);
             s.F[0].Ult = ChibiSimConst.UltMax - 1;
             Step(s, B(ChibiButtons.Ultimate));
             Assert.AreEqual(0, s.F[0].UltWindowTicks);
+            Assert.AreEqual(0, s.F[0].UltsUsed);
             Assert.AreEqual((int)ChibiUltPrompt.Hidden, s.F[0].UltPrompt);
         }
+
+        [Test]
+        public void UltPress_WhileDashing_FiresAndEndsTheDash()
+        {
+            var s = Arena(FighterClass.Heavy, FighterClass.Melee, -3000, 12000);
+            Step(s, B(ChibiButtons.Dash));
+            Step(s, N);
+            Assert.Greater(s.F[0].DashTicks, 0, "precondition: dashing");
+            s.F[0].Ult = ChibiSimConst.UltMax;
+            Step(s, B(ChibiButtons.Ultimate));
+            Assert.AreEqual(1, s.F[0].UltsUsed);
+            Assert.AreEqual(0, s.F[0].DashTicks, "the ult start interrupts the dash");
+            Assert.AreEqual(5, s.F[0].MoveSlot, "the Heavy ult program is running");
+        }
+
+        [Test]
+        public void UltPress_WhileStunned_DoesNotFire()
+        {
+            var s = Arena(FighterClass.Melee, FighterClass.Melee, -3000, 12000);
+            s.F[0].Ult = ChibiSimConst.UltMax;
+            s.F[0].Stun = 30;
+            Step(s, B(ChibiButtons.Ultimate));
+            Assert.AreEqual(0, s.F[0].UltsUsed, "the button needs the fighter able to act");
+        }
+
+        [Test]
+        public void UltPress_DuringHitstop_FiresOnFirstUnfrozenStep()
+        {
+            var s = Arena(FighterClass.Melee, FighterClass.Melee, -3000, 12000);
+            s.F[0].Ult = ChibiSimConst.UltMax;
+            s.HitstopRealTicks = 3;
+            int g0 = s.GameTicks;
+            Step(s, B(ChibiButtons.Ultimate));
+            for (int k = 0; k < 10 && s.F[0].UltsUsed == 0; k++) Step(s, N);
+            Assert.AreEqual(1, s.F[0].UltsUsed, "the latched press fires once game steps resume");
+            Assert.Greater(s.GameTicks, g0);
+        }
+
+        // ================================================================== dormant gesture window (F:396-434)
 
         [TestCase(FighterClass.Melee)] [TestCase(FighterClass.Heavy)] [TestCase(FighterClass.Ranged)]
         [TestCase(FighterClass.Magic)] [TestCase(FighterClass.Polearm)]
@@ -120,15 +170,13 @@ namespace ChibiClash.Tests
         }
 
         [Test]
-        public void ClassGesture_AlreadyHeldWhenWindowOpens_FiresNextTick()
+        public void ClassGesture_AlreadyHeldWhenWindowOpens_FiresOnFirstWindowTick()
         {
             // StableTime is a property of the gesture, not of the window (F:412): a long-held gesture fires on the first window tick.
             var s = Arena(FighterClass.Ranged, FighterClass.Melee, -3000, 12000);
             var g = G(Gesture.PunchForward);
             for (int k = 0; k < 20; k++) Step(s, g);   // also fires one Pose Fireball (onset) before the window exists
-            s.F[0].Ult = ChibiSimConst.UltMax;
-            Step(s, G(Gesture.PunchForward, ChibiButtons.Ultimate));
-            Assert.AreEqual(0, s.F[0].UltsUsed, "never on the opening tick (window checked before the press, F:176 vs F:266)");
+            OpenWindow(s);
             Step(s, g);
             Assert.AreEqual(1, s.F[0].UltsUsed);
         }
@@ -151,21 +199,16 @@ namespace ChibiClash.Tests
         }
 
         [Test]
-        public void RetryWait_PressBlockedUntilTick90_ThenOpens()
+        public void RetryWait_CountsDownTo0_AndNeverBlocksTheButton()
         {
             var s = Arena(FighterClass.Heavy, FighterClass.Melee, -3000, 12000);
             OpenWindow(s);
             for (int k = 1; k <= ChibiSimConst.UltWindowTicks; k++) Step(s, N);
             Assert.AreEqual(ChibiSimConst.UltRetryTicks, s.F[0].UltRetryTicks);
+            Step(s, B(ChibiButtons.Ultimate));             // rules v22: the button fires even inside the retry wait
+            Assert.AreEqual(1, s.F[0].UltsUsed);
             for (int k = 1; k < ChibiSimConst.UltRetryTicks; k++) Step(s, N);
-            var early = new ChibiSimState(); early.CopyFrom(s);
-            Step(early, B(ChibiButtons.Ultimate));          // retry tick 90 = this tick: Dec runs first, reaches 0
-            Assert.AreEqual(ChibiSimConst.UltWindowTicks, early.F[0].UltWindowTicks, "opens on the tick the wait reaches 0");
-
-            var late = new ChibiSimState(); late.CopyFrom(s);
-            late.F[0].UltRetryTicks += 1;                  // one tick earlier in the wait
-            Step(late, B(ChibiButtons.Ultimate));
-            Assert.AreEqual(0, late.F[0].UltWindowTicks, "blocked while the retry wait is still running");
+            Assert.AreEqual(0, s.F[0].UltRetryTicks, "the wait reaches 0 on real tick 90");
         }
 
         [Test]

@@ -24,6 +24,10 @@ namespace ChibiClash
         float restAngle;
         float flashT;
         int facing = 1;
+        /// <summary>Rules v22 turn (view only): the X scale sign shown now, easing from <see cref="turnFrom"/> to facing.</summary>
+        float shownFacing = 1f, turnFrom = 1f, turnT = TurnTime;
+        /// <summary>Length of the visual turn: 4 frames at 60 Hz, real time so hitstop slow-motion does not stall it.</summary>
+        const float TurnTime = 4f / 60f;
         float bob;
         Vector2 handRest = new Vector2(0.28f, -0.2f);
         float alpha = 1f;
@@ -303,10 +307,39 @@ namespace ChibiClash
             for (int i = 0; i < weaponSrs.Length; i++) weaponSrs[i].enabled = on;
         }
 
+        /// <summary>
+        /// Sets the facing the fighter turns toward. A change starts a quick squash-turn (<see cref="TurnTime"/>) from the
+        /// scale shown now instead of a one-frame flip; <see cref="Tick(Vector2, bool, bool, FightFlags, float, float)"/>
+        /// plays it. Lean and other facing-relative offsets use the new facing at once.
+        /// </summary>
         public void SetFacing(int f)
         {
+            if (f == facing) return;
+            turnFrom = shownFacing;
             facing = f;
+            turnT = 0f;
+        }
+
+        /// <summary>Sets the facing with no turn animation (spawn, menus).</summary>
+        public void SnapFacing(int f)
+        {
+            facing = f;
+            shownFacing = turnFrom = f;
+            turnT = TurnTime;
             root.localScale = new Vector3(f * SizeMul, SizeMul, 1f);
+        }
+
+        /// <summary>Advances the visual turn by <paramref name="dt"/> seconds; returns the Y scale bump of the squash.</summary>
+        float StepTurn(float dt)
+        {
+            if (turnT >= TurnTime) { shownFacing = facing; return 1f; }
+            turnT += dt;
+            float k = Mathf.Clamp01(turnT / TurnTime);
+            float e = k * k * (3f - 2f * k);                    // smoothstep
+            float x = Mathf.Lerp(turnFrom, facing, e);
+            if (Mathf.Abs(x) < 0.15f) x = 0.15f * (e < 0.5f ? Mathf.Sign(turnFrom) : facing);   // never a zero-width frame
+            shownFacing = x;
+            return 1f + 0.08f * Mathf.Sin(k * Mathf.PI);
         }
 
         /// <summary>Body opacity (stealth skills); 1 = normal.</summary>
@@ -949,9 +982,10 @@ namespace ChibiClash
                 body.localScale = new Vector3(sx, sy, 1f);
                 body.localPosition = bodyBase + new Vector3(0f, yOff, 0f);
             }
+            float turnY = StepTurn(Application.isPlaying ? Time.unscaledDeltaTime : dt);
             if (spinT >= 0f && !sheet)
-                root.localScale = new Vector3(Mathf.Cos(spinT * Mathf.PI * 8f) * facing * SizeMul, SizeMul, 1f);
-            else root.localScale = new Vector3(facing * SizeMul, SizeMul, 1f);
+                root.localScale = new Vector3(Mathf.Cos(spinT * Mathf.PI * 8f) * shownFacing * SizeMul, SizeMul * turnY, 1f);
+            else root.localScale = new Vector3(shownFacing * SizeMul, SizeMul * turnY, 1f);
 
             weaponPivot.localPosition = offset;
             weaponPivot.localRotation = Quaternion.Euler(0, 0, angle);

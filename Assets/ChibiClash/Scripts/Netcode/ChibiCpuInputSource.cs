@@ -437,7 +437,10 @@ namespace ChibiClash.Netcode
             }
 
             // Ult: more eager when the opponent sits at kill percent (spec 3.5 CPU rule; ult hits get the base bonus).
-            if (self.Ult >= ChibiSimConst.UltMax && self.UltWindowTicks == 0 && _rng.Roll(HighPercent(opp) ? 60 : 20))
+            // Rules v22: the press fires the ult at once, so the old gesture success odds (60 % + 12 % per difficulty)
+            // scale the per-tick press chance instead, keeping easy CPUs slower to spend a full meter.
+            if (self.Ult >= ChibiSimConst.UltMax && self.UltWindowTicks == 0 &&
+                _rng.Roll((HighPercent(opp) ? 60 : 20) * (600 + 120 * _difficulty) / 1000))
                 press |= ChibiButtons.Ultimate;
             FinishTick(self, st, ref press);
             return false;

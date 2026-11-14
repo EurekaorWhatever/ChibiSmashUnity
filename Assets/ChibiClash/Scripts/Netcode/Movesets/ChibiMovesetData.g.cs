@@ -15,7 +15,7 @@ namespace ChibiClash.Netcode
             // kaia_ftilt Forward Tilt (L+F, G) slot 7
             new ChibiMove
             {
-                Startup = 5, Active = 5, Recovery = 24, Mult = 1870,
+                Startup = 5, Active = 5, Recovery = 18, Mult = 1870,
                 BoxX = 0, BoxW = 1650, BoxY = 150, BoxH = 1100, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -28,7 +28,7 @@ namespace ChibiClash.Netcode
             // kaia_utilt Up Tilt (L+U, G) slot 8
             new ChibiMove
             {
-                Startup = 6, Active = 4, Recovery = 22, Mult = 1800,
+                Startup = 6, Active = 4, Recovery = 17, Mult = 1800,
                 BoxX = -600, BoxW = 1700, BoxY = 700, BoxH = 1300, KbX = 22500, KbY = 90000, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -41,7 +41,7 @@ namespace ChibiClash.Netcode
             // kaia_dtilt Down Tilt (L+D, G) slot 9
             new ChibiMove
             {
-                Startup = 5, Active = 4, Recovery = 20, Mult = 1730,
+                Startup = 5, Active = 4, Recovery = 16, Mult = 1730,
                 BoxX = 0, BoxW = 1850, BoxY = 0, BoxH = 450, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -54,7 +54,7 @@ namespace ChibiClash.Netcode
             // kaia_dash Dash Attack (L@dash, G) slot 10
             new ChibiMove
             {
-                Startup = 8, Active = 6, Recovery = 28, Mult = 2120,
+                Startup = 8, Active = 6, Recovery = 21, Mult = 2120,
                 BoxX = 0, BoxW = 1650, BoxY = 100, BoxH = 1100, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 150, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -67,7 +67,7 @@ namespace ChibiClash.Netcode
             // kaia_fsmash Forward Smash (H+F, G) slot 11
             new ChibiMove
             {
-                Startup = 14, Active = 6, Recovery = 36, Mult = 2830,
+                Startup = 14, Active = 6, Recovery = 29, Mult = 2830,
                 BoxX = 0, BoxW = 2050, BoxY = 100, BoxH = 1300, KbX = 150000, KbY = 112500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -81,7 +81,7 @@ namespace ChibiClash.Netcode
             // kaia_usmash Up Smash (H+U, G) slot 12
             new ChibiMove
             {
-                Startup = 16, Active = 5, Recovery = 38, Mult = 2740,
+                Startup = 16, Active = 5, Recovery = 31, Mult = 2740,
                 BoxX = 0, BoxW = 1600, BoxY = 800, BoxH = 1500, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -95,7 +95,7 @@ namespace ChibiClash.Netcode
             // kaia_dsmash Down Smash (H+D, G) slot 13
             new ChibiMove
             {
-                Startup = 15, Active = 6, Recovery = 40, Mult = 2650,
+                Startup = 15, Active = 6, Recovery = 32, Mult = 2650,
                 BoxX = 0, BoxW = 3900, BoxY = 0, BoxH = 600, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -109,7 +109,7 @@ namespace ChibiClash.Netcode
             // kaia_lowsweep Low Sweep (L+D@dash, G) slot 14
             new ChibiMove
             {
-                Startup = 7, Active = 5, Recovery = 26, Mult = 1730,
+                Startup = 7, Active = 5, Recovery = 20, Mult = 1730,
                 BoxX = 0, BoxW = 1650, BoxY = 0, BoxH = 450, KbX = 22500, KbY = 0, Stun = 34,
                 SelfVx = 120, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -122,7 +122,7 @@ namespace ChibiClash.Netcode
             // kaia_nair Neutral Air (L, A) slot 15
             new ChibiMove
             {
-                Startup = 5, Active = 4, Recovery = 24, Mult = 1730,
+                Startup = 5, Active = 4, Recovery = 18, Mult = 1730,
                 BoxX = 0, BoxW = 0, BoxY = 675, BoxH = 0, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -135,7 +135,7 @@ namespace ChibiClash.Netcode
             // kaia_fair Forward Air (L+F, A) slot 16
             new ChibiMove
             {
-                Startup = 6, Active = 4, Recovery = 26, Mult = 2000,
+                Startup = 6, Active = 4, Recovery = 20, Mult = 2000,
                 BoxX = 0, BoxW = 1550, BoxY = 300, BoxH = 1100, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -148,7 +148,7 @@ namespace ChibiClash.Netcode
             // kaia_bair Back Air (L+BK, A) slot 17
             new ChibiMove
             {
-                Startup = 6, Active = 5, Recovery = 28, Mult = 2120,
+                Startup = 6, Active = 5, Recovery = 21, Mult = 2120,
                 BoxX = 0, BoxW = 1450, BoxY = 300, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -161,7 +161,7 @@ namespace ChibiClash.Netcode
             // kaia_uair Up Air (L+U, A) slot 18
             new ChibiMove
             {
-                Startup = 7, Active = 4, Recovery = 26, Mult = 1940,
+                Startup = 7, Active = 4, Recovery = 20, Mult = 1940,
                 BoxX = 0, BoxW = 1400, BoxY = 1100, BoxH = 1000, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -174,7 +174,7 @@ namespace ChibiClash.Netcode
             // kaia_dair Down Air (L+D, A) slot 19
             new ChibiMove
             {
-                Startup = 9, Active = 5, Recovery = 30, Mult = 2240,
+                Startup = 9, Active = 5, Recovery = 23, Mult = 2240,
                 BoxX = 0, BoxW = 1000, BoxY = -600, BoxH = 900, KbX = 30000, KbY = -150000, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -187,7 +187,7 @@ namespace ChibiClash.Netcode
             // kaia_nspec Blade Flurry (B, GA) slot 20
             new ChibiMove
             {
-                Startup = 8, Active = 10, Recovery = 30, Mult = 470,
+                Startup = 8, Active = 10, Recovery = 24, Mult = 470,
                 BoxX = 0, BoxW = 1650, BoxY = 150, BoxH = 1100, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 3, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -201,7 +201,7 @@ namespace ChibiClash.Netcode
             // kaia_sspec Shadow Lunge (B+F, GA) slot 21
             new ChibiMove
             {
-                Startup = 10, Active = 6, Recovery = 34, Mult = 2450,
+                Startup = 10, Active = 6, Recovery = 28, Mult = 2450,
                 BoxX = 0, BoxW = 1500, BoxY = 150, BoxH = 1100, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 200, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FLevel,
                 Ext = new ChibiMoveExt
@@ -214,7 +214,7 @@ namespace ChibiClash.Netcode
             // kaia_uspec Skyhook (B+U, GA) slot 22
             new ChibiMove
             {
-                Startup = 10, Active = 6, Recovery = 36, Mult = 2240,
+                Startup = 10, Active = 6, Recovery = 29, Mult = 2240,
                 BoxX = -400, BoxW = 1600, BoxY = 600, BoxH = 1500, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 0, SelfVy = 250, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -227,7 +227,7 @@ namespace ChibiClash.Netcode
             // kaia_dspec Blade Trap (B+D, G) slot 23
             new ChibiMove
             {
-                Startup = 12, Active = 8, Recovery = 38, Mult = 2000,
+                Startup = 12, Active = 8, Recovery = 31, Mult = 2000,
                 BoxX = 0, BoxW = 1600, BoxY = 0, BoxH = 700, KbX = 67500, KbY = 52500, Stun = 24,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -241,7 +241,7 @@ namespace ChibiClash.Netcode
             // kaia_ccc Charged Cross Cut (S3+U, G) slot 24
             new ChibiMove
             {
-                Startup = 18, Active = 6, Recovery = 42, Mult = 2140,
+                Startup = 18, Active = 6, Recovery = 36, Mult = 2140,
                 BoxX = 0, BoxW = 2100, BoxY = 100, BoxH = 1300, KbX = 150000, KbY = 112500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 300, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -282,7 +282,7 @@ namespace ChibiClash.Netcode
             // kaia_wallkick Air Kick-off (S1+U, A) slot 27
             new ChibiMove
             {
-                Startup = 4, Active = 4, Recovery = 20, Mult = 1730,
+                Startup = 4, Active = 4, Recovery = 17, Mult = 1730,
                 BoxX = 0, BoxW = 1500, BoxY = 200, BoxH = 1100, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = -60, SelfVy = 150, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -313,7 +313,7 @@ namespace ChibiClash.Netcode
             // bruna_ftilt Forward Tilt (L+F, G) slot 7
             new ChibiMove
             {
-                Startup = 6, Active = 4, Recovery = 20, Mult = 1670,
+                Startup = 6, Active = 4, Recovery = 15, Mult = 1670,
                 BoxX = 0, BoxW = 1850, BoxY = 150, BoxH = 1100, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -326,7 +326,7 @@ namespace ChibiClash.Netcode
             // bruna_utilt Up Tilt (L+U, G) slot 8
             new ChibiMove
             {
-                Startup = 7, Active = 5, Recovery = 24, Mult = 1730,
+                Startup = 7, Active = 5, Recovery = 18, Mult = 1730,
                 BoxX = -600, BoxW = 1900, BoxY = 700, BoxH = 1300, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -339,7 +339,7 @@ namespace ChibiClash.Netcode
             // bruna_dtilt Down Tilt (L+D, G) slot 9
             new ChibiMove
             {
-                Startup = 5, Active = 4, Recovery = 20, Mult = 1610,
+                Startup = 5, Active = 4, Recovery = 15, Mult = 1610,
                 BoxX = 0, BoxW = 2050, BoxY = 0, BoxH = 450, KbX = 22500, KbY = 0, Stun = 34,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -352,7 +352,7 @@ namespace ChibiClash.Netcode
             // bruna_dash Dash Attack (L@dash, G) slot 10
             new ChibiMove
             {
-                Startup = 8, Active = 5, Recovery = 28, Mult = 1900,
+                Startup = 8, Active = 5, Recovery = 21, Mult = 1900,
                 BoxX = 0, BoxW = 1850, BoxY = 100, BoxH = 1100, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 130, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -365,7 +365,7 @@ namespace ChibiClash.Netcode
             // bruna_fsmash Forward Smash (H+F, G) slot 11
             new ChibiMove
             {
-                Startup = 14, Active = 6, Recovery = 36, Mult = 2680,
+                Startup = 14, Active = 6, Recovery = 29, Mult = 2680,
                 BoxX = 0, BoxW = 2250, BoxY = 100, BoxH = 1300, KbX = 150000, KbY = 112500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -379,7 +379,7 @@ namespace ChibiClash.Netcode
             // bruna_usmash Up Smash (H+U, G) slot 12
             new ChibiMove
             {
-                Startup = 16, Active = 5, Recovery = 38, Mult = 2610,
+                Startup = 16, Active = 5, Recovery = 31, Mult = 2610,
                 BoxX = 0, BoxW = 1800, BoxY = 800, BoxH = 1500, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -393,7 +393,7 @@ namespace ChibiClash.Netcode
             // bruna_dsmash Down Smash (H+D, G) slot 13
             new ChibiMove
             {
-                Startup = 15, Active = 6, Recovery = 40, Mult = 2530,
+                Startup = 15, Active = 6, Recovery = 32, Mult = 2530,
                 BoxX = 0, BoxW = 4300, BoxY = 0, BoxH = 600, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -407,7 +407,7 @@ namespace ChibiClash.Netcode
             // bruna_nair Neutral Air (L, A) slot 14
             new ChibiMove
             {
-                Startup = 5, Active = 4, Recovery = 24, Mult = 1550,
+                Startup = 5, Active = 4, Recovery = 18, Mult = 1550,
                 BoxX = 0, BoxW = 0, BoxY = 675, BoxH = 0, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -420,7 +420,7 @@ namespace ChibiClash.Netcode
             // bruna_fair Forward Air (L+F, A) slot 15
             new ChibiMove
             {
-                Startup = 6, Active = 4, Recovery = 26, Mult = 1840,
+                Startup = 6, Active = 4, Recovery = 20, Mult = 1840,
                 BoxX = 0, BoxW = 1750, BoxY = 300, BoxH = 1100, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -433,7 +433,7 @@ namespace ChibiClash.Netcode
             // bruna_bair Back Air (L+BK, A) slot 16
             new ChibiMove
             {
-                Startup = 6, Active = 5, Recovery = 28, Mult = 1900,
+                Startup = 6, Active = 5, Recovery = 21, Mult = 1900,
                 BoxX = 0, BoxW = 1650, BoxY = 300, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -446,7 +446,7 @@ namespace ChibiClash.Netcode
             // bruna_uair Up Air (L+U, A) slot 17
             new ChibiMove
             {
-                Startup = 7, Active = 4, Recovery = 26, Mult = 1730,
+                Startup = 7, Active = 4, Recovery = 20, Mult = 1730,
                 BoxX = 0, BoxW = 1600, BoxY = 1100, BoxH = 1000, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -459,7 +459,7 @@ namespace ChibiClash.Netcode
             // bruna_dair Down Air (L+D, A) slot 18
             new ChibiMove
             {
-                Startup = 9, Active = 5, Recovery = 30, Mult = 2000,
+                Startup = 9, Active = 5, Recovery = 23, Mult = 2000,
                 BoxX = 0, BoxW = 1200, BoxY = -700, BoxH = 1000, KbX = 30000, KbY = -150000, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -472,7 +472,7 @@ namespace ChibiClash.Netcode
             // bruna_nspec Earth Shock (B, G) slot 19
             new ChibiMove
             {
-                Startup = 10, Active = 6, Recovery = 30, Mult = 2100,
+                Startup = 10, Active = 6, Recovery = 24, Mult = 2100,
                 BoxX = 700, BoxW = 0, BoxY = 250, BoxH = 0, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 200000, ProjLife = 15, ProjR = 450, ProjOffX = 700, ProjOffY = 250,
@@ -487,7 +487,7 @@ namespace ChibiClash.Netcode
             // bruna_sspec Hammer Rush (B+F, GA) slot 20
             new ChibiMove
             {
-                Startup = 8, Active = 8, Recovery = 34, Mult = 2190,
+                Startup = 8, Active = 8, Recovery = 28, Mult = 2190,
                 BoxX = 0, BoxW = 1800, BoxY = 100, BoxH = 1200, KbX = 150000, KbY = 112500, Stun = 38,
                 SelfVx = 160, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FLevel,
                 Ext = new ChibiMoveExt
@@ -514,7 +514,7 @@ namespace ChibiClash.Netcode
             // bruna_uspec Rocket Hammer (B+U, GA) slot 22
             new ChibiMove
             {
-                Startup = 9, Active = 6, Recovery = 30, Mult = 1790,
+                Startup = 9, Active = 6, Recovery = 24, Mult = 1790,
                 BoxX = 0, BoxW = 1600, BoxY = 700, BoxH = 1400, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 40, SelfVy = 240, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -542,7 +542,7 @@ namespace ChibiClash.Netcode
             // bruna_uppercut Iron Uppercut (S1+U, G) slot 24
             new ChibiMove
             {
-                Startup = 9, Active = 6, Recovery = 28, Mult = 2280,
+                Startup = 9, Active = 6, Recovery = 24, Mult = 2280,
                 BoxX = -300, BoxW = 1900, BoxY = 500, BoxH = 1500, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 0, SelfVy = 80, Rehit = 0, Cooldown = 240, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -555,7 +555,7 @@ namespace ChibiClash.Netcode
             // bruna_seismic Seismic Sweep (S1+D, G) slot 25
             new ChibiMove
             {
-                Startup = 12, Active = 8, Recovery = 36, Mult = 2370,
+                Startup = 12, Active = 8, Recovery = 31, Mult = 2370,
                 BoxX = 0, BoxW = 4800, BoxY = 0, BoxH = 700, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 360, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -568,7 +568,7 @@ namespace ChibiClash.Netcode
             // bruna_rocketstrike Rocket Hammer Strike (S2+U, GA) slot 26
             new ChibiMove
             {
-                Startup = 9, Active = 5, Recovery = 30, Mult = 2000,
+                Startup = 9, Active = 5, Recovery = 26, Mult = 2000,
                 BoxX = 0, BoxW = 1700, BoxY = 300, BoxH = 1300, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 150, SelfVy = 200, Rehit = 0, Cooldown = 240, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -598,7 +598,7 @@ namespace ChibiClash.Netcode
             // ren_ftilt Forward Tilt (L+F, G) slot 7
             new ChibiMove
             {
-                Startup = 5, Active = 5, Recovery = 24, Mult = 1800,
+                Startup = 5, Active = 5, Recovery = 18, Mult = 1800,
                 BoxX = 500, BoxW = 0, BoxY = 725, BoxH = 0, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 300000, ProjLife = 9, ProjR = 250, ProjOffX = 500, ProjOffY = 725,
@@ -613,7 +613,7 @@ namespace ChibiClash.Netcode
             // ren_utilt Up Tilt (L+U, G) slot 8
             new ChibiMove
             {
-                Startup = 6, Active = 6, Recovery = 27, Mult = 1730,
+                Startup = 6, Active = 6, Recovery = 21, Mult = 1730,
                 BoxX = -500, BoxW = 1500, BoxY = 700, BoxH = 1300, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -626,7 +626,7 @@ namespace ChibiClash.Netcode
             // ren_dtilt Down Tilt (L+D, G) slot 9
             new ChibiMove
             {
-                Startup = 6, Active = 4, Recovery = 25, Mult = 1660,
+                Startup = 6, Active = 4, Recovery = 19, Mult = 1660,
                 BoxX = 0, BoxW = 1500, BoxY = 0, BoxH = 450, KbX = 22500, KbY = 0, Stun = 34,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -639,7 +639,7 @@ namespace ChibiClash.Netcode
             // ren_dash Dash Attack (L@dash, G) slot 10
             new ChibiMove
             {
-                Startup = 8, Active = 6, Recovery = 36, Mult = 2000,
+                Startup = 8, Active = 6, Recovery = 27, Mult = 2000,
                 BoxX = 0, BoxW = 1300, BoxY = 0, BoxH = 700, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 150, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -652,7 +652,7 @@ namespace ChibiClash.Netcode
             // ren_fsmash Forward Smash (H+F, G) slot 11
             new ChibiMove
             {
-                Startup = 15, Active = 6, Recovery = 48, Mult = 2830,
+                Startup = 15, Active = 6, Recovery = 39, Mult = 2830,
                 BoxX = 500, BoxW = 0, BoxY = 725, BoxH = 0, KbX = 150000, KbY = 112500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 360000, ProjLife = 20, ProjR = 400, ProjOffX = 500, ProjOffY = 725,
@@ -668,7 +668,7 @@ namespace ChibiClash.Netcode
             // ren_usmash Up Smash (H+U, G) slot 12
             new ChibiMove
             {
-                Startup = 16, Active = 6, Recovery = 50, Mult = 2740,
+                Startup = 16, Active = 6, Recovery = 40, Mult = 2740,
                 BoxX = 0, BoxW = 1400, BoxY = 900, BoxH = 2200, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -682,7 +682,7 @@ namespace ChibiClash.Netcode
             // ren_dsmash Down Smash (H+D, G) slot 13
             new ChibiMove
             {
-                Startup = 14, Active = 7, Recovery = 46, Mult = 2650,
+                Startup = 14, Active = 7, Recovery = 37, Mult = 2650,
                 BoxX = 0, BoxW = 3200, BoxY = 0, BoxH = 600, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -696,7 +696,7 @@ namespace ChibiClash.Netcode
             // ren_nair Neutral Air (L, A) slot 14
             new ChibiMove
             {
-                Startup = 5, Active = 5, Recovery = 24, Mult = 620,
+                Startup = 5, Active = 5, Recovery = 18, Mult = 620,
                 BoxX = 0, BoxW = 0, BoxY = 675, BoxH = 0, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 2, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -710,7 +710,7 @@ namespace ChibiClash.Netcode
             // ren_fair Forward Air (L+F, A) slot 15
             new ChibiMove
             {
-                Startup = 7, Active = 5, Recovery = 28, Mult = 2060,
+                Startup = 7, Active = 5, Recovery = 21, Mult = 2060,
                 BoxX = 0, BoxW = 1300, BoxY = 300, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -723,7 +723,7 @@ namespace ChibiClash.Netcode
             // ren_bair Back Air (L+BK, A) slot 16
             new ChibiMove
             {
-                Startup = 7, Active = 5, Recovery = 27, Mult = 2000,
+                Startup = 7, Active = 5, Recovery = 21, Mult = 2000,
                 BoxX = 0, BoxW = 1200, BoxY = 300, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -736,7 +736,7 @@ namespace ChibiClash.Netcode
             // ren_uair Up Air (L+U, A) slot 17
             new ChibiMove
             {
-                Startup = 6, Active = 4, Recovery = 26, Mult = 1940,
+                Startup = 6, Active = 4, Recovery = 20, Mult = 1940,
                 BoxX = 0, BoxW = 1300, BoxY = 1100, BoxH = 1000, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -749,7 +749,7 @@ namespace ChibiClash.Netcode
             // ren_dair Down Air (L+D, A) slot 18
             new ChibiMove
             {
-                Startup = 8, Active = 5, Recovery = 30, Mult = 2240,
+                Startup = 8, Active = 5, Recovery = 23, Mult = 2240,
                 BoxX = 0, BoxW = 1000, BoxY = -600, BoxH = 900, KbX = 30000, KbY = -150000, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -762,7 +762,7 @@ namespace ChibiClash.Netcode
             // ren_nspec_lv1 Focus Shot Lv1 (B, GA) slot 19
             new ChibiMove
             {
-                Startup = 12, Active = 4, Recovery = 28, Mult = 1730,
+                Startup = 12, Active = 4, Recovery = 23, Mult = 1730,
                 BoxX = 500, BoxW = 0, BoxY = 725, BoxH = 0, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 300000, ProjLife = 60, ProjR = 250, ProjOffX = 500, ProjOffY = 725,
@@ -778,7 +778,7 @@ namespace ChibiClash.Netcode
             // ren_nspec_lv2 Focus Shot Lv2 (B, GA) slot 20
             new ChibiMove
             {
-                Startup = 12, Active = 4, Recovery = 28, Mult = 2240,
+                Startup = 12, Active = 4, Recovery = 23, Mult = 2240,
                 BoxX = 500, BoxW = 0, BoxY = 725, BoxH = 0, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 300000, ProjLife = 60, ProjR = 300, ProjOffX = 500, ProjOffY = 725,
@@ -794,7 +794,7 @@ namespace ChibiClash.Netcode
             // ren_nspec_lv3 Focus Shot Lv3 (B, GA) slot 21
             new ChibiMove
             {
-                Startup = 12, Active = 4, Recovery = 28, Mult = 2650,
+                Startup = 12, Active = 4, Recovery = 23, Mult = 2650,
                 BoxX = 500, BoxW = 0, BoxY = 725, BoxH = 0, KbX = 150000, KbY = 112500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 300000, ProjLife = 60, ProjR = 350, ProjOffX = 500, ProjOffY = 725,
@@ -810,7 +810,7 @@ namespace ChibiClash.Netcode
             // ren_sspec Piercing Arrow (B+F, GA) slot 22
             new ChibiMove
             {
-                Startup = 14, Active = 6, Recovery = 36, Mult = 2450,
+                Startup = 14, Active = 6, Recovery = 29, Mult = 2450,
                 BoxX = 500, BoxW = 0, BoxY = 725, BoxH = 0, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 405000, ProjLife = 40, ProjR = 250, ProjOffX = 500, ProjOffY = 725,
@@ -839,7 +839,7 @@ namespace ChibiClash.Netcode
             // ren_uspec Grapple Arrow (B+U, GA) slot 24
             new ChibiMove
             {
-                Startup = 8, Active = 4, Recovery = 33, Mult = 1410,
+                Startup = 8, Active = 4, Recovery = 27, Mult = 1410,
                 BoxX = 500, BoxW = 0, BoxY = 900, BoxH = 0, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 450000, ProjLife = 8, ProjR = 250, ProjOffX = 500, ProjOffY = 900,
@@ -855,7 +855,7 @@ namespace ChibiClash.Netcode
             // ren_fallingpin Falling Pin (B+D, A) slot 25
             new ChibiMove
             {
-                Startup = 10, Active = 6, Recovery = 32, Mult = 2450,
+                Startup = 10, Active = 6, Recovery = 26, Mult = 2450,
                 BoxX = 200, BoxW = 0, BoxY = 300, BoxH = 0, KbX = 30000, KbY = -150000, Stun = 38,
                 SelfVx = 0, SelfVy = 80, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 330000, ProjLife = 40, ProjR = 300, ProjOffX = 200, ProjOffY = 300,
@@ -871,7 +871,7 @@ namespace ChibiClash.Netcode
             // ren_volley Skyward Volley (S3+U, GA) slot 26
             new ChibiMove
             {
-                Startup = 12, Active = 18, Recovery = 40, Mult = 500,
+                Startup = 12, Active = 18, Recovery = 34, Mult = 500,
                 BoxX = 300, BoxW = 0, BoxY = 1100, BoxH = 0, KbX = 22500, KbY = 90000, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 4, Cooldown = 360, Flags = 0,
                 ProjSpeed = 240000, ProjLife = 40, ProjR = 250, ProjOffX = 300, ProjOffY = 1100,
@@ -888,7 +888,7 @@ namespace ChibiClash.Netcode
             // ren_ricochet Ricochet Arrow (S3+D, GA) slot 27
             new ChibiMove
             {
-                Startup = 14, Active = 8, Recovery = 34, Mult = 1870,
+                Startup = 14, Active = 8, Recovery = 29, Mult = 1870,
                 BoxX = 500, BoxW = 0, BoxY = 725, BoxH = 0, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 240, Flags = 0,
                 ProjSpeed = 300000, ProjLife = 90, ProjR = 250, ProjOffX = 500, ProjOffY = 725,
@@ -904,7 +904,7 @@ namespace ChibiClash.Netcode
             // ren_rebound Rebound Kick (S1+D, G) slot 28
             new ChibiMove
             {
-                Startup = 6, Active = 4, Recovery = 26, Mult = 1730,
+                Startup = 6, Active = 4, Recovery = 23, Mult = 1730,
                 BoxX = 0, BoxW = 1100, BoxY = 200, BoxH = 900, KbX = 67500, KbY = 15000, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 180, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -918,7 +918,7 @@ namespace ChibiClash.Netcode
             // ren_rebound_air Rebound Kick (air) (S1+D, A) slot 29
             new ChibiMove
             {
-                Startup = 6, Active = 4, Recovery = 26, Mult = 1730,
+                Startup = 6, Active = 4, Recovery = 23, Mult = 1730,
                 BoxX = 0, BoxW = 1100, BoxY = 200, BoxH = 900, KbX = 67500, KbY = 15000, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 180, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -932,7 +932,7 @@ namespace ChibiClash.Netcode
             // ren_grapple2 Grapple Arrow (Extended) (S1+U, GA) slot 30
             new ChibiMove
             {
-                Startup = 10, Active = 4, Recovery = 38, Mult = 1580,
+                Startup = 10, Active = 4, Recovery = 33, Mult = 1580,
                 BoxX = 500, BoxW = 0, BoxY = 725, BoxH = 0, KbX = 67500, KbY = 30000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 300, Flags = 0,
                 ProjSpeed = 450000, ProjLife = 12, ProjR = 250, ProjOffX = 500, ProjOffY = 725,
@@ -952,7 +952,7 @@ namespace ChibiClash.Netcode
             // lyra_ftilt Forward Tilt (L+F, G) slot 7
             new ChibiMove
             {
-                Startup = 5, Active = 5, Recovery = 25, Mult = 1780,
+                Startup = 5, Active = 5, Recovery = 19, Mult = 1780,
                 BoxX = 0, BoxW = 1600, BoxY = 200, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -965,7 +965,7 @@ namespace ChibiClash.Netcode
             // lyra_utilt Up Tilt (L+U, G) slot 8
             new ChibiMove
             {
-                Startup = 6, Active = 6, Recovery = 27, Mult = 1720,
+                Startup = 6, Active = 6, Recovery = 21, Mult = 1720,
                 BoxX = -500, BoxW = 1600, BoxY = 800, BoxH = 1300, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -978,7 +978,7 @@ namespace ChibiClash.Netcode
             // lyra_dtilt Down Tilt (L+D, G) slot 9
             new ChibiMove
             {
-                Startup = 5, Active = 5, Recovery = 23, Mult = 1620,
+                Startup = 5, Active = 5, Recovery = 18, Mult = 1620,
                 BoxX = 0, BoxW = 1700, BoxY = 0, BoxH = 450, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -991,7 +991,7 @@ namespace ChibiClash.Netcode
             // lyra_dash Dash Attack (L@dash, G) slot 10
             new ChibiMove
             {
-                Startup = 7, Active = 6, Recovery = 32, Mult = 2020,
+                Startup = 7, Active = 6, Recovery = 24, Mult = 2020,
                 BoxX = 0, BoxW = 1500, BoxY = 100, BoxH = 1100, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 150, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1004,7 +1004,7 @@ namespace ChibiClash.Netcode
             // lyra_fsmash Forward Smash (H+F, G) slot 11
             new ChibiMove
             {
-                Startup = 16, Active = 6, Recovery = 40, Mult = 2700,
+                Startup = 16, Active = 6, Recovery = 32, Mult = 2700,
                 BoxX = 0, BoxW = 2200, BoxY = 100, BoxH = 1400, KbX = 150000, KbY = 112500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1018,7 +1018,7 @@ namespace ChibiClash.Netcode
             // lyra_usmash Up Smash (H+U, G) slot 12
             new ChibiMove
             {
-                Startup = 15, Active = 7, Recovery = 42, Mult = 2610,
+                Startup = 15, Active = 7, Recovery = 34, Mult = 2610,
                 BoxX = 0, BoxW = 1600, BoxY = 800, BoxH = 2000, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1032,7 +1032,7 @@ namespace ChibiClash.Netcode
             // lyra_dsmash Down Smash (H+D, G) slot 13
             new ChibiMove
             {
-                Startup = 17, Active = 8, Recovery = 44, Mult = 2650,
+                Startup = 17, Active = 8, Recovery = 36, Mult = 2650,
                 BoxX = 0, BoxW = 3600, BoxY = 0, BoxH = 600, KbX = 150000, KbY = 112500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1046,7 +1046,7 @@ namespace ChibiClash.Netcode
             // lyra_nair Neutral Air (L, A) slot 14
             new ChibiMove
             {
-                Startup = 4, Active = 5, Recovery = 28, Mult = 1650,
+                Startup = 4, Active = 5, Recovery = 21, Mult = 1650,
                 BoxX = 0, BoxW = 0, BoxY = 675, BoxH = 0, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1059,7 +1059,7 @@ namespace ChibiClash.Netcode
             // lyra_fair Forward Air (L+F, A) slot 15
             new ChibiMove
             {
-                Startup = 6, Active = 5, Recovery = 30, Mult = 1910,
+                Startup = 6, Active = 5, Recovery = 23, Mult = 1910,
                 BoxX = 0, BoxW = 1500, BoxY = 300, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1072,7 +1072,7 @@ namespace ChibiClash.Netcode
             // lyra_bair Back Air (L+BK, A) slot 16
             new ChibiMove
             {
-                Startup = 5, Active = 5, Recovery = 29, Mult = 1850,
+                Startup = 5, Active = 5, Recovery = 22, Mult = 1850,
                 BoxX = 0, BoxW = 1400, BoxY = 300, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1085,7 +1085,7 @@ namespace ChibiClash.Netcode
             // lyra_uair Up Air (L+U, A) slot 17
             new ChibiMove
             {
-                Startup = 5, Active = 5, Recovery = 28, Mult = 1780,
+                Startup = 5, Active = 5, Recovery = 21, Mult = 1780,
                 BoxX = 0, BoxW = 1400, BoxY = 1100, BoxH = 1000, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1098,7 +1098,7 @@ namespace ChibiClash.Netcode
             // lyra_dair Down Air (L+D, A) slot 18
             new ChibiMove
             {
-                Startup = 7, Active = 6, Recovery = 36, Mult = 2020,
+                Startup = 7, Active = 6, Recovery = 27, Mult = 2020,
                 BoxX = 0, BoxW = 1000, BoxY = -600, BoxH = 900, KbX = 30000, KbY = -150000, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1111,7 +1111,7 @@ namespace ChibiClash.Netcode
             // lyra_nspec Arcane Shot (B, GA) slot 19
             new ChibiMove
             {
-                Startup = 10, Active = 4, Recovery = 32, Mult = 1780,
+                Startup = 10, Active = 4, Recovery = 26, Mult = 1780,
                 BoxX = 600, BoxW = 0, BoxY = 925, BoxH = 0, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 240000, ProjLife = 60, ProjR = 300, ProjOffX = 600, ProjOffY = 925,
@@ -1126,7 +1126,7 @@ namespace ChibiClash.Netcode
             // lyra_sspec Spell Lance (B+F, GA) slot 20
             new ChibiMove
             {
-                Startup = 12, Active = 6, Recovery = 36, Mult = 2240,
+                Startup = 12, Active = 6, Recovery = 29, Mult = 2240,
                 BoxX = 300, BoxW = 2600, BoxY = 400, BoxH = 700, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1139,7 +1139,7 @@ namespace ChibiClash.Netcode
             // lyra_dspec Glyph Zone (B+D, G) slot 21
             new ChibiMove
             {
-                Startup = 14, Active = 1, Recovery = 28, Mult = 390,
+                Startup = 14, Active = 1, Recovery = 23, Mult = 390,
                 BoxX = 0, BoxW = 3000, BoxY = 0, BoxH = 1000, KbX = 37500, KbY = 30000, Stun = 17,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1153,7 +1153,7 @@ namespace ChibiClash.Netcode
             // lyra_uspec Blink Ascension (B+U, GA) slot 22
             new ChibiMove
             {
-                Startup = 8, Active = 8, Recovery = 28, Mult = 1650,
+                Startup = 8, Active = 8, Recovery = 23, Mult = 1650,
                 BoxX = 0, BoxW = 1400, BoxY = 0, BoxH = 1500, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 120, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1167,7 +1167,7 @@ namespace ChibiClash.Netcode
             // lyra_lift Astral Lift (S1+U, G) slot 23
             new ChibiMove
             {
-                Startup = 16, Active = 10, Recovery = 30, Mult = 1910,
+                Startup = 16, Active = 10, Recovery = 26, Mult = 1910,
                 BoxX = 500, BoxW = 1400, BoxY = 0, BoxH = 2500, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 300, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1180,7 +1180,7 @@ namespace ChibiClash.Netcode
             // lyra_starfall Starfall Trap (S1+D, G) slot 24
             new ChibiMove
             {
-                Startup = 18, Active = 2, Recovery = 30, Mult = 2130,
+                Startup = 18, Active = 2, Recovery = 26, Mult = 2130,
                 BoxX = 1300, BoxW = 1400, BoxY = 0, BoxH = 2200, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 360, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1223,7 +1223,7 @@ namespace ChibiClash.Netcode
             // lyra_blinkplus Blink Ascension+ (S2+U, GA) slot 27
             new ChibiMove
             {
-                Startup = 18, Active = 20, Recovery = 30, Mult = 1910,
+                Startup = 18, Active = 20, Recovery = 26, Mult = 1910,
                 BoxX = 0, BoxW = 1600, BoxY = 0, BoxH = 1600, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 220, Rehit = 0, Cooldown = 300, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1241,7 +1241,7 @@ namespace ChibiClash.Netcode
             // taro_ftilt Forward Tilt (L+F, G) slot 7
             new ChibiMove
             {
-                Startup = 5, Active = 5, Recovery = 25, Mult = 1780,
+                Startup = 5, Active = 5, Recovery = 19, Mult = 1780,
                 BoxX = 0, BoxW = 2300, BoxY = 250, BoxH = 1000, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1254,7 +1254,7 @@ namespace ChibiClash.Netcode
             // taro_utilt Up Tilt (L+U, G) slot 8
             new ChibiMove
             {
-                Startup = 6, Active = 6, Recovery = 28, Mult = 1720,
+                Startup = 6, Active = 6, Recovery = 21, Mult = 1720,
                 BoxX = -700, BoxW = 2300, BoxY = 800, BoxH = 1500, KbX = 22500, KbY = 90000, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1267,7 +1267,7 @@ namespace ChibiClash.Netcode
             // taro_dtilt Down Tilt (L+D, G) slot 9
             new ChibiMove
             {
-                Startup = 6, Active = 4, Recovery = 24, Mult = 1580,
+                Startup = 6, Active = 4, Recovery = 18, Mult = 1580,
                 BoxX = 0, BoxW = 2500, BoxY = 0, BoxH = 450, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1280,7 +1280,7 @@ namespace ChibiClash.Netcode
             // taro_dash Dash Attack (L@dash, G) slot 10
             new ChibiMove
             {
-                Startup = 9, Active = 6, Recovery = 36, Mult = 2020,
+                Startup = 9, Active = 6, Recovery = 27, Mult = 2020,
                 BoxX = 0, BoxW = 2300, BoxY = 200, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 150, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1293,7 +1293,7 @@ namespace ChibiClash.Netcode
             // taro_fsmash Forward Smash (H+F, G) slot 11
             new ChibiMove
             {
-                Startup = 16, Active = 6, Recovery = 46, Mult = 2700,
+                Startup = 16, Active = 6, Recovery = 37, Mult = 2700,
                 BoxX = 0, BoxW = 2800, BoxY = 200, BoxH = 1100, KbX = 180000, KbY = 135000, Stun = 48,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1307,7 +1307,7 @@ namespace ChibiClash.Netcode
             // taro_usmash Up Smash (H+U, G) slot 12
             new ChibiMove
             {
-                Startup = 14, Active = 6, Recovery = 48, Mult = 2610,
+                Startup = 14, Active = 6, Recovery = 39, Mult = 2610,
                 BoxX = 0, BoxW = 1800, BoxY = 800, BoxH = 2000, KbX = 45000, KbY = 157500, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1321,7 +1321,7 @@ namespace ChibiClash.Netcode
             // taro_dsmash Down Smash (H+D, G) slot 13
             new ChibiMove
             {
-                Startup = 15, Active = 7, Recovery = 50, Mult = 2520,
+                Startup = 15, Active = 7, Recovery = 40, Mult = 2520,
                 BoxX = 0, BoxW = 5200, BoxY = 0, BoxH = 600, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1335,7 +1335,7 @@ namespace ChibiClash.Netcode
             // taro_nair Neutral Air (L, A) slot 14
             new ChibiMove
             {
-                Startup = 4, Active = 5, Recovery = 30, Mult = 1650,
+                Startup = 4, Active = 5, Recovery = 23, Mult = 1650,
                 BoxX = 0, BoxW = 0, BoxY = 675, BoxH = 0, KbX = 67500, KbY = 52500, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1348,7 +1348,7 @@ namespace ChibiClash.Netcode
             // taro_fair Forward Air (L+F, A) slot 15
             new ChibiMove
             {
-                Startup = 6, Active = 6, Recovery = 34, Mult = 1970,
+                Startup = 6, Active = 6, Recovery = 26, Mult = 1970,
                 BoxX = 0, BoxW = 2200, BoxY = 300, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1361,7 +1361,7 @@ namespace ChibiClash.Netcode
             // taro_bair Back Air (L+BK, A) slot 16
             new ChibiMove
             {
-                Startup = 8, Active = 6, Recovery = 32, Mult = 2020,
+                Startup = 8, Active = 6, Recovery = 24, Mult = 2020,
                 BoxX = 0, BoxW = 2100, BoxY = 300, BoxH = 900, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1374,7 +1374,7 @@ namespace ChibiClash.Netcode
             // taro_uair Up Air (L+U, A) slot 17
             new ChibiMove
             {
-                Startup = 7, Active = 5, Recovery = 36, Mult = 1850,
+                Startup = 7, Active = 5, Recovery = 27, Mult = 1850,
                 BoxX = 0, BoxW = 1600, BoxY = 1100, BoxH = 1300, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1387,7 +1387,7 @@ namespace ChibiClash.Netcode
             // taro_dair Down Air (L+D, A) slot 18
             new ChibiMove
             {
-                Startup = 10, Active = 5, Recovery = 38, Mult = 2180,
+                Startup = 10, Active = 5, Recovery = 29, Mult = 2180,
                 BoxX = 0, BoxW = 1000, BoxY = -1000, BoxH = 1200, KbX = 30000, KbY = -150000, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1400,7 +1400,7 @@ namespace ChibiClash.Netcode
             // taro_nspec Wind Lance (B, GA) slot 19
             new ChibiMove
             {
-                Startup = 11, Active = 3, Recovery = 36, Mult = 1910,
+                Startup = 11, Active = 3, Recovery = 29, Mult = 1910,
                 BoxX = 700, BoxW = 0, BoxY = 775, BoxH = 0, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 ProjSpeed = 270000, ProjLife = 30, ProjR = 350, ProjOffX = 700, ProjOffY = 775,
@@ -1415,7 +1415,7 @@ namespace ChibiClash.Netcode
             // taro_sspec Piercing Dash (B+F, GA) slot 20
             new ChibiMove
             {
-                Startup = 9, Active = 6, Recovery = 40, Mult = 2240,
+                Startup = 9, Active = 6, Recovery = 32, Mult = 2240,
                 BoxX = 0, BoxW = 2300, BoxY = 200, BoxH = 1000, KbX = 120000, KbY = 90000, Stun = 30,
                 SelfVx = 200, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FLevel,
                 Ext = new ChibiMoveExt
@@ -1441,7 +1441,7 @@ namespace ChibiClash.Netcode
             // taro_uspec Staff Vault (B+U, GA) slot 22
             new ChibiMove
             {
-                Startup = 6, Active = 12, Recovery = 28, Mult = 1650,
+                Startup = 6, Active = 12, Recovery = 23, Mult = 1650,
                 BoxX = 0, BoxW = 0, BoxY = 675, BoxH = 0, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 60, SelfVy = 260, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
@@ -1454,7 +1454,7 @@ namespace ChibiClash.Netcode
             // taro_skyhook Skyhook (S1+U, G) slot 23
             new ChibiMove
             {
-                Startup = 7, Active = 5, Recovery = 32, Mult = 2080,
+                Startup = 7, Active = 5, Recovery = 28, Mult = 2080,
                 BoxX = 0, BoxW = 2300, BoxY = 0, BoxH = 1400, KbX = 36000, KbY = 135000, Stun = 30,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 240, Flags = 0,
                 Ext = new ChibiMoveExt
@@ -1467,7 +1467,7 @@ namespace ChibiClash.Netcode
             // taro_reaper Crescent Reaper (S2+U, GA) slot 24
             new ChibiMove
             {
-                Startup = 12, Active = 8, Recovery = 42, Mult = 2430,
+                Startup = 12, Active = 8, Recovery = 36, Mult = 2430,
                 BoxX = 0, BoxW = 0, BoxY = 675, BoxH = 0, KbX = 150000, KbY = 112500, Stun = 38,
                 SelfVx = 0, SelfVy = 100, Rehit = 0, Cooldown = 300, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt

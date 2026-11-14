@@ -302,6 +302,20 @@ namespace ChibiClash.Netcode
         /// <summary>The "FIGHT!" banner shows for the last 0.8 s of the intro (Hud.cs:49): 48 real ticks. View only.</summary>
         public const int IntroFightTicks = 48;
 
+        // ---- rules v22: responsiveness pass (user decisions UL-1 / EL-1 / TN-1, 2026-11-14).
+        /// <summary>
+        /// Attack buffer: an attack press (Light, Heavy, Special, Skill1-3) in the last 6 lock ticks of a move, or during
+        /// the attack lock left by a walk cancel, is replayed on the first free tick (replaces D-N1).
+        /// </summary>
+        public const int AttackBufferTicks = 6;
+        /// <summary>Walk / turn cancel: a new stick direction on the ground ends the last 6 recovery ticks of a move.</summary>
+        public const int MoveCancelTicks = 6;
+        /// <summary>The buttons the attack buffer holds.</summary>
+        public const int AttackBufferMask = (int)(ChibiButtons.Light | ChibiButtons.Heavy | ChibiButtons.Special |
+                                                  ChibiButtons.Skill1 | ChibiButtons.Skill2 | ChibiButtons.Skill3);
+        /// <summary>Every rules-v22 constant, mixed into the config hash.</summary>
+        public static readonly int[] FeelConstants = { AttackBufferTicks, MoveCancelTicks, AttackBufferMask };
+
         /// <summary>Every step-15 constant, mixed into the config hash.</summary>
         public static readonly int[] GestureConstants =
         {
@@ -343,7 +357,8 @@ namespace ChibiClash.Netcode
         /// <remarks>19: security review SEC-101..106: Jade Stance cd 240 sharing Jade Counter's technique slot, reflect growth capped at two scaled reflections (projectile Reflects), teleport clamped above the kill line, cooldown / aironce gate on every moveset start path, charge / riposte / hold / landing-hit / pull flags cleared by Interrupt and by every move start.</remarks>
         /// <remarks>20: damage percent + stocks (design/gdd/percent-knockback.md, GL-1 / GL-2): HP removed from the state, every hit's micro-HP becomes percent (x 0.2), Smash knockback from percent / hit percent (capped 15 %) / weight / base and growth derived from KbX-KbY (set knockback under magnitude 30 000 and for grounded trips), Ren / Lyra x0.85, hitstun KB x 0.4 capped 90, launch decay and hitstun gravity fade, armor breaks at KB 150; 3 stocks, KO only on an active stage edge, out 60 / hover 180 / invuln 120, last stock loses, same-tick double last stock = draw, 300 s timer, timeout by stocks then percent then draw, the -15 % ring-out rule removed. Five new stages 3..7 (ST-1..ST-5): per-edge KO / walls / solid floor / sky cap, per-stage main underside, moving platforms (F1 of GameTicks, riders carried), hazards with their own RNG stream (HazardsOff in the config hash); stage geometry and the percent constants in the config hash.</remarks>
         /// <remarks>21: GL-2 applied consistently (lead): every side KO line is at least 8000 beyond the outermost walkable surface (Plain ground +-16991 -> KO +-25000 with a bottom line, Bird Lair cloud floor finite +-12000 -> KO +-20000 with a bottom line, Volcano 17500, Ocean 19800); finite solid floors (HasFloor / FloorY / FloorHalfW, in the stage hash); Sword Aura waves no longer get the ult base bonus.</remarks>
-        public const int RulesVersion = 21;
+        /// <remarks>22: responsiveness pass (UL-1, EL-1, TN-1, 2026-11-14): the Ult press with a full meter fires the ultimate on its game step (the gesture window is no longer opened); recovery trimmed (CSV rows by category with floors, counters / rolls / armor / reflect / dive rows unchanged; normals x 3/4; Dash &amp; Thrust, Choke, Fireball, Spear rows); 6-tick attack buffer (BufferedEdges / BufferTicks, replaces D-N1, fresh press wins, cleared by Interrupt); grounded walk / turn cancel in the last 6 recovery ticks of non-program moves when the stick differs from the move's start direction (Light rows and the light normal always, other moves on hit), attacks stay locked until the old lock end (AttackLockTicks) and go to the buffer; constants in the config hash.</remarks>
+        public const int RulesVersion = 22;
 
         public uint Seed;
         public FighterClass Class0, Class1;
@@ -410,6 +425,9 @@ namespace ChibiClash.Netcode
             ChibiSimState.Mix(ref h, ChibiSimConst.MatchTicks);
             // Rules v18: every moveset row, the input resolution table and the moveset constants.
             ChibiMovesetData.MixHash(ref h);
+            // Rules v22: attack buffer and walk-cancel constants.
+            var fc = ChibiSimConst.FeelConstants;
+            for (int k = 0; k < fc.Length; k++) ChibiSimState.Mix(ref h, fc[k]);
             // Rules v20: percent / knockback / stock constants, the hazards switch, the selected stage's geometry and the
             // hazard constants.
             var pk = ChibiPercentConst.Constants;
@@ -549,7 +567,7 @@ namespace ChibiClash.Netcode
                 // (13-tick) dash at 18 u/s; whole move locked for 0.4 s (24 ticks); box = MeleeBox(0.8, 1.2) =
                 // from the fighter's centre to 1.1 u ahead, 1.2 u tall around the body centre (0.725 above feet).
                 // Velocity (Facing·18, 0) every tick of the window, then (Facing·3, 0) once (dash-conversion.md section 4).
-                Mv(0, 13, 11, 1600, 0, 1100, 75, 1200, 115, 65, 27, vx: 300, cd: 240, flags: L, ev: 50),
+                Mv(0, 13, 10, 1600, 0, 1100, 75, 1200, 115, 65, 27, vx: 300, cd: 240, flags: L, ev: 50),   // v22 recovery 11 -> 10
                 Mv(3, 21, 6, flags: P, cd: 300),                                             // Parry (reflects damage)
                 Mv(4, 36, 10, 550, 200, 1500, 100, 1100, 20, 15, 10, rehit: 6, cd: 420),     // Thrust Barrage (6 pulses)
                 Mv(0, 1, 0),                                                                 // ULT Sword Aura: inline in FireUlt (v14, D-U2 = A)
@@ -574,7 +592,7 @@ namespace ChibiClash.Netcode
                 // Backstep shot = big arrow (F:854, row 6): (500, 725), 21 u/s, life 78, kb (5, 3), stun 0.4. Timing: step 12.
                 Shot(Mv(9, 1, 12, 1500, vx: -280, cd: 240), ChibiProjKind.ArrowBig, 250, PD, 500, 725, 315000, 78,
                      75000, 45000, 24),
-                Mv(8, 3, 20, 1200, 150, 1050, 100, 1300, 180, 80, 36, cd: 360),              // Bowstring choke
+                Mv(8, 3, 17, 1200, 150, 1050, 100, 1300, 180, 80, 36, cd: 360),              // Bowstring choke (v22 recovery 20 -> 17)
                 // Arrow Barrage x5 (F:871, row 7): (500, 675 + yOff), 18 u/s, life 78, kb (1.2, 0.8), stun 0.18. RNG yOff + cadence: step 12.
                 Shot(Mv(6, 25, 10, 600, rehit: 5, cd: 420), ChibiProjKind.Arrow, 250, PD, 500, 675, 270000, 78,
                      18000, 12000, 11),
@@ -588,7 +606,8 @@ namespace ChibiClash.Netcode
                    kind: ChibiProjKind.Bolt, r: 280),
                 Nm(hms, 1800, kx: 72000, ky: 54000, stun: 30, ps: 210000, pl: 72, ox: 600, oy: 925, kind: ChibiProjKind.BoltBig, r: 440),
                 // Homing Fireball (F:876-884, row 8): (600, 975), 9 u/s, r 380, life 3 s, kb (5, 4), stun 0.4, 2D homing.
-                Shot(Mv(12, 1, 12, 1600, cd: 240), ChibiProjKind.Fireball, 380, PH | PD, 600, 975, 135000, 180,
+                Shot(Mv(12, 1, 11, 1600, cd: 240), ChibiProjKind.Fireball,   // v22 recovery 12 -> 11
+                     380, PH | PD, 600, 975, 135000, 180,
                      75000, 60000, 24),
                 // Summon Minions (F:886-892, rules v13): no hitbox, frame 0 spawns 3 minions, actionLock 0.4 s = 24, cd 12 s.
                 Mv(0, 1, ChibiSimConst.MinionLock - 1, cd: 720, flags: SM),
@@ -605,7 +624,8 @@ namespace ChibiClash.Netcode
                 Mv(2, 70, 4, 300, 0, 3000, 0, 1200, 40, 35, 12, rehit: 18, cd: 360, flags: C | G), // Spin guard
                 // Throw spear (F:935-950, row 9): (600, 775), 16 u/s, r 300, life 3 s, kb (5, 3), stun 0.35, !Destructible,
                 // returns after 0.45 s at 0.8 (x Patience). Sets SpearOut on a successful spawn.
-                Shot(Mv(10, 1, 14, 1400, cd: 360), ChibiProjKind.Spear, 300, 0, 600, 775, 240000, 180,
+                Shot(Mv(10, 1, 12, 1400, cd: 360), ChibiProjKind.Spear,   // v22 recovery 14 -> 12
+                     300, 0, 600, 775, 240000, 180,
                      75000, 45000, 21, 27, 800),
                 Mv(0, 1, 0),                                                                 // ULT Kick: program PKick (v14)
                 Mv(0, 1, ChibiSimConst.PoseShotLock - 1),                                    // Pose Fireball actionLock (v15, slot 6)
@@ -726,6 +746,12 @@ namespace ChibiClash.Netcode
         public bool UltFirePending;
         /// <summary>Gesture id whose onset (JustStarted, Pose.cs:190-195) was seen since the last game step; 0 = none. Cleared every step (D-N1).</summary>
         public int LatchedPose;
+        /// <summary>Rules v22: buffered attack press edges (<see cref="ChibiSimConst.AttackBufferMask"/> bits), 0 = none.</summary>
+        public int BufferedEdges;
+        /// <summary>Rules v22: game steps the buffered press stays valid (counted down with the timers; 0 clears it).</summary>
+        public int BufferTicks;
+        /// <summary>Rules v22: after a walk cancel, game steps until attacks may start again (the cancelled move's lock end).</summary>
+        public int AttackLockTicks;
         /// <summary>Super Jump / Pose Fireball cooldowns in game ticks (superJumpCd / poseShotCd, scaled dt, F:208-209).</summary>
         public int SuperJumpCd, PoseShotCd;
         /// <summary>HUD prompt (<see cref="ChibiUltPrompt"/>) and its real-tick timer for Detected / Failed (F:226-230).</summary>
@@ -757,6 +783,7 @@ namespace ChibiClash.Netcode
             UltWindowTicks = o.UltWindowTicks; UltRetryTicks = o.UltRetryTicks; GestureTicks = o.GestureTicks;
             UltFirePending = o.UltFirePending; LatchedPose = o.LatchedPose; SuperJumpCd = o.SuperJumpCd; PoseShotCd = o.PoseShotCd;
             UltPrompt = o.UltPrompt; UltPromptTicks = o.UltPromptTicks;
+            BufferedEdges = o.BufferedEdges; BufferTicks = o.BufferTicks; AttackLockTicks = o.AttackLockTicks;   // rules v22
             CopyMoveset(o);   // rules v18 (Movesets/ChibiMovesetState.cs)
             CopyPercent(o);   // rules v20 (ChibiSimulation.Percent.cs)
         }
@@ -802,6 +829,7 @@ namespace ChibiClash.Netcode
             ChibiSimState.Mix(ref h, SuperJumpCd); ChibiSimState.Mix(ref h, PoseShotCd);
             ChibiSimState.Mix(ref h, UltPrompt); ChibiSimState.Mix(ref h, UltPromptTicks);
             ChibiSimState.Mix(ref h, MaxCombo);  // rules v17
+            ChibiSimState.Mix(ref h, BufferedEdges); ChibiSimState.Mix(ref h, BufferTicks); ChibiSimState.Mix(ref h, AttackLockTicks);   // rules v22
             HashMoveset(ref h);                  // rules v18
             HashPercent(ref h);                  // rules v20
         }
@@ -1105,6 +1133,7 @@ namespace ChibiClash.Netcode
             f.KickFromX = f.KickFromY = f.KickToX = f.KickToY = 0;
             f.UltWindowTicks = 0; f.UltRetryTicks = 0; f.GestureTicks = 0; f.UltFirePending = false; f.LatchedPose = 0;
             f.SuperJumpCd = 0; f.PoseShotCd = 0; f.UltPrompt = (int)ChibiUltPrompt.Hidden; f.UltPromptTicks = 0;
+            f.BufferedEdges = 0; f.BufferTicks = 0; f.AttackLockTicks = 0;   // rules v22
             f.ResetMoveset();   // rules v18
             f.ResetPercent();   // rules v20
         }
@@ -1247,16 +1276,17 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>
-        /// TryOpenUltWindow (F:396-403), from the Ult press edge while able to act: needs a full meter, no open window, no
-        /// retry wait, alive. Opening never fires on the same tick (the window is checked before actions, F:176 vs F:266).
+        /// Rules v22 (user decision UL-1, 2026-11-14): the Ult press edge while able to act fires the ultimate on this game
+        /// step when the meter is full and the fighter is alive; no gesture window opens (the v15 window stays in state but
+        /// nothing opens it any more). Returns true when the caller must start the ult. The gesture prompt stays hidden:
+        /// the HUD's "move detected" panel shows the class gesture, which would be wrong for a key press.
         /// </summary>
-        static void TryOpenUltWindow(ChibiFighterSim f, int edges)
+        static bool TryFireUltPress(ChibiFighterSim f, int edges)
         {
-            if ((edges & (int)ChibiButtons.Ultimate) == 0) return;
-            if (f.Ult < ChibiSimConst.UltMax || f.UltWindowTicks > 0 || f.UltRetryTicks > 0 || !f.InPlay) return;
-            f.UltWindowTicks = ChibiSimConst.UltWindowTicks;
-            f.UltPrompt = (int)ChibiUltPrompt.Preparing;
-            f.UltPromptTicks = 0;
+            if ((edges & (int)ChibiButtons.Ultimate) == 0) return false;
+            if (f.Ult < ChibiSimConst.UltMax || f.UltFirePending || !f.InPlay) return false;
+            f.UltWindowTicks = 0;
+            return true;
         }
 
         /// <summary>
@@ -1347,6 +1377,8 @@ namespace ChibiClash.Netcode
             if (f.SinceAttackTicks < ChibiSimConst.SinceAttackCap) f.SinceAttackTicks++;
             Dec(ref f.Cd[0]); Dec(ref f.Cd[1]); Dec(ref f.Cd[2]);
             MovesetTimers(f);                                // rules v18 technique cooldowns
+            Dec(ref f.AttackLockTicks);                      // rules v22 walk-cancel attack lock
+            if (f.BufferTicks > 0 && --f.BufferTicks == 0) f.BufferedEdges = 0;   // rules v22 buffer expiry
             if (f.ComboTimer > 0 && --f.ComboTimer == 0) f.ComboHits = 0;
             if (f.Stats.TailwindCooldown > 0)
             {
@@ -1399,7 +1431,17 @@ namespace ChibiClash.Netcode
                 // canAct section (F:181-185): poses first, then HandleActions, whose first act is the Ult press (F:266,
                 // before the dash / block early returns, so it opens the window while dashing, blocking or attacking).
                 poseLock = HandlePoses(s, i, pose);
-                TryOpenUltWindow(f, edges);
+                if (TryFireUltPress(f, edges))
+                {
+                    // Rules v22: fire now (same path as the gesture fire above). StartMove(5) interrupts a dash, so the
+                    // `dashing` flag computed above must be refreshed or the dash branch would advance ult frame 0 again.
+                    StartMove(s, i, 5);
+                    UltFireVelocity(f);
+                    ultFired = true;
+                    dashing = false;
+                }
+                // Rules v22 walk / turn cancel: ends the move here, so this tick falls through to FreeActions below.
+                if (!dashing && !ultFired && !poseLock) TryWalkCancel(s, i, input);
             }
 
             if (f.Stun > 0)
@@ -1445,6 +1487,7 @@ namespace ChibiClash.Netcode
             else if (f.MoveSlot >= 0)
             {
                 int prog = ProgramOf(f), frame = f.MoveTick;
+                BufferAttack(f, edges, f.MoveLockEnd - f.MoveTick);   // rules v22, before this tick advances the move
                 level = AdvanceMove(s, i, false, groundedAtStart);
                 // Doc 5.9 / Fighter.cs:291-307: jump and fast-fall sit outside the actionLock gate.
                 JumpAndFastFall(s, f, input.MoveY, edges);
@@ -1456,6 +1499,7 @@ namespace ChibiClash.Netcode
             }
             else
             {
+                ApplyAttackBuffer(f, ref input, ref edges);   // rules v22: cancel lock, then replay a buffered press
                 FreeActions(s, i, input, edges);
             }
 
@@ -1533,6 +1577,12 @@ namespace ChibiClash.Netcode
             var mv = ChibiMoveTable.Get(f.Class, slot);
             bool hexed = f.SluggishTicks > 0;
             f.ClearMoveRuntime();   // rules v19 SEC-106: every move start, slots 0-6 and the ult included
+            if (slot < FirstNew)
+            {
+                // Rules v22: the start direction of slots 0-6 too (rows set it in StartNewMove), for the walk cancel.
+                var pk = new ChibiInputPacket { Raw = (ushort)f.PrevInput };
+                f.MoveDir = PackDir(pk.MoveX, pk.MoveY);
+            }
             if (slot == 5)
             {
                 // Common ult body (rules v14, section 1, F:956-959): Interrupt() then hitstun = 0, before the class part.
@@ -2681,6 +2731,7 @@ namespace ChibiClash.Netcode
         {
             var f = s.F[i];
             f.MoveSlot = -1; f.MoveLockEnd = 0; f.DashTicks = 0; f.Shielding = false; f.ShieldTick = 0;   // actionLock = 0 (F:673)
+            f.BufferedEdges = 0; f.BufferTicks = 0; f.AttackLockTicks = 0;   // rules v22: hitstun / ult start drop the buffer
             f.ClearMoveRuntime();   // rules v19 SEC-106: charge / riposte / hold / landing hit / pull end with the move
             Release(s, i);
         }

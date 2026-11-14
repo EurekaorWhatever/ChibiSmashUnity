@@ -102,7 +102,8 @@ namespace ChibiClash
 
             Visual = gameObject.AddComponent<FighterVisual>();
             Visual.Build(def, skin, 10 + index * 20, weapon);
-            SetFacing(index == 0 ? 1 : -1);
+            Facing = index == 0 ? 1 : -1;
+            Visual.SnapFacing(Facing);   // spawn: no turn animation (rules v22 view turn)
         }
 
         public Collider2D Collider => col;
