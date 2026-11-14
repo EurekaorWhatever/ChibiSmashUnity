@@ -24,7 +24,10 @@ namespace ChibiClash.Tests
         /// proved the moveset port left neutral inputs alone; these values pin the v20 trace so a later change to the
         /// neutral kit still shows up here. Recorded by running this file against the rules v20 build outside Unity.
         /// </summary>
-        static readonly uint[] GoldenV20 = { 0x89FC7AFFu, 0x833EAAF2u, 0x382E95DCu, 0x46F72735u, 0xD56F4841u };
+        /// <remarks>Rules v22 re-pin, ON PURPOSE (EL-1, 2026-11-14): the neutral normals' recovery is trimmed by a quarter
+        /// and presses near a move's end are buffered, so the neutral-input trace changes (v20 values: 0x89FC7AFFu,
+        /// 0x833EAAF2u, 0x382E95DCu, 0x46F72735u, 0xD56F4841u).</remarks>
+        static readonly uint[] GoldenV20 = { 0x57340963u, 0x0DAC5E24u, 0x29840B70u, 0x1CE888DAu, 0x1F20533Eu };
 
         static ChibiInputPacket Bot(ChibiSimState s, int i, int n, int seed)
         {
@@ -107,7 +110,7 @@ namespace ChibiClash.Tests
             uint h = Play(c0);
 
             // Assert
-            Assert.AreEqual(GoldenV20[c0], h, $"pinned v20 fingerprint changed: now 0x{h:X8}u (neutral inputs must keep their moves)");
+            Assert.AreEqual(GoldenV20[c0], h, $"pinned v22 fingerprint changed: now 0x{h:X8}u (neutral inputs must keep their moves)");
         }
     }
 }

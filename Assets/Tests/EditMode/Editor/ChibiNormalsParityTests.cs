@@ -54,8 +54,9 @@ namespace ChibiClash.Tests
         const int LightSlot = 0, HeavySlot = 1, NoMove = -1;
 
         // ---- timing at base speed (doc section 1 table, section 10 rows 1-4)
-        const int LightStrike = 6, LightLock = 15;     // 24*240/1000 = 5.76 -> 6 ; 60*240/1000 = 14.4 -> 15
-        const int HeavyStrike = 11, HeavyLock = 26;    // 10.08 -> 11 ; 25.2 -> 26
+        // Rules v22: accept tick = k_strike + 1 + floor((k_lock - k_strike - 1) x 3/4) (recovery trimmed by a quarter).
+        const int LightStrike = 6, LightLock = 13;     // 24*240/1000 = 5.76 -> 6 ; k_lock 15 -> 6 + 1 + floor(8 x 3/4) = 13
+        const int HeavyStrike = 11, HeavyLock = 22;    // 10.08 -> 11 ; k_lock 26 -> 11 + 1 + floor(14 x 3/4) = 22
 
         // ---- stun ticks (doc section 2: ceil(stun_s * 60); F:471-472)
         const int LightStun = 17, FinisherStun = 27, HeavyStun = 30;
@@ -224,7 +225,7 @@ namespace ChibiClash.Tests
         static void AssertSlotNeverStarts(Trace tr, int from, int to, string why)
         {
             for (int t = from; t <= to; t++)
-                Assert.AreEqual(NoMove, tr.AttackerSlot[t], $"{why}: MoveSlot on tick {t} (D-N1 = A: no buffered attack)");
+                Assert.AreEqual(NoMove, tr.AttackerSlot[t], $"{why}: MoveSlot on tick {t} (outside the rules-v22 attack buffer)");
         }
 
         // ------------------------------------------------------------------ strike tick (doc section 1a, section 10 rows 1-2)
@@ -279,38 +280,70 @@ namespace ChibiClash.Tests
         }
 
         /// <summary>
-        /// First normal on tick 0; a Light on tick N-1 is ignored AND lost (no move on N..N+10 without a new press);
-        /// a Light on tick N (fresh run) starts slot 0 on tick N.
+        /// First normal on tick 0; the move is over at the end of tick N-1. Rules v22 attack buffer: a Light on tick N-1 or
+        /// as early as N - <see cref="ChibiSimConst.AttackBufferTicks"/> starts slot 0 exactly on tick N; one tick earlier it
+        /// is lost (no move on N-1..N+10). A Light on tick N (fresh run) starts slot 0 on tick N.
         /// </summary>
         static void AssertLock(FighterClass cls, int passive, int sluggishTicks, ChibiButtons first, int n)
         {
-            // Ignored at N-1
-            var s = FarArena(cls, passive);
-            if (sluggishTicks > 0) s.F[0].SluggishTicks = sluggishTicks;
-            var tr = Run(s, n + 12, Or(On(first, 0), On(ChibiButtons.Light, n - 1)));
-            Assert.AreEqual(first == ChibiButtons.Light ? LightSlot : HeavySlot, tr.AttackerSlot[0], "first press starts its move on tick 0");
-            Assert.AreEqual(NoMove, tr.AttackerSlot[n - 1], $"press on tick {n - 1} must be ignored (move over at end of tick {n - 1})");
-            AssertSlotNeverStarts(tr, n, n + 10, $"press on tick {n - 1} was lost");
+            int earliest = n - ChibiSimConst.AttackBufferTicks;
+            foreach (int press in new[] { n - 1, earliest })
+            {
+                var s = FarArena(cls, passive);
+                if (sluggishTicks > 0) s.F[0].SluggishTicks = sluggishTicks;
+                var tr = Run(s, n + 2, Or(On(first, 0), On(ChibiButtons.Light, press)));
+                Assert.AreEqual(first == ChibiButtons.Light ? LightSlot : HeavySlot, tr.AttackerSlot[0], "first press starts its move on tick 0");
+                Assert.AreEqual(NoMove, tr.AttackerSlot[n - 1], $"move over at end of tick {n - 1}");
+                Assert.AreEqual(LightSlot, tr.AttackerSlot[n], $"Light buffered on tick {press} must start exactly on tick {n}");
+            }
+
+            // Lost one tick before the buffer window
+            var s2 = FarArena(cls, passive);
+            if (sluggishTicks > 0) s2.F[0].SluggishTicks = sluggishTicks;
+            var tr2 = Run(s2, n + 12, Or(On(first, 0), On(ChibiButtons.Light, earliest - 1)));
+            AssertSlotNeverStarts(tr2, n - 1, n + 10, $"press on tick {earliest - 1} was lost");
 
             // Accepted at N
-            s = FarArena(cls, passive);
-            if (sluggishTicks > 0) s.F[0].SluggishTicks = sluggishTicks;
-            tr = Run(s, n + 2, Or(On(first, 0), On(ChibiButtons.Light, n)));
-            Assert.AreEqual(LightSlot, tr.AttackerSlot[n], $"Light on tick {n} must start a move");
+            var s3 = FarArena(cls, passive);
+            if (sluggishTicks > 0) s3.F[0].SluggishTicks = sluggishTicks;
+            var tr3 = Run(s3, n + 2, Or(On(first, 0), On(ChibiButtons.Light, n)));
+            Assert.AreEqual(LightSlot, tr3.AttackerSlot[n], $"Light on tick {n} must start a move");
         }
 
-        // ------------------------------------------------------------------ D-N1 = A (doc section 0 row 13, section 10 row "D-N1")
+        // ------------------------------------------------------------------ rules v22 attack buffer (replaces D-N1)
 
         [Test]
-        public void PressDuringAttack_IsLost_NoBufferedAttack()
+        public void PressEarlyInTheAttack_IsLost_OutsideTheBuffer()
         {
-            // counts game steps (D10)
+            // counts game steps (D10). Tick 5 is 8 ticks before the lock end (13): outside the 6-tick buffer.
             var s = Arena(FighterClass.Melee, MeleeBase, MeleeAX, MeleeVX);
 
-            var tr = Run(s, 31, On(ChibiButtons.Light, 0, 10));
+            var tr = Run(s, 31, On(ChibiButtons.Light, 0, 5));
 
-            AssertSlotNeverStarts(tr, LightLock, 30, "Light on tick 10 during the lock");
+            AssertSlotNeverStarts(tr, LightLock, 30, "Light on tick 5 early in the lock");
             CollectionAssert.AreEqual(new[] { LightStrike }, tr.Hits, "only the tick-0 light may hit");
+        }
+
+        [Test]
+        public void PressLateInTheAttack_IsBuffered_StartsOnTheFirstFreeTick()
+        {
+            var s = Arena(FighterClass.Melee, MeleeBase, MeleeAX, MeleeVX);
+
+            var tr = Run(s, 20, On(ChibiButtons.Light, 0, 10));
+
+            Assert.AreEqual(NoMove, tr.AttackerSlot[LightLock - 1], "first light over at the end of its lock");
+            Assert.AreEqual(LightSlot, tr.AttackerSlot[LightLock], "the buffered tick-10 light starts on tick 13");
+        }
+
+        [Test]
+        public void BufferedPress_IsDroppedByHitstun()
+        {
+            var s = FarArena(FighterClass.Melee, MeleeBase);
+
+            var tr = Run(s, 30, On(ChibiButtons.Light, 0, LightLock - 2), t => { if (t == LightLock - 1) s.F[0].Stun = 5; });
+
+            for (int t = LightLock; t < 30; t++)
+                Assert.AreNotEqual(LightSlot, tr.AttackerSlot[t], $"a buffered light survived hitstun (tick {t})");
         }
 
         [Test]
@@ -352,11 +385,11 @@ namespace ChibiClash.Tests
         // ------------------------------------------------------------------ attack speed (doc section 1 table, section 10 rows 5-7)
 
         // cls, passive, sluggishTicks, button, expected hit tick, expected accept tick
-        [TestCase(FighterClass.Melee, SwiftBlade, 0, ChibiButtons.Light, 6, 13)]
-        [TestCase(FighterClass.Melee, SwiftBlade, 0, ChibiButtons.Heavy, 9, 22)]
-        [TestCase(FighterClass.Heavy, Crusher, 0, ChibiButtons.Light, 7, 17)]
-        [TestCase(FighterClass.Heavy, Crusher, 0, ChibiButtons.Heavy, 12, 30)]
-        [TestCase(FighterClass.Heavy, Crusher, 1000, ChibiButtons.Heavy, 14, 35)]   // Crusher + Hex: 722 500 ppm, multiplicative
+        [TestCase(FighterClass.Melee, SwiftBlade, 0, ChibiButtons.Light, 6, 11)]
+        [TestCase(FighterClass.Melee, SwiftBlade, 0, ChibiButtons.Heavy, 9, 19)]
+        [TestCase(FighterClass.Heavy, Crusher, 0, ChibiButtons.Light, 7, 14)]
+        [TestCase(FighterClass.Heavy, Crusher, 0, ChibiButtons.Heavy, 12, 25)]
+        [TestCase(FighterClass.Heavy, Crusher, 1000, ChibiButtons.Heavy, 14, 30)]   // Crusher + Hex: 722 500 ppm, multiplicative
         public void AttackSpeedModifier_SwiftBlade_ChangesTiming(FighterClass cls, int passive, int sluggish, ChibiButtons btn, int hitTick, int acceptTick)
         {
             // Hit tick
@@ -560,17 +593,17 @@ namespace ChibiClash.Tests
 
         // ------------------------------------------------------------------ reload (doc section 4, section 10 "Reload")
 
-        static readonly int[] ChainPresses = { 0, LightLock, 2 * LightLock, 3 * LightLock };   // finisher on 45, strike 51
-        const int FinisherStrikeTick = 3 * LightLock + LightStrike;                            // 51
-        const int ReloadAcceptTick = FinisherStrikeTick + ReloadTicks;                          // 141
+        static readonly int[] ChainPresses = { 0, LightLock, 2 * LightLock, 3 * LightLock };   // finisher on 39, strike 45 (v22)
+        const int FinisherStrikeTick = 3 * LightLock + LightStrike;                            // 45 (v22)
+        const int ReloadAcceptTick = FinisherStrikeTick + ReloadTicks;                          // 135 (v22)
 
         [TestCase(FighterClass.Ranged)]
         [TestCase(FighterClass.Magic)]
         public void Reload_StartsOnFinisherShot_PressAtEndMinus1Ignored_AtEndAccepted(FighterClass cls)
         {
-            // Ignored (and lost) at 140
+            // Ignored (and lost) on ReloadAcceptTick - 1
             var s = FarArena(cls, BasePassive(cls));
-            int[] withIgnored = { 0, 15, 30, 45, ReloadAcceptTick - 1 };
+            int[] withIgnored = { 0, LightLock, 2 * LightLock, 3 * LightLock, ReloadAcceptTick - 1 };
             var tr = Run(s, ReloadAcceptTick + 12, On(ChibiButtons.Light, withIgnored), t =>
             {
                 if (t == FinisherStrikeTick) Assert.AreEqual(0, s.F[0].SetCd, "secondary: reload not set before the strike tick");
@@ -579,9 +612,9 @@ namespace ChibiClash.Tests
             foreach (int p in ChainPresses) Assert.AreEqual(LightSlot, tr.AttackerSlot[p], $"chain light on tick {p} accepted");
             AssertSlotNeverStarts(tr, ReloadAcceptTick - 1, ReloadAcceptTick + 10, $"Light on tick {ReloadAcceptTick - 1} during reload");
 
-            // Accepted at 141
+            // Accepted on ReloadAcceptTick
             s = FarArena(cls, BasePassive(cls));
-            int[] withAccepted = { 0, 15, 30, 45, ReloadAcceptTick };
+            int[] withAccepted = { 0, LightLock, 2 * LightLock, 3 * LightLock, ReloadAcceptTick };
             tr = Run(s, ReloadAcceptTick + 2, On(ChibiButtons.Light, withAccepted));
             Assert.AreEqual(LightSlot, tr.AttackerSlot[ReloadAcceptTick], $"Light on tick {ReloadAcceptTick} must start a move");
         }
@@ -590,7 +623,7 @@ namespace ChibiClash.Tests
         [TestCase(FighterClass.Magic)]
         public void Reload_DoesNotBlockSkills(FighterClass cls)
         {
-            const int skillTick = 60;      // finisher on 45, normal lock over on 60, reload until 141
+            const int skillTick = 60;      // v22: finisher on 39, normal lock over on 52, reload until 135
             var s = FarArena(cls, BasePassive(cls));
 
             var tr = Run(s, skillTick + 2, Or(On(ChibiButtons.Light, ChainPresses), On(ChibiButtons.Skill1, skillTick)));

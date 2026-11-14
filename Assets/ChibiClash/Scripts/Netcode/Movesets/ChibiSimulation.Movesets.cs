@@ -157,6 +157,75 @@ namespace ChibiClash.Netcode
             }
         }
 
+        // ================================================================== rules v22: attack buffer / walk cancel
+
+        /// <summary>
+        /// Rules v22 (EL-1): stores this step's attack press edges when <paramref name="lockLeft"/> (ticks until the move or
+        /// the cancel lock frees the fighter) is at most <see cref="ChibiSimConst.AttackBufferTicks"/>. The newest press
+        /// replaces an older one; the same-tick priority is applied later by ResolveActions. The press stays valid through
+        /// the first free step (lockLeft + 1 decrements away).
+        /// </summary>
+        static void BufferAttack(ChibiFighterSim f, int edges, int lockLeft)
+        {
+            int atk = edges & ChibiSimConst.AttackBufferMask;
+            if (atk == 0 || lockLeft > ChibiSimConst.AttackBufferTicks) return;
+            f.BufferedEdges = atk;
+            f.BufferTicks = lockLeft + 1;
+        }
+
+        /// <summary>
+        /// Rules v22, before FreeActions. During a walk-cancel lock, attack presses go to the buffer and Shield is ignored
+        /// (movement, jump and dash stay free). Otherwise a buffered press is replayed when this step has no fresh attack
+        /// press (a fresh press wins), using this step's stick, so a buffered attack turns toward the held direction on the
+        /// ground (FreeActions sets Facing before ResolveActions). The buffer is consumed either way.
+        /// </summary>
+        static void ApplyAttackBuffer(ChibiFighterSim f, ref ChibiInputPacket input, ref int edges)
+        {
+            if (f.AttackLockTicks > 0)
+            {
+                BufferAttack(f, edges, f.AttackLockTicks);
+                edges &= ~ChibiSimConst.AttackBufferMask;
+                input.Raw = (ushort)(input.Raw & ~(int)ChibiButtons.Shield);
+                return;
+            }
+            if (f.BufferTicks > 0 && (edges & ChibiSimConst.AttackBufferMask) == 0) edges |= f.BufferedEdges;
+            f.BufferedEdges = 0;
+            f.BufferTicks = 0;
+        }
+
+        /// <summary>Row flags whose recovery is part of the mechanic (counters, rolls, armor, reflect, dive, hold): never cancelled.</summary>
+        const int NoCancelFlags = ChibiMoveExt.FCounter | ChibiMoveExt.FCounterProj | ChibiMoveExt.FReflect |
+                                  ChibiMoveExt.FDive | ChibiMoveExt.FRoll | ChibiMoveExt.FArmor | ChibiMoveExt.FHold |
+                                  ChibiMoveExt.FLandHit;
+
+        /// <summary>
+        /// Rules v22 (EL-1 / TN-1) walk / turn cancel. Grounded, past the active frames, in the last
+        /// <see cref="ChibiSimConst.MoveCancelTicks"/> lock ticks, with a stick X that differs from the move's start
+        /// direction: Light rows and the light normal always, every other move only when it hit. Never for program moves,
+        /// the ult, the Pose Fireball lock, charging moves or the <see cref="NoCancelFlags"/> rows. The move ends like a
+        /// natural end (MoveSlot = -1) and attacks stay locked until the old lock end (<c>AttackLockTicks</c>).
+        /// </summary>
+        static void TryWalkCancel(ChibiSimState s, int i, ChibiInputPacket input)
+        {
+            var f = s.F[i];
+            int slot = f.MoveSlot;
+            if (slot < 0 || slot == 5 || slot == ChibiSimConst.PoseSlot || ProgramOf(f) != PNone) return;
+            if (!f.Grounded || f.Held || f.Charging || input.MoveX == 0 || input.MoveX == DirXOf(f.MoveDir)) return;
+            int left = f.MoveLockEnd - f.MoveTick;
+            if (f.MoveTick < f.MoveStartup + f.MoveActive || left <= 0 || left > ChibiSimConst.MoveCancelTicks) return;
+            bool light;
+            if (slot >= FirstNew)
+            {
+                var e = RowOf(f).Ext;
+                if ((e.Flags & NoCancelFlags) != 0) return;
+                light = e.Button == 0;
+            }
+            else light = slot == 0;
+            if (!light && !f.MoveHit) return;
+            f.MoveSlot = -1;
+            f.AttackLockTicks = left;
+        }
+
         // ================================================================== move start / timers
 
         /// <summary>Technique cooldowns tick with Cd[] (README 1.3).</summary>

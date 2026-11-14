@@ -211,7 +211,7 @@ namespace ChibiClash.Tests
 
         [TestCase(FighterClass.Melee)] [TestCase(FighterClass.Heavy)] [TestCase(FighterClass.Ranged)]
         [TestCase(FighterClass.Magic)] [TestCase(FighterClass.Polearm)]
-        public void FullMeter_OpensWindowAndPerformsClassGesture_FiresMostOfTheTime(FighterClass c)
+        public void FullMeter_PressesUltKey_FiresMostOfTheTime(FighterClass c)
         {
             int fired = 0;
             const int runs = 10;
@@ -229,12 +229,12 @@ namespace ChibiClash.Tests
                 if (r.S.F[1].UltsUsed > 0)
                 {
                     fired++;
-                    bool sawGesture = false;
-                    foreach (var p in r.Sent) if ((int)p.Gesture == ChibiSimConst.UltGesture[(int)c]) sawGesture = true;
-                    Assert.IsTrue(sawGesture, "the ult fired through the class gesture bits");
+                    bool sawKey = false;
+                    foreach (var p in r.Sent) if (p.Has(ChibiButtons.Ultimate)) sawKey = true;
+                    Assert.IsTrue(sawKey, "rules v22: the ult fired through the Ult key (no gesture needed)");
                 }
             }
-            // Difficulty 3: success 96% per window, failed windows retry after 1.5 s, so nearly every run fires.
+            // Difficulty 3: the per-tick press chance is scaled by 96 %, so nearly every run fires within 20 s.
             Assert.GreaterOrEqual(fired, 8, $"{c}: CPU fired its ult in {fired}/{runs} runs");
         }
     }

@@ -37,22 +37,26 @@ namespace ChibiClash.Tests
         /// 21: re-recorded ON PURPOSE (lead: GL-2 applied consistently, Sword Aura waves are not ult hits). Only the config
         /// hash moves (RulesVersion 21 and the stage hash now mixing the floor fields); both fixtures run on classic stages
         /// and never fire a Sword Aura wave, so their checksums are unchanged, as expected.
+        /// 22: re-recorded ON PURPOSE (UL-1 / EL-1 / TN-1, 2026-11-14): the Ult press fires the ult, recovery trimmed, 6-tick
+        /// attack buffer and walk cancel with three new hashed fighter fields and FeelConstants in the config hash, so the
+        /// config hash and both fixture checksums move.
         /// </remarks>
-        const int PinnedRulesVersion = 21;
+        const int PinnedRulesVersion = 22;
         /// <summary>The wire protocol version the wire golden values were recorded with.</summary>
         /// <remarks>3: re-recorded ON PURPOSE (CH-3) - input bit 15 changed meaning from PoseVerified to Special.
         /// 4: re-recorded ON PURPOSE (rules v20, ST-5) - the Start message carries a 1-bit HazardsOff after the stage and the
         /// stage range is 0..7; Hello keeps its layout, only its protocol byte (and the rules field) change.</remarks>
         const int PinnedProtocolVersion = 4;
         /// <summary>Hash of every gameplay constant table + the fixture config (ChibiMatchConfig.ComputeHash).</summary>
-        const uint GoldenConfigHash = 0x81DE0FB7u;
+        const uint GoldenConfigHash = 0x26C1875Bu;
         /// <summary>Final state checksum of fixture match A after <see cref="Ticks"/> ticks.</summary>
-        const uint GoldenChecksumA = 0x059A90E1u;
+        const uint GoldenChecksumA = 0xE72052CEu;
         /// <summary>Final state checksum of fixture match B (other fighters, stage, intro off).</summary>
-        const uint GoldenChecksumB = 0x37CEB603u;
+        const uint GoldenChecksumB = 0x1D0DA211u;
         /// <summary>Bytes of a Hello control datagram (protocol, rules, class, passive, name "Kira").</summary>
-        /// <remarks>Re-recorded on purpose: protocol 4 and rules 21 (same Hello layout, only the two version fields).</remarks>
-        const string GoldenHelloHex = "c9415001208922ae1a";
+        /// <remarks>Re-recorded on purpose: protocol 4 and rules 22 (same Hello layout; only the rules field moved, 21 -> 22,
+        /// so ProtocolVersion stays 4).</remarks>
+        const string GoldenHelloHex = "c9416001208922ae1a";
 
         const int Ticks = 1800;   // 30 s of play: movement, attacks, skills, jumps, hits, KOs
 
