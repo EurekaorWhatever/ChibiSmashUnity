@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using UnityEngine.TestTools.Constraints;
+using Is = UnityEngine.TestTools.Constraints.Is;
 
 namespace ChibiClash.Tests
 {
@@ -95,6 +97,44 @@ namespace ChibiClash.Tests
             // Assert
             CollectionAssert.AreEqual(before, d.keybinds);
             Assert.AreEqual(OldCount + 2, Bindings.Count);
+        }
+
+        /// <summary>
+        /// Story type: Logic (perf, hot path). Get / Held / Pressed run ~100 times a frame, and the key-name parse used
+        /// to allocate on every call (~2.7 KB/frame, profiled 2026-11-14). After the first lookup per binding string,
+        /// resolving bindings must not allocate.
+        /// </summary>
+        [Test]
+        public void Get_DoesNotAllocate_AfterFirstLookup()
+        {
+            // Arrange: a normal profile plus one unreadable entry that falls back to the default
+            var d = new SaveData { keybindVersion = Bindings.Version, keybinds = new List<string>() };
+            Bindings.Normalize(d);
+            d.keybinds[(int)BindAction.Block] = "NotAKey";
+            var saved = Bindings.Data;
+            Bindings.Data = d;
+            try
+            {
+                for (int p = 0; p < 2; p++)
+                    for (int a = 0; a < Bindings.Count; a++) Bindings.Get(p, (BindAction)a);   // warm up
+
+                // Act + Assert: zero allocation. (GC.GetAllocatedBytesForCurrentThread always reads 0 under Unity's Mono,
+                // so use the Test Framework constraint, which counts profiler GC.Alloc samples.)
+                Assert.That(() =>
+                {
+                    for (int p = 0; p < 2; p++)
+                        for (int a = 0; a < Bindings.Count; a++) Bindings.Get(p, (BindAction)a);
+                }, Is.Not.AllocatingGCMemory(), "Bindings.Get allocated in the hot path");
+
+                // Assert: the parse result is unchanged (bad entry -> default "F")
+                Assert.AreEqual("F", Bindings.Get(0, BindAction.Block));
+                Assert.AreEqual("Space", Bindings.Get(0, BindAction.Jump));
+                Assert.AreEqual("Mouse0", Bindings.Get(0, BindAction.Light));
+            }
+            finally
+            {
+                Bindings.Data = saved;
+            }
         }
     }
 }
