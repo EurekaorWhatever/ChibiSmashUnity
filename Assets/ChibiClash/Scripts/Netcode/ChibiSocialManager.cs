@@ -403,7 +403,8 @@ namespace ChibiClash.Netcode
             if (m == null) return;
             bool friend = IsFriend(e.UserId);
 
-            if (friend && m.Kind == ChibiSocialRules.KindDecline && e.UserId == _inviteTargetId)
+            // SOC-01: _inviteTargetId is cleared the moment the invite is sent; _invitedId is who holds it now.
+            if (ChibiSocialRules.IsDeclineOfOurInvite(m, friend, e.UserId, _invitedId))
             {
                 SetStatus(FriendName(e.UserId) + " declined the invite.", true);
                 _inviteTargetId = null;

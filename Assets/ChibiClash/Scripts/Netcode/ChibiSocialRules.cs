@@ -207,6 +207,15 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>Room names: 3-24 characters.</summary>
+        /// <summary>
+        /// True when <paramref name="m"/> is a friend declining the invite we sent. <paramref name="invitedId"/> is the
+        /// friend who currently HOLDS our invite (set once the invite message went out), not the friend we are still
+        /// creating a room for.
+        /// </summary>
+        /// <example><code>if (ChibiSocialRules.IsDeclineOfOurInvite(m, friend, e.UserId, _invitedId)) ...</code></example>
+        public static bool IsDeclineOfOurInvite(ChibiInviteMessage m, bool senderIsFriend, string senderId, string invitedId)
+            => m != null && senderIsFriend && m.Kind == KindDecline && !string.IsNullOrEmpty(invitedId) && senderId == invitedId;
+
         public const int RoomNameMin = 3, RoomNameMax = 24;
         /// <summary>Shown when a room has no usable name.</summary>
         public const string FallbackRoomName = "Private room";

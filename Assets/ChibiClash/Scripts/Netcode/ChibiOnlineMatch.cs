@@ -45,10 +45,21 @@ namespace ChibiClash.Netcode
         LocalForfeit,
         /// <summary>The two simulations disagreed (checksum), detected here or reported by the peer.</summary>
         Desync,
-        /// <summary>The peer closed after its end, but we never received the inputs to confirm that end ourselves.</summary>
+        /// <summary>No longer produced (SEC-003, protocol 5): an end we cannot confirm ourselves is scored as a disconnect.</summary>
         UnconfirmedEnd,
         /// <summary>Handshake rejected / timed out / cancelled.</summary>
         HandshakeFailed,
+        /// <summary>
+        /// The session started here but the peer never sent one gameplay packet (e.g. the host never saw our Ready):
+        /// no contest, so nobody collects a win for a match that was never played (NET-03).
+        /// </summary>
+        PeerNeverStarted,
+        /// <summary>
+        /// The peer kept playing, but so slowly that the match was stalled for more than two thirds of the stall window: no
+        /// contest (decision 2026-11-16). A slow link and a deliberate drip-feed look the same, and two honest players
+        /// on a bad connection must not both record a win.
+        /// </summary>
+        OpponentStalled,
     }
 
     /// <summary>Final result of an online match, from the local player's point of view.</summary>
@@ -76,10 +87,19 @@ namespace ChibiClash.Netcode
     ///   * The simulation's end (KO / timer) counts only once its frame is CONFIRMED (both inputs final). A predicted
     ///     KO can still be undone by a rollback, so it never decides a result.
     ///   * Opponent forfeits, goes silent past the timeout or the transport drops: local player wins (decision Q4).
+    ///     A peer that only sends old frames again counts as silent (NET-01).
+    ///   * A peer that keeps the match stalled for more than two thirds of the stall window: no contest (NET-01, 2026-11-16).
+    ///   * Leave(MatchComplete) never decides a result (SEC-003). Either our own CONFIRMED state shows the end (then it
+    ///     is a normal MatchOver), or the peer's drop is scored like any other disconnect. It used to give a no contest,
+    ///     which let a losing peer erase the loss by claiming "complete" and leaving.
+    ///   * A peer that never delivered a single real input frame: no contest (NET-03). Known limit: a joiner can use
+    ///     this to dodge a matchup after seeing the host's pick in Start (it costs the host a win, not a loss).
     ///   * Any checksum mismatch (ours or reported by the peer): no contest (decision 2026-11-09). Nobody can tell whose
     ///     simulation is right with two peers, so a cheater cannot convert a desync into a win.
     ///   * Honest limit (P2P, no authority): if the network dies for both players at once, both see "opponent
     ///     disconnected". Ranked play would need a server-side replay check (netcode-architecture.md 7.6).
+    ///   * Known limit (SEC-003 remainder): a losing peer can still force a no contest by sending Leave(Desync) or a
+    ///     wrong checksum. Without an authority nobody can tell a real desync from a faked one.
     /// </summary>
     public sealed class ChibiOnlineMatch : IDisposable
     {
@@ -91,7 +111,7 @@ namespace ChibiClash.Netcode
         readonly IChibiInputSource _input;
         readonly IChibiLinkStatus _link;
         int _linger;
-        bool _desyncFlag, _peerCompleted;
+        bool _desyncFlag;
         ChibiDisconnectReason? _disconnect;
 
         public ChibiOnlinePhase Phase { get; private set; } = ChibiOnlinePhase.Handshaking;
@@ -202,7 +222,12 @@ namespace ChibiClash.Netcode
                 {
                     case ChibiLeaveReason.Forfeit: Session.NotifyDisconnected(ChibiDisconnectReason.RemoteLeft); break;
                     case ChibiLeaveReason.Desync: _desyncFlag = true; break;
-                    case ChibiLeaveReason.MatchComplete: _peerCompleted = true; break;
+                    // SEC-003: the peer's word that the match is complete decides nothing. If it really is, the confirmed
+                    // state below shows it; if not, whatever disconnect follows is scored as a disconnect.
+                    case ChibiLeaveReason.MatchComplete: break;
+                    // The peer ended the match as "too slow to play": end it the same way here (no contest), instead of
+                    // timing the peer out 5 s later and recording a win. Weaker than Leave(Desync), so no new escape.
+                    case ChibiLeaveReason.Stalled: Session.NotifyDisconnected(ChibiDisconnectReason.Stalled); break;
                 }
             }
 
@@ -223,8 +248,13 @@ namespace ChibiClash.Netcode
             }
             else if (_disconnect.HasValue)
             {
-                if (_peerCompleted)
-                    Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.UnconfirmedEnd, -1, close: true);
+                if (!Session.HasRemoteInput)   // NET-03: the peer never played a tick with us (stale datagrams do not count)
+                    Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.PeerNeverStarted, -1, close: true);
+                else if (_disconnect.Value == ChibiDisconnectReason.Stalled)
+                {
+                    _handshake.SendLeave(ChibiLeaveReason.Stalled);   // so the other side ends as no contest too
+                    Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.OpponentStalled, -1, close: true);
+                }
                 else
                 {
                     var cause = _disconnect.Value == ChibiDisconnectReason.RemoteLeft ? ChibiEndCause.OpponentLeft

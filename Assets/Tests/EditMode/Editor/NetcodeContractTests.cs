@@ -45,8 +45,10 @@ namespace ChibiClash.Tests
         /// <summary>The wire protocol version the wire golden values were recorded with.</summary>
         /// <remarks>3: re-recorded ON PURPOSE (CH-3) - input bit 15 changed meaning from PoseVerified to Special.
         /// 4: re-recorded ON PURPOSE (rules v20, ST-5) - the Start message carries a 1-bit HazardsOff after the stage and the
-        /// stage range is 0..7; Hello keeps its layout, only its protocol byte (and the rules field) change.</remarks>
-        const int PinnedProtocolVersion = 4;
+        /// stage range is 0..7; Hello keeps its layout, only its protocol byte (and the rules field) change.
+        /// 5: re-recorded ON PURPOSE (review 2026-11-16, netcode hardening) - same layout, new rollback/result rules
+        /// (DisconnectTicks cap, input-progress timeout, MatchComplete and never-started scoring).</remarks>
+        const int PinnedProtocolVersion = 5;
         /// <summary>Hash of every gameplay constant table + the fixture config (ChibiMatchConfig.ComputeHash).</summary>
         const uint GoldenConfigHash = 0x26C1875Bu;
         /// <summary>Final state checksum of fixture match A after <see cref="Ticks"/> ticks.</summary>
@@ -54,9 +56,8 @@ namespace ChibiClash.Tests
         /// <summary>Final state checksum of fixture match B (other fighters, stage, intro off).</summary>
         const uint GoldenChecksumB = 0x1D0DA211u;
         /// <summary>Bytes of a Hello control datagram (protocol, rules, class, passive, name "Kira").</summary>
-        /// <remarks>Re-recorded on purpose: protocol 4 and rules 22 (same Hello layout; only the rules field moved, 21 -> 22,
-        /// so ProtocolVersion stays 4).</remarks>
-        const string GoldenHelloHex = "c9416001208922ae1a";
+        /// <remarks>Re-recorded on purpose: protocol 5 and rules 22 (same Hello layout; only the protocol byte moved, 4 -> 5).</remarks>
+        const string GoldenHelloHex = "c9516001208922ae1a";
 
         const int Ticks = 1800;   // 30 s of play: movement, attacks, skills, jumps, hits, KOs
 

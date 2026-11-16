@@ -275,7 +275,204 @@ namespace ChibiClash.Tests
             Assert.Greater(p.A.RttTicksX8, 0, "RTT was never sampled");
         }
 
+        // ------------------------------------------------------------------ hostile peer (review 2026-11-16)
+
+        /// <summary>A session against a hand-driven peer; <paramref name="ended"/> collects every OnDisconnect reason.</summary>
+        static ChibiRollbackSession ProbeSession(out ProbeTransport net, out List<ChibiDisconnectReason> ended)
+        {
+            net = new ProbeTransport();
+            var s = new ChibiRollbackSession(0, Cfg(), net, new ChibiScriptedInputSource(n => Bot(1, n)));
+            var list = new List<ChibiDisconnectReason>();
+            s.OnDisconnect += r => list.Add(r);
+            ended = list;
+            return s;
+        }
+
+        static readonly ChibiDisconnectReason[] OnlyTimeout = { ChibiDisconnectReason.Timeout };
+        static readonly ChibiDisconnectReason[] OnlyStalled = { ChibiDisconnectReason.Stalled };
+
+        [Test]
+        public void Net01_PeerResendingOldFrames_TimesOut()
+        {
+            // Arrange: a peer that keeps sending a well-formed datagram, but never a new input frame.
+            var s = ProbeSession(out var net, out var ended);
+            var stale = Encode(new ChibiNetMessage { LastFrame = 0, AckFrame = -1, Advantage = 0, Count = 1 });
+            int limit = s.Settings.DisconnectTicks;
+
+            // Act
+            for (int i = 0; i < limit * 2; i++) { net.Inbox.Enqueue(stale); s.Tick(); }
+
+            // Assert: valid-but-stale packets must not keep the match frozen forever.
+            Assert.AreEqual(0, s.RejectedPackets, "precondition: the stale datagram is well formed");
+            CollectionAssert.AreEqual(OnlyTimeout, ended, "a peer that never advances its input must time out");
+        }
+
+        [Test]
+        public void Net01_PeerDripFeedingInputs_EndsAsStalled()
+        {
+            // Arrange: one NEW input frame every 200 ticks (under the 300-tick silence limit), so we stall almost always.
+            var s = ProbeSession(out var net, out var ended);
+            int next = s.Settings.InputDelay;   // frames below InputDelay are pre-seeded
+
+            // Act
+            for (int i = 0; i < 1500 && ended.Count == 0; i++)
+            {
+                if (i % 200 == 0) net.Inbox.Enqueue(Encode(new ChibiNetMessage { LastFrame = next++, AckFrame = -1, Count = 1 }));
+                s.Tick();
+            }
+
+            // Assert: not a Timeout (the peer is alive), but the match must not crawl forever.
+            CollectionAssert.AreEqual(OnlyStalled, ended, "a peer that holds the match at a crawl must end it (stall window)");
+        }
+
+        [Test]
+        public void Net01_PeerFeedingOneFrameEveryFourthTick_EndsAsStalled()
+        {
+            // Arrange: security review F2. One new frame per 4 ticks holds the match at quarter speed (75 % stalled,
+            // over the two-thirds limit). Half speed is NOT ended on purpose: an honest 500 ms RTT link stalls 47 %.
+            var s = ProbeSession(out var net, out var ended);
+            int next = s.Settings.InputDelay;
+
+            // Act
+            for (int i = 0; i < 3000 && ended.Count == 0; i++)
+            {
+                if (i % 4 == 0) net.Inbox.Enqueue(Encode(new ChibiNetMessage { LastFrame = next++, AckFrame = -1, Count = 1 }));
+                s.Tick();
+            }
+
+            // Assert
+            CollectionAssert.AreEqual(OnlyStalled, ended, "a peer that holds the match at quarter speed forever must end it");
+        }
+
+        [Test]
+        public void Net06_PeerThatNeverAcks_DoesNotThrowPastTheInputRing()
+        {
+            // Arrange: the peer plays at full speed but always reports "I hold none of your inputs" (AckFrame -1).
+            var s = ProbeSession(out var net, out var ended);
+            int next = s.Settings.InputDelay;
+
+            // Act / Assert: the resend window used to walk out of the 128-frame ring and LocalInput threw every tick.
+            Assert.DoesNotThrow(() =>
+            {
+                for (int i = 0; i < ChibiRollbackSession.RingSize * 3; i++)
+                {
+                    net.Inbox.Enqueue(Encode(new ChibiNetMessage { LastFrame = next++, AckFrame = -1, Count = 1 }));
+                    s.Tick();
+                }
+            });
+            Assert.Greater(s.Frame, ChibiRollbackSession.RingSize * 2, "the match kept advancing");
+            Assert.IsEmpty(ended);
+        }
+
+        // ------------------------------------------------------------------ honest play must not trip the new limits
+
+        [Test]
+        public void HonestBadLink_StaysFarFromTheStallLimit()
+        {
+            // Arrange: ~300 ms RTT, heavy jitter, 15 % loss for 60 s (network review: guards the stall-window threshold).
+            var p = NewPair(9, 3, 15);
+            int peak = 0;
+
+            // Act
+            for (int t = 0; t < 3600; t++)
+            {
+                p.Run(1);
+                peak = System.Math.Max(peak, System.Math.Max(p.A.StalledInWindow, p.B.StalledInWindow));
+            }
+
+            // Assert
+            Assert.IsFalse(p.Disconnected, "an honest bad link was ended");
+            Assert.Less(peak, p.A.StallLimit / 2, "peak stalled ticks in the window: " + peak);
+        }
+
+        [Test]
+        public void HonestSlowLink_500msRtt_IsNotEnded()
+        {
+            var p = NewPair(15, 0, 0);
+            p.Run(3600);
+            Assert.IsFalse(p.Disconnected, "a 500 ms RTT link must stay playable (slow, but not ended)");
+        }
+
+        [TestCase(1)]
+        [TestCase(2)]
+        public void HonestPeerFreezes_UnderFiveSeconds_AreNotEnded(int freezes)
+        {
+            // Arrange: B's game hangs for 2.8 s (window drag, loading hitch), once or twice two seconds apart.
+            var p = NewPair(LatencyTicks, 0, 0);
+            p.Run(300);
+
+            // Act
+            for (int k = 0; k < freezes; k++)
+            {
+                for (int t = 0; t < 168; t++) { p.Link.Advance(); p.A.Tick(); }   // only A keeps ticking
+                p.Run(120);
+            }
+            p.Run(600);
+
+            // Assert: short freezes do not add up to a result (they used to with a running budget).
+            Assert.IsFalse(p.Disconnected, "freezes under the 5 s limit ended the match");
+            Assert.IsFalse(p.Desynced);
+        }
+
+        [Test]
+        public void Net03_StalePacketsAlone_AreNotRemoteInput()
+        {
+            // Security review F1: a well-formed datagram that carries no new frame must not count as "the peer played".
+            var s = ProbeSession(out var net, out _);
+            Assert.IsFalse(s.HasRemoteInput);
+            net.Inbox.Enqueue(Encode(new ChibiNetMessage { LastFrame = 0, AckFrame = -1, Count = 1 }));
+            s.Tick();
+            Assert.IsFalse(s.HasRemoteInput, "a pre-seeded frame sent again is not input");
+
+            net.Inbox.Enqueue(Encode(new ChibiNetMessage { LastFrame = s.Settings.InputDelay, AckFrame = -1, Count = 1 }));
+            s.Tick();
+            Assert.IsTrue(s.HasRemoteInput);
+        }
+
+        [Test]
+        public void Net04_ImplausibleLastFrame_DoesNotMoveTheTimeSyncEstimate()
+        {
+            // Arrange
+            var s = ProbeSession(out var net, out _);
+            for (int i = 0; i < 4; i++) s.Tick();
+            int before = s.LocalFrameAdvantage;
+
+            // Act: the peer claims to be far ahead: a million frames, then one frame past the honest maximum
+            // (contiguous = InputDelay - 1 here, and an honest window ends at most MaxInputs past it).
+            net.Inbox.Enqueue(Encode(new ChibiNetMessage { LastFrame = 1_000_000, AckFrame = -1, Count = 1 }));
+            int boundary = s.Settings.InputDelay - 1 + ChibiNetMessage.MaxInputs + 1;
+            net.Inbox.Enqueue(Encode(new ChibiNetMessage { LastFrame = boundary, AckFrame = -1, Count = 1 }));
+            s.Tick();
+
+            // Assert: our advantage estimate (what drives time dilation on both sides) is not poisoned.
+            Assert.GreaterOrEqual(s.LocalFrameAdvantage, before, "a forged LastFrame switched time sync off");
+        }
+
+        [Test]
+        public void Net05_ChecksumsCompared_CountsEachChecksumFrameOnce()
+        {
+            // Arrange / Act
+            var p = NewPair(2, 0, 0);
+            p.Run(TotalTicks);
+
+            // Assert: at most one comparison per 30-frame checksum point (it used to count every repeated datagram).
+            Assert.IsFalse(p.Desynced);
+            Assert.Greater(p.A.ChecksumsCompared, 10);
+            Assert.LessOrEqual(p.A.ChecksumsCompared, p.A.Frame / ChibiRollbackSession.ChecksumInterval);
+        }
+
         // ------------------------------------------------------------------ settings
+
+        [TestCase(600, false)]
+        [TestCase(601, true)]
+        [TestCase(65535, true)]
+        public void Net02_DisconnectTicks_HasAnUpperBound(int ticks, bool rejected)
+        {
+            var s = ChibiRollbackSettings.Default;
+            s.DisconnectTicks = ticks;
+            if (rejected) Assert.Throws<System.ArgumentOutOfRangeException>(() => s.Validate());
+            else Assert.DoesNotThrow(() => s.Validate());
+        }
 
         [Test]
         public void Settings_OutOfRange_Throw()

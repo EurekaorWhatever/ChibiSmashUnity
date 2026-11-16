@@ -32,7 +32,10 @@ namespace ChibiClash.Netcode
         public int InputDelay;
         /// <summary>Most frames we simulate past the newest confirmed remote input before stalling (8 = 133 ms).</summary>
         public int MaxPrediction;
-        /// <summary>Ticks without a valid datagram before the opponent counts as disconnected (300 = 5 s).</summary>
+        /// <summary>
+        /// Ticks without a NEW remote input frame before the opponent counts as disconnected (300 = 5 s). The stall
+        /// window (<see cref="ChibiRollbackSession.StallWindowTicks"/>) is four times this. 60..<see cref="ChibiRollbackSession.MaxDisconnectTicks"/>.
+        /// </summary>
         public int DisconnectTicks;
 
         /// <summary>Production defaults (rollback-gap-report.md 2.6: 150 ms RTT target, 3-5 s timeout).</summary>
@@ -49,18 +52,29 @@ namespace ChibiClash.Netcode
             if (InputDelay < 0 || InputDelay > 8) throw new ArgumentOutOfRangeException(nameof(InputDelay), "0..8");
             if (MaxPrediction < 1 || MaxPrediction > 15) throw new ArgumentOutOfRangeException(nameof(MaxPrediction), "1..15");
             if (DisconnectTicks < ChibiSimConst.TickRate) throw new ArgumentOutOfRangeException(nameof(DisconnectTicks), ">= 1 s");
+            // NET-02: the host picks this value and the joiner must live with it; 16 bits on the wire would allow 18 minutes.
+            if (DisconnectTicks > ChibiRollbackSession.MaxDisconnectTicks)
+                throw new ArgumentOutOfRangeException(nameof(DisconnectTicks), "<= 10 s");
         }
     }
 
     /// <summary>Why a session stopped talking to its peer.</summary>
     public enum ChibiDisconnectReason : byte
     {
-        /// <summary>No valid datagram for <see cref="ChibiRollbackSettings.DisconnectTicks"/>.</summary>
+        /// <summary>
+        /// No new remote input frame for <see cref="ChibiRollbackSettings.DisconnectTicks"/>. Datagrams that only repeat
+        /// old frames do not count as life (NET-01).
+        /// </summary>
         Timeout = 0,
         /// <summary>The peer said goodbye (quit, forfeit) on the control channel.</summary>
         RemoteLeft = 1,
         /// <summary>The transport itself lost the connection (Relay severed it, socket error).</summary>
         TransportLost = 2,
+        /// <summary>
+        /// The peer kept sending new input, but so slowly that we were stalled for more than two thirds of the stall
+        /// window (NET-01). A bad link looks exactly like a deliberate drip-feed, so this is scored as no contest, not a win.
+        /// </summary>
+        Stalled = 3,
     }
 
     /// <summary>
@@ -90,6 +104,8 @@ namespace ChibiClash.Netcode
         public const int DefaultMaxPrediction = 8;
         public const int ChecksumInterval = 30;
         public const int DefaultDisconnectTicks = 300;   // 5 s of silence
+        /// <summary>Largest disconnect timeout a handshake may ask for (NET-02): 10 s.</summary>
+        public const int MaxDisconnectTicks = 600;
 
         /// <summary>Frame, local hash, remote hash. Raised at most once per session (a desync ends the match).</summary>
         public event Action<int, uint, uint> OnDesync;
@@ -118,6 +134,9 @@ namespace ChibiClash.Netcode
         int _nextConfirmEmit;
         int _silentTicks;
         int _tickCount;
+        // NET-01 stall window: one flag per tick for the last StallWindowTicks ticks, and how many of them are set.
+        readonly bool[] _stallRing;
+        int _stalledInWindow;
 
         // RTT estimate: tick on which each local frame was first sent; sampled when the ack passes it.
         readonly int[] _sentTick = new int[RingSize];
@@ -125,6 +144,7 @@ namespace ChibiClash.Netcode
         // desync detection: tiny rings keyed by (frame / interval) & 7
         readonly int[] _localHashFrame = new int[8], _remoteHashFrame = new int[8];
         readonly uint[] _localHash = new uint[8], _remoteHash = new uint[8];
+        readonly int[] _comparedFrame = new int[8];   // NET-05: frame already compared in this slot (-1 = none)
         int _nextChecksumFrame = ChecksumInterval;
         int _latestHashFrame = -1;
         uint _latestHash;
@@ -146,8 +166,32 @@ namespace ChibiClash.Netcode
         public bool Disconnected { get; private set; }
         /// <summary>True when the last Tick could not advance (waiting for the remote). Drive a "waiting" HUD from it.</summary>
         public bool IsStalled { get; private set; }
-        /// <summary>Ticks since the last valid datagram (0 while the link is healthy).</summary>
+        /// <summary>Ticks since the remote's contiguous input last advanced (0 while the link is healthy).</summary>
         public int SilentTicks => _silentTicks;
+        /// <summary>Length of the stall window in ticks: 4 x DisconnectTicks (1200 = 20 s by default).</summary>
+        public int StallWindowTicks => _stallRing.Length;
+        /// <summary>
+        /// Stalled ticks allowed inside the window: two thirds of it (800 by default). One more raises Stalled.
+        /// Measured on the loopback link (2026-11-16, 60 s, share of the window stalled): 300 ms RTT + 15 % loss 26 %,
+        /// 400 ms 33 %, 500 ms 47 %, 500 ms + 10 % loss 52 %, 670 ms 60 %, 1 s 73 %. So honest links up to about
+        /// 500 ms RTT with loss (about 650 ms clean) stay under the limit; the price is that a peer can still slow a
+        /// match to about a third of full speed without ending it (the sim timer still ends the match).
+        /// </summary>
+        public int StallLimit => _stallRing.Length * 2 / 3;
+        /// <summary>
+        /// Ticks inside the last <see cref="StallWindowTicks"/> that could not advance. Above <see cref="StallLimit"/> the
+        /// session raises <see cref="ChibiDisconnectReason.Stalled"/>, so a peer that feeds inputs slowly (each inside the
+        /// silence limit) cannot hold the match at a crawl forever (NET-01). A window, not a running total: two short
+        /// freezes do not add up for the rest of the match.
+        /// </summary>
+        public int StalledInWindow => _stalledInWindow;
+        /// <summary>Datagrams accepted from the peer (diagnostics; a stale datagram counts, so it proves nothing about play).</summary>
+        public int AcceptedPackets { get; private set; }
+        /// <summary>
+        /// True once at least one REAL remote input frame arrived (frames below InputDelay are pre-seeded, not sent).
+        /// False means the peer never played a single tick with us (NET-03).
+        /// </summary>
+        public bool HasRemoteInput => _inputs.RemoteContiguous >= _settings.InputDelay;
         /// <summary>Smoothed round trip in ticks, x8 fixed point (divide by 8). -1 until the first sample.</summary>
         public int RttTicksX8 { get; private set; } = -1;
         public float TimeDilation { get; private set; } = 1f;
@@ -189,7 +233,8 @@ namespace ChibiClash.Netcode
             _net = net ?? throw new ArgumentNullException(nameof(net));
             _source = source ?? throw new ArgumentNullException(nameof(source));
             _inputs = new RollbackInputBuffer(localIndex, settings.InputDelay);
-            for (int i = 0; i < 8; i++) _localHashFrame[i] = _remoteHashFrame[i] = -1;
+            _stallRing = new bool[settings.DisconnectTicks * 4];
+            for (int i = 0; i < 8; i++) _localHashFrame[i] = _remoteHashFrame[i] = _comparedFrame[i] = -1;
             for (int i = 0; i < RingSize; i++) _sentTick[i] = -1;
             ChibiSimulation.Init(_state, cfg);
         }
@@ -215,12 +260,17 @@ namespace ChibiClash.Netcode
             }
             else StalledTicks++;   // too far ahead of the remote's confirmed input: wait for it
             IsStalled = !advanced;
+            int slot = _tickCount % _stallRing.Length;
+            if (_stallRing[slot]) _stalledInWindow--;
+            _stallRing[slot] = !advanced;
+            if (!advanced) _stalledInWindow++;
 
             EmitConfirmedFrames();
             RunChecksums();
             SendPacket();
 
             if (++_silentTicks > _settings.DisconnectTicks) RaiseDisconnect(ChibiDisconnectReason.Timeout);
+            else if (_stalledInWindow > StallLimit) RaiseDisconnect(ChibiDisconnectReason.Stalled);
             return advanced;
         }
 
@@ -280,6 +330,7 @@ namespace ChibiClash.Netcode
 
         void PumpNetwork()
         {
+            int contiguousBefore = _inputs.RemoteContiguous;
             while (true)
             {
                 int n = _net.Receive(_rxRaw);
@@ -287,8 +338,11 @@ namespace ChibiClash.Netcode
                 _rxBuf.LoadFrom(_rxRaw, n);
                 if (!ChibiPacketCodec.TryRead(_rxBuf, _rx)) continue;   // garbage / truncated / foreign datagram
                 if (!Process(_rx)) { RejectedPackets++; continue; }
-                _silentTicks = 0;
+                AcceptedPackets++;
             }
+            // NET-01: only a NEW input frame proves the peer is still playing. A well-formed datagram that repeats old
+            // frames used to reset this, so a losing peer could freeze the match forever without ever timing out.
+            if (_inputs.RemoteContiguous > contiguousBefore) _silentTicks = 0;
         }
 
         /// <summary>Apply one parsed datagram. Returns false (and changes nothing) if it is impossible from an honest peer.</summary>
@@ -297,7 +351,11 @@ namespace ChibiClash.Netcode
             // An honest peer can only ack frames we have produced and sent (gap report 2.8).
             if (m.AckFrame > _inputs.LocalLast) return false;
 
-            if (m.LastFrame > _remoteSeen) _remoteSeen = m.LastFrame;
+            // NET-04: sanity bound only. An honest LastFrame is at most MaxInputs past what we hold contiguously (the
+            // window starts at our ack + 1), so anything further is ignored instead of dragging LocalFrameAdvantage far
+            // negative. It does not make time sync tamper-proof: the peer's own Advantage field is unauthenticated too.
+            if (m.LastFrame > _remoteSeen && m.LastFrame <= _inputs.RemoteContiguous + ChibiNetMessage.MaxInputs)
+                _remoteSeen = m.LastFrame;
             _remoteAdv = m.Advantage;
             if (m.AckFrame > _remoteAck)
             {
@@ -330,6 +388,9 @@ namespace ChibiClash.Netcode
             int first = _remoteAck + 1;
             if (first > last) first = last;                          // all acked: resend the newest as a keep-alive
             if (first < 0) first = 0;
+            // NET-06: a peer that never acks (honest peers cannot fall this far behind: both sides stall first) must not
+            // walk the window out of the input ring, where LocalInput throws and Tick would never finish again.
+            if (first < last - (RingSize - 1)) first = last - (RingSize - 1);
             int count = last - first + 1;
             if (count > ChibiNetMessage.MaxInputs) count = ChibiNetMessage.MaxInputs;
 
@@ -405,6 +466,7 @@ namespace ChibiClash.Netcode
             if (frame <= 0 || frame % ChecksumInterval != 0) return;
             int idx = (frame / ChecksumInterval) & 7;
             if (_remoteHashFrame[idx] == frame) return;                // already recorded
+            if (_comparedFrame[idx] == frame) return;                  // NET-05: already compared (every datagram repeats it)
             _remoteHashFrame[idx] = frame;
             _remoteHash[idx] = hash;
             CompareChecksum(idx);
@@ -414,6 +476,7 @@ namespace ChibiClash.Netcode
         {
             if (_localHashFrame[idx] < 0 || _localHashFrame[idx] != _remoteHashFrame[idx]) return;
             ChecksumsCompared++;
+            _comparedFrame[idx] = _localHashFrame[idx];
             if (_localHash[idx] != _remoteHash[idx]) RaiseDesync(_localHashFrame[idx], _localHash[idx], _remoteHash[idx]);
             _remoteHashFrame[idx] = -2;   // consumed
         }

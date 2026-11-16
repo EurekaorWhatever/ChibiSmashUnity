@@ -241,6 +241,8 @@ namespace ChibiClash
                     case ChibiEndCause.Desync: return "The two games disagreed (desync): no contest.";
                     case ChibiEndCause.UnconfirmedEnd: return "The match end could not be confirmed: no contest.";
                     case ChibiEndCause.HandshakeFailed: return "The match could not start.";
+                    case ChibiEndCause.PeerNeverStarted: return "Your opponent never joined the match: no contest.";
+                    case ChibiEndCause.OpponentStalled: return "The connection was too slow to play: no contest.";
                     default: return "";
                 }
             }
