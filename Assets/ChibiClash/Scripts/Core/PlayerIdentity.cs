@@ -72,6 +72,20 @@ namespace ChibiClash
             return !RequireTeenForOnline || storedBand == (int)AgeBand.Teen || storedBand == (int)AgeBand.Adult;
         }
 
+        /// <summary>
+        /// Gamepad age entry (review 2026-11-16 item 18): the answer after stepping it by <paramref name="delta"/>,
+        /// clamped to 1..<see cref="MaxAge"/>. A blank answer starts from 0 (no suggested age); non-digits are dropped.
+        /// </summary>
+        /// <example><code>ageInput = PlayerIdentity.StepAge(ageInput, padUp ? 1 : -1);</code></example>
+        public static string StepAge(string typed, int delta)
+        {
+            int age = 0;
+            foreach (char c in typed ?? "")
+                if (c >= '0' && c <= '9' && age < 1000) age = age * 10 + (c - '0');
+            age = System.Math.Max(1, System.Math.Min(MaxAge, age + delta));
+            return age.ToString();
+        }
+
         /// <summary>The typed age as a number (digits only, 1..MaxAge), or 0 when it is not a plausible age.</summary>
         public static int ParseAge(string typed) => BandForAnswer(typed) == AgeBand.Unknown ? 0 : int.Parse((typed ?? "").Trim());
 

@@ -125,6 +125,29 @@ namespace ChibiClash.Netcode
         /// <summary>At most this many invites are pending at once.</summary>
         public const int MaxPendingInvites = 3;
 
+        static readonly string[] StarterAdjectives =
+            { "Swift", "Brave", "Lucky", "Mighty", "Sunny", "Fizzy", "Bouncy", "Clever", "Jolly", "Zippy", "Cosmic", "Pixel" };
+        static readonly string[] StarterNouns =
+            { "Panda", "Tiger", "Comet", "Fox", "Bunny", "Otter", "Dragon", "Kitten", "Rocket", "Ninja", "Penguin", "Mochi" };
+
+        /// <summary>
+        /// A valid starter name (adjective + noun + 2 digits, at most 15 characters) for a gamepad player who cannot type
+        /// one on first launch (review 2026-11-16 item 18). Always passes <see cref="ValidateName"/>; the player can change it.
+        /// </summary>
+        /// <example><code>nameInput = ChibiSocialRules.DefaultFighterName((uint)Environment.TickCount);</code></example>
+        public static string DefaultFighterName(uint seed)
+        {
+            for (int attempt = 0; attempt < 8; attempt++, seed = seed * 1664525u + 1013904223u)
+            {
+                uint h = seed ^ (seed >> 15);
+                h *= 0x2C1B3C6Du; h ^= h >> 12;
+                string n = StarterAdjectives[h % (uint)StarterAdjectives.Length] +
+                           StarterNouns[(h / 16u) % (uint)StarterNouns.Length] + ((h / 256u) % 90u + 10u);
+                if (ValidateName(n) == null) return n;
+            }
+            return "BraveFighter10";                                   // fixed, known-valid fallback
+        }
+
         /// <summary>
         /// Check a name the local player wants. Returns null when valid, else a short reason to show.
         /// </summary>

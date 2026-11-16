@@ -717,7 +717,7 @@ namespace ChibiClash
             var a = BeginPage("06", "SETTINGS", "GAME · CAMERA · CONTROLS");
             SettingsTab(a);
             EndPage();
-            Gui.HintBar(listening ? "PRESS A KEY OR CLICK A MOUSE BUTTON  ·  ESC CANCELS" : "SETTINGS", Gui.Key("WASD", "D-PAD"), "MOVE", Gui.Key("SPACE", "A"), "SELECT", Gui.Key("ESC", "B"), "BACK", Gui.Key("Q / E", "LB / RB"), "TABS");
+            Gui.HintBar(listening ? "PRESS A KEY OR CLICK THE BOX  ·  ESC / PAD B CANCELS  ·  PAD BUTTONS CAN'T BE BOUND" : "SETTINGS", Gui.Key("WASD", "D-PAD"), "MOVE", Gui.Key("SPACE", "A"), "SELECT", Gui.Key("ESC", "B"), "BACK", Gui.Key("Q / E", "LB / RB"), "TABS");
         }
 
         void SettingsTab(Rect a)
@@ -754,24 +754,38 @@ namespace ChibiClash
             if (VolumeSlider(x, ref y, "SFX VOLUME", ref sfx)) Netcode.ChibiAudio.SfxVolume = sfx;
 
             y += 4f;
-            if (Gui.Button(new Rect(x, y, 260f, 44f), "RESET PROFILE", Gui.Red, 15))
+            // Two clicks within 3 s (item 22). RESET PROFILE keeps the name, age and sign-in (user decision 2026-11-17).
+            bool profileArmed = Time.unscaledTime < resetProfileArmedUntil;
+            bool profileLive = profileArmed && Time.unscaledTime > resetProfileArmedUntil - ResetArmSeconds + ResetGraceSeconds;
+            if (Gui.Button(new Rect(x, y, 260f, 44f), profileArmed ? "SURE? ALL PROGRESS GOES" : "RESET PROFILE", Gui.Red, profileArmed ? 13 : 15))
             {
-                PlayerPrefs.DeleteKey("ChibiClash.Save.v1");
-                Save = SaveData.Load();
-                Bindings.Data = Save;
-                WebcamFeed.SetEnabled(Save.settings.useWebcam);
-                Toast("Profile reset");
+                if (profileLive)
+                {
+                    resetProfileArmedUntil = 0f;
+                    Save = Save.ResetProgress(PlayerPrefsSaveStore.Instance);
+                    Bindings.Data = Save;
+                    WebcamFeed.SetEnabled(Save.settings.useWebcam);
+                    Toast("Profile reset (name and sign-in kept)");
+                }
+                else if (!profileArmed) { resetProfileArmedUntil = Time.unscaledTime + ResetArmSeconds; UiSound.Confirm(); }
             }
 
             var c = new Rect(a.x + 650f, a.y, a.width - 650f, a.height);
             Gui.Box(c, Gui.Gold);
             Gui.Display(new Rect(c.x + 20f, c.y + 10f, 300f, 30f), "KEY BINDINGS", 24, Gui.Gold, TextAnchor.MiddleLeft, 0.18f);
-            if (Gui.Button(new Rect(c.xMax - 170f, c.y + 10f, 150f, 30f), "RESET KEYS", Gui.Red, 12))
+            bool keysArmed = Time.unscaledTime < resetKeysArmedUntil;
+            bool keysLive = keysArmed && Time.unscaledTime > resetKeysArmedUntil - ResetArmSeconds + ResetGraceSeconds;
+            if (Gui.Button(new Rect(c.xMax - 170f, c.y + 10f, 150f, 30f), keysArmed ? "SURE?" : "RESET KEYS", Gui.Red, 12))
             {
-                Bindings.ResetDefaults(Save);
-                Save.Save();
-                listening = false;
-                Toast("Keys reset to defaults");
+                if (keysLive)
+                {
+                    resetKeysArmedUntil = 0f;
+                    Bindings.ResetDefaults(Save);
+                    Save.Save();
+                    listening = false;
+                    Toast("Keys reset to defaults");
+                }
+                else if (!keysArmed) { resetKeysArmedUntil = Time.unscaledTime + ResetArmSeconds; UiSound.Confirm(); }
             }
             float colW = (c.width - 60f) * 0.5f;
             // Every action in Bindings (Count grows with new buttons): rows shrink to fit the panel.
@@ -788,15 +802,19 @@ namespace ChibiClash
                     var act = (BindAction)k;
                     bool mine = listening && listenPlayer == pn && listenAction == act;
                     Gui.Text(new Rect(bx, by, colW - 106f, rowH - 3f), Bindings.Names[k], 12, Gui.Paper, TextAnchor.MiddleLeft, false);
-                    if (Gui.Button(new Rect(bx + colW - 104f, by, 104f, rowH - 3f), mine ? "key or click" : Bindings.Label(pn, act), mine ? Gui.Gold : pc, 11, true, mine))
+                    var row = new Rect(bx + colW - 104f, by, 104f, rowH - 3f);
+                    if (mine && Event.current.type == EventType.Repaint) listenPointerOnRow = row.Contains(Event.current.mousePosition);
+                    if (Gui.Button(row, mine ? "key or click here" : Bindings.Label(pn, act), mine ? Gui.Gold : pc, 11, true, mine) &&
+                        !listening && !listenClickLatch && Time.unscaledTime - listenEndedAt > 0.4f)
                     {
                         listening = true; listenSince = Time.unscaledTime; listenPlayer = pn; listenAction = act;
+                        listenPointerOnRow = true;
                     }
                     by += rowH;
                 }
             }
             Gui.Text(new Rect(c.x + 20f, c.yMax - 52f, c.width - 40f, 46f),
-                "Click a binding, then press a key or click a mouse button (Esc cancels). If it's already used, the two actions swap.\n" +
+                "Click a binding, then press a key or click that box with a mouse button (Esc / pad B / a click elsewhere cancels; 5 s timeout). If either player already uses it, the two swap.\n" +
                 "Camera poses: cross arms = block · arm out to the side = fireball · both hands up = super jump (keyboard poses: 1/2/3 and 8/9/0).",
                 11, Gui.Muted, TextAnchor.UpperLeft, false);
         }

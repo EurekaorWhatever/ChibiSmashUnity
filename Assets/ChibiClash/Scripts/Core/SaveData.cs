@@ -123,7 +123,13 @@ namespace ChibiClash
         public const string BackupKey = Key + ".corrupt";
         public const int PullCost = 100;
         public const int TenPullCost = 900;
+        /// <summary>Layout version of this class; <see cref="Migrate"/> upgrades older saves to it.</summary>
+        public const int SchemaVersion = 1;
+        /// <summary>Coins are clamped to 0..MaxCoins on load (an edited save cannot overflow the shop).</summary>
+        public const int MaxCoins = 9_999_999;
 
+        /// <summary>Layout version this profile was written with (0 = before versioning, 2026-11-17).</summary>
+        public int schemaVersion;
         public int coins = 300;
         public List<string> owned = new List<string>();
         public List<string> equipped = new List<string>();
@@ -153,7 +159,11 @@ namespace ChibiClash
         /// <summary>Load the profile from PlayerPrefs.</summary>
         public static SaveData Load() => Load(PlayerPrefsSaveStore.Instance);
 
-        /// <summary>Load the profile from store. Unreadable JSON is copied to BackupKey before a fresh profile is returned.</summary>
+        /// <summary>
+        /// Load the profile from store: parse, <see cref="Migrate"/>, <see cref="Repair"/>. A profile that fails any of
+        /// those (unreadable JSON, or a Repair that throws on an edited save) is copied to BackupKey and a fresh profile
+        /// is returned instead (review 2026-11-16 item 23: Repair used to run outside the try).
+        /// </summary>
         public static SaveData Load(ISaveStore store)
         {
             SaveData d = null;
@@ -165,12 +175,18 @@ namespace ChibiClash
                 {
                     d = JsonUtility.FromJson<SaveData>(json);
                     if (d == null) error = "save parsed to null";
+                    else { d.Migrate(); d.Repair(); }
                 }
             }
             catch (Exception e) { d = null; error = e.Message; }
             if (error != null) BackupCorrupt(store, json, error);
-            if (d == null) d = new SaveData();
-            d.Repair();
+            if (d == null)
+            {
+                d = new SaveData();
+                d.Repair();
+            }
+            // Never stamp a save written by a newer build down (its Migrate steps would run again on that build).
+            if (d.schemaVersion < SchemaVersion) d.schemaVersion = SchemaVersion;
             return d;
         }
 
@@ -197,10 +213,57 @@ namespace ChibiClash
             store.Flush();
         }
 
-        void Repair()
+        /// <summary>
+        /// Upgrade an older layout to <see cref="SchemaVersion"/>. Version 1 (2026-11-17) only adds the field itself, so a
+        /// version-0 save needs no change; add a step here for each later layout change, oldest first.
+        /// </summary>
+        /// <example><code>if (schemaVersion &lt; 2) { /* move field X to Y */ }</code></example>
+        public void Migrate()
+        {
+            // 0 -> 1: nothing to move.
+        }
+
+        /// <summary>
+        /// RESET PROFILE (review 2026-11-16 item 22, decision: progress only). A fresh profile that keeps this one's
+        /// identity (name, age, sign-in, the age-record flag, per-account profiles) so there is no second onboarding and
+        /// no second row in the age record, and drops coins, cosmetics, quests, stats, settings and keys. It is written
+        /// to <paramref name="store"/> (PlayerPrefs in the game) and returned.
+        /// </summary>
+        /// <example><code>Save = Save.ResetProgress(PlayerPrefsSaveStore.Instance); Bindings.Data = Save;</code></example>
+        public SaveData ResetProgress(ISaveStore store)
+        {
+            var d = new SaveData
+            {
+                playerName = playerName ?? "",
+                ageBand = ageBand,
+                age = age,
+                ageRecorded = ageRecorded,
+                accountId = accountId ?? "",
+                accountAsked = accountAsked,
+                profiles = profiles != null ? new List<AccountProfile>(profiles) : new List<AccountProfile>(),
+            };
+            // Privacy: a player who turned the camera off keeps it off (a fresh Settings would switch it on by default).
+            if (settings != null) { d.settings.useWebcam = settings.useWebcam; d.settings.camInit = settings.camInit; }
+            d.Repair();
+            d.schemaVersion = SchemaVersion;
+            d.Save(store);
+            return d;
+        }
+
+        /// <summary>
+        /// Fill missing parts, clamp edited values, restore built-ins. Safe on any deserialized profile (null lists,
+        /// null entries, out-of-range coins).
+        /// </summary>
+        public void Repair()
         {
             if (settings == null) settings = new Settings();
             if (keybinds == null) keybinds = new List<string>();
+            if (owned == null) owned = new List<string>();
+            if (equipped == null) equipped = new List<string>();
+            if (quests == null) quests = new List<Quest>();
+            if (profiles == null) profiles = new List<AccountProfile>();
+            quests.RemoveAll(q => q == null);
+            coins = Mathf.Clamp(coins, 0, MaxCoins);
             Bindings.Normalize(this);
             settings.matchTime = MatchController.MatchSeconds;   // match length is locked
             if (!settings.camInit) { settings.useWebcam = true; settings.camInit = true; }   // camera is on by default
@@ -227,9 +290,13 @@ namespace ChibiClash
             if (q.reward < 0) q.reward = reward;
         }
 
+        /// <summary>The skin equipped on <paramref name="c"/>; the class default when the entry is missing, unknown or not owned.</summary>
         public Skin Equipped(FighterClass c)
         {
-            return Skin.Find(equipped[(int)c]) ?? Skin.Default(c);
+            int i = (int)c;
+            string id = equipped != null && i >= 0 && i < equipped.Count ? equipped[i] : null;
+            var s = id != null && owned != null && owned.Contains(id) ? Skin.Find(id) : null;
+            return s ?? Skin.Default(c);
         }
 
         public void Equip(Skin s)
@@ -242,7 +309,7 @@ namespace ChibiClash
         /// <summary>Progress a quest; returns coins awarded if it completed (quests repeat).</summary>
         public int Progress(string id, int amount, List<string> log)
         {
-            var q = quests.FirstOrDefault(x => x.id == id);
+            var q = quests?.FirstOrDefault(x => x != null && x.id == id);
             if (q == null || amount <= 0 || q.target <= 0) return 0;   // target <= 0 would never leave the loop below
             q.progress += amount;
             int earned = 0;
@@ -253,31 +320,36 @@ namespace ChibiClash
                 earned += q.reward;
                 log?.Add("Quest: " + q.desc + "  +" + q.reward);
             }
-            coins += earned;
+            coins = (int)Math.Min(MaxCoins, (long)coins + earned);
             return earned;
         }
 
         public struct PullResult { public Skin skin; public bool duplicate; }
 
         /// <summary>Cosmetics-only gacha. Rates: Common 60%, Rare 28%, Epic 10%, Legendary 2%.</summary>
-        public List<PullResult> Pull(int count, FighterClass? banner)
+        public List<PullResult> Pull(int count, FighterClass? banner, ISaveStore store = null)
         {
             var results = new List<PullResult>();
+            if (count <= 0) return results;
             int cost = count >= 10 ? TenPullCost : PullCost * count;
             if (coins < cost) return results;
+            // A banner with no pullable skins (unknown class) would index an empty pool: no pull, no charge.
+            if (!Skin.All.Any(s => !s.id.EndsWith("_default") && (banner == null || s.cls == banner))) return results;
             coins -= cost;
             for (int i = 0; i < count; i++)
             {
                 float r = UnityEngine.Random.value;
                 Rarity rarity = r < 0.02f ? Rarity.Legendary : r < 0.12f ? Rarity.Epic : r < 0.40f ? Rarity.Rare : Rarity.Common;
                 var pool = Skin.All.Where(s => s.rarity == rarity && !s.id.EndsWith("_default") && (banner == null || s.cls == banner)).ToList();
+                if (pool.Count == 0)
+                    pool = Skin.All.Where(s => !s.id.EndsWith("_default") && (banner == null || s.cls == banner)).ToList();
                 var skin = pool[UnityEngine.Random.Range(0, pool.Count)];
                 bool dup = owned.Contains(skin.id);
-                if (dup) coins += 20;
+                if (dup) coins = Math.Min(MaxCoins, coins + 20);
                 else owned.Add(skin.id);
                 results.Add(new PullResult { skin = skin, duplicate = dup });
             }
-            Save();
+            Save(store ?? PlayerPrefsSaveStore.Instance);
             return results;
         }
     }

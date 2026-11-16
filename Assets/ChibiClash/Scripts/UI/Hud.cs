@@ -12,7 +12,7 @@ namespace ChibiClash
     /// </summary>
     public static class Hud
     {
-        public enum Action { None, Resume, Rematch, CharacterSelect, Menu }
+        public enum Action { None, Resume, Rematch, CharacterSelect, Menu, Forfeit }
 
         static readonly string[][] PoseKeys = { new[] { "1", "2", "3" }, new[] { "8", "9", "0" } };
         static readonly List<string> StatusScratch = new List<string>(8);
@@ -94,6 +94,7 @@ namespace ChibiClash
             }
 
             if (m.Paused) return Pause();
+            if (m.Online && m.LeavePrompt && !m.Finished) return LeavePrompt();
             if (m.Finished && Time.unscaledTime - m.FinishedTime > 1.3f) return Results(m, gm);
             resultsFocus = false;
             return Action.None;
@@ -152,7 +153,7 @@ namespace ChibiClash
             string stage = StageBuilder.Names[st].ToUpperInvariant();
             stageUpper = Gui.Measure(stage, 10) <= 118f ? stage : StageBuilder.ShortNames[st].ToUpperInvariant();
             introLine = CharNameUpper(m.Def(0).type) + "  VS  " + CharNameUpper(m.Def(1).type) + "  ·  " + stage +
-                        (m.Config.training ? "  ·  TRAINING" : "") + (m.Online ? "  ·  ONLINE" : "");
+                        (m.Config.training ? "  ·  TRAINING" : "") + (m.Online ? "  ·  ONLINE  ·  ESC / START: LEAVE" : "");
             for (int i = 0; i < 2; i++)
             {
                 var def = m.Def(i);
@@ -887,6 +888,22 @@ namespace ChibiClash
             Gui.PreferNext();
             if (Gui.Button(new Rect(r.x + 40f, r.y + 90f, 260f, 50f), "RESUME", Gui.Accent2)) return Action.Resume;
             if (Gui.Button(new Rect(r.x + 40f, r.y + 160f, 260f, 50f), "QUIT TO MENU", Gui.Accent)) return Action.Menu;
+            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), "B / Backspace to resume", 12, Gui.Muted);
+            return Action.None;
+        }
+
+        /// <summary>Online leave confirm (the match keeps running underneath): STAY closes it, LEAVE forfeits.</summary>
+        static Action LeavePrompt()
+        {
+            Gui.Rect(new Rect(0f, 0f, Gui.W, Gui.H), new Color(0f, 0f, 0f, 0.35f));
+            var r = new Rect(Gui.W * 0.5f - 200f, Gui.H * 0.5f - 130f, 400f, 270f);
+            Gui.Box(r, Gui.Red);
+            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 50f), "LEAVE MATCH?", 40, Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Text(new Rect(r.x + 20f, r.y + 66f, r.width - 40f, 22f), "The match keeps going. Leaving counts as a loss.", 13, Gui.Muted);
+            Gui.PreferNext();
+            if (Gui.Button(new Rect(r.x + 70f, r.y + 100f, 260f, 50f), "STAY", Gui.Accent2)) return Action.Resume;
+            if (Gui.Button(new Rect(r.x + 70f, r.y + 165f, 260f, 50f), "LEAVE", Gui.Red)) return Action.Forfeit;
+            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), "B / Backspace / Esc / Start to stay", 12, Gui.Muted);
             return Action.None;
         }
 
