@@ -181,6 +181,38 @@ namespace ChibiClash.Netcode
         /// <summary>Respawn hover: minimum wait before leaving (ticks, + Range), and how near below an opponent must be to keep waiting.</summary>
         const int HoverWaitBase = 10, HoverWaitSpan = 30, HoverCampX = 2500, HoverCampMinLeft = 30;
 
+        // Review 2026-11-16 batch 2 (positioning and defence). Distances milli, times ticks.
+        /// <summary>Rise of a ground jump / an air jump from rest (v²/2g): 2153 and 1685 at rules v22.</summary>
+        static readonly int JumpApex = Apex(ChibiSimConst.JumpVel), AirJumpApex = Apex(ChibiSimConst.AirJumpVel);
+        /// <summary>Walking may step off onto a platform at most this far below: one ground jump back up plus a little slack (2503).</summary>
+        static readonly int SafeDropDepth = JumpApex + 350;
+        /// <summary>Horizontal distance one air dash covers (2040).</summary>
+        const int DashReach = ChibiSimConst.DashSpeedSub / ChibiSimConst.VelSub * ChibiSimConst.DashDuration;
+        /// <summary>Follow a grounded opponent onto a lower tier only when it stands at least this far below.</summary>
+        const int DescendMinDrop = 1500;
+        /// <summary>Extra depth the up special adds to the way back from a lower tier (on top of both jumps).</summary>
+        const int UpSpecialClimb = 1500;
+        /// <summary>A deliberate descent gives up after this long (it re-decides from the new position).</summary>
+        const int DescendMaxTicks = 240, DescendRetryTicks = 60;
+        /// <summary>The opponent counts as on our tier within this X slack of its ends.</summary>
+        const int TierSlackX = 600;
+        /// <summary>Air jump only below this feet height when recovering (above it the drift brings us in, the jump is worth more later).</summary>
+        const int AirJumpBelowY = -200;
+        /// <summary>Under the stage the air jump is kept (it would hit the underside) unless the kill line is this close.</summary>
+        const int LastResortAboveKill = 3000;
+        /// <summary>Taking off from a surface under the main stage's level: walk this far past its side first (room for the up special).</summary>
+        const int ClimbRoom = 1200;
+        /// <summary>After a take-off from a lower surface, ignore it as a landing target for this long (no jump / land loop).</summary>
+        const int ClimbTicks = 120;
+        /// <summary>Edge-guard hop depth: how far below us the off-stage opponent may be (the original rule's 1500).</summary>
+        const int EdgeGuardDepth = 1500;
+        /// <summary>Out-of-shield punish chance (permille) per difficulty once the blocked move is over.</summary>
+        const int OosPunishPerDiff = 250;
+        /// <summary>Lock ticks left (after the walk cancel) above which a move in its recovery is worth punishing.</summary>
+        const int PunishLockTicks = 12;
+
+        static int Apex(int v) => (int)((long)v * v / (2L * ChibiSimConst.Gravity * ChibiSimConst.VelSub));
+
         // ================================================================== state
 
         readonly int _player, _difficulty, _skillPermille;
@@ -215,6 +247,12 @@ namespace ChibiClash.Netcode
         bool _allowOff;                                         // this decision may walk off the footing (edge-guard hop)
         int _smashScaleP = 1000;                                // ground smash weight outside kill range (percent appetite)
 
+        // Batch 2 intents that outlive one decision.
+        int _descendTier = -1, _descendTicks;                   // following the opponent down onto this platform
+        int _descendCd;                                         // ticks before a given-up descent may start again
+        int _lowTier = -1;                                      // this decision: fighting on this lower tier (-1 none)
+        int _climbTicks;                                        // just took off from a lower surface toward MAIN
+
         /// <summary>Create a CPU for fighter <paramref name="player"/> (0 or 1) at <paramref name="difficulty"/> (0 dummy .. 3 hard).</summary>
         public ChibiCpuInputSource(int player, int difficulty, uint matchSeed)
         {
@@ -248,6 +286,7 @@ namespace ChibiClash.Netcode
             if (me.OutTicks > 0 || me.HoverTicks > 0)
             {
                 _planLen = 0; _prevEmitted = 0; _pendingStep = -1;
+                _descendTier = -1; _climbTicks = 0; _descendCd = 0; _lowTier = -1;
                 if (me.OutTicks > 0 || _difficulty <= 0 || !_state.Running || !HoverLeaveSafe(me)) return default;
                 _hoverWait = -1;
                 var opp0 = _state.F[1 - _player];
@@ -319,18 +358,38 @@ namespace ChibiClash.Netcode
             _noJump = false; _allowOff = false;
             _danger = InDanger(self, opp, st);
             _smashScaleP = SmashScale(opp);
+            if (_climbTicks > 0) _climbTicks--;
 
             // Ocean whale (hazards on): get under MAIN onto a tier before it lands and stay there until it has risen.
             if (WhaleThreat(st))
             {
+                _descendTier = -1;
                 if (!(self.Grounded && self.Y <= st.MainBottom - TierBelowMain)) { WhaleDescend(self, opp, st, ref press); return false; }
                 _noJump = true;                                       // on a tier: fight here, never jump up into it
+            }
+
+            // Lower tier beside MAIN (Ocean T1 / T2): fight the opponent there instead of recovering away from it, and
+            // follow a grounded opponent down onto one from MAIN (review 2026-11-16 item 10).
+            _lowTier = _noJump ? -1 : LowFightTier(self, opp, st);
+            bool lowFight = _lowTier >= 0;
+            if (_descendCd > 0) _descendCd--;
+            if (_descendTier >= 0 && (lowFight || _noJump || !ContinueDescend(self, opp, st)))
+            {
+                if (!lowFight) _descendCd = DescendRetryTicks;          // gave up (hit, timed out, opponent left): wait
+                _descendTier = -1;
+            }
+            if (!lowFight && !_noJump && _descendTier < 0 && _descendCd == 0) TryStartDescend(self, opp, st);
+            if (_descendTier >= 0)
+            {
+                Descend(self, st, ref press);
+                AvoidFire(self, st, ref press);
+                return false;
             }
 
             // Recover to the stage when knocked off (FI:163-171). Pivot = feet + 0.725, so pivot.y < groundY - 0.5
             // is feet Y < -1225; |pivot.x| > halfWidth - 0.3 is the same on the feet. Grounded: only a surface below the
             // main top or a platform beside the main stage counts (rules v20 tiers, cloud-sea floor, Mountain A / B).
-            if (!_noJump && OffStage(self, st))
+            if (!_noJump && !lowFight && OffStage(self, st))
             {
                 Recover(self, st, ref press);
                 AvoidFire(self, st, ref press);
@@ -393,8 +452,13 @@ namespace ChibiClash.Netcode
                 }
             }
 
+            // The think's block intent lasts its window, but the shield is held only while a threat lasts: dropped once
+            // the opponent's move is past its active ticks and no shot is coming (it used to be held for the whole
+            // window), raised again for a second move in the same window, with a punish out of it (item 11).
+            bool threat = _wantBlock && Threat(self, opp);
+            bool oos = _wantBlock && !threat && self.Shielding;           // it really blocked: act out of shield
             _dx = _wantMove;
-            block = _wantBlock;
+            block = threat;
             bool free = self.MoveSlot < 0 && self.Stun == 0 && self.DashTicks == 0 && !self.Held;
 
             // Counters / reflectors (difficulty 2+) replace the shield when the timing fits.
@@ -404,15 +468,30 @@ namespace ChibiClash.Netcode
                 FinishTick(self, st, ref press);
                 return false;
             }
-            if (_wantBlock) return false;
+            if (block) return false;
 
             bool facingOpp = sdx == self.Facing || adx < 200;
             // The original creeps at MoveX 0.2 to turn; the sim's stick is digital, so one tick of full input turns it.
             if (_wantMove == 0 && !facingOpp && self.Grounded) _dx = sdx;
 
             // Edge-guard hop (difficulty 2+, not in danger): the opponent is off the stage close by, not far below.
-            _allowOff = !OnStageArea(opp, st) && !_danger && _difficulty >= 2 && st.KoBottom && self.AirJumps > 0 && !_noJump &&
-                        adx < 3500 && dy > -1500;
+            // Only from the stage (never off the end of a lower tier). Review item 12 (deeper with the up special) is
+            // deferred: going out the CPU faces away from the stage, and with air facing locked its up special then
+            // carries it outward; Taro died that way at 2200 deep (2026-11-17).
+            _allowOff = !OnStageArea(opp, st) && OnStageArea(self, st) && !_danger && _difficulty >= 2 && st.KoBottom &&
+                        self.AirJumps > 0 && !_noJump && adx < 3500 && dy > -EdgeGuardDepth;
+
+            // Out of shield: the blocked move is over; punish its recovery when close (item 11).
+            if (oos && free && self.Grounded && press == ChibiButtons.None && adx < reach + 1800 && Math.Abs(dy) < 1200 &&
+                _rng.Roll(OosPunishPerDiff * _difficulty))
+            {
+                if ((Vulnerable(opp) && TryContext(CtxPunish, self, opp, dx, dy, ref press)) ||
+                    TryContext(CtxClose, self, opp, dx, dy, ref press))
+                {
+                    FinishTick(self, st, ref press);
+                    return false;
+                }
+            }
 
             if (free && press == ChibiButtons.None)
             {
@@ -481,7 +560,8 @@ namespace ChibiClash.Netcode
 
             // A platform beside the main stage (moving ones at their predicted landing position) that we can drift onto
             // without a jump is a landing target too (Mountain A / B, the Ocean tiers, Volcano L1's overhang).
-            if (PlatformLanding(self, st, out int landX))
+            // Not right after a take-off from such a surface: landing back on it would loop jump / land forever.
+            if (_climbTicks == 0 && PlatformLanding(self, st, out int landX))
             {
                 int d = landX - self.X;
                 _dx = Math.Abs(d) > 250 ? Math.Sign(d) : 0;
@@ -492,10 +572,25 @@ namespace ChibiClash.Netcode
             _dx = under ? (toCentre != 0 ? -toCentre : 1) : toCentre;
             int outside = Math.Abs(self.X) - st.HalfWidth;             // > 0: beyond the edge
             bool canAct = self.MoveSlot < 0 && self.Stun == 0 && !self.Held && self.DashTicks == 0 && !self.Grounded;
+            // Air jump (it also works during a move): never in hitstun, held or dashing (the press is lost, it only
+            // mashed), only once below stage level, and not up into the underside unless the kill line is close
+            // (review 2026-11-16 items 13 / 14).
+            bool canJump = self.Stun == 0 && !self.Held && self.DashTicks == 0 && self.AirJumps > 0;
+            bool lastResort = self.Y < st.KillY + LastResortAboveKill;
 
-            if (self.Vy < 0 && self.Y < 500 && (self.AirJumps > 0 || !canAct)) press |= ChibiButtons.Jump;
-            // Air dash for distance only over a void (a solid floor below makes it a waste of the dash).
-            else if (canAct && !under && !OverFloor(st, self.X) && outside > 1200 && self.DashCd == 0 && CanPress(ChibiButtons.Dash))
+            if (canJump && self.Vy < 0 && self.Y < AirJumpBelowY && (!under || lastResort) && CanPress(ChibiButtons.Jump))
+                press |= ChibiButtons.Jump;
+            // Deep under the stage: air dash out toward the nearer side (it also stops the fall for its duration).
+            else if (canAct && under && st.HalfWidth + ChibiSimConst.HurtHalfW - Math.Abs(self.X) > 600 && self.DashCd == 0 &&
+                     CanPress(ChibiButtons.Dash))
+            {
+                press = ChibiButtons.Dash;
+                return;
+            }
+            // Air dash for distance only over a void (a solid floor below makes it a waste of the dash). Below stage level
+            // only when it ends short of the side wall: a dash into the wall stops the rise and drops us under the stage.
+            else if (canAct && !under && !OverFloor(st, self.X) && outside > 1200 && self.DashCd == 0 &&
+                     (self.Y > 0 || outside > DashReach + ChibiSimConst.HurtHalfW + 300) && CanPress(ChibiButtons.Dash))
             {
                 press = ChibiButtons.Dash;
                 return;
@@ -552,7 +647,8 @@ namespace ChibiClash.Netcode
                     if (sl >= 0 && CanStartNew(self, sl) && CanPress(b)) { press = b; _dy = 1; return; }
                 }
             }
-            if (self.Vy < -30000 && self.Class == (int)FighterClass.Melee && self.Facing == toCentre && SkillReady(self, 0))
+            // Not from under the stage: there "toward the centre" thrusts deeper underneath.
+            if (!under && self.Vy < -30000 && self.Class == (int)FighterClass.Melee && self.Facing == toCentre && SkillReady(self, 0))
                 press |= ChibiButtons.Skill1;
         }
 
@@ -778,8 +874,8 @@ namespace ChibiClash.Netcode
             int half = Math.Min(stg.HalfWidth - 300, stg.KoSides ? stg.BlastX - WalkOffMargin : int.MaxValue);
             if (btn == BtnDash)
                 return self.DashCd == 0 && Math.Abs(dy) < 600 && Math.Abs(dx) > Profile[cls][PReach] + 300 && Math.Abs(dx) < 5000
-                       && Math.Abs(self.X + sdx * (Math.Abs(dx) + mv.SelfVx * (mv.Startup + mv.Active) / 2)) < half;
-            if (mv.SelfVx > 0 && !e.Has(ChibiMoveExt.FRoll) && Math.Abs(self.X + face * mv.SelfVx * (mv.Startup + mv.Active)) >= half)
+                       && OverFooting(self.X + sdx * (Math.Abs(dx) + mv.SelfVx * (mv.Startup + mv.Active) / 2), half);
+            if (mv.SelfVx > 0 && !e.Has(ChibiMoveExt.FRoll) && !OverFooting(self.X + face * mv.SelfVx * (mv.Startup + mv.Active), half))
                 return false;
 
             if (ctx == CtxCounter || ctx == CtxProjDef)
@@ -925,11 +1021,18 @@ namespace ChibiClash.Netcode
             return Math.Abs(landX) < st.HalfWidth - 800;
         }
 
-        /// <summary>The opponent can be punished: in hitstun, guard-broken, or in the recovery of a long move.</summary>
-        static bool Vulnerable(ChibiFighterSim opp)
+        /// <summary>
+        /// The opponent can be punished: in hitstun, guard-broken, or in the recovery of a long move. A move it can
+        /// walk-cancel (rules v22, <see cref="ChibiSimulation.WalkCancellable"/>) ends <see cref="ChibiSimConst.MoveCancelTicks"/>
+        /// ticks early, so those do not count (review 2026-11-16 item 15).
+        /// </summary>
+        public static bool Vulnerable(ChibiFighterSim opp)
         {
             if (opp.Stun > 0 || opp.GuardBrokenTicks > 0) return true;
-            return opp.MoveSlot >= 0 && opp.MoveTick >= opp.MoveStartup + opp.MoveActive && opp.MoveLockEnd - opp.MoveTick > 12;
+            if (opp.MoveSlot < 0 || opp.MoveTick < opp.MoveStartup + opp.MoveActive) return false;
+            int left = opp.MoveLockEnd - opp.MoveTick;
+            if (ChibiSimulation.WalkCancellable(opp)) left -= ChibiSimConst.MoveCancelTicks;
+            return left > PunishLockTicks;
         }
 
         // ================================================================== rules v20: percent kill reads and survival
@@ -1070,15 +1173,22 @@ namespace ChibiClash.Netcode
         void RecoverFromGround(ChibiFighterSim self, ChibiStageDef st, int toCentre, ref ChibiButtons press)
         {
             int ax = Math.Abs(self.X);
-            bool under = self.Y < -300 && ax < st.HalfWidth + ChibiSimConst.HurtHalfW + 100;
+            // Below the main stage's underside the side wall stops all drift until we are above its top: take off far
+            // enough out that the rise (both jumps, then the up special) has room beside it.
+            bool deep = self.Y < st.MainBottom;
+            bool under = self.Y < -300 && ax < st.HalfWidth + ChibiSimConst.HurtHalfW + (deep ? ClimbRoom : 100);
             if (!under)
             {
                 _dx = toCentre;
-                if (CanPress(ChibiButtons.Jump)) press |= ChibiButtons.Jump;
+                if (CanPress(ChibiButtons.Jump)) { press |= ChibiButtons.Jump; if (deep) _climbTicks = ClimbTicks; }
                 return;
             }
             _dx = toCentre != 0 ? -toCentre : 1;
-            if (!SafeGround(st, self.X + _dx * 500, self.Y) && CanPress(ChibiButtons.Jump)) press |= ChibiButtons.Jump;
+            if (!SafeGround(st, self.X + _dx * 500, self.Y) && CanPress(ChibiButtons.Jump))
+            {
+                press |= ChibiButtons.Jump;
+                if (deep) _climbTicks = ClimbTicks;
+            }
         }
 
         /// <summary>
@@ -1142,7 +1252,7 @@ namespace ChibiClash.Netcode
             for (int p = 0; p < plats.Length; p++)
             {
                 int cx = ChibiSimulation.PlatformCx(_state, p), top = ChibiSimulation.PlatformTop(_state, p);
-                if (Math.Abs(x - cx) <= plats[p].HalfW - 150 && top <= y + 200 && top >= y - 2500) return true;
+                if (Math.Abs(x - cx) <= plats[p].HalfW - 150 && top <= y + 200 && top >= y - SafeDropDepth) return true;
             }
             return y > 200 && ax <= st.HalfWidth - ledge;              // dropping off a platform onto the main stage
         }
@@ -1156,6 +1266,15 @@ namespace ChibiClash.Netcode
                 // one) or toward an active side line; steer back instead.
                 long av = self.Vx;
                 int airStop = (int)(av * Math.Abs(av) / (2L * ChibiSimConst.AirAccel * ChibiSimConst.VelSub));
+                if (_lowTier >= 0)
+                {
+                    // Fighting on a lower tier: stay over it (off either end there is no way back).
+                    int tcx = ChibiSimulation.PlatformCx(_state, _lowTier), thw = st.Platforms[_lowTier].HalfW - 400;
+                    int tpx = self.X + airStop + _dx * 300;
+                    if (tpx > tcx + thw && _dx >= 0) _dx = -1;
+                    else if (tpx < tcx - thw && _dx <= 0) _dx = 1;
+                    return;
+                }
                 int lim = st.KoSides ? st.BlastX - WalkOffMargin - (_danger ? DangerWalkOffExtra : 0) : st.WallClampX;
                 if (st.KoBottom && self.Y > -300) lim = Math.Min(lim, st.HasFloor ? st.FloorHalfW - 500 : st.HalfWidth + 300);
                 int px = self.X + airStop + _dx * 300;
@@ -1205,15 +1324,24 @@ namespace ChibiClash.Netcode
             int side = self.X > 0 ? 1 : (self.X < 0 ? -1 : (opp.X > 0 ? -1 : 1));
             int tier = LowTier(st, side);
             if (tier < 0) { Recover(self, st, ref press); return; }
-            int cx = ChibiSimulation.PlatformCx(_state, tier), top = ChibiSimulation.PlatformTop(_state, tier);
-            int hw = st.Platforms[tier].HalfW;
-            int clearX = st.HalfWidth + ChibiSimConst.HurtHalfW + 300;    // past the main stage's side
             if (self.Grounded)
             {
                 if (self.Y > 300 && CanPress(ChibiButtons.Jump)) { press |= ChibiButtons.Jump; _dx = 0; _dy = -1; return; }
                 _dx = side;                                               // walk off the main stage's edge
                 return;
             }
+            SteerOntoTier(self, st, tier, side, ref press);
+        }
+
+        /// <summary>
+        /// Airborne beside the main stage: steer onto <paramref name="tier"/> on <paramref name="side"/> (clear of the main
+        /// stage's side wall first), fast fall over it, air jump back up to it if we fell past.
+        /// </summary>
+        void SteerOntoTier(ChibiFighterSim self, ChibiStageDef st, int tier, int side, ref ChibiButtons press)
+        {
+            int cx = ChibiSimulation.PlatformCx(_state, tier), top = ChibiSimulation.PlatformTop(_state, tier);
+            int hw = st.Platforms[tier].HalfW;
+            int clearX = st.HalfWidth + ChibiSimConst.HurtHalfW + 300;    // past the main stage's side
             int tx = side * Math.Max(Math.Abs(cx), clearX + 200);
             if (self.Y > st.MainBottom && Math.Abs(self.X) < clearX) tx = side * (clearX + 600);
             int d = tx - self.X;
@@ -1227,6 +1355,99 @@ namespace ChibiClash.Netcode
             }
             if (overTier && self.Y > top + 300) _dy = -1;                 // fast fall onto it
         }
+
+        // ================================================================== review 2026-11-16 item 10: lower tiers
+
+        /// <summary>Deepest lower tier the CPU will fight on: both jumps, plus the up special when this class has one.</summary>
+        static int MaxTierDepth(ChibiFighterSim self) =>
+            JumpApex + AirJumpApex - 300 + (ChibiMovesetData.SlotFor(self.Class, BtnB, DU, true) >= 0 ? UpSpecialClimb : 0);
+
+        /// <summary>A platform under the main stage's level that reaches past its side (Ocean T1 / T2), not too deep for the way back.</summary>
+        bool IsLowTier(ChibiFighterSim self, ChibiStageDef st, int p, out int cx, out int top, out int hw)
+        {
+            cx = ChibiSimulation.PlatformCx(_state, p); top = ChibiSimulation.PlatformTop(_state, p); hw = st.Platforms[p].HalfW;
+            return top < st.MainBottom && Math.Abs(cx) + hw > st.HalfWidth + 400 && top >= -MaxTierDepth(self);
+        }
+
+        /// <summary>The fighter is on / just above that tier (in its column, below the main stage's level).</summary>
+        static bool OnTier(ChibiFighterSim f, int cx, int top, int hw, int slackX) =>
+            Math.Abs(f.X - cx) <= hw + slackX && f.Y >= top - 300 && f.Y < -300;
+
+        /// <summary>
+        /// The lower tier we share with the opponent (both on it or just above it), -1 when none. While it holds, the CPU
+        /// fights there instead of recovering to MAIN; once the opponent leaves, normal recovery takes it back up.
+        /// </summary>
+        int LowFightTier(ChibiFighterSim self, ChibiFighterSim opp, ChibiStageDef st)
+        {
+            if (!opp.InPlay || !self.InPlay || _danger) return -1;
+            var plats = st.Platforms;
+            for (int p = 0; p < plats.Length; p++)
+            {
+                if (!IsLowTier(self, st, p, out int cx, out int top, out int hw)) continue;
+                // In its column only (KeepFooting keeps an airborne CPU over it while the fight lasts).
+                if (OnTier(self, cx, top, hw, 0) && OnTier(opp, cx, top, hw, TierSlackX)) return p;
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// On MAIN, free, not in danger, with the opponent standing on a lower tier at least <see cref="DescendMinDrop"/>
+        /// below: start following it down (the intent lasts until we land there, see <see cref="ContinueDescend"/>).
+        /// </summary>
+        void TryStartDescend(ChibiFighterSim self, ChibiFighterSim opp, ChibiStageDef st)
+        {
+            if (_danger || !opp.InPlay || !opp.Grounded || opp.Y > self.Y - DescendMinDrop) return;
+            if (!self.Grounded || Math.Abs(self.Y) > 200 || Math.Abs(self.X) > st.HalfWidth) return;
+            if (self.MoveSlot >= 0 || self.Stun > 0 || self.Held || self.DashTicks > 0) return;
+            var plats = st.Platforms;
+            for (int p = 0; p < plats.Length; p++)
+            {
+                if (!IsLowTier(self, st, p, out int cx, out int top, out int hw)) continue;
+                if (Math.Abs(opp.X - cx) > hw || Math.Abs(opp.Y - top) > 50) continue;
+                _descendTier = p;
+                _descendTicks = DescendMaxTicks;
+                return;
+            }
+        }
+
+        /// <summary>Whether the descent goes on: not hit, not timed out, not landed, not fallen past, and the opponent is still there (until we left MAIN).</summary>
+        bool ContinueDescend(ChibiFighterSim self, ChibiFighterSim opp, ChibiStageDef st)
+        {
+            if (--_descendTicks <= 0 || self.Stun > 0 || self.Held || _danger || !opp.InPlay) return false;
+            int p = _descendTier;
+            if (p >= st.Platforms.Length || !IsLowTier(self, st, p, out int cx, out int top, out int hw)) return false;
+            if (self.Grounded && Math.Abs(self.Y - top) <= 50) return false;          // arrived
+            if (self.Y < top - 1500) return false;                                    // fell past it: recover
+            if (self.Y > -300 && !OnTier(opp, cx, top, hw, TierSlackX)) return false; // it left before we went over
+            return true;
+        }
+
+        /// <summary>The descent: walk off MAIN's nearer edge toward the tier's side, then steer onto the tier.</summary>
+        void Descend(ChibiFighterSim self, ChibiStageDef st, ref ChibiButtons press)
+        {
+            int cx = ChibiSimulation.PlatformCx(_state, _descendTier);
+            int side = cx > 0 ? 1 : -1;
+            if (self.Grounded) { _dx = side; return; }                    // off the edge (KeepFooting is skipped)
+            SteerOntoTier(self, st, _descendTier, side, ref press);
+        }
+
+        // ================================================================== review 2026-11-16 items 11 / 12 helpers
+
+        /// <summary>
+        /// A lunge / dash that ends at feet X <paramref name="x"/> keeps footing: over the lower tier we fight on (its ends
+        /// lead off a ledge or under the main stage), else within <paramref name="half"/> of the centre (the main stage).
+        /// </summary>
+        bool OverFooting(int x, int half)
+        {
+            if (_lowTier < 0) return Math.Abs(x) < half;
+            int cx = ChibiSimulation.PlatformCx(_state, _lowTier);
+            return Math.Abs(x - cx) < ChibiStageTable.Get(_state.Stage).Platforms[_lowTier].HalfW - 300;
+        }
+
+        /// <summary>The opponent can still hit us: its move is not past its active ticks yet, or one of its shots is coming.</summary>
+        bool Threat(ChibiFighterSim self, ChibiFighterSim opp) =>
+            (opp.MoveSlot >= 0 && (opp.MoveTick < opp.MoveStartup + opp.MoveActive || opp.Charging)) || IncomingShotTicks(self) > 0;
+
 
         /// <summary>The highest platform under the main stage's underside on <paramref name="side"/> (else any), -1 when none.</summary>
         int LowTier(ChibiStageDef st, int side)
@@ -1304,7 +1525,10 @@ namespace ChibiClash.Netcode
                     int toIn = band + rel, toOut = band - rel;
                     _dx = toIn <= toOut + 900 ? -outward : outward;
                     press &= ~moving;
-                    if (!self.Grounded && self.Vy < 0 && self.Y < 0 && self.AirJumps > 0 && CanPress(ChibiButtons.Jump)) press |= ChibiButtons.Jump;
+                    // Inside a lane the air jump may lift us over the column top: below 500 as the recovery used to
+                    // jump (the recovery itself now waits until below stage level).
+                    if (!self.Grounded && self.Vy < 0 && self.Y < 500 && self.AirJumps > 0 && self.Stun == 0 &&
+                        CanPress(ChibiButtons.Jump)) press |= ChibiButtons.Jump;
                 }
                 else if (rel > 0 && !low)
                 {
