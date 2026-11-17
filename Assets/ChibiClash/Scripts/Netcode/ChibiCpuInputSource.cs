@@ -341,6 +341,9 @@ namespace ChibiClash.Netcode
             if (!_state.Running) { _planLen = 0; return false; }   // InputEnabled gate: the original Fighter ignores the CPU too
             TrackOpponentMove(opp);
 
+            // Rules v24 escape dash (ED-1): Normal ~50 % (one roll per launch), Hard always, when the launch would KO.
+            if (TryEscapeDash(self, ref press)) { _planLen = 0; return false; }
+
             if (_planLen > 0)
             {
                 if (self.Stun > 0 || self.Held) _planLen = 0;          // interrupted: drop the rest (releases everything)
@@ -1126,6 +1129,57 @@ namespace ChibiClash.Netcode
             if (st.KoTop && ny > st.CeilingY) return true;
             // Spike on an opponent already off the stage: it will not come back from below the stage.
             if (st.KoBottom && ty < 0 && Math.Abs(victim.X) > st.HalfWidth && ny < st.KillY / 2) return true;
+            return false;
+        }
+
+        /// <summary>Normal: one roll per launch, decided the first tick the escape is possible (keyed by the launch's start tick).</summary>
+        int _escapeKey = -1;
+        bool _escapeGo;
+        /// <summary>Permille chance that a Normal CPU escapes a launch that would KO (ED-1).</summary>
+        const int EscapeNormalP = 500;
+        /// <summary>Ticks of launch the CPU projects ahead when deciding the escape dash.</summary>
+        const int EscapeLookTicks = 90;
+        /// <summary>Ticks of free fall still projected after the hitstun ends (momentum the recovery cannot stop at once).</summary>
+        const int EscapeAfterStunTicks = 10;
+
+        /// <summary>
+        /// Rules v24 escape dash for the CPU (ED-1): Easy never; Normal rolls once per launch (EscapeNormalP); Hard always;
+        /// only when <see cref="LaunchWouldKo"/> says the current launch crosses an active KO edge.
+        /// </summary>
+        bool TryEscapeDash(ChibiFighterSim self, ref ChibiButtons press)
+        {
+            if (_difficulty < 2 || !self.CanEscapeDash) return false;
+            var st = ChibiStageTable.Get(_state.Stage);
+            if (!LaunchWouldKo(self, st)) return false;
+            if (_difficulty < 3)
+            {
+                int key = _state.GameTicks - self.LaunchAge;
+                if (key != _escapeKey) { _escapeKey = key; _escapeGo = _rng.Roll(EscapeNormalP); }
+                if (!_escapeGo) return false;
+            }
+            press = ChibiButtons.Dash;
+            return true;
+        }
+
+        /// <summary>
+        /// Projects the current launch (velocity, launch decay, hitstun gravity) for up to EscapeLookTicks ticks and reports
+        /// whether the feet cross an active KO edge. Approximate: ignores platforms, the fall cap and any input; projects EscapeAfterStunTicks past the hitstun.
+        /// </summary>
+        public static bool LaunchWouldKo(ChibiFighterSim f, ChibiStageDef st)
+        {
+            long x = f.X, y = f.Y, vx = f.Vx, vy = f.Vy;
+            int look = Math.Min(EscapeLookTicks, f.Stun + EscapeAfterStunTicks);   // a few ticks of drift after the hitstun
+            for (int t = 0; t < look; t++)
+            {
+                bool stunned = t < f.Stun;
+                if (stunned && f.LaunchDecX != 0) vx = vx > 0 ? Math.Max(0, vx - f.LaunchDecX) : Math.Min(0, vx + f.LaunchDecX);
+                if (stunned && f.LaunchDecY != 0 && vy != 0 && Math.Sign(vy) == Math.Sign(f.LaunchDecY))
+                    vy = vy > 0 ? Math.Max(0, vy - Math.Abs(f.LaunchDecY)) : Math.Min(0, vy + Math.Abs(f.LaunchDecY));
+                vy -= stunned ? (long)ChibiSimConst.Gravity * f.LaunchGravP / 1000 : ChibiSimConst.Gravity;
+                x += vx / ChibiSimConst.VelSub; y += vy / ChibiSimConst.VelSub;
+                if (st.CrossesKoEdge((int)Math.Max(int.MinValue, Math.Min(int.MaxValue, x)), (int)Math.Max(int.MinValue, Math.Min(int.MaxValue, y))))
+                    return true;
+            }
             return false;
         }
 

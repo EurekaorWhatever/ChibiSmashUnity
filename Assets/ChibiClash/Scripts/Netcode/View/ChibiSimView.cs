@@ -803,6 +803,10 @@ namespace ChibiClash.Netcode
                 case ChibiSimEventKind.DashStarted:
                     Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 8, 3f, 0.3f);   // Fighter.cs dash start
                     break;
+                case ChibiSimEventKind.EscapeDash:   // rules v24 (ED-1): broke out of a launch
+                    Fx.Burst(Center(e.Index), _skin[e.Index].ultFx, 16, 5f, 0.35f);
+                    Fx.Text(Center(e.Index) + Vector2.up * 1.2f, "ESCAPE!", Color.white, 0.9f);
+                    break;
                 case ChibiSimEventKind.KO:
                     // Rules v20: the KO'd body is already off-screen (out / respawn); the KO blast at the blast line comes from
                     // ChibiLaunchFx and the flying ghost from the KoFly above, so no burst / text at the (hidden) body here.

@@ -359,7 +359,8 @@ namespace ChibiClash.Netcode
         /// <remarks>21: GL-2 applied consistently (lead): every side KO line is at least 8000 beyond the outermost walkable surface (Plain ground +-16991 -> KO +-25000 with a bottom line, Bird Lair cloud floor finite +-12000 -> KO +-20000 with a bottom line, Volcano 17500, Ocean 19800); finite solid floors (HasFloor / FloorY / FloorHalfW, in the stage hash); Sword Aura waves no longer get the ult base bonus.</remarks>
         /// <remarks>22: responsiveness pass (UL-1, EL-1, TN-1, 2026-11-14): the Ult press with a full meter fires the ultimate on its game step (the gesture window is no longer opened); recovery trimmed (CSV rows by category with floors, counters / rolls / armor / reflect / dive rows unchanged; normals x 3/4; Dash &amp; Thrust, Choke, Fireball, Spear rows); 6-tick attack buffer (BufferedEdges / BufferTicks, replaces D-N1, fresh press wins, cleared by Interrupt); grounded walk / turn cancel in the last 6 recovery ticks of non-program moves when the stick differs from the move's start direction (Light rows and the light normal always, other moves on hit), attacks stay locked until the old lock end (AttackLockTicks) and go to the buffer; constants in the config hash.</remarks>
         /// <remarks>23: balance pass (review 2026-11-16 batch 4, B4-1..B4-3, 2026-11-17): trip loops removed (grounded trip stun Bruna down tilt 22, Ren down tilt 26, Kaia low sweep 28, was 34); Bruna down smash knockback 120000/90000 (was 45000/157500, straight up); the walk cancel's "on hit" needs a landed or blocked melee hit (MoveConnected, rolled back and hashed; a touch on an invulnerable, hovering, countered or parried target no longer counts); attack presses in a dash's last AttackBufferTicks are buffered and come out when the dash ends.</remarks>
-        public const int RulesVersion = 23;
+        /// <remarks>24: escape dash (ED-1, 2026-11-17): a Dash press during a knockback launch (not set knockback) after 10 game ticks of it, with DashCd 0, halves Vx / Vy, ends the hitstun and the launch and starts the 33-tick dash cooldown (no invuln, no dash motion); LaunchAge and EscapeDashes per fighter in state and hash; EscapeMinAge / EscapeSpeedP / LaunchAgeCap in the config hash.</remarks>
+        public const int RulesVersion = 24;
 
         public uint Seed;
         public FighterClass Class0, Class1;
@@ -710,6 +711,8 @@ namespace ChibiClash.Netcode
         public int HitsLanded, CombosLanded, UltsUsed, Parries;
         /// <summary>Highest ComboHits reached this match (rules v17, MaxCombo F:42, F:636): results screen and quests.</summary>
         public int MaxCombo;
+        /// <summary>Rules v24: escape dashes used this match (stats; the view plays the escape cue when it rises).</summary>
+        public int EscapeDashes;
 
         /// <summary>
         /// A thrown spear is in flight (F:455, F:938-949; rules v11): light / heavy presses start nothing. Set only when the
@@ -781,6 +784,7 @@ namespace ChibiClash.Netcode
             DropTicks = o.DropTicks; DropPlatform = o.DropPlatform;
             HitsLanded = o.HitsLanded; CombosLanded = o.CombosLanded; UltsUsed = o.UltsUsed; Parries = o.Parries;
             MaxCombo = o.MaxCombo;
+            EscapeDashes = o.EscapeDashes;
             SpearOut = o.SpearOut;
             MoveLockEnd = o.MoveLockEnd; MovePhase = o.MovePhase; Held = o.Held; Holding = o.Holding;
             GrabSX = o.GrabSX; GrabSY = o.GrabSY; GrabTX = o.GrabTX; GrabTY = o.GrabTY; GrabLX = o.GrabLX; GrabLY = o.GrabLY;
@@ -834,6 +838,7 @@ namespace ChibiClash.Netcode
             ChibiSimState.Mix(ref h, SuperJumpCd); ChibiSimState.Mix(ref h, PoseShotCd);
             ChibiSimState.Mix(ref h, UltPrompt); ChibiSimState.Mix(ref h, UltPromptTicks);
             ChibiSimState.Mix(ref h, MaxCombo);  // rules v17
+            ChibiSimState.Mix(ref h, EscapeDashes);  // rules v24
             ChibiSimState.Mix(ref h, BufferedEdges); ChibiSimState.Mix(ref h, BufferTicks); ChibiSimState.Mix(ref h, AttackLockTicks);   // rules v22
             HashMoveset(ref h);                  // rules v18
             HashPercent(ref h);                  // rules v20
@@ -1130,6 +1135,7 @@ namespace ChibiClash.Netcode
             f.PrevInput = 0; f.LatchedEdges = 0; f.LatchedHeld = 0;
             f.HitsLanded = f.CombosLanded = f.UltsUsed = f.Parries = 0;
             f.MaxCombo = 0;
+            f.EscapeDashes = 0;
             f.DashTicks = 0; f.DashCd = 0; f.DashDir = 0;
             f.DropTicks = 0; f.DropPlatform = -1;
             f.SpearOut = false;
@@ -1368,6 +1374,7 @@ namespace ChibiClash.Netcode
             // ---- timers
             Dec(ref f.Stun); Dec(ref f.Invuln); Dec(ref f.ComboWindow);
             if (f.Stun == 0) f.ClearLaunch();               // rules v20: the launch fields end with the hitstun (spec 3.3)
+            else if (f.LaunchAge > 0 && f.LaunchAge < ChibiPercentConst.LaunchAgeCap) f.LaunchAge++;   // rules v24 (ED-1)
             Dec(ref f.DashTicks); Dec(ref f.DashCd);       // dash timers tick unconditionally (Fighter.cs:205-207)
             // Drop-through ends at the start of tick T+21, before this tick's probe and physics (stage-conversion.md section 3).
             if (f.DropTicks > 0 && --f.DropTicks == 0) f.DropPlatform = -1;
@@ -1454,7 +1461,8 @@ namespace ChibiClash.Netcode
                 // Interrupt() keeps parryUntil / spinGuardUntil (F:670-677): ParryTicks and GuardTicks are NOT cleared (section 8.5).
                 // Single release path (TD amendment 4); DashTicks is already 0 here (every stun source interrupts).
                 Interrupt(s, i);
-                LaunchDecayStep(f);                      // rules v20: launch decay (spec 3.3)
+                // Rules v24 escape dash (ED-1): halves the launch and ends the hitstun; control returns next tick.
+                if (!TryEscapeDash(s, f, edges)) LaunchDecayStep(f);   // rules v20: launch decay (spec 3.3)
             }
             else if (!acting)
             {
@@ -2636,6 +2644,7 @@ namespace ChibiClash.Netcode
                 int refU = ChibiCombatStats.FinalDamageMicro(refN, ChibiCombatStats.DefenseH(A.Stats, A.ArmorBreakTicks > 0), false);
                 AddPct(A, Pct(refU));                       // rules v20: reflect damage as percent; push stays fixed
                 A.Stun = Math.Max(A.Stun, ChibiSimConst.ReflectStun);
+                A.LaunchAge = 0;                            // rules v24 (ED-1 review): a reflect stun cannot be escaped
                 Interrupt(s, a);
                 if (!A.Held)                                // a held (kinematic) attacker keeps V 0
                 {
@@ -2703,6 +2712,7 @@ namespace ChibiClash.Netcode
             {
                 if (launch.Stun > 0) { D.Stun = Math.Max(D.Stun, launch.Stun); Interrupt(s, d); D.AirUsedMask = 0; }
                 D.LaunchDecX = launch.DecX; D.LaunchDecY = launch.DecY; D.LaunchGravP = launch.GravP;
+                D.StartLaunchAge(StrongKb(h.KbX, h.KbY));   // rules v24 (ED-1)
                 SetKnockback(D, launch.Vx, launch.Vy);
             }
             GainUlt(D, ChibiSimConst.UltWhenHit);
