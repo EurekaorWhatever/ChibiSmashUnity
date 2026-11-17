@@ -666,6 +666,7 @@ namespace ChibiClash.Netcode
                     break;
                 }
                 case ChibiSimEventKind.DashStarted:
+                case ChibiSimEventKind.EscapeDash:   // rules v24 (ED-1): the escape plays the class dash sound
                     if (!fighter) break;
                     switch ((FighterClass)cls)
                     {

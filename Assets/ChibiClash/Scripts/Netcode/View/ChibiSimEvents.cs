@@ -51,6 +51,8 @@ namespace ChibiClash.Netcode
         UltPromptChanged,
         /// <summary>Training revive (rules v16): the fighter was KO'd and restored to full HP.</summary>
         Revived,
+        /// <summary>Rules v24 (ED-1): the fighter used the escape dash (EscapeDashes rose) and broke out of its launch.</summary>
+        EscapeDash,
     }
 
     /// <summary>One presentation event. Index is the fighter (0/1) or, for projectile / minion / cloud events, the pool slot.</summary>
@@ -236,6 +238,8 @@ namespace ChibiClash.Netcode
 
             if (c.DashTicks > 0 && (p.DashTicks == 0 || c.DashTicks > p.DashTicks))
                 output.Add(new ChibiSimEvent(ChibiSimEventKind.DashStarted, i, c.DashDir));
+            if (c.EscapeDashes > p.EscapeDashes)
+                output.Add(new ChibiSimEvent(ChibiSimEventKind.EscapeDash, i, 0));
 
             // Rules v15: SuperJumpCd is set to its full value only on the pose tick and otherwise only counts down.
             if (c.SuperJumpCd > p.SuperJumpCd) output.Add(new ChibiSimEvent(ChibiSimEventKind.PoseSuperJump, i));

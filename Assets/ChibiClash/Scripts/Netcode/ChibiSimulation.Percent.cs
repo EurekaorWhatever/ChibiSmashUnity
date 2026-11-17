@@ -56,6 +56,12 @@ namespace ChibiClash.Netcode
         public const int ComebackPctM = 100_000;
         /// <summary>CPU kill read: opponent percent &gt;= (Weight + offset) x 1000 (spec 3.5). Read by the CPU only.</summary>
         public const int CpuKillPctOffset = 10;
+        /// <summary>
+        /// Rules v24 escape dash (decision ED-1, 2026-11-17): a Dash press while launched (real knockback, not set
+        /// knockback) once LaunchAge &gt; EscapeMinAge, with DashCd 0, scales the launch velocity by EscapeSpeedP permille,
+        /// ends the hitstun and starts the dash cooldown. No invulnerability. LaunchAge saturates at LaunchAgeCap.
+        /// </summary>
+        public const int EscapeMinAge = 10, EscapeSpeedP = 500, LaunchAgeCap = 1000;
 
         /// <summary>Every constant above, mixed into the config hash (rules v20).</summary>
         public static readonly int[] Constants =
@@ -63,6 +69,7 @@ namespace ChibiClash.Netcode
             PctPerHpM, PctCapM, DmgTermCapM, KbgBase, KbgDiv, BkbBase, BkbNum, BkbDen, MagCap, UltBkbBonusM, ZonerKbP, SetKbMag,
             WeightNum, WeightOff, KbConstM, KbCapM, LsSubPerKb, LaunchDecay, GravFullKbM, GravZeroKbM, KbStunNum, KbStunDen,
             HitstunCap, StrongKbMag, HitstunMin, ArmorBreakKbM, StocksStart, RespawnDelay, RespawnHoverMax, RespawnInvuln, ComebackPctM, CpuKillPctOffset,
+            EscapeMinAge, EscapeSpeedP, LaunchAgeCap,
         };
     }
 
@@ -81,6 +88,13 @@ namespace ChibiClash.Netcode
         public int LaunchDecX, LaunchDecY;
         /// <summary>Gravity permille while in hitstun (1000 = normal).</summary>
         public int LaunchGravP = 1000;
+        /// <summary>
+        /// Rules v24: game ticks since the current knockback launch started (1 on the hit tick), 0 when not launched
+        /// (no hitstun, or set knockback). Gates the escape dash (<see cref="ChibiPercentConst.EscapeMinAge"/>).
+        /// </summary>
+        public int LaunchAge;
+        /// <summary>True while a knockback launch is running and the escape dash may still be used.</summary>
+        public bool CanEscapeDash => Stun > 0 && LaunchAge > ChibiPercentConst.EscapeMinAge && DashCd == 0 && !Held;
         /// <summary>KOs taken this match (stats; training counts too). Replaces the v16 Revives counter.</summary>
         public int KosTaken;
 
@@ -104,23 +118,32 @@ namespace ChibiClash.Netcode
         public void ResetPercent()
         {
             PctM = 0; Stocks = ChibiPercentConst.StocksStart; OutTicks = 0; HoverTicks = 0;
-            LaunchDecX = 0; LaunchDecY = 0; LaunchGravP = 1000; KosTaken = 0;
+            LaunchDecX = 0; LaunchDecY = 0; LaunchGravP = 1000; LaunchAge = 0; KosTaken = 0;
         }
 
+        /// <summary>
+        /// Rules v24: call right after a knockback writes the launch fields. Starts LaunchAge only for a strong launch
+        /// (<paramref name="strong"/>: KbX/KbY magnitude &gt;= StrongKbMag, the same split as the hitstun rule), so weak hits
+        /// (jabs, tilts) and set knockback keep their combo timing and cannot be escaped. A held fighter gets no launch (its
+        /// velocity stays 0), so a hit while held cannot be escaped either.
+        /// </summary>
+        public void StartLaunchAge(bool strong) =>
+            LaunchAge = strong && !Held && Stun > 0 && (LaunchDecX != 0 || LaunchDecY != 0 || LaunchGravP != 1000) ? 1 : 0;
+
         /// <summary>Clears the hitstun launch fields (end of hitstun, set knockback, StunF, KO).</summary>
-        public void ClearLaunch() { LaunchDecX = 0; LaunchDecY = 0; LaunchGravP = 1000; }
+        public void ClearLaunch() { LaunchDecX = 0; LaunchDecY = 0; LaunchGravP = 1000; LaunchAge = 0; }
 
         void CopyPercent(ChibiFighterSim o)
         {
             PctM = o.PctM; Stocks = o.Stocks; OutTicks = o.OutTicks; HoverTicks = o.HoverTicks;
-            LaunchDecX = o.LaunchDecX; LaunchDecY = o.LaunchDecY; LaunchGravP = o.LaunchGravP; KosTaken = o.KosTaken;
+            LaunchDecX = o.LaunchDecX; LaunchDecY = o.LaunchDecY; LaunchGravP = o.LaunchGravP; LaunchAge = o.LaunchAge; KosTaken = o.KosTaken;
         }
 
         void HashPercent(ref uint h)
         {
             ChibiSimState.Mix(ref h, PctM); ChibiSimState.Mix(ref h, Stocks); ChibiSimState.Mix(ref h, OutTicks);
             ChibiSimState.Mix(ref h, HoverTicks); ChibiSimState.Mix(ref h, LaunchDecX); ChibiSimState.Mix(ref h, LaunchDecY);
-            ChibiSimState.Mix(ref h, LaunchGravP); ChibiSimState.Mix(ref h, KosTaken);
+            ChibiSimState.Mix(ref h, LaunchGravP); ChibiSimState.Mix(ref h, LaunchAge); ChibiSimState.Mix(ref h, KosTaken);
         }
     }
 
@@ -226,6 +249,13 @@ namespace ChibiClash.Netcode
             return l;
         }
 
+        /// <summary>Rules v24: a strong launch (KbX/KbY magnitude &gt;= StrongKbMag) may be escaped (ED-1).</summary>
+        static bool StrongKb(int kbX, int kbY)
+        {
+            long kx = kbX, ky = kbY;
+            return kx * kx + ky * ky >= (long)ChibiPercentConst.StrongKbMag * ChibiPercentConst.StrongKbMag;
+        }
+
         /// <summary>Adds <paramref name="addM"/> milli-percent, saturating at PctCapM.</summary>
         static void AddPct(ChibiFighterSim f, int addM)
         {
@@ -243,6 +273,23 @@ namespace ChibiClash.Netcode
             if (f.LaunchDecX != 0) f.Vx = Approach(f.Vx, 0, f.LaunchDecX);
             if (f.LaunchDecY != 0 && f.Vy != 0 && Sign(f.Vy) == Sign(f.LaunchDecY))
                 f.Vy = Approach(f.Vy, 0, Math.Abs(f.LaunchDecY));
+        }
+
+        /// <summary>
+        /// Rules v24 escape dash (ED-1): on a Dash press edge while <see cref="ChibiFighterSim.CanEscapeDash"/>, scale the
+        /// launch velocity by EscapeSpeedP permille, end the hitstun and the launch, start the dash cooldown. Returns true
+        /// when it fired (the caller then skips this tick's launch decay). No invulnerability, no dash motion.
+        /// </summary>
+        static bool TryEscapeDash(ChibiSimState s, ChibiFighterSim f, int edges)
+        {
+            if ((edges & (int)ChibiButtons.Dash) == 0 || !f.CanEscapeDash || !InputEnabled(s)) return false;
+            f.Vx = (int)((long)f.Vx * ChibiPercentConst.EscapeSpeedP / 1000);
+            f.Vy = (int)((long)f.Vy * ChibiPercentConst.EscapeSpeedP / 1000);
+            f.Stun = 0;
+            f.ClearLaunch();
+            f.DashCd = ChibiSimConst.DashCooldown;
+            f.EscapeDashes++;
+            return true;
         }
 
         /// <summary>Gravity this tick: Gravity x LaunchGravP / 1000 while in hitstun, else Gravity.</summary>
