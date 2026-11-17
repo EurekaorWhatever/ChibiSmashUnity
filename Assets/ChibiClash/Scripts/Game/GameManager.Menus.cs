@@ -588,7 +588,7 @@ namespace ChibiClash
                 Gui.Rect(g, active ? new Color(0.1f, 0.35f, 0.25f, 0.9f) : Gui.PanelLight);
                 Gui.Frame(g, active ? Gui.Green : Gui.Steel, 2f);
                 if (active) Gui.Rect(new Rect(g.x, g.y, g.width, 3f), Gui.Green);
-                Gui.Skeleton(new Rect(g.x + gw * 0.5f - 50f, g.y + 8f, 100f, 110f), SimulatedPoseSource.Template(TrainingGestures[i], false), active ? Gui.Green : Gui.P2, 2.5f);
+                Gui.Skeleton(new Rect(g.x + gw * 0.5f - 50f, g.y + 8f, 100f, 110f), SimulatedPoseSource.TemplateCached(TrainingGestures[i], false), active ? Gui.Green : Gui.P2, 2.5f);
                 Gui.Text(new Rect(g.x, g.y + 120f, gw, 22f), "[" + (i + 1) + "] " + ClassDef.GestureName(TrainingGestures[i]), 13, Gui.Paper);
                 Gui.Text(new Rect(g.x + 6f, g.y + 144f, gw - 12f, 40f), TrainingUses[i], 11, Gui.Muted, TextAnchor.UpperCenter, false);
             }

@@ -69,7 +69,6 @@ namespace ChibiClash.Tests
         const int LongTimer = 600;                        // a status timer that cannot run out inside one test
         const double RegenPerTick = 0.4;                  // 24 HP/s at 60 Hz (F:202-203)
 
-        static readonly ChibiInputPacket Neutral = default;
 
         // ------------------------------------------------------------------ RNG forcing (doc section 9)
 

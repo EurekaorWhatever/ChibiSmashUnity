@@ -429,11 +429,14 @@ namespace ChibiClash
             var ink = new Color(Gui.Ink.r, Gui.Ink.g, Gui.Ink.b, c.a);
             float d = o + Mathf.Max(2f, size * 0.06f);
             Gui.Display(new Rect(r.x + d, r.y + d, r.width, r.height), s, size, new Color(0f, 0f, 0f, 0.55f * c.a), TextAnchor.LowerLeft, slant, Color.clear);
-            for (int k = 0; k < 8; k++)
-            {
-                float ang = k * Mathf.PI * 0.25f;
-                Gui.Display(new Rect(r.x + Mathf.Cos(ang) * o, r.y + Mathf.Sin(ang) * o, r.width, r.height), s, size, ink, TextAnchor.LowerLeft, slant, Color.clear);
-            }
+            // 4 diagonal copies instead of 8 around a circle (review 2026-11-16 perf fix D): every IMGUI label allocates
+            // inside Unity, and this ran 10 labels per number. The diagonal offset is o * 0.8 on each axis so the corners
+            // stay covered.
+            float q = o * 0.8f;
+            Gui.Display(new Rect(r.x - q, r.y - q, r.width, r.height), s, size, ink, TextAnchor.LowerLeft, slant, Color.clear);
+            Gui.Display(new Rect(r.x + q, r.y - q, r.width, r.height), s, size, ink, TextAnchor.LowerLeft, slant, Color.clear);
+            Gui.Display(new Rect(r.x - q, r.y + q, r.width, r.height), s, size, ink, TextAnchor.LowerLeft, slant, Color.clear);
+            Gui.Display(new Rect(r.x + q, r.y + q, r.width, r.height), s, size, ink, TextAnchor.LowerLeft, slant, Color.clear);
             Gui.Display(r, s, size, c, TextAnchor.LowerLeft, slant, Color.clear);
         }
 
@@ -679,7 +682,7 @@ namespace ChibiClash
 
             var fig = new Rect(r.x + 14f, r.y + 36f, 120f, 150f);
             Gui.Rect(fig, new Color(0f, 0.1f, 0.15f, 0.5f));
-            Gui.Skeleton(fig, SimulatedPoseSource.Template(def.ultGesture, false), new Color(0.5f, 1f, 1f, 0.6f + 0.4f * pulse), 3f);
+            Gui.Skeleton(fig, SimulatedPoseSource.TemplateCached(def.ultGesture, false), new Color(0.5f, 1f, 1f, 0.6f + 0.4f * pulse), 3f);
 
             var info = new Rect(r.x + 144f, r.y + 36f, r.width - 156f, 150f);
             Gui.Text(new Rect(info.x, info.y, info.width, 44f), ClassDef.GestureName(def.ultGesture), 17, Gui.Paper);

@@ -76,6 +76,17 @@ Same wire layout as protocol 4; the rollback and result rules changed, so old an
 - REP-01: `ChibiReplay.TryRead` range-checks class, passive and stage; `Verify` returns false instead of throwing. Replays now store `HazardsOff` (flags bit 2), so hazards-off replays load.
 - Training matches no longer record a replay (the T ult fill is outside the input stream).
 
+## Rules versions 22 and 23 (protocol 5 unchanged)
+A rules bump changes the config hash and the Hello rules field; peers with different rules refuse each other
+(`RulesMismatch`), and the room tag (`p5r22` / `p5r23`) keeps them in separate rooms. The wire layout is unchanged.
+- **v22 (2026-11-14):** the Ult press fires the ultimate on a full meter; recovery trimmed; 6-tick attack buffer
+  (`BufferedEdges` / `BufferTicks`) and grounded walk / turn cancel (`AttackLockTicks`): three new hashed fighter fields.
+- **v23 (2026-11-17, review batch 4):** trip stun per row, Bruna down smash sideways, walk cancel "on hit" = landed or
+  blocked (new hashed `MoveConnected`), dash-tail attack buffer. Goldens re-recorded: config hash `0x8E6FB4A6`, fixtures
+  `0xC589DD73` / `0xCADE4CC6`, Hello `c9517001208922ae1a`.
+- Local only (not on the wire): `ChibiPlayerInputSource.Muted` sends neutral packets while a menu overlay (online LEAVE
+  MATCH prompt) owns the keys.
+
 ## Superseded in these docs
 - Any recommendation to show the **Relay** join code (Q2 chose Lobby).
 - `mode3-ai-input.md` option (A) "run ChibiSimulation directly": still valid, but the sim must first reach full feature parity with the original (Q1).

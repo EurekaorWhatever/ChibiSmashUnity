@@ -27,6 +27,19 @@ namespace ChibiClash
         {
             return new PoseFrame { p = (Vector3[])p.Clone(), confidence = confidence, aspect = aspect };
         }
+
+        /// <summary>
+        /// Copy into <paramref name="dst"/>, reusing its joint array when it has the right length (no allocation after the
+        /// first call; review 2026-11-16 perf fix B).
+        /// </summary>
+        /// <example><code>frame.CopyTo(ref previous);</code></example>
+        public void CopyTo(ref PoseFrame dst)
+        {
+            if (dst.p == null || dst.p.Length != p.Length) dst.p = new Vector3[p.Length];
+            System.Array.Copy(p, dst.p, p.Length);
+            dst.confidence = confidence;
+            dst.aspect = aspect;
+        }
     }
 
     /// <summary>Anything that produces body landmarks: the MoveNet camera tracker, or the built-in simulator.</summary>
@@ -136,7 +149,7 @@ namespace ChibiClash
                 frozenSamples = maxDelta < 1e-5f ? frozenSamples + 1 : 0;
                 if (maxDelta / Mathf.Max(dt, 1e-3f) > MaxJointSpeed) lastSnap = now;
             }
-            prev = f.Clone();
+            f.CopyTo(ref prev);                             // reuses prev's array (perf fix B)
             hasPrev = true;
 
             if (f.confidence < GestureClassifier.MinConfidence) { Valid = false; Reason = "Low tracking confidence"; }
@@ -213,6 +226,7 @@ namespace ChibiClash
         readonly Func<Gesture> target;
         readonly Func<bool> slouch;
         PoseFrame current;
+        readonly Vector3[] goal = new Vector3[PoseFrame.Count];    // this tick's target joints, reused (perf fix B)
 
         public string Name { get; }
         public bool HasPose => true;
@@ -230,12 +244,12 @@ namespace ChibiClash
 
         public void Tick(float dt)
         {
-            var goal = Template(target(), slouch != null && slouch());
+            FillTemplate(goal, target(), slouch != null && slouch());
             float k = 1f - Mathf.Exp(-dt * 14f);
             for (int i = 0; i < PoseFrame.Count; i++)
             {
                 var jitter = new Vector3(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f), 0f) * 0.003f;
-                current.p[i] = Vector3.Lerp(current.p[i], goal.p[i], k) + jitter;
+                current.p[i] = Vector3.Lerp(current.p[i], goal[i], k) + jitter;
             }
             current.confidence = 0.95f;
             current.aspect = 1f;
@@ -243,9 +257,33 @@ namespace ChibiClash
             SampleDt = Mathf.Max(dt, 1e-3f);
         }
 
+        static readonly PoseFrame[] cachedTemplates = new PoseFrame[8];   // (gesture, slouched)
+
+        /// <summary>
+        /// A shared template for DRAWING (Gui.Skeleton in the HUD and training menu): built once per (gesture, slouched)
+        /// and reused, so drawing it every frame allocates nothing. Never modify the returned joints. Use
+        /// <see cref="Template"/> for a private copy.
+        /// </summary>
+        /// <example><code>Gui.Skeleton(rect, SimulatedPoseSource.TemplateCached(Gesture.RaiseHands, false), color, 3f);</code></example>
+        public static PoseFrame TemplateCached(Gesture g, bool slouched)
+        {
+            int k = (int)g * 2 + (slouched ? 1 : 0);
+            if (k < 0 || k >= cachedTemplates.Length) return Template(g, slouched);
+            if (cachedTemplates[k].p == null) cachedTemplates[k] = Template(g, slouched);
+            return cachedTemplates[k];
+        }
+
+        /// <summary>A new frame holding the joint template of <paramref name="g"/> (allocates; see <see cref="TemplateCached"/>).</summary>
         public static PoseFrame Template(Gesture g, bool slouched)
         {
             var p = new Vector3[PoseFrame.Count];
+            FillTemplate(p, g, slouched);
+            return new PoseFrame { p = p, confidence = 0.95f, aspect = 1f };
+        }
+
+        /// <summary>Write the joint template of <paramref name="g"/> into <paramref name="p"/> (length PoseFrame.Count), no allocation.</summary>
+        public static void FillTemplate(Vector3[] p, Gesture g, bool slouched)
+        {
             p[PoseFrame.Nose] = new Vector3(0.5f, 0.72f, 0f);
             p[PoseFrame.LShoulder] = new Vector3(0.4f, 0.58f, 0f);
             p[PoseFrame.RShoulder] = new Vector3(0.6f, 0.58f, 0f);
@@ -282,7 +320,6 @@ namespace ChibiClash
                 p[PoseFrame.LShoulder] += new Vector3(0f, 0.02f, 0f);
                 p[PoseFrame.RShoulder] += new Vector3(0f, -0.02f, 0f);
             }
-            return new PoseFrame { p = p, confidence = 0.95f, aspect = 1f };
         }
     }
 

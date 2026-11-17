@@ -42,6 +42,17 @@ namespace ChibiClash.Netcode
     /// </code></example>
     public sealed class ChibiSocialManager : MonoBehaviour
     {
+        /// <summary>
+        /// Drop invites whose time ran out. Runs every frame, so it is a plain reverse loop: the old RemoveAll(lambda)
+        /// allocated a closure each frame (148 B; review 2026-11-16 perf fix C).
+        /// </summary>
+        /// <example><code>ChibiSocialManager.RemoveExpired(Invites, Time.unscaledTime);</code></example>
+        public static void RemoveExpired(List<ChibiPendingInvite> invites, float now)
+        {
+            for (int k = invites.Count - 1; k >= 0; k--)
+                if (invites[k].ExpiresAt <= now) invites.RemoveAt(k);
+        }
+
         /// <summary>Signed in and the Friends service is ready.</summary>
         public bool Ready { get; private set; }
         /// <summary>True while a request is in flight (buttons disabled).</summary>
@@ -455,7 +466,7 @@ namespace ChibiClash.Netcode
                 }
             }
             for (int n = 0; n < 8 && _messages.TryDequeue(out var msg); n++) OnMessage(msg);   // a few per frame
-            Invites.RemoveAll(i => i.ExpiresAt <= now);
+            RemoveExpired(Invites, now);
 
             // Our room for an invite is ready: send the code to the friend (once).
             if (_inviteTargetId != null && _rooms != null)

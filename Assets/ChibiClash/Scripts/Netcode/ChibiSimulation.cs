@@ -550,8 +550,7 @@ namespace ChibiClash.Netcode
             // Normals (normals-conversion.md section 2): kb (2.5, 2) / finisher (7, 7) / heavy (8, 6) u/s x 15000 sub;
             // stun 17 / 27 / 30. Ranged/Magic store kb x0.6 (halved again at hit time). Arrow 18/21 u/s, bolt 14 u/s.
             const int lms = ChibiSimConst.LightBaseMs, hms = ChibiSimConst.HeavyBaseMs;
-            const int P = ChibiMove.FParry, U = ChibiMove.FUnblockable, C = ChibiMove.FCentered, A = ChibiMove.FAura,
-                      R = ChibiMove.FRing, G = ChibiMove.FSpinGuard,
+            const int P = ChibiMove.FParry, U = ChibiMove.FUnblockable, C = ChibiMove.FCentered, G = ChibiMove.FSpinGuard,
                       SM = ChibiMove.FSummonMinions, SC = ChibiMove.FSummonCloud;
             // Projectile flags and kinds (projectile-conversion.md section 6).
             const int PH = ChibiProjectileSim.FHoming, PD = ChibiProjectileSim.FDestructible;
