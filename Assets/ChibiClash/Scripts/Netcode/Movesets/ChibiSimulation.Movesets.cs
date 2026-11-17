@@ -233,7 +233,7 @@ namespace ChibiClash.Netcode
                 light = e.Button == 0;
             }
             else light = slot == 0;
-            return light || f.MoveHit;
+            return light || f.MoveConnected;   // rules v23 (B4-2): landed or blocked, not a touch on invulnerability
         }
 
         // ================================================================== move start / timers

@@ -132,14 +132,14 @@ namespace ChibiClash.Tests
             var s = Arena(FighterClass.Heavy, FighterClass.Melee, 0, 1200);
             Game(s, P(ChibiDir.S, ChibiButtons.Light));
             Idle(s, row.Startup + 1);
-            Assert.AreEqual(ChibiMovesetConst.TripStun, s.F[1].Stun, "grounded: trip stun 34");
+            Assert.AreEqual(row.Stun, s.F[1].Stun, "grounded: the row's own trip stun (v23: Bruna down tilt 22, was 34)");
             Assert.AreEqual(ChibiMovesetConst.TripKbX, s.F[1].Vx, "grounded trip = set knockback (v20, spec 4.5)");
 
             s = Arena(FighterClass.Heavy, FighterClass.Melee, 0, 1200);
             Place(s.F[1], 1200, 300, -1);
             Game(s, P(ChibiDir.S, ChibiButtons.Light));
             Idle(s, row.Startup + 1);
-            Assert.IsFalse(s.F[1].Grounded && s.F[1].Stun == ChibiMovesetConst.TripStun, "airborne victim is not tripped");
+            Assert.IsFalse(s.F[1].Grounded && s.F[1].Stun == row.Stun, "airborne victim is not tripped");
             var air = ChibiPercentTestKit.ExpectedOn(s.F[1], 0, s.F[0], ChibiMovesetConst.TripAirKbX, ChibiMovesetConst.TripAirKbY,
                                                      1, ChibiMovesetConst.TripAirStun);
             Assert.AreEqual(air.Stun, s.F[1].Stun, "airborne: L tier (legacy stun 22 is the floor, v20)");

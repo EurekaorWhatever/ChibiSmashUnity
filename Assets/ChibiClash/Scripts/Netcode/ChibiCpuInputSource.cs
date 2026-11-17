@@ -875,7 +875,9 @@ namespace ChibiClash.Netcode
             if (btn == BtnDash)
                 return self.DashCd == 0 && Math.Abs(dy) < 600 && Math.Abs(dx) > Profile[cls][PReach] + 300 && Math.Abs(dx) < 5000
                        && OverFooting(self.X + sdx * (Math.Abs(dx) + mv.SelfVx * (mv.Startup + mv.Active) / 2), half);
-            if (mv.SelfVx > 0 && !e.Has(ChibiMoveExt.FRoll) && !OverFooting(self.X + face * mv.SelfVx * (mv.Startup + mv.Active), half))
+            // In the air the lunge's speed carries on through the recovery (no ground friction): count those ticks too.
+            int lungeTicks = mv.Startup + mv.Active + (air ? mv.Recovery : 0);
+            if (mv.SelfVx > 0 && !e.Has(ChibiMoveExt.FRoll) && !OverFooting(self.X + face * mv.SelfVx * lungeTicks, half))
                 return false;
 
             if (ctx == CtxCounter || ctx == CtxProjDef)
