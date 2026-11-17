@@ -93,11 +93,49 @@ namespace ChibiClash
                 Gui.Rect(new Rect(0f, 0f, Gui.W, Gui.H), new Color(c.r, c.g, c.b, v.FlashAlpha * 0.5f));
             }
 
+            FireWarnings(m);
             if (m.Paused) return Pause();
             if (m.Online && m.LeavePrompt && !m.Finished) return LeavePrompt();
             if (m.Finished && Time.unscaledTime - m.FinishedTime > 1.3f) return Results(m, gm);
             resultsFocus = false;
             return Action.None;
+        }
+
+        const string FireHere = "FIRE!", FireLeft = "<  FIRE!", FireRight = "FIRE!  >";
+        static readonly Color FireWarn = new Color(1f, 0.28f, 0.08f, 1f);
+
+        /// <summary>
+        /// Volcano (review 2026-11-16 item 26): the fire lanes sit beyond the ledges and the stage's own telegraph flare is
+        /// at the lava surface, both often off camera. During the telegraph and the eruption, each active lane gets a
+        /// "FIRE!" badge at stage height: over the lane when it is on screen, pinned to the screen edge with an arrow when
+        /// it is not. The telegraph badge pulses and carries a bar that empties as the eruption nears. View only.
+        /// </summary>
+        static void FireWarnings(ChibiMatch m)
+        {
+            var s = m.State;
+            if (s == null || !s.HazardsOn || !s.Running) return;
+            if (ChibiStageTable.Get(s.Stage).Hazard != ChibiStageTable.HazardFire) return;
+            bool tele = s.HazPhase == ChibiHazardConst.Telegraph, erupt = s.HazPhase == ChibiHazardConst.PhaseFireErupt;
+            if (!tele && !erupt) return;
+            float pulse = 0.55f + 0.45f * Mathf.Abs(Mathf.Sin(Time.unscaledTime * 9f));
+            const float w = 150f, h = 42f, margin = 14f;
+            for (int lane = 0; lane < 2; lane++)
+            {
+                if (!ChibiSimulation.FireLaneOn(s, lane)) continue;
+                int lx = lane == 0 ? ChibiHazardConst.FireLaneLeftX : ChibiHazardConst.FireLaneRightX;
+                var g = Gui.WorldToGui(new Vector3(lx / 1000f, 1.5f, 0f));   // stage height above the lane
+                bool offLeft = g.x < margin, offRight = g.x > Gui.W - margin;
+                float x = Mathf.Clamp(g.x - w * 0.5f, margin, Gui.W - w - margin);
+                float y = Mathf.Clamp(g.y - h, Gui.H * 0.22f, Gui.H - 190f);
+                var r = new Rect(x, y, w, h);
+                Gui.Rect(r, new Color(FireWarn.r, FireWarn.g, FireWarn.b, tele ? 0.55f + 0.4f * pulse : 0.95f), 6f);
+                Gui.Text(r, offLeft ? FireLeft : offRight ? FireRight : FireHere, 20, Gui.Paper);
+                if (tele)
+                {
+                    float left = Mathf.Clamp01(s.HazTimer / (float)ChibiHazardConst.FireTelegraph);
+                    Gui.Rect(new Rect(x + 6f, y + h - 6f, (w - 12f) * left, 3f), Gui.Paper);
+                }
+            }
         }
 
         static bool PromptVisible(ChibiFighterSim f) =>
