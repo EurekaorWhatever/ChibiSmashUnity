@@ -85,7 +85,7 @@ namespace ChibiClash
             Gui.Text(new Rect(r.x + 30f, r.y + 62f, r.width - 60f, 40f),
                      "Every age can play every mode. Your age is recorded with your player name for game statistics.", 13, Gui.Muted, TextAnchor.UpperCenter, false);
 
-            bool enter = EnterPressed();
+            bool enter = EnterPressed() || TakePadSubmit();
             var field = new Rect(r.x + r.width * 0.5f - 90f, r.y + 106f, 180f, 56f);
             GUI.SetNextControlName("Age");
             string typed = GUI.TextField(field, ageInput ?? "", 3, Field(30));
@@ -101,7 +101,7 @@ namespace ChibiClash
             if (Gui.Button(new Rect(r.x + r.width * 0.5f - 130f, r.y + 210f, 260f, 54f), "NEXT", Gui.P1, 20) || enter)
             {
                 var band = PlayerIdentity.BandForAnswer(ageInput);
-                if (band == AgeBand.Unknown) { nameError = "Please type your age as a number."; UiSound.Error(); }
+                if (band == AgeBand.Unknown) { nameError = "Type your age, or set it with the D-pad."; UiSound.Error(); }
                 else
                 {
                     Save.ageBand = (int)band;
@@ -110,8 +110,9 @@ namespace ChibiClash
                     nameError = "";
                     ageInput = "";
                 }
-                if (enter) Event.current.Use();
+                if (enter && Event.current.type == EventType.KeyDown) Event.current.Use();
             }
+            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), "Gamepad: D-pad up/down changes it by 1, left/right by 10 · A = next", 12, Gui.Muted);
         }
 
         void OpenRoomDialog()
@@ -219,6 +220,8 @@ namespace ChibiClash
             if (NeedsOnboarding) return;
             nameDialog = true;
             nameInput = Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
+            // First launch: start from a valid fighter name so a gamepad player (no keyboard) can just press A (item 18).
+            if (nameInput.Length == 0) nameInput = Netcode.ChibiSocialRules.DefaultFighterName((uint)System.Environment.TickCount);
             nameError = "";
         }
 
@@ -233,7 +236,7 @@ namespace ChibiClash
                      "3-16 letters, numbers or _. Pick a fun fighter name, not your real name. It is how friends find and invite you, and what everyone sees.",
                      13, Gui.Muted, TextAnchor.UpperCenter, false);
 
-            bool enter = EnterPressed();
+            bool enter = EnterPressed() || TakePadSubmit();
             var field = new Rect(r.x + 60f, r.y + 112f, r.width - 120f, 50f);
             GUI.SetNextControlName("PlayerName");
             nameInput = GUI.TextField(field, nameInput ?? "", Netcode.ChibiSocialRules.NameMax, Field(26));
@@ -258,8 +261,9 @@ namespace ChibiClash
                     else if (changed && account.SignedIn) account.PushName(n);   // the account keeps the name everywhere
                     Toast("You are " + n + "!");
                 }
-                if (enter) Event.current.Use();
+                if (enter && Event.current.type == EventType.KeyDown) Event.current.Use();
             }
+            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), first ? "Gamepad: A = let's fight · Y = another name" : "Gamepad: A = save · Y = another name", 12, Gui.Muted);
             // Account row: who this identity belongs to, and switching Google account.
             if (!first && PlayerIdentity.OnlineAllowed(Save.ageBand))
             {

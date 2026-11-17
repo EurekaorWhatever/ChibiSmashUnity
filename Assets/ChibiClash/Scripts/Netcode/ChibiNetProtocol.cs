@@ -160,6 +160,11 @@ namespace ChibiClash.Netcode
         MatchComplete = 1,
         /// <summary>This peer detected a desync: the match is a no contest.</summary>
         Desync = 2,
+        /// <summary>
+        /// This peer was stalled past the stall limit and is ending the match as a no contest (protocol 5). Without it
+        /// the slow side would wait out our silence and record a win. Same layout: the reason is already a full byte.
+        /// </summary>
+        Stalled = 3,
     }
 
     /// <summary>One decoded control message (a reused instance; fields not used by <see cref="Type"/> are stale).</summary>

@@ -34,7 +34,14 @@ Notation used in the CSV `input` column: button `L` (Light/A), `H` (Heavy), `B` 
   `Grounded`. In the air `dx == Facing` = F, `dx == -Facing` = BK. Exception: a side special (`B+F`) started in the
   air sets `Facing = dx` at StartMove (turnaround side special).
 
-### 1.2 Precedence (one move per tick; press edges only, no buffer, D-N1 unchanged)
+### 1.2 Precedence (one move per tick; press edges, plus the rules v22/v23 attack buffer)
+> **Rules v22 (2026-11-14, EL-1/TN-1/UL-1):** D-N1 is replaced by a 6-tick attack buffer (`AttackBufferTicks`): an attack
+> press in the last 6 lock ticks of a move (or of a walk-cancel lock) comes out on the first free tick; a fresh press wins.
+> Grounded walk / turn cancel in the last 6 recovery ticks (Light rows always, other moves only on hit). The Ult button
+> fires the ultimate on a full meter (the gesture window is no longer opened). **Rules v23 (2026-11-17, B4-2/B4-3):** "on
+> hit" means a landed or blocked melee hit (`MoveConnected`; a touch on an invulnerable, hovering, countered or parried
+> target does not count), and attack presses in a dash's last 6 ticks are buffered too (a grounded Light stays the dash
+> attack). Grounded trip stun comes from each row's `stun` (Bruna down tilt 22, Ren down tilt 26, Kaia low sweep 28).
 Gates kept from today, in order: hitstun -> held/ult/pose -> dashing branch -> running move -> Shield held
 (returns, nothing else) -> FreeActions. Inside FreeActions after jump/dash start, the first matching rule fires:
 

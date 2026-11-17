@@ -135,5 +135,32 @@ namespace ChibiClash.Tests
 
         [Test]
         public void Invite_WhileBusy_Ignored() => Assert.AreEqual(ChibiInviteVerdict.Busy, Check(Invite(), busy: true));
+
+        // ------------------------------------------------------------------ SOC-01 (review 2026-11-16)
+
+        static ChibiInviteMessage Decline() => new ChibiInviteMessage { Kind = ChibiSocialRules.KindDecline };
+
+        [Test]
+        public void Decline_FromTheFriendHoldingOurInvite_IsRecognised()
+            => Assert.IsTrue(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, "bob", invitedId: "bob"));
+
+        [Test]
+        public void Decline_WhenNoInviteIsOut_IsIgnored()
+        {
+            // The manager clears its "creating a room for" id as soon as the invite is sent, so the check must use the
+            // id of the friend who HOLDS the invite; with none out, a decline means nothing.
+            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, "bob", invitedId: null));
+            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, null, invitedId: null));
+            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, "", invitedId: ""));
+        }
+
+        [Test]
+        public void Decline_FromSomeoneElseOrANonFriendOrAnotherKind_IsIgnored()
+        {
+            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, "eve", invitedId: "bob"), "other friend");
+            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), false, "bob", invitedId: "bob"), "not a friend");
+            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Invite(), true, "bob", invitedId: "bob"), "an invite, not a decline");
+            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(null, true, "bob", invitedId: "bob"), "no message");
+        }
     }
 }

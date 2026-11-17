@@ -6,7 +6,7 @@ kaia,Melee,kaia_dash,Dash Attack,L@dash,G,8,6,21,9.0,2120,120000,90000,30,0,1650
 kaia,Melee,kaia_fsmash,Forward Smash,H+F,G,14,6,29,16.0,2830,150000,112500,38,0,2050,100,1300,0,0,0,0,0,0,charge:60:400,swing,"Big crescent slash, glow",SHRAK!,kaia_shrak,core_hit_heavy
 kaia,Melee,kaia_usmash,Up Smash,H+U,G,16,5,31,15.0,2740,45000,157500,38,0,1600,800,1500,0,0,0,0,0,0,charge:60:400|centered,upswing,Vertical spiral slash,Vwoom!,kaia_vwoom,core_hit_heavy
 kaia,Melee,kaia_dsmash,Down Smash,H+D,G,15,6,32,14.0,2650,120000,90000,30,0,3900,0,600,0,0,0,0,0,0,charge:60:400|centered,lowsweep,Dual ground arcs,Kring!,kaia_shrak,core_hit_heavy
-kaia,Melee,kaia_lowsweep,Low Sweep,L+D@dash,G,7,5,20,6.0,1730,22500,0,34,0,1650,0,450,0,0,0,0,120,0,trip,lowsweep,"Dust trail, low arc",Skrrt!,kaia_skrrt,kaia_shk
+kaia,Melee,kaia_lowsweep,Low Sweep,L+D@dash,G,7,5,20,6.0,1730,22500,0,28,0,1650,0,450,0,0,0,0,120,0,trip,lowsweep,"Dust trail, low arc",Skrrt!,kaia_skrrt,kaia_shk
 kaia,Melee,kaia_nair,Neutral Air,L,A,5,4,18,6.0,1730,67500,52500,22,0,0,675,0,900,0,0,0,0,0,centered,spin,Circular slash,Swish!,kaia_swish,kaia_shk
 kaia,Melee,kaia_fair,Forward Air,L+F,A,6,4,20,8.0,2000,120000,90000,30,0,1550,300,1100,0,0,0,0,0,0,,swing,"Wide arc, air trail",Shrah!,kaia_swish,kaia_shk
 kaia,Melee,kaia_bair,Back Air,L+BK,A,6,5,21,9.0,2120,120000,90000,30,0,1450,300,1000,0,0,0,0,0,0,back,swing,Sharp reverse arc,Shink!,kaia_shing,kaia_shk
@@ -23,11 +23,11 @@ kaia,Melee,kaia_wallkick,Air Kick-off,S1+U,A,4,4,17,6.0,1730,67500,52500,22,0,15
 kaia,Melee,kaia_roll,Tech Roll,S1+D,G,2,14,10,0,0,0,0,0,0,0,0,0,0,0,0,0,140,0,roll|invuln:2:13|cd:60|est,rush,"Climb dust, roll blur",Hup! Swoosh!,kaia_dash,
 bruna,Heavy,bruna_ftilt,Forward Tilt,L+F,G,6,4,15,7.0,1670,67500,52500,22,0,1850,150,1100,0,0,0,0,0,0,,swing,"Wide arc, dust kick",Woom!,bruna_whoosh,bruna_thud
 bruna,Heavy,bruna_utilt,Up Tilt,L+U,G,7,5,18,7.5,1730,36000,135000,30,-600,1900,700,1300,0,0,0,0,0,0,,upswing,"Upward arc, sparks",Clang!,bruna_clang,bruna_thud
-bruna,Heavy,bruna_dtilt,Down Tilt,L+D,G,5,4,15,6.5,1610,22500,0,34,0,2050,0,450,0,0,0,0,0,0,trip,lowsweep,"Ground dust, skid",Scrape!,bruna_whoosh,bruna_thud
+bruna,Heavy,bruna_dtilt,Down Tilt,L+D,G,5,4,15,6.5,1610,22500,0,22,0,2050,0,450,0,0,0,0,0,0,trip,lowsweep,"Ground dust, skid",Scrape!,bruna_whoosh,bruna_thud
 bruna,Heavy,bruna_dash,Dash Attack,L@dash,G,8,5,21,9.0,1900,120000,90000,30,0,1850,100,1100,0,0,0,0,130,0,,rush,"Speed lines, heavy impact",Rush!,bruna_rush,bruna_bam
 bruna,Heavy,bruna_fsmash,Forward Smash,H+F,G,14,6,29,18.0,2680,150000,112500,38,0,2250,100,1300,0,0,0,0,0,0,charge:60:400,slam,"Large shockwave, debris",SMASH!,bruna_smash,bruna_bam
 bruna,Heavy,bruna_usmash,Up Smash,H+U,G,16,5,31,17.0,2610,45000,157500,38,0,1800,800,1500,0,0,0,0,0,0,charge:60:400|centered,upswing,"Upward burst, rock lift",Boom!,bruna_swoosh,bruna_bam
-bruna,Heavy,bruna_dsmash,Down Smash,H+D,G,15,6,32,16.0,2530,45000,157500,38,0,4300,0,600,0,0,0,0,0,0,charge:60:400|centered,slam,Dual ground shockwave,KRA-THUD!,bruna_kra_thud,bruna_bam
+bruna,Heavy,bruna_dsmash,Down Smash,H+D,G,15,6,32,16.0,2530,120000,90000,38,0,4300,0,600,0,0,0,0,0,0,charge:60:400|centered,slam,Dual ground shockwave,KRA-THUD!,bruna_kra_thud,bruna_bam
 bruna,Heavy,bruna_nair,Neutral Air,L,A,5,4,18,6.0,1550,67500,52500,22,0,0,675,0,1000,0,0,0,0,0,centered,spin,Circular swing trail,Whoosh!,bruna_whoosh,bruna_thud
 bruna,Heavy,bruna_fair,Forward Air,L+F,A,6,4,20,8.5,1840,120000,90000,30,0,1750,300,1100,0,0,0,0,0,0,,swing,Wide slash trail,Swoosh!,bruna_whoosh,bruna_thud
 bruna,Heavy,bruna_bair,Back Air,L+BK,A,6,5,21,9.0,1900,120000,90000,30,0,1650,300,1000,0,0,0,0,0,0,back,swing,"Backslash, sparks",Thunk!,bruna_whoosh,bruna_thud
@@ -44,7 +44,7 @@ bruna,Heavy,bruna_rocketstrike,Rocket Hammer Strike,S2+U,GA,9,5,26,10.0,2000,450
 bruna,Heavy,bruna_fortressguard,Fortress Guard,S2+D,G,4,6,24,12.0,2190,120000,126000,38,0,2000,100,1300,0,0,0,0,0,0,counter|cd:240,guard,"Shield flash, counter burst",Counter!,bruna_guard,bruna_bam
 ren,Ranged,ren_ftilt,Forward Tilt,L+F,G,5,5,18,6.5,1800,120000,90000,30,500,0,725,0,0,300000,9,250,0,0,pk:Arrow,shoot,Arrow line slash,Swoosh!,ren_twang,ren_zing
 ren,Ranged,ren_utilt,Up Tilt,L+U,G,6,6,21,6.0,1730,36000,135000,30,-500,1500,700,1300,0,0,0,0,0,0,,upswing,Upward wind arc,Whoosh!,ren_thwip,ren_zing
-ren,Ranged,ren_dtilt,Down Tilt,L+D,G,6,4,19,5.5,1660,22500,0,34,0,1500,0,450,0,0,0,0,0,0,trip,lowsweep,"Ground dust, arrow spark",Shk!,ren_thwip,ren_zing
+ren,Ranged,ren_dtilt,Down Tilt,L+D,G,6,4,19,5.5,1660,22500,0,26,0,1500,0,450,0,0,0,0,0,0,trip,lowsweep,"Ground dust, arrow spark",Shk!,ren_thwip,ren_zing
 ren,Ranged,ren_dash,Dash Attack,L@dash,G,8,6,27,8.0,2000,120000,90000,30,0,1300,0,700,0,0,0,0,150,0,,rush,Speed trail,Dash!,ren_whoosh,ren_zing
 ren,Ranged,ren_fsmash,Forward Smash,H+F,G,15,6,39,16.0,2830,150000,112500,38,500,0,725,0,0,360000,20,400,0,0,charge:60:400|pk:ArrowBig,shoot,Charged arrow burst,Boom!,ren_bang,ren_zing
 ren,Ranged,ren_usmash,Up Smash,H+U,G,16,6,40,15.0,2740,45000,157500,38,0,1400,900,2200,0,0,0,0,0,0,charge:60:400|centered,shoot,Vertical arrow flares,Shing!,ren_twang,ren_zing

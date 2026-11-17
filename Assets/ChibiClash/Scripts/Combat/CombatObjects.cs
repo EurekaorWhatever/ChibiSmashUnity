@@ -9,7 +9,7 @@ namespace ChibiClash
     {
         public Fighter Owner;
         public Vector2 Vel;
-        public HitSpec Hit;
+        [System.NonSerialized] public HitSpec Hit;   // set in code when spawned; never serialized (was implicit, UAC1001)
         public float Radius = 0.3f;
         public float Life = 2f;
         public bool Homing, Pierce, Harmless;

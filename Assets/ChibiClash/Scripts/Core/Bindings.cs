@@ -9,6 +9,21 @@ namespace ChibiClash
     /// <summary>Rebindable actions. New actions are appended (Up, Special: version 3) so saved indices stay meaningful.</summary>
     public enum BindAction { Left, Right, Down, Jump, JumpAlt, Light, Heavy, Block, Dash, Skill1, Skill2, Skill3, Ultimate, Up, Special }
 
+    /// <summary>What <see cref="Bindings.Set"/> did.</summary>
+    public enum BindResult
+    {
+        /// <summary>Bound; nothing else used the key.</summary>
+        Bound,
+        /// <summary>Bound; another action of the same player had it and got the old key.</summary>
+        Swapped,
+        /// <summary>Bound; the other player had it and got the old key.</summary>
+        SwappedOtherPlayer,
+        /// <summary>Refused: the key is read directly by the game (pose keys, posture toggle).</summary>
+        Reserved,
+        /// <summary>No profile is loaded.</summary>
+        NoProfile,
+    }
+
     /// <summary>
     /// Rebindable controls for both players, stored in the save profile as strings: a keyboard Key enum name
     /// ("A", "Space", "RightShift"...) or a mouse button ("Mouse0" left, "Mouse1" right, "Mouse2" middle).
@@ -153,21 +168,47 @@ namespace ChibiClash
             Normalize(d);
         }
 
-        /// <summary>Bind a key or mouse button. If another action of the same player already uses it, the two swap.</summary>
-        public static void Set(int player, BindAction a, string binding)
+        /// <summary>
+        /// Bind a key or mouse button. If another action of either player already uses it, that action gets this
+        /// action's old key (the two swap; review 2026-11-16 item 17). Keys the game reads directly
+        /// (<see cref="IsReserved"/>) are refused and nothing changes. Saved to <paramref name="store"/> (PlayerPrefs when null).
+        /// </summary>
+        /// <example><code>if (Bindings.Set(0, BindAction.Dash, "K") == BindResult.Reserved) Toast("That key is taken by a pose.");</code></example>
+        public static BindResult Set(int player, BindAction a, string binding, ISaveStore store = null)
         {
-            if (Data == null) return;
+            if (Data == null) return BindResult.NoProfile;
+            if (IsReserved(binding)) return BindResult.Reserved;
             Normalize(Data);
             string old = Get(player, a);
-            for (int k = 0; k < Count; k++)
-            {
-                var other = (BindAction)k;
-                if (other != a && binding != "None" && Get(player, other) == binding)
-                    Data.keybinds[Index(player, other)] = old;
-            }
+            var result = BindResult.Bound;
+            // Only the first holder swaps (same player first): a profile that already had the key twice must not end
+            // with the old key twice as well.
+            if (binding != "None")
+                for (int n = 0; n < 2 && result == BindResult.Bound; n++)
+                {
+                    int p = n == 0 ? player : 1 - player;
+                    for (int k = 0; k < Count; k++)
+                    {
+                        var other = (BindAction)k;
+                        if ((p == player && other == a) || Get(p, other) != binding) continue;
+                        Data.keybinds[Index(p, other)] = old;
+                        result = p == player ? BindResult.Swapped : BindResult.SwappedOtherPlayer;
+                        break;
+                    }
+                }
             Data.keybinds[Index(player, a)] = binding;
-            Data.Save();
+            Data.Save(store ?? PlayerPrefsSaveStore.Instance);
+            return result;
         }
+
+        /// <summary>
+        /// Keys FighterInput reads directly for both players: the pose keys (P1 1/2/3, P2 8/9/0 and numpad 7/8/9) and the
+        /// posture toggles (P1 P, P2 -). Binding one would fire two things at once, so <see cref="Set"/> refuses it.
+        /// </summary>
+        static readonly string[] Reserved = { "Digit1", "Digit2", "Digit3", "Digit8", "Digit9", "Digit0", "Numpad7", "Numpad8", "Numpad9", "P", "Minus" };
+
+        /// <summary>A key the game reads directly (pose keys, posture toggle), never bindable.</summary>
+        public static bool IsReserved(string binding) => binding != null && Array.IndexOf(Reserved, binding) >= 0;
 
         public static string Label(int player, BindAction a) => BindingLabel(Get(player, a));
 

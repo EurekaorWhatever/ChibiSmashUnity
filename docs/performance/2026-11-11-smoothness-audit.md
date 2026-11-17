@@ -235,3 +235,25 @@ Tests: `Assets/Tests/EditMode/Editor/SpriteAnimLibraryTests.cs` (8 tests). Not y
   (technical-artist, profile first).
 - Async loading (`Resources.LoadAsync` per sheet during the wipe and the READY intro) would remove the build-frame
   freeze entirely; needs a known name list (clips.txt + `Clips`), engine-programmer.
+
+## Follow-up measurements (2026-11-14 and 2026-11-17)
+
+Editor Play Mode, Plain, Kaia vs a Bruna CPU, webcam off, vSync on.
+
+**2026-11-14 (fix A):**
+- Main thread average is 6.5-6.8 ms on Mountain, Volcano and Ocean, with no frame over 33 ms.
+- Memoizing `Bindings` key parsing took game-side GC from 11.5 to 7.8 KB/frame.
+
+**2026-11-17 (fixes B, C and D, review batch 5).** Game-side GC was measured per call site with allocation call stacks over 241 frames, `profileEditor = false`:
+
+| Source | Before | After | Fix |
+|---|---|---|---|
+| Pose templates and telemetry clone (`Pose.cs`) | ~280 B/frame (11-14) | **0** | B: `SimulatedPoseSource` fills a reused goal buffer, `TelemetryValidator` copies into its previous frame (`PoseFrame.CopyTo`), HUD and menu skeletons use `TemplateCached` |
+| Invite expiry (`ChibiSocialManager`) | 148 B/frame (11-14) | **0** | C: `RemoveExpired` reverse loop instead of `RemoveAll(lambda)` |
+| `Hud.Outlined` (HUD numbers) | 2,280 B/frame | **1,352 B/frame** | D: 4 diagonal outline copies instead of 8; screenshots `production/qa/evidence/2026-11-17-batch5-hud-outline-before/after.png` look the same |
+
+- **Total game-side GC:** 10,555 → 7,788 B/frame. Part of that gap is window-to-window variance.
+- **Main thread:** about 6.8-6.9 ms (unchanged).
+- **Editor frame average** ("GC Allocated In Frame", editor included): it varies by about ±2 KB between identical runs (38.9 vs 42.7 KB), so it cannot show savings this small. Use the per-call-site method above.
+- **Regression guards:** `PerfAllocationTests` (EditMode, `Is.Not.AllocatingGCMemory`).
+- **Still open:** the other IMGUI label costs (`PlayerPanel`, `Hints`, `CvPanel`), which allocate inside Unity.
