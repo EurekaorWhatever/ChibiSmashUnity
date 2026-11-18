@@ -22,6 +22,14 @@ namespace ChibiClash.EditorTools
         /// <summary>Output folder of a local build (the folder that holds index.html).</summary>
         public const string DefaultOutput = "build/WebGL/WebGL";
 
+        /// <summary>
+        /// Largest texture side in the web build only (Build Settings "Asset Import Overrides > Max Texture Size").
+        /// At full size the download was ~530 MB (2026-11-18), about 80% character animation sheets 3840 px wide, and
+        /// every byte must arrive before a Unity web build can start. Capping at 2048 cuts it to roughly a third, at the
+        /// cost of softer art in the browser. The PC build and the texture files/.meta are not affected.
+        /// </summary>
+        public const int WebMaxTextureSize = 2048;
+
         const string MenuPath = "Chibi Clash/Build Web Version (GitHub Pages)";
 
         /// <summary>Menu entry: local WebGL build into <see cref="DefaultOutput"/>.</summary>
@@ -49,11 +57,13 @@ namespace ChibiClash.EditorTools
             var scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
             var oldCompression = PlayerSettings.WebGL.compressionFormat;
             bool oldFallback = PlayerSettings.WebGL.decompressionFallback;
+            int oldMaxTexture = EditorUserBuildSettings.overrideMaxTextureSize;
             bool ok = false;
             try
             {
                 PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
                 PlayerSettings.WebGL.decompressionFallback = true;
+                EditorUserBuildSettings.overrideMaxTextureSize = WebMaxTextureSize;   // web download size, see above
                 Directory.CreateDirectory(output);
                 var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
                 {
@@ -75,6 +85,7 @@ namespace ChibiClash.EditorTools
             {
                 PlayerSettings.WebGL.compressionFormat = oldCompression;      // leave the project settings as they were
                 PlayerSettings.WebGL.decompressionFallback = oldFallback;
+                EditorUserBuildSettings.overrideMaxTextureSize = oldMaxTexture;
             }
             if (exitOnFinish) EditorApplication.Exit(ok ? 0 : 1);
         }
