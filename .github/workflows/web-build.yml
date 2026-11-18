@@ -65,6 +65,20 @@ jobs:
           tool-cache: false
           large-packages: false
 
+      # Importing the large stage and animation textures and the IL2CPP WebGL link need more memory than the runner's
+      # RAM: run #7 was killed with exit code 137 (out of memory) after 14 minutes. A big swap file on the runner's
+      # spare /mnt disk lets it finish (slower, but it does not get killed).
+      - name: Add swap space
+        if: steps.lic.outputs.have == 'true'
+        run: |
+          sudo swapoff -a || true
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 24G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          free -h; df -h / /mnt
+
       - uses: actions/checkout@v4
         if: steps.lic.outputs.have == 'true'
         with:
