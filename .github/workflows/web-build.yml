@@ -1,0 +1,108 @@
+# Builds the browser (WebGL) version of the game and publishes it to GitHub Pages, so
+# https://eurekaorwhatever.github.io/ChibiSmashUnity/ always serves the latest main.
+# Runs on every push to main (any change that reaches main: local edits, Claude Code + Unity MCP, merged PRs)
+# and on demand (Actions > web-build > Run workflow).
+#
+# One-time setup by the repository owner (see tools/ci/README.md, "Web build / GitHub Pages"):
+#   1. Secrets UNITY_LICENSE, UNITY_EMAIL, UNITY_PASSWORD (the same ones tests.yml uses).
+#   2. Settings > Pages > Build and deployment > Source: "GitHub Actions".
+# Without the secrets the job is skipped with a notice and the published site stays as it was.
+name: web-build
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "design/**"
+      - "production/**"
+      - "studio-tests/**"
+      - "**/*.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer push replaces a queued older build so the site ends on the latest main.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    outputs:
+      built: ${{ steps.lic.outputs.have }}
+    env:
+      UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+    steps:
+      - name: Check Unity licence secrets
+        id: lic
+        run: |
+          if [ -z "$UNITY_LICENSE" ]; then
+            echo "::notice title=Web build skipped::UNITY_LICENSE secret is not set; the game was not built or published. See tools/ci/README.md."
+            echo "have=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "have=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The Unity editor image and an IL2CPP WebGL build need more disk than the runner has free by default.
+      - name: Free disk space
+        if: steps.lic.outputs.have == 'true'
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          large-packages: false
+
+      - uses: actions/checkout@v4
+        if: steps.lic.outputs.have == 'true'
+        with:
+          lfs: true
+
+      - uses: actions/cache@v4
+        if: steps.lic.outputs.have == 'true'
+        with:
+          path: Library
+          key: Library-WebGL-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: Library-WebGL-
+
+      - name: Build WebGL
+        if: steps.lic.outputs.have == 'true'
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: WebGL
+          buildsPath: build
+          buildMethod: ChibiClash.EditorTools.WebBuild.BuildFromCommandLine
+
+      - name: Locate the built site
+        if: steps.lic.outputs.have == 'true'
+        id: site
+        run: |
+          dir=$(dirname "$(find build -name index.html -print -quit)")
+          if [ -z "$dir" ] || [ "$dir" = "." ]; then echo "::error::No index.html in the WebGL build output"; exit 1; fi
+          touch "$dir/.nojekyll"
+          echo "Site folder: $dir"; du -sh "$dir"
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.lic.outputs.have == 'true'
+        with:
+          path: ${{ steps.site.outputs.dir }}
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.built == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
