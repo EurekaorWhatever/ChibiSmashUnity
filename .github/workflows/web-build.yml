@@ -38,12 +38,20 @@ jobs:
       built: ${{ steps.lic.outputs.have }}
     env:
       UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
     steps:
+      # game-ci needs all three for a Personal licence. Name any missing one instead of failing later with
+      # "No valid license activation strategy could be determined".
       - name: Check Unity licence secrets
         id: lic
         run: |
-          if [ -z "$UNITY_LICENSE" ]; then
-            echo "::notice title=Web build skipped::UNITY_LICENSE secret is not set; the game was not built or published. See tools/ci/README.md."
+          missing=""
+          [ -z "$UNITY_LICENSE" ] && missing="$missing UNITY_LICENSE"
+          [ -z "$UNITY_EMAIL" ] && missing="$missing UNITY_EMAIL"
+          [ -z "$UNITY_PASSWORD" ] && missing="$missing UNITY_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "::notice title=Web build skipped::Missing repository secret(s):$missing. The game was not built or published. See tools/ci/README.md."
             echo "have=false" >> "$GITHUB_OUTPUT"
           else
             echo "have=true" >> "$GITHUB_OUTPUT"
