@@ -106,11 +106,15 @@ jobs:
       - name: Locate the built site
         if: steps.lic.outputs.have == 'true'
         id: site
+        # The build runs in game-ci's container as root, so build/ is root-owned: take ownership before touching it
+        # (run #8 built fine and then failed here on a permission error). WebBuild.cs already writes .nojekyll.
         run: |
-          dir=$(dirname "$(find build -name index.html -print -quit)")
-          if [ -z "$dir" ] || [ "$dir" = "." ]; then echo "::error::No index.html in the WebGL build output"; exit 1; fi
-          touch "$dir/.nojekyll"
-          echo "Site folder: $dir"; du -sh "$dir"
+          sudo chown -R "$(id -u):$(id -g)" build
+          index=$(find build -name index.html -print -quit)
+          if [ -z "$index" ]; then echo "::error::No index.html in the WebGL build output"; find build -maxdepth 3; exit 1; fi
+          dir=$(dirname "$index")
+          [ -f "$dir/.nojekyll" ] || touch "$dir/.nojekyll"
+          echo "Site folder: $dir"; du -sh "$dir"; ls -la "$dir"
           echo "dir=$dir" >> "$GITHUB_OUTPUT"
 
       - uses: actions/upload-pages-artifact@v3
