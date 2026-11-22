@@ -17,3 +17,4 @@ Full guide: `docs/architecture/netcode/DEVELOPER-GUIDE.md`.
 - Never make a failing `NetcodeContractTests` / `ChibiSyncVerificationTests` pass by editing only the expected value: find the cause first
 - Network input is untrusted: size and range checks, no throw, no per-packet allocation; names drawn only through `ChibiSocialRules.SafeDisplayName` / `PeerDisplayName`
 - Changes to the red zone (rollback, protocol, transport, rooms, social security) get a `network-programmer` and a `security-engineer` review before commit
+- Any netcode or online-play change (versions, rollback numbers, transport, rooms, matchmaking, results, limits; no "problems fixed" section) also updates `docs/Network Engineering Summary.md` in the same change: keep it short and clean, simple English, with emoji (user request 2026-11-22; it is the single summary file)
