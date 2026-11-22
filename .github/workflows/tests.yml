@@ -9,6 +9,11 @@ on:
     branches: [main]
   pull_request:
 
+# unity-test-runner publishes its results as a check run ("EditMode tests"), which needs checks: write.
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   editmode:
     runs-on: ubuntu-latest
@@ -33,9 +38,28 @@ jobs:
         if: steps.lic.outputs.have == 'true'
         with:
           path: Library
-          key: Library-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}
-          restore-keys: Library-
+          # Own prefix: "Library-" alone also matched the web build's WebGL-target cache (Library-WebGL-...).
+          key: Library-EditModeTests-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: Library-EditModeTests-
+      # Same as the web build: importing the large game textures needs more memory and disk than the runner has.
+      - name: Free disk space
+        if: steps.lic.outputs.have == 'true'
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
+          large-packages: false
+      - name: Add swap space
+        if: steps.lic.outputs.have == 'true'
+        run: |
+          sudo swapoff -a || true
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 24G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          free -h; df -h / /mnt
       - uses: game-ci/unity-test-runner@v4
+        id: tests
         if: steps.lic.outputs.have == 'true'
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -45,6 +69,16 @@ jobs:
           testMode: editmode
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           checkName: EditMode tests
+          customParameters: -logFile /github/workspace/artifacts/editor.log
+      # The Actions log needs a GitHub sign-in to read; annotations do not. On failure, publish the key lines of the
+      # Unity editor log as annotations so the cause is visible from the public run page / API.
+      - name: Publish the Unity error lines
+        if: failure() && steps.lic.outputs.have == 'true'
+        run: |
+          log=artifacts/editor.log
+          if [ ! -f "$log" ]; then echo "::error title=No Unity log::Unity wrote no editor log: it failed before starting (image pull, licence activation or the action itself)."; exit 0; fi
+          grep -i -E "error|exception|fail|licen|abort|out of memory|killed" "$log" | grep -v -i "warning" | tail -n 12 | while IFS= read -r line; do echo "::error title=Unity log::${line:0:900}"; done
+          echo "::notice title=Unity log tail::$(tail -n 5 "$log" | tr '\n' ' ' | cut -c1-900)"
       - uses: actions/upload-artifact@v4
         if: always() && steps.lic.outputs.have == 'true'
         with:
