@@ -22,14 +22,6 @@ namespace ChibiClash.EditorTools
         /// <summary>Output folder of a local build (the folder that holds index.html).</summary>
         public const string DefaultOutput = "build/WebGL/WebGL";
 
-        /// <summary>
-        /// Largest texture side in the web build only (Build Settings "Asset Import Overrides > Max Texture Size").
-        /// At full size the download was ~530 MB (2026-11-18), about 80% character animation sheets 3840 px wide, and
-        /// every byte must arrive before a Unity web build can start. Capping at 2048 cuts it to roughly a third, at the
-        /// cost of softer art in the browser. The PC build and the texture files/.meta are not affected.
-        /// </summary>
-        public const int WebMaxTextureSize = 2048;
-
         const string MenuPath = "Chibi Clash/Build Web Version (GitHub Pages)";
 
         /// <summary>Menu entry: local WebGL build into <see cref="DefaultOutput"/>.</summary>
@@ -57,7 +49,6 @@ namespace ChibiClash.EditorTools
             var scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
             var oldCompression = PlayerSettings.WebGL.compressionFormat;
             bool oldFallback = PlayerSettings.WebGL.decompressionFallback;
-            int oldMaxTexture = EditorUserBuildSettings.overrideMaxTextureSize;
             bool ok = false;
             var info = new System.Text.StringBuilder();
             info.AppendLine("built: " + DateTime.UtcNow.ToString("u") + ", Unity " + Application.unityVersion);
@@ -67,7 +58,6 @@ namespace ChibiClash.EditorTools
                 if (OnCiRunner()) info.AppendLine(CrunchGameTexturesForWeb());   // CI copy only, see CrunchGameTexturesForWeb
                 PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
                 PlayerSettings.WebGL.decompressionFallback = true;
-                EditorUserBuildSettings.overrideMaxTextureSize = WebMaxTextureSize;   // web download size, see above
                 Directory.CreateDirectory(output);
                 var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
                 {
@@ -92,7 +82,6 @@ namespace ChibiClash.EditorTools
             {
                 PlayerSettings.WebGL.compressionFormat = oldCompression;      // leave the project settings as they were
                 PlayerSettings.WebGL.decompressionFallback = oldFallback;
-                EditorUserBuildSettings.overrideMaxTextureSize = oldMaxTexture;
             }
             if (exitOnFinish) EditorApplication.Exit(ok ? 0 : 1);
         }
@@ -115,9 +104,11 @@ namespace ChibiClash.EditorTools
             Environment.GetCommandLineArgs().Any(a => string.Equals(a, CiCrunchFlag, StringComparison.OrdinalIgnoreCase));
 
         /// <summary>
-        /// Web download size: gives every game texture a WebGL override with Crunch compression (DXT5 Crunched with alpha,
-        /// DXT1 Crunched without). The download was still 268 MB after the 2048 px cap (2026-11-22), almost all of it
-        /// textures. Crunched DXT is typically 3-5x smaller on disk and decompresses on the GPU format at load.
+        /// Web download size: every game texture gets mipmaps off, its full resolution and a WebGL override with Crunch
+        /// compression (DXT5 Crunched with alpha, DXT1 Crunched without). Probe 2026-11-22: the web build shipped all
+        /// 367 textures as RGBA32 (1.1 GB unpacked, 267 MB download), because mipmapped non-power-of-two textures are not
+        /// block-compressed. Without mipmaps, crunched: e.g. a 3840x768 sheet 15.7 MB -> 217 KB, a 3840x2160 stage
+        /// layer 44 MB -> 326-574 KB.
         /// It writes .meta importer settings, so it runs ONLY on the CI runner (<see cref="OnCiRunner"/>). The repo,
         /// the PC build and the editor on any PC keep the original settings.
         /// </summary>
@@ -135,7 +126,11 @@ namespace ChibiClash.EditorTools
                     if (!(AssetImporter.GetAtPath(path) is TextureImporter ti)) continue;
                     var web = ti.GetPlatformTextureSettings("WebGL");
                     web.overridden = true;
-                    web.maxTextureSize = Mathf.Min(ti.maxTextureSize, WebMaxTextureSize);
+                    // Mipmaps off: Unity does not block-compress these non-power-of-two textures with mipmaps, so
+                    // with mipmaps on every one shipped as RGBA32 (1.1 GB, 2026-11-22 probe). Full resolution: a
+                    // downscale (e.g. 768 -> 410 px) breaks the multiple-of-4 rule and also falls back to RGBA32.
+                    ti.mipmapEnabled = false;
+                    web.maxTextureSize = ti.maxTextureSize;
                     web.format = ti.DoesSourceTextureHaveAlpha() ? TextureImporterFormat.DXT5Crunched : TextureImporterFormat.DXT1Crunched;
                     web.crunchedCompression = true;
                     web.compressionQuality = WebCrunchQuality;
