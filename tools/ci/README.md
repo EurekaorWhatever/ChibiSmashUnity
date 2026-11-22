@@ -4,6 +4,7 @@
 |---|---|---|
 | `.github/workflows/fast-checks.yml` | no | `gen_movesets.py --check`, `check_stage_geometry.py`, Python syntax check of `tools/` |
 | `.github/workflows/tests.yml` | yes | EditMode tests via game-ci/unity-test-runner |
+| `.github/workflows/web-build.yml` | yes | WebGL build via game-ci/unity-builder, published to GitHub Pages |
 
 `tests.yml` skips (green, with a notice annotation) when `UNITY_LICENSE` is not set, so a skipped run verifies nothing:
 check the annotation.
@@ -18,6 +19,35 @@ GitHub > Settings > Secrets and variables > Actions > New repository secret:
 - `UNITY_PASSWORD`: Unity account password.
 
 Secrets are not exposed to pull requests from forks; those runs skip the Unity job.
+
+## Web build / GitHub Pages
+
+`.github/workflows/web-build.yml` builds the WebGL version on every push to `main` (and on demand from Actions >
+web-build > Run workflow), then publishes it to **https://eurekaorwhatever.github.io/ChibiSmashUnity/**. Whatever
+reaches `main` (local edits, Claude Code with Unity MCP, merged pull requests) shows up on the link after the build:
+expect about 30-60 minutes, longer the first time. Pushes that change only `docs/`, `design/`, `production/` or
+Markdown do not rebuild.
+
+One-time setup by the repository owner:
+
+1. Add the three Unity secrets above (`UNITY_LICENSE`, `UNITY_EMAIL`, `UNITY_PASSWORD`). Without them the job is
+   skipped with a notice and the link keeps the last published version.
+2. Settings > Pages > Build and deployment > Source: **GitHub Actions**.
+3. Run it once: Actions > web-build > Run workflow. The link works when the `deploy` job is green.
+
+The build itself is `ChibiClash.EditorTools.WebBuild.BuildFromCommandLine` (`Assets/ChibiClash/Editor/WebBuild.cs`).
+It uses the scenes enabled in Build Settings. It also uses Gzip with the decompression fallback, because GitHub
+Pages cannot send Brotli headers. It sets that only for the build and restores the project settings afterwards. To keep the
+download small, on the CI runner only (when the workflow passes `-chibiWebCrunch`), it turns mipmaps off and switches
+every game texture to Crunch compression at full resolution. Mipmapped non-power-of-two textures are not compressed
+at all, and a downscale that breaks the multiple-of-4 rule isn't either. That edits importer settings in the
+throwaway CI checkout, never in a working copy. For a local build, use the menu **Chibi Clash > Build Web Version (GitHub Pages)**, which writes to `build/WebGL/WebGL/`
+(git-ignored).
+
+Limits in the browser:
+- Online play needs Relay over WebSockets and a linked Unity Gaming Services project.
+- The webcam pose panel asks for camera permission.
+- GitHub Pages sites are capped at 1 GB.
 
 ## Local tools
 

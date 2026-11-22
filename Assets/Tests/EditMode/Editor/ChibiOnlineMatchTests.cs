@@ -433,6 +433,127 @@ namespace ChibiClash.Tests
             Assert.AreEqual(-1, d2.Host.Result.Winner);
         }
 
+        // ------------------------------------------------------------------ review 2026-11-16 (SEC-003, NET-02, NET-03)
+
+        [Test]
+        public void Sec003_MatchCompleteWithoutAConfirmedEnd_IsScoredAsADisconnect()
+        {
+            // Arrange: mid-match, nobody is close to a KO in the confirmed state.
+            var d = NewDuel(loss: 0);
+            d.RunUntil(() => d.Host.Phase == ChibiOnlinePhase.Playing && d.Joiner.Phase == ChibiOnlinePhase.Playing);
+            d.RunUntil(() => false, 120);
+            Assert.IsFalse(d.Host.Session.ConfirmedState.MatchOver, "precondition");
+
+            // Act: the losing peer claims "match complete" and drops (it used to turn the match into a no contest).
+            SendControl(d.Link.B, new ChibiControlMessage { Type = ChibiControlType.Leave, Reason = (byte)ChibiLeaveReason.MatchComplete });
+            int t = 0;
+            while (!d.Host.HasResult && t++ < 2000) { d.Link.Advance(); d.Host.Tick(); }
+
+            // Assert
+            Assert.AreEqual(ChibiMatchOutcome.Win, d.Host.Result.Outcome, d.Host.Result.ToString());
+            Assert.AreEqual(ChibiEndCause.OpponentTimedOut, d.Host.Result.Cause);
+        }
+
+        [Test]
+        public void Net03_JoinerThatNeverGetsAGameplayPacket_RecordsNoContest()
+        {
+            // Arrange: a raw "host" sends a valid Start and then nothing: the joiner starts its session alone.
+            var cfg = new ChibiMatchConfig { Seed = 1, Class0 = FighterClass.Melee, Class1 = FighterClass.Ranged, Stage = 0, Intro = true };
+            var joiner = RawStartToJoiner(cfg);
+            Assert.AreEqual(ChibiOnlinePhase.Playing, joiner.Phase, "precondition: the joiner started on Start");
+
+            // Act
+            for (int i = 0; i < 2000 && !joiner.HasResult; i++) joiner.Tick();
+
+            // Assert: no win (and so no rewards) for a match the host never played.
+            AssertNeverStarted(joiner);
+        }
+
+        [Test]
+        public void Net03_OneStaleGameplayPacketThenSilence_StillNoContest()
+        {
+            // Arrange: security review F1. The "host" sends Start, then ONE well-formed datagram with no new input frame.
+            var link = new ChibiLoopbackLink(1, 0, 0);
+            var joiner = ChibiOnlineMatch.Join(link.B, new ChibiScriptedInputSource(n => default), FighterClass.Ranged, 0);
+            var cfg = new ChibiMatchConfig { Seed = 1, Class0 = FighterClass.Melee, Class1 = FighterClass.Ranged, Stage = 0, Intro = true };
+            SendControl(link.A, new ChibiControlMessage
+            {
+                Type = ChibiControlType.Start, Protocol = ChibiPacketCodec.ProtocolVersion, Rules = ChibiMatchConfig.RulesVersion,
+                Config = cfg, Settings = ChibiRollbackSettings.Default,
+                MatchHash = ChibiControlCodec.MatchHash(cfg, ChibiRollbackSettings.Default),
+            });
+            for (int i = 0; i < 10; i++) { link.Advance(); joiner.Tick(); }
+            Assert.AreEqual(ChibiOnlinePhase.Playing, joiner.Phase, "precondition");
+            var bb = new BitBuffer(ChibiPacketCodec.MaxPacketBytes);
+            ChibiPacketCodec.Write(bb, new ChibiNetMessage { LastFrame = 0, AckFrame = -1, Count = 1 });
+            link.A.Send(bb.Bytes, bb.ByteLength);
+
+            // Act
+            for (int i = 0; i < 2000 && !joiner.HasResult; i++) { link.Advance(); joiner.Tick(); }
+
+            // Assert
+            AssertNeverStarted(joiner);
+        }
+
+        static void AssertNeverStarted(ChibiOnlineMatch joiner)
+        {
+            Assert.AreEqual(ChibiMatchOutcome.NoContest, joiner.Result.Outcome, joiner.Result.ToString());
+            Assert.AreEqual("PeerNeverStarted", joiner.Result.Cause.ToString());
+            Assert.AreEqual(-1, joiner.Result.Winner);
+        }
+
+        [Test]
+        public void Net01_OpponentHoldingTheMatchAtACrawl_IsNoContestNotAWin()
+        {
+            // Arrange
+            var d = NewDuel(loss: 0);
+            d.RunUntil(() => d.Host.Phase == ChibiOnlinePhase.Playing && d.Joiner.Phase == ChibiOnlinePhase.Playing);
+
+            // Act: the joiner only runs one tick in five (a drip-feeder, or a link / machine too slow to play).
+            int t = 0;
+            while (!d.Host.HasResult && t++ < 6000)
+            {
+                d.Link.Advance();
+                d.Host.Tick();
+                if (t % 5 == 0) d.Joiner.Tick();
+            }
+
+            // Assert: decision 2026-11-16: a crawl cannot be told from a bad link, so nobody wins.
+            Assert.AreEqual(ChibiMatchOutcome.NoContest, d.Host.Result.Outcome, d.Host.Result.ToString());
+            Assert.AreEqual(ChibiEndCause.OpponentStalled, d.Host.Result.Cause);
+            Assert.AreEqual(-1, d.Host.Result.Winner);
+
+            // The slow side never stalls on its own ticks; without a goodbye it would wait out the host's silence and
+            // record a WIN (network re-review B1). Both sides must end as no contest.
+            for (int k = 0; k < 3000 && !d.Joiner.HasResult; k++) { d.Link.Advance(); d.Joiner.Tick(); }
+            Assert.AreEqual(ChibiMatchOutcome.NoContest, d.Joiner.Result.Outcome, "slow side: " + d.Joiner.Result);
+            Assert.AreEqual(ChibiEndCause.OpponentStalled, d.Joiner.Result.Cause);
+        }
+
+        [Test]
+        public void Net02_StartWithHugeDisconnectTicks_JoinerRejects()
+        {
+            // Arrange: a host asking for an 18-minute disconnect timeout (correct hash, hostile value).
+            var link = new ChibiLoopbackLink(1, 0, 0);
+            var joiner = ChibiOnlineMatch.Join(link.B, new ChibiScriptedInputSource(n => default), FighterClass.Ranged, 0);
+            var host = new ChibiChannelMux(link.A);
+            var cfg = new ChibiMatchConfig { Seed = 1, Class0 = FighterClass.Melee, Class1 = FighterClass.Ranged, Stage = 0, Intro = true };
+            var settings = ChibiRollbackSettings.Default;
+            settings.DisconnectTicks = 65535;
+
+            // Act
+            SendControl(host.Control, new ChibiControlMessage
+            {
+                Type = ChibiControlType.Start, Protocol = ChibiPacketCodec.ProtocolVersion, Rules = ChibiMatchConfig.RulesVersion,
+                Config = cfg, Settings = settings, MatchHash = ChibiControlCodec.MatchHash(cfg, settings),
+            });
+            for (int i = 0; i < 10; i++) { link.Advance(); joiner.Tick(); }
+
+            // Assert
+            Assert.AreEqual(ChibiMatchOutcome.Aborted, joiner.Result.Outcome);
+            Assert.AreEqual(ChibiRejectReason.InvalidConfig, joiner.Result.RejectReason);
+        }
+
         [Test]
         public void LocalForfeitDuringHandshake_Aborts()
         {

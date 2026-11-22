@@ -67,24 +67,38 @@ namespace ChibiClash.Netcode
             return s;
         }
 
-        /// <summary>Host over Unity Relay: <paramref name="relay"/> from the host's Allocation (ToRelayServerData("dtls")).</summary>
+        /// <summary>
+        /// Driver for a Relay link. In a browser (WebGL player) it must be a WebSocket driver: browsers cannot open UDP
+        /// sockets, and UTP's default WebGL interface (IPC) is local-only. The Relay data must then be "wss"
+        /// (<see cref="NetworkRoomManager.RelayConnectionType"/>). Everywhere else: UDP, as before.
+        /// </summary>
+        static NetworkDriver CreateRelayDriver(NetworkSettings settings)
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            return NetworkDriver.Create(new WebSocketNetworkInterface(), settings);
+#else
+            return NetworkDriver.Create(settings);
+#endif
+        }
+
+        /// <summary>Host over Unity Relay: <paramref name="relay"/> from the host's Allocation (ToRelayServerData(type)).</summary>
         public static ChibiUtpTransport HostRelay(RelayServerData relay)
         {
             var t = new ChibiUtpTransport(true);
             var settings = BaseSettings();
             settings.WithRelayParameters(ref relay);
-            t._driver = NetworkDriver.Create(settings);
+            t._driver = CreateRelayDriver(settings);
             if (t._driver.Bind(NetworkEndpoint.AnyIpv4) != 0 || t._driver.Listen() != 0) t.Fail();
             return t;
         }
 
-        /// <summary>Joiner over Unity Relay: <paramref name="relay"/> from the JoinAllocation (ToRelayServerData("dtls")).</summary>
+        /// <summary>Joiner over Unity Relay: <paramref name="relay"/> from the JoinAllocation (ToRelayServerData(type)).</summary>
         public static ChibiUtpTransport JoinRelay(RelayServerData relay)
         {
             var t = new ChibiUtpTransport(false);
             var settings = BaseSettings();
             settings.WithRelayParameters(ref relay);
-            t._driver = NetworkDriver.Create(settings);
+            t._driver = CreateRelayDriver(settings);
             if (t._driver.Bind(NetworkEndpoint.AnyIpv4) != 0) { t.Fail(); return t; }
             t._conn = t._driver.Connect(relay.Endpoint);
             return t;

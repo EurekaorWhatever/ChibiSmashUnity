@@ -25,7 +25,7 @@ the frame scale, darken-only unsharp, ink re-darkened, hardened alpha.
 
 Frame convention (SpriteAnimLibrary): the frame is 1 world unit tall, feet at the horizontal centre FeetPivot (4 %)
 above the bottom, the standing character fills FigureFill (78 %) of the height. Move frames are 2.5x as wide as they
-are tall (SpriteAnimLibrary.MoveFrameAspect) so drawn slash arcs fit. The .meta (mipmaps + trilinear) is written
+are tall (SpriteAnimLibrary.MoveFrameAspect) so drawn slash arcs fit. The .meta (no mipmaps, see save()) is written
 before the PNG so Unity imports at full size.
 
 Panel rectangles are measured by hand (PANELS below: the drawing area of each panel, between the title bar and the
@@ -1132,11 +1132,14 @@ def _put(path, data):
 
 
 def save(path, bgra):
-    """BGRA grid sheet -> PNG, with an anim .meta written first: mipmaps + trilinear (art review M7), max size 4096,
-    high-quality compression (BC7 on desktop)."""
+    """BGRA grid sheet -> PNG, with an anim .meta written first: NO mipmaps, bilinear-trilinear filter, max size 4096,
+    high-quality compression (BC7 on desktop).
+
+    Mipmaps are off on purpose (2026-11-22, replaces art review M7): Unity does not block-compress mipmapped
+    non-power-of-two textures, so with mipmaps on every sheet shipped as RGBA32 (5x the memory, 1.1 GB in total)."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
     if in_assets(path):
-        text = _TEMPLATE.format(guid=_guid(path), mip=1, size=4096)
+        text = _TEMPLATE.format(guid=_guid(path), mip=0, size=4096)
         text = text.replace("    filterMode: 1", "    filterMode: 2")
         # frames are drawn on screen at 0.5-0.9x: trilinear alone blends in mip 1 and softens the ink; a negative
         # bias keeps the sharper level until the sprite is really small

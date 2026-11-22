@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Engine Version** | Unity 6.3 LTS |
-| **Installed at pin time** | NOT DETERMINED — `/setup-engine` §3 probes the installed editor and records the result here. |
+| **Engine Version** | Unity 6.6 (**6000.6.7f1**), the editor this project opens and builds with (updated 2026-11-17). The 6.3 LTS sections below are the earlier pin. |
+| **Installed at pin time** | 6000.6.7f1 (`G:/Unity/6000.6.7f1`), observed 2026-11-17. `/setup-engine` has not been re-run, so the 6.4-6.6 API notes below are still unverified for this project. |
 | **Release Date** | December 2025 |
 | **Latest editor on the pinned line** | 6000.3.26f1 (Oct 8, 2026) |
 | **Project Pinned** | 2026-02-13 |

@@ -11,7 +11,6 @@ namespace ChibiClash.Tests
     /// stream, determinism, rollback and fuzz on the new stages.</summary>
     public class ChibiStagesV20Tests
     {
-        static readonly ChibiInputPacket N = default;
         const uint Seed = 20_2611;
 
         static ChibiSimState New(int stage, bool hazardsOff = false, uint seed = Seed, bool training = false)

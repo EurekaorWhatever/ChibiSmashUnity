@@ -110,7 +110,7 @@ namespace ChibiClash.Netcode
             new ChibiMove
             {
                 Startup = 7, Active = 5, Recovery = 20, Mult = 1730,
-                BoxX = 0, BoxW = 1650, BoxY = 0, BoxH = 450, KbX = 22500, KbY = 0, Stun = 34,
+                BoxX = 0, BoxW = 1650, BoxY = 0, BoxH = 450, KbX = 22500, KbY = 0, Stun = 28,
                 SelfVx = 120, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
                 {
@@ -340,7 +340,7 @@ namespace ChibiClash.Netcode
             new ChibiMove
             {
                 Startup = 5, Active = 4, Recovery = 15, Mult = 1610,
-                BoxX = 0, BoxW = 2050, BoxY = 0, BoxH = 450, KbX = 22500, KbY = 0, Stun = 34,
+                BoxX = 0, BoxW = 2050, BoxY = 0, BoxH = 450, KbX = 22500, KbY = 0, Stun = 22,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
                 {
@@ -394,7 +394,7 @@ namespace ChibiClash.Netcode
             new ChibiMove
             {
                 Startup = 15, Active = 6, Recovery = 32, Mult = 2530,
-                BoxX = 0, BoxW = 4300, BoxY = 0, BoxH = 600, KbX = 45000, KbY = 157500, Stun = 38,
+                BoxX = 0, BoxW = 4300, BoxY = 0, BoxH = 600, KbX = 120000, KbY = 90000, Stun = 38,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = ChibiMove.FCentered,
                 Ext = new ChibiMoveExt
                 {
@@ -627,7 +627,7 @@ namespace ChibiClash.Netcode
             new ChibiMove
             {
                 Startup = 6, Active = 4, Recovery = 19, Mult = 1660,
-                BoxX = 0, BoxW = 1500, BoxY = 0, BoxH = 450, KbX = 22500, KbY = 0, Stun = 34,
+                BoxX = 0, BoxW = 1500, BoxY = 0, BoxH = 450, KbX = 22500, KbY = 0, Stun = 26,
                 SelfVx = 0, SelfVy = 0, Rehit = 0, Cooldown = 0, Flags = 0,
                 Ext = new ChibiMoveExt
                 {

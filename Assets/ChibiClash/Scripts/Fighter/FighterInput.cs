@@ -33,7 +33,7 @@ namespace ChibiClash
     /// U/I/O skills, R ultimate.
     /// Defaults P2: arrows (Up aims), RCtrl jump, . light, / heavy, \ special, RShift block, , dash, ; ' ] skills, Enter
     /// ultimate (numpad also works).
-    /// Gamepad: stick move/aim, A jump, X light, Y heavy, B special, RT block, L3 dash, LB/RB/LT skills, R3 or Start ultimate,
+    /// Gamepad: stick move/aim, A jump, X light, Y heavy, B special, RT block, L3 dash, LB/RB/LT skills, R3 ultimate (Start pauses),
     /// d-pad poses (down cross, right/left punch, up raise).
     /// Simulated camera poses (only when no real camera tracking): P1 keys 1/2/3, P2 keys 8/9/0; P / - toggle slouch.
     /// </summary>
@@ -109,7 +109,8 @@ namespace ChibiClash
                 Skill[0] |= gp.leftShoulder.wasPressedThisFrame;
                 Skill[1] |= gp.rightShoulder.wasPressedThisFrame;
                 Skill[2] |= gp.leftTrigger.wasPressedThisFrame;
-                Ult |= gp.rightStickButton.wasPressedThisFrame || gp.startButton.wasPressedThisFrame;
+                // Start is Pause only (review 2026-11-16 item 19, user decision): it used to fire the ult as it paused.
+                Ult |= gp.rightStickButton.wasPressedThisFrame;
             }
             MoveX = Mathf.Clamp(MoveX, -1f, 1f);
         }

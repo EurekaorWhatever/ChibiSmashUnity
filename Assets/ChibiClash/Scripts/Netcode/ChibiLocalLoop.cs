@@ -47,7 +47,10 @@ namespace ChibiClash.Netcode
         /// <summary>The running session, or null before Begin.</summary>
         public ChibiLocalSession Session { get; private set; }
 
-        /// <summary>Replay of every simulated frame, or null when recording was disabled.</summary>
+        /// <summary>
+        /// Replay of every simulated frame, or null when recording was disabled. Always null in training: the T key fills
+        /// the ult directly in the sim state (outside the input stream), so a training replay could never verify.
+        /// </summary>
         public ChibiReplayRecorder Replay { get; private set; }
 
         /// <summary>Fraction of the next tick that has elapsed, for visual interpolation.</summary>
@@ -64,7 +67,7 @@ namespace ChibiClash.Netcode
             _p1 = p1;
             Session = new ChibiLocalSession(cfg, p0, p1);
             Replay = null;
-            if (recordReplay)
+            if (recordReplay && !cfg.Training)
             {
                 Replay = new ChibiReplayRecorder(cfg);
                 Session.OnFrame += Replay.Add;

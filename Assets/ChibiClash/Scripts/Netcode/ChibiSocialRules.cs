@@ -125,6 +125,29 @@ namespace ChibiClash.Netcode
         /// <summary>At most this many invites are pending at once.</summary>
         public const int MaxPendingInvites = 3;
 
+        static readonly string[] StarterAdjectives =
+            { "Swift", "Brave", "Lucky", "Mighty", "Sunny", "Fizzy", "Bouncy", "Clever", "Jolly", "Zippy", "Cosmic", "Pixel" };
+        static readonly string[] StarterNouns =
+            { "Panda", "Tiger", "Comet", "Fox", "Bunny", "Otter", "Dragon", "Kitten", "Rocket", "Ninja", "Penguin", "Mochi" };
+
+        /// <summary>
+        /// A valid starter name (adjective + noun + 2 digits, at most 15 characters) for a gamepad player who cannot type
+        /// one on first launch (review 2026-11-16 item 18). Always passes <see cref="ValidateName"/>; the player can change it.
+        /// </summary>
+        /// <example><code>nameInput = ChibiSocialRules.DefaultFighterName((uint)Environment.TickCount);</code></example>
+        public static string DefaultFighterName(uint seed)
+        {
+            for (int attempt = 0; attempt < 8; attempt++, seed = seed * 1664525u + 1013904223u)
+            {
+                uint h = seed ^ (seed >> 15);
+                h *= 0x2C1B3C6Du; h ^= h >> 12;
+                string n = StarterAdjectives[h % (uint)StarterAdjectives.Length] +
+                           StarterNouns[(h / 16u) % (uint)StarterNouns.Length] + ((h / 256u) % 90u + 10u);
+                if (ValidateName(n) == null) return n;
+            }
+            return "BraveFighter10";                                   // fixed, known-valid fallback
+        }
+
         /// <summary>
         /// Check a name the local player wants. Returns null when valid, else a short reason to show.
         /// </summary>
@@ -207,6 +230,15 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>Room names: 3-24 characters.</summary>
+        /// <summary>
+        /// True when <paramref name="m"/> is a friend declining the invite we sent. <paramref name="invitedId"/> is the
+        /// friend who currently HOLDS our invite (set once the invite message went out), not the friend we are still
+        /// creating a room for.
+        /// </summary>
+        /// <example><code>if (ChibiSocialRules.IsDeclineOfOurInvite(m, friend, e.UserId, _invitedId)) ...</code></example>
+        public static bool IsDeclineOfOurInvite(ChibiInviteMessage m, bool senderIsFriend, string senderId, string invitedId)
+            => m != null && senderIsFriend && m.Kind == KindDecline && !string.IsNullOrEmpty(invitedId) && senderId == invitedId;
+
         public const int RoomNameMin = 3, RoomNameMax = 24;
         /// <summary>Shown when a room has no usable name.</summary>
         public const string FallbackRoomName = "Private room";

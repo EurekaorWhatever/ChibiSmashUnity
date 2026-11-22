@@ -59,8 +59,19 @@ namespace ChibiClash.Netcode
         const int SpreadAcross = 3;
         /// <summary>When the Lobby service says "too many requests" (peak traffic), wait this long (+ random jitter) before searching again.</summary>
         const float RateLimitBackoffSeconds = 15f;
-        /// <summary>Relay connection type: DTLS = encrypted UDP.</summary>
-        const string RelayConnectionType = "dtls";
+        /// <summary>
+        /// Relay connection type: "dtls" (encrypted UDP) on PC; "wss" (secure WebSockets over TCP, Relay ports
+        /// 37000-37100) in the browser build, where UDP is not available. Must match the driver ChibiUtpTransport creates
+        /// for the platform. Web and PC players can share a match: Unity Transport's cross-play doc
+        /// (com.unity.transport Documentation~/cross-play.md) says Relay connects a DTLS host and a WebSocket browser client
+        /// automatically, so both platforms stay in one matchmaking pool (network review 2026-11-22).
+        /// </summary>
+        public const string RelayConnectionType =
+#if UNITY_WEBGL && !UNITY_EDITOR
+            "wss";
+#else
+            "dtls";
+#endif
 
         /// <summary>Matchmaking tag: only builds with the same wire protocol and rules version meet.</summary>
         public static string ProtocolTag => "p" + ChibiPacketCodec.ProtocolVersion + "r" + ChibiMatchConfig.RulesVersion;
@@ -155,6 +166,7 @@ namespace ChibiClash.Netcode
         public void HostLan(ushort port = LanPort)
         {
             if (Busy || !Gate()) return;
+            if (LanUnavailable()) return;
             ++_flow;
             _quickMode = false;
             _isHost = true;
@@ -167,10 +179,25 @@ namespace ChibiClash.Netcode
             _connectDeadline = float.MaxValue;
         }
 
+        /// <summary>
+        /// True (and the flow fails with a clear message) in the browser build: LAN is direct UDP by IP, which browsers
+        /// do not allow. Online play there goes through Relay (rooms / matchmaking) instead.
+        /// </summary>
+        bool LanUnavailable()
+        {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            Fail("LAN play is not available in the browser. Use ROOMS or MATCHMAKING, or the PC version for LAN.");
+            return true;
+#else
+            return false;
+#endif
+        }
+
         /// <summary>Join a LAN host by IP address (see <see cref="HostLan"/>).</summary>
         public void JoinLan(string address, ushort port = LanPort)
         {
             if (Busy || !Gate()) return;
+            if (LanUnavailable()) return;
             ++_flow;
             address = (address ?? "").Trim();
             if (address.Length == 0) { Fail("Enter the host's IP address."); return; }

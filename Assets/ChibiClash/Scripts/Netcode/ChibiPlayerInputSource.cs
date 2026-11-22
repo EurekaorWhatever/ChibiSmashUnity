@@ -129,12 +129,26 @@ namespace ChibiClash.Netcode
             return b;
         }
 
+        /// <summary>
+        /// While true the source sends neutral packets (no direction, no buttons, no gesture) and drops anything latched.
+        /// Set by <c>ChibiMatch</c> while a menu overlay is driven by the same keys / pad (the online LEAVE MATCH prompt,
+        /// and briefly after a resume) so menu presses never reach the fighter. Local input only; nothing on the wire changes.
+        /// </summary>
+        /// <example><code>localInput.Muted = match.LeavePrompt;</code></example>
+        public bool Muted { get; set; }
+
         /// <summary>Poll the device once for this render frame, tick the owned tracker, and latch one-shot presses.</summary>
         public void PollRenderFrame()
         {
             float dt = _deltaTime();
             _device.Tick(null, dt);
             _tracker?.Tick(dt);
+            if (Muted)
+            {
+                _moveX = 0f; _down = false; _up = false; _block = false; _shieldLatch = false;
+                _heldLevel = ChibiButtons.None; _latched = ChibiButtons.None;
+                return;
+            }
 
             _moveX = _device.MoveX;
             _down = _device.Down;
@@ -161,6 +175,11 @@ namespace ChibiClash.Netcode
         /// </summary>
         public ChibiInputPacket SampleTick()
         {
+            if (Muted)
+            {
+                _latched = ChibiButtons.None; _shieldLatch = false;
+                return default;
+            }
             ChibiButtons b = _latched | _heldLevel;
             _latched = ChibiButtons.None;
             if (_block || _shieldLatch) b |= ChibiButtons.Shield;

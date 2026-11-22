@@ -57,7 +57,11 @@ namespace ChibiClash.Netcode
         public const int DashAttackWindow = 16;
         /// <summary>Non-final hits of a multi-hit: kb (13500, 9000), stun = rehit + 4.</summary>
         public const int LinkKbX = 13500, LinkKbY = 9000, LinkStunPad = 4;
-        /// <summary>Trip vs a grounded victim (22500, 0) stun 34 (CSV values); vs an airborne victim the L horizontal tier.</summary>
+        /// <summary>
+        /// Trip vs a grounded victim (22500, 0); vs an airborne victim the L horizontal tier. The grounded stun comes from each
+        /// row's own CSV <c>stun</c> since rules v23 (Bruna down tilt 22, Ren 26, Kaia low sweep 28); TripStun = 34 is the
+        /// original sheet value, no longer read by the sim but kept in the config hash.
+        /// </summary>
         public const int TripKbX = 22500, TripStun = 34, TripAirKbX = 67500, TripAirKbY = 52500, TripAirStun = 22;
         /// <summary>Counter: lock ends 20 ticks after the trigger, invuln 20.</summary>
         public const int CounterLock = 20, CounterInvuln = 20;

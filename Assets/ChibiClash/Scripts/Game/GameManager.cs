@@ -32,6 +32,12 @@ namespace ChibiClash
         // key rebinding (Settings)
         bool listening;
         float listenSince;
+        float listenEndedAt = -10f;        // the click that ended listening must not re-open it on release
+        bool listenPointerOnRow;           // mouse is over the row being rebound (set while drawing Settings)
+        float resetProfileArmedUntil, resetKeysArmedUntil;   // two-click RESET PROFILE / RESET KEYS (item 22)
+        /// <summary>The second click arms for this long; it is ignored for the first ResetGraceSeconds (a double-click is not a yes).</summary>
+        const float ResetArmSeconds = 3f, ResetGraceSeconds = 0.4f;
+        bool listenClickLatch;             // a mouse click ended listening: no row click until every button is up again
         int listenPlayer;
         BindAction listenAction;
 
@@ -174,6 +180,7 @@ namespace ChibiClash
                 return;
             }
 
+            if (listenClickLatch && !AnyMouseHeld()) listenClickLatch = false;
             bool wasListening = listening;
             if (listening) CaptureRebind();
             menuInput.Tick(null, Time.unscaledDeltaTime);
@@ -183,9 +190,11 @@ namespace ChibiClash
             homeSelAnim = Mathf.Lerp(homeSelAnim, homeSel, 1f - Mathf.Exp(-Time.unscaledDeltaTime * 18f));
             stageAnim = Mathf.Lerp(stageAnim, stageTarget, 1f - Mathf.Exp(-Time.unscaledDeltaTime * 14f));
 
+            if (!DialogOpen) padSubmit = false;
             if (wipeStart >= 0f || wasListening || page == Page.Loading) return;
             if (DialogOpen)
             {
+                PadDialogInput();
                 // Text-entry dialogs own the keyboard; only Back closes the ones that may be closed.
                 if (MenuInput.Any(NavCmd.Back))
                 {
@@ -202,6 +211,41 @@ namespace ChibiClash
             }
             if (page == Page.Select) UpdateSelect();
             else MenuNav();
+        }
+
+        bool padSubmit;   // a gamepad A / Start asked the open dialog to submit (taken by the dialog in OnGUI)
+
+        /// <summary>
+        /// Gamepad driving of the first-launch dialogs (review 2026-11-16 item 18): the age is stepped with the D-pad /
+        /// stick (up/down 1, left/right 10), the name is prefilled and Y rerolls it, A submits either.
+        /// </summary>
+        void PadDialogInput()
+        {
+            bool ageStep = PlayerIdentity.NeedsAge(Save.ageBand) || Save.age <= 0;
+            if (ageStep)
+            {
+                int d = MenuInput.PadFired(NavCmd.Up) ? 1 : MenuInput.PadFired(NavCmd.Down) ? -1 :
+                        MenuInput.PadFired(NavCmd.Right) ? 10 : MenuInput.PadFired(NavCmd.Left) ? -10 : 0;
+                if (d != 0) ageInput = PlayerIdentity.StepAge(ageInput, d);
+            }
+            else if (nameDialog && MenuInput.PadFired(NavCmd.Alt))
+                nameInput = Netcode.ChibiSocialRules.DefaultFighterName((uint)System.Environment.TickCount);
+            if (MenuInput.PadFired(NavCmd.Confirm) && (ageStep || nameDialog)) padSubmit = true;
+        }
+
+        static bool AnyMouseHeld()
+        {
+            var m = Mouse.current;
+            return m != null && (m.leftButton.isPressed || m.rightButton.isPressed || m.middleButton.isPressed ||
+                                 m.leftButton.wasReleasedThisFrame || m.rightButton.wasReleasedThisFrame || m.middleButton.wasReleasedThisFrame);
+        }
+
+        /// <summary>The dialog's submit for a gamepad A press made in Update (consumed once).</summary>
+        bool TakePadSubmit()
+        {
+            if (!padSubmit) return false;
+            padSubmit = false;
+            return true;
         }
 
         /// <summary>A modal onboarding / text-entry dialog is on screen (keyboard menu navigation is off).</summary>
@@ -288,16 +332,34 @@ namespace ChibiClash
         void MatchInput()
         {
             if (match == null || wipeStart >= 0f) return;
-            // Gamepad Start pauses offline matches (Esc is handled by the local loop itself). Online never pauses.
-            if (!match.Online && !match.Finished && MenuInput.PadStartPressed())
+            var kb = Keyboard.current;
+            bool backspace = kb != null && kb.backspaceKey.wasPressedThisFrame;
+            if (match.Online)
             {
-                match.SetPaused(!match.Paused);
-                Gui.ResetFocus();
+                // Online never pauses: Esc / Start open a "LEAVE MATCH?" confirm over the running match (item 21).
+                if (match.Finished) match.LeavePrompt = false;
+                else if (MenuInput.PadStartPressed() || (kb != null && kb.escapeKey.wasPressedThisFrame))
+                {
+                    match.LeavePrompt = !match.LeavePrompt;
+                    Gui.ResetFocus();
+                }
+                else if (match.LeavePrompt && (MenuInput.PadBackPressed() || backspace)) match.LeavePrompt = false;
+            }
+            else if (!match.Finished)
+            {
+                // Gamepad Start pauses offline matches (Esc is handled by the local loop itself). B / Back / Backspace
+                // resume (item 20); Esc is not read here or it would toggle twice.
+                if (MenuInput.PadStartPressed())
+                {
+                    match.SetPaused(!match.Paused);
+                    Gui.ResetFocus();
+                }
+                else if (match.Paused && (MenuInput.PadBackPressed() || backspace)) match.SetPaused(false);
             }
             float sinceEnd = Time.unscaledTime - match.FinishedTime;
             bool results = match.Finished && sinceEnd > 1.3f;
             if (results && !resultsSeen) resultsSeen = true;
-            if (!match.Paused && !(results && sinceEnd > 1.9f)) return;
+            if (!match.Paused && !match.LeavePrompt && !(results && sinceEnd > 1.9f)) return;
             if (MenuInput.Any(NavCmd.Up)) Gui.Navigate(0, -1);
             if (MenuInput.Any(NavCmd.Down)) Gui.Navigate(0, 1);
             if (MenuInput.Any(NavCmd.Left)) Gui.Navigate(-1, 0);
@@ -305,26 +367,55 @@ namespace ChibiClash
             if (MenuInput.Any(NavCmd.Confirm)) Gui.Activate();
         }
 
-        /// <summary>While a binding is selected in Settings, the next key press becomes the new binding (Esc cancels).</summary>
+        /// <summary>
+        /// While a binding is selected in Settings, the next key press (or a mouse click on that row) becomes the new
+        /// binding. Esc, gamepad B / Back, a click elsewhere or <see cref="RebindRules.TimeoutSeconds"/> cancel (item 16).
+        /// </summary>
         void CaptureRebind()
         {
             var kb = Keyboard.current;
-            if (kb != null && kb.escapeKey.wasPressedThisFrame) { listening = false; return; }
-            string bound = null;
             var mouse = Mouse.current;
-            if (mouse != null && Time.unscaledTime - listenSince > 0.25f)
+            var f = new RebindFrame
             {
-                if (mouse.leftButton.wasPressedThisFrame) bound = Bindings.MouseLeft;
-                else if (mouse.rightButton.wasPressedThisFrame) bound = Bindings.MouseRight;
-                else if (mouse.middleButton.wasPressedThisFrame) bound = Bindings.MouseMiddle;
+                Elapsed = Time.unscaledTime - listenSince,
+                Escape = kb != null && kb.escapeKey.wasPressedThisFrame,
+                PadCancel = MenuInput.PadBackPressed(),
+                PointerOnRow = listenPointerOnRow,
+            };
+            if (mouse != null)
+            {
+                if (mouse.leftButton.wasPressedThisFrame) f.MouseButton = Bindings.MouseLeft;
+                else if (mouse.rightButton.wasPressedThisFrame) f.MouseButton = Bindings.MouseRight;
+                else if (mouse.middleButton.wasPressedThisFrame) f.MouseButton = Bindings.MouseMiddle;
             }
-            if (bound == null && kb != null)
+            if (kb != null && !f.Escape)
                 foreach (var key in kb.allKeys)
-                    if (key.wasPressedThisFrame && key.keyCode != Key.None) { bound = key.keyCode.ToString(); break; }
-            if (bound == null) return;
-            Bindings.Set(listenPlayer, listenAction, bound);
-            Toast("P" + (listenPlayer + 1) + " " + Bindings.Names[(int)listenAction] + " = " + Bindings.BindingLabel(bound));
+                    if (key.wasPressedThisFrame && key.keyCode != Key.None) { f.Key = key.keyCode.ToString(); break; }
+
+            var step = RebindRules.Decide(f, out string bound);
+            if (step == RebindStep.Wait) return;
             listening = false;
+            listenEndedAt = Time.unscaledTime;
+            if (f.MouseButton != null) listenClickLatch = true;
+            if (step == RebindStep.Cancel) { UiSound.Back(); return; }
+            string who = "P" + (listenPlayer + 1) + " " + Bindings.Names[(int)listenAction];
+            string oldKey = Bindings.Get(listenPlayer, listenAction);
+            string otherName = "";
+            for (int k = 0; k < Bindings.Count; k++)
+                if (Bindings.Get(1 - listenPlayer, (BindAction)k) == bound) { otherName = Bindings.Names[k]; break; }
+            switch (Bindings.Set(listenPlayer, listenAction, bound))
+            {
+                case BindResult.Reserved:
+                    Deny(Bindings.BindingLabel(bound) + " is a pose / posture key (1 2 3, 8 9 0, numpad 7 8 9, P, -). Pick another.");
+                    break;
+                case BindResult.SwappedOtherPlayer:
+                    Toast(who + " = " + Bindings.BindingLabel(bound) + ";  P" + (2 - listenPlayer) + " " + otherName + " is now " +
+                          Bindings.BindingLabel(oldKey));
+                    break;
+                default:
+                    Toast(who + " = " + Bindings.BindingLabel(bound));
+                    break;
+            }
         }
 
         void Toast(string s)
@@ -847,7 +938,6 @@ namespace ChibiClash
                     Gui.Interactive = wipeStart < 0f;
                     ExitModal();
                 }
-                if (page != Page.Loading && !DialogOpen) InvitePopup();
                 DrawToast();
             }
             Gui.Interactive = true;
@@ -859,7 +949,11 @@ namespace ChibiClash
         {
             switch (choice)
             {
-                case Hud.Action.Resume: match.SetPaused(false); break;
+                case Hud.Action.Resume:
+                    if (match.Online) match.LeavePrompt = false;
+                    else match.SetPaused(false);
+                    break;
+                case Hud.Action.Forfeit: match.Forfeit(); break;
                 case Hud.Action.Rematch: Rematch(); break;
                 case Hud.Action.CharacterSelect:
                 case Hud.Action.Menu:

@@ -143,6 +143,28 @@ namespace ChibiClash
             return fired[player, (int)c] || fired[2 + player, (int)c];
         }
 
+        /// <summary>
+        /// Fired this frame on a gamepad only (with key repeat). Text-entry dialogs use it: there the keyboard keys type
+        /// (W, A, Space... are letters), so <see cref="Any"/> cannot be used.
+        /// </summary>
+        public static bool PadFired(NavCmd c)
+        {
+            for (int s = 2; s < Sources; s++)
+                if (fired[s, (int)c]) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// A gamepad's B / East or Back / Select was pressed this frame. Used where Esc is already handled elsewhere
+        /// (rebind cancel, pause resume), so the keyboard Back command (Esc) must not fire twice.
+        /// </summary>
+        public static bool PadBackPressed()
+        {
+            foreach (var pad in Gamepad.all)
+                if (pad.buttonEast.wasPressedThisFrame || pad.selectButton.wasPressedThisFrame) return true;
+            return false;
+        }
+
         /// <summary>A gamepad's Start was pressed this frame (pause toggle in a match).</summary>
         public static bool PadStartPressed()
         {

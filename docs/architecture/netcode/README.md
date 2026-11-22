@@ -59,7 +59,33 @@ content), the determinism rules for gameplay, and the tripwire tests that protec
 - ~~Resend window only the newest 8 inputs (lag stall)~~: fixed in online part 1 (oldest unacked first, up to 16). See online-rooms.md section 4.
 
 ## Known issues (deferred)
-- SEC-002 (deferred by the lead until ranked / wagers exist): the host alone picks the match seed (crits, hazard timing); a joiner nonce mixed into the seed needs protocol 5.
+- SEC-002 (deferred by the lead until ranked / wagers exist): the host alone picks the match seed (crits, hazard timing); a joiner nonce mixed into the seed needs another protocol bump.
+- SEC-003 remainder (known limit, 2026-11-16): a losing peer can still turn a match into a no contest by sending `Leave(Desync)` or a wrong checksum. With two peers and no authority, a faked desync cannot be told from a real one. Closing it needs a server-side replay check (netcode-architecture.md 7.6). What protocol 5 did close: `Leave(MatchComplete)` followed by a drop is now scored as a disconnect (the local player wins) instead of a no contest.
+- Disconnect scoring (known limit, protocol 5): a peer whose last 1.5 s of packets are all lost after a real match end is scored as a disconnect by the other side, and both sides can still each see "opponent disconnected" when the link dies both ways. A match that is stalled for more than two thirds of the last 20 s (`ChibiRollbackSession.StalledInWindow` over `StallLimit`; about 500 ms RTT with loss or 650 ms clean, sustained, or repeated long freezes) ends as no contest for both sides: the side that was waiting sends `Leave(Stalled)`. If all three copies of that goodbye are lost, the other side falls back to the silence timeout and records a win. Measured stall share on the loopback link: 300 ms RTT + 15 % loss 26 %, 400 ms 33 %, 500 ms 47 %, 670 ms 60 %, 1 s 73 %. Accepted risk: a peer can still slow a match to about a third of full speed without ending it (a half-speed peer cannot be told from an honest 500 ms link); the sim timer still ends the match.
+- NET-03 remainder (known limit): a joiner can see the host's class and stage in Start, send Ready and then never send input; the host records no contest (`PeerNeverStarted`) instead of a win. Repeat offenders would have to be tracked at the room or social layer.
+- Local link loss (open decision, predates protocol 5): when OUR transport reports `Lost`, the match is still scored as a win (`ConnectionLost`), so a player who cuts their own connection while losing records a win locally. Scoring a local link loss as no contest is a design decision (it changes decision Q4).
+
+## Protocol 5 (2026-11-16, netcode hardening)
+Same wire layout as protocol 4; the rollback and result rules changed, so old and new builds refuse each other.
+- NET-01: only a new remote input frame resets the silence timer (a silent peer loses by timeout as before). A peer that drip-feeds inputs trips the stall window (stalled more than two thirds of the last 4 x DisconnectTicks), which ends the match as no contest (`OpponentStalled`, decision 2026-11-16).
+- NET-06: the resend window is clamped to the input ring, so a peer that never acks can no longer make `SendPacket` throw.
+- NET-02: `DisconnectTicks` is capped at 600 (10 s) in `ChibiRollbackSettings.Validate`, so a joiner rejects a larger value in Start.
+- NET-03: a session that never received a real remote input frame ends as no contest (`PeerNeverStarted`), not a win.
+- NET-04: `LastFrame` only moves the time-sync estimate when it is within `MaxInputs` (16) of the contiguous remote frame. A sanity bound, not tamper-proofing: the `Advantage` field is unauthenticated as well.
+- NET-05: `ChecksumsCompared` counts each checksum frame once.
+- REP-01: `ChibiReplay.TryRead` range-checks class, passive and stage; `Verify` returns false instead of throwing. Replays now store `HazardsOff` (flags bit 2), so hazards-off replays load.
+- Training matches no longer record a replay (the T ult fill is outside the input stream).
+
+## Rules versions 22 and 23 (protocol 5 unchanged)
+A rules bump changes the config hash and the Hello rules field; peers with different rules refuse each other
+(`RulesMismatch`), and the room tag (`p5r22` / `p5r23`) keeps them in separate rooms. The wire layout is unchanged.
+- **v22 (2026-11-14):** the Ult press fires the ultimate on a full meter; recovery trimmed; 6-tick attack buffer
+  (`BufferedEdges` / `BufferTicks`) and grounded walk / turn cancel (`AttackLockTicks`): three new hashed fighter fields.
+- **v23 (2026-11-17, review batch 4):** trip stun per row, Bruna down smash sideways, walk cancel "on hit" = landed or
+  blocked (new hashed `MoveConnected`), dash-tail attack buffer. Goldens re-recorded: config hash `0x8E6FB4A6`, fixtures
+  `0xC589DD73` / `0xCADE4CC6`, Hello `c9517001208922ae1a`.
+- Local only (not on the wire): `ChibiPlayerInputSource.Muted` sends neutral packets while a menu overlay (online LEAVE
+  MATCH prompt) owns the keys.
 
 ## Superseded in these docs
 - Any recommendation to show the **Relay** join code (Q2 chose Lobby).

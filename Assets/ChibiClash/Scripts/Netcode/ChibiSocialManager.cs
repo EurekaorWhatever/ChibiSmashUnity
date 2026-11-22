@@ -42,6 +42,17 @@ namespace ChibiClash.Netcode
     /// </code></example>
     public sealed class ChibiSocialManager : MonoBehaviour
     {
+        /// <summary>
+        /// Drop invites whose time ran out. Runs every frame, so it is a plain reverse loop: the old RemoveAll(lambda)
+        /// allocated a closure each frame (148 B; review 2026-11-16 perf fix C).
+        /// </summary>
+        /// <example><code>ChibiSocialManager.RemoveExpired(Invites, Time.unscaledTime);</code></example>
+        public static void RemoveExpired(List<ChibiPendingInvite> invites, float now)
+        {
+            for (int k = invites.Count - 1; k >= 0; k--)
+                if (invites[k].ExpiresAt <= now) invites.RemoveAt(k);
+        }
+
         /// <summary>Signed in and the Friends service is ready.</summary>
         public bool Ready { get; private set; }
         /// <summary>True while a request is in flight (buttons disabled).</summary>
@@ -395,15 +406,21 @@ namespace ChibiClash.Netcode
             catch (Exception) { /* best effort: the sender's room simply times out */ }
         }
 
+        /// <summary>Match invites are switched off (user request 2026-11-22). Set true only together with the invite UI,
+        /// and get a security review first (security review 2026-11-22, SEC-001).</summary>
+        const bool InvitesEnabled = false;
+
         void OnMessage(IMessageReceivedEvent e)
         {
+            if (!InvitesEnabled) return;   // incoming invite / decline / cancel messages are ignored entirely
             ChibiInviteMessage m;
             try { m = e.GetAs<ChibiInviteMessage>(); }
             catch (Exception) { return; }   // not our format: ignore silently
             if (m == null) return;
             bool friend = IsFriend(e.UserId);
 
-            if (friend && m.Kind == ChibiSocialRules.KindDecline && e.UserId == _inviteTargetId)
+            // SOC-01: _inviteTargetId is cleared the moment the invite is sent; _invitedId is who holds it now.
+            if (ChibiSocialRules.IsDeclineOfOurInvite(m, friend, e.UserId, _invitedId))
             {
                 SetStatus(FriendName(e.UserId) + " declined the invite.", true);
                 _inviteTargetId = null;
@@ -454,7 +471,7 @@ namespace ChibiClash.Netcode
                 }
             }
             for (int n = 0; n < 8 && _messages.TryDequeue(out var msg); n++) OnMessage(msg);   // a few per frame
-            Invites.RemoveAll(i => i.ExpiresAt <= now);
+            RemoveExpired(Invites, now);
 
             // Our room for an invite is ready: send the code to the friend (once).
             if (_inviteTargetId != null && _rooms != null)

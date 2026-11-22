@@ -208,22 +208,32 @@ namespace ChibiClash.Netcode
         static void TryWalkCancel(ChibiSimState s, int i, ChibiInputPacket input)
         {
             var f = s.F[i];
-            int slot = f.MoveSlot;
-            if (slot < 0 || slot == 5 || slot == ChibiSimConst.PoseSlot || ProgramOf(f) != PNone) return;
-            if (!f.Grounded || f.Held || f.Charging || input.MoveX == 0 || input.MoveX == DirXOf(f.MoveDir)) return;
+            if (!WalkCancellable(f) || input.MoveX == 0 || input.MoveX == DirXOf(f.MoveDir)) return;
             int left = f.MoveLockEnd - f.MoveTick;
             if (f.MoveTick < f.MoveStartup + f.MoveActive || left <= 0 || left > ChibiSimConst.MoveCancelTicks) return;
+            f.MoveSlot = -1;
+            f.AttackLockTicks = left;
+        }
+
+        /// <summary>
+        /// The state part of <see cref="TryWalkCancel"/> (no stick, no timing): the running move may be walk / turn
+        /// cancelled in its last <see cref="ChibiSimConst.MoveCancelTicks"/> lock ticks. Pure query; the CPU reads it to
+        /// judge punishes.
+        /// </summary>
+        internal static bool WalkCancellable(ChibiFighterSim f)
+        {
+            int slot = f.MoveSlot;
+            if (slot < 0 || slot == 5 || slot == ChibiSimConst.PoseSlot || ProgramOf(f) != PNone) return false;
+            if (!f.Grounded || f.Held || f.Charging) return false;
             bool light;
             if (slot >= FirstNew)
             {
                 var e = RowOf(f).Ext;
-                if ((e.Flags & NoCancelFlags) != 0) return;
+                if ((e.Flags & NoCancelFlags) != 0) return false;
                 light = e.Button == 0;
             }
             else light = slot == 0;
-            if (!light && !f.MoveHit) return;
-            f.MoveSlot = -1;
-            f.AttackLockTicks = left;
+            return light || f.MoveConnected;   // rules v23 (B4-2): landed or blocked, not a touch on invulnerability
         }
 
         // ================================================================== move start / timers

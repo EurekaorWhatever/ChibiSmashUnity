@@ -40,23 +40,30 @@ namespace ChibiClash.Tests
         /// 22: re-recorded ON PURPOSE (UL-1 / EL-1 / TN-1, 2026-11-14): the Ult press fires the ult, recovery trimmed, 6-tick
         /// attack buffer and walk cancel with three new hashed fighter fields and FeelConstants in the config hash, so the
         /// config hash and both fixture checksums move.
+        /// 23: re-recorded ON PURPOSE (B4-1..B4-3, 2026-11-17, review batch 4): trip stun / down smash CSV values change the
+        /// moveset hash, the new hashed MoveConnected field and the dash attack buffer change both fixtures.
+        /// 24: re-recorded ON PURPOSE (ED-1 escape dash, 2026-11-17): EscapeMinAge / EscapeSpeedP / LaunchAgeCap join the
+        /// config hash and the new hashed fighter fields LaunchAge and EscapeDashes change both fixture checksums.
         /// </remarks>
-        const int PinnedRulesVersion = 22;
+        const int PinnedRulesVersion = 24;
         /// <summary>The wire protocol version the wire golden values were recorded with.</summary>
         /// <remarks>3: re-recorded ON PURPOSE (CH-3) - input bit 15 changed meaning from PoseVerified to Special.
         /// 4: re-recorded ON PURPOSE (rules v20, ST-5) - the Start message carries a 1-bit HazardsOff after the stage and the
-        /// stage range is 0..7; Hello keeps its layout, only its protocol byte (and the rules field) change.</remarks>
-        const int PinnedProtocolVersion = 4;
+        /// stage range is 0..7; Hello keeps its layout, only its protocol byte (and the rules field) change.
+        /// 5: re-recorded ON PURPOSE (review 2026-11-16, netcode hardening) - same layout, new rollback/result rules
+        /// (DisconnectTicks cap, input-progress timeout, MatchComplete and never-started scoring).</remarks>
+        const int PinnedProtocolVersion = 5;
         /// <summary>Hash of every gameplay constant table + the fixture config (ChibiMatchConfig.ComputeHash).</summary>
-        const uint GoldenConfigHash = 0x26C1875Bu;
+        const uint GoldenConfigHash = 0x76E8792Bu;
         /// <summary>Final state checksum of fixture match A after <see cref="Ticks"/> ticks.</summary>
-        const uint GoldenChecksumA = 0xE72052CEu;
+        const uint GoldenChecksumA = 0x203C416Bu;
         /// <summary>Final state checksum of fixture match B (other fighters, stage, intro off).</summary>
-        const uint GoldenChecksumB = 0x1D0DA211u;
+        const uint GoldenChecksumB = 0x53B6AE02u;
         /// <summary>Bytes of a Hello control datagram (protocol, rules, class, passive, name "Kira").</summary>
-        /// <remarks>Re-recorded on purpose: protocol 4 and rules 22 (same Hello layout; only the rules field moved, 21 -> 22,
-        /// so ProtocolVersion stays 4).</remarks>
-        const string GoldenHelloHex = "c9416001208922ae1a";
+        /// <remarks>Re-recorded on purpose: protocol 5 and rules 22 (same Hello layout; only the protocol byte moved, 4 -> 5).
+        /// Rules 23 (2026-11-17): only the rules byte moved (0x60 -> 0x70), as in the v22 bump; layout unchanged, no protocol bump.
+        /// Rules 24 (ED-1, 2026-11-17): only the rules byte moved (0x70 -> 0x80); layout unchanged, no protocol bump.</remarks>
+        const string GoldenHelloHex = "c9518001208922ae1a";
 
         const int Ticks = 1800;   // 30 s of play: movement, attacks, skills, jumps, hits, KOs
 

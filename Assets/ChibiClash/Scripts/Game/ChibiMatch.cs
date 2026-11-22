@@ -241,6 +241,8 @@ namespace ChibiClash
                     case ChibiEndCause.Desync: return "The two games disagreed (desync): no contest.";
                     case ChibiEndCause.UnconfirmedEnd: return "The match end could not be confirmed: no contest.";
                     case ChibiEndCause.HandshakeFailed: return "The match could not start.";
+                    case ChibiEndCause.PeerNeverStarted: return "Your opponent never joined the match: no contest.";
+                    case ChibiEndCause.OpponentStalled: return "The connection was too slow to play: no contest.";
                     default: return "";
                 }
             }
@@ -252,14 +254,66 @@ namespace ChibiClash
             View.Begin(Feed, SimConfig, _skin, _weapon);
         }
 
-        /// <summary>Pause or resume (offline only; the HUD's Resume button).</summary>
-        public void SetPaused(bool paused) { if (_local != null) _local.SetPaused(paused); }
+        /// <summary>
+        /// Pause or resume (offline only; the HUD's Resume button). On resume the human inputs stay muted for
+        /// <see cref="MenuInputGraceSeconds"/>, so the button that resumed (B is also Special, A is also Jump) does not
+        /// fire in the match.
+        /// </summary>
+        public void SetPaused(bool paused)
+        {
+            if (_local == null) return;
+            if (!paused && _local.Paused) MuteBriefly();
+            _local.SetPaused(paused);
+        }
+
+        /// <summary>Human inputs stay neutral this long after a menu overlay closes (its keys are also fighter keys).</summary>
+        public const float MenuInputGraceSeconds = 0.15f;
+
+        bool _leavePrompt;
+        float _muteUntil = -1f;
+
+        /// <summary>
+        /// Online: the "LEAVE MATCH?" confirm is showing (Esc / Start). The match keeps running underneath; online never
+        /// pauses (review 2026-11-16 item 21). While it shows, and briefly after it closes, the local fighter gets
+        /// neutral input so navigating the prompt never moves or attacks.
+        /// </summary>
+        public bool LeavePrompt
+        {
+            get => _leavePrompt;
+            set
+            {
+                if (_leavePrompt && !value) MuteBriefly();
+                _leavePrompt = value;
+                ApplyMute();
+            }
+        }
+
+        void MuteBriefly()
+        {
+            _muteUntil = Time.unscaledTime + MenuInputGraceSeconds;
+            ApplyMute();
+        }
+
+        void ApplyMute()
+        {
+            bool mute = _leavePrompt || Time.unscaledTime < _muteUntil;
+            for (int i = 0; i < _human.Length; i++)
+                if (_human[i] != null) _human[i].Muted = mute;
+        }
+
+        /// <summary>Online: leave now. It tells the peer and counts as a loss (decision Q4); no-op offline.</summary>
+        public void Forfeit()
+        {
+            LeavePrompt = false;
+            if (_runner != null && _runner.Match != null) _runner.Match.Forfeit();
+        }
 
         /// <summary>Save the offline replay to <paramref name="path"/> (no-op online or when not recorded).</summary>
         public void SaveReplay(string path) { if (_local != null && _local.Replay != null) _local.Replay.Save(path); }
 
         void Update()
         {
+            if (_muteUntil >= 0f && Time.unscaledTime >= _muteUntil) { _muteUntil = -1f; ApplyMute(); }
             var s = State;
             if (s == null) return;
             // Posture is sampled for local human fighters while running, scaled dt (MC:150); never part of the sim.

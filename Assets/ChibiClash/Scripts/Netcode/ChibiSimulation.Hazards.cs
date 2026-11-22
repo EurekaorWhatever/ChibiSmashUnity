@@ -275,6 +275,7 @@ namespace ChibiClash.Netcode
             f.LaunchDecX = (int)((long)ChibiPercentConst.LaunchDecay * Math.Abs(kx) / mag);
             f.LaunchDecY = (int)((long)ChibiPercentConst.LaunchDecay * ky / mag);
             f.LaunchGravP = LaunchGravityP(kb);
+            f.StartLaunchAge(StrongKb(kbX, kbY));        // rules v24 (ED-1)
             SetKnockback(f, dir * (int)(ls * Math.Abs(kx) / mag), (int)(ls * ky / mag));
             if (f.Vy > 0) f.Grounded = false;
         }
