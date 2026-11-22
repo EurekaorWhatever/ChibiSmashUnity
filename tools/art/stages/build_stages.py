@@ -154,10 +154,12 @@ def to_milli(sid, px, py):
 
 
 def write_meta(path, ppu, pivot_norm):
-    """Sprite meta: mipmaps + trilinear (the camera zooms out 2-4x; art review M7), max 8192, no NPOT scaling,
-    alpha is transparency, custom pivot, ppu = stage ppu."""
+    """Sprite meta: NO mipmaps, max 8192, no NPOT scaling, alpha is transparency, custom pivot, ppu = stage ppu.
+
+    Mipmaps are off on purpose (2026-11-22, replaces art review M7): Unity does not block-compress mipmapped
+    non-power-of-two textures, so the 3840x2160 layers shipped as RGBA32 (about 44 MB each with mips)."""
     g = unity_meta._guid(path)
-    text = unity_meta._TEMPLATE.format(guid=g, mip=1, size=8192)
+    text = unity_meta._TEMPLATE.format(guid=g, mip=0, size=8192)
     old = "  alignment: 0\n  spritePivot: {x: 0.5, y: 0.5}\n  spritePixelsToUnits: 100\n"
     assert old in text, "unity_meta template changed; update write_meta"
     assert "    filterMode: 1\n" in text
