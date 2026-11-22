@@ -252,14 +252,65 @@ namespace ChibiClash.Netcode
         static Task<string> _signIn;
 
         /// <summary>
+        /// The project uses Enter Play Mode Options without a domain reload (EditorSettings), so statics survive between
+        /// Play sessions while Unity Services are shut down at exit. Forget the cached sign-in at each Play start.
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetStatics()
+        {
+            _signIn = null;
+            ChibiRegions.ResetCapturedCountry();   // captured again in UseInvariantCulture
+        }
+
+        /// <summary>
+        /// The OS culture seen when this process first started ("th-TH"), before the switch below. Deliberately NOT reset
+        /// per Play session: without a domain reload the thread culture is already invariant when the next session starts,
+        /// so this is the only place the real culture survives. It describes the machine, not a session, and never changes.
+        /// </summary>
+        static System.Globalization.CultureInfo _osCulture;
+        /// <summary>The country captured under <see cref="_osCulture"/> (same lifetime and reason: kept across Play sessions).</summary>
+        static string _osCountry;
+
+        /// <summary>
+        /// Online services need a neutral culture for formatting. On a PC whose Windows region uses the Thai Buddhist
+        /// calendar (dates like 22/11/2569), the PC player's secure WebSocket to Unity's "Wire" service failed every TLS
+        /// handshake (2026-11-22, player log), while the editor, which runs invariant, was fine. Text in any language still
+        /// displays normally; only number and date formatting becomes culture-neutral, which the game already assumes.
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void UseInvariantCulture()
+        {
+            // Regional matchmaking reads the device country from the culture: capture it BEFORE the switch (review 2026-11-22).
+            var current = System.Globalization.CultureInfo.CurrentCulture;
+            bool osCultureLive = !string.IsNullOrEmpty(current.Name);   // the invariant culture has Name ""
+            if (_osCulture == null && osCultureLive) _osCulture = current;
+            // Live OS culture: the region setting wins. Already invariant (a later Play session without a domain reload):
+            // the region API would describe the invariant culture (Mono may answer "US"), so use the saved culture's name.
+            if (osCultureLive)
+            {
+                ChibiRegions.CaptureDeviceCountry(current.Name);
+                if (_osCountry == null) _osCountry = ChibiRegions.DeviceCountry();
+            }
+            else ChibiRegions.CaptureDeviceCountry(_osCountry ?? "", _osCulture != null ? _osCulture.Name : "");
+            var c = System.Globalization.CultureInfo.InvariantCulture;
+            System.Globalization.CultureInfo.DefaultThreadCurrentCulture = c;
+            System.Globalization.CultureInfo.CurrentCulture = c;
+        }
+
+        /// <summary>
         /// Initialise Unity Services and sign in anonymously once per run (shared by rooms and friends; concurrent callers
-        /// await the same attempt). Returns null on success, else a player-facing reason.
+        /// await the same attempt). Returns null on success, else a player-facing reason. A cached success is only trusted
+        /// while the services really are initialised and signed in: otherwise the player id would be empty and every
+        /// Lobby call would fail with "400 Bad Request" (found 2026-11-22 after a Play Mode restart).
         /// </summary>
         public static Task<string> EnsureSignedInAsync()
         {
             if (string.IsNullOrEmpty(Application.cloudProjectId)) return Task.FromResult(NotLinkedMessage);
             if (Application.internetReachability == NetworkReachability.NotReachable) return Task.FromResult(NoInternetMessage);
-            if (_signIn == null || _signIn.IsCompleted && _signIn.Result != null) _signIn = SignInOnce();
+            bool stale = _signIn != null && _signIn.IsCompleted &&
+                         (_signIn.Result != null || UnityServices.State != ServicesInitializationState.Initialized ||
+                          !AuthenticationService.Instance.IsSignedIn);
+            if (_signIn == null || stale) _signIn = SignInOnce();
             return _signIn;
         }
 

@@ -65,6 +65,36 @@ the internet (the block says NO INTERNET otherwise); VS AI, local versus and tra
 - Reviewed by network-programmer (races, stale launches, rate limits) and security-engineer (relaunch spam, hostile
   lobby data, age gate) agents; all findings fixed.
 
+### Invite by name (`ChibiNameInvites`, `ChibiNameInviteRules`, tests: `ChibiNameInviteRulesTests`)
+
+- Type a player's in-game name (the first-launch name, no #tag, no friendship needed). Unity Lobby only.
+- Send: the inviter creates a public **beacon** lobby named `ChibiInvite`, 2 seats, closed by a random password nobody
+  keeps (never full, never joinable). Public data: `inv` (index **S5**) = `"ci2:"` + 32 hex of
+  SHA-256(protocol tag | lower-case invitee name); `proto`; `v` (format 2); `pl` = room code, inviter name and room
+  name (sanitised), XOR a keystream from SHA-256(protocol tag | name | salt | block), hex; `s` salt; `exp` Unix expiry.
+  Matchmaking uses S1-S4 and filters S1 == protocol tag, which a beacon never sets.
+- One beacon per player, at most one Send per 5 s. Heartbeats at 25 s, then every 30.5 s (more than 30 s apart, so it
+  adds at most one heartbeat to any 30 s window next to the room heartbeats; Lobby allows 5). Deleted after 60 s, on
+  cancel, when the room is full or leaves the room list. On quit the delete may not finish: the beacon then goes
+  inactive 30 s after its last heartbeat and leaves query results, and receivers drop it at its expiry anyway.
+- Receive (only on the online menu pages, never in a match and not while MATCHMAKING searches, which shares the
+  1-per-second Query limit): one query every 5-6 s (jitter) for S5 == my hash, 10 results, **newest first**;
+  "too many requests" -> wait 15-20 s. Every field is validated (an expiry further ahead than 60 s + 90 s clock skew
+  is forged); own beacons ignored; at most 3 pending; one per inviter (the newest wins); shown at most 60 s. An
+  invite whose beacon is missing from a non-full page is withdrawn; a full page proves nothing (junk beacons could
+  push a real one off it), so then only expiry removes it. Expired and answered invites are remembered and never
+  shown again. ACCEPT returns the code and the game calls `JoinByCode` (same version and age gates as a typed code).
+  DECLINE ignores that player for 60 s; 3 declines within 10 minutes pause all invites for 10 minutes. Nothing joins
+  by itself. The age gate fails closed.
+- Honest limits: names are self-reported and not unique, so every "Kira" sees an invite to "Kira" (the inviter's name
+  is shown). The hash and mask only stop a client that lists all lobbies from reading codes; anyone who knows the
+  name can read the code during the 60 s, and at worst takes the room's second seat, which the host sees. The
+  invitee does not learn who else got it, and the inviter is not told about a decline.
+- `ChibiRoomService.Refresh` skips beacons by their `inv` data key, not their name (a real room may be named
+  "ChibiInvite").
+- Verified 2026-11-22 with two instances (editor + Windows player): invite received and accepted within 4 s, the
+  room filled and the match started (evidence `production/qa/evidence/2026-11-22-invite-by-name-match-*.png`).
+
 ### Regional matchmaking (`ChibiRegions`, tests: `ChibiRegionsTests`)
 
 - **Location** = the device's region setting (`RegionInfo.CurrentRegion`, e.g. `TH`). No GPS, no IP lookup, no permission.

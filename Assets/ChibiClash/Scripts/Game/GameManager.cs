@@ -10,13 +10,14 @@ namespace ChibiClash
     /// on the deterministic simulation through <see cref="ChibiMatch"/>; the menus only READ it.
     /// Presentation is the copy-ghibli-smash fork's arcade UI (decision UI-1) with our five characters:
     ///   GameManager.cs         flow, pages, input routing, match start / end, loading steps, pre-match check
-    ///   GameManager.Menus.cs   loading, home, nav bar, Play / Online hub / Arcade / Training / Collection / Settings
+    ///   GameManager.Menus.cs   loading, home, nav bar, Play (Vs Online / Vs Local / Vs CPU) and its play-style
+    ///                          screen, Arcade / Training / Collection / Settings
     ///   GameManager.Select.cs  character select (roster grid, side panels, loadout) and the stage carousel
-    ///   GameManager.Online.cs  onboarding (age, name, account), online lobby, friends, rooms, invites
+    ///   GameManager.Online.cs  onboarding (age, name, account) and the Vs Online Solo pages (hub, join, matchmaking, room)
     /// </summary>
     public partial class GameManager : MonoBehaviour
     {
-        enum Page { Loading, Home, Play, Online, Training, Arcade, Collection, Settings, Select, PreCheck, Match, Lobby, Rooms, Room }
+        enum Page { Loading, Home, Play, PlayStyle, Training, Arcade, Collection, Settings, Select, PreCheck, Match, Rooms, Room, Matchmaking }
 
         public SaveData Save { get; private set; }
 
@@ -107,6 +108,8 @@ namespace ChibiClash
             roomsSvc.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
             roomsSvc.InMatch = () => page == Page.Match || pendingOnline != null;
             roomsSvc.ScreenOpen = () => page == Page.Room;   // room starts only happen while the room screen is shown
+            nameInvites = gameObject.AddComponent<Netcode.ChibiNameInvites>();   // INVITE A FRIEND BY NAME (Vs Online rooms)
+            nameInvites.Bind(roomsSvc);   // name, age gate and in-match come from the room service
             social.Bind(roomsSvc);   // friend invites go into named rooms
             social.PreferredName = () => Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
             // Age gate enforced inside both services too, not only by the menu (no side path can start online play).
@@ -141,7 +144,7 @@ namespace ChibiClash
                 social.ResetForAccountChange();
                 roomsSvc.ResetForAccountChange();
                 roomNameInput = null;
-                if (page == Page.Lobby || page == Page.Rooms || page == Page.Room) Enter(Page.Home);
+                if (page == Page.Rooms || page == Page.Room || page == Page.Matchmaking) Enter(Page.Home);
             }
             // The account has no public name yet but we have one: give it to the account now.
             string local = Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
@@ -173,6 +176,7 @@ namespace ChibiClash
             MenuInput.Poll();
             UpdateWipe();
             UpdatePendingOnline();
+            if (nameInvites != null) nameInvites.Enabled = NameInvitesWanted;   // only on the online menu pages, never in a match
             WatchOnlineSounds();
             if (page == Page.Match)
             {
@@ -195,17 +199,20 @@ namespace ChibiClash
             if (DialogOpen)
             {
                 PadDialogInput();
+                // CREATE ROOM / JOIN ROOM windows: the gamepad moves between their buttons (keys type into the field).
+                if (roomDialog || joinDialog) PadDialogNav();
                 // Text-entry dialogs own the keyboard; only Back closes the ones that may be closed.
                 if (MenuInput.Any(NavCmd.Back))
                 {
                     if (roomDialog) { roomDialog = false; UiSound.Back(); }
+                    else if (joinDialog) { joinDialog = false; UiSound.Back(); }
                     else if (nameDialog && !NeedsFirstName) { nameDialog = false; UiSound.Back(); }
                 }
                 return;
             }
             if (GUIUtility.keyboardControl != 0)
             {
-                // Typing into a text field (room code, friend name, LAN address): keys type, Esc leaves the field.
+                // Typing into a text field (room code, invite name): keys type, Esc leaves the field.
                 if (MenuInput.Any(NavCmd.Back)) { GUIUtility.keyboardControl = 0; UiSound.Back(); }
                 return;
             }
@@ -249,7 +256,17 @@ namespace ChibiClash
         }
 
         /// <summary>A modal onboarding / text-entry dialog is on screen (keyboard menu navigation is off).</summary>
-        bool DialogOpen => NeedsOnboarding || nameDialog || roomDialog || NeedsFirstName;
+        bool DialogOpen => NeedsOnboarding || nameDialog || roomDialog || joinDialog || NeedsFirstName;
+
+        /// <summary>Gamepad only (the keyboard is typing): D-pad moves the focus, A presses the focused button.</summary>
+        static void PadDialogNav()
+        {
+            if (MenuInput.PadFired(NavCmd.Up)) Gui.Navigate(0, -1);
+            if (MenuInput.PadFired(NavCmd.Down)) Gui.Navigate(0, 1);
+            if (MenuInput.PadFired(NavCmd.Left)) Gui.Navigate(-1, 0);
+            if (MenuInput.PadFired(NavCmd.Right)) Gui.Navigate(1, 0);
+            if (MenuInput.PadFired(NavCmd.Confirm)) Gui.Activate();
+        }
 
         /// <summary>Keyboard / gamepad driving of every non-select screen through Gui's spatial focus.</summary>
         void MenuNav()
@@ -278,8 +295,9 @@ namespace ChibiClash
             {
                 case Page.Home: OpenExitPrompt(); return;
                 case Page.PreCheck: UiSound.Back(); Go(Page.Select); return;
-                case Page.Lobby: LobbyBack(); return;
-                case Page.Rooms: UiSound.Back(); Go(Page.Online); return;
+                case Page.PlayStyle: UiSound.Back(); Go(Page.Play); return;
+                case Page.Rooms: UiSound.Back(); OpenPlayStyle(true); return;   // back to the Vs Online play styles
+                case Page.Matchmaking: UiSound.Back(); OpenRoomsPage(); return;   // stops the search (Enter)
                 case Page.Room:
                     if (roomsSvc.Launching || pendingOnline != null) { UiSound.Error(); return; }
                     UiSound.Back();
@@ -426,13 +444,13 @@ namespace ChibiClash
 
         // ---------------------------------------------------------------- navigation
 
-        static readonly string[] NavNames = { "HOME", "PLAY", "ONLINE", "TRAINING", "ARCADE", "COLLECTION", "SETTINGS" };
-        static readonly Page[] NavPages = { Page.Home, Page.Play, Page.Online, Page.Training, Page.Arcade, Page.Collection, Page.Settings };
+        static readonly string[] NavNames = { "HOME", "PLAY", "TRAINING", "ARCADE", "COLLECTION", "SETTINGS" };
+        static readonly Page[] NavPages = { Page.Home, Page.Play, Page.Training, Page.Arcade, Page.Collection, Page.Settings };
 
         static bool IsNavPage(Page p) => Array.IndexOf(NavPages, p) >= 0;
 
-        /// <summary>The nav tab a page belongs to (the online sub-pages light up ONLINE).</summary>
-        static Page NavOwner(Page p) => p == Page.Lobby || p == Page.Rooms || p == Page.Room ? Page.Online : p;
+        /// <summary>The nav tab a page belongs to (the play-style screen and the Vs Online Solo pages light up PLAY).</summary>
+        static Page NavOwner(Page p) => p == Page.PlayStyle || p == Page.Rooms || p == Page.Room || p == Page.Matchmaking ? Page.Play : p;
 
         void CycleTab(int d)
         {
@@ -448,6 +466,9 @@ namespace ChibiClash
 
         void Enter(Page p)
         {
+            // Leaving the MATCHMAKING page any way (BACK, a nav tab, an accepted invite) stops the search, so a match
+            // never starts on another screen. A found match switches to Page.Match directly, not through here.
+            if (page == Page.Matchmaking && p != Page.Matchmaking) StopMatchmaking();
             page = p;
             pageSince = Time.unscaledTime;
             exitPrompt = false;
@@ -598,8 +619,9 @@ namespace ChibiClash
         }
 
         /// <summary>
-        /// Jump straight to a screen (editor testing / automation): home, play (or brawl), online, training, arcade,
-        /// collection (or armory), settings, select, precheck, matchmaking, rooms, createroom, lobby, friends.
+        /// Jump straight to a screen (editor testing / automation): home, play (or brawl), online (the Vs Online play
+        /// styles), local (the Vs Local play styles), training, arcade, collection (or armory), settings, select,
+        /// precheck, rooms (the Vs Online solo hub), createroom, matchmaking (starts a real search).
         /// </summary>
         public void ShowScreen(string screen)
         {
@@ -614,7 +636,11 @@ namespace ChibiClash
                 case "precheck": SetupSelect(true, false, false); Enter(Page.PreCheck); preCheckT = 0f; return;
                 case "brawl":
                 case "play": Enter(Page.Play); return;
-                case "online": Enter(Page.Online); return;
+                case "online":
+                    if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
+                    OpenPlayStyle(true);
+                    return;
+                case "local": OpenPlayStyle(false); return;
                 case "training": Enter(Page.Training); return;
                 case "arcade": Enter(Page.Arcade); return;
                 case "armory":
@@ -622,6 +648,7 @@ namespace ChibiClash
                 case "settings": Enter(Page.Settings); return;
                 case "matchmaking":
                     if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
+                    OpenRoomsPage();
                     StartMatchmaking();
                     return;
                 case "createroom":
@@ -629,11 +656,6 @@ namespace ChibiClash
                     if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
                     OpenRoomsPage();
                     if (screen == "createroom") OpenRoomDialog();
-                    return;
-                case "lobby":
-                case "friends":
-                    if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
-                    OpenLobby(screen == "friends");
                     return;
                 default: Enter(Page.Home); return;
             }
@@ -930,13 +952,20 @@ namespace ChibiClash
             }
             else
             {
-                Gui.Interactive = wipeStart < 0f && !exitPrompt;
+                // A room invite pop-up sits on top of the page: the page under the mouse pointer must not take its clicks.
+                bool invite = !exitPrompt && NameInviteShown;
+                Gui.Interactive = wipeStart < 0f && !exitPrompt && !(invite && InvitePopupRect.Contains(Event.current.mousePosition));
                 DrawMenus();
                 Gui.Alpha = 1f;
                 if (exitPrompt)
                 {
                     Gui.Interactive = wipeStart < 0f;
                     ExitModal();
+                }
+                else if (invite)
+                {
+                    Gui.Interactive = wipeStart < 0f;
+                    NameInvitePopup();
                 }
                 DrawToast();
             }
@@ -964,7 +993,14 @@ namespace ChibiClash
                             LeaveMatch(Page.Room);   // room fight: back to the room for a rematch
                             roomsSvc.OnMatchEnded();
                         }
-                        else LeaveMatch(choice == Hud.Action.Menu ? Page.Home : Page.Online);
+                        else
+                        {
+                            // A matchmaking fight (no room): BACK returns to the Vs Online Solo hub (its BACK leads to the
+                            // Vs Online play styles), MENU to the home menu.
+                            playStyleOnline = true;
+                            LeaveMatch(choice == Hud.Action.Menu ? Page.Home : Page.Rooms);
+                            if (page == Page.Rooms) roomsSvc.Refresh(force: true);
+                        }
                         break;
                     }
                     bool toMenu = choice == Hud.Action.Menu;
@@ -1013,20 +1049,26 @@ namespace ChibiClash
                 RoomDialog();
                 return;
             }
+            if (joinDialog)
+            {
+                DialogBackdrop("JOIN A ROOM");
+                JoinDialog();
+                return;
+            }
             switch (page)
             {
                 case Page.Home: HomeView(); break;
                 case Page.Play: PlayView(); break;
-                case Page.Online: OnlineView(); break;
+                case Page.PlayStyle: PlayStyleView(); break;
                 case Page.Training: TrainingView(); break;
                 case Page.Arcade: ArcadeView(); break;
                 case Page.Collection: CollectionView(); break;
                 case Page.Settings: SettingsView(); break;
                 case Page.Select: SelectView(); break;
                 case Page.PreCheck: PreCheckView(); break;
-                case Page.Lobby: LobbyView(); break;
                 case Page.Rooms: RoomsView(); break;
                 case Page.Room: RoomView(); break;
+                case Page.Matchmaking: MatchmakingView(); break;
                 default: HomeView(); break;
             }
         }

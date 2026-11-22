@@ -55,7 +55,8 @@ Rollback only works if both computers get **exactly** the same result. So the ga
 | Mode | How you connect |
 |---|---|
 | 🏠 Rooms | Make a private room and share its code with a friend |
-| 🔍 Matchmaking | Finds the closest player first (your country → region → world) |
+| 📨 Invite by name | In your room, type a friend's in-game name. They see the invite for 60 seconds and press join. ✅ Tested with 2 games: joined in 4 seconds. |
+| 🔍 Matchmaking | Finds the closest player first (your country → region → world). ✅ Tested with 2 games: matched in 12 seconds. |
 | 🏢 LAN | Same Wi-Fi or network, no internet needed (PC version only) |
 | 🤖 vs AI / Local / Training | Offline, the same game rules |
 
@@ -73,12 +74,14 @@ play together.
 ## ⚠️ Limits
 
 - 👮 **No server means no referee.** A player can force a "no contest". The host picks the random seed.
+- 🏷️ **Names are not unique.** An invite by name reaches every player with that name, so the invite shows who sent
+  it. Nothing joins by itself, and at most 3 invites wait at once.
 - 🌍 **Web version** (GitHub Pages link): online play goes through Relay with secure WebSockets. LAN is not possible
   in a browser. 🤝 Web and PC players can play each other (Unity supports this cross-play).
 
 ## ✅ Testing
 
-🧪 Automatic tests check the network code: **1,541 passing** at the last full run.
+🧪 Automatic tests check the network code: **1,863 passing** at the last full run. GitHub runs them on every push too.
 
 - 🔐 known-result tests
 - ⏪ rollback tests

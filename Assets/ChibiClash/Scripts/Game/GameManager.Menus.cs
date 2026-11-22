@@ -4,16 +4,16 @@ using UnityEngine;
 namespace ChibiClash
 {
     /// <summary>
-    /// Loading screen, home menu, top navigation bar, Play / Online hub / Arcade / Training / Collection / Settings pages
-    /// and the shared screen chrome (ported from the copy-ghibli-smash fork, decision UI-1, with our five characters).
+    /// Loading screen, home menu, top navigation bar, Play (Vs Online / Vs Local / Vs CPU) and its play-style screen,
+    /// Arcade / Training / Collection / Settings pages and the shared screen chrome (ported from the copy-ghibli-smash
+    /// fork, decision UI-1, with our five characters).
     /// </summary>
     public partial class GameManager
     {
-        static readonly string[] HomeItems = { "PLAY", "ONLINE", "TRAINING", "ARCADE", "CHARACTER COLLECTION", "SETTINGS", "EXIT GAME" };
+        static readonly string[] HomeItems = { "PLAY", "TRAINING", "ARCADE", "CHARACTER COLLECTION", "SETTINGS", "EXIT GAME" };
         static readonly string[] HomeDesc =
         {
-            "VS CPU, local versus with a friend, or training",
-            "Matchmaking, your own rooms, friends and LAN play",
+            "Vs Online, Vs Local with a friend, or Vs CPU",
             "Camera setup, gesture practice and a training dummy",
             "All five rivals back to back across every stage",
             "Skins, weapons and the cosmetic banner",
@@ -35,6 +35,8 @@ namespace ChibiClash
         static readonly string[] StatNames = { "POWER", "SPEED", "RANGE", "ENDURANCE", "RECOVERY" };
 
         int homeSel;
+        /// <summary>Home menu index of EXIT GAME (the last item).</summary>
+        static int HomeExit => HomeItems.Length - 1;
         float homeSelAnim;
         int featured;
         float featuredSince;
@@ -268,7 +270,7 @@ namespace ChibiClash
             float sa = Gui.EaseOut((since - 0.15f) / 0.3f);
             var slab = new Rect(-30f, y0 + homeSelAnim * step + 3f, 30f + 470f * sa, step - 6f);
             Gui.Skew(new Rect(slab.x + 5f, slab.y + 5f, slab.width, slab.height), new Color(0f, 0f, 0f, 0.4f));
-            Gui.Skew(slab, homeSel == 6 ? Gui.Steel : Gui.P1);
+            Gui.Skew(slab, homeSel == HomeExit ? Gui.Steel : Gui.P1);
             Gui.Skew(new Rect(slab.xMax + 8f, slab.y, 10f, slab.height), Gui.P2);
             Gui.Skew(new Rect(slab.xMax + 24f, slab.y, 4f, slab.height), Gui.Paper);
 
@@ -283,8 +285,7 @@ namespace ChibiClash
                 Gui.Alpha = ap;
                 Gui.Text(new Rect(r.x, r.y, 36f, r.height), (i + 1).ToString("00"), 13, sel ? Gui.Paper : Gui.Muted, TextAnchor.MiddleLeft, true, false);
                 float shift = sel ? 14f : 0f;
-                string label = i == 1 && !PlayerIdentity.OnlineAllowed(Save.ageBand) ? "ONLINE  13+" : HomeItems[i];
-                Gui.Display(new Rect(r.x + 40f + shift, r.y, 440f, r.height), label, sel ? 38 : 32, sel ? Gui.Paper : (i == 6 ? Gui.Muted : WithA(Gui.Paper, 0.78f)), TextAnchor.MiddleLeft, 0.2f, sel ? Gui.Ink : Color.clear);
+                Gui.Display(new Rect(r.x + 40f + shift, r.y, 440f, r.height), HomeItems[i], sel ? 38 : 32, sel ? Gui.Paper : (i == HomeExit ? Gui.Muted : WithA(Gui.Paper, 0.78f)), TextAnchor.MiddleLeft, 0.2f, sel ? Gui.Ink : Color.clear);
                 Gui.Alpha = 1f;
                 if (click) HomeSelect(i);
             }
@@ -332,11 +333,10 @@ namespace ChibiClash
             switch (i)
             {
                 case 0: Go(Page.Play); break;
-                case 1: Go(Page.Online); break;
-                case 2: Go(Page.Training); break;
-                case 3: Go(Page.Arcade); break;
-                case 4: Go(Page.Collection); break;
-                case 5: Go(Page.Settings); break;
+                case 1: Go(Page.Training); break;
+                case 2: Go(Page.Arcade); break;
+                case 3: Go(Page.Collection); break;
+                case 4: Go(Page.Settings); break;
                 default: OpenExitPrompt(); break;
             }
         }
@@ -354,26 +354,112 @@ namespace ChibiClash
             if (Gui.Button(new Rect(r.xMax - 250f, r.yMax - 78f, 220f, 52f), "EXIT GAME", Gui.P1, 18)) QuitGame();
         }
 
-        // ---------------------------------------------------------------- PLAY (offline modes)
+        // ---------------------------------------------------------------- PLAY (Vs Online / Vs Local / Vs CPU)
+
+        const string OnlineLockedMsg = "Online modes are for players 13 and older.";
+        const string NoInternetMsg = "No internet: connect Wi-Fi or mobile data. VS AI works offline.";
+        const string FourPlayerMsg = "2v2 and Battle Royale need 4-player support, coming in a later update.";
+
+        /// <summary>The internet is reachable (Wi-Fi or mobile data). Vs Online needs it; Vs Local and Vs CPU never do.</summary>
+        static bool InternetUp => Application.internetReachability != NetworkReachability.NotReachable;
 
         void PlayView()
         {
             Backdrop();
             NavBar();
-            var a = BeginPage("01", "PLAY", "CHOOSE YOUR BATTLE  ·  NO INTERNET NEEDED");
+            bool onlineOk = PlayerIdentity.OnlineAllowed(Save.ageBand);
+            bool online = InternetUp;
+            var a = BeginPage("01", "PLAY", "CHOOSE YOUR BATTLE  ·  VS ONLINE · VS LOCAL · VS CPU");
             float qw = 380f;
             float cw = (a.width - qw - 30f - 44f) / 3f;
             float ch = Mathf.Min(a.height - 16f, 430f);
-            // VS AI runs entirely on this device: no internet, no sign-in, nothing online is touched.
-            if (ModeCard(0, new Rect(a.x, a.y + 8f, cw, ch), "VS\nCPU", "1P VS COM", "The computer picks a random fighter every fight. Earn coins and quest progress.", Gui.P1, "COM  " + DifficultyUpper[Save.settings.cpuDifficulty]))
+            // Vs Online: 13+ and an internet connection, else a locked card that explains why when clicked.
+            string net = !onlineOk ? "13+ ONLY" : !online ? "NO INTERNET" : "1P VS 1P";
+            if (ModeCard(0, new Rect(a.x, a.y + 8f, cw, ch), "VS\nONLINE", net,
+                         "Rooms with friends, or matchmaking near you.", Gui.Gold,   // two lines: clears the footer
+                         onlineOk && online ? "CHOOSE A PLAY STYLE" : "LOCKED", !onlineOk || !online))
+            {
+                if (!onlineOk) Deny(OnlineLockedMsg);
+                else if (!online) Deny(NoInternetMsg);
+                else OpenPlayStyle(true);
+            }
+            if (ModeCard(1, new Rect(a.x + cw + 22f, a.y + 8f, cw, ch), "VS\nLOCAL", "1P VS 2P",
+                         "Play on this device: one keyboard split in half, or two gamepads.", Gui.P2, "CHOOSE A PLAY STYLE"))
+                OpenPlayStyle(false);
+            // VS CPU runs entirely on this device: no internet, no sign-in, nothing online is touched.
+            if (ModeCard(2, new Rect(a.x + 2f * (cw + 22f), a.y + 8f, cw, ch), "VS\nCPU", "1P VS COM", "The computer picks a random fighter every fight. Earn coins and quest progress.", Gui.P1, "COM  " + DifficultyUpper[Save.settings.cpuDifficulty]))
                 BeginSelect(true, false);
-            if (ModeCard(1, new Rect(a.x + cw + 22f, a.y + 8f, cw, ch), "LOCAL\nVERSUS", "1P VS 2P", "Two players: one keyboard split in half, or two gamepads.", Gui.P2, "2 PLAYERS"))
-                BeginSelect(false, false);
-            if (ModeCard(2, new Rect(a.x + 2f * (cw + 22f), a.y + 8f, cw, ch), "TRAINING", "1P VS DUMMY", "Practice combos and gesture ultimates on a dummy that never stays down.", Gui.Gold, "NO REWARDS"))
-                BeginSelect(true, true);
             Quests(new Rect(a.xMax - qw, a.y + 8f, qw, a.height - 8f));
             EndPage();
             NavHints("PLAY");
+        }
+
+        // ---------------------------------------------------------------- PLAY STYLE (after Vs Online / Vs Local)
+
+        /// <summary>The play-style screen was opened from Vs Online (true) or Vs Local (false).</summary>
+        bool playStyleOnline;
+
+        /// <summary>Opens the play-style screen (Solo / 2v2 / Battle Royale) for Vs Online or Vs Local.</summary>
+        void OpenPlayStyle(bool online)
+        {
+            playStyleOnline = online;
+            Enter(Page.PlayStyle);
+        }
+
+        /// <summary>
+        /// Solo (1v1), 2v2 (Team) and Battle Royale. Only Solo is playable: the fight engine has two fighters, so the two
+        /// 4-player styles are locked cards marked COMING SOON. Solo online opens the Vs Online Solo hub (create / join a
+        /// room, matchmaking), solo local the
+        /// character select. Right panel: the connection state (online) or how local play works, and BACK.
+        /// </summary>
+        void PlayStyleView()
+        {
+            bool online = playStyleOnline;
+            if (online && !PlayerIdentity.OnlineAllowed(Save.ageBand)) { Enter(Page.Play); return; }   // age gate (13+), defence in depth
+            Backdrop();
+            NavBar();
+            bool net = InternetUp;
+            var a = BeginPage("01", online ? "VS ONLINE" : "VS LOCAL", "CHOOSE A PLAY STYLE  ·  SOLO · 2V2 · BATTLE ROYALE");
+            float qw = 380f;
+            float cw = (a.width - qw - 30f - 44f) / 3f;
+            float ch = Mathf.Min(a.height - 16f, 430f);
+
+            bool soloLocked = online && !net;
+            if (ModeCard(0, new Rect(a.x, a.y + 8f, cw, ch), "SOLO\n1V1", soloLocked ? "NO INTERNET" : "1 VS 1",
+                         online ? "Create or join a room, or matchmake."
+                                : "Two players on this device: one keyboard split in half, or two gamepads.",
+                         online ? Gui.Gold : Gui.P2, soloLocked ? "LOCKED" : online ? "ROOMS  ·  MATCHMAKING" : "2 PLAYERS", soloLocked))
+            {
+                if (soloLocked) Deny(NoInternetMsg);
+                else if (online) OpenRoomsPage();
+                else BeginSelect(false, false);
+            }
+            if (ModeCard(1, new Rect(a.x + cw + 22f, a.y + 8f, cw, ch), "2V2\nTEAM", "4P · 2 TEAMS",
+                         "Two teams of two. No friendly fire: your hits never hurt your teammate.", Gui.P2, "COMING SOON", true))
+                Deny(FourPlayerMsg);
+            if (ModeCard(2, new Rect(a.x + 2f * (cw + 22f), a.y + 8f, cw, ch), "BATTLE\nROYALE", "4P · FREE-FOR-ALL",
+                         "Everyone for themselves. The last fighter standing wins.", Gui.P1, "COMING SOON", true))
+                Deny(FourPlayerMsg);
+
+            // Right: what this mode needs, and BACK to the Play menu.
+            var info = new Rect(a.xMax - qw, a.y + 8f, qw, a.height - 8f);
+            var sc = !online ? Gui.P2 : net ? Gui.Green : Gui.P1;
+            Gui.Box(info, sc);
+            float x = info.x + 22f, w = info.width - 44f;
+            Gui.Text(new Rect(x, info.y + 18f, w, 20f), online ? "CONNECTION" : "SAME DEVICE", 13, Gui.Muted, TextAnchor.MiddleLeft);
+            float blink = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f);
+            Gui.Skew(new Rect(x, info.y + 50f, 14f, 30f), WithA(sc, 0.5f + 0.5f * blink), 0.3f);
+            Gui.Display(new Rect(x + 26f, info.y + 40f, w, 50f), !online ? "2 PLAYERS" : net ? "READY" : "OFFLINE", 42, sc);
+            string body = !online ? "No internet needed. Each player picks a fighter on the character select screen."
+                        : !net ? "No internet right now. Connect Wi-Fi or mobile data, or play Vs Local or Vs CPU."
+                        : "Rollback netcode: both games run the same fight from the same inputs, so it stays fast and fair.";
+            Gui.Text(new Rect(x, info.y + 100f, w, 110f), body, 14, Gui.Paper, TextAnchor.UpperLeft, false);
+            Gui.Text(new Rect(x, info.y + 214f, w, 60f), "2v2 and Battle Royale arrive with 4-player support in a later update.", 13, Gui.Muted, TextAnchor.UpperLeft, false);
+            if (online && roomsSvc.MyRooms.Count > 0)
+                Gui.Text(new Rect(x, info.y + 270f, w, 20f), "YOUR ROOMS: " + roomsSvc.MyRooms.Count, 13, Gui.Gold, TextAnchor.MiddleLeft);
+            if (Gui.Button(new Rect(x, info.yMax - 70f, w, 50f), "BACK", Gui.Steel, 18)) { UiSound.Back(); Go(Page.Play); }
+            EndPage();
+            NavHints(online ? "VS ONLINE  ·  PLAY STYLE" : "VS LOCAL  ·  PLAY STYLE");
         }
 
         /// <summary>Tall slanted mode card; lifts and streaks when hot. A locked card still reports clicks (to explain why).</summary>
@@ -433,70 +519,13 @@ namespace ChibiClash
             Gui.Text(new Rect(q.x + 18f, q.yMax - 54f, q.width - 36f, 46f), "Coins come only from playing: wins, PvE, quests and good posture tracked by the camera.", 12, Gui.Muted, TextAnchor.MiddleLeft, false);
         }
 
-        // ---------------------------------------------------------------- ONLINE hub
-
-        void OnlineView()
-        {
-            Backdrop();
-            NavBar();
-            bool onlineOk = PlayerIdentity.OnlineAllowed(Save.ageBand);
-            // MATCHMAKING and ROOMS need the internet (Wi-Fi or mobile data); VS AI, local versus and training never do.
-            bool online = Application.internetReachability != NetworkReachability.NotReachable;
-            const string Locked = "Online modes are for players 13 and older.";
-            const string NoNet = "No internet: connect Wi-Fi or mobile data. VS AI works offline.";
-            var a = BeginPage("02", "ONLINE", "MATCHMAKING · ROOMS · FRIENDS · LAN");
-            float cw = 270f, ch = Mathf.Min(a.height - 16f, 420f);
-            string net = !onlineOk ? "13+ ONLY" : !online ? "NO INTERNET" : "ONLINE";
-            if (ModeCard(0, new Rect(a.x, a.y + 8f, cw, ch), "MATCH\nMAKING", net == "ONLINE" ? "QUICK MATCH" : net,
-                         "Closest players first: your country, nearby countries, then the world.", Gui.P1,
-                         onlineOk && online ? "FIND A RIVAL NOW" : "LOCKED", !onlineOk || !online))
-            {
-                if (!onlineOk) Deny(Locked);
-                else if (!online) Deny(NoNet);
-                else StartMatchmaking();
-            }
-            if (ModeCard(1, new Rect(a.x + cw + 22f, a.y + 8f, cw, ch), "ROOMS", net == "ONLINE" ? "PRIVATE" : net,
-                         "Your own named rooms. Invite a friend, both press OK, then START FIGHT.", Gui.Gold,
-                         onlineOk && online ? "CREATE OR JOIN" : "LOCKED", !onlineOk || !online))
-            {
-                if (!onlineOk) Deny(Locked);
-                else if (!online) Deny(NoNet);
-                else OpenRoomsPage();
-            }
-            if (ModeCard(2, new Rect(a.x + 2f * (cw + 22f), a.y + 8f, cw, ch), "FRIENDS\n& LAN", onlineOk ? "SOCIAL" : "13+ ONLY",
-                         "Friends list, invites by name, room codes and same-network play.", Gui.P2,
-                         onlineOk ? "OPEN LOBBY" : "LOCKED", !onlineOk))
-            {
-                if (!onlineOk) Deny(Locked);
-                else OpenLobby(true);
-            }
-
-            var info = new Rect(a.x + 3f * (cw + 22f) + 26f, a.y + 8f, a.width - 3f * (cw + 22f) - 26f, ch);
-            Gui.Box(info, onlineOk && online ? Gui.Green : Gui.P1);
-            float x = info.x + 22f, w = info.width - 44f;
-            Gui.Text(new Rect(x, info.y + 18f, w, 20f), "CONNECTION", 13, Gui.Muted, TextAnchor.MiddleLeft);
-            float blink = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f);
-            var sc = onlineOk && online ? Gui.Green : Gui.P1;
-            Gui.Skew(new Rect(x, info.y + 50f, 14f, 30f), WithA(sc, 0.5f + 0.5f * blink), 0.3f);
-            Gui.Display(new Rect(x + 26f, info.y + 40f, w, 50f), onlineOk ? (online ? "READY" : "OFFLINE") : "13+ ONLY", 42, sc);
-            string body = !onlineOk ? "Online play is for players 13 and older. Every offline mode is open to you."
-                        : !online ? "No internet right now. LAN play on the same network still works from FRIENDS & LAN."
-                        : "Rollback netcode: both games run the same fight from the same inputs, so it stays fast and fair.";
-            Gui.Text(new Rect(x, info.y + 100f, w, 110f), body, 14, Gui.Paper, TextAnchor.UpperLeft, false);
-            if (onlineOk && roomsSvc.MyRooms.Count > 0)
-                Gui.Text(new Rect(x, info.y + 214f, w, 20f), "YOUR ROOMS: " + roomsSvc.MyRooms.Count, 13, Gui.Gold, TextAnchor.MiddleLeft);
-            if (Gui.Button(new Rect(x, info.yMax - 70f, w, 50f), "PLAY VS CPU", Gui.P1, 17)) BeginSelect(true, false);
-            EndPage();
-            NavHints("ONLINE");
-        }
-
         // ---------------------------------------------------------------- ARCADE
 
         void ArcadeView()
         {
             Backdrop();
             NavBar();
-            var a = BeginPage("04", "ARCADE", "FIVE RIVALS · ONE RUN");
+            var a = BeginPage("03", "ARCADE", "FIVE RIVALS · ONE RUN");
             var box = new Rect(a.x, a.y + 8f, 470f, a.height - 8f);
             Gui.Box(box, Gui.P1);
             float x = box.x + 26f, w = box.width - 52f, y = box.y + 22f;
@@ -552,7 +581,7 @@ namespace ChibiClash
         {
             Backdrop();
             NavBar();
-            var a = BeginPage("03", "TRAINING", "CAMERA SETUP & PRACTICE");
+            var a = BeginPage("02", "TRAINING", "CAMERA SETUP & PRACTICE");
             TrainingTab(a);
             EndPage();
             if (MenuInput.UsingGamepad) Gui.HintBar("TRAINING  /  CV SETUP", "D-PAD", "MOVE", "A", "SELECT", "B", "BACK", "LB / RB", "TABS");
@@ -615,7 +644,7 @@ namespace ChibiClash
         {
             Backdrop();
             NavBar();
-            var a = BeginPage("05", "COLLECTION", "SKINS · WEAPONS · COSMETIC BANNER");
+            var a = BeginPage("04", "COLLECTION", "SKINS · WEAPONS · COSMETIC BANNER");
             ArmoryTab(a);
             EndPage();
             Gui.HintBar("CHARACTER COLLECTION", Gui.Key("WASD", "D-PAD"), "MOVE", Gui.Key("SPACE", "A"), "SELECT", Gui.Key("ESC", "B"), "BACK", Gui.Key("Q / E", "LB / RB"), "TABS");
@@ -714,7 +743,7 @@ namespace ChibiClash
         {
             Backdrop();
             NavBar();
-            var a = BeginPage("06", "SETTINGS", "GAME · CAMERA · CONTROLS");
+            var a = BeginPage("05", "SETTINGS", "GAME · CAMERA · CONTROLS");
             SettingsTab(a);
             EndPage();
             Gui.HintBar(listening ? "PRESS A KEY OR CLICK THE BOX  ·  ESC / PAD B CANCELS  ·  PAD BUTTONS CAN'T BE BOUND" : "SETTINGS", Gui.Key("WASD", "D-PAD"), "MOVE", Gui.Key("SPACE", "A"), "SELECT", Gui.Key("ESC", "B"), "BACK", Gui.Key("Q / E", "LB / RB"), "TABS");

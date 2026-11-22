@@ -186,9 +186,46 @@ namespace ChibiClash.Netcode
         /// This device's country from the operating system's region setting (no permission, no GPS, no network). Returns
         /// "" when the platform reports no real region (e.g. the invariant culture), which means "search worldwide".
         /// </summary>
-        public static string DeviceCountry()
+        /// <remarks>
+        /// NetworkRoomManager switches the process to the invariant culture at startup (Thai Buddhist calendar TLS fix), and
+        /// on Mono RegionInfo.CurrentRegion follows the current culture, so reading it afterwards gives no country. The
+        /// startup hook therefore calls <see cref="CaptureDeviceCountry(string)"/> FIRST; this returns that captured value.
+        /// </remarks>
+        public static string DeviceCountry() => _capturedCountry ?? ChooseCountry(ReadRegionIso(), CultureInfo.CurrentCulture.Name);
+
+        // The country read before the culture switch (null = not captured in this Play session). Reset by
+        // NetworkRoomManager's SubsystemRegistration hook through ResetCapturedCountry.
+        static string _capturedCountry;
+
+        /// <summary>
+        /// Remember the device country now, while the OS culture <paramref name="osCultureName"/> (e.g. "th-TH") is still
+        /// known. Called by NetworkRoomManager just before it switches to the invariant culture.
+        /// </summary>
+        public static void CaptureDeviceCountry(string osCultureName) => CaptureDeviceCountry(ReadRegionIso(), osCultureName);
+
+        /// <summary>Capture from explicit values (testable): the region's ISO code wins when it is a known country.</summary>
+        public static void CaptureDeviceCountry(string regionIso, string osCultureName) =>
+            _capturedCountry = ChooseCountry(regionIso, osCultureName);
+
+        /// <summary>Forget the captured country (each Play session captures it again).</summary>
+        public static void ResetCapturedCountry() => _capturedCountry = null;
+
+        /// <summary>
+        /// The device country from the region's 2-letter code, else from the culture name's region part ("th-TH" -> "TH",
+        /// "zh-Hant-TW" -> "TW"). "" when neither is a known country (e.g. the invariant culture, region "IV").
+        /// </summary>
+        public static string ChooseCountry(string regionIso, string cultureName)
         {
-            try { return NormalizeCountry(RegionInfo.CurrentRegion.TwoLetterISORegionName); }
+            string r = NormalizeCountry(regionIso);
+            if (r.Length > 0) return r;
+            if (string.IsNullOrEmpty(cultureName)) return "";
+            int dash = cultureName.LastIndexOf('-');
+            return dash < 0 ? "" : NormalizeCountry(cultureName.Substring(dash + 1));
+        }
+
+        static string ReadRegionIso()
+        {
+            try { return RegionInfo.CurrentRegion.TwoLetterISORegionName; }
             catch (Exception) { return ""; }   // some platforms have no region data
         }
     }

@@ -220,10 +220,13 @@ namespace ChibiClash
         void LeaveSelect()
         {
             UiSound.Back();
-            var to = arcade ? Page.Arcade : pending.training ? Page.Training : Page.Play;
+            // Vs Local (Solo) came through the play-style screen: back goes there; Vs CPU goes back to Play.
+            bool local = !arcade && !pending.training && !pending.cpu[1];
+            var to = arcade ? Page.Arcade : pending.training ? Page.Training : local ? Page.PlayStyle : Page.Play;
             Wipe(null, () =>
             {
                 arcade = false;
+                if (local) playStyleOnline = false;
                 Enter(to);
             });
         }

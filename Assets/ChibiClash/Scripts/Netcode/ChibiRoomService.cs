@@ -144,7 +144,14 @@ namespace ChibiClash.Netcode
                     for (int k = 0; k < ids.Count && fresh.Count < MaxListedRooms; k++)
                     {
                         if (k > 0) await Task.Delay(1100);   // spaced reads
-                        try { fresh.Add(ToSnapshot(await LobbyService.Instance.GetLobbyAsync(ids[k]))); }
+                        try
+                        {
+                            var l = await LobbyService.Instance.GetLobbyAsync(ids[k]);
+                            // Our invite-by-name beacon (ChibiNameInvites) is a joined lobby too, but not a room. Known
+                            // by its index data key, not its name: a player may name a real room "ChibiInvite".
+                            if (l != null && !(l.Data != null && l.Data.ContainsKey(ChibiNameInviteRules.KeyIndex)))
+                                fresh.Add(ToSnapshot(l));
+                        }
                         catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound || e.Reason == LobbyExceptionReason.Forbidden)
                         { /* closed or we were removed */ }
                         catch (Exception)
