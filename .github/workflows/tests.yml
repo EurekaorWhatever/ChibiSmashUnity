@@ -38,9 +38,11 @@ jobs:
         if: steps.lic.outputs.have == 'true'
         with:
           path: Library
-          # Own prefix: "Library-" alone also matched the web build's WebGL-target cache (Library-WebGL-...).
-          key: Library-EditModeTests-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}
-          restore-keys: Library-EditModeTests-
+          # Same WebGL target as the web build, so its imported Library (Library-WebGL-...) is a valid warm start.
+          key: Library-EditModeTests-WebGL-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}
+          restore-keys: |
+            Library-EditModeTests-WebGL-
+            Library-WebGL-
       # Same as the web build: importing the large game textures needs more memory and disk than the runner has.
       - name: Free disk space
         if: steps.lic.outputs.have == 'true'
@@ -58,27 +60,30 @@ jobs:
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
           free -h; df -h / /mnt
-      - uses: game-ci/unity-test-runner@v4
+      # game-ci/unity-test-runner never started Unity on this project (runs 19-31: "Unity wrote no editor log"), while
+      # game-ci/unity-builder works for the web build with the same secrets. So the tests run through the builder,
+      # calling ChibiClash.EditorTools.CiTests.RunEditMode (Assets/ChibiClash/Editor/CiTests.cs), which exits 1 on any
+      # failed test. The WebGL target reuses the web build's Docker image.
+      - name: Run EditMode tests
         id: tests
         if: steps.lic.outputs.have == 'true'
+        uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          testMode: editmode
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          checkName: EditMode tests
-          customParameters: -logFile /github/workspace/artifacts/editor.log
-      # The Actions log needs a GitHub sign-in to read; annotations do not. On failure, publish the key lines of the
-      # Unity editor log as annotations so the cause is visible from the public run page / API.
-      - name: Publish the Unity error lines
-        if: failure() && steps.lic.outputs.have == 'true'
+          targetPlatform: WebGL
+          buildsPath: build
+          buildMethod: ChibiClash.EditorTools.CiTests.RunEditMode
+          customParameters: -ciTestsOut /github/workspace/artifacts
+      # The Actions log needs a GitHub sign-in to read; annotations do not. Publish the summary and each failing test.
+      - name: Publish the test results
+        if: always() && steps.lic.outputs.have == 'true'
         run: |
-          log=artifacts/editor.log
-          if [ ! -f "$log" ]; then echo "::error title=No Unity log::Unity wrote no editor log: it failed before starting (image pull, licence activation or the action itself)."; exit 0; fi
-          grep -i -E "error|exception|fail|licen|abort|out of memory|killed" "$log" | grep -v -i "warning" | tail -n 12 | while IFS= read -r line; do echo "::error title=Unity log::${line:0:900}"; done
-          echo "::notice title=Unity log tail::$(tail -n 5 "$log" | tr '\n' ' ' | cut -c1-900)"
+          sudo chown -R "$(id -u):$(id -g)" artifacts 2>/dev/null || true
+          if [ -f artifacts/editmode-summary.txt ]; then echo "::notice title=EditMode tests::$(cat artifacts/editmode-summary.txt)"; else echo "::error title=EditMode tests::No test summary was written (Unity did not reach the tests)."; fi
+          if [ -s artifacts/editmode-failures.txt ]; then head -n 20 artifacts/editmode-failures.txt | while IFS= read -r line; do echo "::error title=Failed test::${line:0:900}"; done; fi
       - uses: actions/upload-artifact@v4
         if: always() && steps.lic.outputs.have == 'true'
         with:
