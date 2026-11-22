@@ -61,6 +61,7 @@ namespace ChibiClash.EditorTools
             bool ok = false;
             try
             {
+                if (OnCiRunner()) CrunchGameTexturesForWeb();   // CI copy only, see CrunchGameTexturesForWeb
                 PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
                 PlayerSettings.WebGL.decompressionFallback = true;
                 EditorUserBuildSettings.overrideMaxTextureSize = WebMaxTextureSize;   // web download size, see above
@@ -88,6 +89,59 @@ namespace ChibiClash.EditorTools
                 EditorUserBuildSettings.overrideMaxTextureSize = oldMaxTexture;
             }
             if (exitOnFinish) EditorApplication.Exit(ok ? 0 : 1);
+        }
+
+        /// <summary>Folder whose textures are crunched for the web build (everything the game loads at runtime).</summary>
+        const string GameTextureRoot = "Assets/ChibiClash/Resources";
+
+        /// <summary>Crunch quality 0..100 for the web build: 50 is Unity's default, artifacts are hard to spot on sprites.</summary>
+        const int WebCrunchQuality = 50;
+
+        /// <summary>Command-line flag passed only by .github/workflows/web-build.yml (game-ci customParameters).</summary>
+        public const string CiCrunchFlag = "-chibiWebCrunch";
+
+        /// <summary>
+        /// True only when the build was started with <see cref="CiCrunchFlag"/>, which only the GitHub workflow passes.
+        /// Its checkout is thrown away after the build. The editor menu and a plain batch build never pass it, so
+        /// <see cref="CrunchGameTexturesForWeb"/> cannot change files in a working copy.
+        /// </summary>
+        public static bool OnCiRunner() =>
+            Environment.GetCommandLineArgs().Any(a => string.Equals(a, CiCrunchFlag, StringComparison.OrdinalIgnoreCase));
+
+        /// <summary>
+        /// Web download size: gives every game texture a WebGL override with Crunch compression (DXT5 Crunched with alpha,
+        /// DXT1 Crunched without). The download was still 268 MB after the 2048 px cap (2026-11-22), almost all of it
+        /// textures. Crunched DXT is typically 3-5x smaller on disk and decompresses on the GPU format at load.
+        /// It writes .meta importer settings, so it runs ONLY on the CI runner (<see cref="OnCiRunner"/>). The repo,
+        /// the PC build and the editor on any PC keep the original settings.
+        /// </summary>
+        static void CrunchGameTexturesForWeb()
+        {
+            var guids = AssetDatabase.FindAssets("t:Texture2D", new[] { GameTextureRoot });
+            int changed = 0;
+            AssetDatabase.StartAssetEditing();
+            try
+            {
+                foreach (var guid in guids)
+                {
+                    var path = AssetDatabase.GUIDToAssetPath(guid);
+                    if (!(AssetImporter.GetAtPath(path) is TextureImporter ti)) continue;
+                    var web = ti.GetPlatformTextureSettings("WebGL");
+                    web.overridden = true;
+                    web.maxTextureSize = Mathf.Min(ti.maxTextureSize, WebMaxTextureSize);
+                    web.format = ti.DoesSourceTextureHaveAlpha() ? TextureImporterFormat.DXT5Crunched : TextureImporterFormat.DXT1Crunched;
+                    web.crunchedCompression = true;
+                    web.compressionQuality = WebCrunchQuality;
+                    ti.SetPlatformTextureSettings(web);
+                    ti.SaveAndReimport();
+                    changed++;
+                }
+            }
+            finally
+            {
+                AssetDatabase.StopAssetEditing();   // runs the queued reimports in one pass
+            }
+            Debug.Log("[WebBuild] crunched " + changed + " texture(s) under " + GameTextureRoot + " for WebGL (CI copy only)");
         }
     }
 }

@@ -102,6 +102,9 @@ jobs:
           targetPlatform: WebGL
           buildsPath: build
           buildMethod: ChibiClash.EditorTools.WebBuild.BuildFromCommandLine
+          # CI-only Crunch compression of the game textures for a smaller download (WebBuild.CrunchGameTexturesForWeb).
+          # It edits importer settings in this throwaway checkout only; never pass the flag on a working copy.
+          customParameters: -chibiWebCrunch
 
       - name: Locate the built site
         if: steps.lic.outputs.have == 'true'

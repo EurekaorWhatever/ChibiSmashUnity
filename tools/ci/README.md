@@ -37,8 +37,10 @@ One-time setup by the repository owner:
 
 The build itself is `ChibiClash.EditorTools.WebBuild.BuildFromCommandLine` (`Assets/ChibiClash/Editor/WebBuild.cs`).
 It uses the scenes enabled in Build Settings. It also uses Gzip with the decompression fallback, because GitHub
-Pages cannot send Brotli headers. It sets that only for the build and restores the project settings afterwards. For
-a local build, use the menu **Chibi Clash > Build Web Version (GitHub Pages)**, which writes to `build/WebGL/WebGL/`
+Pages cannot send Brotli headers. It sets that only for the build and restores the project settings afterwards. To keep the
+download small, it also caps textures at 2048 px. On the CI runner only, when the workflow passes `-chibiWebCrunch`, it
+switches the game textures to Crunch compression. That edits importer settings in the throwaway CI checkout and never
+in a working copy. For a local build, use the menu **Chibi Clash > Build Web Version (GitHub Pages)**, which writes to `build/WebGL/WebGL/`
 (git-ignored).
 
 Limits in the browser:
