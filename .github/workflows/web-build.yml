@@ -89,8 +89,14 @@ jobs:
         if: steps.lic.outputs.have == 'true'
         with:
           path: Library
-          key: Library-WebGL-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}
-          restore-keys: Library-WebGL-
+          # v2 (2026-11-22): the v1 cache dated from 2026-11-18 and an existing key is never saved again, so every build
+          # re-imported hundreds of textures first; runs 18-19 were killed (exit 137) a few minutes in. Warm start from
+          # the newest Library of the same WebGL target (the tests workflow saves one), then save a fresh v2 per commit.
+          key: Library-WebGL-v2-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ github.sha }}
+          restore-keys: |
+            Library-WebGL-v2-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-
+            Library-EditModeTests-WebGL-
+            Library-WebGL-
 
       - name: Build WebGL
         if: steps.lic.outputs.have == 'true'
@@ -106,6 +112,15 @@ jobs:
           # CI-only Crunch compression of the game textures for a smaller download (WebBuild.CrunchGameTexturesForWeb).
           # It edits importer settings in this throwaway checkout only; never pass the flag on a working copy.
           customParameters: -chibiWebCrunch
+
+      # The Actions log needs a GitHub sign-in to read; annotations do not. On failure, publish memory and disk facts.
+      - name: Explain a failed build
+        if: failure() && steps.lic.outputs.have == 'true'
+        run: |
+          echo "::error title=Memory at failure::$(free -m | tr '\n' ' ')"
+          oom=$(sudo dmesg 2>/dev/null | grep -iE 'killed process|out of memory' | tail -n 3 | tr '\n' ' ')
+          if [ -n "$oom" ]; then echo "::error title=Out of memory::${oom:0:900}"; else echo "::error title=No OOM kill in dmesg::exit 137 was not the kernel OOM killer"; fi
+          echo "::error title=Disk at failure::$(df -h / /mnt | tr '\n' ' ')"
 
       - name: Locate the built site
         if: steps.lic.outputs.have == 'true'
