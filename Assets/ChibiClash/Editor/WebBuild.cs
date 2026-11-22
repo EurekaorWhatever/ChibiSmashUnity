@@ -59,9 +59,12 @@ namespace ChibiClash.EditorTools
             bool oldFallback = PlayerSettings.WebGL.decompressionFallback;
             int oldMaxTexture = EditorUserBuildSettings.overrideMaxTextureSize;
             bool ok = false;
+            var info = new System.Text.StringBuilder();
+            info.AppendLine("built: " + DateTime.UtcNow.ToString("u") + ", Unity " + Application.unityVersion);
+            info.AppendLine("crunch flag: " + OnCiRunner());   // never write the raw command line: this file is public
             try
             {
-                if (OnCiRunner()) CrunchGameTexturesForWeb();   // CI copy only, see CrunchGameTexturesForWeb
+                if (OnCiRunner()) info.AppendLine(CrunchGameTexturesForWeb());   // CI copy only, see CrunchGameTexturesForWeb
                 PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
                 PlayerSettings.WebGL.decompressionFallback = true;
                 EditorUserBuildSettings.overrideMaxTextureSize = WebMaxTextureSize;   // web download size, see above
@@ -77,6 +80,9 @@ namespace ChibiClash.EditorTools
                 Debug.Log("[WebBuild] " + report.summary.result + ": " + scenes.Length + " scene(s), " +
                           (report.summary.totalSize / (1024 * 1024)) + " MB -> " + output);
                 if (ok) File.WriteAllText(Path.Combine(output, ".nojekyll"), "");   // serve files starting with '_' as-is
+                // Public build diagnostics next to index.html (the Actions log needs a GitHub sign-in to read).
+                info.AppendLine("result: " + report.summary.result + ", " + (report.summary.totalSize / (1024 * 1024)) + " MB");
+                if (ok) File.WriteAllText(Path.Combine(output, "build-info.txt"), info.ToString());
             }
             catch (Exception e)
             {
@@ -115,10 +121,11 @@ namespace ChibiClash.EditorTools
         /// It writes .meta importer settings, so it runs ONLY on the CI runner (<see cref="OnCiRunner"/>). The repo,
         /// the PC build and the editor on any PC keep the original settings.
         /// </summary>
-        static void CrunchGameTexturesForWeb()
+        static string CrunchGameTexturesForWeb()
         {
             var guids = AssetDatabase.FindAssets("t:Texture2D", new[] { GameTextureRoot });
             int changed = 0;
+            string sample = "";
             AssetDatabase.StartAssetEditing();
             try
             {
@@ -141,7 +148,17 @@ namespace ChibiClash.EditorTools
             {
                 AssetDatabase.StopAssetEditing();   // runs the queued reimports in one pass
             }
-            Debug.Log("[WebBuild] crunched " + changed + " texture(s) under " + GameTextureRoot + " for WebGL (CI copy only)");
+            // Read one importer back after the reimport, to prove the override stuck.
+            if (guids.Length > 0 && AssetImporter.GetAtPath(AssetDatabase.GUIDToAssetPath(guids[0])) is TextureImporter check)
+            {
+                var s = check.GetPlatformTextureSettings("WebGL");
+                sample = AssetDatabase.GUIDToAssetPath(guids[0]) + " -> overridden=" + s.overridden + " format=" + s.format +
+                         " crunch=" + s.crunchedCompression + " max=" + s.maxTextureSize;
+            }
+            string msg = "crunch: " + guids.Length + " texture(s) found, " + changed + " changed under " + GameTextureRoot +
+                         "\nsample: " + sample;
+            Debug.Log("[WebBuild] " + msg);
+            return msg;
         }
     }
 }
