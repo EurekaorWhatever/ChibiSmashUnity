@@ -453,7 +453,7 @@ namespace ChibiClash
             Backdrop();
             NavBar();
             var a = BeginPage("02", "LOBBY", noInternet ? "NO INTERNET  ·  CONNECT WI-FI OR MOBILE DATA (LAN STILL WORKS)"
-                                                        : "MATCHMAKING · LAN · FRIENDS & INVITES");
+                                                        : "MATCHMAKING · LAN · FRIENDS");
             float ph = a.height - 62f;
             var left = new Rect(a.x, a.y, a.width * 0.5f - 10f, ph);
             FighterPicker(left, true);
@@ -505,6 +505,12 @@ namespace ChibiClash
             y += 74f;
 
             // LAN direct play: no Unity services needed (same network). Same transport, handshake and rollback as Relay.
+            // Not in the browser build: direct UDP by IP is impossible there (NetworkRoomManager.LanUnavailable).
+#if UNITY_WEBGL && !UNITY_EDITOR
+            Gui.Text(new Rect(x, y - 4f, w, 36f), "LAN play needs the PC version. In the browser, use ROOMS or MATCHMAKING.",
+                     12, Gui.Muted, TextAnchor.MiddleLeft, false);
+            y += 40f;
+#else
             Gui.Text(new Rect(x, y - 4f, w, 18f), "SAME NETWORK (LAN)", 12, Gui.Gold, TextAnchor.MiddleLeft);
             y += 16f;
             if (Gui.Button(new Rect(x, y, 140f, 40f), "LAN HOST", Gui.Gold, 14, !busy) && !busy)
@@ -515,6 +521,7 @@ namespace ChibiClash
             if (Gui.Button(new Rect(ipField.xMax + 10f, y, 140f, 40f), "LAN JOIN", Gui.Gold, 14, !busy) && !busy)
             { onlineNote = ""; social.ClearMatchFriend(); rooms.JoinLan(lanAddress); }
             y += 56f;
+#endif
 
             bool failed = rooms.State == Netcode.ChibiRoomState.Failed;
             string status = onlineNote.Length > 0 ? onlineNote : rooms.Status;
@@ -543,25 +550,18 @@ namespace ChibiClash
 
             // Our name ("Kira#4821"): what friends type to add / invite us. Changed with the profile chip at the top.
             Gui.Display(new Rect(x, y, w, 30f), "YOU: " + (social.NeedsName ? "(setting your name...)" : social.MyName), 24, Gui.Gold, TextAnchor.MiddleLeft, 0.15f);
-            Gui.Text(new Rect(x, y + 28f, w, 20f), "Friends type this name to add or invite you. Change it with your name at the top right.",
+            Gui.Text(new Rect(x, y + 28f, w, 20f), "Friends type this name to add you. Change it with your name at the top right.",
                      12, Gui.Muted, TextAnchor.MiddleLeft);
             y += 54f;
 
-            // Type a player's name: ADD FRIEND, or INVITE straight into our room (a friend request goes first if needed).
-            var af = new Rect(x, y, w - 290f, 40f);
+            // Type a player's name: ADD FRIEND. (Match invites were removed at the user's request, 2026-11-22: friends
+            // play together by sharing a room code.)
+            var af = new Rect(x, y, w - 150f, 40f);
             friendInput = GUI.TextField(af, friendInput ?? "", 24, Field(18));
             if (Gui.Button(new Rect(af.xMax + 10f, y, 140f, 40f), "ADD FRIEND", Gui.P2, 13, !social.Working))
             { social.AddFriend(friendInput); friendInput = ""; }
-            if (Gui.Button(new Rect(af.xMax + 155f, y, 135f, 40f), "INVITE", Gui.P1, 14, !social.Working && !busy) && !busy)
-            { onlineNote = ""; social.InviteByName(friendInput); friendInput = ""; }
             y += 44f;
-            if (social.WaitingToInviteName.Length > 0)
-            {
-                Gui.Text(new Rect(x, y, w - 100f, 24f), "Waiting for " + social.WaitingToInviteName + " to accept, then the invite goes out.",
-                         12, Gui.Gold, TextAnchor.MiddleLeft, false);
-                if (Gui.Button(new Rect(x + w - 90f, y, 90f, 24f), "STOP", Gui.Steel, 11)) social.ForgetWaitingInvite();
-            }
-            else Gui.Text(new Rect(x, y, w, 24f), "Type a name like Kira#4821.", 12, Gui.Muted, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(x, y, w, 24f), "Type a name like Kira#4821.", 12, Gui.Muted, TextAnchor.MiddleLeft);
             y += 30f;
 
             // Incoming requests.
@@ -589,9 +589,6 @@ namespace ChibiClash
                 Gui.Rect(new Rect(x, y, w, 40f), Gui.PanelLight);
                 Gui.Skew(new Rect(x + 12f, y + 15f, 10f, 10f), f.Online ? Gui.Green : Gui.Muted, 0.3f);
                 Gui.Text(new Rect(x + 30f, y, w - 280f, 40f), f.Name + (f.Online ? "" : "  (offline)"), 14, Gui.Paper, TextAnchor.MiddleLeft, false);
-                if (Gui.Button(new Rect(x + w - 240f, y + 4f, 130f, 32f), "INVITE", Gui.P1, 13, f.Online && !busy && !social.Working)
-                    && f.Online && !busy)
-                { onlineNote = ""; social.SendInvite(f.Id); }
                 // Two-click remove: the first click arms "SURE?" for 3 seconds.
                 bool armed = removeArmedId == f.Id && Time.unscaledTime < removeArmedUntil;
                 if (Gui.Button(new Rect(x + w - 102f, y + 4f, 90f, 32f), armed ? "SURE?" : "REMOVE", armed ? Gui.Red : Gui.Steel, 11, !social.Working))
@@ -602,8 +599,6 @@ namespace ChibiClash
                 y += 46f;
             }
 
-            if (roomsSvc.Current != null)
-                Gui.Text(new Rect(x, r.yMax - 92f, w, 24f), "INVITE puts friends into your room \"" + roomsSvc.Current.Name + "\" (" + roomsSvc.Current.Code + ").", 13, Gui.Gold);
             string status = rooms.State == Netcode.ChibiRoomState.Failed ? rooms.Status : social.Status;
             bool err = rooms.State == Netcode.ChibiRoomState.Failed || social.StatusIsError;
             Gui.Text(new Rect(x, r.yMax - 66f, w, 60f), status, 14, err ? Gui.Red : Gui.Paper, TextAnchor.UpperCenter, false);
@@ -632,29 +627,6 @@ namespace ChibiClash
             social.WithdrawInvite();
             rooms.Cancel();
             Go(Page.Online);
-        }
-
-        /// <summary>Invite pop-up on every menu screen: ACCEPT joins the friend's room, DECLINE tells them. Expires after 60 s.</summary>
-        void InvitePopup()
-        {
-            if (social == null || social.Invites.Count == 0 || !PlayerIdentity.OnlineAllowed(Save.ageBand)) return;
-            var inv = social.Invites[0];
-            var r = new Rect(W * 0.5f - 270f, 120f, 540f, 160f);
-            Gui.Glow(new Rect(r.x - 30f, r.y - 30f, r.width + 60f, r.height + 60f), new Color(1f, 0.8f, 0.2f, 0.35f));
-            Gui.Box(r, Gui.Gold);
-            Gui.Display(new Rect(r.x, r.y + 10f, r.width, 40f), "MATCH INVITE", 32, Gui.Gold, TextAnchor.MiddleCenter);
-            int left = Mathf.Max(0, Mathf.CeilToInt(inv.ExpiresAt - Time.unscaledTime));
-            Gui.Text(new Rect(r.x, r.y + 52f, r.width, 28f), inv.FromName + " wants to fight you  (" + left + "s)", 16, Gui.Paper);
-            Gui.PreferNext();
-            if (Gui.Button(new Rect(r.x + 60f, r.y + 96f, 190f, 46f), "ACCEPT", Gui.Green, 17))
-            {
-                pending.cpu[0] = pending.cpu[1] = false;
-                pending.training = false;
-                onlineNote = "";
-                social.AcceptInvite(0);   // joins the friend's room
-                Enter(Page.Room);
-            }
-            if (Gui.Button(new Rect(r.xMax - 250f, r.y + 96f, 190f, 46f), "DECLINE", Gui.Red, 17)) social.DeclineInvite(0);
         }
 
         // ---------------------------------------------------------------- ROOMS (create room mode)
@@ -778,7 +750,7 @@ namespace ChibiClash
             Gui.Display(new Rect(x, y, w, 36f), cur.Name, 30, Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
             Gui.Text(new Rect(x, y, w, 36f), "CODE  " + cur.Code, 18, Gui.Gold, TextAnchor.MiddleRight);
             y += 40f;
-            Gui.Text(new Rect(x, y, w, 18f), "Share the code, or INVITE a friend by name.", 12, Gui.Muted, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(x, y, w, 18f), "Share the code with your friend.", 12, Gui.Muted, TextAnchor.MiddleLeft);
             y += 24f;
 
             for (int i = 0; i < Netcode.ChibiRoomRules.Seats; i++)
@@ -846,9 +818,8 @@ namespace ChibiClash
             if (!launching && hint.Length > 0 && !roomsSvc.StatusIsError && onlineNote.Length == 0) status = hint;
             Gui.Text(new Rect(x, y, w, 50f), status, 14, roomsSvc.StatusIsError || onlineNote.Length > 0 ? Gui.Red : Gui.Paper, TextAnchor.UpperCenter, false);
 
-            // Bottom: invite friends (FRIENDS tab keeps this room), leave for good, or back to the room list.
+            // Bottom: leave for good, or back to the room list. (No INVITE FRIENDS: invites removed 2026-11-22; share the code.)
             float by = a.yMax - 48f;
-            if (Gui.Button(new Rect(a.x, by, 230f, 46f), "INVITE FRIENDS", Gui.P2, 17, !launching)) OpenLobby(true);
             bool armed = leaveArmedId == cur.Id && Time.unscaledTime < leaveArmedUntil;
             if (Gui.Button(new Rect(a.xMax - 440f, by, 180f, 46f), armed ? "SURE?" : host ? "CLOSE ROOM" : "LEAVE ROOM", Gui.Red, 15, !launching))
             {

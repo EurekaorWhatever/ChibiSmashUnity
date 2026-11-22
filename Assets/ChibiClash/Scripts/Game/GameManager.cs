@@ -938,7 +938,6 @@ namespace ChibiClash
                     Gui.Interactive = wipeStart < 0f;
                     ExitModal();
                 }
-                if (page != Page.Loading && !DialogOpen) InvitePopup();
                 DrawToast();
             }
             Gui.Interactive = true;

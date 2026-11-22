@@ -406,8 +406,13 @@ namespace ChibiClash.Netcode
             catch (Exception) { /* best effort: the sender's room simply times out */ }
         }
 
+        /// <summary>Match invites are switched off (user request 2026-11-22). Set true only together with the invite UI,
+        /// and get a security review first (security review 2026-11-22, SEC-001).</summary>
+        const bool InvitesEnabled = false;
+
         void OnMessage(IMessageReceivedEvent e)
         {
+            if (!InvitesEnabled) return;   // incoming invite / decline / cancel messages are ignored entirely
             ChibiInviteMessage m;
             try { m = e.GetAs<ChibiInviteMessage>(); }
             catch (Exception) { return; }   // not our format: ignore silently
