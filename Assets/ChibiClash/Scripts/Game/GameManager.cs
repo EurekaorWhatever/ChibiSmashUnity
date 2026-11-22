@@ -10,14 +10,15 @@ namespace ChibiClash
     /// on the deterministic simulation through <see cref="ChibiMatch"/>; the menus only READ it.
     /// Presentation is the copy-ghibli-smash fork's arcade UI (decision UI-1) with our five characters:
     ///   GameManager.cs         flow, pages, input routing, match start / end, loading steps, pre-match check
-    ///   GameManager.Menus.cs   loading, home, nav bar, Play (Vs Online / Vs Local / Vs CPU) and its play-style
-    ///                          screen, Arcade / Training / Collection / Settings
+    ///   GameManager.Menus.cs   loading, home, nav bar, Play (Vs Online / Matchmaking / Vs CPU), the Vs Online
+    ///                          play-style screen, Arcade / Training / Collection / Settings
     ///   GameManager.Select.cs  character select (roster grid, side panels, loadout) and the stage carousel
-    ///   GameManager.Online.cs  onboarding (age, name, account) and the Vs Online Solo pages (hub, join, matchmaking, room)
+    ///   GameManager.Online.cs  onboarding (age, name, account), the Matchmaking rooms pages (rooms, room, create / join
+    ///                          pop-ups) and the Vs Online quick match page
     /// </summary>
     public partial class GameManager : MonoBehaviour
     {
-        enum Page { Loading, Home, Play, PlayStyle, Training, Arcade, Collection, Settings, Select, PreCheck, Match, Rooms, Room, Matchmaking }
+        enum Page { Loading, Home, Play, PlayStyle, Training, Arcade, Collection, Settings, Select, PreCheck, Match, Rooms, Room, QuickMatch }
 
         public SaveData Save { get; private set; }
 
@@ -72,8 +73,9 @@ namespace ChibiClash
         int arcadeRound;
         readonly FighterClass[] arcadeLadder = new FighterClass[ArcadeRounds];
 
-        static readonly string[] Difficulty = { "Dummy", "Easy", "Normal", "Hard" };
-        static readonly string[] DifficultyUpper = { "DUMMY", "EASY", "NORMAL", "HARD" };
+        // Vs CPU levels 1-3 are easy / medium / hard (the user's words); 0 is the training dummy.
+        static readonly string[] Difficulty = { "Dummy", "Easy", "Medium", "Hard" };
+        static readonly string[] DifficultyUpper = { "DUMMY", "EASY", "MEDIUM", "HARD" };
 
         static float W => Gui.W;
         static float H => Gui.H;
@@ -144,7 +146,7 @@ namespace ChibiClash
                 social.ResetForAccountChange();
                 roomsSvc.ResetForAccountChange();
                 roomNameInput = null;
-                if (page == Page.Rooms || page == Page.Room || page == Page.Matchmaking) Enter(Page.Home);
+                if (page == Page.Rooms || page == Page.Room || page == Page.QuickMatch) Enter(Page.Home);
             }
             // The account has no public name yet but we have one: give it to the account now.
             string local = Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
@@ -236,7 +238,7 @@ namespace ChibiClash
                 if (d != 0) ageInput = PlayerIdentity.StepAge(ageInput, d);
             }
             else if (nameDialog && MenuInput.PadFired(NavCmd.Alt))
-                nameInput = Netcode.ChibiSocialRules.DefaultFighterName((uint)System.Environment.TickCount);
+                SuggestName();
             if (MenuInput.PadFired(NavCmd.Confirm) && (ageStep || nameDialog)) padSubmit = true;
         }
 
@@ -296,8 +298,8 @@ namespace ChibiClash
                 case Page.Home: OpenExitPrompt(); return;
                 case Page.PreCheck: UiSound.Back(); Go(Page.Select); return;
                 case Page.PlayStyle: UiSound.Back(); Go(Page.Play); return;
-                case Page.Rooms: UiSound.Back(); OpenPlayStyle(true); return;   // back to the Vs Online play styles
-                case Page.Matchmaking: UiSound.Back(); OpenRoomsPage(); return;   // stops the search (Enter)
+                case Page.Rooms: UiSound.Back(); Go(Page.Play); return;            // MATCHMAKING rooms: back to PLAY
+                case Page.QuickMatch: UiSound.Back(); OpenPlayStyle(); return;     // stops the search (Enter)
                 case Page.Room:
                     if (roomsSvc.Launching || pendingOnline != null) { UiSound.Error(); return; }
                     UiSound.Back();
@@ -449,8 +451,8 @@ namespace ChibiClash
 
         static bool IsNavPage(Page p) => Array.IndexOf(NavPages, p) >= 0;
 
-        /// <summary>The nav tab a page belongs to (the play-style screen and the Vs Online Solo pages light up PLAY).</summary>
-        static Page NavOwner(Page p) => p == Page.PlayStyle || p == Page.Rooms || p == Page.Room || p == Page.Matchmaking ? Page.Play : p;
+        /// <summary>The nav tab a page belongs to (the play-style, quick match and Matchmaking rooms pages light up PLAY).</summary>
+        static Page NavOwner(Page p) => p == Page.PlayStyle || p == Page.Rooms || p == Page.Room || p == Page.QuickMatch ? Page.Play : p;
 
         void CycleTab(int d)
         {
@@ -466,9 +468,9 @@ namespace ChibiClash
 
         void Enter(Page p)
         {
-            // Leaving the MATCHMAKING page any way (BACK, a nav tab, an accepted invite) stops the search, so a match
+            // Leaving the QUICK MATCH page any way (BACK, a nav tab, an accepted invite) stops the search, so a match
             // never starts on another screen. A found match switches to Page.Match directly, not through here.
-            if (page == Page.Matchmaking && p != Page.Matchmaking) StopMatchmaking();
+            if (page == Page.QuickMatch && p != Page.QuickMatch) StopQuickMatch();
             page = p;
             pageSince = Time.unscaledTime;
             exitPrompt = false;
@@ -620,8 +622,10 @@ namespace ChibiClash
 
         /// <summary>
         /// Jump straight to a screen (editor testing / automation): home, play (or brawl), online (the Vs Online play
-        /// styles), local (the Vs Local play styles), training, arcade, collection (or armory), settings, select,
-        /// precheck, rooms (the Vs Online solo hub), createroom, matchmaking (starts a real search).
+        /// styles), matchmaking / rooms / local (the MATCHMAKING rooms screen), createroom / joinroom (that screen with its
+        /// pop-up open), quickmatch (Vs Online QUICK MATCH, starts a real regional search), cpu (Vs CPU character select
+        /// with the difficulty), select, precheck, training, arcade, collection (or armory), settings, changename (the
+        /// change-name window).
         /// </summary>
         public void ShowScreen(string screen)
         {
@@ -638,24 +642,29 @@ namespace ChibiClash
                 case "play": Enter(Page.Play); return;
                 case "online":
                     if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
-                    OpenPlayStyle(true);
+                    OpenPlayStyle();
                     return;
-                case "local": OpenPlayStyle(false); return;
+                case "cpu":
+                case "vscpu": SetupSelect(true, false, false); Enter(Page.Select); return;
+                case "changename": Enter(Page.Settings); OpenNameDialog(); return;
                 case "training": Enter(Page.Training); return;
                 case "arcade": Enter(Page.Arcade); return;
                 case "armory":
                 case "collection": Enter(Page.Collection); return;
                 case "settings": Enter(Page.Settings); return;
-                case "matchmaking":
+                case "quickmatch":
                     if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
-                    OpenRoomsPage();
-                    StartMatchmaking();
+                    StartQuickMatch();
                     return;
-                case "createroom":
+                case "matchmaking":
+                case "local":
                 case "rooms":
+                case "createroom":
+                case "joinroom":
                     if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
                     OpenRoomsPage();
                     if (screen == "createroom") OpenRoomDialog();
+                    else if (screen == "joinroom") OpenJoinDialog();
                     return;
                 default: Enter(Page.Home); return;
             }
@@ -995,11 +1004,9 @@ namespace ChibiClash
                         }
                         else
                         {
-                            // A matchmaking fight (no room): BACK returns to the Vs Online Solo hub (its BACK leads to the
-                            // Vs Online play styles), MENU to the home menu.
-                            playStyleOnline = true;
-                            LeaveMatch(choice == Hud.Action.Menu ? Page.Home : Page.Rooms);
-                            if (page == Page.Rooms) roomsSvc.Refresh(force: true);
+                            // A quick match fight (no room): BACK returns to the Vs Online play styles (SOLO searches
+                            // again), MENU to the home menu.
+                            LeaveMatch(choice == Hud.Action.Menu ? Page.Home : Page.PlayStyle);
                         }
                         break;
                     }
@@ -1045,13 +1052,13 @@ namespace ChibiClash
             }
             if (roomDialog)
             {
-                DialogBackdrop("CREATE A ROOM");
+                DialogBackdrop("MATCHMAKING  ·  CREATE ROOMS");
                 RoomDialog();
                 return;
             }
             if (joinDialog)
             {
-                DialogBackdrop("JOIN A ROOM");
+                DialogBackdrop("MATCHMAKING  ·  JOIN ROOM");
                 JoinDialog();
                 return;
             }
@@ -1068,7 +1075,7 @@ namespace ChibiClash
                 case Page.PreCheck: PreCheckView(); break;
                 case Page.Rooms: RoomsView(); break;
                 case Page.Room: RoomView(); break;
-                case Page.Matchmaking: MatchmakingView(); break;
+                case Page.QuickMatch: QuickMatchView(); break;
                 default: HomeView(); break;
             }
         }

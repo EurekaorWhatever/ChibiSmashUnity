@@ -54,11 +54,11 @@ Rollback only works if both computers get **exactly** the same result. So the ga
 
 | Mode | How you connect |
 |---|---|
-| 🏠 Rooms | Make a private room and share its code with a friend |
+| 🏠 Matchmaking (rooms) | PLAY → MATCHMAKING. Make a private room (2-4 players) and share its code. 👥 Fights are still 1 v 1: they start when exactly 2 players are in and ready. 3-4 players wait for the 4-player update. |
 | 📨 Invite by name | In your room, type a friend's in-game name. They see the invite for 60 seconds and press join. ✅ Tested with 2 games: joined in 4 seconds. |
-| 🔍 Matchmaking | Finds the closest player first (your country → region → world). ✅ Tested with 2 games: matched in 12 seconds. |
+| ⚡ Quick match | Vs Online → Solo. Finds the closest player first (your country → region → world). ✅ Tested with 2 games: matched in 12 seconds. |
 | 🏢 LAN | Same Wi-Fi or network, no internet needed (PC version only) |
-| 🤖 vs AI / Local / Training | Offline, the same game rules |
+| 🤖 Vs CPU / Training | Offline, the same game rules. Vs CPU: easy, medium or hard. |
 
 🤝 Before each online match, both games check they are the same version. Different versions are not allowed to
 play together.

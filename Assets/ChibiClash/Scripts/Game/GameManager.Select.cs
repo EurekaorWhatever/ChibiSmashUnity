@@ -220,13 +220,11 @@ namespace ChibiClash
         void LeaveSelect()
         {
             UiSound.Back();
-            // Vs Local (Solo) came through the play-style screen: back goes there; Vs CPU goes back to Play.
-            bool local = !arcade && !pending.training && !pending.cpu[1];
-            var to = arcade ? Page.Arcade : pending.training ? Page.Training : local ? Page.PlayStyle : Page.Play;
+            // Arcade and training go back to their pages; Vs CPU (and same-device versus, automation only) to Play.
+            var to = arcade ? Page.Arcade : pending.training ? Page.Training : Page.Play;
             Wipe(null, () =>
             {
                 arcade = false;
-                if (local) playStyleOnline = false;
                 Enter(to);
             });
         }
@@ -589,10 +587,10 @@ namespace ChibiClash
             }
         }
 
-        /// <summary>VS CPU: the AI's level (Easy / Normal / Hard), saved as the profile's CPU difficulty.</summary>
+        /// <summary>VS CPU: the CPU difficulty (Easy / Medium / Hard), saved as the profile's CPU difficulty (also in SETTINGS).</summary>
         void CpuLevelPanel(Rect r)
         {
-            Gui.Text(new Rect(r.x, r.y, r.width, 16f), "AI LEVEL", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
+            Gui.Text(new Rect(r.x, r.y, r.width, 16f), "CPU DIFFICULTY  ·  PICK BEFORE THE FIGHT", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
             float bw = (r.width - 16f) / 3f;
             for (int lvl = 1; lvl <= 3; lvl++)
                 if (Gui.Button(new Rect(r.x + (lvl - 1) * (bw + 8f), r.y + 20f, bw, 34f), DifficultyUpper[lvl], Gui.P2, 14, true, Save.settings.cpuDifficulty == lvl))
@@ -602,7 +600,7 @@ namespace ChibiClash
                 }
             Gui.Text(new Rect(r.x, r.y + 60f, r.width, 34f), "No internet needed. The AI picks a new character, passive and weapon for every fight, rematches too.", 11, Gui.Muted, TextAnchor.UpperLeft, false, false);
             if (AllReady)
-                Gui.Text(new Rect(r.x, r.y + 96f, r.width, 16f), MenuInput.UsingGamepad ? "D-PAD UP / DOWN  ·  AI LEVEL" : "W / S  ·  AI LEVEL", 10, Gui.Muted, TextAnchor.MiddleLeft, true, false);
+                Gui.Text(new Rect(r.x, r.y + 96f, r.width, 16f), MenuInput.UsingGamepad ? "D-PAD UP / DOWN  ·  DIFFICULTY" : "W / S  ·  DIFFICULTY", 10, Gui.Muted, TextAnchor.MiddleLeft, true, false);
         }
 
         void ArcadeLadder(Rect r)

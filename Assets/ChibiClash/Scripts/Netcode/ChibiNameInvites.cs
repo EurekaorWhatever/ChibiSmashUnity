@@ -14,8 +14,8 @@ namespace ChibiClash.Netcode
     /// <para>
     /// Send: we publish a short-lived public "beacon" lobby named <see cref="ChibiNameInviteRules.Marker"/> whose indexed
     /// field S5 holds a hash of the friend's lower-case name and our build tag, with the room code, our name and the room
-    /// name masked by the same name. One beacon at a time; it is deleted after 60 s, on <see cref="CancelOutgoing"/>, or when the room is full
-    /// or closed. Receive: while <see cref="Enabled"/> (online menu pages, never during a match) we query every 5-6 s for
+    /// name masked by the same name. One beacon at a time; it is deleted after 60 s, on <see cref="CancelOutgoing"/>, when someone joins the
+    /// room, or when the room is full or closed. Receive: while <see cref="Enabled"/> (online menu pages, never during a match) we query every 5-6 s for
     /// beacons addressed to our name, validate every field (<see cref="ChibiNameInviteRules.Validate"/>) and list them in
     /// <see cref="Pending"/>, newest per inviter. Three declines in 10 minutes pause all invites for 10 minutes
     /// (<see cref="Paused"/>). Nothing joins by itself: <see cref="Accept"/> only returns the room code, and the game
@@ -74,6 +74,7 @@ namespace ChibiClash.Netcode
 
         // Outgoing beacon.
         string _outId = "", _outCode = "";
+        int _outPlayers = -1;   // players in the invited room when the invite went out (-1 unknown)
         float _outExpires, _outHeartbeatAt;
         int _sendGen;
 
@@ -103,7 +104,7 @@ namespace ChibiClash.Netcode
             {
                 var snap = FindRoom(room, code);
                 if (snap == null) { SetStatus("Open your room first, then invite.", true); return; }
-                if (snap.Slots.Count >= ChibiRoomRules.Seats) { SetStatus("Your room is already full.", true); return; }
+                if (snap.Slots.Count >= ChibiRoomRules.MaxSeats) { SetStatus("Your room is already full.", true); return; }
             }
             string shown = ChibiSocialRules.BaseName(ChibiSocialRules.SafeDisplayName(friendName.Trim()));
 
@@ -140,6 +141,10 @@ namespace ChibiClash.Netcode
                 if (gen != _sendGen || this == null) { _ = DeleteQuietly(lobby.Id); return; }   // cancelled while creating
                 _outId = lobby.Id;
                 _outCode = code;
+                // The open room's snapshot is the freshest (polled every 2 s); the room list may be older.
+                var sentRoom = room != null && room.Current != null && room.Current.Code == code ? room.Current
+                             : room != null && room.ListLoaded ? FindRoom(room, code) : null;
+                _outPlayers = sentRoom != null ? sentRoom.Slots.Count : -1;
                 _outExpires = Time.unscaledTime + ChibiNameInviteRules.LifetimeSeconds;
                 _outHeartbeatAt = Time.unscaledTime + ChibiNameInviteRules.FirstHeartbeatSeconds;
                 OutgoingTo = shown;
@@ -298,13 +303,14 @@ namespace ChibiClash.Netcode
             var room = Rooms();
             bool known = room != null && room.ListLoaded;
             var snap = known ? FindRoom(room, _outCode) : null;
-            var end = ChibiNameInviteRules.OutgoingEnd(now, _outExpires, known, snap != null, snap != null ? snap.Slots.Count : 0);
+            var end = ChibiNameInviteRules.OutgoingEnd(now, _outExpires, known, snap != null, snap != null ? snap.Slots.Count : 0, _outPlayers);
             if (end != ChibiNameInviteEnd.None)
             {
                 string who = OutgoingTo;
                 _ = DeleteOutgoing();
                 if (end == ChibiNameInviteEnd.Expired) SetStatus("Your invite to " + who + " ran out.", false);
                 else if (end == ChibiNameInviteEnd.RoomFull) SetStatus("Your room is full. Invite closed.", false);
+                else if (end == ChibiNameInviteEnd.Joined) SetStatus("A player joined your room. Invite closed.", false);
                 else SetStatus("Invite cancelled: the room closed.", false);
                 return;
             }
@@ -328,6 +334,7 @@ namespace ChibiClash.Netcode
             string id = _outId;
             _outId = "";
             _outCode = "";
+            _outPlayers = -1;
             OutgoingTo = "";
             if (id.Length > 0) await DeleteQuietly(id);
         }

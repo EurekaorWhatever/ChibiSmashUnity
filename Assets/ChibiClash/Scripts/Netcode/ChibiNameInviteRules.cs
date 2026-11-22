@@ -67,6 +67,8 @@ namespace ChibiClash.Netcode
     public enum ChibiNameInviteEnd : byte
     {
         None, Expired, RoomFull, RoomClosed,
+        /// <summary>A player joined the invited room after the invite was sent (the invite has done its job).</summary>
+        Joined,
     }
 
     /// <summary>A beacon we answered or let expire (ignored from now on), and how long its inviter stays muted.</summary>
@@ -383,14 +385,17 @@ namespace ChibiClash.Netcode
         /// <summary>
         /// Should our outgoing beacon end now? <paramref name="roomsKnown"/> = the room list is loaded (else the room
         /// state is unknown and only the expiry counts); <paramref name="roomFound"/> / <paramref name="roomPlayers"/>
-        /// describe the invited room in it.
+        /// describe the invited room in it. <paramref name="playersAtSend"/> = players in that room when the invite was
+        /// sent (-1 unknown): more players now means someone joined, and the invite ends.
         /// </summary>
-        public static ChibiNameInviteEnd OutgoingEnd(float now, float expiresAt, bool roomsKnown, bool roomFound, int roomPlayers)
+        public static ChibiNameInviteEnd OutgoingEnd(float now, float expiresAt, bool roomsKnown, bool roomFound, int roomPlayers,
+                                                     int playersAtSend = -1)
         {
             if (now >= expiresAt) return ChibiNameInviteEnd.Expired;
             if (!roomsKnown) return ChibiNameInviteEnd.None;
             if (!roomFound) return ChibiNameInviteEnd.RoomClosed;
-            if (roomPlayers >= ChibiRoomRules.Seats) return ChibiNameInviteEnd.RoomFull;
+            if (roomPlayers >= ChibiRoomRules.MaxSeats) return ChibiNameInviteEnd.RoomFull;
+            if (playersAtSend >= 0 && roomPlayers > playersAtSend) return ChibiNameInviteEnd.Joined;
             return ChibiNameInviteEnd.None;
         }
 

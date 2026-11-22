@@ -40,11 +40,11 @@ namespace ChibiClash.Tests
             var raw = new List<ChibiRoomRawPlayer>
             {
                 P(Host, "<size=500>Kira</size>", "99", ready: true, start: new string('x', 500)),
-                P(Guest, "Pip"), P("third", "Extra"),
+                P(Guest, "Pip"), P("third", "Extra"), P("fourth", "Four"), P("fifth", "Five"),
             };
             var s = ChibiRoomRules.Snapshot("id", "<color=red>Evil</color> Room", "../x", Host, "9", new string('g', 200), "r", raw);   // 9: out of 0..7
 
-            Assert.AreEqual(2, s.Slots.Count, "never more than 2 seats");
+            Assert.AreEqual(ChibiRoomRules.MaxSeats, s.Slots.Count, "never more than 4 seats");
             Assert.IsFalse(s.Slots[0].Name.Contains("<"), s.Slots[0].Name);
             Assert.IsFalse(s.Slots[0].Ready, "a player with an invalid fighter is never ready");
             Assert.AreEqual("", s.Slots[0].StartNonce, "oversized nonce dropped");
@@ -67,6 +67,32 @@ namespace ChibiClash.Tests
         }
 
         [Test]
+        public void Snapshot_FourPlayers_HostFirstThenJoinOrder()
+        {
+            var s = Room("", "", P("g1", "Ann"), P(Host, "Kira"), P("g2", "Bo"), P("g3", "Cy"));
+
+            Assert.AreEqual(4, s.Slots.Count);
+            Assert.AreEqual(Host, s.Slots[0].PlayerId);
+            Assert.AreEqual("g1", s.Slots[1].PlayerId);
+            Assert.AreEqual("g3", s.Slots[3].PlayerId);
+        }
+
+        [Test]
+        public void CanStart_ThreeOrFourSeated_NeverStarts()
+        {
+            var three = Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true), P("g2", "Bo", ready: true));
+            var four = Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true), P("g2", "Bo", ready: true),
+                            P("g3", "Cy", ready: true));
+
+            Assert.IsFalse(ChibiRoomRules.CanStart(three), "the fight engine is 1 v 1: 3 players never start");
+            Assert.IsFalse(ChibiRoomRules.CanStart(four), "4 players never start");
+            Assert.IsFalse(ChibiRoomRules.HostShouldLaunch(Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true, start: "n1"),
+                                                                P("g2", "Bo", ready: true)), "", ""), "no launch with 3 seated");
+            Assert.AreEqual(ChibiRoomRules.MorePlayersSoon, ChibiRoomRules.WaitingFor(three, Host));
+            Assert.AreEqual(ChibiRoomRules.MorePlayersSoon, ChibiRoomRules.WaitingFor(four, Host));
+        }
+
+        [Test]
         public void WaitingFor_ExplainsWhatIsMissing()
         {
             StringAssert.Contains("friend to join", ChibiRoomRules.WaitingFor(Room("", "", P(Host, "Kira")), Host));
@@ -81,11 +107,65 @@ namespace ChibiClash.Tests
         public void HostShouldLaunch_OnNewGuestStart_WhenBothReady_Once()
         {
             var both = Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true, start: "n1"));
-            Assert.IsTrue(ChibiRoomRules.HostShouldLaunch(both, ""), "guest pressed START");
-            Assert.IsFalse(ChibiRoomRules.HostShouldLaunch(both, "n1"), "the same press is handled once");
+            Assert.IsTrue(ChibiRoomRules.HostShouldLaunch(both, "", ""), "guest pressed START");
+            Assert.IsFalse(ChibiRoomRules.HostShouldLaunch(both, Guest, "n1"), "the same press is handled once");
 
             var notReady = Room("", "", P(Host, "Kira"), P(Guest, "Pip", ready: true, start: "n2"));
-            Assert.IsFalse(ChibiRoomRules.HostShouldLaunch(notReady, ""), "START ignored until both pressed OK");
+            Assert.IsFalse(ChibiRoomRules.HostShouldLaunch(notReady, "", ""), "START ignored until both pressed OK");
+        }
+
+        [Test]
+        public void HostShouldLaunch_PressKeyedByPlayerId_NotSeat()
+        {
+            // Arrange: "n1" was handled for Pip. Bo now sits in seat 1 (Pip left) and shows the same nonce text.
+            var shifted = Room("", "", P(Host, "Kira", ready: true), P("g2", "Bo", ready: true, start: "n1"));
+
+            // Act / Assert: a nonce handled for another player is not this player's handled press.
+            Assert.IsTrue(ChibiRoomRules.HostShouldLaunch(shifted, Guest, "n1"), "a press belongs to a player, not to seat 1");
+            Assert.IsFalse(ChibiRoomRules.HostShouldLaunch(shifted, "g2", "n1"), "Bo's own handled press is not used twice");
+        }
+
+        [Test]
+        public void SameFightSeats_OnlyTheTwoLaunchPlayers()
+        {
+            var two = Room("", "", P(Host, "Kira"), P(Guest, "Pip"));
+            var three = Room("", "", P(Host, "Kira"), P(Guest, "Pip"), P("g2", "Bo"));
+            var shifted = Room("", "", P(Host, "Kira"), P("g2", "Bo"));
+
+            Assert.IsTrue(ChibiRoomRules.SameFightSeats(two, Host, Guest));
+            Assert.IsFalse(ChibiRoomRules.SameFightSeats(three, Host, Guest), "a third player joined during the launch");
+            Assert.IsFalse(ChibiRoomRules.SameFightSeats(shifted, Host, Guest), "seat 1 left and another player moved in");
+            Assert.IsFalse(ChibiRoomRules.SameFightSeats(Room("", "", P(Host, "Kira")), Host, Guest), "the guest left");
+            Assert.IsFalse(ChibiRoomRules.SameFightSeats(two, Host, ""), "no recorded guest");
+            Assert.IsFalse(ChibiRoomRules.SameFightSeats(null, Host, Guest));
+        }
+
+        [Test]
+        public void LaunchStillValid_NeedsSameSeatsAndReadyGuest()
+        {
+            Assert.IsTrue(ChibiRoomRules.LaunchStillValid(Room("", "", P(Host, "Kira"), P(Guest, "Pip", ready: true)), Host, Guest),
+                          "the host withdrew its own OK on launch: only the guest must still be ready");
+            Assert.IsFalse(ChibiRoomRules.LaunchStillValid(Room("", "", P(Host, "Kira"), P(Guest, "Pip")), Host, Guest), "guest pressed CHANGE");
+            Assert.IsFalse(ChibiRoomRules.LaunchStillValid(Room("", "", P(Host, "Kira"), P("g2", "Bo", ready: true)), Host, Guest),
+                           "a different player in seat 1");
+        }
+
+        [Test]
+        public void GuestAcked_FindsTheLaunchGuestByPlayerId()
+        {
+            var acked = Room("", "", P(Host, "Kira"), P(Guest, "Pip"), P("g2", "Bo"));
+            var raw = new List<ChibiRoomRawPlayer>
+            {
+                P(Host, "Kira"), new ChibiRoomRawPlayer { Id = Guest, Name = "Pip", Class = "1", Ack = "go7" },
+                new ChibiRoomRawPlayer { Id = "g2", Name = "Bo", Class = "1", Ack = "go8" },
+            };
+            var s = ChibiRoomRules.Snapshot("lobby1", "Room", "k7q2px", Host, "0", "go7", "", raw);
+
+            Assert.IsTrue(ChibiRoomRules.GuestAcked(s, Guest, "go7"));
+            Assert.IsFalse(ChibiRoomRules.GuestAcked(s, "g2", "go7"), "another member's ack never counts");
+            Assert.IsFalse(ChibiRoomRules.GuestAcked(s, Host, "go7"), "the host is never the acking guest");
+            Assert.IsFalse(ChibiRoomRules.GuestAcked(acked, Guest, ""), "no launch published");
+            Assert.IsFalse(ChibiRoomRules.GuestAcked(s, "stranger", "go7"));
         }
 
         [Test]

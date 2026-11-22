@@ -28,9 +28,9 @@ datagram at 60 Hz when held inputs repeat).
 
 | Mode | Flow |
 |---|---|
-| ROOMS (create room mode) | Named rooms that stay open between fights: see "Rooms" below (`ChibiRoomService`, `ChibiRoomRules`). |
+| MATCHMAKING (rooms, PLAY menu) | Named rooms of 2-4 players that stay open between fights: see "Rooms" below (`ChibiRoomService`, `ChibiRoomRules`). Same-keyboard local play left the menu (user decision 2026-11-22). |
 | Private room by code (API) | `NetworkRoomManager.CreatePrivateRoom(name)` / `JoinPrivateRoom(code)`: one-shot room, link on join (kept for automation). |
-| Matchmaking (regional) | Closest waiting player first: see "Regional matchmaking" below. Else host a public lobby and search again every 6-8 s, so two searching players always meet. |
+| QUICK MATCH (Vs Online > Solo, regional) | Closest waiting player first: see "Regional matchmaking" below. Else host a public lobby and search again every 6-8 s, so two searching players always meet. |
 | LAN (no services) | `HostLan()` listens on UDP 7777 and shows this PC's IP; `JoinLan(ip)` connects. Same transport, handshake and rollback. |
 | vs AI | offline, `ChibiCpuInputSource` (step 17). |
 
@@ -42,20 +42,30 @@ Players can be anywhere with internet (Wi-Fi or mobile data, other cities or the
 and the Relay SDK picks the server region with the best ping (QoS) automatically. No internet → the menu says so
 (`NoInternetMessage`); LAN still works on one network.
 
-### Home page
+### PLAY menu (2026-11-22)
 
-Three main blocks: **MATCHMAKING** (starts searching at once), **ROOMS**, **VS AI** (offline, the AI picks its fighter
-at random each fight, you press START BATTLE). Below: Local Versus, Training, Friends & LAN. MATCHMAKING and ROOMS need
-the internet (the block says NO INTERNET otherwise); VS AI, local versus and training never do.
+Three cards: **VS ONLINE** (play styles Solo / 2v2 / Battle Royale; Solo = **QUICK MATCH**, the regional search; 2v2 and
+Battle Royale say COMING SOON; friends' room invites pop up on this page), **MATCHMAKING** (the rooms screen below) and
+**VS CPU** (offline: you pick your fighter and EASY / MEDIUM / HARD, the CPU gets a random fighter, 1v1). VS ONLINE and
+MATCHMAKING need 13+ and the internet (the card says why otherwise); VS CPU never does. The player-facing word
+"matchmaking" now means the rooms screen; the regional search is called QUICK MATCH (code: `Page.QuickMatch`,
+`StartQuickMatch`, `NetworkRoomManager.QuickMatch`).
 
 ### Rooms (`ChibiRoomService`, `ChibiRoomRules`, tests: `ChibiRoomRulesTests`)
 
-- ROOMS page: no rooms yet → one big **CREATE ROOM** in the middle (+ join by code). With rooms → **+ CREATE ROOM**
-  top right and a block per room (name, code, players). Click a block to go in. Host at most 2 rooms.
-- A room is a private 2-seat Lobby kept alive by the host's heartbeat (also during fights). Player data: name (no
+- MATCHMAKING rooms screen: **CREATE ROOMS** and **JOIN ROOM** top right. No rooms yet → "No room create yet!" in the
+  middle. CREATE ROOMS opens "ENTER THE ROOM NAME"; the room is created at once and shows as a new (glowing) block.
+  JOIN ROOM opens "ENTER THE ROOM CODE" (PASTE works) and opens the room. Each block shows name, code and the 4 seats.
+  Click a block to go in: room code with **COPY**, **INVITE A FRIEND BY NAME** (host), seats, fighter, stage. Host at
+  most 2 rooms. BACK on every screen.
+- A room is a private Lobby of **2-4 seats** (`MaxPlayers` = `ChibiRoomRules.MaxSeats` = 4) kept alive by the host's
+  heartbeat (also during fights). The fight engine is still 1v1: a fight starts only with **exactly 2** seated
+  (`FightSeats`); with 3-4 seated nothing starts and the room says "3-4 player fights are coming soon: 2 players start
+  the fight." Seat 0 is the host, then join order; only seat 1 ever connects to a launch. Player data: name (no
   #tag), fighter, OK flag, start nonce, launch ack. Lobby data: stage, `go` nonce, Relay code.
 - Inside: pick a fighter, press **OK** (locked in; **CHANGE** unlocks). OK unlocks only after a fresh read of the room.
-  **START FIGHT** works only when both seats are taken and both pressed OK; either player may press it.
+  **START FIGHT** works only when exactly 2 are seated and both pressed OK; either player may press it (and the host
+  presses it by itself once both are ready).
 - Host start → host un-readies, opens a fresh Relay link (`HostLinkAsync`), publishes `{relay, go}`. Guest start →
   guest publishes a nonce, the host's 2 s poll launches (max 3 guest starts per 2 min). The guest sees the new `go`,
   acknowledges it (ack = go, OK off), joins (`JoinLink`) → handshake → match. No ack within 8 s or no link within

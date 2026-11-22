@@ -36,7 +36,7 @@ namespace ChibiClash
             Save.Save();
         }
 
-        /// <summary>Create a Solo 1v1 lobby and open the waiting screen, like CREATE LOBBY in the UI.</summary>
+        /// <summary>Create a room (MATCHMAKING) and open its screen, like CREATE ROOMS then clicking the new room block.</summary>
         public void DevCreateLobby(string lobbyName)
         {
             if (!DevAutomationAllowed) return;
@@ -46,7 +46,7 @@ namespace ChibiClash
             StartCoroutine(DevWhenIdle(() => roomsSvc.Create(lobbyName, pending.stage, pending.hazards)));
         }
 
-        /// <summary>Join a lobby by code and open the waiting screen, like JOIN LOBBY in the UI.</summary>
+        /// <summary>Join a room by code and open its screen, like JOIN ROOM in the MATCHMAKING rooms screen.</summary>
         public void DevJoinLobby(string code)
         {
             if (!DevAutomationAllowed) return;
@@ -70,13 +70,13 @@ namespace ChibiClash
             yield return DevPressOkWhenSynced();
         }
 
-        /// <summary>Start MATCHMAKING exactly like the MATCHMAKING card (the search page starts a real regional search).</summary>
+        /// <summary>Start a Vs Online QUICK MATCH exactly like the SOLO card (the search page starts a real regional search).</summary>
         public void DevMatchmake()
         {
             if (!DevAutomationAllowed) return;
             DevPrepareOnlinePlayer("DevPlayer");
             FinishLoadingNow();
-            ShowScreen("matchmaking");
+            ShowScreen("quickmatch");
         }
 
         /// <summary>From inside our room: invite a player by in-game name, like the INVITE button.</summary>
@@ -86,7 +86,7 @@ namespace ChibiClash
             nameInvites.Send(friendName, roomsSvc.Current.Code, roomsSvc.Current.Name);
         }
 
-        /// <summary>Wait on the Vs Online hub for a ROOM INVITE, then ACCEPT it (join by its code) and press OK.</summary>
+        /// <summary>Wait on the MATCHMAKING rooms screen for a ROOM INVITE, then ACCEPT it (join by its code) and press OK.</summary>
         IEnumerator DevAcceptFirstInvite()
         {
             DevPrepareOnlinePlayer("DevGuest");
@@ -126,8 +126,8 @@ namespace ChibiClash
 
         /// <summary>
         /// Development build command line, after loading:
-        /// <c>-autoJoinLobby CODE</c> joins that room; <c>-autoMatchmake</c> starts MATCHMAKING;
-        /// <c>-autoAcceptInvites</c> waits on the Vs Online hub and accepts the first ROOM INVITE.
+        /// <c>-autoJoinLobby CODE</c> joins that room; <c>-autoMatchmake</c> starts a QUICK MATCH;
+        /// <c>-autoAcceptInvites</c> waits on the MATCHMAKING rooms screen and accepts the first ROOM INVITE.
         /// </summary>
         IEnumerator DevAutomationFromCommandLine()
         {

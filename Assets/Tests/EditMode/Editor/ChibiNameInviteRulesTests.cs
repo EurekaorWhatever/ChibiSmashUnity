@@ -438,8 +438,20 @@ namespace ChibiClash.Tests
             Assert.AreEqual(ChibiNameInviteEnd.Expired, ChibiNameInviteRules.OutgoingEnd(Now, Now, true, true, 1));
 
         [Test]
-        public void OutgoingEnd_RoomHasTwoPlayers_RoomFull() =>
-            Assert.AreEqual(ChibiNameInviteEnd.RoomFull, ChibiNameInviteRules.OutgoingEnd(Now, Now + 30f, true, true, 2));
+        public void OutgoingEnd_RoomHasFourPlayers_RoomFull() =>
+            Assert.AreEqual(ChibiNameInviteEnd.RoomFull, ChibiNameInviteRules.OutgoingEnd(Now, Now + 30f, true, true, ChibiRoomRules.MaxSeats));
+
+        [Test]
+        public void OutgoingEnd_TwoPlayersNobodyJoined_StaysOpen() =>
+            Assert.AreEqual(ChibiNameInviteEnd.None, ChibiNameInviteRules.OutgoingEnd(Now, Now + 30f, true, true, 2, 2));
+
+        [Test]
+        public void OutgoingEnd_APlayerJoinedSinceSend_Joined() =>
+            Assert.AreEqual(ChibiNameInviteEnd.Joined, ChibiNameInviteRules.OutgoingEnd(Now, Now + 30f, true, true, 3, 2));
+
+        [Test]
+        public void OutgoingEnd_PlayersAtSendUnknown_OnlyFullEnds() =>
+            Assert.AreEqual(ChibiNameInviteEnd.None, ChibiNameInviteRules.OutgoingEnd(Now, Now + 30f, true, true, 3));
 
         [Test]
         public void OutgoingEnd_RoomMissingFromLoadedList_RoomClosed() =>
