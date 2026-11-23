@@ -58,6 +58,13 @@ namespace ChibiClash.Netcode
         public Func<bool> OnlineAllowed;
         /// <summary>True while a match runs (no queries). Null = the bound room service's <c>InMatch</c>.</summary>
         public Func<bool> InMatch;
+        /// <summary>
+        /// Worldwide name gate (claims our name; null = OK, else the reason). Null = the bound room service's
+        /// <c>NameGate</c>. Invites are only sent, and only looked for, under a claimed name.
+        /// </summary>
+        public Func<Task<string>> NameGate;
+
+        Task<string> GateName() => (NameGate ?? _rooms?.NameGate)?.Invoke() ?? Task.FromResult<string>(null);
 
         ChibiRoomService _rooms;
         readonly List<PendingNameInvite> _pending = new List<PendingNameInvite>(ChibiNameInviteRules.MaxPending);
@@ -114,7 +121,7 @@ namespace ChibiClash.Netcode
             SetStatus("Inviting " + shown + "...", false);
             try
             {
-                string err = await NetworkRoomManager.EnsureSignedInAsync();
+                string err = await NetworkRoomManager.EnsureSignedInAsync() ?? await GateName();
                 if (err != null) { SetStatus(err, true); return; }
                 await DeleteOutgoing();   // at most one beacon per player
                 if (gen != _sendGen) return;   // cancelled while we waited
@@ -242,6 +249,9 @@ namespace ChibiClash.Netcode
                 }
                 string norm = ChibiNameInviteRules.NormalizeName(MyNameNow());
                 if (norm == null) return;   // no valid name yet: nobody can address us
+                // Only a name claimed worldwide may receive invites (shared claim, once per session; slow retry on failure).
+                if (await GateName() != null) { _pollAt = Time.unscaledTime + ChibiNameInviteRules.NameGateBackoffSeconds; return; }
+                if (this == null) return;
                 if (norm != _myNorm) PrepareQuery(norm);
 
                 var resp = await LobbyService.Instance.QueryLobbiesAsync(_query);

@@ -74,8 +74,13 @@ play together.
 ## ⚠️ Limits
 
 - 👮 **No server means no referee.** A player can force a "no contest". The host picks the random seed.
-- 🏷️ **Names are not unique.** An invite by name reaches every player with that name, so the invite shows who sent
-  it. Nothing joins by itself, and at most 3 invites wait at once.
+- 🏷️ **Names are unique when claimed through the game.** A small server script (Cloud Code "ChibiNames") keeps one
+  list of every name and counts players and daily launches. A name someone else has shows "This name is already
+  taken". 📴 Offline, the name is saved on your computer and claimed before you play online. Details:
+  `docs/architecture/netcode/player-names.md`.
+- 🎭 **Names in rooms, invites and the match handshake are still self-reported.** A modified game can skip the claim
+  and show any name. Invites still show who sent them, nothing joins by itself, and at most 3 invites wait at once.
+- ⏳ **Names never expire**, even when a player stops playing.
 - 🌍 **Web version** (GitHub Pages link): online play goes through Relay with secure WebSockets. LAN is not possible
   in a browser. 🤝 Web and PC players can play each other (Unity supports this cross-play).
 

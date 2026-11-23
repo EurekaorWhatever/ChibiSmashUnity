@@ -106,6 +106,9 @@ namespace ChibiClash
             account.AccountChanged += OnAccountChanged;
             roomsSvc = gameObject.AddComponent<Netcode.ChibiRoomService>();
             roomsSvc.Bind(rooms);
+            // Worldwide-unique names: every online flow claims our name first, at the service level (one gate).
+            rooms.NameGate = EnsureOnlineNameAsync;
+            roomsSvc.NameGate = EnsureOnlineNameAsync;
             roomsSvc.MyName = DisplayedName;
             roomsSvc.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
             roomsSvc.InMatch = () => page == Page.Match || pendingOnline != null;
@@ -114,6 +117,9 @@ namespace ChibiClash
             nameInvites.Bind(roomsSvc);   // name, age gate and in-match come from the room service
             social.Bind(roomsSvc);   // friend invites go into named rooms
             social.PreferredName = () => Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
+            // Only a name claimed worldwide becomes Unity's public name (dev names skip the claim in editor / dev builds).
+            social.NameVerified = n => nameRegistry.IsVerified(n) ||
+                                       Netcode.ChibiNameRegistryRules.MaySkipClaim(Application.isEditor, Debug.isDebugBuild, n);
             // Age gate enforced inside both services too, not only by the menu (no side path can start online play).
             rooms.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
             social.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
@@ -136,6 +142,7 @@ namespace ChibiClash
             accountId = accountId ?? "";
             bool switched = accountId != (Save.accountId ?? "");
             PlayerIdentity.SwitchProfile(Save, accountId, serverName);
+            nameRegistry.ResetVerified();   // another player id: its name must be claimed again before online play
             Save.accountAsked = true;
             RecordNewPlayer();   // an account that brought its own name is a new player too (once age is known)
             Save.Save();
@@ -148,9 +155,12 @@ namespace ChibiClash
                 roomNameInput = null;
                 if (page == Page.Rooms || page == Page.Room || page == Page.QuickMatch) Enter(Page.Home);
             }
-            // The account has no public name yet but we have one: give it to the account now.
+            // The account has no public name yet but we have one: give it to the account only once the name is claimed
+            // worldwide for THIS player id (review 2026-11-23: a new account is a new player id, so the old claim does not
+            // count). Otherwise PushClaimedName does it after the name gate's claim succeeds.
             string local = Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
-            if (accountId.Length > 0 && string.IsNullOrEmpty(serverName) && local.Length > 0) account.PushName(local);
+            if (accountId.Length > 0 && string.IsNullOrEmpty(serverName) && local.Length > 0 && nameRegistry.IsVerified(local))
+                account.PushName(local);
             nameDialog = false;   // re-evaluated: NeedsFirstName opens it again when this account has no name
             Toast(accountId.Length > 0 ? "Signed in" + (local.Length > 0 ? " as " + local : "") + "." : "Signed out.");
         }
@@ -178,6 +188,8 @@ namespace ChibiClash
             MenuInput.Poll();
             UpdateWipe();
             UpdatePendingOnline();
+            // One "join" (launch count) per run, once the friends layer has signed in (never races the account restore).
+            if (social != null && social.Ready && PlayerIdentity.OnlineAllowed(Save.ageBand)) nameRegistry.JoinOncePerLaunch();
             if (nameInvites != null) nameInvites.Enabled = NameInvitesWanted;   // only on the online menu pages, never in a match
             WatchOnlineSounds();
             if (page == Page.Match)
@@ -1036,7 +1048,7 @@ namespace ChibiClash
                 return;
             }
             // No sign-in step: the identity is kept automatically for this computer's user profile (every launch, no
-            // button). SIGN IN WITH GOOGLE stays optional in the name window, only to carry the name to other computers.
+            // button). The SIGN IN WITH GOOGLE button was removed from the name window (user request 2026-11-23).
             if (ShowAccountStep)
             {
                 DialogBackdrop("YOUR ACCOUNT");

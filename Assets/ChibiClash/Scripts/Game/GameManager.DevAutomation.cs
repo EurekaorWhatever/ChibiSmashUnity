@@ -115,6 +115,39 @@ namespace ChibiClash
                    " | invites pending=" + (nameInvites != null ? nameInvites.Pending.Count + " \"" + nameInvites.Status + "\"" : "-");
         }
 
+        /// <summary>
+        /// Ask the name server (Cloud Code script "Chibi_Clash", code Assets/ChibiClash/CloudCode/Chibi_Clash.js) about <paramref name="name"/> as THIS player: check, then claim.
+        /// Logs one "[DevNameTest]" line per call, so a second instance can prove "This name is already taken".
+        /// </summary>
+        public async void DevNameTest(string name)
+        {
+            if (!DevAutomationAllowed) return;
+            var check = await nameRegistry.CheckAsync(name);
+            var claim = await nameRegistry.ClaimAsync(name);
+            var stats = await nameRegistry.StatsAsync();
+            Debug.Log("[DevNameTest] name=" + name + " check=" + check.Status + " claim=" + claim.Status +
+                      " stats=" + stats.Status + " players=" + stats.Players);
+        }
+
+        /// <summary>
+        /// Open CHANGE NAME, type <paramref name="name"/> and press SAVE, exactly like a player (validation, worldwide
+        /// claim, "This name is already taken" when another player owns it). Logs "[DevTypeName]" with the outcome.
+        /// </summary>
+        public async void DevTypeNameAndSave(string name)
+        {
+            if (!DevAutomationAllowed) return;
+            FinishLoadingNow();
+            OpenNameDialog();
+            nameInput = name;
+            string err = Netcode.ChibiSocialRules.ValidateName(name);
+            if (err != null) { nameError = err; Debug.Log("[DevTypeName] " + name + " invalid: " + err); return; }
+            ClaimAndSaveName(name);
+            float until = Time.realtimeSinceStartup + 15f;
+            while (Time.realtimeSinceStartup < until && nameClaiming) await System.Threading.Tasks.Task.Yield();
+            await System.Threading.Tasks.Task.Delay(200);
+            Debug.Log("[DevTypeName] " + name + " -> dialogOpen=" + nameDialog + " error=\"" + nameError + "\" saved=\"" + Save.playerName + "\"");
+        }
+
         /// <summary>Press OK once the lobby has synced, like a player would after picking a fighter.</summary>
         IEnumerator DevPressOkWhenSynced()
         {
@@ -140,6 +173,18 @@ namespace ChibiClash
                 if (i < args.Length - 1 && string.Equals(args[i], DevJoinArg, StringComparison.OrdinalIgnoreCase)) code = args[i + 1];
                 if (string.Equals(args[i], "-autoMatchmake", StringComparison.OrdinalIgnoreCase)) matchmake = true;
                 if (string.Equals(args[i], "-autoAcceptInvites", StringComparison.OrdinalIgnoreCase)) acceptInvites = true;
+                if (i < args.Length - 1 && string.Equals(args[i], "-devTypeName", StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return new WaitForSecondsRealtime(5f);
+                    DevTypeNameAndSave(args[i + 1]);
+                    yield break;
+                }
+                if (i < args.Length - 1 && string.Equals(args[i], "-devNameTest", StringComparison.OrdinalIgnoreCase))
+                {
+                    yield return new WaitForSecondsRealtime(3f);
+                    DevNameTest(args[i + 1]);
+                    yield break;
+                }
             }
             if (string.IsNullOrEmpty(code) && !matchmake && !acceptInvites) yield break;
             yield return new WaitForSecondsRealtime(3f);   // let the game finish loading

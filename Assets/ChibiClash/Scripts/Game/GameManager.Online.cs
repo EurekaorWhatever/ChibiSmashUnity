@@ -39,7 +39,7 @@ namespace ChibiClash
         string inviteNameInput = "";
         /// <summary>When the current QUICK MATCH search was started (unscaled time), for the elapsed clock.</summary>
         float quickMatchSince;
-        Netcode.ChibiAccount account;   // optional SIGN IN WITH GOOGLE (Unity Player Accounts): name on other computers
+        Netcode.ChibiAccount account;   // Unity Player Accounts (Google); no UI opens it since 2026-11-23 (user request)
         /// <summary>Product decision 2026-11-09: no sign-in step on first launch (identity is automatic per computer user).</summary>
         const bool ShowAccountStepOnFirstLaunch = false;
         Netcode.ChibiRoomService roomsSvc;   // CREATE ROOM mode: named rooms, OK / START FIGHT
@@ -247,16 +247,109 @@ namespace ChibiClash
             nameError = "";
         }
 
-        /// <summary>
-        /// HOOK for worldwide-unique names (Cloud Code + Cloud Save, a later task): returns "this name is already taken"
-        /// style text when <paramref name="name"/> belongs to another player, else null. Today nothing is checked (null).
-        /// This is the single place the check plugs in; it runs after ChibiSocialRules.ValidateName, before saving. A real
-        /// check is a network call, so the name window will then need a CHECKING... state while it waits.
-        /// </summary>
-        static string NameTakenError(string name) => null;
+        /// <summary>Worldwide-unique names (Cloud Code script "Chibi_Clash" = Assets/ChibiClash/CloudCode/Chibi_Clash.js, + Cloud Save): claim, check, launch count.</summary>
+        readonly Netcode.ChibiNameRegistry nameRegistry = new Netcode.ChibiNameRegistry();
+        /// <summary>A SAVE in the name window is waiting for the server's claim answer (CHECKING...).</summary>
+        bool nameClaiming;
+        /// <summary>The running online-name claim, shared by concurrent online flows (null when none).</summary>
+        System.Threading.Tasks.Task<string> onlineNameTask;
+        /// <summary>The name <see cref="onlineNameTask"/> claims: a different saved name starts a new claim.</summary>
+        string onlineNameTaskFor = "";
+
+        /// <summary>Push a name the server confirmed as ours to Unity's public player name (friends) or the account.</summary>
+        void PushClaimedName(string n)
+        {
+            if (social.Ready && !string.Equals(Netcode.ChibiSocialRules.BaseName(social.MyName), n, System.StringComparison.Ordinal))
+                social.SetName(n);
+            else if (!social.Ready && account.SignedIn) account.PushName(n);   // the account keeps the name everywhere
+        }
 
         /// <summary>
-        /// Choose or change the player name (validated by ChibiSocialRules.ValidateName, then the NameTakenError hook; saved;
+        /// SAVE / LET'S FIGHT in the name window: the name passed ChibiSocialRules.ValidateName; now claim it worldwide.
+        /// Taken: "This name is already taken", the window stays open. Offline, under 13 or service down: the name is
+        /// saved locally as unverified and claimed before the first online flow (<see cref="EnsureOnlineNameAsync"/>).
+        /// The claim always ends (ChibiNameRegistry's deadline covers sign-in too), so the window never stays stuck.
+        /// </summary>
+        async void ClaimAndSaveName(string n)
+        {
+            bool canClaim = PlayerIdentity.OnlineAllowed(Save.ageBand) && InternetUp &&
+                            !Netcode.ChibiNameRegistryRules.MaySkipClaim(Application.isEditor, Debug.isDebugBuild, n);
+            if (!canClaim) { CommitName(n, verified: false); return; }
+            nameClaiming = true;
+            nameError = "";
+            Netcode.ChibiNameReply r;
+            try { r = await nameRegistry.ClaimAsync(n); }
+            catch (System.Exception) { r = Netcode.ChibiNameReply.Unavailable; }   // never thrown today; belt and braces
+            finally { nameClaiming = false; }
+            if (this == null) return;   // left Play Mode while waiting
+            string err = Netcode.ChibiNameRegistryRules.DialogError(r.Status);
+            if (err != null) { nameError = err; UiSound.Error(); return; }
+            CommitName(n, verified: r.Status != Netcode.ChibiNameStatus.ServiceUnavailable);
+        }
+
+        /// <summary>Save the chosen name (the old SAVE body) and push it to Unity.</summary>
+        void CommitName(string n, bool verified)
+        {
+            bool changed = n != Save.playerName;
+            Save.playerName = n;
+            RecordNewPlayer();   // age given + identity name created: this player's row in the age record
+            Save.Save();
+            nameDialog = false;
+            // Unity's public name / the account name only change for a name claimed worldwide (unclaimed: pushed by
+            // PushClaimedName once the online name gate confirms it).
+            if (changed && verified) PushClaimedName(n);
+            Toast(verified ? "You are " + n + "!" : "You are " + n + "! We will check the name when you play online.");
+        }
+
+        /// <summary>
+        /// The name gate of every online flow. Wired into NetworkRoomManager.NameGate (quick match, private rooms, room
+        /// links: checked in its sign-in step) and ChibiRoomService.NameGate (create / join a room), so no screen, deep
+        /// link or invite path can go online with an unclaimed name. Returns null when our saved name is ours worldwide
+        /// (claimed once per session), else the reason to show. Taken: the name window also opens with "This name is
+        /// already taken". Service down: refused in release builds; editor / development builds go on (dev automation).
+        /// </summary>
+        System.Threading.Tasks.Task<string> EnsureOnlineNameAsync()
+        {
+            string n = Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
+            if (n.Length > 0 && (nameRegistry.IsVerified(n) ||
+                                 Netcode.ChibiNameRegistryRules.MaySkipClaim(Application.isEditor, Debug.isDebugBuild, n)))
+                return System.Threading.Tasks.Task.FromResult<string>(null);
+            if (onlineNameTask == null || onlineNameTask.IsCompleted || onlineNameTaskFor != n)
+            {
+                onlineNameTaskFor = n;
+                onlineNameTask = ClaimForOnline(n);
+            }
+            return onlineNameTask;
+        }
+
+        async System.Threading.Tasks.Task<string> ClaimForOnline(string n)
+        {
+            if (n.Length == 0) { OpenNameDialog(); return "Choose your player name first."; }
+            Netcode.ChibiNameReply r;
+            try { r = await nameRegistry.ClaimAsync(n); }
+            catch (System.Exception) { r = Netcode.ChibiNameReply.Unavailable; }
+            if (this == null) return "Cancelled.";
+            // SEC-003: the saved name changed while we waited: this answer is about the old name, check the new one.
+            if (Netcode.ChibiSocialRules.CleanSavedName(Save.playerName) != n) return await EnsureOnlineNameAsync();
+            if (Netcode.ChibiNameRegistryRules.IsOwned(r.Status)) { PushClaimedName(n); return null; }
+            if (r.Status == Netcode.ChibiNameStatus.ServiceUnavailable)
+                return Netcode.ChibiNameRegistryRules.MaySkipClaim(Application.isEditor, Debug.isDebugBuild, n, r.Status)
+                    ? null : Netcode.ChibiNameRegistryRules.UnavailableMessage;
+            string err = Netcode.ChibiNameRegistryRules.DialogError(r.Status) ?? Netcode.ChibiNameRegistryRules.TakenMessage;
+            if (this != null)
+            {
+                // Taken (or refused): choose another name. Never reopen a window that is already open: the invite poll
+                // retries every 30 s and must not wipe what the player is typing (review 2026-11-23).
+                bool wasOpen = nameDialog;
+                if (!wasOpen) OpenNameDialog();
+                nameError = err;
+                if (!wasOpen) UiSound.Error();
+            }
+            return err;
+        }
+
+        /// <summary>
+        /// Choose or change the player name (validated by ChibiSocialRules.ValidateName, then a worldwide claim via ClaimAndSaveName; saved;
         /// pushed to Unity). The box opens by itself only on first launch; later it opens from CHANGE NAME (SETTINGS) or
         /// the profile chip. SUGGEST fills a random valid name.
         /// </summary>
@@ -276,48 +369,24 @@ namespace ChibiClash
             nameInput = GUI.TextField(field, nameInput ?? "", Netcode.ChibiSocialRules.NameMax, Field(26));
             if (GUI.GetNameOfFocusedControl() != "PlayerName") GUI.FocusControl("PlayerName");
             if (Gui.Button(new Rect(field.xMax + 10f, field.y + 3f, 130f, 44f), "SUGGEST", Gui.Gold, 16)) { SuggestName(); UiSound.Step(); }
+            if (nameClaiming) enter = false;   // one claim at a time
             Gui.Text(new Rect(r.x + 30f, r.y + 168f, r.width - 60f, 24f), nameError, 14, Gui.Red);
 
             float bw = first ? 260f : 200f;
             float bx = first ? r.x + (r.width - bw) * 0.5f : r.x + r.width * 0.5f - bw - 10f;
-            if (Gui.Button(new Rect(bx, r.y + 210f, bw, 54f), first ? "LET'S FIGHT!" : "SAVE", Gui.P1, 20) || enter)
+            string saveLabel = nameClaiming ? "CHECKING..." : first ? "LET'S FIGHT!" : "SAVE";
+            if (Gui.Button(new Rect(bx, r.y + 210f, bw, 54f), saveLabel, Gui.P1, 20, !nameClaiming) || enter)
             {
                 string n = (nameInput ?? "").Trim();
-                string err = Netcode.ChibiSocialRules.ValidateName(n) ?? NameTakenError(n);
+                string err = Netcode.ChibiSocialRules.ValidateName(n);
                 if (err != null) { nameError = err; UiSound.Error(); }
-                else
-                {
-                    bool changed = n != Save.playerName;
-                    Save.playerName = n;
-                    RecordNewPlayer();   // age given + identity name created: this player's row in the age record
-                    Save.Save();
-                    nameDialog = false;
-                    if (changed && social.Ready) social.SetName(n);   // signed in: rename on Unity now (else synced on connect)
-                    else if (changed && account.SignedIn) account.PushName(n);   // the account keeps the name everywhere
-                    Toast("You are " + n + "!");
-                }
+                else if (!nameClaiming) ClaimAndSaveName(n);   // worldwide-unique claim, then save (or "already taken")
                 if (enter && Event.current.type == EventType.KeyDown) Event.current.Use();
             }
             Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), first ? "Gamepad: A = let's fight · Y = suggest a name" : "Gamepad: A = save · Y = suggest a name", 12, Gui.Muted);
-            // Account row: who this identity belongs to, and switching Google account.
-            if (!first && PlayerIdentity.OnlineAllowed(Save.ageBand))
-            {
-                var ar = new Rect(r.x, r.yMax + 16f, r.width, 50f);
-                Gui.Rect(ar, Gui.Panel);
-                Gui.Rect(new Rect(ar.x, ar.y, 4f, ar.height), Gui.P2);
-                Gui.Text(new Rect(ar.x + 18f, ar.y, ar.width - 260f, 50f),
-                         account.SignedIn ? "Signed in with your account: this name stays with it on every computer."
-                                          : "Saved on this computer automatically. Sign in only to use it on other computers.", 13, Gui.Muted, TextAnchor.MiddleLeft, false);
-                string label = account.SignedIn ? "SIGN OUT / SWITCH" : "SIGN IN WITH GOOGLE";
-                if (Gui.Button(new Rect(ar.xMax - 236f, ar.y + 7f, 222f, 36f), account.Working ? "SIGNING IN..." : label, Gui.P2, 14, !account.Working))
-                {
-                    if (account.SignedIn) account.SignOut();
-                    else account.SignInWithGoogle();
-                }
-                if (account.Status.Length > 0)
-                    Gui.Text(new Rect(ar.x, ar.yMax + 4f, ar.width, 40f), account.Status, 12, account.StatusIsError ? Gui.Red : Gui.Muted, TextAnchor.UpperCenter, false);
-            }
-            if (!first && Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 210f, 200f, 54f), "CANCEL", Gui.Steel, 18))
+            // No SIGN IN WITH GOOGLE row (user request 2026-11-23): the name stays on this device, tied to its
+            // anonymous player id. ChibiAccount remains in the code but nothing in the UI opens it.
+            if (!first && Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 210f, 200f, 54f), "CANCEL", Gui.Steel, 18, !nameClaiming))
             {
                 nameDialog = false;
                 UiSound.Back();
@@ -1030,7 +1099,7 @@ namespace ChibiClash
             if (can && focused && name.Length > 0 && EnterPressed()) { send = true; Event.current.Use(); }
             if (send && can && name.Length > 0)
             {
-                nameInvites.Send(name, cur.Code, cur.Name);
+                nameInvites.Send(name, cur.Code, cur.Name);   // host of a room: our name was claimed to create it
                 GUIUtility.keyboardControl = 0;
             }
             string status = full ? "The room is full." : nameInvites != null ? nameInvites.Status : "";

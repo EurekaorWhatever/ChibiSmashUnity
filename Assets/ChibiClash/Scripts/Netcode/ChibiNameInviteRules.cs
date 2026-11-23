@@ -120,6 +120,8 @@ namespace ChibiClash.Netcode
         public const float PollSeconds = 5f, PollJitterSeconds = 1f;
         /// <summary>After "too many requests": wait this long plus up to 5 s random (same as NetworkRoomManager).</summary>
         public const float RateLimitBackoffSeconds = 15f;
+        /// <summary>Wait before looking for invites again when our name could not be claimed (taken / service down).</summary>
+        public const float NameGateBackoffSeconds = 30f;
         /// <summary>At most one Send per this many seconds (stops spam and keeps Create well under its rate limit).</summary>
         public const float SendCooldownSeconds = 5f;
         /// <summary>Declining an invite ignores new invites from the same player id for this long.</summary>

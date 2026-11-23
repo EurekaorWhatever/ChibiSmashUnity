@@ -83,6 +83,11 @@ namespace ChibiClash.Netcode
         public Func<string> MyName = () => "";
         /// <summary>Age gate (set by the game): false refuses every room action.</summary>
         public Func<bool> OnlineAllowed = () => true;
+        /// <summary>
+        /// Name gate (set by the game): claims our player name worldwide before a room is created or joined. Returns
+        /// null when the name is ours, else the reason to show. Every create / join passes here, whatever screen calls it.
+        /// </summary>
+        public Func<Task<string>> NameGate = () => Task.FromResult<string>(null);
         /// <summary>True while a match is running (polling pauses; heartbeats continue).</summary>
         public Func<bool> InMatch = () => false;
         /// <summary>True while the room screen is on show: launches and starts are only acted on then.</summary>
@@ -205,7 +210,7 @@ namespace ChibiClash.Netcode
             SetStatus("Creating \"" + name + "\"...", false);
             try
             {
-                string err = await NetworkRoomManager.EnsureSignedInAsync();
+                string err = await NetworkRoomManager.EnsureSignedInAsync() ?? await NameGate();
                 if (err != null) { SetStatus(err, true); return; }
                 await LeaveCurrentSeat();
                 var options = new CreateLobbyOptions
@@ -240,7 +245,7 @@ namespace ChibiClash.Netcode
             SetStatus("Joining room " + c + "...", false);
             try
             {
-                string err = await NetworkRoomManager.EnsureSignedInAsync();
+                string err = await NetworkRoomManager.EnsureSignedInAsync() ?? await NameGate();
                 if (err != null) { SetStatus(err, true); return; }
                 await LeaveCurrentSeat();
                 var lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(c, new JoinLobbyByCodeOptions { Player = MyPlayer() });

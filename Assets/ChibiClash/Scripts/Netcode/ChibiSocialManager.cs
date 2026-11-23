@@ -80,6 +80,11 @@ namespace ChibiClash.Netcode
         /// sign-in, or the player renamed while offline) it is pushed to Unity so friends always see the current name.
         /// </summary>
         public Func<string> PreferredName = () => "";
+        /// <summary>
+        /// Set by the game: true only when the name was claimed worldwide (ChibiNameRegistry) this session. An unclaimed
+        /// or taken name is never pushed to Unity's public player name (friends, invites see that name).
+        /// </summary>
+        public Func<string, bool> NameVerified = _ => true;
 
         /// <summary>A player we sent a friend request to with INVITE: the invite goes out once they accept (see InviteByName).</summary>
         public string WaitingToInviteName { get; private set; } = "";
@@ -135,7 +140,8 @@ namespace ChibiClash.Netcode
                 RebuildLists();
                 // Keep Unity's public name equal to the name chosen in the game (first sign-in or renamed offline).
                 string wanted = PreferredName?.Invoke() ?? "";
-                if (ChibiSocialRules.ValidateName(wanted) == null && !string.Equals(ChibiSocialRules.BaseName(MyName), wanted, StringComparison.Ordinal))
+                if (ChibiSocialRules.ValidateName(wanted) == null && NameVerified(wanted) &&
+                    !string.Equals(ChibiSocialRules.BaseName(MyName), wanted, StringComparison.Ordinal))
                 {
                     try
                     {
@@ -162,6 +168,7 @@ namespace ChibiClash.Netcode
             name = (name ?? "").Trim();
             string err = ChibiSocialRules.ValidateName(name);
             if (err != null) { SetStatus(err, true); return; }
+            if (!NameVerified(name)) return;   // unclaimed name: pushed later, once the name gate confirmed it
             Working = true;
             try
             {

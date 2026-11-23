@@ -110,6 +110,11 @@ namespace ChibiClash.Netcode
         /// as in the menu so no screen or side path can bypass it.
         /// </summary>
         public Func<bool> OnlineAllowed = () => true;
+        /// <summary>
+        /// Name gate (set by the game): claims our player name worldwide before any online flow (quick match, private
+        /// rooms, room links). Null = OK, else the reason to show. Checked in <c>SignIn</c>, the step every flow passes.
+        /// </summary>
+        public Func<Task<string>> NameGate = () => Task.FromResult<string>(null);
         /// <summary>Shown when <see cref="OnlineAllowed"/> refuses.</summary>
         public const string NotAllowedMessage = "Online play is for players 13 and older.";
 
@@ -243,7 +248,7 @@ namespace ChibiClash.Netcode
         {
             State = ChibiRoomState.SigningIn;
             Status = "Signing in...";
-            string error = await EnsureSignedInAsync();
+            string error = await EnsureSignedInAsync() ?? await NameGate();
             if (flow != _flow) return false;
             if (error != null) { Fail(error); return false; }
             return true;

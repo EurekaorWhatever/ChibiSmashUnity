@@ -7,7 +7,7 @@ namespace ChibiClash.Netcode
     /// Random fun fighter names for the name window's SUGGEST button (and gamepad Y). Every suggestion passes
     /// <see cref="ChibiSocialRules.ValidateName"/> (length, characters, blocked words). The random source is injected,
     /// so tests are deterministic. Names are not checked for worldwide uniqueness here: that check happens when the
-    /// name is saved (GameManager.NameTakenError, the Cloud Code hook).
+    /// name is saved (GameManager.ClaimAndSaveName, the Cloud Code claim).
     /// </summary>
     /// <example><code>
     /// var rng = new System.Random();
