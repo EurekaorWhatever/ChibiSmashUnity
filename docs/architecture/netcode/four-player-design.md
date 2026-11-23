@@ -283,3 +283,19 @@ Total is about 4-6 weeks. Phases 1-2 can ship on their own (local party mode) be
 5. **Topology:** star through the host (recommended for v1) or full mesh?
 6. **Global hitstop and ult slow-mo** with 4 players: keep for v1 and judge in playtest (recommended)?
 7. **Online mixed local:** 2 players on one PC joining an online 2v2. Out of scope for v1 (recommended)?
+
+## 9. Decisions taken (2026-11-23)
+
+The owner said "just make it", so every DECIDE item takes the recommended answer:
+
+1. Friendly fire OFF for everything a player owns (melee, projectiles, minions, zones, clouds, Fire Ring); stage
+   hazards hit everyone; no grabbing or reflecting a teammate's shot.
+2. Stocks: 3 for Battle Royale; 2v2 = 3 per player (no shared pool).
+3. A player who leaves is eliminated at an exact frame (`presentMask`) and the match continues.
+4. Teams: join order in quick match; rooms may pick teams later (v1: join order).
+5. Topology: star through the host (one Relay allocation for 3 guests).
+6. Global hitstop and ult slow-mo stay for v1; judged in playtest.
+7. Two local players joining one online match: out of scope for v1.
+
+Priority from the user's PDF: every mode is players against each other, so **Battle Royale (2-4 FFA)** is the
+main mode for MATCHMAKING rooms and VS ONLINE; 2v2 Team follows with the same engine.

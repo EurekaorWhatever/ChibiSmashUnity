@@ -34,7 +34,7 @@ namespace ChibiClash.Netcode
             bool any = false;
             for (int p = 0; p < plats.Length; p++) any |= plats[p].Moves;
             if (!any) return;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < s.PlayerCount; i++)
             {
                 var f = s.F[i];
                 if (f.Held || f.OutTicks > 0) continue;

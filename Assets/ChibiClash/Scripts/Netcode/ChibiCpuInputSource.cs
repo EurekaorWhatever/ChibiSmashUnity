@@ -256,7 +256,7 @@ namespace ChibiClash.Netcode
         /// <summary>Create a CPU for fighter <paramref name="player"/> (0 or 1) at <paramref name="difficulty"/> (0 dummy .. 3 hard).</summary>
         public ChibiCpuInputSource(int player, int difficulty, uint matchSeed)
         {
-            if (player < 0 || player > 1) throw new ArgumentOutOfRangeException(nameof(player));
+            if (player < 0 || player >= ChibiSimState.MaxFighters) throw new ArgumentOutOfRangeException(nameof(player));
             _player = player;
             _difficulty = difficulty;
             _skillPermille = difficulty * 1000 / 3;                       // skill = difficulty / 3 (FI:158)
@@ -289,7 +289,7 @@ namespace ChibiClash.Netcode
                 _descendTier = -1; _climbTicks = 0; _descendCd = 0; _lowTier = -1;
                 if (me.OutTicks > 0 || _difficulty <= 0 || !_state.Running || !HoverLeaveSafe(me)) return default;
                 _hoverWait = -1;
-                var opp0 = _state.F[1 - _player];
+                var opp0 = _state.F[ChibiSimulation.Foe(_state, _player)];
                 int away = opp0.X > me.X ? -1 : (opp0.X < me.X ? 1 : (me.X > 0 ? -1 : 1));
                 return ChibiInputPacket.Make(ChibiInputPacket.DirFromAxes(away, 0), ChibiButtons.None);
             }
@@ -335,7 +335,7 @@ namespace ChibiClash.Netcode
         {
             if (_difficulty <= 0) return false;
             var self = _state.F[_player];
-            var opp = _state.F[1 - _player];
+            var opp = _state.F[ChibiSimulation.Foe(_state, _player)];
 
             UpdateUltGesture(self);
             if (!_state.Running) { _planLen = 0; return false; }   // InputEnabled gate: the original Fighter ignores the CPU too
@@ -1615,7 +1615,7 @@ namespace ChibiClash.Netcode
             if (_hoverWait > 0) { _hoverWait--; return false; }
             var st = ChibiStageTable.Get(_state.Stage);
             if (BirdAlert(st) || WhaleThreat(st) && me.Y > 0) return false;
-            var opp = _state.F[1 - _player];
+            var opp = _state.F[ChibiSimulation.Foe(_state, _player)];
             if (opp.InPlay && me.HoverTicks > HoverCampMinLeft && Math.Abs(opp.X - me.X) < HoverCampX && opp.Y < me.Y && opp.Stun == 0)
                 return false;
             return true;

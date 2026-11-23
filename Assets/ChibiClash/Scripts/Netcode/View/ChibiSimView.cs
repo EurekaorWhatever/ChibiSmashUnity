@@ -404,7 +404,7 @@ namespace ChibiClash.Netcode
                     }
                     case ChibiSimEventKind.Damaged:
                     {
-                        int d = e.Index, a = 1 - d;
+                        int d = e.Index, a = ChibiSimView.Attacker(cur, d);
                         int slot = NewMoveSlotOfHit(cur, a);
                         if (slot < firstNew) break;
                         var fd = cur.F[d];
@@ -849,9 +849,19 @@ namespace ChibiClash.Netcode
         /// the sim's HitstopRealTicks), silhouette flash, camera trauma, and on heavy hits a punch-in toward the impact,
         /// a kick along the launch and a radial burst. Strength from the shown state (read only).
         /// </summary>
+        /// <summary>
+        /// Attacker of the latest hit on fighter <paramref name="d"/> (four-player-design.md 1.3, read only): the sim's
+        /// <see cref="ChibiFighterSim.LastHitBy"/>, else the 1v1 opponent. In 1v1 both are 1 - d.
+        /// </summary>
+        internal static int Attacker(ChibiSimState s, int d)
+        {
+            int a = s.F[d].LastHitBy;
+            return a >= 0 && a < s.PlayerCount && a != d ? a : 1 - d;
+        }
+
         void OnHitFeel(int d, int pct)
         {
-            int a = 1 - d;
+            int a = Attacker(_seen, d);
             var fd = _seen.F[d];
             var launch = new Vector2(fd.Vx, fd.Vy) * ChibiFeel.SubToUps;
             float s = ChibiFeel.HitStrength(pct, launch.magnitude);

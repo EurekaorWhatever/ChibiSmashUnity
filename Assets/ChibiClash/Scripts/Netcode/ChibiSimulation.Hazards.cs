@@ -205,7 +205,7 @@ namespace ChibiClash.Netcode
         {
             if (!s.HazardsOn || !s.Running) return;
             int hz = ChibiStageTable.Get(s.Stage).Hazard;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < s.PlayerCount; i++)
             {
                 var f = s.F[i];
                 if (HazardImmune(f)) continue;

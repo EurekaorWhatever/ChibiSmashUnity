@@ -348,7 +348,12 @@ namespace ChibiClash.Netcode
             var f = s.F[i];
             // Existing ring-out release (F:692-697): Interrupt self (frees a held victim); a held fighter frees its holder.
             Interrupt(s, i);
-            if (f.Held) { Interrupt(s, 1 - i); f.Held = false; }
+            if (f.Held)
+            {
+                int holder = f.HeldBy;
+                Interrupt(s, holder);                       // releases f (HeldBy / HoldTarget invariant)
+                if (f.HeldBy >= 0) { s.F[f.HeldBy].HoldTarget = -1; f.HeldBy = -1; }
+            }
             if (!s.Training && f.Stocks > 0) f.Stocks--;
             f.KosTaken++;
             f.OutTicks = ChibiPercentConst.RespawnDelay;
@@ -376,19 +381,21 @@ namespace ChibiClash.Netcode
         {
             if (!s.Running) return;
             var st = ChibiStageTable.Get(s.Stage);
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < s.PlayerCount; i++)
             {
                 var f = s.F[i];
                 if (f.OutTicks > 0) continue;
                 if (st.CrossesKoEdge(f.X, f.Y)) KnockOut(s, i);
             }
             if (s.Training) return;   // no stock loss and no timer in training (MC:68)
+            if (s.PlayerCount > 2) { ResolveMultiMatchEnd(s); return; }   // four players (ChibiSimulation.Players.cs)
 
             bool ko0 = s.F[0].Stocks <= 0, ko1 = s.F[1].Stocks <= 0;
             if (ko0 || ko1)
             {
                 s.MatchOver = true;
                 s.Winner = ko0 && ko1 ? -1 : (ko0 ? 1 : 0);
+                SetLegacyResults(s);
                 return;
             }
             s.MatchClock++;
@@ -396,6 +403,7 @@ namespace ChibiClash.Netcode
             {
                 s.MatchOver = true;
                 s.Winner = TimeoutWinner(s.F[0], s.F[1]);
+                SetLegacyResults(s);
             }
         }
     }

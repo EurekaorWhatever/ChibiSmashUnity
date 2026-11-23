@@ -263,7 +263,7 @@ namespace ChibiClash.Tests
             f.MoveStartup = 4; f.MoveActive = 3;
             f.MoveTick = 20;
             f.MoveLockEnd = f.MoveTick + lockLeft;
-            f.MoveHit = hit; f.MoveConnected = hit;   // rules v23: the walk cancel reads MoveConnected
+            f.MoveHitMask = hit ? 1 << 1 : 0; f.MoveConnected = hit;   // rules v23: the walk cancel reads MoveConnected (four players: MoveHit is a mask, bit 1 = fighter 1)
             return f;
         }
 

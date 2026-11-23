@@ -17,7 +17,9 @@ namespace ChibiClash.Netcode
     /// </summary>
     public sealed class ChibiLocalSession
     {
-        readonly IChibiInputSource _p0, _p1;
+        readonly IChibiInputSource[] _sources;
+        /// <summary>This tick's sanitized inputs, one per fighter (reused: Tick does not allocate).</summary>
+        readonly ChibiInputPacket[] _inputs;
 
         /// <summary>The live simulation state (read it for rendering; do not mutate).</summary>
         public ChibiSimState State { get; }
@@ -34,18 +36,38 @@ namespace ChibiClash.Netcode
         /// </summary>
         public event Action<int, ChibiInputPacket, ChibiInputPacket> OnFrame;
 
+        /// <summary>
+        /// Raised after each simulated frame with that frame's number and every fighter's input (four players). The array
+        /// is reused by the next Tick: copy what you keep.
+        /// </summary>
+        public event Action<int, ChibiInputPacket[]> OnFrameAll;
+
         /// <summary>Create and initialise a match. Neither source may be null.</summary>
         /// <example><code>var s = new ChibiLocalSession(cfg, p0, p1);</code></example>
         public ChibiLocalSession(in ChibiMatchConfig cfg, IChibiInputSource p0, IChibiInputSource p1)
+            : this(cfg, new[] { p0 ?? throw new ArgumentNullException(nameof(p0)), p1 ?? throw new ArgumentNullException(nameof(p1)) })
         {
-            _p0 = p0 ?? throw new ArgumentNullException(nameof(p0));
-            _p1 = p1 ?? throw new ArgumentNullException(nameof(p1));
+        }
+
+        /// <summary>
+        /// Create and initialise a match for 2..4 fighters (four-player-design.md 1.1): <paramref name="sources"/>[i] drives
+        /// fighter i and its length must equal the config's player count. No entry may be null.
+        /// </summary>
+        /// <example><code>var s = new ChibiLocalSession(cfg, new IChibiInputSource[] { pad0, pad1, cpu2, cpu3 });</code></example>
+        public ChibiLocalSession(in ChibiMatchConfig cfg, IChibiInputSource[] sources)
+        {
+            if (sources == null) throw new ArgumentNullException(nameof(sources));
+            if (sources.Length != cfg.Players)
+                throw new ArgumentException($"need {cfg.Players} input sources, got {sources.Length}", nameof(sources));
+            for (int i = 0; i < sources.Length; i++)
+                if (sources[i] == null) throw new ArgumentNullException(nameof(sources), $"source {i} is null");
+            _sources = (IChibiInputSource[])sources.Clone();
+            _inputs = new ChibiInputPacket[sources.Length];
             Config = cfg;
             State = new ChibiSimState();
             ChibiSimulation.Init(State, cfg);
             // A CPU (or any state-reading source) sees the state at the start of each tick it is sampled for.
-            (p0 as IChibiStateAwareSource)?.Bind(State);
-            (p1 as IChibiStateAwareSource)?.Bind(State);
+            for (int i = 0; i < _sources.Length; i++) (_sources[i] as IChibiStateAwareSource)?.Bind(State);
         }
 
         /// <summary>
@@ -57,10 +79,11 @@ namespace ChibiClash.Netcode
         {
             if (State.MatchOver) return false;
             int frame = State.Frame;
-            var in0 = new ChibiInputPacket { Raw = (ushort)(_p0.SampleTick().Raw & ChibiInputPacket.WireMask) }.Sanitized();
-            var in1 = new ChibiInputPacket { Raw = (ushort)(_p1.SampleTick().Raw & ChibiInputPacket.WireMask) }.Sanitized();
-            ChibiSimulation.Step(State, in0, in1);
-            OnFrame?.Invoke(frame, in0, in1);
+            for (int i = 0; i < _sources.Length; i++)   // sampled in fighter order (1v1: p0 then p1, as before)
+                _inputs[i] = new ChibiInputPacket { Raw = (ushort)(_sources[i].SampleTick().Raw & ChibiInputPacket.WireMask) }.Sanitized();
+            ChibiSimulation.Step(State, _inputs);
+            OnFrame?.Invoke(frame, _inputs[0], _inputs[1]);
+            OnFrameAll?.Invoke(frame, _inputs);
             return !State.MatchOver;
         }
     }

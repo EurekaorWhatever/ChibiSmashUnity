@@ -97,6 +97,10 @@ namespace ChibiClash.Tests
 
         static FieldInfo Need(Type t, string name)
         {
+            // Four players (four-player-design.md 1.1): the v12 bools Held / Holding are now the int fields HeldBy /
+            // HoldTarget (-1 = none; 1v1 value = the other fighter). Held / Holding stay as read-only properties.
+            if (name == "Held") name = "HeldBy";
+            else if (name == "Holding") name = "HoldTarget";
             var fi = t.GetField(name, Inst);
             if (fi == null) Assert.Fail($"field {t.Name}.{name} missing (multiphase-conversion.md section 6, RulesVersion 12)");
             return fi;
@@ -113,8 +117,8 @@ namespace ChibiClash.Tests
 
         static void SetBool(object o, string name, bool v) => Need(o.GetType(), name).SetValue(o, v);
 
-        static bool Held(ChibiFighterSim f) => GetBool(f, "Held");
-        static bool Holding(ChibiFighterSim f) => GetBool(f, "Holding");
+        static bool Held(ChibiFighterSim f) => f.Held;         // HeldBy >= 0
+        static bool Holding(ChibiFighterSim f) => f.Holding;   // HoldTarget >= 0
 
         /// <summary>Amendment 6 / 8h: F[i].Holding == F[1-i].Held, both directions, every tick.</summary>
         static void HeldInvariant(ChibiSimState s, int tick)
