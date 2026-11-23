@@ -86,6 +86,13 @@ namespace ChibiClash.Netcode
     /// </summary>
     public static class ChibiSimEvents
     {
+        /// <summary>Fighters drawn for <paramref name="s"/>: its PlayerCount clamped to 2..MaxFighters (1v1 = 2).</summary>
+        public static int Fighters(ChibiSimState s)
+        {
+            int n = s != null ? s.PlayerCount : 2;
+            return n <= 2 ? 2 : n > ChibiSimState.MaxFighters ? ChibiSimState.MaxFighters : n;
+        }
+
         /// <summary>
         /// Append the events between <paramref name="prev"/> and <paramref name="cur"/> to <paramref name="output"/>
         /// (the list is not cleared). Neither state is modified.
@@ -93,10 +100,12 @@ namespace ChibiClash.Netcode
         /// <example><code>events.Clear(); ChibiSimEvents.Diff(shown, session.State, events); shown.CopyFrom(session.State);</code></example>
         public static void Diff(ChibiSimState prev, ChibiSimState cur, List<ChibiSimEvent> output)
         {
-            for (int i = 0; i < 2; i++) DiffFighter(i, prev.F[i], cur.F[i], output);
+            // Fighters of this match (1v1: 0 and 1, as before; up to 4 with four players).
+            int nf = Fighters(cur);
+            for (int i = 0; i < nf; i++) DiffFighter(i, prev.F[i], cur.F[i], output);
 
             // Rise only (a new ult re-arms the counter upward); the per-real-tick countdown never emits.
-            if (cur.CinematicRealTicks > prev.CinematicRealTicks && cur.CinematicFighter >= 0 && cur.CinematicFighter < 2)
+            if (cur.CinematicRealTicks > prev.CinematicRealTicks && cur.CinematicFighter >= 0 && cur.CinematicFighter < nf)
                 output.Add(new ChibiSimEvent(ChibiSimEventKind.CinematicStarted, cur.CinematicFighter));
 
             // Rules v20 (damage percent + stocks): a KO is any blast-line KO, emitted per fighter in DiffFighter from KosTaken.

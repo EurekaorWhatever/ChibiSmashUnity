@@ -36,12 +36,12 @@ namespace ChibiClash
         /// <summary>Unscaled time the end of the match was first seen.</summary>
         public float FinishedTime { get; private set; }
 
-        readonly ClassDef[] _def = new ClassDef[2];
-        readonly Skin[] _skin = new Skin[2];
-        readonly WeaponDef[] _weapon = new WeaponDef[2];
-        readonly ChibiPlayerInputSource[] _human = new ChibiPlayerInputSource[2];
-        readonly bool[] _cpu = new bool[2];
-        readonly string[] _names = { "", "" };
+        readonly ClassDef[] _def = new ClassDef[ChibiSimState.MaxFighters];
+        readonly Skin[] _skin = new Skin[ChibiSimState.MaxFighters];
+        readonly WeaponDef[] _weapon = new WeaponDef[ChibiSimState.MaxFighters];
+        readonly ChibiPlayerInputSource[] _human = new ChibiPlayerInputSource[ChibiSimState.MaxFighters];
+        readonly bool[] _cpu = new bool[ChibiSimState.MaxFighters];
+        readonly string[] _names = { "", "", "", "" };
         ChibiLocalLoop _local;
         bool _awarded;
 
@@ -59,6 +59,13 @@ namespace ChibiClash
         public int Winner => Online ? OnlineResult.Winner : State != null ? State.Winner : -1;
         /// <summary>Stage display name.</summary>
         public string StageName => View != null && View.Stage != null ? View.Stage.name : "";
+
+        /// <summary>Fighters in this match: 2 for 1v1, up to 4 (four-player Phase 2b).</summary>
+        public int PlayerCount => State != null ? ChibiSimEvents.Fighters(State) : 2;
+        /// <summary>Team mode (2v2): the HUD uses team colours and the results show the winning team.</summary>
+        public bool TeamMode => State != null && State.Mode == ChibiMatchMode.Team;
+        /// <summary>Team (0 / 1) of fighter <paramref name="i"/> in Team mode, else -1.</summary>
+        public int TeamOf(int i) => TeamMode ? (State.TeamOf >> i) & 1 : -1;
 
         /// <summary>Static data of fighter <paramref name="i"/>.</summary>
         public ClassDef Def(int i) => _def[i];
@@ -97,6 +104,8 @@ namespace ChibiClash
         public static ChibiMatch Create(GameManager gm, MatchConfig cfg)
         {
             PreloadAssets(cfg.cls[0], cfg.cls[1]);   // perf: whatever the wipe did not load yet, still behind the wipe
+            for (int i = 2; i < Mathf.Clamp(cfg.players, 2, ChibiSimState.MaxFighters); i++)
+                SpriteAnimLibrary.Preload(CharacterRoster.Of(cfg.cls[i]).Id);   // fighters 3-4 (cheap when already loaded)
             var go = new GameObject("Match");
             var m = go.AddComponent<ChibiMatch>();
             m.GM = gm;
@@ -143,7 +152,8 @@ namespace ChibiClash
 
         void ResolveCosmetics(SaveData save)
         {
-            for (int i = 0; i < 2; i++)
+            int n = Mathf.Clamp(Config.players, 2, ChibiSimState.MaxFighters);
+            for (int i = 0; i < n; i++)
             {
                 _def[i] = ClassDef.Get(Config.cls[i]);
                 _skin[i] = save != null ? save.Equipped(_def[i].type) : Skin.Default(_def[i].type);
@@ -161,8 +171,15 @@ namespace ChibiClash
                 Stage = Config.stage, Intro = true, Training = Config.training,
                 HazardsOff = !Config.hazards,   // ST-5: stage events toggle (moving platforms move either way)
             };
-            var src = new IChibiInputSource[2];
-            for (int i = 0; i < 2; i++)
+            int n = Mathf.Clamp(Config.players, 2, ChibiSimState.MaxFighters);
+            if (n > 2)
+            {
+                // Four players (Phase 2b): fighters 3-4 and the mode. A 1v1 leaves every new field at its default, so its
+                // config (and hash) is exactly the old one.
+                SimConfig = WithPlayers(SimConfig, Config, n);
+            }
+            var src = new IChibiInputSource[n];
+            for (int i = 0; i < n; i++)
             {
                 _cpu[i] = Config.cpu[i];
                 if (_cpu[i]) src[i] = new ChibiCpuInputSource(i, Config.training ? 0 : Config.difficulty, SimConfig.Seed);
@@ -171,10 +188,22 @@ namespace ChibiClash
             // The profile owner (P1) is shown by their chosen name; P2 / CPU keep their labels.
             if (!_cpu[0] && GM != null && GM.Save != null) _names[0] = ChibiSocialRules.CleanSavedName(GM.Save.playerName);
             _local = gameObject.AddComponent<ChibiLocalLoop>();
-            _local.Begin(SimConfig, src[0], src[1], recordReplay: true);
+            if (n == 2) _local.Begin(SimConfig, src[0], src[1], recordReplay: true);
+            else _local.Begin(SimConfig, src, recordReplay: false);   // the replay format holds 2 streams (Phase 3)
             Feed = _local;
             LocalPlayer = 0;
             BuildView();
+        }
+
+        /// <summary>The sim config with fighters 2..n-1, the player count and the mode from <paramref name="mc"/>.</summary>
+        static ChibiMatchConfig WithPlayers(ChibiMatchConfig c, MatchConfig mc, int n)
+        {
+            c.PlayerCount = n;
+            c.Class2 = mc.cls[2]; c.Passive2 = mc.passive[2];
+            if (n > 3) { c.Class3 = mc.cls[3]; c.Passive3 = mc.passive[3]; }
+            c.Mode = mc.team ? ChibiMatchMode.Team : ChibiMatchMode.FreeForAll;
+            c.TeamOf = mc.team ? mc.teamOf & ((1 << n) - 1) : 0;
+            return c;
         }
 
         /// <summary>
@@ -318,7 +347,7 @@ namespace ChibiClash
             if (s == null) return;
             // Posture is sampled for local human fighters while running, scaled dt (MC:150); never part of the sim.
             if (s.Running && !Paused)
-                for (int i = 0; i < 2; i++) Tracker(i)?.SamplePosture(Time.deltaTime);
+                for (int i = 0; i < _human.Length; i++) Tracker(i)?.SamplePosture(Time.deltaTime);
 
             if (Finished && !_awarded)
             {
@@ -358,6 +387,13 @@ namespace ChibiClash
             return "";
         }
 
+        /// <summary>The local player won (1v1: Winner; more fighters: in WinnerMask, so a 2v2 team wins together).</summary>
+        bool WonLocal => PlayerCount <= 2 || Online ? Winner == LocalPlayer
+                                                    : State != null && (State.WinnerMask & (1 << LocalPlayer)) != 0;
+        /// <summary>The local player lost (1v1: the other one won; more fighters: someone else won, not a draw).</summary>
+        bool LostLocal => PlayerCount <= 2 || Online ? Winner == 1 - LocalPlayer
+                                                     : State != null && State.WinnerMask != 0 && !WonLocal;
+
         void AwardRewards()
         {
             if (GM == null || GM.Save == null || Config.training) return;
@@ -375,8 +411,8 @@ namespace ChibiClash
             var tracker = Tracker(LocalPlayer);
             var stats = new MatchStatsForRewards
             {
-                Won = Winner == LocalPlayer,
-                Lost = Winner == 1 - LocalPlayer,
+                Won = WonLocal,
+                Lost = LostLocal,
                 Pve = Config.pve && !Online,
                 Training = Config.training,
                 CombosLanded = me.CombosLanded, UltsUsed = me.UltsUsed, Parries = me.Parries,

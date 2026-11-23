@@ -44,8 +44,15 @@ namespace ChibiClash.Tests
         /// moveset hash, the new hashed MoveConnected field and the dash attack buffer change both fixtures.
         /// 24: re-recorded ON PURPOSE (ED-1 escape dash, 2026-11-17): EscapeMinAge / EscapeSpeedP / LaunchAgeCap join the
         /// config hash and the new hashed fighter fields LaunchAge and EscapeDashes change both fixture checksums.
+        /// 25: re-recorded for RulesVersion 25 (4-player rules, 2026-11-23), ON PURPOSE (four-player-design.md 1.5, Phase 2a).
+        /// Causes, all intended: the Phase 1 "1v1 canonical" checksum trick is gone, so every state now mixes PlayerCount,
+        /// Mode, TeamOf, WinnerMask, PresentMask, Place and each fighter's HeldBy / HoldTarget / MoveHitMask / LastHitBy /
+        /// ProgTarget and each live shot's HitMask; the pools grew to 128 / 24 / 8 (the checksum walks every slot);
+        /// LastHitBy is cleared on respawn; the config hash mixes RulesVersion 25, the new pool sizes, MaxFighters, the
+        /// mode / team fields and the stage's 3-4 fighter spawn table. 1v1 gameplay rules did not change. New fixtures
+        /// C (2v2 Team) and D (4-player Battle Royale) pin the four-player rules.
         /// </remarks>
-        const int PinnedRulesVersion = 24;
+        const int PinnedRulesVersion = 25;
         /// <summary>The wire protocol version the wire golden values were recorded with.</summary>
         /// <remarks>3: re-recorded ON PURPOSE (CH-3) - input bit 15 changed meaning from PoseVerified to Special.
         /// 4: re-recorded ON PURPOSE (rules v20, ST-5) - the Start message carries a 1-bit HazardsOff after the stage and the
@@ -54,23 +61,58 @@ namespace ChibiClash.Tests
         /// (DisconnectTicks cap, input-progress timeout, MatchComplete and never-started scoring).</remarks>
         const int PinnedProtocolVersion = 5;
         /// <summary>Hash of every gameplay constant table + the fixture config (ChibiMatchConfig.ComputeHash).</summary>
-        const uint GoldenConfigHash = 0x76E8792Bu;
+        const uint GoldenConfigHash = 0x3A6558E2u;
         /// <summary>Final state checksum of fixture match A after <see cref="Ticks"/> ticks.</summary>
-        const uint GoldenChecksumA = 0x203C416Bu;
+        const uint GoldenChecksumA = 0x22B0CD26u;
         /// <summary>Final state checksum of fixture match B (other fighters, stage, intro off).</summary>
-        const uint GoldenChecksumB = 0x53B6AE02u;
+        const uint GoldenChecksumB = 0x1DF9931Cu;
+        /// <summary>Final state checksum of fixture match C: 2v2 Team, 4 fighters, <see cref="FourTicks"/> ticks (rules v25).</summary>
+        const uint GoldenChecksumC = 0x6A062411u;
+        /// <summary>Final state checksum of fixture match D: 4-player Battle Royale, <see cref="FourTicks"/> ticks (rules v25).</summary>
+        const uint GoldenChecksumD = 0x0D9BD502u;
         /// <summary>Bytes of a Hello control datagram (protocol, rules, class, passive, name "Kira").</summary>
         /// <remarks>Re-recorded on purpose: protocol 5 and rules 22 (same Hello layout; only the protocol byte moved, 4 -> 5).
         /// Rules 23 (2026-11-17): only the rules byte moved (0x60 -> 0x70), as in the v22 bump; layout unchanged, no protocol bump.
-        /// Rules 24 (ED-1, 2026-11-17): only the rules byte moved (0x70 -> 0x80); layout unchanged, no protocol bump.</remarks>
-        const string GoldenHelloHex = "c9518001208922ae1a";
+        /// Rules 24 (ED-1, 2026-11-17): only the rules byte moved (0x70 -> 0x80); layout unchanged, no protocol bump.
+        /// Rules 25 (4-player rules, 2026-11-23): only the rules byte moved (0x80 -> 0x90); layout unchanged, no protocol bump.</remarks>
+        const string GoldenHelloHex = "c9519001208922ae1a";
 
         const int Ticks = 1800;   // 30 s of play: movement, attacks, skills, jumps, hits, KOs
+        const int FourTicks = 600;   // 10 s of 4-fighter play: crowded hits, grabs, shots and a few KOs
 
         static readonly ChibiMatchConfig FixtureA = new ChibiMatchConfig
             { Seed = 0x12345678u, Class0 = FighterClass.Melee, Passive0 = 0, Class1 = FighterClass.Heavy, Passive1 = 1, Stage = 0, Intro = true };
         static readonly ChibiMatchConfig FixtureB = new ChibiMatchConfig
             { Seed = 0xCAFEF00Du, Class0 = FighterClass.Magic, Passive0 = 1, Class1 = FighterClass.Polearm, Passive1 = 0, Stage = 2, Intro = false };
+
+        static readonly ChibiMatchConfig FixtureC = new ChibiMatchConfig
+        {
+            Seed = 0x2B2B2B2Bu, PlayerCount = 4, Mode = ChibiMatchMode.Team, TeamOf = 0b1010, Stage = 3, Intro = false,
+            Class0 = FighterClass.Melee, Passive0 = 0, Class1 = FighterClass.Heavy, Passive1 = 1,
+            Class2 = FighterClass.Ranged, Passive2 = 1, Class3 = FighterClass.Polearm, Passive3 = 0,
+        };
+        static readonly ChibiMatchConfig FixtureD = new ChibiMatchConfig
+        {
+            Seed = 0xB0A1B0A1u, PlayerCount = 4, Mode = ChibiMatchMode.FreeForAll, Stage = 5, Intro = false,
+            Class0 = FighterClass.Magic, Passive0 = 1, Class1 = FighterClass.Polearm, Passive1 = 1,
+            Class2 = FighterClass.Heavy, Passive2 = 0, Class3 = FighterClass.Melee, Passive3 = 1,
+        };
+
+        /// <summary>Runs a 4-fighter fixture: fighter i plays <see cref="Script"/>(seed0 + i) for <see cref="FourTicks"/> ticks.</summary>
+        static ChibiSimState SimulateFour(in ChibiMatchConfig cfg, int seed0)
+        {
+            var scripts = new List<ushort>[ChibiSimState.MaxFighters];
+            for (int i = 0; i < scripts.Length; i++) scripts[i] = Script(seed0 + i);
+            var s = new ChibiSimState();
+            ChibiSimulation.Init(s, cfg);
+            var inputs = new ChibiInputPacket[ChibiSimState.MaxFighters];
+            for (int t = 0; t < FourTicks; t++)
+            {
+                for (int i = 0; i < inputs.Length; i++) inputs[i] = new ChibiInputPacket { Raw = scripts[i][t] };
+                ChibiSimulation.Step(s, inputs);
+            }
+            return s;
+        }
 
         /// <summary>A fixed, busy input script (same every run, no randomness, no clock).</summary>
         static List<ushort> Script(int seed)
@@ -152,6 +194,27 @@ namespace ChibiClash.Tests
         {
             uint c = ChibiReplay.Simulate(FixtureB, Script(3), Script(4)).ComputeChecksum();
             Assert.AreEqual(GoldenChecksumB, c, "match B checksum is now 0x" + c.ToString("X8") + "u." + HowToFixGameplay);
+        }
+
+        [Test]
+        public void FixtureMatchC_2v2Team_FinalChecksumUnchanged()
+        {
+            uint c = SimulateFour(FixtureC, 11).ComputeChecksum();
+            Assert.AreEqual(GoldenChecksumC, c, "match C (2v2) checksum is now 0x" + c.ToString("X8") + "u." + HowToFixGameplay);
+        }
+
+        [Test]
+        public void FixtureMatchD_BattleRoyale_FinalChecksumUnchanged()
+        {
+            uint c = SimulateFour(FixtureD, 21).ComputeChecksum();
+            Assert.AreEqual(GoldenChecksumD, c, "match D (Battle Royale) checksum is now 0x" + c.ToString("X8") + "u." + HowToFixGameplay);
+        }
+
+        [Test]
+        public void FourPlayerFixtures_RunTwice_Identical()
+        {
+            Assert.AreEqual(SimulateFour(FixtureC, 11).ComputeChecksum(), SimulateFour(FixtureC, 11).ComputeChecksum(), "2v2 twice");
+            Assert.AreEqual(SimulateFour(FixtureD, 21).ComputeChecksum(), SimulateFour(FixtureD, 21).ComputeChecksum(), "BR twice");
         }
 
         [Test]

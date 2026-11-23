@@ -58,7 +58,7 @@ namespace ChibiClash.Tests
         const int GuardHold = 100;                    // GuardTicks kept > 0 for the whole test
         const int RingHold = 101;                     // RingTicks after Dec = 100, 100 % 30 != 0: no ring damage pulse
         const int DashInvuln = 6;                     // dash i-frames (dash-conversion.md)
-        const int MaxProjectiles = 64;                // D-P2 = A
+        const int MaxProjectiles = 128;               // D-P2 = A (64 for 2 fighters); rules v25 doubles it for 4 fighters
         const int RulesVersion11 = 11;                // A8
 
         // ---- rows 1-9 / 11-13 of the section 1 table (sim units)
@@ -755,7 +755,7 @@ namespace ChibiClash.Tests
 
         // ================================================================== P19 pool + A1 / A4
 
-        // P19 -- section 5, D-P2 = A, A4: MaxProjectiles 64; a Ranged mirror firing both ults, Arrow Barrage and normals never
+        // P19 -- section 5, D-P2 = A, A4: MaxProjectiles 64 (128 since rules v25, 4 fighters); a Ranged mirror firing both ults, Arrow Barrage and normals never
         // drops a shot (DroppedShots stays 0, in state).
         [Test]
         public void P19_RangedMirror_NoDroppedShots()

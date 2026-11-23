@@ -153,7 +153,7 @@ namespace ChibiClash.Netcode
             a._requests.Clear();
             if (!ChibiSfxMap.Move(cls, animKind, heavy, fighter, a._requests)) { a.WarnOnce("move kind " + animKind); return; }
             var s = a._feed?.State;
-            if ((animKind == "slam" || animKind == "dive") && s != null && fighter >= 0 && fighter < 2)
+            if ((animKind == "slam" || animKind == "dive") && s != null && fighter >= 0 && fighter < ChibiSimEvents.Fighters(s))
                 a._router.ArmContact(fighter, s.F[fighter].MoveSlot, now);
             a.Flush(now);
         }
@@ -454,7 +454,7 @@ namespace ChibiClash.Netcode
         {
             var s = _feed?.State;
             if (s == null) { r.Panned = false; return; }
-            if (!r.Panned && r.Fighter >= 0 && r.Fighter < 2) { r.PanX = s.F[r.Fighter].X; r.Panned = true; }
+            if (!r.Panned && r.Fighter >= 0 && r.Fighter < ChibiSimEvents.Fighters(s)) { r.PanX = s.F[r.Fighter].X; r.Panned = true; }
         }
 
         float PanOf(in SfxRequest r)

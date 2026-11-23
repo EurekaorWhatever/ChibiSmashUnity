@@ -54,10 +54,11 @@ namespace ChibiClash.Netcode
         /// <summary>Default skill projectile spawn height above the feet (seeker orbs; Thousand Arrows until step 14).</summary>
         public const int ProjectileY = 700;
         /// <summary>
-        /// Projectile pool size (projectile-conversion.md section 5, D-P2 = A): worst match about 52 live. A full pool
-        /// drops the shot and counts it in <see cref="ChibiSimState.DroppedShots"/>. Mixed into the config hash (A8).
+        /// Projectile pool size (projectile-conversion.md section 5, D-P2 = A): worst 1v1 match about 52 live, so 64 for 2
+        /// fighters; rules v25 doubles it for 4 fighters. A full pool drops the shot and counts it in
+        /// <see cref="ChibiSimState.DroppedShots"/>. Mixed into the config hash (A8).
         /// </summary>
-        public const int MaxProjectiles = 64;
+        public const int MaxProjectiles = 128;
         /// <summary>Fighter Center = feet + 0.675 (BoxCollider2D offset, F:32, F:97-99): homing / return / destroy origin.</summary>
         public const int CenterOffY = 675;
         /// <summary>Spear return (CO:57-72, section 3c): 18 u/s, arrive when pre-move distance &lt; 0.5 (strict), Life floor 0.5 s.</summary>
@@ -232,8 +233,11 @@ namespace ChibiClash.Netcode
         };
 
         // ---- rules v13: Mage minions + Thunder Cloud (minion-cloud-conversion.md sections 0, 1, 2, 3.2 + TD review).
-        /// <summary>Summon pool sizes (section 3.1): a full pool drops the spawn and counts it in DroppedSummons. In the config hash.</summary>
-        public const int MaxMinions = 12, MaxClouds = 4;
+        /// <summary>
+        /// Summon pool sizes (section 3.1): a full pool drops the spawn and counts it in DroppedSummons. In the config hash.
+        /// Rules v25: doubled for 4 fighters (were 12 / 4, sized for two Mages).
+        /// </summary>
+        public const int MaxMinions = 24, MaxClouds = 8;
         /// <summary>
         /// Minion body and physics (CO:119-171, section 1.3): gravityScale 3 = 7357.5 sub/tick² rounded, C50 arc 735.75
         /// rounded, circle r 0.22. D-C1 = A (TD amendment 1, 50 Hz basis): Unity default friction 0.4 x 29.43 x 0.02 s =
@@ -343,7 +347,6 @@ namespace ChibiClash.Netcode
 
     public partial struct ChibiMatchConfig
     {
-        /// <summary>Bump whenever simulation rules change so old replays / mismatched peers are detected.</summary>
         /// <summary>Bump whenever simulation rules or move data change, so mismatched peers/replays are rejected.</summary>
         /// <remarks>2: Melee Dash &amp; Thrust matched to the original. 3: melee light/heavy hit areas matched to the original MeleeBox. 4: input message widened to 16 bits (Dash, gesture, PoseVerified). 5: movement matched to original (1/900 velocity units, C50 arc term, friction/fast-fall/air-block/jump-during-attack). 6: Dash (8 ticks, 33-tick cd, 6-tick invuln) and Dash &amp; Thrust end speed matched to original. 7: three stages, one-way platforms, drop-through, solid stage sides/underside, per-stage ring-out. 8: normal attacks matched to original (timing, kb, stun, combo, reload, projectiles, aura on heavy); no input buffer (D-N1). 9: damage rules matched to original (exact micro-HP, crit/defense/block/guard/parry/passives, roll order). 10: hitstop + ult cinematic via integer time accumulator (D10, A-held), GameTicks clock, replay v2.</remarks>
         /// <remarks>11: projectile kinds (projectile-conversion.md, port step 11): circle hit radius per kind, 2D constant-speed homing, spear return + SpearOut lock, growth / pierce / harmless flags, Thousand Arrows split machinery, destroy check from Center (strict), kb sign Vx &gt;= 0, 64-slot pool with DroppedShots; MaxProjectiles in the config hash.</remarks>
@@ -360,7 +363,8 @@ namespace ChibiClash.Netcode
         /// <remarks>22: responsiveness pass (UL-1, EL-1, TN-1, 2026-11-14): the Ult press with a full meter fires the ultimate on its game step (the gesture window is no longer opened); recovery trimmed (CSV rows by category with floors, counters / rolls / armor / reflect / dive rows unchanged; normals x 3/4; Dash &amp; Thrust, Choke, Fireball, Spear rows); 6-tick attack buffer (BufferedEdges / BufferTicks, replaces D-N1, fresh press wins, cleared by Interrupt); grounded walk / turn cancel in the last 6 recovery ticks of non-program moves when the stick differs from the move's start direction (Light rows and the light normal always, other moves on hit), attacks stay locked until the old lock end (AttackLockTicks) and go to the buffer; constants in the config hash.</remarks>
         /// <remarks>23: balance pass (review 2026-11-16 batch 4, B4-1..B4-3, 2026-11-17): trip loops removed (grounded trip stun Bruna down tilt 22, Ren down tilt 26, Kaia low sweep 28, was 34); Bruna down smash knockback 120000/90000 (was 45000/157500, straight up); the walk cancel's "on hit" needs a landed or blocked melee hit (MoveConnected, rolled back and hashed; a touch on an invulnerable, hovering, countered or parried target no longer counts); attack presses in a dash's last AttackBufferTicks are buffered and come out when the dash ends.</remarks>
         /// <remarks>24: escape dash (ED-1, 2026-11-17): a Dash press during a knockback launch (not set knockback) after 10 game ticks of it, with DashCd 0, halves Vx / Vy, ends the hitstun and the launch and starts the 33-tick dash cooldown (no invuln, no dash motion); LaunchAge and EscapeDashes per fighter in state and hash; EscapeMinAge / EscapeSpeedP / LaunchAgeCap in the config hash.</remarks>
-        public const int RulesVersion = 24;
+        /// <remarks>25: four players, Phase 2a (four-player-design.md 1.3-1.5, section 9, 2026-11-23): Battle Royale (FFA) and Team (2v2) for 3-4 fighters, friendly fire off in Team for everything a player owns, hazards hit everyone, 3 stocks each, elimination places (same-tick ties shared), team / FFA timeout ranking, WinnerMask / Place; presentMask (a leaver is eliminated at an exact tick); hold steal clears the old holder's program victim; same-tick grab chains resolve order-independently (a grabber grabbed this tick whiffs); a pierce shot that hit a fighter can still be destroyed or reflected by it (3-4 fighters); LastHitBy cleared on respawn; spawns and respawn offsets for 3-4 fighters; pools 128 / 24 / 8; every four-player field hashed always (the Phase 1 1v1 canonical checksum is gone).</remarks>
+        public const int RulesVersion = 25;
 
         public uint Seed;
         public FighterClass Class0, Class1;
@@ -1114,15 +1118,15 @@ namespace ChibiClash.Netcode
             s.MatchClock = 0;
             s.Training = cfg.Training;
             InitHazards(s, cfg);   // rules v20: own RNG stream, first delay
-            var st = ChibiStageTable.Get(s.Stage);
             // Spawn transform (+-halfWidth*0.45, groundY+1.5) -> feet (+-SpawnX, 775), airborne (stage-conversion.md section 1).
-            InitFighter(s.F[0], cfg.Class0, cfg.Passive0, -st.SpawnX, st.SpawnY, 1);
-            InitFighter(s.F[1], cfg.Class1, cfg.Passive1, st.SpawnX, st.SpawnY, -1);
-            // Four players (Phase 1 placeholder spawns until the level-designer points of Phase 2): fighters 2 and 3 start
-            // halfway in, facing the centre. Unused slots are initialised the same way but never stepped or hashed.
+            // Rules v25: 3-4 fighters use the per-stage spawn table (SpawnPoint, ChibiSimulation.Stages.cs). Unused slots
+            // are initialised too but never stepped or hashed.
             InitPlayers(s, cfg);
-            InitFighter(s.F[2], cfg.Class2, cfg.Passive2, -st.SpawnX / 2, st.SpawnY, 1);
-            InitFighter(s.F[3], cfg.Class3, cfg.Passive3, st.SpawnX / 2, st.SpawnY, -1);
+            for (int i = 0; i < ChibiSimState.MaxFighters; i++)
+            {
+                SpawnPoint(s.Stage, s.PlayerCount, i, out int sx, out int sy, out int facing);
+                InitFighter(s.F[i], cfg.ClassOf(i), cfg.PassiveOf(i), sx, sy, facing);
+            }
         }
 
         static void InitFighter(ChibiFighterSim f, FighterClass cls, int passive, int x, int y, int facing)
@@ -1186,7 +1190,11 @@ namespace ChibiClash.Netcode
         /// a missing entry is neutral, entries at or above <see cref="ChibiSimState.PlayerCount"/> are ignored. Does not
         /// allocate. The 1v1 overload <see cref="Step(ChibiSimState, ChibiInputPacket, ChibiInputPacket)"/> forwards here.
         /// </summary>
-        /// <example><code>ChibiSimulation.Step(state, new[] { p0, p1, p2, p3 });</code></example>
+        /// <example><code>
+        /// Span&lt;ChibiInputPacket&gt; inputs = stackalloc ChibiInputPacket[ChibiSimState.MaxFighters];
+        /// inputs[0] = p0; inputs[1] = p1; inputs[2] = p2; inputs[3] = p3;
+        /// ChibiSimulation.Step(state, inputs);
+        /// </code></example>
         public static void Step(ChibiSimState s, ReadOnlySpan<ChibiInputPacket> inputs)
         {
             if (s.MatchOver) { s.Frame++; return; }
@@ -1216,6 +1224,19 @@ namespace ChibiClash.Netcode
             // input off and the first tick with input is real tick IntroTicks.
             Dec(ref s.IntroRealTicks);
             s.Frame++;
+        }
+
+        /// <summary>
+        /// One REAL tick with the presentMask hook (four-player-design.md 2.4): bit i clear = player i has left. A fighter
+        /// whose bit clears is eliminated on this exact tick, before the tick runs (<see cref="ChibiSimState.PresentMask"/>).
+        /// The session passes the same mask on every peer for a given frame (it travels with the inputs), so a rollback
+        /// replays the leave identically. A set bit never brings a fighter back.
+        /// </summary>
+        /// <example><code>ChibiSimulation.StepPresent(state, inputs, state.PresentMask &amp; ~(1 &lt;&lt; 2)); // player 2 left on this frame</code></example>
+        public static void StepPresent(ChibiSimState s, ReadOnlySpan<ChibiInputPacket> inputs, int presentMask)
+        {
+            ApplyPresence(s, presentMask);
+            Step(s, inputs);
         }
 
         /// <summary>
@@ -2120,8 +2141,10 @@ namespace ChibiClash.Netcode
 
         /// <summary>
         /// Grabs of this tick with 3..4 fighters (four-player-design.md 1.3): each grabber's candidate is the lowest-index
-        /// foe that is not held and passes the grab check. A mutual grab (A on B while B on A) whiffs both (D-M3); the rest
-        /// resolve in index order, and nobody grabs or is grabbed once held.
+        /// foe that is not held and passes the grab check. Rules v25: a grabber that is itself some other grabber's
+        /// candidate this tick whiffs (generalises the mutual-grab rule D-M3 to chains and cycles, so the outcome never
+        /// depends on seat order); two grabbers on the same victim: the lower index wins. Grabbing a fighter that holds
+        /// someone is allowed: the grab's stun interrupts it and frees its victim.
         /// </summary>
         static void MultiGrabs(ChibiSimState s)
         {
@@ -2136,12 +2159,13 @@ namespace ChibiClash.Netcode
                 for (int j = 0; j < n; j++)
                     if (IsFoe(s, i, j) && !s.F[j].Held && GrabHits(s, i, j)) { cand[i] = j; break; }
             }
+            int targeted = 0;
+            for (int i = 0; i < n; i++) if (cand[i] >= 0) targeted |= 1 << cand[i];
             for (int i = 0; i < n; i++)
             {
                 int c = cand[i];
-                if (c < 0) continue;
-                if (((starts >> c) & 1) != 0 && cand[c] == i) continue;   // mutual grab: both whiff
-                if (s.F[i].Held || s.F[c].Held) continue;
+                if (c < 0 || (targeted & (1 << i)) != 0) continue;   // grabbed this tick (mutual, chain, cycle): whiff
+                if (s.F[i].Held || s.F[c].Held) continue;             // a lower index already took this victim
                 GrabConnect(s, i, c);
             }
         }
@@ -2191,7 +2215,12 @@ namespace ChibiClash.Netcode
             var v = s.F[vi];
             // Four players: a victim held by someone else is taken over, and a holder drops its old victim, so the invariant
             // F[v].HeldBy == h <=> F[h].HoldTarget == v always holds. Neither can happen in 1v1.
-            if (v.HeldBy >= 0 && v.HeldBy != i) Release(s, v.HeldBy);
+            if (v.HeldBy >= 0 && v.HeldBy != i)
+            {
+                int old = v.HeldBy;
+                Release(s, old);
+                s.F[old].ProgTarget = -1;   // rules v25: its grab slam / kick hits no longer reach the stolen victim
+            }
             if (s.F[i].HoldTarget >= 0 && s.F[i].HoldTarget != vi) Release(s, i);
             s.F[i].HoldTarget = vi;
             v.HeldBy = i;
@@ -2647,27 +2676,24 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>
-        /// Thousand Arrows split (F:1019-1032, section 4, D-P1 = A, A5): 18 arrows from (lx, ly). Per arrow, s.Rng draws in
-        /// this order: ox, oy, (cx, cy) until inside the 0.6 disc (max 16 tries, then the centre), speed. Each flies at its
-        /// speed toward the opponent's Center + (ox, oy), and first moves on the next game step (SpawnFrame = GameTicks).
-        /// </summary>
-        /// <summary>
-        /// Destroy / reflect / hit checks of one projectile against every foe of its owner it has not hit yet, in index
-        /// order (four-player-design.md 1.3; 1v1: the opponent only, the rules-v24 body). Returns true when the projectile
-        /// is gone or reflected, so the caller skips the expiry check.
+        /// Destroy / reflect / hit checks of one projectile against every foe of its owner, in index order
+        /// (four-player-design.md 1.3; 1v1: the opponent only, the original body gated by HasHit in the caller). With 3-4
+        /// fighters (rules v25) a foe the shot already hit (HitMask) can still destroy or reflect it, but is not hit again.
+        /// Returns true when the projectile is gone or reflected, so the caller skips the expiry check.
         /// </summary>
         static bool ProjHitFoes(ChibiSimState s, ChibiProjectileSim p)
         {
             int n = s.PlayerCount;
             for (int j = 0; j < n; j++)
             {
-                // 1v1 gates on FHasHit only (the caller), exactly rules v24; HitMask gates only with more than 2 fighters.
-                if (!IsFoe(s, p.Owner, j) || (n > 2 && (p.HitMask & (1 << j)) != 0)) continue;
+                // 1v1 gates on FHasHit only (the caller), as the original; with more fighters HitMask gates the hit only.
+                if (!IsFoe(s, p.Owner, j)) continue;
+                bool hitBefore = n > 2 && (p.HitMask & (1 << j)) != 0;
                 var target = s.F[j];
                 if ((p.Flags & ChibiProjectileSim.FDestructible) != 0 && DestroyedBy(target, p.X, p.Y))
                 { Despawn(s, p); return true; }
                 if (ProjReflected(s, p, j)) return true;                                          // v18 reflect row
-                if (!CircleHitsFighter(target, p.X, p.Y, p.Radius)) continue;
+                if (hitBefore || !CircleHitsFighter(target, p.X, p.Y, p.Radius)) continue;
                 // HasHit is set even if the hit misses (invulnerable / KO'd), CO:102-104; kb sign Vel.x >= 0 (CO:101).
                 p.Flags |= ChibiProjectileSim.FHasHit;
                 p.HitMask |= 1 << j;
@@ -2687,6 +2713,11 @@ namespace ChibiClash.Netcode
             return false;
         }
 
+        /// <summary>
+        /// Thousand Arrows split (F:1019-1032, section 4, D-P1 = A, A5): 18 arrows from (lx, ly). Per arrow, s.Rng draws in
+        /// this order: ox, oy, (cx, cy) until inside the 0.6 disc (max 16 tries, then the centre), speed. Each flies at its
+        /// speed toward the opponent's Center + (ox, oy), and first moves on the next game step (SpawnFrame = GameTicks).
+        /// </summary>
         static void SplitVolley(ChibiSimState s, int owner, int lx, int ly)
         {
             var t = s.F[Foe(s, owner)];

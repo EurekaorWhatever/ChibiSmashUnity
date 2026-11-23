@@ -330,7 +330,7 @@ namespace ChibiClash.Netcode
         static void Respawn(ChibiSimState s, int i)
         {
             var f = s.F[i];
-            RespawnPoint(s, out int rx, out int ry);
+            RespawnPoint(s, i, out int rx, out int ry);
             f.X = rx; f.Y = ry; f.XRem = 0; f.YRem = 0; f.Vx = 0; f.Vy = 0;
             f.Grounded = false; f.Stun = 0; f.ClearLaunch();
             f.PctM = 0;
@@ -340,10 +340,20 @@ namespace ChibiClash.Netcode
             f.AirUsedMask = 0; f.AirJumps = 1;
             f.ParryTicks = 0; f.GuardTicks = 0; f.PullTicks = 0;
             f.DropTicks = 0; f.DropPlatform = -1;
+            f.LastHitBy = -1;   // rules v25: a new stock starts with no attacker (KO credit never carries over)
         }
 
         /// <summary>KO of fighter <paramref name="i"/> (spec 3.4): release holds, lose a stock (not in training), go Out.</summary>
         static void KnockOut(ChibiSimState s, int i)
+        {
+            var f = s.F[i];
+            GoOut(s, i);
+            if (!s.Training && f.Stocks > 0) f.Stocks--;
+            f.KosTaken++;
+        }
+
+        /// <summary>Shared by a KO and a leave: release holds both ways, then Out (still, airborne, no stun or launch).</summary>
+        static void GoOut(ChibiSimState s, int i)
         {
             var f = s.F[i];
             // Existing ring-out release (F:692-697): Interrupt self (frees a held victim); a held fighter frees its holder.
@@ -354,8 +364,6 @@ namespace ChibiClash.Netcode
                 Interrupt(s, holder);                       // releases f (HeldBy / HoldTarget invariant)
                 if (f.HeldBy >= 0) { s.F[f.HeldBy].HoldTarget = -1; f.HeldBy = -1; }
             }
-            if (!s.Training && f.Stocks > 0) f.Stocks--;
-            f.KosTaken++;
             f.OutTicks = ChibiPercentConst.RespawnDelay;
             f.HoverTicks = 0;
             f.Vx = 0; f.Vy = 0; f.XRem = 0; f.YRem = 0; f.Stun = 0; f.ClearLaunch();

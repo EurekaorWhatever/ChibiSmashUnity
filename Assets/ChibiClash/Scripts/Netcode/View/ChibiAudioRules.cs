@@ -352,30 +352,39 @@ namespace ChibiClash.Netcode
                   DStockKo = 107, DRespawn = 108, DLaunch = 109;
 
         public readonly ChibiSfxDedupe Dedupe = new ChibiSfxDedupe();
-        readonly float[] _lastHit = { -10f, -10f }, _lastStringHit = { -10f, -10f };
-        readonly int[] _lastLevel = new int[2], _string = new int[2];
-        readonly bool[] _spinLoop = new bool[2], _shieldLoop = new bool[2];
-        readonly int[] _contactSlot = { -1, -1 };
-        readonly float[] _contactUntil = new float[2];
+        readonly float[] _lastHit = { -10f, -10f, -10f, -10f }, _lastStringHit = { -10f, -10f, -10f, -10f };
+        readonly int[] _lastLevel = new int[ChibiSimState.MaxFighters], _string = new int[ChibiSimState.MaxFighters];
+        readonly bool[] _spinLoop = new bool[ChibiSimState.MaxFighters], _shieldLoop = new bool[ChibiSimState.MaxFighters];
+        readonly int[] _contactSlot = { -1, -1, -1, -1 };
+        readonly float[] _contactUntil = new float[ChibiSimState.MaxFighters];
         bool _endDone;
         int _lastCountdown, _lastIntro;
         // Scratch (no per-step allocation).
-        readonly bool[] _damaged = new bool[2], _guardBreak = new bool[2], _crit = new bool[2];
+        readonly bool[] _damaged = new bool[ChibiSimState.MaxFighters], _guardBreak = new bool[ChibiSimState.MaxFighters], _crit = new bool[ChibiSimState.MaxFighters];
         readonly List<int> _goneOwner = new List<int>(8), _goneKind = new List<int>(8);
         readonly bool[] _goneUsed = new bool[64];
-        readonly int[] _minionCount = new int[2];
-        readonly int[] _progFrame = new int[2], _progSlot = new int[2];
+        readonly int[] _minionCount = new int[ChibiSimState.MaxFighters];
+        readonly int[] _progFrame = new int[ChibiSimState.MaxFighters], _progSlot = new int[ChibiSimState.MaxFighters];
 
         /// <summary>Forget all per-match state.</summary>
         public void Reset()
         {
             Dedupe.Clear();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < ChibiSimState.MaxFighters; i++)
             {
                 _lastHit[i] = _lastStringHit[i] = -10f; _lastLevel[i] = _string[i] = 0;
                 _spinLoop[i] = _shieldLoop[i] = false; _contactSlot[i] = -1; _contactUntil[i] = 0f;
             }
             _endDone = false; PendingEndFrame = -1; _lastCountdown = 0; _lastIntro = 0;
+        }
+
+        /// <summary>A foe of <paramref name="owner"/> was hurt this batch (1v1: exactly the opponent 1 - owner).</summary>
+        bool HurtFoe(ChibiSimState s, int owner)
+        {
+            if (s.PlayerCount <= 2) return _damaged[1 - owner];
+            int nf = ChibiSimEvents.Fighters(s);
+            for (int j = 0; j < nf; j++) if (_damaged[j] && ChibiSimulation.IsFoe(s, owner, j)) return true;
+            return false;
         }
 
         int ClassOf(ChibiSimState s, int i) => ChibiSfxMap.Cls(ClassOverride != null && i >= 0 && i < ClassOverride.Length ? ClassOverride[i] : s.F[i].Class);
@@ -414,7 +423,8 @@ namespace ChibiClash.Netcode
         public void Step(ChibiSimState prev, ChibiSimState cur, List<ChibiSimEvent> events, int first, float now, List<SfxRequest> output)
         {
             int frame = cur.Frame;
-            for (int i = 0; i < 2; i++)
+            int nf = ChibiSimEvents.Fighters(cur);
+            for (int i = 0; i < ChibiSimState.MaxFighters; i++)
             {
                 _damaged[i] = _guardBreak[i] = _crit[i] = false; _minionCount[i] = 0; _progFrame[i] = -1;
             }
@@ -423,13 +433,13 @@ namespace ChibiClash.Netcode
             for (int k = first; k < events.Count; k++)
             {
                 var e = events[k];
-                if (e.Kind == ChibiSimEventKind.Damaged && e.Value > 0 && e.Index >= 0 && e.Index < 2) _damaged[e.Index] = true;
+                if (e.Kind == ChibiSimEventKind.Damaged && e.Value > 0 && e.Index >= 0 && e.Index < nf) _damaged[e.Index] = true;
                 if (e.Kind == ChibiSimEventKind.ProjectileGone) { _goneOwner.Add(e.Value); _goneKind.Add(e.Value2); }
             }
 
             // ---- derived events (sfx-events.md 2.2), before the hits that they modify
             bool critStop = cur.HitstopRealTicks == ChibiSimConst.HitstopCrit && cur.HitstopRealTicks > prev.HitstopRealTicks;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < nf; i++)
             {
                 var p = prev.F[i];
                 var c = cur.F[i];
@@ -441,7 +451,10 @@ namespace ChibiClash.Netcode
                     _guardBreak[i] = true;
                     var r = At("core_guard_break", i, c.X); r.Duck = SfxDuck.HitAccent;
                     output.Add(r);
-                    if (ClassOf(cur, 1 - i) == (int)FighterClass.Heavy) output.Add(At("bruna_krash", 1 - i, c.X));
+                    {
+                        int gb = ChibiSimView.Attacker(cur, i);   // who broke the guard (1v1: 1 - i)
+                        if (gb >= 0 && ClassOf(cur, gb) == (int)FighterClass.Heavy) output.Add(At("bruna_krash", gb, c.X));
+                    }
                 }
                 if (p.Grounded && !c.Grounded && c.Vy > 0 && !Dedupe.Seen(DJump, i, 0, 0, frame))
                     output.Add(At("core_jump", i, c.X));
@@ -480,7 +493,7 @@ namespace ChibiClash.Netcode
                 if (e.Kind == ChibiSimEventKind.ProgramFrame)
                 {
                     // Cadence only, at most the latest qualifying frame per batch (sfx-events.md 2, ProgramFrame row).
-                    if (e.Index >= 0 && e.Index < 2 && ProgramQualifies(ClassOf(cur, e.Index), e.Value, e.Value2))
+                    if (e.Index >= 0 && e.Index < nf && ProgramQualifies(ClassOf(cur, e.Index), e.Value, e.Value2))
                     {
                         _progFrame[e.Index] = e.Value2; _progSlot[e.Index] = e.Value;
                     }
@@ -489,7 +502,7 @@ namespace ChibiClash.Netcode
                 if (Dedupe.Seen((int)e.Kind, e.Index, e.Value, e.Value2, frame)) continue;
                 Event(prev, cur, e, now, output);
             }
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < nf; i++)
             {
                 if (_progFrame[i] < 0) continue;
                 int start = cur.GameTicks - cur.F[i].MoveTick;   // key = move start + move frame (sfx-events.md 6.1)
@@ -658,7 +671,7 @@ namespace ChibiClash.Netcode
                 {
                     int owner = e.Value;
                     // A projectile that left on the batch its owner's opponent was hurt is the hit (2.1); no expire sound.
-                    if (owner >= 0 && owner < 2 && _damaged[1 - owner]) break;
+                    if (owner >= 0 && owner < ChibiSimState.MaxFighters && HurtFoe(cur, owner)) break;
                     var row = ChibiSfxMap.Proj(e.Value2);
                     if (row.Expire == null) break;
                     int px = i >= 0 && i < prev.Proj.Length ? prev.Proj[i].X : 0;
@@ -807,7 +820,8 @@ namespace ChibiClash.Netcode
         /// <summary>Hit composition (sfx-events.md 2.1) with the per-defender window and string attenuation (5.2).</summary>
         void Hit(ChibiSimState prev, ChibiSimState cur, int d, int hp, float now, List<SfxRequest> o)
         {
-            int a = 1 - d;
+            int a = ChibiSimView.Attacker(cur, d);
+            if (a < 0) a = d;   // four players: a hazard hit has no attacker; the victim's class picks the hit layer
             int acls = ClassOf(cur, a);
             int x = cur.F[d].X;
             bool heavy = hp >= HeavyHitHp;

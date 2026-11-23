@@ -59,7 +59,7 @@ namespace ChibiClash.Tests
         const int MinionSpawnOx = 600, MinionSpawnStep = 500, MinionSpawnY = 975;
         const int MinionLock = 24, CloudLock = 18;
         const int MinionSkillCd = 720, CloudSkillCd = 600;
-        const int MaxMinions = 12, MaxClouds = 4;
+        const int MaxMinions = 24, MaxClouds = 8;   // rules v25: doubled for 4 fighters (were 12 / 4)
 
         const int CloudSpawnOy = 3675, CloudGoalOy = 3875, CloudLerpDiv = 24;
         const int CloudLife = 276, CloudFirstStrike = 48, CloudPeriod = 66, CloudBolt = 9, CloudStrikeDx = 750;
@@ -1033,8 +1033,8 @@ namespace ChibiClash.Tests
         public void S32_PoolsAndConstants()
         {
             var s = new ChibiSimState();
-            Assert.AreEqual(MaxMinions, Const("MaxMinions"), "3.1: MaxMinions 12");
-            Assert.AreEqual(MaxClouds, Const("MaxClouds"), "3.1: MaxClouds 4");
+            Assert.AreEqual(MaxMinions, Const("MaxMinions"), "3.1: MaxMinions 24 (rules v25)");
+            Assert.AreEqual(MaxClouds, Const("MaxClouds"), "3.1: MaxClouds 8 (rules v25)");
             Assert.AreEqual(MaxMinions, Pool(s, "Minions").Length, "3.2: Minions[MaxMinions]");
             Assert.AreEqual(MaxClouds, Pool(s, "Clouds").Length, "3.2: Clouds[MaxClouds]");
             foreach (var o in Pool(s, "Minions")) Assert.IsNotNull(o, "3.2: minion slots constructed");

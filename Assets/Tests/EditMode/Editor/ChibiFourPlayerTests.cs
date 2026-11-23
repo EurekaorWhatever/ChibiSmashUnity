@@ -301,7 +301,7 @@ namespace ChibiClash.Tests
         {
             var one = new ChibiMatchConfig { Seed = 5, Class0 = FighterClass.Melee, Class1 = FighterClass.Heavy };
             var oneSeats = one; oneSeats.Class2 = FighterClass.Ranged; oneSeats.Passive3 = 1; oneSeats.PlayerCount = 2;
-            Assert.AreEqual(one.ComputeHash(), oneSeats.ComputeHash(), "a 1v1 config ignores seats 2..3 (keeps the v24 hash)");
+            Assert.AreEqual(one.ComputeHash(), oneSeats.ComputeHash(), "a 1v1 config ignores the unused seats 2..3");
 
             var four = one; four.PlayerCount = 4;
             Assert.AreNotEqual(one.ComputeHash(), four.ComputeHash(), "PlayerCount is in the hash once above 2");

@@ -36,6 +36,7 @@ namespace ChibiClash
             var s = m.State;
             if (s == null) return Action.None;
             var settings = gm.Save.settings;
+            cvTop = m.PlayerCount > 2;
             Track(m);
             BuildPlates(m, settings.showCvOverlay);
             Tags(m);
@@ -49,8 +50,12 @@ namespace ChibiClash
             }
 
             bool motion = settings.screenShake;   // the player's motion preference also calms the HUD's shake
-            PlayerPanel(m, 0, PanelRect(0), false, motion);
-            PlayerPanel(m, 1, PanelRect(1), true, motion);
+            if (m.PlayerCount > 2) MultiPanels(m, motion);   // three or four fighters: compact panels along the bottom
+            else
+            {
+                PlayerPanel(m, 0, PanelRect(0), false, motion);
+                PlayerPanel(m, 1, PanelRect(1), true, motion);
+            }
             Timer(m);
             if (m.Config.training) TrainingReadout(m);
 
@@ -72,7 +77,7 @@ namespace ChibiClash
                 GesturePrompt(m, i, new Rect(x, 175f, 300f, 230f));
             }
 
-            Hints(m);
+            if (m.PlayerCount <= 2) Hints(m);   // the key hints sit where the four-player panels go
 
             if (s.IntroRealTicks > 0 && !s.MatchOver)
             {
@@ -161,19 +166,19 @@ namespace ChibiClash
         /// <summary>Builds <see cref="Who"/>'s strings (and everything that embeds the name) when a name changes.</summary>
         static void RefreshNames(ChibiMatch m, bool force)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < m.PlayerCount; i++)
             {
                 string n = m.NameOf(i);
                 if (!force && ReferenceEquals(n, whoSrc[i])) continue;
                 whoSrc[i] = n;
                 n = n ?? "";
-                if (m.IsCpu(i)) whoShort[i] = whoFull[i] = m.Config.training ? "DUMMY" : "CPU";
+                if (m.IsCpu(i)) whoShort[i] = whoFull[i] = m.Config.training ? "DUMMY" : m.PlayerCount > 2 ? CpuNames[i] : "CPU";
                 else if (m.Online)
                 {
                     whoFull[i] = n.Length > 0 ? n : i != m.LocalPlayer ? "RIVAL" : "YOU";
                     whoShort[i] = n.Length > 0 ? ChibiSocialRules.BaseName(n) : whoFull[i];
                 }
-                else whoShort[i] = whoFull[i] = n.Length > 0 ? n : i == 0 ? "P1" : "P2";
+                else whoShort[i] = whoFull[i] = n.Length > 0 ? n : PNames[i];
                 promptHead[i * 3] = whoShort[i] + " · ULTIMATE READY";
                 promptHead[i * 3 + 1] = whoShort[i] + " · MOVE DETECTED";
                 promptHead[i * 3 + 2] = whoShort[i] + " · FAILED";
@@ -192,12 +197,12 @@ namespace ChibiClash
             stageUpper = Gui.Measure(stage, 10) <= 118f ? stage : StageBuilder.ShortNames[st].ToUpperInvariant();
             introLine = CharNameUpper(m.Def(0).type) + "  VS  " + CharNameUpper(m.Def(1).type) + "  ·  " + stage +
                         (m.Config.training ? "  ·  TRAINING" : "") + (m.Online ? "  ·  ONLINE  ·  ESC / START: LEAVE" : "");
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < m.PlayerCount; i++)
             {
                 var def = m.Def(i);
                 var ch = CharacterRoster.Of(def.type);
                 var f = m.State.F[i];
-                bool showKeys = !m.IsCpu(i) && (!m.Online || i == m.LocalPlayer);
+                bool showKeys = !m.IsCpu(i) && (!m.Online || i == m.LocalPlayer) && (m.Online || i < 2);   // key layouts exist for P1 / P2 only
                 int keyPlayer = m.Online ? 0 : i;
                 subLine[i] = ch.Weapon + " · " + def.passiveNames[f.Passive];
                 ultReady[i] = showKeys ? "ULT READY - press " + Bindings.Label(keyPlayer, BindAction.Ultimate) : "ULT READY";
@@ -208,7 +213,7 @@ namespace ChibiClash
                     skillText[i * 3 + s] = skillBase[i * 3 + s];
                     skillKey[i * 3 + s] = 0;
                 }
-                simKey[i] = "sim key: " + PoseKeys[keyPlayer][Mathf.Clamp((int)def.ultGesture - 1, 0, 2)];
+                simKey[i] = "sim key: " + PoseKeys[Mathf.Min(keyPlayer, 1)][Mathf.Clamp((int)def.ultGesture - 1, 0, 2)];
                 promptKey[i] = -1;
                 statusKey[i * StatusKeyLen] = int.MinValue;   // force the first status build
             }
@@ -317,11 +322,11 @@ namespace ChibiClash
 
         static ChibiMatch trackFor;
         static int trackFrame = -1;
-        static readonly int[] seenPct = new int[2], seenStocks = new int[2], seenKos = new int[2], lostSlot = new int[2];
-        static readonly float[] shownPct = new float[2], popAt = { -10f, -10f }, popAmt = new float[2], lostAt = { -10f, -10f };
+        static readonly int[] seenPct = new int[4], seenStocks = new int[4], seenKos = new int[4], lostSlot = new int[4];
+        static readonly float[] shownPct = new float[4], popAt = { -10f, -10f, -10f, -10f }, popAmt = new float[4], lostAt = { -10f, -10f, -10f, -10f };
         // training readout: last hit, running combo (hits landed while the target was still in hitstun)
-        static readonly int[] lastHitM = new int[2], comboM = new int[2], comboN = new int[2];
-        static readonly bool[] wasStunned = new bool[2];
+        static readonly int[] lastHitM = new int[4], comboM = new int[4], comboN = new int[4];
+        static readonly bool[] wasStunned = new bool[4];
         static readonly string[] WholeText = new string[1000];
         static readonly string[] TenthText = { ".0%", ".1%", ".2%", ".3%", ".4%", ".5%", ".6%", ".7%", ".8%", ".9%" };
         static int clockSecs = -1;
@@ -346,7 +351,7 @@ namespace ChibiClash
             if (trackFor != m)
             {
                 trackFor = m;
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < m.PlayerCount; i++)
                 {
                     var f = s.F[i];
                     seenPct[i] = f.PctM; seenStocks[i] = f.Stocks; seenKos[i] = f.KosTaken; shownPct[i] = f.PctM / 1000f;
@@ -360,7 +365,7 @@ namespace ChibiClash
             if (trackFrame == Time.frameCount) return;   // OnGUI runs several events per frame; animate once
             trackFrame = Time.frameCount;
             float now = Time.unscaledTime, dt = Time.unscaledDeltaTime;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < m.PlayerCount; i++)
             {
                 var f = s.F[i];
                 int d = f.PctM - seenPct[i];
@@ -566,20 +571,21 @@ namespace ChibiClash
         static readonly string[] CvTitles = { "P1 CAMERA · SIM", "P1 CAMERA · LIVE", "P2 CAMERA · SIM", "P2 CAMERA · LIVE" };
         static readonly string[] Digits = { "0", "1", "2", "3" };
         static readonly string[] UltPctText = new string[101];
-        static readonly string[] whoShort = { "P1", "P2" }, whoFull = { "P1", "P2" }, whoSrc = new string[2];
-        static readonly string[] promptHead = new string[6], trainTitle = new string[2], promptMsg = { "", "" };
-        static readonly int[] promptKey = { -1, -1 };
-        static readonly string[] subLine = new string[2], ultReady = new string[2], simKey = new string[2], hintText = { "", "" };
-        static readonly string[] skillBase = new string[6], skillText = new string[6];
-        static readonly int[] skillKey = new int[6];
+        static readonly string[] whoShort = { "P1", "P2", "P3", "P4" }, whoFull = { "P1", "P2", "P3", "P4" }, whoSrc = new string[4];
+        static readonly string[] PNames = { "P1", "P2", "P3", "P4" }, CpuNames = { "CPU 1", "CPU 2", "CPU 3", "CPU 4" };
+        static readonly string[] promptHead = new string[12], trainTitle = new string[4], promptMsg = { "", "", "", "" };
+        static readonly int[] promptKey = { -1, -1, -1, -1 };   // one per fighter slot (up to 4)
+        static readonly string[] subLine = new string[4], ultReady = new string[4], simKey = new string[4], hintText = { "", "" };
+        static readonly string[] skillBase = new string[12], skillText = new string[12];
+        static readonly int[] skillKey = new int[12];
         static string introLine = "", stageUpper = "";
         static int trainPctKey = -1, trainLastKey = -1, trainComboKey = -1, trainKosKey = -1;
         static string trainPct = "", trainLast = "", trainCombo = "", trainKos = "";
 
         // status line: rebuilt only when one of its inputs changes (the same inputs ChibiMatch.Statuses reads)
         const int StatusKeyLen = 10;
-        static readonly int[] statusKey = new int[2 * StatusKeyLen];
-        static readonly string[] statusText = { "", "" };
+        static readonly int[] statusKey = new int[4 * StatusKeyLen];
+        static readonly string[] statusText = { "", "", "", "" };
 
         static void SKey(int at, int v, ref bool changed)
         {
@@ -760,7 +766,7 @@ namespace ChibiClash
         const float LabelGap = 6f;
 
         // Keep-out rects: up to 6 plates, then the placed name tags (tag + pointer room), then the placed popups.
-        const int MaxPlates = 6, MaxPopupBlockers = 24;
+        const int MaxPlates = 8, MaxPopupBlockers = 24;   // 8: four bottom panels + timer + training + 2 camera panels
         static readonly Rect[] labelBlockers = new Rect[MaxPlates + 2 + MaxPopupBlockers];
         static int plateCount, blockerCount;
         static Rect labelArea;
@@ -778,10 +784,159 @@ namespace ChibiClash
         static readonly List<Fx.Popup> popupStale = new List<Fx.Popup>(8);
         static int popupFrame = -1;
 
+        // ================================================================ three or four fighters (four-player Phase 2b)
+        // Compact panels along the bottom (four-player-design.md section 5), the same skewed-plate style as the 1v1 panels.
+        // View-only: they READ the state (PctM, Stocks, Ult, Place) like everything else in the HUD.
+
+        const float MiniH = 96f, MiniGap = 12f, MiniBottom = 12f, MiniMaxW = 360f;
+        static readonly string[] PlaceText = { "", "1ST", "2ND", "3RD", "4TH" };
+        static readonly string[] OutPlaceText = { "OUT", "OUT · 1ST", "OUT · 2ND", "OUT · 3RD", "OUT · 4TH" };
+        static readonly Color GreyVeil = new Color(0.08f, 0.08f, 0.1f, 0.62f);
+
+        /// <summary>
+        /// Colour of fighter <paramref name="i"/>'s tag and panel strip: the player colour (P1 red, P2 blue, P3 yellow,
+        /// P4 purple), or in Team mode the team colour (team 0 red, team 1 blue) so teammates read as one side.
+        /// </summary>
+        public static Color SlotColor(ChibiMatch m, int i) =>
+            m.TeamMode ? (m.TeamOf(i) == 0 ? Gui.P1 : Gui.P2) : Gui.PlayerColor(i);
+
+        /// <summary>Screen rect of compact panel <paramref name="i"/> of <paramref name="n"/>, centred along the bottom.</summary>
+        static Rect MultiRect(int i, int n)
+        {
+            float w = Mathf.Min(MiniMaxW, (Gui.W - 2f * PanelInset - (n - 1) * MiniGap) / n);
+            float total = n * w + (n - 1) * MiniGap;
+            float x0 = (Gui.W - total) * 0.5f;
+            return new Rect(x0 + i * (w + MiniGap), Gui.H - MiniH - MiniBottom, w, MiniH);
+        }
+
+        static void MultiPanels(ChibiMatch m, bool motion)
+        {
+            int n = m.PlayerCount;
+            for (int i = 0; i < n; i++) MiniPanel(m, i, MultiRect(i, n), motion);
+        }
+
+        /// <summary>
+        /// One compact panel: portrait + name tag, character name, damage percent, stocks and ult meter. Team mode: the
+        /// frame is the team colour and the top strip keeps the player colour. Eliminated: greyed with its place.
+        /// </summary>
+        static void MiniPanel(ChibiMatch m, int i, Rect r, bool motion)
+        {
+            var s = m.State;
+            var f = s.F[i];
+            var def = m.Def(i);
+            var ch = CharacterRoster.Of(def.type);
+            var pc = Gui.PlayerColor(i);
+            int place = s.Place[i];
+            bool gone = place > 0 && f.Stocks <= 0 && !s.MatchOver;   // eliminated while the match goes on
+
+            const float k = PanelSkew;
+            Gui.Skew(new Rect(r.x + PanelShadow, r.y + PanelShadow, r.width, r.height), new Color(0f, 0f, 0f, 0.4f), k);
+            Gui.Skew(r, new Color(0.055f, 0.09f, 0.16f, 0.93f), k);
+            Gui.Skew(new Rect(r.x, r.y, r.width, 4f), pc, k);
+            if (m.TeamMode) Gui.SkewFrame(r, SlotColor(m, i), 3f, k);
+            else Gui.SkewFrame(r, new Color(ch.Primary.r, ch.Primary.g, ch.Primary.b, 0.7f), 1.5f, k);
+
+            var port = new Rect(r.x + 10f, r.y + 9f, 56f, 56f);
+            Gui.Rect(port, new Color(ch.Primary.r * 0.3f, ch.Primary.g * 0.3f, ch.Primary.b * 0.3f, 1f));
+            CharacterArt.DrawPortrait(port, ch, 1f, false);
+            Gui.Frame(port, ch.Primary, 2f);
+            var tag = new Rect(r.x + 6f, r.y + 69f, 64f, 18f);
+            Gui.Skew(tag, SlotColor(m, i), 0.3f);
+            Gui.Text(tag, Who(m, i), 11, Gui.Paper, TextAnchor.MiddleCenter, true, false);
+
+            float bx = r.x + 76f, bw = r.width - 86f;
+            Gui.Display(new Rect(bx, r.y + 4f, bw, 20f), CharNameUpper(def.type), 16, Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
+            PercentNumber(new Rect(bx, r.y + 20f, Mathf.Min(PctBlockW, bw * 0.6f), 46f), i, shownPct[i], false, motion && !gone);
+            StockRow(m, i, f, ch, bx + bw, r.y + 28f, true);
+
+            float ult = f.Ult / (float)ChibiSimConst.UltMax;
+            bool full = ult >= 1f;
+            var ultRect = new Rect(bx, r.y + 74f, bw, 12f);
+            var ultColor = full ? Color.Lerp(Gui.Gold, Color.white, 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 8f)) : Color.Lerp(Gui.Accent2, Gui.Accent, ult);
+            Gui.Meter(ultRect, ult, ultColor, 16);
+            int ultN = Mathf.Clamp(Mathf.FloorToInt(ult * 100f), 0, 100);
+            string ultLabel = full ? "ULT READY" : UltPctText[ultN] ?? (UltPctText[ultN] = "ULT " + ultN + "%");
+            Gui.Text(ultRect, ultLabel, 10, full ? Gui.Ink : Gui.Paper, TextAnchor.MiddleCenter, true, !full);
+
+            if (gone)
+            {
+                Gui.Skew(r, GreyVeil, k);
+                Gui.Display(new Rect(r.x, r.y + r.height * 0.5f - 18f, r.width, 36f), OutPlaceText[Mathf.Clamp(place, 0, 4)], 26,
+                            Gui.Muted, TextAnchor.MiddleCenter, 0.15f);
+            }
+        }
+
+        static string TeamName(int team) => team == 0 ? "RED TEAM" : "BLUE TEAM";
+
+        /// <summary>
+        /// Results for three or four fighters: title (winner, winning team or draw), then one row per fighter in place
+        /// order (1st to 4th, shared places on a tie), then the rewards box and the buttons of the 1v1 screen.
+        /// </summary>
+        static Action MultiResults(ChibiMatch m, GameManager gm)
+        {
+            var s = m.State;
+            int n = m.PlayerCount;
+            Gui.Rect(new Rect(0f, 0f, Gui.W, Gui.H), new Color(0f, 0f, 0f, 0.6f));
+            var r = new Rect(Gui.W * 0.5f - 360f, Gui.H * 0.5f - 300f, 720f, 600f);
+            int w = s.Winner;
+            bool draw = s.WinnerMask == 0;
+            int winTeam = m.TeamMode && !draw && w >= 0 ? m.TeamOf(w) : -1;
+            string title = draw ? "DRAW!" : winTeam >= 0 ? TeamName(winTeam) + " WINS!"
+                         : w >= 0 ? (m.IsCpu(w) ? Who(m, w) + " WINS!" : CharNameUpper(m.Def(w).type) + " WINS!") : "DRAW!";
+            var frame = draw ? Gui.Gold : winTeam >= 0 ? (winTeam == 0 ? Gui.P1 : Gui.P2) : w >= 0 ? Gui.PlayerColor(w) : Gui.Gold;
+            bool iWon = !draw && (s.WinnerMask & (1 << m.LocalPlayer)) != 0;
+            Gui.Box(r, frame);
+            Gui.Display(new Rect(r.x, r.y + 10f, r.width, 64f), title, 50, iWon ? Gui.Gold : Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Text(new Rect(r.x, r.y + 70f, r.width, 20f), m.TeamMode ? "2 VS 2" : "BATTLE ROYALE · " + n + " PLAYERS", 14, Gui.Muted);
+
+            float y = r.y + 96f;
+            const float rowH = 50f;
+            for (int place = 1; place <= ChibiSimState.MaxFighters; place++)
+                for (int i = 0; i < n; i++)
+                {
+                    if (s.Place[i] != place) continue;
+                    var f = s.F[i];
+                    var ch = CharacterRoster.Of(m.Def(i).type);
+                    var row = new Rect(r.x + 30f, y, r.width - 60f, rowH - 6f);
+                    Gui.Rect(row, Gui.PanelLight);
+                    Gui.Rect(new Rect(row.x, row.y, 4f, row.height), SlotColor(m, i));
+                    bool top = place == 1 && !draw;
+                    Gui.Display(new Rect(row.x + 10f, row.y, 64f, row.height), PlaceText[place], 22, top ? Gui.Gold : Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
+                    var port = new Rect(row.x + 76f, row.y + 4f, 36f, 36f);
+                    CharacterArt.DrawPortrait(port, ch);
+                    Gui.Frame(port, ch.Primary, 2f);
+                    Gui.Display(new Rect(row.x + 122f, row.y + 2f, 220f, 24f), CharNameUpper(m.Def(i).type), 20, Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
+                    Gui.Text(new Rect(row.x + 122f, row.y + 24f, 220f, 18f), Who(m, i, true), 12, SlotColor(m, i), TextAnchor.MiddleLeft);
+                    if (m.TeamMode) Gui.Text(new Rect(row.x + 340f, row.y, 110f, row.height), TeamName(m.TeamOf(i)), 12, SlotColor(m, i), TextAnchor.MiddleLeft);
+                    float fp = Mathf.Min(f.PctM, ChibiPercentConst.PctCapM) / 1000f;
+                    Gui.Text(new Rect(row.x + 450f, row.y, 90f, row.height), f.Stocks == 1 ? "1 STOCK" : f.Stocks + " STOCKS", 12, Gui.Muted, TextAnchor.MiddleLeft);
+                    Gui.Display(new Rect(row.xMax - 110f, row.y, 100f, row.height), ChibiSimView.DamageText(Mathf.FloorToInt(fp)) + "%", 20,
+                                PctColor(fp), TextAnchor.MiddleRight, 0.15f);
+                    y += rowH;
+                }
+
+            var rw = new Rect(r.x + 30f, r.y + 312f, r.width - 60f, 190f);
+            BuildResultsText(m, w, false);
+            Gui.Rect(rw, new Color(0f, 0f, 0f, 0.3f));
+            Gui.Text(new Rect(rw.x + 14f, rw.y + 6f, rw.width, 24f), resRewardsHead, 14, Gui.Gold, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(rw.x + 14f, rw.y + 32f, rw.width - 28f, 150f), resRewards, 13, Gui.Paper, TextAnchor.UpperLeft, false);
+            Gui.Text(new Rect(rw.x, rw.y + 6f, rw.width - 14f, 24f), resCoins, 16, Gui.Gold, TextAnchor.MiddleRight);
+
+            float by = r.yMax - 78f;
+            Gui.PreferNext();
+            if (Gui.Button(new Rect(r.x + 30f, by, 210f, 52f), gm.RematchLabel, Gui.Accent)) return Action.Rematch;
+            if (Gui.Button(new Rect(r.x + 255f, by, 210f, 52f), "CHARACTERS", Gui.Accent2)) return Action.CharacterSelect;
+            if (Gui.Button(new Rect(r.x + 480f, by, 210f, 52f), "MAIN MENU", Gui.Muted)) return Action.Menu;
+            return Action.None;
+        }
+
         static Rect PanelRect(int i) => new Rect(i == 0 ? PanelInset : Gui.W - PanelInset - PanelW, PanelTop, PanelW, PanelH);
         static Rect TimerRect() => new Rect(Gui.W * 0.5f - TimerW * 0.5f, TimerTop, TimerW, TimerH);
         static Rect TrainingRect() => new Rect(Gui.W * 0.5f - TrainW * 0.5f, TrainTop, TrainW, TrainH);
-        static Rect CvRect(int i) => new Rect(i == 0 ? PanelInset : Gui.W - PanelInset - CvW, Gui.H - CvFromBottom, CvW, CvH);
+        /// <summary>3-4 fighters: the player panels run along the bottom, so the camera panels move to the free top corners.</summary>
+        static bool cvTop;
+
+        static Rect CvRect(int i) => new Rect(i == 0 ? PanelInset : Gui.W - PanelInset - CvW, cvTop ? PanelTop : Gui.H - CvFromBottom, CvW, CvH);
 
         /// <summary>
         /// Once per OnGUI pass, before any world label: the screen extents of this frame's HUD plates (player panels,
@@ -790,8 +945,11 @@ namespace ChibiClash
         static void BuildPlates(ChibiMatch m, bool cvOverlay)
         {
             int n = 0;
-            labelBlockers[n++] = HudLabelLayout.SkewedPlate(PanelRect(0), PanelSkew, PanelShadow);
-            labelBlockers[n++] = HudLabelLayout.SkewedPlate(PanelRect(1), PanelSkew, PanelShadow);
+            if (m.PlayerCount <= 2)
+            {
+                labelBlockers[n++] = HudLabelLayout.SkewedPlate(PanelRect(0), PanelSkew, PanelShadow);
+                labelBlockers[n++] = HudLabelLayout.SkewedPlate(PanelRect(1), PanelSkew, PanelShadow);
+            }
             labelBlockers[n++] = HudLabelLayout.SkewedPlate(TimerRect(), TimerSkew, TimerShadow);
             if (m.Config.training) labelBlockers[n++] = HudLabelLayout.SkewedPlate(TrainingRect(), TrainSkew, TrainShadow);
             if (cvOverlay)
@@ -800,6 +958,13 @@ namespace ChibiClash
             plateCount = blockerCount = n;
             float band = HudLabelLayout.BandBottom(labelBlockers, plateCount, Gui.H);
             labelArea = HudLabelLayout.SafeArea(Gui.W, Gui.H, PanelInset, band, LabelGap);
+            if (m.PlayerCount > 2)
+            {
+                // Four players: the bottom panels are plates too, but measured after the top band (they are not in it).
+                for (int i = 0; i < m.PlayerCount; i++)
+                    labelBlockers[n++] = HudLabelLayout.SkewedPlate(MultiRect(i, m.PlayerCount), PanelSkew, PanelShadow);
+                plateCount = blockerCount = n;
+            }
         }
 
         /// <summary>
@@ -808,11 +973,11 @@ namespace ChibiClash
         /// </summary>
         static void Tags(ChibiMatch m)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < m.PlayerCount; i++)
             {
                 var f = m.State.F[i];
                 if (f.OutTicks > 0) continue;   // KO'd: the body sits off-screen at the blast line until the respawn
-                var c = Gui.PlayerColor(i);
+                var c = SlotColor(m, i);
                 if (f.HoverTicks > 0) RespawnHalo(m, i, f, c);
                 var p = Gui.WorldToGui(m.Center(i) + Vector2.up * TagLiftWorld);
                 string who = Who(m, i);
@@ -957,6 +1122,7 @@ namespace ChibiClash
                 Gui.ResetFocus();
                 Gui.NavMode = false;
             }
+            if (m.PlayerCount > 2 && !m.Online) return MultiResults(m, gm);
             var s = m.State;
             Gui.Rect(new Rect(0f, 0f, Gui.W, Gui.H), new Color(0f, 0f, 0f, 0.6f));
             var r = new Rect(Gui.W * 0.5f - 360f, Gui.H * 0.5f - 280f, 720f, 560f);

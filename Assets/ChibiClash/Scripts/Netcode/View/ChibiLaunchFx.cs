@@ -141,17 +141,17 @@ namespace ChibiClash.Netcode
         readonly Color[] _fx;
         readonly float _groundY, _feetToPivot;
 
-        readonly Trail[] _trail = new Trail[2];
-        readonly Vector2[] _vel = new Vector2[2];             // world u/s of each fighter at the last step
-        readonly bool[] _out = new bool[2], _hover = new bool[2], _blink = new bool[2];
-        readonly PendingKo[] _ko = new PendingKo[2];
-        readonly PendingImpact[] _impact = new PendingImpact[2];
-        readonly bool[] _arrive = new bool[2];
-        readonly Vector2[] _arrivePos = new Vector2[2];
+        readonly Trail[] _trail = new Trail[ChibiSimState.MaxFighters];
+        readonly Vector2[] _vel = new Vector2[ChibiSimState.MaxFighters];             // world u/s of each fighter at the last step
+        readonly bool[] _out = new bool[ChibiSimState.MaxFighters], _hover = new bool[ChibiSimState.MaxFighters], _blink = new bool[ChibiSimState.MaxFighters];
+        readonly PendingKo[] _ko = new PendingKo[ChibiSimState.MaxFighters];
+        readonly PendingImpact[] _impact = new PendingImpact[ChibiSimState.MaxFighters];
+        readonly bool[] _arrive = new bool[ChibiSimState.MaxFighters];
+        readonly Vector2[] _arrivePos = new Vector2[ChibiSimState.MaxFighters];
 
         // Hover platform per fighter: column + back glow, ink rim, disc, pulse ring.
-        readonly SpriteRenderer[,] _hov = new SpriteRenderer[2, 5];
-        readonly float[] _hoverT = new float[2], _hoverEndT = new float[2], _sparkT = new float[2];
+        readonly SpriteRenderer[,] _hov = new SpriteRenderer[ChibiSimState.MaxFighters, 5];
+        readonly float[] _hoverT = new float[ChibiSimState.MaxFighters], _hoverEndT = new float[ChibiSimState.MaxFighters], _sparkT = new float[ChibiSimState.MaxFighters];
         const int HovColumn = 0, HovGlow = 1, HovInk = 2, HovDisc = 3, HovRing = 4;
 
         float _shakeReq, _flashReq;
@@ -199,7 +199,7 @@ namespace ChibiClash.Netcode
                 sr.enabled = false;
                 _items[i] = new Item { Tr = sr.transform, Sr = sr };
             }
-            for (int f = 0; f < 2; f++)
+            for (int f = 0; f < ChibiSimState.MaxFighters; f++)
             {
                 _hov[f, HovColumn] = Art.Sprite(root, "HoverColumn", Art.Soft, Color.clear, Vector2.zero, Vector2.one, OrderHoverBack);
                 _hov[f, HovGlow] = Art.Sprite(root, "HoverGlow", Art.Soft, Color.clear, Vector2.zero, Vector2.one, OrderHoverBack);
@@ -223,7 +223,8 @@ namespace ChibiClash.Netcode
         public void OnSimStep(ChibiSimState prev, ChibiSimState cur)
         {
             var st = ChibiStageTable.Get(cur.Stage);   // read every step: KO lines may move (GL-3)
-            for (int i = 0; i < 2; i++)
+            int nf = ChibiSimEvents.Fighters(cur);
+            for (int i = 0; i < nf; i++)
             {
                 var p = prev.F[i];
                 var c = cur.F[i];
@@ -402,7 +403,7 @@ namespace ChibiClash.Netcode
         /// <summary>Plays pending effects and advances everything; <paramref name="dt"/> = scaled frame time (hitstop slows it).</summary>
         public void Tick(float dt)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < ChibiSimState.MaxFighters; i++)
             {
                 if (_ko[i].On) { _ko[i].On = false; PlayKo(i, _ko[i]); }
                 if (_impact[i].On) { _impact[i].On = false; PlayImpact(_impact[i]); }
@@ -417,7 +418,7 @@ namespace ChibiClash.Netcode
         public void Clear()
         {
             for (int k = 0; k < PoolSize; k++) Release(_items[k]);
-            for (int f = 0; f < 2; f++)
+            for (int f = 0; f < ChibiSimState.MaxFighters; f++)
             {
                 for (int k = 0; k < 5; k++) if (_hov[f, k] != null) _hov[f, k].enabled = false;
                 _trail[f] = default;

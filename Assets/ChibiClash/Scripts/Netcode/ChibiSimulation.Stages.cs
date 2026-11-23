@@ -59,12 +59,59 @@ namespace ChibiClash.Netcode
             }
         }
 
-        /// <summary>Respawn point of the current stage (spec 3.4 / stages README 3.5); Ocean moves it under MAIN during the whale.</summary>
-        static void RespawnPoint(ChibiSimState s, out int x, out int y)
+        /// <summary>
+        /// Respawn point of fighter <paramref name="i"/> on the current stage (spec 3.4 / stages README 3.5); Ocean moves it
+        /// under MAIN during the whale. Rules v25: with 3-4 fighters each slot hovers at its own X offset
+        /// (<see cref="RespawnSpreadX"/>) so two fighters KO'd close together never respawn stacked. 1v1: no offset.
+        /// </summary>
+        static void RespawnPoint(ChibiSimState s, int i, out int x, out int y)
         {
             var st = ChibiStageTable.Get(s.Stage);
             x = st.RespawnX; y = st.RespawnY;
             HazardRespawnOverride(s, ref x, ref y);
+            if (s.PlayerCount > 2 && i >= 0 && i < RespawnSpreadX.Length) x += RespawnSpreadX[i];
+        }
+
+        // ---- rules v25: spawn points for 3 and 4 fighters (four-player-design.md section 5, Phase 2a).
+        // Derived from the stage tables (ChibiStageTable SpawnX / HalfWidth) and design/gdd/stages/stage-geometry.json (MAIN
+        // half-widths 7981 / 16991 / 7599 / 7765 / 7613 for stages 3..7): outer = min(1.5 x SpawnX, MAIN half-width - 1500)
+        // rounded to 100, inner = outer / 3 rounded to 100, so four fighters stand evenly spaced on MAIN. Feet Y = SpawnY
+        // (airborne, they drop onto MAIN top 0). 1v1 keeps +-SpawnX exactly.
+
+        /// <summary>Outer spawn |X| per stage (fighters 0 / 1 with 3-4 fighters). Index = stage.</summary>
+        public static readonly int[] SpawnOuterX = { 5400, 6000, 4700, 6000, 6800, 6000, 6200, 6000 };
+        /// <summary>Inner spawn |X| per stage (fighters 2 / 3 with 4 fighters). Index = stage.</summary>
+        public static readonly int[] SpawnInnerX = { 1800, 2000, 1600, 2000, 2300, 2000, 2100, 2000 };
+        /// <summary>Respawn hover X offset per fighter slot with 3-4 fighters (milli).</summary>
+        public static readonly int[] RespawnSpreadX = { -1200, 1200, -400, 400 };
+
+        /// <summary>
+        /// Spawn feet position and facing of fighter <paramref name="i"/> for <paramref name="players"/> fighters on
+        /// <paramref name="stage"/>. 2: P0 at -SpawnX, P1 at +SpawnX (unchanged). 3: -outer, +outer, centre. 4: -outer,
+        /// +outer, -inner, +inner. Everyone faces the centre (the centre fighter faces right).
+        /// </summary>
+        /// <example><code>ChibiSimulation.SpawnPoint(3, 4, 2, out int x, out int y, out int facing); // x = -2000</code></example>
+        public static void SpawnPoint(int stage, int players, int i, out int x, out int y, out int facing)
+        {
+            stage = ChibiStageTable.Normalize(stage);
+            var st = ChibiStageTable.Stages[stage];
+            y = st.SpawnY;
+            if (players <= 2)
+                x = i == 0 ? -st.SpawnX : i == 1 ? st.SpawnX : (i == 2 ? -st.SpawnX / 2 : st.SpawnX / 2);
+            else
+            {
+                int outer = SpawnOuterX[stage], inner = SpawnInnerX[stage];
+                x = i == 0 ? -outer : i == 1 ? outer : i == 2 ? (players == 3 ? 0 : -inner) : inner;
+            }
+            facing = x > 0 ? -1 : 1;
+        }
+
+        /// <summary>The 3-4 fighter spawn and respawn tables of <paramref name="stage"/>, mixed into the config hash.</summary>
+        public static void MixSpawnHash(ref uint h, int stage)
+        {
+            stage = ChibiStageTable.Normalize(stage);
+            ChibiSimState.Mix(ref h, SpawnOuterX[stage]); ChibiSimState.Mix(ref h, SpawnInnerX[stage]);
+            for (int k = 0; k < RespawnSpreadX.Length; k++) ChibiSimState.Mix(ref h, RespawnSpreadX[k]);
         }
 
         /// <summary>Projectiles created by an ultimate (rules v20 ult base bonus): Smash waves, Thousand Arrows.</summary>

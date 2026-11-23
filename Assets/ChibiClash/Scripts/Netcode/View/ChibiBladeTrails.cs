@@ -50,8 +50,8 @@ namespace ChibiClash.Netcode
         // Sorting: fighter i draws at 10 + 20 i - 1 .. + 15 (ChibiSimView.Begin sortBase). Blades go over both fighters
         // (46, under ChibiLaunchFx hover 47..49), glows and afterimages just behind the owner's body (sortBase + 1).
         const int OrderBlade = 46;
-        static int SortBase(int i) => 10 + 20 * i;
-        static readonly string[] VisNames = { "SimP1", "SimP2" };   // ChibiSimView.Begin fighter objects
+        static int SortBase(int i) => ChibiSimView.FighterSortBase(i);
+        static readonly string[] VisNames = { "SimP1", "SimP2", "SimP3", "SimP4" };   // ChibiSimView.Begin fighter objects
 
         sealed class Swing
         {
@@ -84,7 +84,8 @@ namespace ChibiClash.Netcode
         Func<ChibiSimState> _state;
         float _groundY;
         bool _bound;
-        readonly FighterFx[] _f = { new FighterFx(), new FighterFx() };
+        readonly FighterFx[] _f = { new FighterFx(), new FighterFx(), new FighterFx(), new FighterFx() };
+        int _n = 2;   // fighters of this match (set by Bind from the state)
         Material _glowEdge, _glowCentre;
         ChibiHitSparks _sparks;
         Transform _root;
@@ -111,7 +112,8 @@ namespace ChibiClash.Netcode
         {
             var host = transform.parent;
             if (host == null) return false;
-            for (int i = 0; i < 2; i++)
+            _n = ChibiSimEvents.Fighters(s);
+            for (int i = 0; i < _n; i++)
             {
                 var p = host.Find(VisNames[i]);
                 _f[i].Vis = p != null ? p.GetComponent<FighterVisual>() : null;
@@ -125,7 +127,7 @@ namespace ChibiClash.Netcode
 
             _glowEdge = ChibiFxTextures.NewRibbonMaterial(ChibiFxTextures.GlowStrip(false), "ChibiTrailGlowArc");
             _glowCentre = ChibiFxTextures.NewRibbonMaterial(ChibiFxTextures.GlowStrip(true), "ChibiTrailGlowStreak");
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _n; i++)
             {
                 var f = _f[i];
                 var cls = (FighterClass)Mathf.Clamp(s.F[i].Class, 0, CharacterRoster.All.Length - 1);
@@ -179,10 +181,10 @@ namespace ChibiClash.Netcode
             float now = Time.unscaledTime, dt = Time.unscaledDeltaTime;
             float scale = ChibiSimulation.CurrentScalePermille(s) / 1000f;
 
-            for (int i = 0; i < 2; i++) UpdateMoves(i, s, now, scale);
+            for (int i = 0; i < _n; i++) UpdateMoves(i, s, now, scale);
             DetectHits(s);
             DetectShots(s);
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _n; i++)
             {
                 DrawSwings(i, s, now, scale, dt);
                 UpdateGhosts(i, s, dt);
@@ -385,7 +387,7 @@ namespace ChibiClash.Netcode
 
         void DetectHits(ChibiSimState s)
         {
-            for (int d = 0; d < 2; d++)
+            for (int d = 0; d < _n; d++)
             {
                 var f = _f[d];
                 int pct = s.F[d].PctM;
@@ -393,7 +395,8 @@ namespace ChibiClash.Netcode
                 f.Pct = pct;
                 if (gained <= 0 || !s.F[d].InPlay) continue;   // respawn reset / lifesteal: no spark
 
-                int a = 1 - d;
+                int a = ChibiSimView.Attacker(s, d);   // 1v1: 1 - d; four players: LastHitBy, -1 for a hazard
+                if (a < 0) { _sparks.Hit((Vector2)f.Vis.transform.position + new Vector2(0f, 0.15f), HazardSpark, gained / (1000f * PctFullSpark)); continue; }
                 Vector2 dc = f.Vis.transform.position, ac = _f[a].Vis.transform.position;
                 float side = ac.x >= dc.x ? 1f : -1f;
                 var at = dc + new Vector2(side * 0.3f, 0.15f);
@@ -492,7 +495,7 @@ namespace ChibiClash.Netcode
 
         void OnDestroy()
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _f.Length; i++)
             {
                 var f = _f[i];
                 if (f.Ribbons != null) for (int k = 0; k < f.Ribbons.Length; k++) f.Ribbons[k]?.Dispose();

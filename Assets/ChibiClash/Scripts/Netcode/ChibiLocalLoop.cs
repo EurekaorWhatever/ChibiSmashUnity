@@ -57,17 +57,24 @@ namespace ChibiClash.Netcode
         public float RenderAlpha => _clock.RenderAlpha;
 
         readonly ChibiTickClock _clock = new ChibiTickClock();
-        IChibiInputSource _p0, _p1;
+        IChibiInputSource[] _src;
 
         /// <summary>Start a new offline match. Pass two distinct source instances.</summary>
         /// <example><code>loop.Begin(cfg, p0, p1, recordReplay: false);</code></example>
-        public void Begin(in ChibiMatchConfig cfg, IChibiInputSource p0, IChibiInputSource p1, bool recordReplay = true)
+        public void Begin(in ChibiMatchConfig cfg, IChibiInputSource p0, IChibiInputSource p1, bool recordReplay = true) =>
+            Begin(cfg, new[] { p0, p1 }, recordReplay);
+
+        /// <summary>
+        /// Start a new offline match for 2..4 fighters: <paramref name="sources"/>[i] drives fighter i (length = the
+        /// config's player count). The replay file holds two input streams, so only a 2-fighter match is recorded.
+        /// </summary>
+        /// <example><code>loop.Begin(cfg, new IChibiInputSource[] { p0, cpu1, cpu2, cpu3 }, recordReplay: false);</code></example>
+        public void Begin(in ChibiMatchConfig cfg, IChibiInputSource[] sources, bool recordReplay = true)
         {
-            _p0 = p0;
-            _p1 = p1;
-            Session = new ChibiLocalSession(cfg, p0, p1);
+            _src = (IChibiInputSource[])sources.Clone();
+            Session = new ChibiLocalSession(cfg, _src);
             Replay = null;
-            if (recordReplay && !cfg.Training)
+            if (recordReplay && !cfg.Training && _src.Length == 2)
             {
                 Replay = new ChibiReplayRecorder(cfg);
                 Session.OnFrame += Replay.Add;
@@ -102,8 +109,7 @@ namespace ChibiClash.Netcode
             if (Paused) return;
             if (kb != null && kb.tKey.wasPressedThisFrame) ChibiSimulation.TrainingFillUlt(Session.State, 0);
 
-            _p0.PollRenderFrame();
-            _p1.PollRenderFrame();
+            for (int i = 0; i < _src.Length; i++) _src[i].PollRenderFrame();
 
             int n = _clock.Advance(PacedDelta(), Dilation);
             for (int i = 0; i < n; i++) Session.Tick();

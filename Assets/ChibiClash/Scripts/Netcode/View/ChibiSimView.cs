@@ -25,6 +25,10 @@ namespace ChibiClash.Netcode
         const float FeetToPivot = 0.725f;
         const float StunVisualTicks = 18f;        // Fighter.cs shows the stun stars above 0.3 s of hitstun
         const float CamMinSize = 5.5f, CamMaxSize = 10f, CamPad = 3.2f;
+        // Three or four fighters spread wider: the zoom-out cap rises (still limited by the KO lines and the painted art,
+        // ChibiCameraFraming.MaxSize / WithinArt, so a small stage simply shows all of itself).
+        const float CamMaxSizeMulti = 13f;
+        float MaxCamSize => _n > 2 ? CamMaxSizeMulti : CamMaxSize;
         // Critically damped springs (SmoothDamp, unscaled time): position / zoom / ult-focus smooth times in seconds.
         const float CamSmooth = 0.22f, CamSizeSmooth = 0.3f, CamFocusSmooth = 0.12f;
         // Classic framing keeps the centre >= ground + 3 (was the fixed 0.5 at ground -2.5); below the ground (Ocean
@@ -75,12 +79,13 @@ namespace ChibiClash.Netcode
         readonly ChibiSimState _before = new ChibiSimState();   // state one tick before _seen (interpolation start)
         readonly ChibiSimState _seen = new ChibiSimState();     // latest tick the view has processed
         readonly List<ChibiSimEvent> _events = new List<ChibiSimEvent>(32);
-        readonly FighterVisual[] _vis = new FighterVisual[2];
-        readonly Skin[] _skin = new Skin[2];
-        readonly ClassDef[] _def = new ClassDef[2];
+        readonly FighterVisual[] _vis = new FighterVisual[ChibiSimState.MaxFighters];
+        readonly Skin[] _skin = new Skin[ChibiSimState.MaxFighters];
+        readonly ClassDef[] _def = new ClassDef[ChibiSimState.MaxFighters];
+        int _n = 2;            // fighters drawn (the state's PlayerCount, 2..4)
         ProjVis[] _proj;
-        readonly bool[] _weaponHidden = new bool[2];   // last SpearOut applied to FighterVisual.SetWeaponVisible
-        readonly Transform[] _ring = new Transform[2];   // FireRing visual per fighter (CombatObjects.cs:229-235), shown while RingTicks > 0
+        readonly bool[] _weaponHidden = new bool[ChibiSimState.MaxFighters];   // last SpearOut applied to FighterVisual.SetWeaponVisible
+        readonly Transform[] _ring = new Transform[ChibiSimState.MaxFighters];   // FireRing visual per fighter (CombatObjects.cs:229-235), shown while RingTicks > 0
         // VolleyLead expiries seen in OnSimFrame (position taken from the pre-step state): Fx.Burst in LateUpdate.
         readonly List<Vector2> _leadBurstPos = new List<Vector2>(4);
         readonly List<int> _leadBurstOwner = new List<int>(4);
@@ -141,8 +146,8 @@ namespace ChibiClash.Netcode
         readonly List<NewMove> _newMoves = new List<NewMove>(8);
         readonly List<NewHit> _newHits = new List<NewHit>(8);
         readonly List<KoFly> _koFly = new List<KoFly>(2);
-        readonly Color[] _fx = new Color[2];          // CharacterRoster Fx colour per fighter (move VFX, popups, trails)
-        readonly Color[] _accent = new Color[2];
+        readonly Color[] _fx = new Color[ChibiSimState.MaxFighters];          // CharacterRoster Fx colour per fighter (move VFX, popups, trails)
+        readonly Color[] _accent = new Color[ChibiSimState.MaxFighters];
         ChibiMoveVfx _moveFx;
         ChibiLaunchFx _launchFx;   // launch trails, KO blasts, respawn hover / blink (presentation only)
         int _stageIndex;           // camera bounds are read from ChibiStageTable every frame (KO lines may move)
@@ -161,12 +166,12 @@ namespace ChibiClash.Netcode
         float _camSize;            // ortho-size spring state (without the punch-in)
         bool _camSizeSet;
         // Hitstop decoration: strength of the last hit per fighter (0 = none) and the sim hitstop length it started with.
-        readonly float[] _hitShakeS = new float[2];
+        readonly float[] _hitShakeS = new float[ChibiSimState.MaxFighters];
         int _hitStopTotal = 1;
         Vector2 _finishFocus;      // final-KO camera focus, captured on the first frame after MatchOver
         bool _finishFocusSet;
         // Cinematic band strings per fighter, built once in Begin (no per-ult string concatenation).
-        readonly string[] _cinTitle = new string[2], _cinSub = new string[2];
+        readonly string[] _cinTitle = new string[ChibiSimState.MaxFighters], _cinSub = new string[ChibiSimState.MaxFighters];
         int _focus = -1;          // fighter the camera is focused on during the ult cinematic, -1 none
         float _focusUntil;         // unscaled time the focus ends
         bool _finished;            // MatchOver seen
@@ -191,7 +196,20 @@ namespace ChibiClash.Netcode
         public float GroundY => _stage != null ? _stage.groundY : 0f;
 
         /// <summary>World position of fighter <paramref name="i"/>'s body centre (name tags, popups). Zero before Begin.</summary>
-        public Vector2 FighterCenter(int i) => i >= 0 && i < 2 ? Center(i) : Vector2.zero;
+        public Vector2 FighterCenter(int i) => i >= 0 && i < _n ? Center(i) : Vector2.zero;
+
+        /// <summary>Fighters drawn in this match (2 in 1v1, up to <see cref="ChibiSimState.MaxFighters"/>).</summary>
+        public int FighterCount => _n;
+
+        /// <summary>
+        /// Sorting base of fighter <paramref name="i"/>'s sprites (parts draw at base - 1 .. base + 15). 1v1: 10 and 30 as
+        /// always. Fighters 2 and 3 share the bases of 0 and 1: orders 46+ belong to blades, hover discs, the stage
+        /// foreground (70) and Fx particles (80), so there is no free band for a third and fourth fighter.
+        /// </summary>
+        public static int FighterSortBase(int i) => 10 + 20 * (i & 1);
+
+        /// <summary>True while fighter <paramref name="i"/> is KO'd or eliminated (hidden, not framed by the camera).</summary>
+        public bool IsOut(int i) => _launchFx != null && i >= 0 && i < _n && _launchFx.IsOut(i);
 
         /// <summary>True once the view has seen MatchOver; <see cref="FinishedTime"/> is the unscaled time it did.</summary>
         public bool Finished => _finished;
@@ -210,6 +228,7 @@ namespace ChibiClash.Netcode
             var state = loop.State;
             _before.CopyFrom(state);
             _seen.CopyFrom(state);
+            _n = ChibiSimEvents.Fighters(state);
 
             Fx.Init(transform);
             // Stage chosen by cfg.Stage (0..2 classic, 3..7 the map design sheet); sim Y 0 maps to _stage.groundY.
@@ -220,15 +239,15 @@ namespace ChibiClash.Netcode
             ChibiPostFx.Attach(transform, cfg.Stage, () => _loop != null ? _loop.State : null);
             ChibiBladeTrails.Attach(transform, GroundY, () => _loop != null ? _loop.State : null);   // [blade-trails hook] HDR blade ribbons, hit sparks, muzzle flares, afterimages (reads state only)
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _n; i++)
             {
-                var cls = i == 0 ? cfg.Class0 : cfg.Class1;
+                var cls = cfg.ClassOf(i);
                 _def[i] = ClassDef.Get(cls);
                 _skin[i] = skins != null && skins[i] != null ? skins[i] : Skin.Default(cls);   // test match: defaults
                 var go = new GameObject("SimP" + (i + 1));
                 go.transform.SetParent(transform, false);
                 _vis[i] = go.AddComponent<FighterVisual>();
-                _vis[i].Build(_def[i], _skin[i], 10 + i * 20, weapons != null && weapons[i] != null ? weapons[i] : WeaponDef.Get(cls, 0));
+                _vis[i].Build(_def[i], _skin[i], FighterSortBase(i), weapons != null && weapons[i] != null ? weapons[i] : WeaponDef.Get(cls, 0));
                 _vis[i].EnableSheetOnly();   // fight: moveset-sheet clips only (FightClips), never cutouts or the body drawing
                 var ch = CharacterRoster.Of(cls);
                 _fx[i] = ch.Fx;
@@ -302,7 +321,7 @@ namespace ChibiClash.Netcode
             _launchFx = new ChibiLaunchFx(transform, _vis, _fx, GroundY, FeetToPivot);
             _impactFx = new ChibiImpactFx(transform, _vis, _fx, GroundY);
             _stageIndex = cfg.Stage;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _n; i++)
             {
                 // Hud.cs:186, :192-194; built once here, not per cinematic.
                 var def = _def[i];
@@ -340,14 +359,14 @@ namespace ChibiClash.Netcode
                 if (e.Kind != ChibiSimEventKind.ProjectileGone || e.Value2 != (int)ChibiProjKind.VolleyLead) continue;
                 var lead = _seen.Proj[e.Index];
                 _leadBurstPos.Add(ProjPos(lead.X, lead.Y));
-                _leadBurstOwner.Add(Mathf.Clamp(e.Value, 0, 1));
+                _leadBurstOwner.Add(Slot(e.Value));
             }
             // Minion / cloud bursts: positions come from this step's states (a gone minion's last position is only in
             // _seen; a slot may be reused before LateUpdate runs), so capture them here.
             for (int i = first; i < _events.Count; i++)
             {
                 var e = _events[i];
-                var ult = _skin[Mathf.Clamp(e.Value, 0, 1)].ultFx;
+                var ult = _skin[Slot(e.Value)].ultFx;
                 switch (e.Kind)
                 {
                     case ChibiSimEventKind.MinionSpawned:   // Minion.Spawn CO:147
@@ -405,6 +424,7 @@ namespace ChibiClash.Netcode
                     case ChibiSimEventKind.Damaged:
                     {
                         int d = e.Index, a = ChibiSimView.Attacker(cur, d);
+                        if (a < 0) break;   // four players: a hazard hit has no attacker move
                         int slot = NewMoveSlotOfHit(cur, a);
                         if (slot < firstNew) break;
                         var fd = cur.F[d];
@@ -509,7 +529,7 @@ namespace ChibiClash.Netcode
                     v.Live = true; v.SpawnTick = z.SpawnTick; v.Owner = z.Owner;
                     v.Root.gameObject.SetActive(true);
                 }
-                var c = _fx[Mathf.Clamp(z.Owner, 0, 1)];
+                var c = _fx[Slot(z.Owner)];
                 float w = Mathf.Max(0.3f, (z.X1 - z.X0) * MilliToWorld);
                 float pulse = 0.8f + 0.2f * Mathf.Sin(Time.time * 6f + i);
                 v.Root.position = ProjPos((z.X0 + z.X1) / 2, z.Y0) + new Vector3(0f, 0.05f, 0f);
@@ -553,7 +573,8 @@ namespace ChibiClash.Netcode
             if (!_victoryShown && _seen.MatchOver)
             {
                 _victoryShown = true;
-                if (_seen.Winner >= 0 && _seen.Winner < 2) _vis[_seen.Winner].SetVictory(true);
+                if (_n <= 2) { if (_seen.Winner >= 0 && _seen.Winner < 2) _vis[_seen.Winner].SetVictory(true); }
+                else for (int i = 0; i < _n; i++) if ((_seen.WinnerMask & (1 << i)) != 0) _vis[i].SetVictory(true);   // a team wins together
             }
             for (int i = 0; i < _leadBurstPos.Count; i++)
                 Fx.Burst(_leadBurstPos[i], _skin[_leadBurstOwner[i]].ultFx, LeadBurstCount, LeadBurstSpeed, LeadBurstSize);
@@ -566,7 +587,7 @@ namespace ChibiClash.Netcode
             }
             _bursts.Clear();
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _n; i++)
             {
                 var a = _before.F[i];
                 var f = _seen.F[i];
@@ -695,7 +716,7 @@ namespace ChibiClash.Netcode
                 {
                     v.Live = true; v.SpawnTick = b.SpawnTick; v.Owner = b.Owner;
                     // CO:132 body = Lerp(ultFx, black, 0.2); eye and pupil are fixed colours.
-                    v.Body.color = Color.Lerp(_skin[Mathf.Clamp(b.Owner, 0, 1)].ultFx, Color.black, 0.2f);
+                    v.Body.color = Color.Lerp(_skin[Slot(b.Owner)].ultFx, Color.black, 0.2f);
                     v.Root.gameObject.SetActive(true);
                 }
                 var a = _before.Minions[i];
@@ -845,19 +866,37 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>
-        /// Impact feel for a hit on <paramref name="d"/> worth <paramref name="pct"/> percent: hitstop vibration (timed by
-        /// the sim's HitstopRealTicks), silhouette flash, camera trauma, and on heavy hits a punch-in toward the impact,
-        /// a kick along the launch and a radial burst. Strength from the shown state (read only).
-        /// </summary>
-        /// <summary>
         /// Attacker of the latest hit on fighter <paramref name="d"/> (four-player-design.md 1.3, read only): the sim's
-        /// <see cref="ChibiFighterSim.LastHitBy"/>, else the 1v1 opponent. In 1v1 both are 1 - d.
+        /// <see cref="ChibiFighterSim.LastHitBy"/> when valid. Else 1v1: the opponent 1 - d (in 1v1 both are 1 - d);
+        /// three or four fighters: -1 (a stage hazard sets no LastHitBy, and 1 - d is no fighter for d &gt;= 2). Callers
+        /// treat -1 as "no attacker" (Phase 1 review item 2).
         /// </summary>
         internal static int Attacker(ChibiSimState s, int d)
         {
             int a = s.F[d].LastHitBy;
-            return a >= 0 && a < s.PlayerCount && a != d ? a : 1 - d;
+            if (a >= 0 && a < s.PlayerCount && a < ChibiSimState.MaxFighters && a != d) return a;
+            return s.PlayerCount <= 2 && d >= 0 && d < 2 ? 1 - d : -1;
         }
+
+        /// <summary>A fighter index from sim data (projectile / zone / minion owner) clamped to this match's fighters.</summary>
+        int Slot(int i) => Mathf.Clamp(i, 0, _n - 1);
+
+        /// <summary>
+        /// Victim of fighter <paramref name="i"/>'s Polearm Kick program: 1v1 the opponent (as before), else the sim's
+        /// ProgTarget, else the fighter the sim calls its foe (read only).
+        /// </summary>
+        int KickVictim(int i)
+        {
+            if (_n <= 2) return 1 - i;
+            int t = _seen.F[i].ProgTarget;
+            return t >= 0 && t < _n ? t : ChibiSimulation.Foe(_seen, i);
+        }
+
+        /// <summary>
+        /// Impact feel for a hit on <paramref name="d"/> worth <paramref name="pct"/> percent: hitstop vibration (timed by
+        /// the sim's HitstopRealTicks), silhouette flash, camera trauma, and on heavy hits a punch-in toward the impact,
+        /// a kick along the launch and a radial burst. Strength from the shown state (read only).
+        /// </summary>
 
         void OnHitFeel(int d, int pct)
         {
@@ -874,12 +913,13 @@ namespace ChibiClash.Netcode
                 _hitStopTotal = Mathf.Max(1, stop);
             }
 
-            Vector2 dc = Center(d), ac = Center(a);
+            Vector2 dc = Center(d), ac = a >= 0 ? Center(a) : dc;   // a < 0: hazard hit (four players), no attacker side
             float side = ac.x >= dc.x ? 1f : -1f;
             Vector2 at = dc + new Vector2(side * 0.3f, 0.15f);
-            var flash = Color.Lerp(Color.white, _fx[a], ChibiFeel.FlashTint);
+            var hitCol = a >= 0 ? _fx[a] : Color.white;
+            var flash = Color.Lerp(Color.white, hitCol, ChibiFeel.FlashTint);
             float camSize = _cam != null ? _cam.orthographicSize : CamMinSize;
-            _impactFx.Hit(d, at, _fx[a], flash, s, camSize);
+            _impactFx.Hit(d, at, hitCol, flash, s, camSize);
 
             _camFeel.AddTrauma(ChibiFeel.HitTrauma(s));
             if (s >= ChibiFeel.HeavyHit)
@@ -1010,13 +1050,13 @@ namespace ChibiClash.Netcode
             else if (frame == ChibiSimConst.KickLerpFrames)
             {
                 v.PlayThrust(0.25f);                                                        // F:1068
-                Fx.Burst(Center(1 - i), KickHitRed, 20, 5f, 0.35f);                         // F:1070 at o.Center
+                Fx.Burst(Center(KickVictim(i)), KickHitRed, 20, 5f, 0.35f);                         // F:1070 at o.Center
             }
             else if (frame == ChibiSimConst.KickRiseFrame) v.PlaySpin(0.35f);               // F:1073
             else if (frame == ChibiSimConst.KickReleaseFrame)
             {
                 v.PlaySwing(0.2f);                                                          // F:1075
-                Fx.Burst(Center(1 - i), ult, 45, 9f, 0.5f);                                 // F:1078 at o.Center
+                Fx.Burst(Center(KickVictim(i)), ult, 45, 9f, 0.5f);                                 // F:1078 at o.Center
                 _camFeel.AddTrauma(0.55f);                                          // Match.Shake(0.55f)
             }
         }
@@ -1042,8 +1082,8 @@ namespace ChibiClash.Netcode
         /// <summary>Re-skin slot visual <paramref name="v"/> for projectile <paramref name="b"/> (new identity).</summary>
         void Configure(ProjVis v, ChibiProjectileSim b)
         {
-            var ult = _skin[Mathf.Clamp(b.Owner, 0, 1)].ultFx;
-            var fx = _fx[Mathf.Clamp(b.Owner, 0, 1)];
+            var ult = _skin[Slot(b.Owner)].ultFx;
+            var fx = _fx[Slot(b.Owner)];
             UnityEngine.Sprite sprite = Art.Rounded;
             Color c, trail = Color.clear;
             Vector2 size;
@@ -1145,7 +1185,7 @@ namespace ChibiClash.Netcode
                     smooth = Mathf.Lerp(smooth, CamFocusSmooth, w);
                 }
             }
-            size = Mathf.Min(size, ChibiCameraFraming.MaxSize(bounds, aspect, CamMaxSize));
+            size = Mathf.Min(size, ChibiCameraFraming.MaxSize(bounds, aspect, MaxCamSize));
             if (!_camSizeSet) { _camSize = _cam.orthographicSize; _camSizeSet = true; }
             // Springs carry the framing only; the punch-in and shake are layered on top and never fed back (no jitter).
             _camSize = Mathf.SmoothDamp(_camSize, size, ref _camSizeVel, CamSizeSmooth, Mathf.Infinity, dt);
@@ -1169,7 +1209,7 @@ namespace ChibiClash.Netcode
         {
             _finishFocusSet = true;
             int win = _seen.Winner;
-            bool hasWinner = win >= 0 && win < 2 && _vis[win] != null && !_launchFx.IsOut(win);
+            bool hasWinner = win >= 0 && win < _n && _vis[win] != null && !_launchFx.IsOut(win);
             if (_launchFx.KoFocus(out var ko))
                 _finishFocus = hasWinner ? Vector2.Lerp(ko, Center(win), ChibiFeel.FinishFocusToWinner) : ko;
             else _finishFocus = hasWinner ? Center(win) : fallback;
@@ -1187,7 +1227,7 @@ namespace ChibiClash.Netcode
             float lowest = float.MaxValue, launch = 0f;
             Vector2 motion = Vector2.zero;
             int n = 0;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _n; i++)   // every fighter still on screen (KO'd and eliminated ones are Out)
             {
                 if (_vis[i] == null || _launchFx.IsOut(i)) continue;
                 Vector2 c = Center(i);
@@ -1209,7 +1249,7 @@ namespace ChibiClash.Netcode
             goal.y = Mathf.Max(goal.y, Mathf.Min(GroundY + CamGroundLift, lowest + CamLowLift));
             goal += Vector2.ClampMagnitude(motion / n * CamMoveLeadSec, CamMoveLeadMax);
             float dist = Mathf.Max((maxX - minX) * 0.5f / aspect, (maxY - minY) * 0.5f);
-            size = Mathf.Clamp(dist + CamPad + CamLaunchZoom * launch, CamMinSize, CamMaxSize);
+            size = Mathf.Clamp(dist + CamPad + CamLaunchZoom * launch, CamMinSize, MaxCamSize);
             return true;
         }
 

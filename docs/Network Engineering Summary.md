@@ -1,6 +1,6 @@
 # 🌐 Network Engineering Summary: Chibi Clash
 
-🎮 Unity 6000.6.7f1 · 📡 protocol 5 · 📜 rules v24 · 📅 2026-11-22
+🎮 Unity 6000.6.7f1 · 📡 protocol 5 · 📜 rules v25 · 📅 2026-11-23
 
 🔗 Linked to Unity Gaming Services (Relay, Lobby and Friends turned on; Relay region tested: Singapore)
 
@@ -62,6 +62,10 @@ Rollback only works if both computers get **exactly** the same result. So the ga
 
 🤝 Before each online match, both games check they are the same version. Different versions are not allowed to
 play together.
+
+🆕 Rules v25 (2026-11-23): the game rules now know 3-4 fighters (👑 Battle Royale and 👥 2v2, no friendly fire in 2v2).
+A player who leaves is out at an exact frame and the match goes on. Online is still 1 v 1 until the 4-player online
+update. A v24 game and a v25 game refuse each other.
 
 ## 🏆 Match results
 

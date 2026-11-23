@@ -633,6 +633,46 @@ namespace ChibiClash
         }
 
         /// <summary>
+        /// DEV ONLY (editor or development build; null elsewhere): start a local match of <paramref name="players"/> (2..4)
+        /// fighters straight away, player 0 human (keyboard / pad 1) and every other slot a CPU, each a different character.
+        /// <paramref name="team"/> = 2v2 (fighters 0 + 2 vs 1 + 3, join order); else free-for-all (Battle Royale). Not in
+        /// any menu: Vs CPU stays 1v1 (user PDF). Resets <c>pending</c> to a 1v1 afterwards so menus are unchanged.
+        /// </summary>
+        /// <example><code>FindAnyObjectByType&lt;GameManager&gt;().DevQuickMatch4(4, team: false, stage: 3);</code></example>
+        public ChibiMatch DevQuickMatch4(int players = 4, bool team = false, int stage = 0)
+        {
+            if (!(Application.isEditor || Debug.isDebugBuild)) return null;
+            FinishLoadingNow();
+            CancelWipe();
+            arcade = false;
+            players = Mathf.Clamp(players, 2, 4);
+            var roster = CharacterRoster.All;
+            for (int i = 0; i < 4; i++)
+            {
+                pending.cls[i] = roster[i % roster.Length].Class;
+                pending.passive[i] = 0;
+                pending.weapon[i] = 0;
+                pending.cpu[i] = i != 0;
+            }
+            pending.players = players;
+            pending.team = team && players == 4;
+            pending.teamOf = pending.team ? 0b1010 : 0;   // fighters 1 and 3 on team 1
+            pending.stage = stage;
+            pending.training = false;
+            aiPicksItself = false;
+            StartMatch();
+            // The next menu match is a 1v1 again (only the match above reads these fields).
+            pending.players = 2; pending.team = false; pending.teamOf = 0;
+            pending.cpu[2] = pending.cpu[3] = true;
+            return match;
+        }
+
+        // Inspector right-click on the GameManager in Play Mode (DEV ONLY, same guard as DevQuickMatch4).
+        [ContextMenu("DEV: 4-player Battle Royale (Mountain)")] void DevBattleRoyale4() => DevQuickMatch4(4, false, 3);
+        [ContextMenu("DEV: 3-player Battle Royale (Mountain)")] void DevBattleRoyale3() => DevQuickMatch4(3, false, 3);
+        [ContextMenu("DEV: 2v2 Team (Mountain)")] void DevTeam2v2() => DevQuickMatch4(4, true, 3);
+
+        /// <summary>
         /// Jump straight to a screen (editor testing / automation): home, play (or brawl), online (the Vs Online play
         /// styles), matchmaking / rooms / local (the MATCHMAKING rooms screen), createroom / joinroom (that screen with its
         /// pop-up open), quickmatch (Vs Online QUICK MATCH, starts a real regional search), cpu (Vs CPU character select

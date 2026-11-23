@@ -6,10 +6,17 @@ namespace ChibiClash
 {
     public class MatchConfig
     {
-        public FighterClass[] cls = { FighterClass.Melee, FighterClass.Heavy };
-        public int[] passive = new int[2];
-        public int[] weapon = new int[2];     // cosmetic weapon variant per player (index into WeaponDef.ForClass)
-        public bool[] cpu = { false, true };
+        // Four slots each (four-player Phase 2b); a 1v1 uses slots 0 and 1 exactly as before.
+        public FighterClass[] cls = { FighterClass.Melee, FighterClass.Heavy, FighterClass.Ranged, FighterClass.Magic };
+        public int[] passive = new int[4];
+        public int[] weapon = new int[4];     // cosmetic weapon variant per player (index into WeaponDef.ForClass)
+        public bool[] cpu = { false, true, true, true };
+        /// <summary>Fighters in the match, 2..4 (2 = the 1v1 every menu starts).</summary>
+        public int players = 2;
+        /// <summary>Team mode (2v2); false = free-for-all / Battle Royale.</summary>
+        public bool team;
+        /// <summary>Team of fighter i in bit i (Team mode only).</summary>
+        public int teamOf;
         public int stage = StageBuilder.DefaultStage;
         /// <summary>Stage events (fire, bird, whale) on; moving platforms move either way (ST-5). Host decides online.</summary>
         public bool hazards = true;

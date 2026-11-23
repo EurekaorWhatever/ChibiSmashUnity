@@ -43,7 +43,13 @@ namespace ChibiClash
         public static readonly Color Red = P1;
         public static readonly Color Muted = Hex(0x9AA6BC);
 
-        public static Color PlayerColor(int i) => i == 0 ? P1 : P2;
+        /// <summary>Player 3 colour (four players): yellow.</summary>
+        public static readonly Color P3 = Hex(0xF2C230);
+        /// <summary>Player 4 colour (four players): purple.</summary>
+        public static readonly Color P4 = Hex(0x9B5CE0);
+
+        /// <summary>Colour of player <paramref name="i"/>: P1 red, P2 blue, P3 yellow, P4 purple.</summary>
+        public static Color PlayerColor(int i) => i == 0 ? P1 : i == 1 ? P2 : i == 2 ? P3 : P4;
 
         /// <summary>Global opacity multiplier applied to everything drawn through Gui (screen fades).</summary>
         public static float Alpha = 1f;

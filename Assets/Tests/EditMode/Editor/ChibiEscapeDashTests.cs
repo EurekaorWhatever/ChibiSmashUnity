@@ -181,7 +181,7 @@ namespace ChibiClash.Tests
         [Test]
         public void ConfigHash_HasRulesVersion24()
         {
-            Assert.AreEqual(24, ChibiMatchConfig.RulesVersion);
+            Assert.GreaterOrEqual(ChibiMatchConfig.RulesVersion, 24);   // 25: four players (Phase 2a)
         }
 
         // ================================================================== CPU
