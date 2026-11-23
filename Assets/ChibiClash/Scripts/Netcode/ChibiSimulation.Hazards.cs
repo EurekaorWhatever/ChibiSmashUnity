@@ -205,7 +205,7 @@ namespace ChibiClash.Netcode
         {
             if (!s.HazardsOn || !s.Running) return;
             int hz = ChibiStageTable.Get(s.Stage).Hazard;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < s.Count; i++)   // rules v25: hazards hit every fighter, allies included
             {
                 var f = s.F[i];
                 if (HazardImmune(f)) continue;

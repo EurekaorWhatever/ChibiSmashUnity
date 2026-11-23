@@ -11,6 +11,8 @@ namespace ChibiClash.Netcode
     public static class ChibiSimConst
     {
         public const int TickRate = 60;
+        /// <summary>Rules v25: fighter slots preallocated in every state (1v1 uses 2, FFA 3-4, 2v2 4).</summary>
+        public const int MaxFighters = 4;
         /// <summary>Match timer: 300 s of running game steps with 3 stocks (rules v20, GL-2; was 180 s).</summary>
         public const int MatchTicks = 300 * TickRate;
 
@@ -360,7 +362,8 @@ namespace ChibiClash.Netcode
         /// <remarks>22: responsiveness pass (UL-1, EL-1, TN-1, 2026-11-14): the Ult press with a full meter fires the ultimate on its game step (the gesture window is no longer opened); recovery trimmed (CSV rows by category with floors, counters / rolls / armor / reflect / dive rows unchanged; normals x 3/4; Dash &amp; Thrust, Choke, Fireball, Spear rows); 6-tick attack buffer (BufferedEdges / BufferTicks, replaces D-N1, fresh press wins, cleared by Interrupt); grounded walk / turn cancel in the last 6 recovery ticks of non-program moves when the stick differs from the move's start direction (Light rows and the light normal always, other moves on hit), attacks stay locked until the old lock end (AttackLockTicks) and go to the buffer; constants in the config hash.</remarks>
         /// <remarks>23: balance pass (review 2026-11-16 batch 4, B4-1..B4-3, 2026-11-17): trip loops removed (grounded trip stun Bruna down tilt 22, Ren down tilt 26, Kaia low sweep 28, was 34); Bruna down smash knockback 120000/90000 (was 45000/157500, straight up); the walk cancel's "on hit" needs a landed or blocked melee hit (MoveConnected, rolled back and hashed; a touch on an invulnerable, hovering, countered or parried target no longer counts); attack presses in a dash's last AttackBufferTicks are buffered and come out when the dash ends.</remarks>
         /// <remarks>24: escape dash (ED-1, 2026-11-17): a Dash press during a knockback launch (not set knockback) after 10 game ticks of it, with DashCd 0, halves Vx / Vy, ends the hitstun and the launch and starts the 33-tick dash cooldown (no invuln, no dash motion); LaunchAge and EscapeDashes per fighter in state and hash; EscapeMinAge / EscapeSpeedP / LaunchAgeCap in the config hash.</remarks>
-        public const int RulesVersion = 24;
+        /// <remarks>25: team play phase 1 (2026-11-23): match formats 1v1 / FFA (3-4 fighters, each its own team) / 2v2 (two teams of two), up to four fighters stepped in index order, friendly fire off (allies pass through every melee box, grab, projectile, zone, minion, cloud and fire ring; stage hazards hit everyone), targets by NearestEnemy (squared distance, tie lowest index), explicit HoldTarget / HeldBy, projectile / minion / cloud Target (a reflect retargets the original owner), team elimination and team timeout (total stocks, then total percent), Placement, the dropped-slot input sentinel; a 1v1 plays and hashes exactly like v24.</remarks>
+        public const int RulesVersion = 25;
 
         public uint Seed;
         public FighterClass Class0, Class1;
@@ -380,6 +383,70 @@ namespace ChibiClash.Netcode
         /// in rooms and it travels in the handshake Start message. Moving platforms move either way. In the config hash.
         /// </summary>
         public bool HazardsOff;
+
+        // ---- rules v25: team play (phase 1). Defaults (all zero) describe the existing 1v1 match.
+        /// <summary>Format ids: 0 = 1v1, 1 = free-for-all (3-4 fighters, each its own team), 2 = 2v2 (two teams of two).</summary>
+        public const int Format1v1 = 0, FormatFfa = 1, Format2v2 = 2;
+        /// <summary>Match format (<see cref="Format1v1"/>, <see cref="FormatFfa"/>, <see cref="Format2v2"/>); any other value plays as 1v1.</summary>
+        public int Format;
+        /// <summary>Fighter count requested for FFA (3 or 4; other values clamp). 1v1 is always 2 and 2v2 always 4.</summary>
+        public int Count;
+        /// <summary>Classes of slots 2 and 3 (used when <see cref="EffectiveCount"/> &gt; 2).</summary>
+        public FighterClass Class2, Class3;
+        /// <summary>Passives of slots 2 and 3 (0 or 1).</summary>
+        public int Passive2, Passive3;
+        /// <summary>2v2 team (0 or 1) per slot. Read only in 2v2; must be two fighters per team, else the default 0,0,1,1 is used.</summary>
+        public int Team0, Team1, Team2, Team3;
+
+        /// <summary>The format the simulation plays: <see cref="Format"/> when it is a known id, else 1v1.</summary>
+        public int EffectiveFormat => Format == FormatFfa || Format == Format2v2 ? Format : Format1v1;
+
+        /// <summary>Fighters in the match: 2 in 1v1, 4 in 2v2, <see cref="Count"/> clamped to 3..4 in FFA.</summary>
+        public int EffectiveCount
+        {
+            get
+            {
+                int f = EffectiveFormat;
+                if (f == Format1v1) return 2;
+                if (f == Format2v2) return ChibiSimConst.MaxFighters;
+                return Count >= ChibiSimConst.MaxFighters ? ChibiSimConst.MaxFighters : 3;
+            }
+        }
+
+        /// <summary>Class of slot <paramref name="i"/> (0..3).</summary>
+        public FighterClass ClassOf(int i) => i == 0 ? Class0 : i == 1 ? Class1 : i == 2 ? Class2 : Class3;
+
+        /// <summary>Passive of slot <paramref name="i"/> (0..3).</summary>
+        public int PassiveOf(int i) => i == 0 ? Passive0 : i == 1 ? Passive1 : i == 2 ? Passive2 : Passive3;
+
+        /// <summary>Raw 2v2 team field of slot <paramref name="i"/> (0..3), unvalidated.</summary>
+        public int RawTeam(int i) => i == 0 ? Team0 : i == 1 ? Team1 : i == 2 ? Team2 : Team3;
+
+        /// <summary>True when the four 2v2 team fields hold two fighters on team 0 and two on team 1.</summary>
+        public bool TeamsValid
+        {
+            get
+            {
+                int zeros = 0;
+                for (int i = 0; i < ChibiSimConst.MaxFighters; i++)
+                {
+                    int t = RawTeam(i);
+                    if (t != 0 && t != 1) return false;
+                    if (t == 0) zeros++;
+                }
+                return zeros == 2;
+            }
+        }
+
+        /// <summary>
+        /// Team id of slot <paramref name="i"/>: the slot index in 1v1 / FFA (each fighter its own team, so in 1v1 the
+        /// team equals the player index), the 2v2 team field when <see cref="TeamsValid"/>, else 0,0,1,1.
+        /// </summary>
+        public int TeamOf(int i)
+        {
+            if (EffectiveFormat != Format2v2) return i;
+            return TeamsValid ? RawTeam(i) : (i < 2 ? 0 : 1);
+        }
 
         /// <summary>
         /// FNV-style hash of RulesVersion and every config field. Peers / replays with different hashes
@@ -436,6 +503,20 @@ namespace ChibiClash.Netcode
             for (int k = 0; k < pk.Length; k++) ChibiSimState.Mix(ref h, pk[k]);
             ChibiSimState.Mix(ref h, HazardsOff ? 1 : 0);
             ChibiSimulation.MixStageHash(ref h, ChibiStageTable.Get(Stage));
+            // Rules v25: team play fields, only for non-1v1 formats so a 1v1 config hashes exactly as before.
+            int fmt = EffectiveFormat;
+            if (fmt != Format1v1)
+            {
+                int n = EffectiveCount;
+                ChibiSimState.Mix(ref h, fmt);
+                ChibiSimState.Mix(ref h, n);
+                for (int i = 0; i < n; i++)
+                {
+                    ChibiSimState.Mix(ref h, (int)ClassOf(i));
+                    ChibiSimState.Mix(ref h, PassiveOf(i));
+                    ChibiSimState.Mix(ref h, TeamOf(i));
+                }
+            }
             return h;
         }
     }
@@ -728,8 +809,15 @@ namespace ChibiClash.Netcode
         public int MoveLockEnd;
         /// <summary>Program phase (rules v12): Leap 0 waiting / 1 slammed; Grab 0 none or whiff / 1 connected (stays 1 after the release).</summary>
         public int MovePhase;
-        /// <summary>This fighter is held by the opponent (kinematic: no input, no Physics, V 0). Invariant: F[i].Held == F[1-i].Holding.</summary>
+        /// <summary>This fighter is held (kinematic: no input, no Physics, V 0). Invariant: Held == (HeldBy &gt;= 0 and F[HeldBy].Holding).</summary>
         public bool Held;
+        /// <summary>
+        /// Rules v25: the fighter the running grab / kick program targets (set at the grab check or the kick fire, kept
+        /// after the release so the slam / last kick hit lands on that victim; cleared at the next move start), -1 none.
+        /// </summary>
+        public int HoldTarget = -1;
+        /// <summary>Rules v25: index of the fighter holding this one while <see cref="Held"/>, else -1.</summary>
+        public int HeldBy = -1;
         /// <summary>This fighter holds the opponent (generic holder side; Grab now, Polearm ult kick in step 14).</summary>
         public bool Holding;
         /// <summary>Hold path points in feet milli (section 2.2): S = victim at frame 0, T = lift top, L = slam point (frame 18).</summary>
@@ -793,11 +881,26 @@ namespace ChibiClash.Netcode
             UltFirePending = o.UltFirePending; LatchedPose = o.LatchedPose; SuperJumpCd = o.SuperJumpCd; PoseShotCd = o.PoseShotCd;
             UltPrompt = o.UltPrompt; UltPromptTicks = o.UltPromptTicks;
             BufferedEdges = o.BufferedEdges; BufferTicks = o.BufferTicks; AttackLockTicks = o.AttackLockTicks;   // rules v22
+            HoldTarget = o.HoldTarget; HeldBy = o.HeldBy;   // rules v25
             CopyMoveset(o);   // rules v18 (Movesets/ChibiMovesetState.cs)
             CopyPercent(o);   // rules v20 (ChibiSimulation.Percent.cs)
         }
 
-        public void Hash(ref uint h)
+        /// <summary>Mixes every hashed field of a 1v1 match (see the overload for the team-play fields).</summary>
+        public void Hash(ref uint h) => Hash(ref h, false);
+
+        /// <summary>
+        /// Mixes every hashed field; <paramref name="multi"/> (rules v25, a match that is not 1v1) also mixes HoldTarget /
+        /// HeldBy, which in 1v1 are implied by Held / Holding, so a 1v1 checksum is unchanged.
+        /// </summary>
+        public void Hash(ref uint h, bool multi)
+        {
+            HashCore(ref h);
+            if (!multi) return;
+            ChibiSimState.Mix(ref h, HoldTarget); ChibiSimState.Mix(ref h, HeldBy);
+        }
+
+        void HashCore(ref uint h)
         {
             ChibiSimState.Mix(ref h, Class); ChibiSimState.Mix(ref h, Passive);
             ChibiSimState.Mix(ref h, X); ChibiSimState.Mix(ref h, Y); ChibiSimState.Mix(ref h, Vx); ChibiSimState.Mix(ref h, Vy);
@@ -883,13 +986,15 @@ namespace ChibiClash.Netcode
         public int ReturnTicks;
         /// <summary>Mult (permille) once the return starts.</summary>
         public int ReturnMult;
+        /// <summary>Rules v25: fighter the shot homes on / aims at (NearestEnemy of the owner at spawn; a reflect retargets the original owner).</summary>
+        public int Target;
 
         public void CopyFrom(ChibiProjectileSim o)
         {
             Active = o.Active; Owner = o.Owner; X = o.X; Y = o.Y; Vx = o.Vx; Vy = o.Vy; XRem = o.XRem; YRem = o.YRem; Life = o.Life;
             Mult = o.Mult; KbX = o.KbX; KbY = o.KbY; Stun = o.Stun; SpawnFrame = o.SpawnFrame;
             Kind = o.Kind; Flags = o.Flags; Radius = o.Radius; GrowPerTick = o.GrowPerTick; Speed = o.Speed;
-            ReturnTicks = o.ReturnTicks; ReturnMult = o.ReturnMult;
+            ReturnTicks = o.ReturnTicks; ReturnMult = o.ReturnMult; Target = o.Target;
             CopyMoveset(o);   // rules v18
         }
     }
@@ -907,11 +1012,13 @@ namespace ChibiClash.Netcode
         public int Facing;
         /// <summary>GameTicks of the spawning step (same convention as ChibiProjectileSim.SpawnFrame): first update next step.</summary>
         public int SpawnTick;
+        /// <summary>Rules v25: fighter this minion chases (NearestEnemy of the owner at spawn; re-picked when it stops being an enemy).</summary>
+        public int Target;
 
         public void CopyFrom(ChibiMinionSim o)
         {
             Active = o.Active; Owner = o.Owner; X = o.X; Y = o.Y; XRem = o.XRem; YRem = o.YRem; Vx = o.Vx; Vy = o.Vy;
-            Life = o.Life; AttackCd = o.AttackCd; Facing = o.Facing; SpawnTick = o.SpawnTick;
+            Life = o.Life; AttackCd = o.AttackCd; Facing = o.Facing; SpawnTick = o.SpawnTick; Target = o.Target;
         }
     }
 
@@ -927,6 +1034,8 @@ namespace ChibiClash.Netcode
         public int BoltTicks;
         /// <summary>GameTicks of the spawning step (same convention as ChibiProjectileSim.SpawnFrame): first update next step.</summary>
         public int SpawnTick;
+        /// <summary>Rules v25: fighter this cloud follows and strikes (NearestEnemy of the owner at spawn; re-picked when it stops being an enemy).</summary>
+        public int Target;
 
         /// <summary>Cloud X in milli = floor(CX / 1000).</summary>
         public int MilliX => ChibiSimulation.FloorDiv1000(CX);
@@ -936,7 +1045,7 @@ namespace ChibiClash.Netcode
         public void CopyFrom(ChibiCloudSim o)
         {
             Active = o.Active; Owner = o.Owner; CX = o.CX; CY = o.CY; Life = o.Life; StrikeTicks = o.StrikeTicks;
-            BoltTicks = o.BoltTicks; SpawnTick = o.SpawnTick;
+            BoltTicks = o.BoltTicks; SpawnTick = o.SpawnTick; Target = o.Target;
         }
     }
 
@@ -984,7 +1093,28 @@ namespace ChibiClash.Netcode
         /// <summary>Game ticks left on the match timer (0 in training, where the timer is off).</summary>
         public int TimeLeftTicks => Training ? 0 : Math.Max(0, ChibiSimConst.MatchTicks - MatchClock);
 
-        public readonly ChibiFighterSim[] F = { new ChibiFighterSim(), new ChibiFighterSim() };
+        /// <summary>Fighters, always <see cref="ChibiSimConst.MaxFighters"/> preallocated; slots 0..Count-1 play (rules v25).</summary>
+        public readonly ChibiFighterSim[] F = { new ChibiFighterSim(), new ChibiFighterSim(), new ChibiFighterSim(), new ChibiFighterSim() };
+
+        // ---- rules v25: team play. Copied always, hashed only when Multi so a 1v1 checksum is unchanged.
+        /// <summary>Fighters in play (2..4), from the config at Init. Loops run 0..Count-1.</summary>
+        public int Count = 2;
+        /// <summary>Match format (<see cref="ChibiMatchConfig.Format1v1"/> / FFA / 2v2), from the config at Init.</summary>
+        public int Format;
+        /// <summary>Team id per slot (1v1 / FFA: the slot index; 2v2: 0 or 1). Allies never hit each other.</summary>
+        public readonly int[] Team = { 0, 1, 2, 3 };
+        /// <summary>
+        /// Final place per slot (1 = best), 0 while undecided: set when a fighter loses its last stock (fighters still
+        /// alive after that step + 1, so simultaneous eliminations share a place) and for the survivors at the match end.
+        /// </summary>
+        public readonly int[] Placement = new int[ChibiSimConst.MaxFighters];
+        /// <summary>Bit i: slot i dropped out (the <see cref="ChibiInputPacket.DroppedRaw"/> sentinel); it is eliminated and its input ignored.</summary>
+        public int DroppedMask;
+        /// <summary>Not 1v1 (more than two fighters or a team format): the team-play fields join the checksum.</summary>
+        public bool Multi => Count > 2 || Format != 0;
+        /// <summary>Scratch input arrays for the 2-input Step wrapper and the sanitized step inputs. Not state, never hashed.</summary>
+        internal readonly ChibiInputPacket[] StepInputs = new ChibiInputPacket[ChibiSimConst.MaxFighters];
+        internal readonly ChibiInputPacket[] StepSanitized = new ChibiInputPacket[ChibiSimConst.MaxFighters];
         public readonly ChibiProjectileSim[] Proj = new ChibiProjectileSim[ChibiSimConst.MaxProjectiles];
         /// <summary>Mage minion pool (rules v13), updated in slot order after the projectiles (D-C3 = A).</summary>
         public readonly ChibiMinionSim[] Minions = new ChibiMinionSim[ChibiSimConst.MaxMinions];
@@ -1004,7 +1134,9 @@ namespace ChibiClash.Netcode
             HitstopRealTicks = o.HitstopRealTicks; CinematicRealTicks = o.CinematicRealTicks; CinematicFighter = o.CinematicFighter;
             TimeAccum = o.TimeAccum; GameTicks = o.GameTicks; RealTicksSinceStep = o.RealTicksSinceStep;
             DroppedShots = o.DroppedShots;
-            F[0].CopyFrom(o.F[0]); F[1].CopyFrom(o.F[1]);
+            for (int i = 0; i < F.Length; i++) F[i].CopyFrom(o.F[i]);
+            Count = o.Count; Format = o.Format; DroppedMask = o.DroppedMask;   // rules v25
+            for (int i = 0; i < Team.Length; i++) { Team[i] = o.Team[i]; Placement[i] = o.Placement[i]; }
             for (int i = 0; i < Proj.Length; i++) Proj[i].CopyFrom(o.Proj[i]);
             DroppedSummons = o.DroppedSummons;
             for (int i = 0; i < Minions.Length; i++) Minions[i].CopyFrom(o.Minions[i]);
@@ -1032,7 +1164,9 @@ namespace ChibiClash.Netcode
             Mix(ref h, HitstopRealTicks); Mix(ref h, CinematicRealTicks); Mix(ref h, CinematicFighter);
             Mix(ref h, TimeAccum); Mix(ref h, GameTicks); Mix(ref h, RealTicksSinceStep);
             Mix(ref h, DroppedShots);
-            F[0].Hash(ref h); F[1].Hash(ref h);
+            bool multi = Multi;
+            int n = Count < 2 ? 2 : (Count > F.Length ? F.Length : Count);
+            for (int i = 0; i < n; i++) F[i].Hash(ref h, multi);
             for (int i = 0; i < Proj.Length; i++)
             {
                 var p = Proj[i];
@@ -1045,6 +1179,7 @@ namespace ChibiClash.Netcode
                 Mix(ref h, (int)p.Kind); Mix(ref h, p.Flags); Mix(ref h, p.Radius); Mix(ref h, p.GrowPerTick);
                 Mix(ref h, p.Speed); Mix(ref h, p.ReturnTicks); Mix(ref h, p.ReturnMult);
                 p.HashMoveset(ref h);   // rules v18
+                if (multi) Mix(ref h, p.Target);   // rules v25
             }
             Mix(ref h, DroppedSummons);
             for (int i = 0; i < Minions.Length; i++)
@@ -1055,6 +1190,7 @@ namespace ChibiClash.Netcode
                 Mix(ref h, m.Owner); Mix(ref h, m.X); Mix(ref h, m.Y); Mix(ref h, m.XRem); Mix(ref h, m.YRem);
                 Mix(ref h, m.Vx); Mix(ref h, m.Vy); Mix(ref h, m.Life); Mix(ref h, m.AttackCd); Mix(ref h, m.Facing);
                 Mix(ref h, m.SpawnTick);
+                if (multi) Mix(ref h, m.Target);   // rules v25
             }
             for (int i = 0; i < Clouds.Length; i++)
             {
@@ -1063,10 +1199,16 @@ namespace ChibiClash.Netcode
                 if (!c.Active) continue;
                 Mix(ref h, c.Owner); Mix(ref h, c.CX); Mix(ref h, c.CY); Mix(ref h, c.Life); Mix(ref h, c.StrikeTicks);
                 Mix(ref h, c.BoltTicks); Mix(ref h, c.SpawnTick);
+                if (multi) Mix(ref h, c.Target);   // rules v25
             }
             Mix(ref h, IntroRealTicks); Mix(ref h, MatchClock); Mix(ref h, Training ? 1 : 0);   // rules v16
             HashMoveset(ref h);   // rules v18 zones
             HashHazards(ref h);   // rules v20 stage events
+            if (multi)            // rules v25 team play
+            {
+                Mix(ref h, Count); Mix(ref h, Format); Mix(ref h, DroppedMask);
+                for (int i = 0; i < Team.Length; i++) { Mix(ref h, Team[i]); Mix(ref h, Placement[i]); }
+            }
             return h;
         }
     }
@@ -1111,10 +1253,18 @@ namespace ChibiClash.Netcode
             s.MatchClock = 0;
             s.Training = cfg.Training;
             InitHazards(s, cfg);   // rules v20: own RNG stream, first delay
+            // Rules v25: format, count and teams first (the spawn points read them).
+            s.Format = cfg.EffectiveFormat; s.Count = cfg.EffectiveCount; s.DroppedMask = 0;
+            for (int i = 0; i < ChibiSimConst.MaxFighters; i++) { s.Team[i] = cfg.TeamOf(i); s.Placement[i] = 0; }
             var st = ChibiStageTable.Get(s.Stage);
             // Spawn transform (+-halfWidth*0.45, groundY+1.5) -> feet (+-SpawnX, 775), airborne (stage-conversion.md section 1).
-            InitFighter(s.F[0], cfg.Class0, cfg.Passive0, -st.SpawnX, st.SpawnY, 1);
-            InitFighter(s.F[1], cfg.Class1, cfg.Passive1, st.SpawnX, st.SpawnY, -1);
+            // Unused slots (i >= Count) are initialised too but never stepped, hit or hashed.
+            for (int i = 0; i < ChibiSimConst.MaxFighters; i++)
+            {
+                SpawnPoint(s, i, out int x, out int facing);
+                bool used = i < s.Count;
+                InitFighter(s.F[i], used ? cfg.ClassOf(i) : FighterClass.Melee, used ? cfg.PassiveOf(i) : 0, x, st.SpawnY, facing);
+            }
         }
 
         static void InitFighter(ChibiFighterSim f, FighterClass cls, int passive, int x, int y, int facing)
@@ -1140,6 +1290,7 @@ namespace ChibiClash.Netcode
             f.DropTicks = 0; f.DropPlatform = -1;
             f.SpearOut = false;
             f.MoveLockEnd = 0; f.MovePhase = 0; f.Held = false; f.Holding = false;
+            f.HoldTarget = -1; f.HeldBy = -1;   // rules v25
             f.GrabSX = f.GrabSY = f.GrabTX = f.GrabTY = f.GrabLX = f.GrabLY = 0;
             f.KickFromX = f.KickFromY = f.KickToX = f.KickToY = 0;
             f.UltWindowTicks = 0; f.UltRetryTicks = 0; f.GestureTicks = 0; f.UltFirePending = false; f.LatchedPose = 0;
@@ -1167,13 +1318,35 @@ namespace ChibiClash.Netcode
         /// </summary>
         public static void Step(ChibiSimState s, ChibiInputPacket in0, ChibiInputPacket in1)
         {
+            // Rules v25: the 2-input form fills the state's scratch array (no allocation); slots 2..3 get no input.
+            var a = s.StepInputs;
+            a[0] = in0; a[1] = in1; a[2] = default; a[3] = default;
+            Step(s, a);
+        }
+
+        /// <summary>
+        /// Rules v25: one REAL tick with one input per fighter (<paramref name="inputs"/>[i] for slot i, at least
+        /// <see cref="ChibiSimState.Count"/> entries). Outside 1v1 an input equal to
+        /// <see cref="ChibiInputPacket.DroppedRaw"/> drops that slot on this frame (eliminated, stocks forfeited, its
+        /// later inputs ignored); in 1v1 the sentinel sanitizes to neutral as before. With Count 2 this is exactly the
+        /// 2-input step.
+        /// </summary>
+        /// <exception cref="ArgumentException">Fewer inputs than fighters.</exception>
+        public static void Step(ChibiSimState s, ChibiInputPacket[] inputs)
+        {
+            if (inputs == null || inputs.Length < s.Count) throw new ArgumentException("one input per fighter is required", nameof(inputs));
             if (s.MatchOver) { s.Frame++; return; }
 
             // ---- real-tick part
-            in0 = in0.Sanitized();
-            in1 = in1.Sanitized();
-            Latch(s.F[0], in0.Raw);
-            Latch(s.F[1], in1.Raw);
+            int n = s.Count;
+            var ins = s.StepSanitized;
+            for (int i = 0; i < n; i++)
+            {
+                var p = inputs[i];
+                if (s.Format != ChibiMatchConfig.Format1v1 && p.Raw == ChibiInputPacket.DroppedRaw) DropFighter(s, i);
+                ins[i] = (s.DroppedMask & (1 << i)) != 0 ? default : p.Sanitized();
+            }
+            for (int i = 0; i < n; i++) Latch(s.F[i], ins[i].Raw);
             int scale = CurrentScalePermille(s);
             RealTickTimers(s);
             s.TimeAccum += scale;
@@ -1182,7 +1355,7 @@ namespace ChibiClash.Netcode
             if (s.TimeAccum >= ChibiSimConst.ScaleNormal)
             {
                 s.TimeAccum -= ChibiSimConst.ScaleNormal;
-                GameStep(s, in0, in1);
+                GameStep(s, ins);
                 s.GameTicks++;
                 s.RealTicksSinceStep = 0;
             }
@@ -1200,7 +1373,7 @@ namespace ChibiClash.Netcode
         /// <returns>True when the meter was filled.</returns>
         public static bool TrainingFillUlt(ChibiSimState s, int i)
         {
-            if (!s.Training || !s.Running || i < 0 || i > 1) return false;
+            if (!s.Training || !s.Running || i < 0 || i >= s.Count) return false;
             s.F[i].Ult = ChibiSimConst.UltMax;
             return true;
         }
@@ -1245,8 +1418,7 @@ namespace ChibiClash.Netcode
             Dec(ref s.HitstopRealTicks);
             Dec(ref s.CinematicRealTicks);
             if (s.CinematicRealTicks == 0) s.CinematicFighter = -1;
-            UltWindowRealTick(s, 0);
-            UltWindowRealTick(s, 1);
+            for (int i = 0; i < s.Count; i++) UltWindowRealTick(s, i);
         }
 
         /// <summary>
@@ -1304,21 +1476,18 @@ namespace ChibiClash.Netcode
         /// One game step: the v9 body. Each fighter acts on this real tick's raw | LatchedHeld and on LatchedEdges, then
         /// both latches are cleared whether the step used them or not (D-N1: never carried to a second step).
         /// </summary>
-        static void GameStep(ChibiSimState s, ChibiInputPacket in0, ChibiInputPacket in1)
+        static void GameStep(ChibiSimState s, ChibiInputPacket[] ins)
         {
             CarryRiders(s);   // rules v20: moving platforms carry their riders first (stages README 3.2)
-            UpdateFighter(s, 0, ConsumeLatch(s.F[0], in0, out int e0, out int p0), e0, p0);
-            UpdateFighter(s, 1, ConsumeLatch(s.F[1], in1, out int e1, out int p1), e1, p1);
+            for (int i = 0; i < s.Count; i++)   // rules v25: index order 0..Count-1
+                UpdateFighter(s, i, ConsumeLatch(s.F[i], ins[i], out int e, out int p), e, p);
 
             // Rules v12 (TD amendment 1): grab start, hold path and release run after both fighters' Physics and BEFORE the
             // melee probes, so a grab beats any same-tick strike of the victim (Update runs before coroutines).
             HoldPhase(s);
 
-            // Probe both melee hitboxes first, then apply: simultaneous swings trade.
-            PendingHit h0 = MeleeProbe(s, 0);
-            PendingHit h1 = MeleeProbe(s, 1);
-            if (h0.Valid) ApplyHit(s, 0, 1, h0);
-            if (h1.Valid) ApplyHit(s, 1, 0, h1);
+            // Probe every melee hitbox first, then apply in (attacker, victim) order: simultaneous swings trade (v25: N x N).
+            MeleePhase(s);
 
             TickFireRings(s);
             UpdateProjectiles(s);
@@ -1606,6 +1775,7 @@ namespace ChibiClash.Netcode
                 f.Stun = 0;
             }
 
+            if (!f.Holding) f.HoldTarget = -1;   // rules v25: a new move forgets the last grab / kick victim
             f.MoveSlot = slot; f.MoveTick = 0; f.MoveHit = false; f.MoveConnected = false; f.ShotIdx = 0; f.MoveFinisher = 0;
             f.MoveActive = mv.Active;
             if (slot <= 1)
@@ -1672,7 +1842,8 @@ namespace ChibiClash.Netcode
                 if (f.Invuln < ChibiSimConst.UltCommonInvuln) f.Invuln = ChibiSimConst.UltCommonInvuln;   // F:960 max
                 FireUltClass(s, i);
             }
-            f.TargetX = s.F[1 - i].X;
+            int tg = NearestEnemy(s, i);                    // rules v25 (1v1: the opponent)
+            f.TargetX = tg >= 0 ? s.F[tg].X : f.X;
             if (prog != PNone)
             {
                 // Frame-0 rule (section 1): frame 0 runs inline on the press tick; its velocity writes are skipped (fact 2).
@@ -1708,13 +1879,15 @@ namespace ChibiClash.Netcode
                 case FighterClass.Polearm:
                 {
                     f.Invuln = ChibiSimConst.KickInvuln;
-                    var o = s.F[1 - i];
+                    int oi = NearestEnemy(s, i);                                       // rules v25 (1v1: the opponent)
+                    var o = oi >= 0 ? s.F[oi] : null;
                     // F:1041 strict on Centers (same 0.675 offset, so feet); dead opponent -> dash branch.
-                    bool inRange = o.InPlay && Math.Abs(o.X - f.X) < ChibiSimConst.KickRangeX &&
+                    bool inRange = o != null && o.InPlay && Math.Abs(o.X - f.X) < ChibiSimConst.KickRangeX &&
                                    Math.Abs(o.Y - f.Y) < ChibiSimConst.KickRangeY;
                     f.KickFromX = f.X; f.KickFromY = f.Y;
                     if (inRange)
                     {
+                        f.HoldTarget = oi;
                         f.Facing = o.X > f.X ? 1 : -1;                                   // SetFacing, tie -> -1
                         f.KickToX = o.X - f.Facing * ChibiSimConst.KickBehind;
                         f.KickToY = o.Y;
@@ -1954,10 +2127,10 @@ namespace ChibiClash.Netcode
         /// (no hit-once). Barrage / Leap boxes keep the step-8 strict <see cref="Overlaps"/>; Tornado / Spin Guard use the
         /// inclusive circle from Center with dir = Mathf.Sign(dx), Sign(0) = +1. The grab slam (frame 26, A1) needs no box.
         /// </summary>
-        static PendingHit ProgramProbe(ChibiSimState s, int i, int prog, int t)
+        static PendingHit ProgramProbe(ChibiSimState s, int i, int prog, int t, int v)
         {
             var f = s.F[i];
-            var o = s.F[1 - i];
+            var o = s.F[v];
             var none = default(PendingHit);
             int x0, x1;
             switch (prog)
@@ -1974,7 +2147,7 @@ namespace ChibiClash.Netcode
                                    last ? ChibiSimConst.ThrustLastKbY : ChibiSimConst.ThrustKbY, ChibiSimConst.ThrustStun, f.Facing, false);
                 }
                 case PGrab:
-                    if (t != ChibiSimConst.GrabReleaseFrame || f.MovePhase != 1) return none;
+                    if (t != ChibiSimConst.GrabReleaseFrame || f.MovePhase != 1 || v != HoldVictim(s, i)) return none;
                     return ProgHit(f.MoveMult, ChibiSimConst.GrabSlamKbX, ChibiSimConst.GrabSlamKbY, ChibiSimConst.GrabSlamStun,
                                    f.Facing, true);
                 case PTornado:
@@ -2007,9 +2180,9 @@ namespace ChibiClash.Netcode
                         return ProgHit(ChibiSimConst.KickBoxMult, ChibiSimConst.KickBoxKbX, ChibiSimConst.KickBoxKbY,
                                        ChibiSimConst.KickBoxStun, f.Facing, false);
                     }
-                    if (f.MovePhase == KickHolding && t == ChibiSimConst.KickLerpFrames)        // F:1068, after Stun + SetHeld
+                    if (f.MovePhase == KickHolding && t == ChibiSimConst.KickLerpFrames && v == HoldVictim(s, i))        // F:1068, after Stun + SetHeld
                         return ProgHit(ChibiSimConst.KickHit1Mult, 0, 0, ChibiSimConst.KickHit1Stun, f.Facing, true);
-                    if (f.MovePhase == KickReleased && t == ChibiSimConst.KickReleaseFrame)     // F:1076, after ReleaseHeld
+                    if (f.MovePhase == KickReleased && t == ChibiSimConst.KickReleaseFrame && v == HoldVictim(s, i))     // F:1076, after ReleaseHeld
                         return ProgHit(ChibiSimConst.KickHit2Mult, ChibiSimConst.KickHit2KbX, ChibiSimConst.KickHit2KbY,
                                        ChibiSimConst.KickHit2Stun, f.Facing, true);
                     return none;
@@ -2031,15 +2204,20 @@ namespace ChibiClash.Netcode
         /// </summary>
         static void HoldPhase(ChibiSimState s)
         {
-            bool g0 = GrabStartsNow(s.F[0]), g1 = GrabStartsNow(s.F[1]);
-            if (g0 != g1) TryGrab(s, g0 ? 0 : 1);
-            for (int i = 0; i < 2; i++)
+            // Rules v25: a fighter starting a grab this tick cannot be grabbed (two same-tick grabs on each other both whiff,
+            // D-M3 = B); grabbers check in index order, so a victim taken by a lower index is Held for the next one.
+            int n = s.Count, grabbers = 0;
+            for (int i = 0; i < n; i++) if (GrabStartsNow(s.F[i])) grabbers |= 1 << i;
+            for (int i = 0; i < n; i++) if ((grabbers & (1 << i)) != 0) TryGrab(s, i, grabbers);
+            for (int i = 0; i < n; i++)
             {
                 var h = s.F[i];
                 if (ProgramOf(h) == PKick) { KickHoldPhase(s, i); continue; }
                 if (!h.Holding) continue;
                 int frame = h.MoveTick - 1;
-                var v = s.F[1 - i];
+                int vi = HoldVictim(s, i);
+                if (vi < 0) { h.Holding = false; continue; }
+                var v = s.F[vi];
                 if (frame >= 1 && frame < ChibiSimConst.GrabLiftFrames)
                 {
                     v.X = h.GrabSX + DivRound((long)(h.GrabTX - h.GrabSX) * frame, ChibiSimConst.GrabLiftFrames);
@@ -2061,18 +2239,31 @@ namespace ChibiClash.Netcode
         /// parry, Parry stance and Spin Guard do not stop it. Success: lock 66, victim Stun(1.2) (Interrupt, drops its
         /// shield), held; S and T snapshot after this tick's Physics (section 2.2).
         /// </summary>
-        static void TryGrab(ChibiSimState s, int i)
+        static void TryGrab(ChibiSimState s, int i, int grabbers)
         {
             var f = s.F[i];
-            var o = s.F[1 - i];
-            if (!f.InPlay || !o.InPlay || o.Invuln > 0) return;
+            if (!f.InPlay) return;
             FacingBox(f, ChibiSimConst.GrabBoxX, ChibiSimConst.GrabBoxW, out int x0, out int x1);
             int y0 = f.Y + ChibiSimConst.GrabBoxY;
-            if (!OverlapsInclusive(o, x0, x1, y0, y0 + ChibiSimConst.GrabBoxH)) return;
+            // Rules v25: the nearest enemy in the box (tie: lowest index) that is in play, not invulnerable, not already
+            // held and not starting its own grab this tick. Allies are never grabbed.
+            int best = -1;
+            long bestD = long.MaxValue;
+            for (int v = 0; v < s.Count; v++)
+            {
+                if (!IsFoe(s, i, v) || (grabbers & (1 << v)) != 0) continue;
+                var c = s.F[v];
+                if (!c.InPlay || c.Invuln > 0 || c.Held) continue;
+                if (!OverlapsInclusive(c, x0, x1, y0, y0 + ChibiSimConst.GrabBoxH)) continue;
+                long d = ChibiFixed.DistSq(c.X - f.X, c.Y - f.Y);
+                if (d < bestD) { bestD = d; best = v; }
+            }
+            if (best < 0) return;
+            var o = s.F[best];
             f.MoveLockEnd = ChibiSimConst.GrabHitLock;
             f.MovePhase = 1;
-            StunF(s, 1 - i, ChibiSimConst.GrabStun);
-            Hold(s, i);
+            StunF(s, best, ChibiSimConst.GrabStun);
+            Hold(s, i, best);
             f.GrabSX = o.X; f.GrabSY = o.Y;
             f.GrabTX = f.X + f.Facing * ChibiSimConst.GrabTopDx; f.GrabTY = f.Y + ChibiSimConst.GrabTopDy;
             f.GrabLX = f.GrabTX; f.GrabLY = f.GrabTY;   // replaced on frame 18
@@ -2089,8 +2280,15 @@ namespace ChibiClash.Netcode
             int frame = h.MoveTick - 1;
             if (h.MovePhase == KickLerp && frame == ChibiSimConst.KickLerpFrames)
             {
-                StunF(s, 1 - i, ChibiSimConst.KickStun);
-                Hold(s, i);
+                // Rules v25: the victim chosen at the fire; one taken by someone else meanwhile (or no longer an enemy) is
+                // not held and the kick's hold hits target nobody.
+                int v = HoldVictim(s, i);
+                if (v >= 0 && IsFoe(s, i, v) && !s.F[v].Held)
+                {
+                    StunF(s, v, ChibiSimConst.KickStun);
+                    Hold(s, i, v);
+                }
+                else h.HoldTarget = -1;
                 h.MovePhase = KickHolding;
             }
             else if (h.MovePhase == KickHolding && frame == ChibiSimConst.KickReleaseFrame)
@@ -2101,11 +2299,13 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>Generic hold start (SetHeld(true), F:685-690): holder i holds the opponent; victim kinematic, V 0.</summary>
-        static void Hold(ChibiSimState s, int i)
+        static void Hold(ChibiSimState s, int i, int vi)
         {
-            var v = s.F[1 - i];
+            var v = s.F[vi];
             s.F[i].Holding = true;
+            s.F[i].HoldTarget = vi;   // rules v25
             v.Held = true;
+            v.HeldBy = i;
             v.Vx = 0; v.Vy = 0; v.XRem = 0; v.YRem = 0; v.Grounded = false;
         }
 
@@ -2117,9 +2317,12 @@ namespace ChibiClash.Netcode
         {
             var h = s.F[i];
             if (!h.Holding) return;
-            var v = s.F[1 - i];
             h.Holding = false;
+            int vi = HoldVictim(s, i);   // rules v25: HoldTarget stays set for the slam / last kick hit
+            if (vi < 0) return;
+            var v = s.F[vi];
             v.Held = false;
+            v.HeldBy = -1;
             v.Vx = 0; v.Vy = 0;
         }
 
@@ -2131,7 +2334,6 @@ namespace ChibiClash.Netcode
         static bool AdvanceMove(ChibiSimState s, int i, bool dashing, bool groundedAtStart)
         {
             var f = s.F[i];
-            var o = s.F[1 - i];
             if (f.MoveSlot >= FirstNew) return AdvanceNewMove(s, i, dashing);   // rules v18 moveset rows
             int prog = ProgramOf(f);
             if (prog != PNone)
@@ -2164,7 +2366,11 @@ namespace ChibiClash.Netcode
                 f.Vy = 0; level = true;
             }
             else if (!dashing && f.Grounded) f.Vx = Approach(f.Vx, 0, ChibiSimConst.MoveFriction);
-            if ((mv.Flags & ChibiMove.FTargeted) != 0 && t < activeStart) f.TargetX = o.X; // cloud follows, then locks
+            if ((mv.Flags & ChibiMove.FTargeted) != 0 && t < activeStart)                  // cloud follows, then locks
+            {
+                int tg = NearestEnemy(s, i);                                                   // rules v25
+                if (tg >= 0) f.TargetX = s.F[tg].X;
+            }
 
             if (t >= activeStart && t < activeEnd)
             {
@@ -2343,26 +2549,35 @@ namespace ChibiClash.Netcode
 
         // ------------------------------------------------------------------ hit detection
 
-        static PendingHit MeleeProbe(ChibiSimState s, int i)
+        /// <summary>
+        /// Rules v25: the melee probe of fighter <paramref name="i"/> against every enemy (allies and eliminated fighters
+        /// are skipped), into <paramref name="row"/>[victim]. Pure but for the hit-once / one-shot flags, which are set
+        /// once after all victims were probed, so one swing can hit several enemies. In 1v1 it is the v24 probe.
+        /// </summary>
+        static void MeleeProbeAll(ChibiSimState s, int i, Span<PendingHit> row)
         {
+            for (int v = 0; v < row.Length; v++) row[v] = default;
             var f = s.F[i];
-            var o = s.F[1 - i];
-            var none = default(PendingHit);
-            if (f.MoveSlot < 0) return none;
-            if (f.MoveSlot >= FirstNew) return NewMoveProbe(s, i);   // rules v18 moveset rows
+            if (f.MoveSlot < 0) return;
+            if (f.MoveSlot >= FirstNew) { NewMoveProbeAll(s, i, row); return; }   // rules v18 moveset rows
             int prog = ProgramOf(f);
             if (prog != PNone)
             {
-                var ph = ProgramProbe(s, i, prog, f.MoveTick - 1);
-                ph.Ult = f.MoveSlot == 5;                // rules v20: Smash / Kick ult program hits
-                return ph;
+                for (int v = 0; v < s.Count; v++)
+                {
+                    if (!IsFoe(s, i, v)) continue;
+                    var ph = ProgramProbe(s, i, prog, f.MoveTick - 1, v);
+                    ph.Ult = f.MoveSlot == 5;            // rules v20: Smash / Kick ult program hits
+                    row[v] = ph;
+                }
+                return;
             }
-            if (f.MoveHit) return none;
+            if (f.MoveHit) return;
             var mv = ChibiMoveTable.Get(f.Class, f.MoveSlot);
-            if (mv.ProjSpeed > 0 || mv.Mult <= 0) return none;
+            if (mv.ProjSpeed > 0 || mv.Mult <= 0) return;
 
             int t = f.MoveTick - 1;   // the tick AdvanceMove just processed
-            if (t < f.MoveStartup || t >= f.MoveStartup + f.MoveActive) return none;
+            if (t < f.MoveStartup || t >= f.MoveStartup + f.MoveActive) return;
 
             bool centered = (mv.Flags & ChibiMove.FCentered) != 0;
             int cx = (mv.Flags & ChibiMove.FTargeted) != 0 ? f.TargetX : f.X;
@@ -2372,17 +2587,22 @@ namespace ChibiClash.Netcode
             else { x1 = f.X - mv.BoxX; x0 = x1 - mv.BoxW; }
             int y0 = f.Y + mv.BoxY, y1 = y0 + mv.BoxH;
 
-            if (!Overlaps(o, x0, x1, y0, y1)) return none;
-
-            f.MoveHit = true;
-            int dir = centered ? (Sign(o.X - f.X) != 0 ? Sign(o.X - f.X) : f.Facing) : f.Facing;
-            bool fin = f.MoveFinisher != 0;
-            return new PendingHit
+            bool fin = f.MoveFinisher != 0, any = false;
+            for (int v = 0; v < s.Count; v++)
             {
-                Valid = true, Mult = f.MoveMult, KbX = fin ? mv.FinKbX : mv.KbX, KbY = fin ? mv.FinKbY : mv.KbY,
-                Stun = fin ? mv.FinStun : mv.Stun, Dir = dir, Unblockable = (mv.Flags & ChibiMove.FUnblockable) != 0,
-                Src = SrcMelee,
-            };
+                if (!IsFoe(s, i, v)) continue;
+                var o = s.F[v];
+                if (!Overlaps(o, x0, x1, y0, y1)) continue;
+                any = true;
+                int dir = centered ? (Sign(o.X - f.X) != 0 ? Sign(o.X - f.X) : f.Facing) : f.Facing;
+                row[v] = new PendingHit
+                {
+                    Valid = true, Mult = f.MoveMult, KbX = fin ? mv.FinKbX : mv.KbX, KbY = fin ? mv.FinKbY : mv.KbY,
+                    Stun = fin ? mv.FinStun : mv.Stun, Dir = dir, Unblockable = (mv.Flags & ChibiMove.FUnblockable) != 0,
+                    Src = SrcMelee,
+                };
+            }
+            if (any) f.MoveHit = true;
         }
 
         static bool Overlaps(ChibiFighterSim target, int x0, int x1, int y0, int y1)
@@ -2426,6 +2646,7 @@ namespace ChibiClash.Netcode
                 p.Speed = (int)ChibiFixed.ISqrt((long)sp.Vx * sp.Vx + (long)sp.Vy * sp.Vy);
                 p.ReturnTicks = sp.ReturnTicks; p.ReturnMult = sp.ReturnMult;
                 p.ResetMoveset();   // rules v18: SrcSlot -1, no bounces
+                p.Target = NearestEnemy(s, sp.Owner);   // rules v25 (1v1: the opponent)
                 return n;
             }
             s.DroppedShots++;   // deterministic: the pool is rollback state
@@ -2497,12 +2718,13 @@ namespace ChibiClash.Netcode
                 var p = s.Proj[n];
                 if (!p.Active || p.SpawnFrame == s.GameTicks) continue;   // first update on the next game step
                 var owner = s.F[p.Owner];
-                var target = s.F[1 - p.Owner];
+                int ti = p.Target;                                                                // v25 stored target
+                if (!IsFoe(s, p.Owner, ti)) p.Target = ti = NearestEnemy(s, p.Owner);
 
                 p.Life--;                                                                         // CO:47
                 ProjTimers(p);                                                                    // v18 bounce re-arm
-                if ((p.Flags & ChibiProjectileSim.FHoming) != 0)                                  // CO:51-55
-                    SteerHoming(ref p.Vx, ref p.Vy, p.Speed, target.X - p.X, target.Y + cy - p.Y);
+                if ((p.Flags & ChibiProjectileSim.FHoming) != 0 && ti >= 0)                       // CO:51-55
+                    SteerHoming(ref p.Vx, ref p.Vy, p.Speed, s.F[ti].X - p.X, s.F[ti].Y + cy - p.Y);
                 if (p.ReturnTicks > 0)                                                            // CO:57-66
                 {
                     p.ReturnTicks--;
@@ -2528,11 +2750,17 @@ namespace ChibiClash.Netcode
 
                 if ((p.Flags & (ChibiProjectileSim.FHarmless | ChibiProjectileSim.FHasHit)) == 0) // CO:89
                 {
-                    if ((p.Flags & ChibiProjectileSim.FDestructible) != 0 && DestroyedBy(target, p.X, p.Y))
-                    { Despawn(s, p); continue; }
-                    if (ProjReflected(s, p)) continue;                                            // v18 reflect row
-                    if (CircleHitsFighter(target, p.X, p.Y, p.Radius))
+                    // Rules v25: every enemy of the owner in index order (allies are passed through); the first hit sets
+                    // HasHit, so a shot still hits at most once. In 1v1 the single enemy is the v24 target.
+                    bool gone = false;
+                    for (int v = 0; v < s.Count && !gone; v++)
                     {
+                        if (!IsFoe(s, p.Owner, v)) continue;
+                        var target = s.F[v];
+                        if ((p.Flags & ChibiProjectileSim.FDestructible) != 0 && DestroyedBy(target, p.X, p.Y))
+                        { Despawn(s, p); gone = true; break; }
+                        if (ProjReflected(s, p, v)) { gone = true; break; }                       // v18 reflect row
+                        if (!CircleHitsFighter(target, p.X, p.Y, p.Radius)) continue;
                         // HasHit is set even if the hit misses (invulnerable / KO'd), CO:102-104; kb sign Vel.x >= 0 (CO:101).
                         p.Flags |= ChibiProjectileSim.FHasHit;
                         var hit = new PendingHit
@@ -2540,13 +2768,15 @@ namespace ChibiClash.Netcode
                             Valid = true, Mult = p.Mult, KbX = ChibiFixed.Abs(p.KbX), KbY = p.KbY, Stun = p.Stun,
                             Dir = p.Vx >= 0 ? 1 : -1, Src = SrcProj, Ult = IsUltProjectile(p.Kind),
                         };
-                        if (p.SrcSlot >= 0) ProjAdjustHit(s, p, ref hit);                         // v18 pull / spike / trip
-                        int res = ApplyHit(s, p.Owner, 1 - p.Owner, hit);
-                        if (res == HitCountered) { Despawn(s, p); continue; }                     // v18 counter:proj
-                        if (p.SrcSlot >= 0 && ProjAfterHit(s, p)) continue;                       // v18 bounce / tether
+                        if (p.SrcSlot >= 0) ProjAdjustHit(s, p, ref hit, v);                      // v18 pull / spike / trip
+                        int res = ApplyHit(s, p.Owner, v, hit);
+                        if (res == HitCountered) { Despawn(s, p); gone = true; break; }           // v18 counter:proj
+                        if (p.SrcSlot >= 0 && ProjAfterHit(s, p)) { gone = true; break; }         // v18 bounce / tether
                         if ((p.Flags & (ChibiProjectileSim.FPierce | ChibiProjectileSim.FReturning)) == 0 && p.ReturnTicks == 0)
-                        { Despawn(s, p); continue; }
+                        { Despawn(s, p); gone = true; }
+                        break;
                     }
+                    if (gone) continue;
                 }
                 // CO:108: Life <= 0 || |x| > 40 || y < -30 || y > 40 (world units).
                 if (p.Life <= 0 || Math.Abs(p.X) > ChibiSimConst.ProjBoundX ||
@@ -2556,7 +2786,7 @@ namespace ChibiClash.Netcode
                     int lx = p.X, ly = p.Y;
                     if (p.SrcSlot >= 0) ProjExpire(s, p);                                         // v18 air tether anchor
                     Despawn(s, p);                                                                // frees the slot first
-                    if (p.Kind == ChibiProjKind.VolleyLead) SplitVolley(s, p.Owner, lx, ly);      // CO:110 OnExpire
+                    if (p.Kind == ChibiProjKind.VolleyLead) SplitVolley(s, p.Owner, lx, ly, p.Target);      // CO:110 OnExpire
                 }
             }
         }
@@ -2566,9 +2796,9 @@ namespace ChibiClash.Netcode
         /// this order: ox, oy, (cx, cy) until inside the 0.6 disc (max 16 tries, then the centre), speed. Each flies at its
         /// speed toward the opponent's Center + (ox, oy), and first moves on the next game step (SpawnFrame = GameTicks).
         /// </summary>
-        static void SplitVolley(ChibiSimState s, int owner, int lx, int ly)
+        static void SplitVolley(ChibiSimState s, int owner, int lx, int ly, int target)
         {
-            var t = s.F[1 - owner];
+            var t = target >= 0 ? s.F[target] : null;   // rules v25: the lead's target; none -> straight down
             const int r = ChibiSimConst.VolleyDiscR;
             for (int k = 0; k < ChibiSimConst.VolleyCount; k++)
             {
@@ -2585,28 +2815,32 @@ namespace ChibiClash.Netcode
                 if (!inside) { cx = 0; cy = 0; }
                 int speed = ChibiSimConst.VolleySpeedMin + s.Rng.Range(ChibiSimConst.VolleySpeedSpan);
                 int fx = lx + cx, fy = ly + cy;
-                ScaleTo(t.X + ox - fx, t.Y + ChibiSimConst.CenterOffY + oy - fy, speed, out int vx, out int vy);
-                SpawnProjectile(s, new ProjSpec
+                int gx = t != null ? t.X : lx, gy = t != null ? t.Y + ChibiSimConst.CenterOffY : ly - ChibiSimConst.CenterOffY;
+                ScaleTo(gx + ox - fx, gy + oy - fy, speed, out int vx, out int vy);
+                int slotN = SpawnProjectile(s, new ProjSpec
                 {
                     Owner = owner, Kind = ChibiProjKind.VolleyArrow, X = fx, Y = fy, Vx = vx, Vy = vy,
                     Radius = ChibiSimConst.VolleyR, Life = ChibiSimConst.VolleyLife, Mult = ChibiSimConst.VolleyMult,
                     KbX = ChibiSimConst.VolleyKbX, KbY = ChibiSimConst.VolleyKbY, Stun = ChibiSimConst.VolleyStun,
                     Flags = ChibiProjectileSim.FDestructible,
                 });
+                if (slotN >= 0 && target >= 0) s.Proj[slotN].Target = target;
             }
         }
 
-        /// <summary>Fire Ring ultimate: damages anyone inside the ring every half second.</summary>
+        /// <summary>Fire Ring ultimate: damages every enemy inside the ring every half second (rules v25: allies are safe).</summary>
         static void TickFireRings(ChibiSimState s)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < s.Count; i++)
+            for (int v = 0; v < s.Count; v++)
             {
                 var f = s.F[i];
-                if (f.RingTicks <= 0 || f.RingTicks % 30 != 0) continue;
-                var o = s.F[1 - i];
+                if (f.RingTicks <= 0 || f.RingTicks % 30 != 0) break;
+                if (!IsFoe(s, i, v)) continue;
+                var o = s.F[v];
                 int dx = o.X - f.X, dy = o.Y - f.Y;
                 if ((long)dx * dx + (long)dy * dy > (long)ChibiSimConst.RingRadius * ChibiSimConst.RingRadius) continue;
-                ApplyHit(s, i, 1 - i, new PendingHit { Valid = true, Mult = 400, KbX = 60 * ChibiSimConst.VelSub, KbY = 45 * ChibiSimConst.VelSub, Stun = 12, Dir = Sign(dx) != 0 ? Sign(dx) : f.Facing, Ult = true });   // v20: Fire Ring = ult
+                ApplyHit(s, i, v, new PendingHit { Valid = true, Mult = 400, KbX = 60 * ChibiSimConst.VelSub, KbY = 45 * ChibiSimConst.VelSub, Stun = 12, Dir = Sign(dx) != 0 ? Sign(dx) : f.Facing, Ult = true });   // v20: Fire Ring = ult
             }
         }
 
@@ -2808,6 +3042,7 @@ namespace ChibiClash.Netcode
                 m.XRem = 0; m.YRem = 0; m.Vx = 0; m.Vy = 0;
                 m.Life = ChibiSimConst.MinionLife; m.AttackCd = ChibiSimConst.MinionFirstCd; m.Facing = 1;
                 m.SpawnTick = s.GameTicks;
+                m.Target = NearestEnemy(s, i);   // rules v25
             }
         }
 
@@ -2822,6 +3057,7 @@ namespace ChibiClash.Netcode
             c.CX = f.X * 1000; c.CY = (f.Y + ChibiSimConst.CenterOffY + ChibiSimConst.CloudSpawnOy) * 1000;
             c.Life = ChibiSimConst.CloudLife; c.StrikeTicks = ChibiSimConst.CloudFirstStrike; c.BoltTicks = 0;
             c.SpawnTick = s.GameTicks;
+            c.Target = NearestEnemy(s, i);   // rules v25
         }
 
         /// <summary>
@@ -2840,7 +3076,10 @@ namespace ChibiClash.Netcode
                 m.Life--; m.AttackCd--;
                 if (m.Life <= 0 || m.Y < ChibiSimConst.MinionKillY) { m.Active = false; continue; }
 
-                var t = s.F[1 - m.Owner];
+                int ti = m.Target;                                        // rules v25: chase the stored enemy
+                if (!IsFoe(s, m.Owner, ti)) m.Target = ti = NearestEnemy(s, m.Owner);
+                if (ti < 0) { m.Vx = 0; MinionPhysics(m, st, s.GameTicks); continue; }
+                var t = s.F[ti];
                 int dx = t.X - m.X, dy = t.Y + ChibiSimConst.CenterOffY - m.Y;
                 int dir = dx >= 0 ? 1 : -1;                               // Mathf.Sign(0) = +1
                 m.Facing = dir;
@@ -2849,7 +3088,7 @@ namespace ChibiClash.Netcode
                 if (adx < ChibiSimConst.MinionBonkDx && Math.Abs(dy) < ChibiSimConst.MinionBonkDy && m.AttackCd <= 0)
                 {
                     m.AttackCd = ChibiSimConst.MinionCd;
-                    ApplyHit(s, m.Owner, 1 - m.Owner, new PendingHit
+                    ApplyHit(s, m.Owner, ti, new PendingHit
                     {
                         Valid = true, Mult = ChibiSimConst.MinionMult, KbX = ChibiSimConst.MinionKb, KbY = ChibiSimConst.MinionKb,
                         Stun = ChibiSimConst.MinionStun, Dir = dir,
@@ -2977,7 +3216,10 @@ namespace ChibiClash.Netcode
                 c.Life--;
                 if (c.Life <= 0) { c.Active = false; continue; }
 
-                var t = s.F[1 - c.Owner];
+                int ti = c.Target;                                        // rules v25: follow the stored enemy
+                if (!IsFoe(s, c.Owner, ti)) c.Target = ti = NearestEnemy(s, c.Owner);
+                if (ti < 0) continue;
+                var t = s.F[ti];
                 long gx = (long)t.X * 1000, gy = ((long)t.Y + ChibiSimConst.CenterOffY + ChibiSimConst.CloudGoalOy) * 1000;
                 c.CX += (int)RoundHalfAway(gx - c.CX, ChibiSimConst.CloudLerpDiv);
                 c.CY += (int)RoundHalfAway(gy - c.CY, ChibiSimConst.CloudLerpDiv);
@@ -2989,7 +3231,7 @@ namespace ChibiClash.Netcode
                     c.StrikeTicks = ChibiSimConst.CloudPeriod;
                     c.BoltTicks = ChibiSimConst.CloudBolt;
                     if (Math.Abs(t.X - c.MilliX) < ChibiSimConst.CloudStrikeDx)
-                        ApplyHit(s, c.Owner, 1 - c.Owner, new PendingHit
+                        ApplyHit(s, c.Owner, ti, new PendingHit
                         {
                             Valid = true, Mult = ChibiSimConst.CloudMult, KbX = 0, KbY = ChibiSimConst.CloudKbY,
                             Stun = ChibiSimConst.CloudStun, Dir = 1,

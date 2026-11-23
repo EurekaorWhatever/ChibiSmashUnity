@@ -57,20 +57,28 @@ namespace ChibiClash.Netcode
         public float RenderAlpha => _clock.RenderAlpha;
 
         readonly ChibiTickClock _clock = new ChibiTickClock();
-        IChibiInputSource _p0, _p1;
+        IChibiInputSource[] _src = Array.Empty<IChibiInputSource>();
 
-        /// <summary>Start a new offline match. Pass two distinct source instances.</summary>
+        /// <summary>Start a new offline 1v1 match. Pass two distinct source instances.</summary>
         /// <example><code>loop.Begin(cfg, p0, p1, recordReplay: false);</code></example>
-        public void Begin(in ChibiMatchConfig cfg, IChibiInputSource p0, IChibiInputSource p1, bool recordReplay = true)
+        public void Begin(in ChibiMatchConfig cfg, IChibiInputSource p0, IChibiInputSource p1, bool recordReplay = true) =>
+            Begin(cfg, new[] { p0, p1 }, recordReplay);
+
+        /// <summary>
+        /// Rules v25: start a new offline match with one distinct source per fighter (at least
+        /// <see cref="ChibiMatchConfig.EffectiveCount"/>; CPU slots are <see cref="ChibiCpuInputSource"/>s).
+        /// </summary>
+        /// <example><code>loop.Begin(ffaCfg, new IChibiInputSource[] { human, cpu1, cpu2 });</code></example>
+        public void Begin(in ChibiMatchConfig cfg, IChibiInputSource[] sources, bool recordReplay = true)
         {
-            _p0 = p0;
-            _p1 = p1;
-            Session = new ChibiLocalSession(cfg, p0, p1);
+            Session = new ChibiLocalSession(cfg, sources);
+            _src = new IChibiInputSource[Session.SourceCount];
+            for (int i = 0; i < _src.Length; i++) _src[i] = Session.Source(i);
             Replay = null;
             if (recordReplay && !cfg.Training)
             {
                 Replay = new ChibiReplayRecorder(cfg);
-                Session.OnFrame += Replay.Add;
+                Session.OnFrameAll += Replay.Add;
             }
             _clock.Reset();
             _skipDelta = true;   // perf audit F3: no catch-up burst for the match-build frame
@@ -102,8 +110,7 @@ namespace ChibiClash.Netcode
             if (Paused) return;
             if (kb != null && kb.tKey.wasPressedThisFrame) ChibiSimulation.TrainingFillUlt(Session.State, 0);
 
-            _p0.PollRenderFrame();
-            _p1.PollRenderFrame();
+            for (int i = 0; i < _src.Length; i++) _src[i].PollRenderFrame();
 
             int n = _clock.Advance(PacedDelta(), Dilation);
             for (int i = 0; i < n; i++) Session.Tick();

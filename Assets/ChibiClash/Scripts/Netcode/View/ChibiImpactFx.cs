@@ -51,15 +51,15 @@ namespace ChibiClash.Netcode
         readonly float _groundY;
         readonly Material _light, _alpha;
 
-        readonly SpriteRenderer[] _flash = new SpriteRenderer[2];
-        readonly float[] _flashLeft = new float[2];
-        readonly Color[] _flashCol = new Color[2];
+        readonly SpriteRenderer[] _flash = new SpriteRenderer[ChibiSimConst.MaxFighters];
+        readonly float[] _flashLeft = new float[ChibiSimConst.MaxFighters];
+        readonly Color[] _flashCol = new Color[ChibiSimConst.MaxFighters];
 
-        readonly Pending[] _pend = new Pending[2];
-        readonly float[] _lineT = new float[2];
-        readonly bool[] _dashing = new bool[2], _tumble = new bool[2];
-        readonly int[] _dashDir = { 1, 1 };
-        readonly Vector2[] _vel = new Vector2[2];
+        readonly Pending[] _pend = new Pending[ChibiSimConst.MaxFighters];
+        readonly float[] _lineT = new float[ChibiSimConst.MaxFighters];
+        readonly bool[] _dashing = new bool[ChibiSimConst.MaxFighters], _tumble = new bool[ChibiSimConst.MaxFighters];
+        readonly int[] _dashDir = { 1, 1, 1, 1 };   // per fighter slot (rules v25: up to 4)
+        readonly Vector2[] _vel = new Vector2[ChibiSimConst.MaxFighters];
 
         /// <summary>
         /// Builds the pool under <paramref name="parent"/>. <paramref name="vis"/> = the two fighter visuals,
@@ -85,7 +85,7 @@ namespace ChibiClash.Netcode
                 sr.enabled = false;
                 _items[i] = new Item { Tr = go.transform, Sr = sr };
             }
-            for (int f = 0; f < 2; f++)
+            for (int f = 0; f < _vis.Length; f++)
             {
                 var go = new GameObject("ImpactFlash" + f);
                 go.transform.SetParent(root, false);
@@ -117,7 +117,7 @@ namespace ChibiClash.Netcode
         /// </summary>
         public void OnSimStep(ChibiSimState prev, ChibiSimState cur)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _vis.Length; i++)
             {
                 var p = prev.F[i];
                 var c = cur.F[i];
@@ -166,7 +166,7 @@ namespace ChibiClash.Netcode
         /// </summary>
         public void Hit(int defender, Vector2 at, Color color, Color flashColor, float strength, float camSize)
         {
-            if (defender >= 0 && defender < 2)
+            if (defender >= 0 && defender < _flashLeft.Length)
             {
                 _flashLeft[defender] = Mathf.Max(_flashLeft[defender], ChibiFeel.FlashSeconds(strength));
                 _flashCol[defender] = flashColor;
@@ -177,7 +177,7 @@ namespace ChibiClash.Netcode
         /// <summary>Plays pending effects and advances everything: <paramref name="dt"/> scaled, <paramref name="udt"/> unscaled.</summary>
         public void Tick(float dt, float udt)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _vis.Length; i++)
             {
                 ref var pd = ref _pend[i];
                 if (pd.Dash) { pd.Dash = false; if (pd.DashGrounded) DashDust(pd.Feet, pd.DashDir); EmitSpeedLines(i, 3); }
@@ -211,7 +211,7 @@ namespace ChibiClash.Netcode
         {
             for (int k = 0; k < PoolSize; k++) if (_items[k] != null && _items[k].Sr != null) _items[k].Sr.enabled = false;
             _ring.Clear();
-            for (int f = 0; f < 2; f++)
+            for (int f = 0; f < _vis.Length; f++)
             {
                 if (_flash[f] != null) _flash[f].enabled = false;
                 _flashLeft[f] = 0f;

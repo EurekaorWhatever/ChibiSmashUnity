@@ -93,10 +93,10 @@ namespace ChibiClash.Netcode
         /// <example><code>events.Clear(); ChibiSimEvents.Diff(shown, session.State, events); shown.CopyFrom(session.State);</code></example>
         public static void Diff(ChibiSimState prev, ChibiSimState cur, List<ChibiSimEvent> output)
         {
-            for (int i = 0; i < 2; i++) DiffFighter(i, prev.F[i], cur.F[i], output);
+            for (int i = 0; i < cur.Count; i++) DiffFighter(i, prev.F[i], cur.F[i], output);   // rules v25: every fighter
 
             // Rise only (a new ult re-arms the counter upward); the per-real-tick countdown never emits.
-            if (cur.CinematicRealTicks > prev.CinematicRealTicks && cur.CinematicFighter >= 0 && cur.CinematicFighter < 2)
+            if (cur.CinematicRealTicks > prev.CinematicRealTicks && cur.CinematicFighter >= 0 && cur.CinematicFighter < cur.Count)
                 output.Add(new ChibiSimEvent(ChibiSimEventKind.CinematicStarted, cur.CinematicFighter));
 
             // Rules v20 (damage percent + stocks): a KO is any blast-line KO, emitted per fighter in DiffFighter from KosTaken.

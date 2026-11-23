@@ -75,12 +75,13 @@ namespace ChibiClash.Netcode
         readonly ChibiSimState _before = new ChibiSimState();   // state one tick before _seen (interpolation start)
         readonly ChibiSimState _seen = new ChibiSimState();     // latest tick the view has processed
         readonly List<ChibiSimEvent> _events = new List<ChibiSimEvent>(32);
-        readonly FighterVisual[] _vis = new FighterVisual[2];
-        readonly Skin[] _skin = new Skin[2];
-        readonly ClassDef[] _def = new ClassDef[2];
+        /// <summary>One visual per fighter in play (rules v25: resized to State.Count in Begin; other per-fighter arrays hold 4).</summary>
+        FighterVisual[] _vis = new FighterVisual[2];
+        readonly Skin[] _skin = new Skin[ChibiSimConst.MaxFighters];
+        readonly ClassDef[] _def = new ClassDef[ChibiSimConst.MaxFighters];
         ProjVis[] _proj;
-        readonly bool[] _weaponHidden = new bool[2];   // last SpearOut applied to FighterVisual.SetWeaponVisible
-        readonly Transform[] _ring = new Transform[2];   // FireRing visual per fighter (CombatObjects.cs:229-235), shown while RingTicks > 0
+        readonly bool[] _weaponHidden = new bool[ChibiSimConst.MaxFighters];   // last SpearOut applied to FighterVisual.SetWeaponVisible
+        readonly Transform[] _ring = new Transform[ChibiSimConst.MaxFighters];   // FireRing visual per fighter (CombatObjects.cs:229-235), shown while RingTicks > 0
         // VolleyLead expiries seen in OnSimFrame (position taken from the pre-step state): Fx.Burst in LateUpdate.
         readonly List<Vector2> _leadBurstPos = new List<Vector2>(4);
         readonly List<int> _leadBurstOwner = new List<int>(4);
@@ -141,8 +142,8 @@ namespace ChibiClash.Netcode
         readonly List<NewMove> _newMoves = new List<NewMove>(8);
         readonly List<NewHit> _newHits = new List<NewHit>(8);
         readonly List<KoFly> _koFly = new List<KoFly>(2);
-        readonly Color[] _fx = new Color[2];          // CharacterRoster Fx colour per fighter (move VFX, popups, trails)
-        readonly Color[] _accent = new Color[2];
+        readonly Color[] _fx = new Color[ChibiSimConst.MaxFighters];          // CharacterRoster Fx colour per fighter (move VFX, popups, trails)
+        readonly Color[] _accent = new Color[ChibiSimConst.MaxFighters];
         ChibiMoveVfx _moveFx;
         ChibiLaunchFx _launchFx;   // launch trails, KO blasts, respawn hover / blink (presentation only)
         int _stageIndex;           // camera bounds are read from ChibiStageTable every frame (KO lines may move)
@@ -161,12 +162,12 @@ namespace ChibiClash.Netcode
         float _camSize;            // ortho-size spring state (without the punch-in)
         bool _camSizeSet;
         // Hitstop decoration: strength of the last hit per fighter (0 = none) and the sim hitstop length it started with.
-        readonly float[] _hitShakeS = new float[2];
+        readonly float[] _hitShakeS = new float[ChibiSimConst.MaxFighters];
         int _hitStopTotal = 1;
         Vector2 _finishFocus;      // final-KO camera focus, captured on the first frame after MatchOver
         bool _finishFocusSet;
         // Cinematic band strings per fighter, built once in Begin (no per-ult string concatenation).
-        readonly string[] _cinTitle = new string[2], _cinSub = new string[2];
+        readonly string[] _cinTitle = new string[ChibiSimConst.MaxFighters], _cinSub = new string[ChibiSimConst.MaxFighters];
         int _focus = -1;          // fighter the camera is focused on during the ult cinematic, -1 none
         float _focusUntil;         // unscaled time the focus ends
         bool _finished;            // MatchOver seen
@@ -220,15 +221,16 @@ namespace ChibiClash.Netcode
             ChibiPostFx.Attach(transform, cfg.Stage, () => _loop != null ? _loop.State : null);
             ChibiBladeTrails.Attach(transform, GroundY, () => _loop != null ? _loop.State : null);   // [blade-trails hook] HDR blade ribbons, hit sparks, muzzle flares, afterimages (reads state only)
 
-            for (int i = 0; i < 2; i++)
+            if (_vis.Length != state.Count) _vis = new FighterVisual[state.Count];   // rules v25: 2..4 fighters
+            for (int i = 0; i < _vis.Length; i++)
             {
-                var cls = i == 0 ? cfg.Class0 : cfg.Class1;
+                var cls = cfg.ClassOf(i);
                 _def[i] = ClassDef.Get(cls);
-                _skin[i] = skins != null && skins[i] != null ? skins[i] : Skin.Default(cls);   // test match: defaults
+                _skin[i] = skins != null && i < skins.Length && skins[i] != null ? skins[i] : Skin.Default(cls);   // test match: defaults
                 var go = new GameObject("SimP" + (i + 1));
                 go.transform.SetParent(transform, false);
                 _vis[i] = go.AddComponent<FighterVisual>();
-                _vis[i].Build(_def[i], _skin[i], 10 + i * 20, weapons != null && weapons[i] != null ? weapons[i] : WeaponDef.Get(cls, 0));
+                _vis[i].Build(_def[i], _skin[i], 10 + i * 20, weapons != null && i < weapons.Length && weapons[i] != null ? weapons[i] : WeaponDef.Get(cls, 0));
                 _vis[i].EnableSheetOnly();   // fight: moveset-sheet clips only (FightClips), never cutouts or the body drawing
                 var ch = CharacterRoster.Of(cls);
                 _fx[i] = ch.Fx;
@@ -302,7 +304,7 @@ namespace ChibiClash.Netcode
             _launchFx = new ChibiLaunchFx(transform, _vis, _fx, GroundY, FeetToPivot);
             _impactFx = new ChibiImpactFx(transform, _vis, _fx, GroundY);
             _stageIndex = cfg.Stage;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _vis.Length; i++)
             {
                 // Hud.cs:186, :192-194; built once here, not per cinematic.
                 var def = _def[i];
@@ -404,7 +406,8 @@ namespace ChibiClash.Netcode
                     }
                     case ChibiSimEventKind.Damaged:
                     {
-                        int d = e.Index, a = 1 - d;
+                        int d = e.Index, a = ChibiSimulation.LikelyAttacker(cur, d);   // rules v25: 1 - d in 1v1
+                        if (a < 0) break;
                         int slot = NewMoveSlotOfHit(cur, a);
                         if (slot < firstNew) break;
                         var fd = cur.F[d];
@@ -553,7 +556,8 @@ namespace ChibiClash.Netcode
             if (!_victoryShown && _seen.MatchOver)
             {
                 _victoryShown = true;
-                if (_seen.Winner >= 0 && _seen.Winner < 2) _vis[_seen.Winner].SetVictory(true);
+                for (int k = 0; k < _vis.Length; k++)   // rules v25: Winner is a team id; every member celebrates
+                    if (_seen.Winner >= 0 && _seen.Team[k] == _seen.Winner) _vis[k].SetVictory(true);
             }
             for (int i = 0; i < _leadBurstPos.Count; i++)
                 Fx.Burst(_leadBurstPos[i], _skin[_leadBurstOwner[i]].ultFx, LeadBurstCount, LeadBurstSpeed, LeadBurstSize);
@@ -566,7 +570,7 @@ namespace ChibiClash.Netcode
             }
             _bursts.Clear();
 
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _vis.Length; i++)
             {
                 var a = _before.F[i];
                 var f = _seen.F[i];
@@ -851,7 +855,8 @@ namespace ChibiClash.Netcode
         /// </summary>
         void OnHitFeel(int d, int pct)
         {
-            int a = 1 - d;
+            int a = ChibiSimulation.LikelyAttacker(_seen, d);   // rules v25: 1 - d in 1v1
+            if (a < 0 || a >= _vis.Length) a = d;
             var fd = _seen.F[d];
             var launch = new Vector2(fd.Vx, fd.Vy) * ChibiFeel.SubToUps;
             float s = ChibiFeel.HitStrength(pct, launch.magnitude);
@@ -979,6 +984,13 @@ namespace ChibiClash.Netcode
                      new Color(1f, FxRandom.Range(0.3f, 0.8f), 0.1f), 1, 1.5f, 0.3f);
         }
 
+        /// <summary>The fighter <paramref name="i"/>'s kick holds (1 - i in 1v1); i itself when none, so the burst stays on screen.</summary>
+        int KickVictim(int i)
+        {
+            int v = ChibiSimulation.HoldVictim(_seen, i);
+            return v >= 0 && v < _vis.Length ? v : i;
+        }
+
         // ULT Kick hit-1 burst colour, Fighter.cs:1070.
         static readonly Color KickHitRed = new Color(1f, 0.3f, 0.3f);
 
@@ -1000,13 +1012,13 @@ namespace ChibiClash.Netcode
             else if (frame == ChibiSimConst.KickLerpFrames)
             {
                 v.PlayThrust(0.25f);                                                        // F:1068
-                Fx.Burst(Center(1 - i), KickHitRed, 20, 5f, 0.35f);                         // F:1070 at o.Center
+                Fx.Burst(Center(KickVictim(i)), KickHitRed, 20, 5f, 0.35f);                         // F:1070 at o.Center
             }
             else if (frame == ChibiSimConst.KickRiseFrame) v.PlaySpin(0.35f);               // F:1073
             else if (frame == ChibiSimConst.KickReleaseFrame)
             {
                 v.PlaySwing(0.2f);                                                          // F:1075
-                Fx.Burst(Center(1 - i), ult, 45, 9f, 0.5f);                                 // F:1078 at o.Center
+                Fx.Burst(Center(KickVictim(i)), ult, 45, 9f, 0.5f);                                 // F:1078 at o.Center
                 _camFeel.AddTrauma(0.55f);                                          // Match.Shake(0.55f)
             }
         }
@@ -1158,8 +1170,11 @@ namespace ChibiClash.Netcode
         void CaptureFinishFocus(Vector2 fallback)
         {
             _finishFocusSet = true;
-            int win = _seen.Winner;
-            bool hasWinner = win >= 0 && win < 2 && _vis[win] != null && !_launchFx.IsOut(win);
+            // Rules v25: Winner is a team id; focus the first member of the winning team still on screen (1v1: the winner).
+            int win = -1;
+            for (int k = 0; k < _vis.Length && win < 0; k++)
+                if (_seen.Winner >= 0 && _seen.Team[k] == _seen.Winner && !_launchFx.IsOut(k)) win = k;
+            bool hasWinner = win >= 0 && win < _vis.Length && _vis[win] != null && !_launchFx.IsOut(win);
             if (_launchFx.KoFocus(out var ko))
                 _finishFocus = hasWinner ? Vector2.Lerp(ko, Center(win), ChibiFeel.FinishFocusToWinner) : ko;
             else _finishFocus = hasWinner ? Center(win) : fallback;
@@ -1177,7 +1192,7 @@ namespace ChibiClash.Netcode
             float lowest = float.MaxValue, launch = 0f;
             Vector2 motion = Vector2.zero;
             int n = 0;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _vis.Length; i++)
             {
                 if (_vis[i] == null || _launchFx.IsOut(i)) continue;
                 Vector2 c = Center(i);

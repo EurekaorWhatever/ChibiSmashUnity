@@ -6,10 +6,19 @@ namespace ChibiClash
 {
     public class MatchConfig
     {
-        public FighterClass[] cls = { FighterClass.Melee, FighterClass.Heavy };
-        public int[] passive = new int[2];
-        public int[] weapon = new int[2];     // cosmetic weapon variant per player (index into WeaponDef.ForClass)
-        public bool[] cpu = { false, true };
+        // Rules v25: per-slot arrays hold 4 fighters; a 1v1 uses slots 0 and 1.
+        public FighterClass[] cls = { FighterClass.Melee, FighterClass.Heavy, FighterClass.Ranged, FighterClass.Magic };
+        public int[] passive = new int[Netcode.ChibiSimConst.MaxFighters];
+        public int[] weapon = new int[Netcode.ChibiSimConst.MaxFighters];     // cosmetic weapon variant per player (index into WeaponDef.ForClass)
+        public bool[] cpu = { false, true, true, true };
+        /// <summary>Rules v25 format (<see cref="Netcode.ChibiMatchConfig.Format1v1"/> / FFA / 2v2); 0 = the existing 1v1.</summary>
+        public int format;
+        /// <summary>FFA fighter count (3 or 4); ignored by 1v1 (2) and 2v2 (4).</summary>
+        public int count = 2;
+        /// <summary>2v2 team per slot (two per team).</summary>
+        public int[] team = { 0, 0, 1, 1 };
+        /// <summary>Fighters in the match for <see cref="format"/> / <see cref="count"/>.</summary>
+        public int FighterCount => new Netcode.ChibiMatchConfig { Format = format, Count = count }.EffectiveCount;
         public int stage = StageBuilder.DefaultStage;
         /// <summary>Stage events (fire, bird, whale) on; moving platforms move either way (ST-5). Host decides online.</summary>
         public bool hazards = true;

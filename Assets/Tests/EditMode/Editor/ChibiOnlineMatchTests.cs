@@ -416,7 +416,7 @@ namespace ChibiClash.Tests
             Assert.Less(d2.Host.Session.Frame, ChibiRollbackSession.ChecksumInterval, "precondition");
             var lie = new ChibiNetMessage
             {
-                LastFrame = 0, AckFrame = -1, Count = 1, HasChecksum = true,
+                Sender = 1, LastFrame = 0, AckFrame = -1, Count = 1, HasChecksum = true,
                 ChecksumFrame = ChibiRollbackSession.ChecksumInterval, Checksum = 0x12345678u,
             };
             var bb = new BitBuffer(ChibiPacketCodec.MaxPacketBytes);

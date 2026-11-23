@@ -36,12 +36,12 @@ namespace ChibiClash
         /// <summary>Unscaled time the end of the match was first seen.</summary>
         public float FinishedTime { get; private set; }
 
-        readonly ClassDef[] _def = new ClassDef[2];
-        readonly Skin[] _skin = new Skin[2];
-        readonly WeaponDef[] _weapon = new WeaponDef[2];
-        readonly ChibiPlayerInputSource[] _human = new ChibiPlayerInputSource[2];
-        readonly bool[] _cpu = new bool[2];
-        readonly string[] _names = { "", "" };
+        readonly ClassDef[] _def = new ClassDef[ChibiSimConst.MaxFighters];
+        readonly Skin[] _skin = new Skin[ChibiSimConst.MaxFighters];
+        readonly WeaponDef[] _weapon = new WeaponDef[ChibiSimConst.MaxFighters];
+        readonly ChibiPlayerInputSource[] _human = new ChibiPlayerInputSource[ChibiSimConst.MaxFighters];
+        readonly bool[] _cpu = new bool[ChibiSimConst.MaxFighters];
+        readonly string[] _names = { "", "", "", "" };
         ChibiLocalLoop _local;
         bool _awarded;
 
@@ -80,7 +80,7 @@ namespace ChibiClash
         /// </summary>
         public void SetVerifiedOpponentName(string friendName)
         {
-            if (!Online || string.IsNullOrEmpty(friendName)) return;
+            if (!Online || string.IsNullOrEmpty(friendName) || Config.FighterCount != 2) return;   // 1v1 invites only
             _names[1 - LocalPlayer] = ChibiSocialRules.PeerDisplayName(friendName, verified: true);
         }
         /// <summary>Gesture tracker of a local human fighter (camera / simulated poses), else null.</summary>
@@ -97,6 +97,7 @@ namespace ChibiClash
         public static ChibiMatch Create(GameManager gm, MatchConfig cfg)
         {
             PreloadAssets(cfg.cls[0], cfg.cls[1]);   // perf: whatever the wipe did not load yet, still behind the wipe
+            for (int i = 2; i < cfg.FighterCount; i++) SpriteAnimLibrary.Preload(CharacterRoster.Of(cfg.cls[i]).Id);   // rules v25
             var go = new GameObject("Match");
             var m = go.AddComponent<ChibiMatch>();
             m.GM = gm;
@@ -143,7 +144,7 @@ namespace ChibiClash
 
         void ResolveCosmetics(SaveData save)
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < Config.FighterCount; i++)
             {
                 _def[i] = ClassDef.Get(Config.cls[i]);
                 _skin[i] = save != null ? save.Equipped(_def[i].type) : Skin.Default(_def[i].type);
@@ -160,9 +161,14 @@ namespace ChibiClash
                 Class0 = Config.cls[0], Class1 = Config.cls[1], Passive0 = Config.passive[0], Passive1 = Config.passive[1],
                 Stage = Config.stage, Intro = true, Training = Config.training,
                 HazardsOff = !Config.hazards,   // ST-5: stage events toggle (moving platforms move either way)
+                // Rules v25 team play: format, count, slots 2..3 and the 2v2 teams.
+                Format = Config.format, Count = Config.count,
+                Class2 = Config.cls[2], Class3 = Config.cls[3], Passive2 = Config.passive[2], Passive3 = Config.passive[3],
+                Team0 = Config.team[0], Team1 = Config.team[1], Team2 = Config.team[2], Team3 = Config.team[3],
             };
-            var src = new IChibiInputSource[2];
-            for (int i = 0; i < 2; i++)
+            int n = SimConfig.EffectiveCount;
+            var src = new IChibiInputSource[n];
+            for (int i = 0; i < n; i++)
             {
                 _cpu[i] = Config.cpu[i];
                 if (_cpu[i]) src[i] = new ChibiCpuInputSource(i, Config.training ? 0 : Config.difficulty, SimConfig.Seed);
@@ -171,7 +177,7 @@ namespace ChibiClash
             // The profile owner (P1) is shown by their chosen name; P2 / CPU keep their labels.
             if (!_cpu[0] && GM != null && GM.Save != null) _names[0] = ChibiSocialRules.CleanSavedName(GM.Save.playerName);
             _local = gameObject.AddComponent<ChibiLocalLoop>();
-            _local.Begin(SimConfig, src[0], src[1], recordReplay: true);
+            _local.Begin(SimConfig, src, recordReplay: true);
             Feed = _local;
             LocalPlayer = 0;
             BuildView();
@@ -187,9 +193,18 @@ namespace ChibiClash
             var hs = runner.Match.Handshake;
             var cfg = hs.Config;
             var mc = new MatchConfig { stage = cfg.Stage, training = false, hazards = !cfg.HazardsOff };   // F3: the agreed switch
-            mc.cls[0] = cfg.Class0; mc.cls[1] = cfg.Class1;
-            mc.passive[0] = cfg.Passive0; mc.passive[1] = cfg.Passive1;
-            mc.cpu[0] = mc.cpu[1] = false;
+            // Team play (protocol 6): every roster slot is a remote human; teams follow the slot (ChibiControlCodec.TeamFor).
+            int n = cfg.EffectiveCount;
+            mc.format = cfg.EffectiveFormat;
+            mc.count = n;
+            for (int i = 0; i < ChibiSimConst.MaxFighters; i++)
+            {
+                mc.cpu[i] = false;
+                if (i >= n) continue;
+                mc.cls[i] = cfg.ClassOf(i);
+                mc.passive[i] = cfg.PassiveOf(i);
+                if (mc.format != ChibiMatchConfig.Format1v1) mc.team[i] = ChibiControlCodec.TeamFor(mc.format, i);
+            }
             int me = runner.Match.LocalIndex;
             mc.weapon[me] = localWeapon;
 
@@ -204,8 +219,9 @@ namespace ChibiClash
             m._human[me] = localInput;
             // Names travel in the handshake (cosmetic). Sanitised again here: never trust the wire for anything drawn.
             m._names[me] = hs.LocalName.Length > 0 ? ChibiSocialRules.SafeDisplayName(hs.LocalName) : "";
-            m._names[1 - me] = ChibiSocialRules.PeerDisplayName(hs.PeerName, verified: false);   // not bound to an account
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < n; i++)   // not bound to an account
+                if (i != me) m._names[i] = ChibiSocialRules.PeerDisplayName(hs.NameOf(i), verified: false);
+            for (int i = 0; i < n; i++)
             {
                 m._def[i] = ClassDef.Get(mc.cls[i]);
                 m._skin[i] = i == me && gm != null && gm.Save != null ? gm.Save.Equipped(m._def[i].type) : Skin.Default(m._def[i].type);
@@ -375,8 +391,10 @@ namespace ChibiClash
             var tracker = Tracker(LocalPlayer);
             var stats = new MatchStatsForRewards
             {
-                Won = Winner == LocalPlayer,
-                Lost = Winner == 1 - LocalPlayer,
+                // Rules v25: Winner is a team id (1v1: the player index, unchanged).
+                // Online: the match's own confirmed outcome (team play: a local forfeit is a Loss with no winner team).
+                Won = Online ? OnlineResult.Outcome == ChibiMatchOutcome.Win : Winner >= 0 && Winner == State.Team[LocalPlayer],
+                Lost = Online ? OnlineResult.Outcome == ChibiMatchOutcome.Loss : Winner >= 0 && Winner != State.Team[LocalPlayer],
                 Pve = Config.pve && !Online,
                 Training = Config.training,
                 CombosLanded = me.CombosLanded, UltsUsed = me.UltsUsed, Parries = me.Parries,

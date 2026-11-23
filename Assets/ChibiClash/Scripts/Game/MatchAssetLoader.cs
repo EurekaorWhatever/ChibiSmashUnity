@@ -23,24 +23,34 @@ namespace ChibiClash
         /// <summary>Real-time budget per frame while a fight is already running (online READY intro): a small slice.</summary>
         public const float RunningFrameBudget = 0.006f;
 
-        readonly string _a, _b;
+        readonly string[] _ids;
         readonly bool _warmFx;
-        int _stage;   // 0 = first fighter, 1 = second fighter, 2 = FX textures, 3 = done
+        int _stage;   // 0.._ids.Length-1 = fighters, _ids.Length = FX textures, _ids.Length + 1 = done
 
         /// <summary>Loads the characters that play <paramref name="c0"/> and <paramref name="c1"/> (CharacterRoster ids).</summary>
         public MatchAssetLoader(FighterClass c0, FighterClass c1, bool warmFx = true)
             : this(CharacterRoster.Of(c0).Id, CharacterRoster.Of(c1).Id, warmFx) { }
 
         /// <summary>Loads characters <paramref name="a"/> and <paramref name="b"/> (may be equal or empty); FX textures last when <paramref name="warmFx"/>.</summary>
-        public MatchAssetLoader(string a, string b, bool warmFx = true)
+        public MatchAssetLoader(string a, string b, bool warmFx = true) : this(new[] { a, b }, warmFx) { }
+
+        /// <summary>Team play: loads every character in <paramref name="ids"/> (duplicates and empties are skipped).</summary>
+        public MatchAssetLoader(string[] ids, bool warmFx = true)
         {
-            _a = a ?? "";
-            _b = string.Equals(_a, b, StringComparison.OrdinalIgnoreCase) ? "" : b ?? "";
+            var list = new System.Collections.Generic.List<string>();
+            foreach (var id in ids ?? new string[0])
+            {
+                if (string.IsNullOrEmpty(id)) continue;
+                bool dup = false;
+                foreach (var x in list) dup |= string.Equals(x, id, StringComparison.OrdinalIgnoreCase);
+                if (!dup) list.Add(id);
+            }
+            _ids = list.ToArray();
             _warmFx = warmFx;
         }
 
         /// <summary>True once everything is loaded.</summary>
-        public bool Done => _stage >= 3;
+        public bool Done => _stage >= _ids.Length + 2;
 
         /// <summary>
         /// Loads for up to <paramref name="budgetSeconds"/> of real time (at least one clip when anything is left, so it
@@ -50,23 +60,17 @@ namespace ChibiClash
         {
             long start = Stopwatch.GetTimestamp();
             long limit = SpriteAnimLibrary.BudgetTicks(budgetSeconds);
-            while (_stage < 3)
+            int end = _ids.Length + 2;
+            while (_stage < end)
             {
                 float left = budgetSeconds - (float)((Stopwatch.GetTimestamp() - start) / (double)Stopwatch.Frequency);
-                switch (_stage)
+                if (_stage < _ids.Length)
                 {
-                    case 0:
-                        if (!SpriteAnimLibrary.PreloadStep(_a, left)) return false;
-                        break;
-                    case 1:
-                        if (!SpriteAnimLibrary.PreloadStep(_b, left)) return false;
-                        break;
-                    case 2:
-                        if (_warmFx) ChibiMatch.WarmSharedFx();
-                        break;
+                    if (!SpriteAnimLibrary.PreloadStep(_ids[_stage], left)) return false;
                 }
+                else if (_stage == _ids.Length && _warmFx) ChibiMatch.WarmSharedFx();
                 _stage++;
-                if (_stage < 3 && Stopwatch.GetTimestamp() - start >= limit) return false;
+                if (_stage < end && Stopwatch.GetTimestamp() - start >= limit) return false;
             }
             return true;
         }

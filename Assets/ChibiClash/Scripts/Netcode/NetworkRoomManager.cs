@@ -144,6 +144,32 @@ namespace ChibiClash.Netcode
         /// <summary>Find any opponent on the same build (quick-join, else host and keep looking).</summary>
         public void QuickMatch() { if (!Busy && Gate()) _ = RunQuickMatch(++_flow); }
 
+        /// <summary>1v1 quick-match queue tag, e.g. "p6r25-1v1" (lobby field S1).</summary>
+        public static string QueueTag1v1 => ChibiRoomRules.QueueTag(ProtocolTag, ChibiMatchConfig.Format1v1);
+
+        /// <summary>
+        /// Team play (protocol 6): the 2v2 / FFA matchmaker. Created on first use on this GameObject; listen to its
+        /// <see cref="ChibiTeamMatchmaker.OnMeshReady"/> to start a <see cref="ChibiOnlineMatch.MeshHost"/> / MeshJoin.
+        /// </summary>
+        public ChibiTeamMatchmaker Teams
+        {
+            get
+            {
+                if (_teams == null) _teams = GetComponent<ChibiTeamMatchmaker>();   // Unity null check: no ?? on components
+                if (_teams == null) _teams = gameObject.AddComponent<ChibiTeamMatchmaker>();
+                return _teams;
+            }
+        }
+        ChibiTeamMatchmaker _teams;
+
+        /// <summary>Quick match in <paramref name="format"/>: 1v1 uses the existing flow, 2v2 / FFA the team matchmaker.</summary>
+        public void QuickMatch(int format)
+        {
+            if (format == ChibiMatchConfig.Format1v1) { QuickMatch(); return; }
+            if (Busy || Teams.Busy || !Gate()) return;
+            Teams.QuickMatch(format);
+        }
+
         /// <summary>Default UDP port for LAN direct play.</summary>
         public const ushort LanPort = 7777;
 
@@ -273,7 +299,9 @@ namespace ChibiClash.Netcode
                     Data = new Dictionary<string, DataObject>
                     {
                         [KeyRelay] = new DataObject(DataObject.VisibilityOptions.Member, relayCode),
-                        [KeyProto] = new DataObject(DataObject.VisibilityOptions.Public, ProtocolTag, DataObject.IndexOptions.S1),
+                        // Private rooms carry the build tag (SameBuild); quick-match lobbies the per-format queue tag (protocol 6).
+                        [KeyProto] = new DataObject(DataObject.VisibilityOptions.Public,
+                                                    isPrivate ? ProtocolTag : QueueTag1v1, DataObject.IndexOptions.S1),
                     },
                 };
                 // Matchmaking lobbies show only a 2-letter country code (from the device region setting) so the closest
@@ -473,7 +501,7 @@ namespace ChibiClash.Netcode
                 var filters = new List<QueryFilter>
                 {
                     new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT),
-                    new QueryFilter(QueryFilter.FieldOptions.S1, ProtocolTag, QueryFilter.OpOptions.EQ),
+                    new QueryFilter(QueryFilter.FieldOptions.S1, QueueTag1v1, QueryFilter.OpOptions.EQ),
                 };
                 if (_myCountry.Length > 0 && maxTier <= ChibiRegions.TierSubregion)
                     filters.Add(new QueryFilter(QueryFilter.FieldOptions.S3, ChibiRegions.Subregion(_myCountry), QueryFilter.OpOptions.EQ));

@@ -308,6 +308,7 @@ namespace ChibiClash.Netcode
             var f = s.F[i];
             if (f.OutTicks > 0)
             {
+                if (Eliminated(s, i)) return true;   // rules v25: an eliminated / dropped fighter stays out (never in 1v1)
                 if (--f.OutTicks == 0) Respawn(s, i);
                 return true;
             }
@@ -348,7 +349,12 @@ namespace ChibiClash.Netcode
             var f = s.F[i];
             // Existing ring-out release (F:692-697): Interrupt self (frees a held victim); a held fighter frees its holder.
             Interrupt(s, i);
-            if (f.Held) { Interrupt(s, 1 - i); f.Held = false; }
+            if (f.Held)
+            {
+                int hb = HolderOf(s, i);             // rules v25: the actual holder (1v1: the opponent)
+                if (hb >= 0) Interrupt(s, hb);
+                f.Held = false; f.HeldBy = -1;
+            }
             if (!s.Training && f.Stocks > 0) f.Stocks--;
             f.KosTaken++;
             f.OutTicks = ChibiPercentConst.RespawnDelay;
@@ -376,7 +382,7 @@ namespace ChibiClash.Netcode
         {
             if (!s.Running) return;
             var st = ChibiStageTable.Get(s.Stage);
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < s.Count; i++)
             {
                 var f = s.F[i];
                 if (f.OutTicks > 0) continue;
@@ -384,18 +390,23 @@ namespace ChibiClash.Netcode
             }
             if (s.Training) return;   // no stock loss and no timer in training (MC:68)
 
-            bool ko0 = s.F[0].Stocks <= 0, ko1 = s.F[1].Stocks <= 0;
-            if (ko0 || ko1)
+            // Rules v25: a team is alive while any member has stocks; the match ends when at most one team is alive
+            // (none = draw, D-F1). In 1v1 each fighter is its own team, which is the v24 rule.
+            UpdatePlacements(s);
+            int alive = AliveTeams(s, out int lastTeam);
+            if (alive <= 1)
             {
                 s.MatchOver = true;
-                s.Winner = ko0 && ko1 ? -1 : (ko0 ? 1 : 0);
+                s.Winner = alive == 1 ? lastTeam : -1;
+                FinishPlacements(s);
                 return;
             }
             s.MatchClock++;
             if (s.MatchClock >= ChibiSimConst.MatchTicks)
             {
                 s.MatchOver = true;
-                s.Winner = TimeoutWinner(s.F[0], s.F[1]);
+                s.Winner = TeamTimeoutWinner(s);
+                FinishPlacements(s);
             }
         }
     }

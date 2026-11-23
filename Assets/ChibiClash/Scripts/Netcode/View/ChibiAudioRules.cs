@@ -352,25 +352,28 @@ namespace ChibiClash.Netcode
                   DStockKo = 107, DRespawn = 108, DLaunch = 109;
 
         public readonly ChibiSfxDedupe Dedupe = new ChibiSfxDedupe();
-        readonly float[] _lastHit = { -10f, -10f }, _lastStringHit = { -10f, -10f };
-        readonly int[] _lastLevel = new int[2], _string = new int[2];
-        readonly bool[] _spinLoop = new bool[2], _shieldLoop = new bool[2];
-        readonly int[] _contactSlot = { -1, -1 };
-        readonly float[] _contactUntil = new float[2];
+        readonly float[] _lastHit = new float[ChibiSimConst.MaxFighters], _lastStringHit = new float[ChibiSimConst.MaxFighters];   // set to -10 in Reset
+        readonly int[] _lastLevel = new int[ChibiSimConst.MaxFighters], _string = new int[ChibiSimConst.MaxFighters];
+        readonly bool[] _spinLoop = new bool[ChibiSimConst.MaxFighters], _shieldLoop = new bool[ChibiSimConst.MaxFighters];
+        readonly int[] _contactSlot = new int[ChibiSimConst.MaxFighters];   // set to -1 in Reset
+        readonly float[] _contactUntil = new float[ChibiSimConst.MaxFighters];
         bool _endDone;
         int _lastCountdown, _lastIntro;
         // Scratch (no per-step allocation).
-        readonly bool[] _damaged = new bool[2], _guardBreak = new bool[2], _crit = new bool[2];
+        readonly bool[] _damaged = new bool[ChibiSimConst.MaxFighters], _guardBreak = new bool[ChibiSimConst.MaxFighters], _crit = new bool[ChibiSimConst.MaxFighters];
         readonly List<int> _goneOwner = new List<int>(8), _goneKind = new List<int>(8);
         readonly bool[] _goneUsed = new bool[64];
-        readonly int[] _minionCount = new int[2];
-        readonly int[] _progFrame = new int[2], _progSlot = new int[2];
+        readonly int[] _minionCount = new int[ChibiSimConst.MaxFighters];
+        readonly int[] _progFrame = new int[ChibiSimConst.MaxFighters], _progSlot = new int[ChibiSimConst.MaxFighters];
+
+        /// <summary>Starts with the same per-fighter defaults <see cref="Reset"/> sets (-10 s hit times, no contact slot).</summary>
+        public ChibiSfxRouter() { Reset(); }
 
         /// <summary>Forget all per-match state.</summary>
         public void Reset()
         {
             Dedupe.Clear();
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < ChibiSimConst.MaxFighters; i++)
             {
                 _lastHit[i] = _lastStringHit[i] = -10f; _lastLevel[i] = _string[i] = 0;
                 _spinLoop[i] = _shieldLoop[i] = false; _contactSlot[i] = -1; _contactUntil[i] = 0f;
@@ -414,7 +417,7 @@ namespace ChibiClash.Netcode
         public void Step(ChibiSimState prev, ChibiSimState cur, List<ChibiSimEvent> events, int first, float now, List<SfxRequest> output)
         {
             int frame = cur.Frame;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < cur.Count; i++)
             {
                 _damaged[i] = _guardBreak[i] = _crit[i] = false; _minionCount[i] = 0; _progFrame[i] = -1;
             }
@@ -423,13 +426,13 @@ namespace ChibiClash.Netcode
             for (int k = first; k < events.Count; k++)
             {
                 var e = events[k];
-                if (e.Kind == ChibiSimEventKind.Damaged && e.Value > 0 && e.Index >= 0 && e.Index < 2) _damaged[e.Index] = true;
+                if (e.Kind == ChibiSimEventKind.Damaged && e.Value > 0 && e.Index >= 0 && e.Index < ChibiSimConst.MaxFighters) _damaged[e.Index] = true;
                 if (e.Kind == ChibiSimEventKind.ProjectileGone) { _goneOwner.Add(e.Value); _goneKind.Add(e.Value2); }
             }
 
             // ---- derived events (sfx-events.md 2.2), before the hits that they modify
             bool critStop = cur.HitstopRealTicks == ChibiSimConst.HitstopCrit && cur.HitstopRealTicks > prev.HitstopRealTicks;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < cur.Count; i++)
             {
                 var p = prev.F[i];
                 var c = cur.F[i];
@@ -441,7 +444,8 @@ namespace ChibiClash.Netcode
                     _guardBreak[i] = true;
                     var r = At("core_guard_break", i, c.X); r.Duck = SfxDuck.HitAccent;
                     output.Add(r);
-                    if (ClassOf(cur, 1 - i) == (int)FighterClass.Heavy) output.Add(At("bruna_krash", 1 - i, c.X));
+                    int o = ChibiSimulation.NearestEnemy(cur, i);   // rules v25 (1v1: the opponent)
+                    if (o >= 0 && ClassOf(cur, o) == (int)FighterClass.Heavy) output.Add(At("bruna_krash", o, c.X));
                 }
                 if (p.Grounded && !c.Grounded && c.Vy > 0 && !Dedupe.Seen(DJump, i, 0, 0, frame))
                     output.Add(At("core_jump", i, c.X));
@@ -489,7 +493,7 @@ namespace ChibiClash.Netcode
                 if (Dedupe.Seen((int)e.Kind, e.Index, e.Value, e.Value2, frame)) continue;
                 Event(prev, cur, e, now, output);
             }
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < cur.Count; i++)
             {
                 if (_progFrame[i] < 0) continue;
                 int start = cur.GameTicks - cur.F[i].MoveTick;   // key = move start + move frame (sfx-events.md 6.1)
@@ -554,6 +558,14 @@ namespace ChibiClash.Netcode
                 return f % ChibiSimConst.ThrustPeriod == 0 && f <= ChibiSimConst.ThrustPeriod * (ChibiSimConst.ThrustHits - 1);
             if (cls == (int)FighterClass.Heavy && slot == 3)
                 return f % ChibiSimConst.TornadoPeriod == 0 && f <= ChibiSimConst.TornadoLastHit;
+            return false;
+        }
+
+        /// <summary>True when an enemy of <paramref name="owner"/> was damaged in this batch (1v1: the opponent, as before).</summary>
+        bool FoeDamaged(ChibiSimState cur, int owner)
+        {
+            for (int v = 0; v < cur.Count && v < _damaged.Length; v++)
+                if (_damaged[v] && ChibiSimulation.IsFoe(cur, owner, v)) return true;
             return false;
         }
 
@@ -658,7 +670,7 @@ namespace ChibiClash.Netcode
                 {
                     int owner = e.Value;
                     // A projectile that left on the batch its owner's opponent was hurt is the hit (2.1); no expire sound.
-                    if (owner >= 0 && owner < 2 && _damaged[1 - owner]) break;
+                    if (owner >= 0 && owner < cur.Count && FoeDamaged(cur, owner)) break;   // rules v25: any enemy of the owner
                     var row = ChibiSfxMap.Proj(e.Value2);
                     if (row.Expire == null) break;
                     int px = i >= 0 && i < prev.Proj.Length ? prev.Proj[i].X : 0;
@@ -807,7 +819,8 @@ namespace ChibiClash.Netcode
         /// <summary>Hit composition (sfx-events.md 2.1) with the per-defender window and string attenuation (5.2).</summary>
         void Hit(ChibiSimState prev, ChibiSimState cur, int d, int hp, float now, List<SfxRequest> o)
         {
-            int a = 1 - d;
+            int a = ChibiSimulation.LikelyAttacker(cur, d);   // rules v25: 1 - d in 1v1
+            if (a < 0) a = d;
             int acls = ClassOf(cur, a);
             int x = cur.F[d].X;
             bool heavy = hp >= HeavyHitHp;

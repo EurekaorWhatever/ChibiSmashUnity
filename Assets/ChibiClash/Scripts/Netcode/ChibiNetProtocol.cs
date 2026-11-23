@@ -39,6 +39,8 @@ namespace ChibiClash.Netcode
         /// <summary>Largest datagram accepted from the wire; bigger ones are dropped (nothing legit comes close).</summary>
         public const int MaxDatagram = 256;
         const int QueueSlots = 64;
+        /// <summary>Most datagrams read from the link per <see cref="Pump"/> (an honest peer sends 1-2 per tick).</summary>
+        public const int MaxPumpPerCall = 2 * QueueSlots;
 
         sealed class Channel : IChibiTransport
         {
@@ -103,7 +105,10 @@ namespace ChibiClash.Netcode
         /// <summary>Drain everything the transport holds into the channel queues.</summary>
         public void Pump()
         {
-            while (true)
+            // Security BLOCKER 6: one mux per link (team play builds one per peer), and at most MaxPumpPerCall datagrams
+            // read per call, so a flooding peer can neither evict other links' datagrams nor spin this loop forever. What
+            // it leaves behind waits in its own transport queue.
+            for (int read = 0; read < MaxPumpPerCall; read++)
             {
                 int n = _raw.Receive(_scratch);
                 if (n <= 0) return;
@@ -125,16 +130,21 @@ namespace ChibiClash.Netcode
     /// <summary>Control message kinds (4 bits on the wire).</summary>
     public enum ChibiControlType : byte
     {
-        /// <summary>Joiner -> host: my versions and my fighter.</summary>
+        /// <summary>Joiner -> host: my versions, my roster slot, format, player hash and fighter.</summary>
         Hello = 1,
-        /// <summary>Host -> joiner: the complete match config + rollback settings + their hash.</summary>
+        /// <summary>Host -> joiner: the complete match config (full roster) + rollback settings + their hash.</summary>
         Start = 2,
-        /// <summary>Joiner -> host: I accept the Start with this hash (both sides then simulate).</summary>
+        /// <summary>Joiner -> host: I accept the Start with this hash and every guest link is verified (I simulate now).</summary>
         Ready = 3,
         /// <summary>Either way: refusing to play (version/config mismatch). Carries a <see cref="ChibiRejectReason"/>.</summary>
         Reject = 4,
         /// <summary>Either way: I am leaving the match. Carries a <see cref="ChibiLeaveReason"/>.</summary>
         Leave = 5,
+        /// <summary>
+        /// Protocol 6, guest &lt;-&gt; guest (team play): "I am roster slot S and agreed to match hash H". Opens and binds a
+        /// guest-to-guest link; a slot or hash that does not match is refused.
+        /// </summary>
+        PeerHello = 6,
     }
 
     /// <summary>Why a handshake was refused.</summary>
@@ -147,18 +157,18 @@ namespace ChibiClash.Netcode
         RulesMismatch = 2,
         /// <summary>Same versions but a different config hash: balance data or constants differ between the builds.</summary>
         ContentMismatch = 3,
-        /// <summary>A field outside its legal range (bad class, passive, stage or settings).</summary>
+        /// <summary>A field outside its legal range, or a roster entry / format that differs from what was agreed in the lobby.</summary>
         InvalidConfig = 4,
     }
 
     /// <summary>Why a peer left a running match.</summary>
     public enum ChibiLeaveReason : byte
     {
-        /// <summary>Player quit or closed the game mid-match: the other player wins (decision Q4).</summary>
+        /// <summary>Player quit or closed the game mid-match: in 1v1 the other player wins (decision Q4); in team play the leaver is dropped.</summary>
         Forfeit = 0,
         /// <summary>The match reached its confirmed end; this peer is closing the connection.</summary>
         MatchComplete = 1,
-        /// <summary>This peer detected a desync: the match is a no contest.</summary>
+        /// <summary>This peer detected a desync: the match is a no contest (for everyone, in team play).</summary>
         Desync = 2,
         /// <summary>
         /// This peer was stalled past the stall limit and is ending the match as a no contest (protocol 5). Without it
@@ -179,38 +189,51 @@ namespace ChibiClash.Netcode
         public FighterClass Class;
         public int Passive;
         public byte Reason;
+        /// <summary>Hello / PeerHello: the sender's roster slot (0..3).</summary>
+        public int Slot;
+        /// <summary>Hello: the format the sender queued for (<see cref="ChibiMatchConfig.Format1v1"/> ...).</summary>
+        public int Format;
+        /// <summary>Hello: the sender's player hash (<see cref="ChibiControlCodec.PlayerHash"/>; 0 = unknown).</summary>
+        public uint PlayerHash;
+        /// <summary>Start: player hash per roster slot.</summary>
+        public readonly uint[] PlayerHashes = new uint[4];
+        /// <summary>PeerHello: the sender already holds our PeerHello (so we need not answer it).</summary>
+        public bool HaveYours;
         /// <summary>
-        /// Hello / Start, write side: the sender's chosen player name (cosmetic, optional, NOT part of the match hash).
-        /// Only <see cref="ChibiControlCodec.NameAlphabet"/> characters are sent; anything else is dropped.
+        /// Hello / Start / PeerHello, write side: the sender's chosen player name (cosmetic, optional, NOT part of the match
+        /// hash). Only <see cref="ChibiControlCodec.NameAlphabet"/> characters are sent; anything else is dropped.
         /// </summary>
         public string Name = "";
-        /// <summary>Hello / Start, read side: received name characters (reused buffer, no allocation per message).</summary>
+        /// <summary>Read side: received name characters (reused buffer, no allocation per message).</summary>
         public readonly char[] NameChars = new char[ChibiControlCodec.NameMaxChars];
-        /// <summary>Number of valid characters in <see cref="NameChars"/> (0 = the peer sent no name, e.g. an older build).</summary>
+        /// <summary>Number of valid characters in <see cref="NameChars"/> (0 = the peer sent no name).</summary>
         public int NameLength;
         /// <summary>The received name as a string ("" when none). Allocates: call once, not per tick.</summary>
         public string ReceivedName() => NameLength == 0 ? "" : new string(NameChars, 0, NameLength);
     }
 
     /// <summary>
-    /// Wire format of control datagrams (bits, LSB first, via <see cref="BitBuffer"/>):
+    /// Wire format of control datagrams (bits, LSB first, via <see cref="BitBuffer"/>), protocol 6:
     ///   8 magic 0xC9, 4 type, then
-    ///   Hello : 8 protocol, 16 rules, 4 class, 1 passive, [name]
-    ///   Start : 8 protocol, 16 rules, 32 seed, 4 class0, 1 passive0, 4 class1, 1 passive1, 4 stage, 1 hazardsOff (protocol 4),
-    ///           4 inputDelay, 4 maxPrediction, 16 disconnectTicks, 32 matchHash, [name]
-    ///   Ready : 32 matchHash
+    ///   Hello     : 8 protocol, 16 rules, 4 class, 1 passive, [name], [2 slot, 2 format, 32 playerHash]
+    ///               (the roster trailer is optional on read like the name; a sender always writes both)
+    ///   Start     : 8 protocol, 16 rules, 32 seed, 2 format, 2 count - 2, then per slot (count times):
+    ///               32 playerHash, 4 class, 1 passive, 2 team; then 4 stage, 1 hazardsOff, 4 inputDelay,
+    ///               4 maxPrediction, 16 disconnectTicks, 32 matchHash, [name]
+    ///   Ready     : 32 matchHash
     ///   Reject/Leave : 8 reason
+    ///   PeerHello : 8 protocol, 2 slot, 1 haveYours, 32 matchHash, [name]
     ///   [name] (optional trailer, cosmetic): 5 length (0..24), then 6 bits per character, an index into
-    ///          NameAlphabet. A datagram that ends before the trailer means "no name" (older builds), so adding
-    ///          it did not change the protocol version. A length above 24 is malformed.
-    /// Largest (Start + 24-char name) = 139 + 5 + 144 = 288 bits = 36 bytes.
+    ///          NameAlphabet. A datagram that ends before the trailer means "no name". A length above 24 is malformed.
+    /// Largest (4-slot Start + 24-char name) = 12 + 60 + 4 x 39 + 61 + 149 = 438 bits = 55 bytes.
     /// </summary>
     public static class ChibiControlCodec
     {
         public const byte Magic = 0xC9;
-        /// <summary>Buffer size for control datagrams.</summary>
-        public const int MaxBytes = 48;
+        /// <summary>Buffer size for control datagrams (protocol 6: a 4-slot Start with a name is 55 bytes).</summary>
+        public const int MaxBytes = 64;
         const int ClassBits = 4, StageBits = 4, NameLengthBits = 5, NameCharBits = 6;
+        const int HelloTrailerBits = 2 + 2 + 32;
         /// <summary>Longest name on the wire (equals ChibiSocialRules.DisplayMax).</summary>
         public const int NameMaxChars = 24;
         /// <summary>
@@ -218,6 +241,42 @@ namespace ChibiClash.Netcode
         /// characters, so a hostile peer cannot inject rich-text tags into the HUD through its name.
         /// </summary>
         public const string NameAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_#";
+
+        /// <summary>
+        /// Team of roster slot <paramref name="slot"/> by join order (protocol 6, fixed by protocol so a host cannot stack
+        /// teams): 2v2 = slots 0,1 vs 2,3 (the simulation's default split); FFA = every slot its own team. 1v1 = 0 (the
+        /// team fields are not read in 1v1, so a 1v1 config stays exactly the protocol-5 config).
+        /// </summary>
+        public static int TeamFor(int format, int slot) =>
+            format == ChibiMatchConfig.Format2v2 ? slot >> 1 : format == ChibiMatchConfig.FormatFfa ? slot : 0;
+
+        /// <summary>Fighters a format needs online (FFA: 3 or 4 decided in the lobby, so this returns the maximum).</summary>
+        public static int MaxCountFor(int format) => format == ChibiMatchConfig.Format1v1 ? 2 : 4;
+
+        /// <summary>
+        /// Stable 32-bit hash of a UGS player id (FNV-1a over UTF-16 units; 0 is reserved for "unknown", so it maps to 1).
+        /// Not a secret: it binds a roster slot to the player the lobby put there so the host cannot swap people.
+        /// </summary>
+        /// <example><code>uint h = ChibiControlCodec.PlayerHash(AuthenticationService.Instance.PlayerId);</code></example>
+        public static uint PlayerHash(string playerId)
+        {
+            if (string.IsNullOrEmpty(playerId)) return 0;
+            uint h = 2166136261u;
+            foreach (char c in playerId) { h ^= c; h *= 16777619u; }
+            return h == 0 ? 1u : h;
+        }
+
+        /// <summary>Set class, passive and team of slot <paramref name="i"/> in <paramref name="cfg"/>.</summary>
+        public static void SetSlot(ref ChibiMatchConfig cfg, int i, FighterClass cls, int passive, int team)
+        {
+            switch (i)
+            {
+                case 0: cfg.Class0 = cls; cfg.Passive0 = passive; cfg.Team0 = team; break;
+                case 1: cfg.Class1 = cls; cfg.Passive1 = passive; cfg.Team1 = team; break;
+                case 2: cfg.Class2 = cls; cfg.Passive2 = passive; cfg.Team2 = team; break;
+                case 3: cfg.Class3 = cls; cfg.Passive3 = passive; cfg.Team3 = team; break;
+            }
+        }
 
         static void WriteName(BitBuffer b, string name)
         {
@@ -262,15 +321,26 @@ namespace ChibiClash.Netcode
                     b.Write((uint)m.Class, ClassBits);
                     b.Write((uint)m.Passive, 1);
                     WriteName(b, m.Name);
+                    // Protocol 6 roster trailer, after the (always written) name length: optional on read.
+                    b.Write((uint)m.Slot & 3u, 2);
+                    b.Write((uint)m.Format & 3u, 2);
+                    b.Write(m.PlayerHash, 32);
                     break;
                 case ChibiControlType.Start:
+                {
+                    int count = m.Config.EffectiveCount;
                     b.Write((uint)m.Protocol, 8);
                     b.Write((uint)m.Rules, 16);
                     b.Write(m.Config.Seed, 32);
-                    b.Write((uint)m.Config.Class0, ClassBits);
-                    b.Write((uint)m.Config.Passive0, 1);
-                    b.Write((uint)m.Config.Class1, ClassBits);
-                    b.Write((uint)m.Config.Passive1, 1);
+                    b.Write((uint)m.Config.EffectiveFormat, 2);
+                    b.Write((uint)(count - 2), 2);
+                    for (int i = 0; i < count; i++)
+                    {
+                        b.Write(m.PlayerHashes[i], 32);
+                        b.Write((uint)m.Config.ClassOf(i), ClassBits);
+                        b.Write((uint)m.Config.PassiveOf(i), 1);
+                        b.Write((uint)m.Config.RawTeam(i) & 3u, 2);
+                    }
                     b.Write((uint)m.Config.Stage, StageBits);
                     b.Write(m.Config.HazardsOff ? 1u : 0u, 1);   // protocol 4 (rules v21, ST-5)
                     b.Write((uint)m.Settings.InputDelay, 4);
@@ -279,12 +349,20 @@ namespace ChibiClash.Netcode
                     b.Write(m.MatchHash, 32);
                     WriteName(b, m.Name);
                     break;
+                }
                 case ChibiControlType.Ready:
                     b.Write(m.MatchHash, 32);
                     break;
                 case ChibiControlType.Reject:
                 case ChibiControlType.Leave:
                     b.Write(m.Reason, 8);
+                    break;
+                case ChibiControlType.PeerHello:
+                    b.Write((uint)m.Protocol, 8);
+                    b.Write((uint)m.Slot & 3u, 2);
+                    b.WriteBool(m.HaveYours);
+                    b.Write(m.MatchHash, 32);
+                    WriteName(b, m.Name);
                     break;
                 default:
                     throw new InvalidOperationException("ChibiControlCodec.Write: unknown type " + m.Type);
@@ -306,29 +384,60 @@ namespace ChibiClash.Netcode
                     m.Class = (FighterClass)b.Read(ClassBits);
                     m.Passive = (int)b.Read(1);
                     if (b.Overrun || !ReadName(b, m)) return false;
+                    // Optional roster trailer (absent: a 1v1 joiner in slot 1 with no known player hash). A mesh host then
+                    // refuses it, because the slot / format / hash do not match the link it arrived on.
+                    m.Slot = 1; m.Format = ChibiMatchConfig.Format1v1; m.PlayerHash = 0;
+                    int left = b.BitsLeft;
+                    // All or nothing: fewer than 8 bits left is byte padding (no trailer); 8..35 is a cut datagram.
+                    if (left >= 8 && left < HelloTrailerBits) return false;
+                    if (left >= HelloTrailerBits)
+                    {
+                        m.Slot = (int)b.Read(2);
+                        m.Format = (int)b.Read(2);
+                        m.PlayerHash = b.Read(32);
+                    }
                     break;
                 case ChibiControlType.Start:
+                {
                     m.Protocol = (int)b.Read(8);
                     m.Rules = (int)b.Read(16);
+                    m.Config = default;
                     m.Config.Seed = b.Read(32);
-                    m.Config.Class0 = (FighterClass)b.Read(ClassBits);
-                    m.Config.Passive0 = (int)b.Read(1);
-                    m.Config.Class1 = (FighterClass)b.Read(ClassBits);
-                    m.Config.Passive1 = (int)b.Read(1);
+                    m.Config.Format = (int)b.Read(2);
+                    int count = (int)b.Read(2) + 2;
+                    if (count > 4 || m.Config.Format > ChibiMatchConfig.Format2v2) return false;
+                    m.Config.Count = count;
+                    for (int i = 0; i < 4; i++) m.PlayerHashes[i] = 0;
+                    for (int i = 0; i < count; i++)
+                    {
+                        m.PlayerHashes[i] = b.Read(32);
+                        var cls = (FighterClass)b.Read(ClassBits);
+                        int passive = (int)b.Read(1);
+                        int team = (int)b.Read(2);
+                        SetSlot(ref m.Config, i, cls, passive, team);
+                    }
                     m.Config.Stage = (int)b.Read(StageBits);
-                    m.Config.HazardsOff = b.Read(1) != 0;          // protocol 4 (rules v21, ST-5)
+                    m.Config.HazardsOff = b.Read(1) != 0;
                     m.Settings.InputDelay = (int)b.Read(4);
                     m.Settings.MaxPrediction = (int)b.Read(4);
                     m.Settings.DisconnectTicks = (int)b.Read(16);
                     m.MatchHash = b.Read(32);
                     if (b.Overrun || !ReadName(b, m)) return false;
                     break;
+                }
                 case ChibiControlType.Ready:
                     m.MatchHash = b.Read(32);
                     break;
                 case ChibiControlType.Reject:
                 case ChibiControlType.Leave:
                     m.Reason = (byte)b.Read(8);
+                    break;
+                case ChibiControlType.PeerHello:
+                    m.Protocol = (int)b.Read(8);
+                    m.Slot = (int)b.Read(2);
+                    m.HaveYours = b.ReadBool();
+                    m.MatchHash = b.Read(32);
+                    if (b.Overrun || !ReadName(b, m)) return false;
                     break;
                 default:
                     return false;
@@ -351,6 +460,21 @@ namespace ChibiClash.Netcode
             return h;
         }
 
+        /// <summary>
+        /// Protocol 6: <see cref="MatchHash(in ChibiMatchConfig, in ChibiRollbackSettings)"/> plus the roster's player hashes
+        /// (when at least one is known; each joiner separately checks the entries it knows from the lobby).
+        /// </summary>
+        public static uint MatchHash(in ChibiMatchConfig cfg, in ChibiRollbackSettings settings, uint[] playerHashes)
+        {
+            uint h = MatchHash(cfg, settings);
+            int n = cfg.EffectiveCount;
+            bool any = false;
+            for (int i = 0; i < n; i++) any |= playerHashes[i] != 0;
+            if (!any) return h;   // no roster identities (tests, offline tools): same value as the plain match hash
+            for (int i = 0; i < n; i++) ChibiSimState.Mix(ref h, unchecked((int)playerHashes[i]));
+            return h;
+        }
+
         /// <summary>Legal fighter class value (wire values are 4 bits; only 0..4 exist).</summary>
         public static bool ValidClass(FighterClass c) => c >= FighterClass.Melee && c <= FighterClass.Polearm;
     }
@@ -362,7 +486,7 @@ namespace ChibiClash.Netcode
     /// <summary>Progress of a <see cref="ChibiHandshake"/>.</summary>
     public enum ChibiHandshakeState : byte
     {
-        /// <summary>Exchanging Hello / Start / Ready.</summary>
+        /// <summary>Exchanging Hello / Start / PeerHello / Ready.</summary>
         Negotiating,
         /// <summary>Agreed: <see cref="ChibiHandshake.Config"/> and <see cref="ChibiHandshake.Settings"/> are final. Start simulating.</summary>
         Agreed,
@@ -370,35 +494,45 @@ namespace ChibiClash.Netcode
         Rejected,
         /// <summary>No agreement within the timeout.</summary>
         TimedOut,
-        /// <summary>The peer sent Leave before the match started (cancelled).</summary>
+        /// <summary>A peer sent Leave before the match started (cancelled).</summary>
         PeerLeft,
     }
 
     /// <summary>
-    /// Agrees on the match before any input flows. The HOST is the config authority (player index 0): it picks the
-    /// seed, stage and rollback settings and adds the joiner's fighter from Hello. Both sides then prove they would
-    /// simulate the same match by comparing <see cref="ChibiControlCodec.MatchHash"/>, which covers RulesVersion and
-    /// every gameplay constant table, so two builds with different balance data are refused here instead of
-    /// desyncing at frame 30 (rollback-gap-report.md 2.3, risks A1-A4).
+    /// Agrees on the match before any input flows, for 2..4 peers in a full mesh (protocol 6). The HOST (roster slot 0) is
+    /// the config authority: it picks the seed, stage and rollback settings and adds each joiner's fighter from its Hello.
+    /// Every peer then proves it would simulate the same match by comparing <see cref="ChibiControlCodec.MatchHash"/>,
+    /// which covers RulesVersion, every gameplay constant table and the roster's player hashes.
     ///
-    ///   joiner                     host
-    ///   Hello (every 10 ticks) --->                       validate versions, complete config
-    ///                          <--- Start (on each Hello / every 10 ticks until Ready)
-    ///   validate, hash; Agreed
-    ///   Ready (on every Start) --->                       hash equal: Agreed
+    /// Links are indexed by roster slot (<c>controls[slot]</c>, null at our own slot). The host holds a link to every
+    /// joiner; a joiner holds the host link (slot 0) and one link to every other joiner. Each link is bound to its slot:
+    /// a Hello or PeerHello claiming another slot is refused (security BLOCKER 1).
     ///
-    /// Every message is idempotent and resent, so it works over the lossy unreliable channel. The joiner keeps
-    /// answering Start with Ready after it agreed (call <see cref="Handle"/> during the match too). Pure C#, no allocation per tick.
+    ///   joiner j                     host                        joiner k (guest link j-k)
+    ///   Hello (every 10 ticks) --->                               validate slot / format / player hash
+    ///                          <--- Start (all Hellos in; resent until each Ready)
+    ///   validate roster entry, format, teams, hash
+    ///   PeerHello{j, hash} ----------------------------------->   (and k -> j) slot and hash must match
+    ///   all guest links verified: Agreed
+    ///   Ready (on every Start) --->                               all Ready: Agreed
+    ///
+    /// Every message is idempotent and resent, so it works over the lossy unreliable channel. Peers keep answering Start
+    /// with Ready and a PeerHello that lacks ours with ours after they agreed (call <see cref="Handle"/> during the match
+    /// too). 1v1 is the same exchange with two slots and no guest links. Pure C#, no allocation per tick.
     /// </summary>
     public sealed class ChibiHandshake
     {
-        /// <summary>Resend interval for Hello / Start (ticks).</summary>
+        /// <summary>Resend interval for Hello / Start / PeerHello (ticks).</summary>
         public const int ResendTicks = 10;
         /// <summary>Give up after this long without agreement (10 s: covers Relay connect + a slow peer).</summary>
         public const int DefaultTimeoutTicks = 600;
+        const int MaxSlots = 4;
 
         readonly bool _isHost;
-        readonly IChibiTransport _control;
+        readonly int _mySlot, _format, _count;
+        readonly IChibiTransport[] _controls;
+        readonly uint[] _expectHashes = new uint[MaxSlots];   // 0 = not checked
+        readonly uint _myHash;
         readonly BitBuffer _tx = new BitBuffer(ChibiControlCodec.MaxBytes);
         readonly BitBuffer _rx = new BitBuffer(ChibiControlCodec.MaxBytes);
         readonly ChibiControlMessage _out = new ChibiControlMessage(), _in = new ChibiControlMessage();
@@ -411,7 +545,12 @@ namespace ChibiClash.Netcode
         readonly int _hostPassive, _stage;
         readonly bool _hazardsOff;
         readonly uint _seed;
-        bool _haveJoiner;
+        readonly bool[] _haveHello = new bool[MaxSlots];
+        readonly bool[] _haveReady = new bool[MaxSlots];
+        readonly FighterClass[] _helloClass = new FighterClass[MaxSlots];
+        readonly int[] _helloPassive = new int[MaxSlots];
+        readonly uint[] _helloHash = new uint[MaxSlots];
+        bool _started;
 
         // joiner side
         readonly FighterClass _myClass;
@@ -420,10 +559,15 @@ namespace ChibiClash.Netcode
         readonly int _expectStage = -1;
         /// <summary>SEC-001: the hazards switch the joiner agreed to in the room (null = any).</summary>
         readonly bool? _expectHazardsOff;
+        bool _haveStart;
+        readonly bool[] _peerVerified = new bool[MaxSlots];
+        readonly bool[] _peerHasOurs = new bool[MaxSlots];
 
         ChibiMatchConfig _cfg;
         ChibiRollbackSettings _settings;
+        readonly uint[] _rosterHashes = new uint[MaxSlots];
         uint _hash;
+        readonly string[] _names = new string[MaxSlots];
 
         public ChibiHandshakeState State { get; private set; } = ChibiHandshakeState.Negotiating;
         /// <summary>Agreed config (valid once <see cref="State"/> is Agreed).</summary>
@@ -432,29 +576,51 @@ namespace ChibiClash.Netcode
         public ChibiRollbackSettings Settings => _settings;
         /// <summary>Agreed match hash (valid once Agreed).</summary>
         public uint MatchHash => _hash;
-        /// <summary>Sim player index: host 0, joiner 1.</summary>
-        public int LocalIndex => _isHost ? 0 : 1;
+        /// <summary>Sim player index = roster slot: host 0, joiners 1..3.</summary>
+        public int LocalIndex => _mySlot;
+        /// <summary>Roster size (2..4).</summary>
+        public int Count => _count;
+        /// <summary>Match format agreed in the lobby.</summary>
+        public int Format => _format;
         /// <summary>Why it was rejected (local or remote refusal).</summary>
         public ChibiRejectReason RejectReason { get; private set; }
-        /// <summary>True when the PEER refused us (false when we refused them).</summary>
+        /// <summary>True when a PEER refused us (false when we refused them).</summary>
         public bool RejectedByPeer { get; private set; }
-        /// <summary>Our player name as sent to the peer (cosmetic; "" = none).</summary>
+        /// <summary>Slot of the link the refusal or leave came from (-1 = none).</summary>
+        public int ProblemSlot { get; private set; } = -1;
+        /// <summary>Our player name as sent to the peers (cosmetic; "" = none).</summary>
         public string LocalName { get; }
         /// <summary>
-        /// The peer's player name from its Hello / Start ("" when it sent none). Untrusted but already limited to
+        /// 1v1: the other player's name from its Hello / Start ("" when it sent none). Untrusted but already limited to
         /// <see cref="ChibiControlCodec.NameAlphabet"/>; it never affects the simulation or the match hash.
         /// </summary>
-        public string PeerName { get; private set; } = "";
+        public string PeerName => _count == 2 ? NameOf(1 - _mySlot) : NameOf(_mySlot == 0 ? 1 : 0);
+        /// <summary>Name received from roster slot <paramref name="slot"/> ("" when none / not yet).</summary>
+        public string NameOf(int slot) => slot >= 0 && slot < MaxSlots && _names[slot] != null ? _names[slot] : "";
+        /// <summary>Player hash of roster slot <paramref name="slot"/> in the agreed Start (0 = unknown).</summary>
+        public uint PlayerHashOf(int slot) => slot >= 0 && slot < MaxSlots ? _rosterHashes[slot] : 0;
 
-        /// <summary>Host (sim player 0): decides seed, stage and settings.</summary>
+        /// <summary>1v1 host (slot 0): decides seed, stage and settings.</summary>
         /// <example><code>var hs = ChibiHandshake.ForHost(mux.Control, FighterClass.Melee, 0, stage: 1, seed, ChibiRollbackSettings.Default);</code></example>
         /// <param name="hazardsOff">Rules v20 (ST-5): stage hazards off for this match (host's choice; travels in Start).</param>
         public static ChibiHandshake ForHost(IChibiTransport control, FighterClass myClass, int myPassive, int stage, uint seed,
                                              ChibiRollbackSettings settings, int timeoutTicks = DefaultTimeoutTicks,
                                              string localName = "", bool hazardsOff = false)
-            => new ChibiHandshake(true, control, myClass, myPassive, stage, seed, settings, timeoutTicks, localName, hazardsOff);
+            => new ChibiHandshake(true, 0, ChibiMatchConfig.Format1v1, 2, new[] { null, control }, null,
+                                  myClass, myPassive, stage, seed, settings, timeoutTicks, localName, hazardsOff);
 
-        /// <summary>Joiner (sim player 1): sends its fighter, accepts the host's config if it hashes the same locally.</summary>
+        /// <summary>
+        /// Team-play host (slot 0). <paramref name="controls"/>[j] is the control channel of the link bound to slot j
+        /// (null at 0); its length is the roster size. <paramref name="playerHashes"/>[j] is the lobby's player in slot j
+        /// (null or 0 entries = not checked); the host's own entry goes into Start.
+        /// </summary>
+        public static ChibiHandshake ForMeshHost(IChibiTransport[] controls, int format, uint[] playerHashes, FighterClass myClass,
+                                                 int myPassive, int stage, uint seed, ChibiRollbackSettings settings,
+                                                 int timeoutTicks = DefaultTimeoutTicks, string localName = "", bool hazardsOff = false)
+            => new ChibiHandshake(true, 0, format, controls?.Length ?? 0, controls, playerHashes,
+                                  myClass, myPassive, stage, seed, settings, timeoutTicks, localName, hazardsOff);
+
+        /// <summary>1v1 joiner (slot 1): sends its fighter, accepts the host's config if it hashes the same locally.</summary>
         /// <example><code>var hs = ChibiHandshake.ForJoiner(mux.Control, FighterClass.Magic, 1);</code></example>
         /// <param name="expectStage">SEC-001: the room's stage the joiner agreed to; a Start with another stage is refused
         /// (InvalidConfig). -1 = accept any stage (quick play, where the host's pick is used).</param>
@@ -462,19 +628,48 @@ namespace ChibiClash.Netcode
         public static ChibiHandshake ForJoiner(IChibiTransport control, FighterClass myClass, int myPassive,
                                                int timeoutTicks = DefaultTimeoutTicks, string localName = "",
                                                int expectStage = -1, bool? expectHazardsOff = null)
-            => new ChibiHandshake(false, control, myClass, myPassive, 0, 0, default, timeoutTicks, localName, false,
-                                  expectStage, expectHazardsOff);
+            => new ChibiHandshake(false, 1, ChibiMatchConfig.Format1v1, 2, new[] { control, null }, null,
+                                  myClass, myPassive, 0, 0, default, timeoutTicks, localName, false, expectStage, expectHazardsOff);
 
-        ChibiHandshake(bool isHost, IChibiTransport control, FighterClass myClass, int myPassive, int stage, uint seed,
-                       ChibiRollbackSettings settings, int timeoutTicks, string localName, bool hazardsOff,
-                       int expectStage = -1, bool? expectHazardsOff = null)
+        /// <summary>
+        /// Team-play joiner in roster slot <paramref name="mySlot"/>. <paramref name="controls"/>[0] is the host link,
+        /// <paramref name="controls"/>[k] the guest link to slot k (null at <paramref name="mySlot"/>). The Start must carry
+        /// <paramref name="format"/>, controls.Length fighters, our own entry and (when given) the lobby's player hashes.
+        /// </summary>
+        public static ChibiHandshake ForMeshJoiner(IChibiTransport[] controls, int mySlot, int format, uint[] playerHashes,
+                                                   FighterClass myClass, int myPassive, int timeoutTicks = DefaultTimeoutTicks,
+                                                   string localName = "", int expectStage = -1, bool? expectHazardsOff = null)
+            => new ChibiHandshake(false, mySlot, format, controls?.Length ?? 0, controls, playerHashes,
+                                  myClass, myPassive, 0, 0, default, timeoutTicks, localName, false, expectStage, expectHazardsOff);
+
+        ChibiHandshake(bool isHost, int mySlot, int format, int count, IChibiTransport[] controls, uint[] playerHashes,
+                       FighterClass myClass, int myPassive, int stage, uint seed, ChibiRollbackSettings settings, int timeoutTicks,
+                       string localName, bool hazardsOff, int expectStage = -1, bool? expectHazardsOff = null)
         {
+            if (controls == null) throw new ArgumentNullException(nameof(controls));
+            if (format < ChibiMatchConfig.Format1v1 || format > ChibiMatchConfig.Format2v2) throw new ArgumentOutOfRangeException(nameof(format));
+            int need = format == ChibiMatchConfig.Format1v1 ? 2 : format == ChibiMatchConfig.Format2v2 ? 4 : -1;
+            if (count < 2 || count > MaxSlots || (need > 0 && count != need) || (need < 0 && count < 3))
+                throw new ArgumentException("roster size " + count + " does not fit format " + format, nameof(controls));
+            if (mySlot < 0 || mySlot >= count) throw new ArgumentOutOfRangeException(nameof(mySlot));
+            for (int i = 0; i < count; i++)
+            {
+                bool needLink = i != mySlot;
+                if (needLink && controls[i] == null) throw new ArgumentNullException(nameof(controls), "missing link for slot " + i);
+            }
+            if (playerHashes != null)
+                for (int i = 0; i < count && i < playerHashes.Length; i++) _expectHashes[i] = playerHashes[i];
+            _isHost = isHost;
+            _mySlot = mySlot;
+            _format = format;
+            _count = count;
+            _controls = (IChibiTransport[])controls.Clone();
+            _controls[mySlot] = null;
+            _myHash = _expectHashes[mySlot];
             _hazardsOff = hazardsOff;
             _expectStage = expectStage;
             _expectHazardsOff = expectHazardsOff;
-            _isHost = isHost;
             LocalName = localName ?? "";
-            _control = control ?? throw new ArgumentNullException(nameof(control));
             _timeoutTicks = timeoutTicks;
             if (!ChibiControlCodec.ValidClass(myClass)) throw new ArgumentOutOfRangeException(nameof(myClass));
             if (isHost)
@@ -492,134 +687,216 @@ namespace ChibiClash.Netcode
             if (State != ChibiHandshakeState.Negotiating) return;
             if (_ticks % ResendTicks == 0)
             {
-                if (!_isHost) SendHello();
-                else if (_haveJoiner) SendStart();
+                if (_isHost)
+                {
+                    if (_started) for (int j = 1; j < _count; j++) if (!_haveReady[j]) SendStart(j);
+                }
+                else if (!_haveStart) SendHello();
+                else for (int k = 1; k < _count; k++) if (k != _mySlot && (!_peerVerified[k] || !_peerHasOurs[k])) SendPeerHello(k);
             }
             if (++_ticks > _timeoutTicks) State = ChibiHandshakeState.TimedOut;
         }
 
         /// <summary>
-        /// Read and act on every waiting control message. During a match the caller routes Leave messages itself, so
-        /// this returns the first Leave it sees (or false) and leaves the rest queued for the next call.
+        /// Read and act on every waiting control message on every link. During a match the caller routes Leave messages
+        /// itself, so this returns the first Leave it sees (and the slot it came from) or false, leaving the rest queued.
         /// </summary>
-        /// <param name="leaveReason">Reason of a received Leave.</param>
-        public bool Handle(out ChibiLeaveReason leaveReason)
+        public bool Handle(out int fromSlot, out ChibiLeaveReason leaveReason)
         {
             leaveReason = ChibiLeaveReason.Forfeit;
-            while (true)
+            fromSlot = -1;
+            for (int s = 0; s < _count; s++)
             {
-                int n = _control.Receive(_raw);
-                if (n <= 0) return false;
-                _rx.LoadFrom(_raw, n);
-                if (!ChibiControlCodec.TryRead(_rx, _in)) continue;
-                if (_in.Type == ChibiControlType.Leave) { leaveReason = (ChibiLeaveReason)_in.Reason; return true; }
-                if (_isHost) OnHostMessage(_in); else OnJoinerMessage(_in);
+                var c = _controls[s];
+                if (c == null) continue;
+                while (true)
+                {
+                    int n = c.Receive(_raw);
+                    if (n <= 0) break;
+                    _rx.LoadFrom(_raw, n);
+                    if (!ChibiControlCodec.TryRead(_rx, _in)) continue;
+                    if (_in.Type == ChibiControlType.Leave) { leaveReason = (ChibiLeaveReason)_in.Reason; fromSlot = s; return true; }
+                    if (_in.Type == ChibiControlType.Reject) { PeerRejected(s, _in); continue; }
+                    if (_isHost) OnHostMessage(s, _in);
+                    else if (s == 0) OnJoinerHostMessage(_in);
+                    else OnGuestLinkMessage(s, _in);
+                }
             }
+            return false;
         }
+
+        /// <summary>1v1 form of <see cref="Handle(out int, out ChibiLeaveReason)"/>.</summary>
+        public bool Handle(out ChibiLeaveReason leaveReason) => Handle(out _, out leaveReason);
 
         /// <summary><see cref="Handle(out ChibiLeaveReason)"/> for the negotiating phase (a Leave there aborts the handshake).</summary>
         public void Handle()
         {
-            if (Handle(out _) && State == ChibiHandshakeState.Negotiating) State = ChibiHandshakeState.PeerLeft;
+            if (Handle(out int slot, out _) && State == ChibiHandshakeState.Negotiating)
+            {
+                ProblemSlot = slot;
+                State = ChibiHandshakeState.PeerLeft;
+            }
         }
 
         // ------------------------------------------------------------------ host
 
-        void OnHostMessage(ChibiControlMessage m)
+        void OnHostMessage(int s, ChibiControlMessage m)
         {
             switch (m.Type)
             {
                 case ChibiControlType.Hello:
-                    if (State != ChibiHandshakeState.Negotiating) return;   // late duplicate
-                    if (m.Protocol != ChibiPacketCodec.ProtocolVersion) { Reject(ChibiRejectReason.ProtocolMismatch); return; }
-                    if (m.Rules != ChibiMatchConfig.RulesVersion) { Reject(ChibiRejectReason.RulesMismatch); return; }
-                    if (!ChibiControlCodec.ValidClass(m.Class)) { Reject(ChibiRejectReason.InvalidConfig); return; }
-                    _cfg = new ChibiMatchConfig
+                    if (_started)
                     {
-                        Seed = _seed, Class0 = _hostClass, Passive0 = _hostPassive, Class1 = m.Class, Passive1 = m.Passive,
-                        Stage = _stage, Intro = true,   // online matches always play the 2.2 s intro, never training (rules v16)
-                        HazardsOff = _hazardsOff,      // rules v21: the host decides (ST-5), sent in Start
-                    };
-                    _hash = ChibiControlCodec.MatchHash(_cfg, _settings);
-                    _haveJoiner = true;
-                    PeerName = m.ReceivedName();
-                    SendStart();
+                        if (State == ChibiHandshakeState.Negotiating && !_haveReady[s]) SendStart(s);   // our Start was lost
+                        return;
+                    }
+                    if (State != ChibiHandshakeState.Negotiating) return;
+                    if (m.Protocol != ChibiPacketCodec.ProtocolVersion) { Reject(s, ChibiRejectReason.ProtocolMismatch); return; }
+                    if (m.Rules != ChibiMatchConfig.RulesVersion) { Reject(s, ChibiRejectReason.RulesMismatch); return; }
+                    if (!ChibiControlCodec.ValidClass(m.Class)) { Reject(s, ChibiRejectReason.InvalidConfig); return; }
+                    // BLOCKER 1/2: the link is bound to slot s and the lobby put a known player there.
+                    if (m.Slot != s || m.Format != _format) { Reject(s, ChibiRejectReason.InvalidConfig); return; }
+                    if (_expectHashes[s] != 0 && m.PlayerHash != _expectHashes[s]) { Reject(s, ChibiRejectReason.InvalidConfig); return; }
+                    _haveHello[s] = true;
+                    _helloClass[s] = m.Class;
+                    _helloPassive[s] = m.Passive;
+                    _helloHash[s] = m.PlayerHash;
+                    _names[s] = m.ReceivedName();
+                    for (int j = 1; j < _count; j++) if (!_haveHello[j]) return;
+                    BuildStart();
+                    for (int j = 1; j < _count; j++) SendStart(j);
                     break;
                 case ChibiControlType.Ready:
-                    if (State != ChibiHandshakeState.Negotiating || !_haveJoiner) return;
-                    if (m.MatchHash != _hash) { Reject(ChibiRejectReason.ContentMismatch); return; }
+                    if (State != ChibiHandshakeState.Negotiating || !_started) return;
+                    if (m.MatchHash != _hash) { Reject(s, ChibiRejectReason.ContentMismatch); return; }
+                    _haveReady[s] = true;
+                    for (int j = 1; j < _count; j++) if (!_haveReady[j]) return;
                     State = ChibiHandshakeState.Agreed;
                     break;
-                case ChibiControlType.Reject:
-                    PeerRejected(m);
-                    break;
             }
+        }
+
+        void BuildStart()
+        {
+            _cfg = new ChibiMatchConfig
+            {
+                Seed = _seed, Stage = _stage, Format = _format, Count = _count,
+                Intro = true,                  // online matches always play the 2.2 s intro, never training (rules v16)
+                HazardsOff = _hazardsOff,      // rules v21: the host decides (ST-5), sent in Start
+            };
+            ChibiControlCodec.SetSlot(ref _cfg, 0, _hostClass, _hostPassive, ChibiControlCodec.TeamFor(_format, 0));
+            _rosterHashes[0] = _expectHashes[0];
+            for (int j = 1; j < _count; j++)
+            {
+                ChibiControlCodec.SetSlot(ref _cfg, j, _helloClass[j], _helloPassive[j], ChibiControlCodec.TeamFor(_format, j));
+                _rosterHashes[j] = _helloHash[j];
+            }
+            _hash = ChibiControlCodec.MatchHash(_cfg, _settings, _rosterHashes);
+            _started = true;
         }
 
         // ------------------------------------------------------------------ joiner
 
-        void OnJoinerMessage(ChibiControlMessage m)
+        void OnJoinerHostMessage(ChibiControlMessage m)
         {
-            switch (m.Type)
+            if (m.Type != ChibiControlType.Start) return;
+            if (_haveStart)
             {
-                case ChibiControlType.Start:
-                    if (State == ChibiHandshakeState.Agreed)
-                    {
-                        if (m.MatchHash == _hash) SendReady();   // host missed our Ready: answer again
-                        return;
-                    }
-                    if (State != ChibiHandshakeState.Negotiating) return;
-                    if (m.Protocol != ChibiPacketCodec.ProtocolVersion) { Reject(ChibiRejectReason.ProtocolMismatch); return; }
-                    if (m.Rules != ChibiMatchConfig.RulesVersion) { Reject(ChibiRejectReason.RulesMismatch); return; }
-                    if (!ValidStart(m)) { Reject(ChibiRejectReason.InvalidConfig); return; }
-                    // Online flags are fixed by protocol, not sent: intro on, training off (rules v16).
-                    var cfg = m.Config;
-                    cfg.Intro = true;
-                    cfg.Training = false;
-                    // Recompute with OUR constant tables: equal only if both builds would simulate the same match.
-                    if (ChibiControlCodec.MatchHash(cfg, m.Settings) != m.MatchHash) { Reject(ChibiRejectReason.ContentMismatch); return; }
-                    _cfg = cfg;
-                    _settings = m.Settings;
-                    _hash = m.MatchHash;
-                    PeerName = m.ReceivedName();
-                    State = ChibiHandshakeState.Agreed;
-                    SendReady();
-                    break;
-                case ChibiControlType.Reject:
-                    PeerRejected(m);
-                    break;
+                if (m.MatchHash == _hash && State == ChibiHandshakeState.Agreed) SendReady();   // host missed our Ready
+                return;
             }
+            if (State != ChibiHandshakeState.Negotiating) return;
+            if (m.Protocol != ChibiPacketCodec.ProtocolVersion) { Reject(0, ChibiRejectReason.ProtocolMismatch); return; }
+            if (m.Rules != ChibiMatchConfig.RulesVersion) { Reject(0, ChibiRejectReason.RulesMismatch); return; }
+            if (!ValidStart(m)) { Reject(0, ChibiRejectReason.InvalidConfig); return; }
+            // Online flags are fixed by protocol, not sent: intro on, training off (rules v16).
+            var cfg = m.Config;
+            cfg.Intro = true;
+            cfg.Training = false;
+            // Recompute with OUR constant tables: equal only if both builds would simulate the same match.
+            if (ChibiControlCodec.MatchHash(cfg, m.Settings, m.PlayerHashes) != m.MatchHash) { Reject(0, ChibiRejectReason.ContentMismatch); return; }
+            _cfg = cfg;
+            _settings = m.Settings;
+            _hash = m.MatchHash;
+            for (int i = 0; i < MaxSlots; i++) _rosterHashes[i] = m.PlayerHashes[i];
+            _names[0] = m.ReceivedName();
+            _haveStart = true;
+            for (int k = 1; k < _count; k++) if (k != _mySlot) SendPeerHello(k);
+            TryAgree();
+        }
+
+        void OnGuestLinkMessage(int s, ChibiControlMessage m)
+        {
+            if (m.Type != ChibiControlType.PeerHello) return;
+            if (m.Protocol != ChibiPacketCodec.ProtocolVersion)
+            {
+                if (State == ChibiHandshakeState.Negotiating) Reject(s, ChibiRejectReason.ProtocolMismatch);
+                return;
+            }
+            if (!_haveStart) return;                                   // we cannot judge the hash yet; it is resent
+            // BLOCKER 2: the guest link is bound to slot s and both ends must have agreed to the same Start.
+            if (m.Slot != s || m.MatchHash != _hash)
+            {
+                if (State == ChibiHandshakeState.Negotiating) Reject(s, m.Slot != s ? ChibiRejectReason.InvalidConfig : ChibiRejectReason.ContentMismatch);
+                return;
+            }
+            if (!_peerVerified[s]) { _peerVerified[s] = true; _names[s] = m.ReceivedName(); }
+            _peerHasOurs[s] = m.HaveYours;
+            if (!m.HaveYours) SendPeerHello(s);                        // answer once; their next one carries HaveYours
+            TryAgree();
+        }
+
+        void TryAgree()
+        {
+            if (State != ChibiHandshakeState.Negotiating || !_haveStart) return;
+            for (int k = 1; k < _count; k++) if (k != _mySlot && !_peerVerified[k]) return;
+            State = ChibiHandshakeState.Agreed;
+            SendReady();
         }
 
         bool ValidStart(ChibiControlMessage m)
         {
-            if (!ChibiControlCodec.ValidClass(m.Config.Class0) || !ChibiControlCodec.ValidClass(m.Config.Class1)) return false;
-            if (m.Config.Class1 != _myClass || m.Config.Passive1 != _myPassive) return false;   // host must echo our pick
-            if (m.Config.Stage < 0 || m.Config.Stage >= ChibiStageTable.Count) return false;   // rules v21: stages 0..7
+            var c = m.Config;
+            // BLOCKER 2: the format and roster size the lobby agreed to; teams by the fixed join-order rule.
+            if (c.Format != _format || c.EffectiveCount != _count || c.Count != _count) return false;
+            for (int i = 0; i < _count; i++)
+            {
+                if (!ChibiControlCodec.ValidClass(c.ClassOf(i))) return false;
+                if (_format != ChibiMatchConfig.Format1v1 && c.RawTeam(i) != ChibiControlCodec.TeamFor(_format, i)) return false;
+                if (_expectHashes[i] != 0 && m.PlayerHashes[i] != _expectHashes[i]) return false;
+            }
+            if (c.ClassOf(_mySlot) != _myClass || c.PassiveOf(_mySlot) != _myPassive) return false;   // host must echo our pick
+            if (c.Stage < 0 || c.Stage >= ChibiStageTable.Count) return false;   // rules v21: stages 0..7
             // SEC-001: in a room the joiner agreed to a stage and a hazards switch; the host cannot swap them in Start.
-            if (_expectStage >= 0 && m.Config.Stage != _expectStage) return false;
-            if (_expectHazardsOff.HasValue && m.Config.HazardsOff != _expectHazardsOff.Value) return false;
+            if (_expectStage >= 0 && c.Stage != _expectStage) return false;
+            if (_expectHazardsOff.HasValue && c.HazardsOff != _expectHazardsOff.Value) return false;
             try { m.Settings.Validate(); } catch (ArgumentOutOfRangeException) { return false; }
             return true;
         }
 
         // ------------------------------------------------------------------ send helpers
 
-        void Reject(ChibiRejectReason r)
+        void Reject(int slot, ChibiRejectReason r)
         {
             RejectReason = r;
             RejectedByPeer = false;
+            ProblemSlot = slot;
             State = ChibiHandshakeState.Rejected;
             _out.Type = ChibiControlType.Reject;
             _out.Reason = (byte)r;
-            for (int i = 0; i < 3; i++) Send();   // no resend loop after rejecting: send a few copies
+            for (int i = 0; i < 3; i++) Send(slot);   // no resend loop after rejecting: send a few copies
+            // Everyone else: the match is off.
+            _out.Type = ChibiControlType.Leave;
+            _out.Reason = (byte)ChibiLeaveReason.Forfeit;
+            for (int s = 0; s < _count; s++) if (s != slot && _controls[s] != null) Send(s);
         }
 
-        void PeerRejected(ChibiControlMessage m)
+        void PeerRejected(int slot, ChibiControlMessage m)
         {
-            if (State == ChibiHandshakeState.Agreed) return;
+            if (State != ChibiHandshakeState.Negotiating) return;
             RejectReason = (ChibiRejectReason)m.Reason;
             RejectedByPeer = true;
+            ProblemSlot = slot;
             State = ChibiHandshakeState.Rejected;
         }
 
@@ -630,11 +907,14 @@ namespace ChibiClash.Netcode
             _out.Rules = ChibiMatchConfig.RulesVersion;
             _out.Class = _myClass;
             _out.Passive = _myPassive;
+            _out.Slot = _mySlot;
+            _out.Format = _format;
+            _out.PlayerHash = _myHash;
             _out.Name = LocalName;
-            Send();
+            Send(0);
         }
 
-        void SendStart()
+        void SendStart(int slot)
         {
             _out.Type = ChibiControlType.Start;
             _out.Protocol = ChibiPacketCodec.ProtocolVersion;
@@ -642,30 +922,49 @@ namespace ChibiClash.Netcode
             _out.Config = _cfg;
             _out.Settings = _settings;
             _out.MatchHash = _hash;
+            for (int i = 0; i < MaxSlots; i++) _out.PlayerHashes[i] = _rosterHashes[i];
             _out.Name = LocalName;
-            Send();
+            Send(slot);
         }
 
         void SendReady()
         {
             _out.Type = ChibiControlType.Ready;
             _out.MatchHash = _hash;
-            Send();
+            Send(0);
         }
 
-        /// <summary>Send a Leave (a few redundant copies; the channel is unreliable).</summary>
+        void SendPeerHello(int slot)
+        {
+            _out.Type = ChibiControlType.PeerHello;
+            _out.Protocol = ChibiPacketCodec.ProtocolVersion;
+            _out.Slot = _mySlot;
+            _out.HaveYours = _peerVerified[slot];
+            _out.MatchHash = _hash;
+            _out.Name = LocalName;
+            Send(slot);
+        }
+
+        /// <summary>Send a Leave to every peer (a few redundant copies; the channel is unreliable).</summary>
         public void SendLeave(ChibiLeaveReason reason, int copies = 3)
         {
-            _out.Type = ChibiControlType.Leave;
-            _out.Reason = (byte)reason;
-            for (int i = 0; i < copies; i++) Send();
+            for (int s = 0; s < _count; s++) if (_controls[s] != null) SendLeave(s, reason, copies);
         }
 
-        void Send()
+        /// <summary>Send a Leave to the peer in roster slot <paramref name="slot"/> only.</summary>
+        public void SendLeave(int slot, ChibiLeaveReason reason, int copies = 3)
+        {
+            if (slot < 0 || slot >= _count || _controls[slot] == null) return;
+            _out.Type = ChibiControlType.Leave;
+            _out.Reason = (byte)reason;
+            for (int i = 0; i < copies; i++) Send(slot);
+        }
+
+        void Send(int slot)
         {
             _tx.Clear();
             ChibiControlCodec.Write(_tx, _out);
-            _control.Send(_tx.Bytes, _tx.ByteLength);
+            _controls[slot].Send(_tx.Bytes, _tx.ByteLength);
         }
     }
 }

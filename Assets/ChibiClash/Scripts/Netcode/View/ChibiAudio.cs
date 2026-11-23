@@ -70,7 +70,7 @@ namespace ChibiClash.Netcode
         readonly ChibiSfxCooldowns _cooldowns = new ChibiSfxCooldowns();
         readonly ChibiSfxRouter _router = new ChibiSfxRouter();
         readonly List<ChibiSimEvent> _one = new List<ChibiSimEvent>(1);
-        readonly int[] _overrideCls = new int[2];
+        readonly int[] _overrideCls = new int[ChibiSimConst.MaxFighters];
         IChibiSimFeed _feed;
         float _pendingEndSince = -1f;
         readonly HashSet<string> _warned = new HashSet<string>();

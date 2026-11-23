@@ -179,9 +179,10 @@ namespace ChibiClash.Tests
         }
 
         [Test]
-        public void ConfigHash_HasRulesVersion24()
+        public void ConfigHash_HasRulesVersion25()
         {
-            Assert.AreEqual(24, ChibiMatchConfig.RulesVersion);
+            // Rules v24 introduced the escape dash; v25 (team play) keeps it. Pinned so a later bump revisits this file.
+            Assert.AreEqual(25, ChibiMatchConfig.RulesVersion);
         }
 
         // ================================================================== CPU

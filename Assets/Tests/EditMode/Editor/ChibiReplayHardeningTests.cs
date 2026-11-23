@@ -19,10 +19,11 @@ namespace ChibiClash.Tests
             using (var w = new BinaryWriter(ms, System.Text.Encoding.UTF8, true))
             {
                 w.Write(new[] { (byte)'C', (byte)'C', (byte)'R', (byte)'P' });
-                w.Write((byte)3);
+                w.Write((byte)4);                                    // v4 (rules v25): format, count, per-slot class / passive / team
                 w.Write(cfg.Seed);
-                w.Write((byte)cfg.Class0); w.Write((byte)cfg.Class1);
-                w.Write((byte)cfg.Passive0); w.Write((byte)cfg.Passive1);
+                w.Write((byte)0); w.Write((byte)2);                  // 1v1, two fighters
+                w.Write((byte)cfg.Class0); w.Write((byte)cfg.Passive0); w.Write((byte)0);
+                w.Write((byte)cfg.Class1); w.Write((byte)cfg.Passive1); w.Write((byte)1);
                 w.Write(cfg.Stage);
                 w.Write((byte)0);
                 w.Write(cfg.ComputeHash());   // a hostile file carries a hash that matches its own header

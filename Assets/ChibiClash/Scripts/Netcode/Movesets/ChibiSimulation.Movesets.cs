@@ -508,11 +508,11 @@ namespace ChibiClash.Netcode
         /// Melee probe of a CSV row: landing hit, counter riposte, then the row box / circle on the active ticks (hit-once
         /// per arm; multi re-arms with LINK kb on the non-final hits). A dive that connects pops up and goes to recovery.
         /// </summary>
-        static PendingHit NewMoveProbe(ChibiSimState s, int i)
+        static void NewMoveProbeAll(ChibiSimState s, int i, Span<PendingHit> row)
         {
+            // Rules v25: probes every enemy (row[victim]); the one-shot flags (landing hit, riposte, hit-once, dive pop)
+            // change once after all victims, so in 1v1 this is the v24 single-target probe.
             var f = s.F[i];
-            var o = s.F[1 - i];
-            var none = default(PendingHit);
             var mv = RowOf(f);
             var e = mv.Ext;
             bool unblockable = (mv.Flags & ChibiMove.FUnblockable) != 0;
@@ -520,48 +520,69 @@ namespace ChibiClash.Netcode
             {
                 f.LandHitPending = 0;
                 int lx0 = f.X - e.LandW / 2;
-                if (!Overlaps(o, lx0, lx0 + e.LandW, f.Y, f.Y + e.LandH)) return none;
-                int sx = Sign(o.X - f.X);
                 int lm = mv.Mult > 0 ? (int)((long)e.LandMult * f.MoveMult / mv.Mult) : e.LandMult;
-                return new PendingHit
+                for (int v = 0; v < s.Count; v++)
                 {
-                    Valid = true, Mult = lm, KbX = e.LandKbX, KbY = e.LandKbY, Stun = e.LandStun,
-                    Dir = sx != 0 ? sx : f.Facing, Unblockable = unblockable, Src = SrcMelee,
-                };
+                    if (!IsFoe(s, i, v)) continue;
+                    var o = s.F[v];
+                    if (!Overlaps(o, lx0, lx0 + e.LandW, f.Y, f.Y + e.LandH)) continue;
+                    int sx = Sign(o.X - f.X);
+                    row[v] = new PendingHit
+                    {
+                        Valid = true, Mult = lm, KbX = e.LandKbX, KbY = e.LandKbY, Stun = e.LandStun,
+                        Dir = sx != 0 ? sx : f.Facing, Unblockable = unblockable, Src = SrcMelee,
+                    };
+                }
+                return;
             }
             if (f.CounterStrike != 0)
             {
                 f.CounterStrike = 0;
-                if (!RowHits(f, o, mv)) return none;
-                var c = new PendingHit
+                for (int v = 0; v < s.Count; v++)
                 {
-                    Valid = true, Mult = f.MoveMult, KbX = mv.KbX, KbY = mv.KbY, Stun = mv.Stun, Dir = RowDir(f, o, mv),
-                    Unblockable = true, Src = SrcMelee,
-                };
-                AdjustKb(ref c, o, e);
-                return c;
+                    if (!IsFoe(s, i, v)) continue;
+                    var o = s.F[v];
+                    if (!RowHits(f, o, mv)) continue;
+                    var c = new PendingHit
+                    {
+                        Valid = true, Mult = f.MoveMult, KbX = mv.KbX, KbY = mv.KbY, Stun = mv.Stun, Dir = RowDir(f, o, mv),
+                        Unblockable = true, Src = SrcMelee,
+                    };
+                    AdjustKb(ref c, o, e);
+                    row[v] = c;
+                }
+                return;
             }
-            if (f.MoveHit || mv.ProjSpeed > 0 || mv.Mult <= 0) return none;
-            if (e.Has(ChibiMoveExt.FZone) || e.Has(ChibiMoveExt.FCounter) || e.Has(ChibiMoveExt.FRoll)) return none;
-            if (!InActive(f) || !RowHits(f, o, mv)) return none;
+            if (f.MoveHit || mv.ProjSpeed > 0 || mv.Mult <= 0) return;
+            if (e.Has(ChibiMoveExt.FZone) || e.Has(ChibiMoveExt.FCounter) || e.Has(ChibiMoveExt.FRoll)) return;
+            if (!InActive(f)) return;
 
-            f.MoveHit = true;
             int k = f.MoveTick - 1 - f.MoveStartup;
             bool link = e.Has(ChibiMoveExt.FMulti) && mv.Rehit > 0 && k / mv.Rehit < e.MultiHits - 1;
-            var h = new PendingHit
+            bool any = false;
+            for (int v = 0; v < s.Count; v++)
             {
-                Valid = true, Mult = f.MoveMult,
-                KbX = link ? ChibiMovesetConst.LinkKbX : mv.KbX, KbY = link ? ChibiMovesetConst.LinkKbY : mv.KbY,
-                Stun = link ? mv.Rehit + ChibiMovesetConst.LinkStunPad : mv.Stun,
-                Dir = RowDir(f, o, mv), Unblockable = unblockable, Src = SrcMelee,
-            };
-            if (!link) AdjustKb(ref h, o, e);
+                if (!IsFoe(s, i, v)) continue;
+                var o = s.F[v];
+                if (!RowHits(f, o, mv)) continue;
+                any = true;
+                var h = new PendingHit
+                {
+                    Valid = true, Mult = f.MoveMult,
+                    KbX = link ? ChibiMovesetConst.LinkKbX : mv.KbX, KbY = link ? ChibiMovesetConst.LinkKbY : mv.KbY,
+                    Stun = link ? mv.Rehit + ChibiMovesetConst.LinkStunPad : mv.Stun,
+                    Dir = RowDir(f, o, mv), Unblockable = unblockable, Src = SrcMelee,
+                };
+                if (!link) AdjustKb(ref h, o, e);
+                row[v] = h;
+            }
+            if (!any) return;
+            f.MoveHit = true;
             if (e.Has(ChibiMoveExt.FDive))
             {
                 f.Vy = ChibiMovesetConst.DivePopVy * ChibiSimConst.VelSub;   // no dive suicide: pop up, recover in the air
                 f.MoveTick = f.MoveStartup + f.MoveActive;
             }
-            return h;
         }
 
         // ================================================================== ApplyHit hooks
@@ -695,16 +716,17 @@ namespace ChibiClash.Netcode
         /// ticks changes owner and reverses, Mult x P / 1000, Life &gt;= 30. It becomes a plain shot (SrcSlot -1). A reflected
         /// spear frees its thrower's SpearOut. Returns true when reflected (no hit this update).
         /// </summary>
-        static bool ProjReflected(ChibiSimState s, ChibiProjectileSim p)
+        static bool ProjReflected(ChibiSimState s, ChibiProjectileSim p, int v)
         {
-            var r = s.F[1 - p.Owner];
+            var r = s.F[v];
             if (r.MoveSlot < FirstNew || !InActive(r)) return false;
             var mv = RowOf(r);
             if (!mv.Ext.Has(ChibiMoveExt.FReflect)) return false;
             RowBox(r, mv, out int x0, out int x1, out int y0, out int y1);
             if (!ChibiFixed.CircleOverlapsAabb(p.X, p.Y, p.Radius, x0, y0, x1 - 1, y1 - 1)) return false;
             if (p.Kind == ChibiProjKind.Spear) s.F[p.Owner].SpearOut = false;
-            p.Owner = 1 - p.Owner;
+            p.Target = p.Owner;   // rules v25: the shot now flies at its old owner
+            p.Owner = v;
             p.Vx = -p.Vx; p.Vy = -p.Vy;
             if (p.Reflects < ChibiMovesetConst.MaxScaledReflects)                       // SEC-104: growth capped
                 p.Mult = (int)((long)p.Mult * mv.Ext.ReflectPermille / 1000);
@@ -717,11 +739,11 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>Projectile hit of a CSV row: positional dir for a vertical shot, pull, spike / trip.</summary>
-        static void ProjAdjustHit(ChibiSimState s, ChibiProjectileSim p, ref PendingHit h)
+        static void ProjAdjustHit(ChibiSimState s, ChibiProjectileSim p, ref PendingHit h, int v)
         {
             var e = ProjExt(s, p);
             if (e == null) return;
-            var victim = s.F[1 - p.Owner];
+            var victim = s.F[v];
             if (p.Vx == 0) { int sx = Sign(victim.X - p.X); h.Dir = sx != 0 ? sx : 1; }
             if (e.Has(ChibiMoveExt.FPull)) h.Dir = -h.Dir;
             AdjustKb(ref h, victim, e);
@@ -793,10 +815,14 @@ namespace ChibiClash.Netcode
                 if (!z.Active || z.SpawnTick == s.GameTicks) continue;
                 var mv = ChibiMoveTable.Get(s.F[z.Owner].Class, z.Slot);
                 var e = mv.Ext;
-                var o = s.F[1 - z.Owner];
                 int age = z.Age++;
-                bool over = Overlaps(o, z.X0, z.X1, z.Y0, z.Y1);
-                if (e.ZoneSlow > 0 && over && o.InPlay) o.SlowTicks = Math.Max(o.SlowTicks, e.ZoneSlow);
+                // Rules v25: the zone slows and hits every enemy of its owner (allies pass through), index order.
+                for (int v = 0; v < s.Count; v++)
+                {
+                    if (!IsFoe(s, z.Owner, v)) continue;
+                    var so = s.F[v];
+                    if (e.ZoneSlow > 0 && so.InPlay && Overlaps(so, z.X0, z.X1, z.Y0, z.Y1)) so.SlowTicks = Math.Max(so.SlowTicks, e.ZoneSlow);
+                }
                 bool live, once = true;
                 switch (e.ZoneKind)
                 {
@@ -807,16 +833,24 @@ namespace ChibiClash.Netcode
                         live = e.ZoneA > 0 && age % e.ZoneA == 0; once = false;
                         break;
                 }
-                if (!live || !over || o.Invuln > 0 || !o.InPlay) continue;
-                int sx = Sign(o.X - (z.X0 + z.X1) / 2);
-                var h = new PendingHit
+                if (!live) continue;
+                bool hitAny = false;
+                for (int v = 0; v < s.Count; v++)
                 {
-                    Valid = true, Mult = z.Mult, KbX = mv.KbX, KbY = mv.KbY, Stun = mv.Stun, Dir = sx != 0 ? sx : z.Facing,
-                    Unblockable = (mv.Flags & ChibiMove.FUnblockable) != 0, Src = SrcOther,
-                };
-                AdjustKb(ref h, o, e);
-                ApplyHit(s, z.Owner, 1 - z.Owner, h);
-                if (once) z.Active = false;
+                    if (!IsFoe(s, z.Owner, v)) continue;
+                    var o = s.F[v];
+                    if (!Overlaps(o, z.X0, z.X1, z.Y0, z.Y1) || o.Invuln > 0 || !o.InPlay) continue;
+                    int sx = Sign(o.X - (z.X0 + z.X1) / 2);
+                    var h = new PendingHit
+                    {
+                        Valid = true, Mult = z.Mult, KbX = mv.KbX, KbY = mv.KbY, Stun = mv.Stun, Dir = sx != 0 ? sx : z.Facing,
+                        Unblockable = (mv.Flags & ChibiMove.FUnblockable) != 0, Src = SrcOther,
+                    };
+                    AdjustKb(ref h, o, e);
+                    ApplyHit(s, z.Owner, v, h);
+                    hitAny = true;
+                }
+                if (once && hitAny) z.Active = false;
             }
         }
     }

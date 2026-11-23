@@ -51,7 +51,7 @@ namespace ChibiClash.Netcode
         // (46, under ChibiLaunchFx hover 47..49), glows and afterimages just behind the owner's body (sortBase + 1).
         const int OrderBlade = 46;
         static int SortBase(int i) => 10 + 20 * i;
-        static readonly string[] VisNames = { "SimP1", "SimP2" };   // ChibiSimView.Begin fighter objects
+        static readonly string[] VisNames = { "SimP1", "SimP2", "SimP3", "SimP4" };   // ChibiSimView.Begin fighter objects (rules v25: up to 4)
 
         sealed class Swing
         {
@@ -84,7 +84,8 @@ namespace ChibiClash.Netcode
         Func<ChibiSimState> _state;
         float _groundY;
         bool _bound;
-        readonly FighterFx[] _f = { new FighterFx(), new FighterFx() };
+        readonly FighterFx[] _f = { new FighterFx(), new FighterFx(), new FighterFx(), new FighterFx() };
+        int _n;   // fighters bound this match (state Count, 2..4)
         Material _glowEdge, _glowCentre;
         ChibiHitSparks _sparks;
         Transform _root;
@@ -111,7 +112,8 @@ namespace ChibiClash.Netcode
         {
             var host = transform.parent;
             if (host == null) return false;
-            for (int i = 0; i < 2; i++)
+            _n = Mathf.Clamp(s.Count, 2, _f.Length);
+            for (int i = 0; i < _n; i++)
             {
                 var p = host.Find(VisNames[i]);
                 _f[i].Vis = p != null ? p.GetComponent<FighterVisual>() : null;
@@ -125,7 +127,7 @@ namespace ChibiClash.Netcode
 
             _glowEdge = ChibiFxTextures.NewRibbonMaterial(ChibiFxTextures.GlowStrip(false), "ChibiTrailGlowArc");
             _glowCentre = ChibiFxTextures.NewRibbonMaterial(ChibiFxTextures.GlowStrip(true), "ChibiTrailGlowStreak");
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _n; i++)
             {
                 var f = _f[i];
                 var cls = (FighterClass)Mathf.Clamp(s.F[i].Class, 0, CharacterRoster.All.Length - 1);
@@ -179,10 +181,10 @@ namespace ChibiClash.Netcode
             float now = Time.unscaledTime, dt = Time.unscaledDeltaTime;
             float scale = ChibiSimulation.CurrentScalePermille(s) / 1000f;
 
-            for (int i = 0; i < 2; i++) UpdateMoves(i, s, now, scale);
+            for (int i = 0; i < _n; i++) UpdateMoves(i, s, now, scale);
             DetectHits(s);
             DetectShots(s);
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _n; i++)
             {
                 DrawSwings(i, s, now, scale, dt);
                 UpdateGhosts(i, s, dt);
@@ -385,7 +387,7 @@ namespace ChibiClash.Netcode
 
         void DetectHits(ChibiSimState s)
         {
-            for (int d = 0; d < 2; d++)
+            for (int d = 0; d < _n; d++)
             {
                 var f = _f[d];
                 int pct = s.F[d].PctM;
@@ -393,7 +395,8 @@ namespace ChibiClash.Netcode
                 f.Pct = pct;
                 if (gained <= 0 || !s.F[d].InPlay) continue;   // respawn reset / lifesteal: no spark
 
-                int a = 1 - d;
+                int a = ChibiSimulation.LikelyAttacker(s, d);
+                if (a < 0 || a >= _n) a = d;   // no enemy left (hazard): spark from the defender itself
                 Vector2 dc = f.Vis.transform.position, ac = _f[a].Vis.transform.position;
                 float side = ac.x >= dc.x ? 1f : -1f;
                 var at = dc + new Vector2(side * 0.3f, 0.15f);
@@ -419,7 +422,7 @@ namespace ChibiClash.Netcode
                 var pr = p[k];
                 bool fresh = pr.Active && (!_pActive[k] || _pSpawn[k] != pr.SpawnFrame || _pOwner[k] != pr.Owner || _pKind[k] != (int)pr.Kind);
                 Remember(k, pr);
-                if (!fresh || flares >= MaxFlaresPerFrame || pr.Owner < 0 || pr.Owner > 1 || !WantsFlare(s, pr)) continue;
+                if (!fresh || flares >= MaxFlaresPerFrame || pr.Owner < 0 || pr.Owner >= _n || !WantsFlare(s, pr)) continue;
                 flares++;
                 var at = new Vector2(pr.X * MilliToWorld, _groundY + pr.Y * MilliToWorld);
                 _sparks.Muzzle(at, new Vector2(pr.Vx, pr.Vy), _f[pr.Owner].Fx);
@@ -492,7 +495,7 @@ namespace ChibiClash.Netcode
 
         void OnDestroy()
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < _n; i++)
             {
                 var f = _f[i];
                 if (f.Ribbons != null) for (int k = 0; k < f.Ribbons.Length; k++) f.Ribbons[k]?.Dispose();

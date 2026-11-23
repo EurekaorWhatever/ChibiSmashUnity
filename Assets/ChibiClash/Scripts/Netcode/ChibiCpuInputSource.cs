@@ -253,11 +253,12 @@ namespace ChibiClash.Netcode
         int _lowTier = -1;                                      // this decision: fighting on this lower tier (-1 none)
         int _climbTicks;                                        // just took off from a lower surface toward MAIN
 
-        /// <summary>Create a CPU for fighter <paramref name="player"/> (0 or 1) at <paramref name="difficulty"/> (0 dummy .. 3 hard).</summary>
+        /// <summary>Create a CPU for fighter <paramref name="player"/> (slot 0..3) at <paramref name="difficulty"/> (0 dummy .. 3 hard).</summary>
         public ChibiCpuInputSource(int player, int difficulty, uint matchSeed)
         {
-            if (player < 0 || player > 1) throw new ArgumentOutOfRangeException(nameof(player));
+            if (player < 0 || player > 3) throw new ArgumentOutOfRangeException(nameof(player));
             _player = player;
+            _target = player == 0 ? 1 : 0;
             _difficulty = difficulty;
             _skillPermille = difficulty * 1000 / 3;                       // skill = difficulty / 3 (FI:158)
             _rng = new ChibiRng(matchSeed ^ SeedSalt ^ (uint)(player + 1) * 0x9E3779B9u);
@@ -279,6 +280,7 @@ namespace ChibiClash.Netcode
         public ChibiInputPacket SampleTick()
         {
             if (_state == null) throw new InvalidOperationException("ChibiCpuInputSource: Bind(state) was never called");
+            RefreshTarget();   // rules v25: the enemy this CPU fights (1v1: the opponent)
 
             // KO'd (off-screen) or hovering on the respawn point: nothing at all (any direction, button or gesture bit ends
             // the hover in the sim), except one stick tick that leaves the hover once it is safe (percent-knockback.md 3.4).
@@ -289,7 +291,7 @@ namespace ChibiClash.Netcode
                 _descendTier = -1; _climbTicks = 0; _descendCd = 0; _lowTier = -1;
                 if (me.OutTicks > 0 || _difficulty <= 0 || !_state.Running || !HoverLeaveSafe(me)) return default;
                 _hoverWait = -1;
-                var opp0 = _state.F[1 - _player];
+                var opp0 = _state.F[_target];
                 int away = opp0.X > me.X ? -1 : (opp0.X < me.X ? 1 : (me.X > 0 ? -1 : 1));
                 return ChibiInputPacket.Make(ChibiInputPacket.DirFromAxes(away, 0), ChibiButtons.None);
             }
@@ -330,12 +332,65 @@ namespace ChibiClash.Netcode
             return p;
         }
 
+        // ------------------------------------------------------------------ rules v25: target choice (team play)
+
+        int _target, _targetHold;
+        /// <summary>Ticks a picked target is kept before the CPU looks again (hysteresis), unless it stops being an enemy.</summary>
+        const int TargetHoldTicks = 60;
+        /// <summary>Score penalty for an enemy that is not in play (KO'd / hovering), so a live enemy is preferred.</summary>
+        const long OutOfPlayPenalty = 1L << 40;
+
+        /// <summary>
+        /// Rules v25: slot of the fighter this CPU fights. Never an ally while any enemy is left. In 1v1 it is always the
+        /// opponent (the v24 behaviour).
+        /// </summary>
+        public int Target => _target;
+
+        /// <summary>
+        /// Picks the enemy to fight (deterministic, no RNG draw): the lowest score = squared distance / 1000 - percent / 4
+        /// (a hurt enemy is a juicier target), live enemies first, ties to the lowest index. The pick is kept for
+        /// <see cref="TargetHoldTicks"/> ticks while it stays an enemy. 1v1 skips all of this: the opponent.
+        /// </summary>
+        /// <summary>True when some enemy of this CPU is currently in play (not KO'd / respawning).</summary>
+        bool AnyFoeInPlay(ChibiSimState s)
+        {
+            for (int v = 0; v < s.Count; v++) if (ChibiSimulation.IsFoe(s, _player, v) && s.F[v].InPlay) return true;
+            return false;
+        }
+
+        void RefreshTarget()
+        {
+            var s = _state;
+            if (s.Count <= 2 && s.Format == ChibiMatchConfig.Format1v1) { _target = 1 - _player; return; }
+            if (_targetHold > 0 && ChibiSimulation.IsFoe(s, _player, _target) && (s.F[_target].InPlay || !AnyFoeInPlay(s)))
+            { _targetHold--; return; }
+            var me = s.F[_player];
+            int best = -1;
+            long bestScore = long.MaxValue;
+            for (int v = 0; v < s.Count; v++)
+            {
+                if (!ChibiSimulation.IsFoe(s, _player, v)) continue;
+                var o = s.F[v];
+                long score = ChibiFixed.DistSq(o.X - me.X, o.Y - me.Y) / 1000 - o.PctM / 4;
+                if (!o.InPlay) score += OutOfPlayPenalty;
+                if (score < bestScore) { bestScore = score; best = v; }
+            }
+            if (best < 0)
+            {
+                // No enemy left (the match is ending): any other non-ally, else any other slot; never this fighter.
+                for (int v = 0; v < s.Count && best < 0; v++) if (v != _player && !ChibiSimulation.IsAlly(s, _player, v)) best = v;
+                if (best < 0) best = _player == 0 ? 1 : 0;
+            }
+            _target = best;
+            _targetHold = TargetHoldTicks;
+        }
+
         /// <summary>One CpuInput.Tick (FI:154-208) at dt = 1/60 plus the moveset layer, on the state at the start of this tick.</summary>
         bool Think(ref bool block, ref ChibiButtons press)
         {
             if (_difficulty <= 0) return false;
             var self = _state.F[_player];
-            var opp = _state.F[1 - _player];
+            var opp = _state.F[_target];
 
             UpdateUltGesture(self);
             if (!_state.Running) { _planLen = 0; return false; }   // InputEnabled gate: the original Fighter ignores the CPU too
@@ -705,6 +760,7 @@ namespace ChibiClash.Netcode
             {
                 var p = pr[k];
                 if (p == null || !p.Active || p.Owner == _player || p.Vx == 0) continue;
+                if (ChibiSimulation.IsAlly(_state, _player, p.Owner)) continue;   // rules v25: ally shots pass through
                 int rx = self.X - p.X;
                 if ((rx > 0) != (p.Vx > 0) || Math.Abs(rx) > 3500) continue;
                 int cy = self.Y + ChibiSimConst.HurtH / 2;
@@ -1615,7 +1671,7 @@ namespace ChibiClash.Netcode
             if (_hoverWait > 0) { _hoverWait--; return false; }
             var st = ChibiStageTable.Get(_state.Stage);
             if (BirdAlert(st) || WhaleThreat(st) && me.Y > 0) return false;
-            var opp = _state.F[1 - _player];
+            var opp = _state.F[_target];
             if (opp.InPlay && me.HoverTicks > HoverCampMinLeft && Math.Abs(opp.X - me.X) < HoverCampX && opp.Y < me.Y && opp.Stun == 0)
                 return false;
             return true;

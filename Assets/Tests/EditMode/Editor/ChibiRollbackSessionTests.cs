@@ -129,6 +129,7 @@ namespace ChibiClash.Tests
 
         static byte[] Encode(ChibiNetMessage m)
         {
+            m.Sender = 1;   // protocol 6: these sessions are slot 0, so the probe link is bound to slot 1
             var b = new BitBuffer(ChibiPacketCodec.MaxPacketBytes);
             ChibiPacketCodec.Write(b, m);
             var bytes = new byte[b.ByteLength];

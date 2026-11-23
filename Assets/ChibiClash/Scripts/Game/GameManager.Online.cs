@@ -14,6 +14,11 @@ namespace ChibiClash
         // plays the handshake, and the match view appears once both peers agreed.
         Netcode.NetworkRoomManager rooms;
         Netcode.ChibiOnlineMatchRunner pendingOnline;
+        /// <summary>
+        /// Team play (phase 2): format of the next quick match (ChibiMatchConfig.Format1v1 / Format2v2 / FormatFfa). The
+        /// format picker UI is phase 3; until then it stays 1v1, so matchmaking behaves exactly as before.
+        /// </summary>
+        public int pendingFormat = Netcode.ChibiMatchConfig.Format1v1;
         Netcode.ChibiPlayerInputSource pendingOnlineInput;
         string joinCode = "";
         string roomNameInput;   // null until first shown, then defaults to "<name>'s room"
@@ -334,6 +339,42 @@ namespace ChibiClash
             UiSound.LockIn();   // match found
         }
 
+        /// <summary>
+        /// Team play (protocol 6): the 2v2 / FFA matchmaker connected every link of the mesh. Start the mesh match: we host
+        /// (slot 0) or join with the roster's player hashes, so the handshake checks every slot against the lobby.
+        /// </summary>
+        void OnMeshConnected(Netcode.ChibiMeshLinks mesh)
+        {
+            if (!PlayerIdentity.OnlineAllowed(Save.ageBand))   // age gate, last line
+            {
+                foreach (var l in mesh.Links) (l as System.IDisposable)?.Dispose();
+                rooms.Teams.Cancel();
+                return;
+            }
+            var input = Netcode.ChibiPlayerInputSource.ForPlayer(0);
+            var settings = Netcode.ChibiRollbackSettings.Default;
+            string me = DisplayedName();
+            string mine = CharacterRoster.Of(pending.cls[0]).Id;
+            if (match == null) SpriteAnimLibrary.ReleaseAllExcept(mine, "");
+            onlineLoad = new MatchAssetLoader(mine, "");
+            onlinePeerSeen = false;
+            var online = mesh.IsHost
+                ? Netcode.ChibiOnlineMatch.MeshHost(mesh.Links, input, mesh.Format, mesh.PlayerHashes, pending.cls[0], pending.passive[0],
+                                                    pending.stage, (uint)System.Environment.TickCount ^ 0xC1B1u, settings,
+                                                    Netcode.ChibiHandshake.DefaultTimeoutTicks, me, !pending.hazards,
+                                                    mesh.PairKeys)   // review N1: authenticated links
+                : Netcode.ChibiOnlineMatch.MeshJoin(mesh.Links, mesh.MySlot, input, mesh.Format, mesh.PlayerHashes, pending.cls[0],
+                                                    pending.passive[0], Netcode.ChibiHandshake.DefaultTimeoutTicks, me,
+                                                    pairKeys: mesh.PairKeys);
+            var go = new GameObject("OnlineMatch");
+            var runner = go.AddComponent<Netcode.ChibiOnlineMatchRunner>();
+            runner.Begin(online, input);
+            pendingOnline = runner;
+            pendingOnlineInput = input;
+            onlineNote = "Connected. Agreeing on the match...";
+            UiSound.LockIn();
+        }
+
         /// <summary>Online fight-sheet preload (handshake, then the READY intro); null when none is running.</summary>
         MatchAssetLoader onlineLoad;
         /// <summary>The host already saw the joiner's Hello (its class is known) and queued its sheets.</summary>
@@ -393,8 +434,12 @@ namespace ChibiClash
                 exitPrompt = false;
                 roomDialog = false;
                 var agreed = m.Handshake.Config;
-                ChibiMatch.ReleaseUnusedSheets(agreed.Class0, agreed.Class1);   // a wrong room guess is dropped here
-                onlineLoad = new MatchAssetLoader(agreed.Class0, agreed.Class1);   // the rest: READY intro slices
+                // Every roster slot's sheets (team play: 3-4 fighters), sliced across the READY intro.
+                int n = agreed.EffectiveCount;
+                var ids = new string[n];
+                for (int i = 0; i < n; i++) ids[i] = CharacterRoster.Of(agreed.ClassOf(i)).Id;
+                if (n == 2) ChibiMatch.ReleaseUnusedSheets(agreed.Class0, agreed.Class1);   // team play: keep, the roster is new
+                onlineLoad = new MatchAssetLoader(ids);
                 match = ChibiMatch.CreateOnline(this, pendingOnline, pendingOnlineInput, pending.weapon[0]);
                 match.SetVerifiedOpponentName(social.MatchFriendName);   // invite match: the friends-list name
                 social.ClearMatchFriend();
@@ -426,7 +471,8 @@ namespace ChibiClash
 
         // ---------------------------------------------------------------- LOBBY (matchmaking, LAN, friends)
 
-        bool OnlineBusy => rooms.State != Netcode.ChibiRoomState.Idle && rooms.State != Netcode.ChibiRoomState.Failed || pendingOnline != null;
+        bool OnlineBusy => rooms.State != Netcode.ChibiRoomState.Idle && rooms.State != Netcode.ChibiRoomState.Failed || pendingOnline != null ||
+                           rooms.Teams.Busy;
 
         void OpenLobby(bool friends)
         {
@@ -443,7 +489,7 @@ namespace ChibiClash
         {
             OpenLobby(false);
             social.ClearMatchFriend();
-            if (!OnlineBusy) rooms.QuickMatch();
+            if (!OnlineBusy) rooms.QuickMatch(pendingFormat);
         }
 
         void LobbyView()
@@ -498,7 +544,7 @@ namespace ChibiClash
 
             Gui.PreferNext();
             if (Gui.Button(new Rect(x, y, w, 44f), "MATCHMAKING (closest players)", Gui.P2, 17, !busy) && !busy)
-            { onlineNote = ""; social.ClearMatchFriend(); rooms.QuickMatch(); }
+            { onlineNote = ""; social.ClearMatchFriend(); rooms.QuickMatch(pendingFormat); }
             // Privacy notice: what matchmaking shares.
             Gui.Text(new Rect(x, y + 46f, w, 18f), "Finds the closest players. Shares your country (from device settings), never your location.",
                      11, Gui.Muted);

@@ -72,8 +72,8 @@ namespace ChibiClash.Netcode
         UniversalAdditionalCameraData _camData;
         bool _camWasPost;
         Func<ChibiSimState> _state;
-        readonly int[] _stocks = { -1, -1 };
-        readonly int[] _pct = { -1, -1 };
+        readonly int[] _stocks = { -1, -1, -1, -1 };   // per fighter slot (rules v25: up to 4)
+        readonly int[] _pct = { -1, -1, -1, -1 };
         int _cinematic = -1;
         float _punchT, _punchLen, _punchAmt;
         int _warmLeft = WarmFrames;
@@ -182,7 +182,7 @@ namespace ChibiClash.Netcode
         void Detect(ChibiSimState s)
         {
             const int heavyPctM = (int)(ChibiFeel.PctFullHit * ChibiFeel.HeavyHit * 1000f);
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < s.Count && i < _stocks.Length; i++)
             {
                 int st = s.F[i].Stocks;
                 if (_stocks[i] >= 0 && st < _stocks[i]) Punch(1f, PunchKoSec);

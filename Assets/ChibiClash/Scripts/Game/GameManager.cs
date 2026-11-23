@@ -97,6 +97,8 @@ namespace ChibiClash
             menuTracker = new GestureTracker(menuPose);
             rooms = gameObject.AddComponent<Netcode.NetworkRoomManager>();
             rooms.OnConnected += OnRoomConnected;
+            rooms.Teams.OnMeshReady += OnMeshConnected;          // team play (protocol 6): 2v2 / FFA quick match
+            rooms.Teams.OnFailed += msg => onlineNote = msg;
             social = gameObject.AddComponent<Netcode.ChibiSocialManager>();
             account = gameObject.AddComponent<Netcode.ChibiAccount>();
             account.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
@@ -590,9 +592,42 @@ namespace ChibiClash
             pending.cls[1] = p2;
             pending.cpu[0] = false;
             pending.cpu[1] = vsCpu;
+            pending.format = Netcode.ChibiMatchConfig.Format1v1;   // rules v25: the 1v1 entry stays 1v1
+            pending.count = 2;
             pending.stage = stage;
             pending.training = training;
             aiPicksItself = false;   // automation: keep the exact opponent
+            StartMatch();
+            return match;
+        }
+
+        /// <summary>
+        /// Rules v25 automation / Play Mode check entry: starts an offline team-play match at once. <paramref name="format"/>
+        /// is 0 1v1, 1 FFA, 2 2v2 (teams 0,0,1,1); <paramref name="classes"/> gives one class per slot (2..4 entries, the
+        /// count of an FFA); bit i of <paramref name="humanMask"/> makes slot i a local human, every other slot is a CPU.
+        /// The full select UI for these formats is phase 3.
+        /// </summary>
+        /// <example><code>gm.QuickMatchTeams(1, new[] { FighterClass.Melee, FighterClass.Heavy, FighterClass.Ranged, FighterClass.Magic }, 1, 4);</code></example>
+        public ChibiMatch QuickMatchTeams(int format, FighterClass[] classes, int humanMask, int stage = 0)
+        {
+            if (classes == null || classes.Length < 2) throw new System.ArgumentException("at least two classes", nameof(classes));
+            FinishLoadingNow();
+            CancelWipe();
+            arcade = false;
+            pending.format = format;
+            pending.count = classes.Length;
+            int n = pending.FighterCount;
+            for (int i = 0; i < Netcode.ChibiSimConst.MaxFighters; i++)
+            {
+                pending.cls[i] = i < classes.Length ? classes[i] : classes[i % classes.Length];
+                pending.passive[i] = 0;
+                pending.weapon[i] = 0;
+                pending.cpu[i] = i >= n || (humanMask & (1 << i)) == 0;
+                pending.team[i] = i < 2 ? 0 : 1;
+            }
+            pending.stage = stage;
+            pending.training = false;
+            aiPicksItself = false;
             StartMatch();
             return match;
         }
@@ -668,6 +703,8 @@ namespace ChibiClash
         void SetupSelect(bool cpu, bool training, bool arcadeMode)
         {
             arcade = arcadeMode;
+            pending.format = Netcode.ChibiMatchConfig.Format1v1;   // rules v25: the menus are 1v1 until the phase 3 UI
+            pending.count = 2;
             pending.cpu[0] = false;
             pending.cpu[1] = cpu;
             pending.training = training;

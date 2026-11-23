@@ -237,18 +237,36 @@ namespace ChibiClash.Tests
         /// <summary>Fields deliberately outside the fighter hash: Stats is derived from Class + Passive at Init.</summary>
         static readonly HashSet<string> FighterHashExempt = new HashSet<string> { "Stats" };
 
-        [Test]
-        public void Checksum_ChangesWhenAnyFighterFieldChanges()
+        /// <summary>
+        /// Rules v25: team-play fields hashed only outside 1v1 (so a 1v1 checksum is unchanged). The 1v1 variant skips
+        /// them; the 4-fighter variant must see every field.
+        /// </summary>
+        static readonly HashSet<string> MultiOnlyFighterFields = new HashSet<string> { "HoldTarget", "HeldBy" };
+        static readonly HashSet<string> MultiOnlyStateFields =
+            new HashSet<string> { "ChibiSimState.DroppedMask", "Proj.Target", "Minion.Target", "Cloud.Target" };
+
+        static ChibiMatchConfig HashProbeConfig(bool multi) => multi
+            ? new ChibiMatchConfig
+            {
+                Seed = 9, Format = ChibiMatchConfig.FormatFfa, Count = 4, Class0 = FighterClass.Magic,
+                Class1 = FighterClass.Heavy, Class2 = FighterClass.Ranged, Class3 = FighterClass.Polearm,
+            }
+            : new ChibiMatchConfig { Seed = 9, Class0 = FighterClass.Magic, Class1 = FighterClass.Heavy };
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Checksum_ChangesWhenAnyFighterFieldChanges(bool multi)
         {
             var s = new ChibiSimState();
-            ChibiSimulation.Init(s, new ChibiMatchConfig { Seed = 9, Class0 = FighterClass.Magic, Class1 = FighterClass.Heavy });
+            ChibiSimulation.Init(s, HashProbeConfig(multi));
             uint baseSum = s.ComputeChecksum();
             var missing = new List<string>();
             foreach (var fi in typeof(ChibiFighterSim).GetFields(BindingFlags.Public | BindingFlags.Instance))
             {
                 if (fi.IsLiteral || FighterHashExempt.Contains(fi.Name)) continue;
+                if (!multi && MultiOnlyFighterFields.Contains(fi.Name)) continue;
                 var probe = new ChibiSimState(); probe.CopyFrom(s);
-                var f = probe.F[1];
+                var f = probe.F[multi ? 3 : 1];   // v25: the last slot of a 4-fighter match is hashed too
                 if (fi.FieldType == typeof(int)) fi.SetValue(f, (int)fi.GetValue(f) + 7);
                 else if (fi.FieldType == typeof(bool)) fi.SetValue(f, !(bool)fi.GetValue(f));
                 else if (fi.FieldType == typeof(int[])) ((int[])fi.GetValue(f))[0] += 7;
@@ -258,11 +276,12 @@ namespace ChibiClash.Tests
             CollectionAssert.IsEmpty(missing, "fighter fields not in the checksum (a desync there would go unseen)");
         }
 
-        [Test]
-        public void Checksum_ChangesWhenAnyMatchFieldOrLivePoolFieldChanges()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Checksum_ChangesWhenAnyMatchFieldOrLivePoolFieldChanges(bool multi)
         {
             var s = new ChibiSimState();
-            ChibiSimulation.Init(s, new ChibiMatchConfig { Seed = 9, Class0 = FighterClass.Magic, Class1 = FighterClass.Heavy });
+            ChibiSimulation.Init(s, HashProbeConfig(multi));
             s.Proj[3].Active = true; s.Minions[2].Active = true; s.Clouds[1].Active = true;
             uint baseSum = s.ComputeChecksum();
             var missing = new List<string>();
@@ -278,13 +297,25 @@ namespace ChibiClash.Tests
                     else if (fi.FieldType.IsEnum) fi.SetValue(o, Enum.ToObject(fi.FieldType, Convert.ToInt32(fi.GetValue(o)) + 1));
                     else if (fi.FieldType == typeof(ChibiRng)) fi.SetValue(o, new ChibiRng(((ChibiRng)fi.GetValue(o)).State + 7));
                     else continue;
-                    if (probe.ComputeChecksum() == baseSum) missing.Add(label + "." + fi.Name);
+                    if (probe.ComputeChecksum() == baseSum && (multi || !MultiOnlyStateFields.Contains(label + "." + fi.Name)))
+                        missing.Add(label + "." + fi.Name);
                 }
             }
             Probe(s, st => st, "ChibiSimState");
             Probe(s.Proj[3], st => st.Proj[3], "Proj");
             Probe(s.Minions[2], st => st.Minions[2], "Minion");
             Probe(s.Clouds[1], st => st.Clouds[1], "Cloud");
+            if (multi)
+            {
+                // Rules v25 readonly arrays (skipped by the field walk above): every Team / Placement entry is hashed.
+                for (int k = 0; k < ChibiSimConst.MaxFighters; k++)
+                {
+                    var a = new ChibiSimState(); a.CopyFrom(s); a.Team[k] += 7;
+                    if (a.ComputeChecksum() == baseSum) missing.Add("ChibiSimState.Team[" + k + "]");
+                    var b = new ChibiSimState(); b.CopyFrom(s); b.Placement[k] += 7;
+                    if (b.ComputeChecksum() == baseSum) missing.Add("ChibiSimState.Placement[" + k + "]");
+                }
+            }
             CollectionAssert.IsEmpty(missing, "state fields not in the checksum");
         }
 

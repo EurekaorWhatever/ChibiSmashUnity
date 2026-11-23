@@ -168,6 +168,165 @@ namespace ChibiClash.Netcode
         /// <summary>A short random token for launch / start presses (not a secret: only "is it new").</summary>
         public static string NewNonce() => Guid.NewGuid().ToString("N").Substring(0, 12);
 
+        // ================================================================== team play queues (protocol 6)
+
+        /// <summary>FFA starts with 3 players once the host has waited this long without a 4th (user decision, phase 2).</summary>
+        public const float FfaFillWaitSeconds = 45f;
+        /// <summary>Fewest players an FFA may start with.</summary>
+        public const int FfaMinPlayers = 3;
+
+        /// <summary>Lobby seats per format: 1v1 = 2, 2v2 = 4, FFA = 4.</summary>
+        public static int SeatsFor(int format) => format == ChibiMatchConfig.Format1v1 ? 2 : 4;
+
+        /// <summary>
+        /// Quick-match queue tag (lobby field S1): the build tag plus the format, e.g. "p6r25-2v2". Separate per format so a
+        /// 2v2 search never finds an FFA lobby, and a different build never finds ours.
+        /// </summary>
+        /// <example><code>string tag = ChibiRoomRules.QueueTag(NetworkRoomManager.ProtocolTag, ChibiMatchConfig.FormatFfa);   // "p6r25-ffa"</code></example>
+        public static string QueueTag(string buildTag, int format)
+            => buildTag + (format == ChibiMatchConfig.Format2v2 ? "-2v2" : format == ChibiMatchConfig.FormatFfa ? "-ffa" : "-1v1");
+
+        /// <summary>
+        /// Host side: start now? 1v1 and 2v2 start when every seat is taken; FFA at 4, or at <see cref="FfaMinPlayers"/> once
+        /// the host has waited <see cref="FfaFillWaitSeconds"/>. No CPU fill online.
+        /// </summary>
+        public static bool ShouldStart(int format, int players, float waitedSeconds)
+        {
+            if (players >= SeatsFor(format)) return true;
+            return format == ChibiMatchConfig.FormatFfa && players >= FfaMinPlayers && waitedSeconds >= FfaFillWaitSeconds;
+        }
+
+        /// <summary>True when <paramref name="count"/> players form a legal roster for <paramref name="format"/>.</summary>
+        public static bool ValidRoster(int format, int count)
+            => format == ChibiMatchConfig.Format1v1 ? count == 2
+             : format == ChibiMatchConfig.Format2v2 ? count == 4
+             : format == ChibiMatchConfig.FormatFfa && count >= FfaMinPlayers && count <= 4;
+
+        /// <summary>
+        /// Relay mesh: of the pair (i, j) the LOWER slot allocates and publishes the join code; the higher slot joins. So slot 0
+        /// allocates for 1..3, slot 1 for 2..3, slot 2 for 3 (one Relay allocation per link, each with one peer).
+        /// </summary>
+        public static bool AllocatesFor(int mySlot, int otherSlot) => mySlot < otherSlot;
+
+        /// <summary>Player-data key under which the lower slot publishes the Relay join code for <paramref name="toSlot"/>.</summary>
+        public static string MeshRelayKey(int toSlot) => "mr" + toSlot;
+
+        /// <summary>
+        /// Parse the roster the host wrote when it locked the lobby: player ids in slot order (join order), comma-separated.
+        /// Returns null when it is malformed for <paramref name="format"/> (wrong size, empty or duplicate ids).
+        /// </summary>
+        public static string[] ParseRoster(string roster, int format)
+        {
+            if (string.IsNullOrEmpty(roster) || roster.Length > 400) return null;
+            var ids = roster.Split(',');
+            if (!ValidRoster(format, ids.Length)) return null;
+            for (int i = 0; i < ids.Length; i++)
+            {
+                if (ids[i].Length == 0 || ids[i].Length > 64) return null;
+                for (int k = 0; k < i; k++) if (ids[k] == ids[i]) return null;
+            }
+            return ids;
+        }
+
+        // ================================================================== team matchmaker decisions (review B2 / S2 / N1)
+
+        /// <summary>Most lobbies we try to join per search before searching again (never create on a failed join).</summary>
+        public const int JoinAttemptsPerSearch = 3;
+        /// <summary>A guest whose lobby has not started after this long leaves and searches again.</summary>
+        public const float QueueRequeueSeconds = 90f;
+        /// <summary>Player-data key of the X25519 public key (base64) published per queue.</summary>
+        public const string KeyPublicKey = "pk";
+
+        /// <summary>True when <paramref name="myId"/> is the lobby's host (UGS migrates HostId when the host leaves).</summary>
+        public static bool IsHost(string hostId, string myId)
+            => !string.IsNullOrEmpty(myId) && string.Equals(hostId, myId, StringComparison.Ordinal);
+
+        /// <summary>
+        /// Back-off after the <paramref name="consecutive"/>-th rate-limited Lobby call in a row: 5, 10, 20, then 30 s.
+        /// </summary>
+        public static float RateLimitBackoffSeconds(int consecutive)
+        {
+            if (consecutive <= 1) return 5f;
+            if (consecutive == 2) return 10f;
+            if (consecutive == 3) return 20f;
+            return 30f;
+        }
+
+        /// <summary>A guest gives up on a lobby that has not started within <see cref="QueueRequeueSeconds"/>; a host keeps waiting.</summary>
+        public static bool ShouldRequeue(bool isHost, float waitedSeconds) => !isHost && waitedSeconds >= QueueRequeueSeconds;
+
+        /// <summary>
+        /// Review S2: the roster the host wrote must be the lobby's real players in join order. Every roster id must be a
+        /// current member, and the members that are in the roster must appear in the same order as in the lobby (a late
+        /// joiner after the lock is simply not in it). Returns null when it holds, else a message for the player.
+        /// </summary>
+        /// <example><code>string err = ChibiRoomRules.VerifyRoster(roster, lobbyIds);</code></example>
+        public static string VerifyRoster(string[] roster, IList<string> lobbyPlayerIds)
+        {
+            if (roster == null || lobbyPlayerIds == null) return "The match could not be set up (no roster).";
+            int next = 0;
+            foreach (var id in lobbyPlayerIds)
+            {
+                if (next < roster.Length && string.Equals(id, roster[next], StringComparison.Ordinal)) next++;
+            }
+            if (next != roster.Length) return "The host's player list does not match the lobby. Try again.";
+            return null;
+        }
+
+        static bool SameKey(byte[] a, byte[] b)
+        {
+            if (a.Length != b.Length) return false;
+            int d = 0;
+            for (int i = 0; i < a.Length; i++) d |= a[i] ^ b[i];
+            return d == 0;
+        }
+
+        /// <summary>A host whose lobby has not started after this long gives up with a message (second review).</summary>
+        public const float HostQueueTimeoutSeconds = 180f;
+
+        /// <summary>True when a host has waited <see cref="HostQueueTimeoutSeconds"/> without starting.</summary>
+        public static bool HostShouldGiveUp(float waitedAsHostSeconds) => waitedAsHostSeconds >= HostQueueTimeoutSeconds;
+
+        /// <summary>Decode a published X25519 public key (base64, 32 bytes); null when malformed (never throws).</summary>
+        public static byte[] ParsePublicKey(string base64)
+        {
+            if (string.IsNullOrEmpty(base64) || base64.Length > 64) return null;
+            try
+            {
+                var k = Convert.FromBase64String(base64);
+                return k.Length == ChibiX25519.KeyBytes ? k : null;
+            }
+            catch (FormatException) { return null; }
+        }
+
+        /// <summary>
+        /// Review N1: per-pair link keys for roster slot <paramref name="mySlot"/>. keys[j] = PairKey(X25519(myPriv, pub[j]),
+        /// lobbyId, mySlot, j); keys[mySlot] = null. Returns null when any peer key is missing, malformed or low-order (the
+        /// match must not start unauthenticated).
+        /// </summary>
+        /// <example><code>byte[][] keys = ChibiRoomRules.DerivePairKeys(priv, pubs, lobby.Id, me);</code></example>
+        public static byte[][] DerivePairKeys(byte[] myPrivate, byte[][] publicBySlot, string lobbyId, int mySlot)
+        {
+            if (myPrivate == null || publicBySlot == null || mySlot < 0 || mySlot >= publicBySlot.Length) return null;
+            var keys = new byte[publicBySlot.Length][];
+            byte[] mine = ChibiX25519.PublicKey(myPrivate);
+            for (int j = 0; j < publicBySlot.Length; j++)
+            {
+                if (j == mySlot) continue;
+                var pj = publicBySlot[j];
+                if (pj == null || pj.Length != ChibiX25519.KeyBytes) return null;
+                // Second review: a peer replaying our own key, or two slots sharing one key, is refused.
+                if (SameKey(pj, mine)) return null;
+                for (int i = 0; i < j; i++)
+                    if (i != mySlot && publicBySlot[i] != null && SameKey(publicBySlot[i], pj)) return null;
+                var shared = ChibiX25519.SharedSecret(myPrivate, pj);
+                if (shared == null) return null;
+                keys[j] = ChibiX25519.PairKey(shared, lobbyId, mySlot, j);
+                Array.Clear(shared, 0, shared.Length);
+            }
+            return keys;
+        }
+
         /// <summary>
         /// True when a room published by another build can host a match with ours: the room's protocol tag
         /// ("p&lt;protocol&gt;r&lt;rules&gt;", NetworkRoomManager.ProtocolTag) must equal ours exactly. A missing tag (very old
