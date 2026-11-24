@@ -56,7 +56,7 @@ namespace ChibiClash
         {
             Clear();
             var kb = Keyboard.current;
-            if (kb != null)
+            if (kb != null && Bindings.HasKeys(player))   // players 3-4 have no keyboard half: gamepad only
             {
                 if (Held(kb, BindAction.Left)) MoveX -= 1f;
                 if (Held(kb, BindAction.Right)) MoveX += 1f;
@@ -120,7 +120,7 @@ namespace ChibiClash
             get
             {
                 var kb = Keyboard.current;
-                if (kb != null)
+                if (kb != null && Bindings.HasKeys(player))   // players 3-4 never read P2's 8/9/0 pose keys
                 {
                     if (player == 0)
                     {

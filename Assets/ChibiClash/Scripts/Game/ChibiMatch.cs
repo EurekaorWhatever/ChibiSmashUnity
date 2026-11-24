@@ -416,6 +416,13 @@ namespace ChibiClash
         void AwardRewards()
         {
             if (GM == null || GM.Save == null || Config.training) return;
+            // Nobody human played the local slot (all-CPU / spectator match): no rewards and no save, so automation and
+            // CPU-only matches never write to the player's profile (found 2026-11-24: an all-CPU run credited coins).
+            if (!Online && !MatchRewardRules.LocalSlotIsHuman(Config.cpu, LocalPlayer))
+            {
+                RewardLog.Add("Spectator match: no rewards");
+                return;
+            }
             if (Online)
             {
                 // No contest (desync / unconfirmed end) and aborted matches give nothing to anybody.
