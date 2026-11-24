@@ -207,8 +207,23 @@ namespace ChibiClash
         public void Save() => Save(PlayerPrefsSaveStore.Instance);
 
         /// <summary>Write the profile to store.</summary>
+        /// <summary>
+        /// DEV ONLY (-devName, ChibiDevFlags): the name that is on disk while <see cref="playerName"/> holds a run-only dev
+        /// name. When set, Save writes this instead, so the dev name never reaches PlayerPrefs. Null = normal.
+        /// </summary>
+        [NonSerialized] public string diskPlayerName;
+
         public void Save(ISaveStore store)
         {
+            if (diskPlayerName != null)
+            {
+                string live = playerName;
+                playerName = diskPlayerName;
+                try { store.Set(Key, JsonUtility.ToJson(this)); }
+                finally { playerName = live; }
+                store.Flush();
+                return;
+            }
             store.Set(Key, JsonUtility.ToJson(this));
             store.Flush();
         }

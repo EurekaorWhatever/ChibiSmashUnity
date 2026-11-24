@@ -30,13 +30,20 @@ datagram at 60 Hz when held inputs repeat).
 |---|---|
 | MATCHMAKING (rooms, PLAY menu) | Named rooms of 2-4 players that stay open between fights: see "Rooms" below (`ChibiRoomService`, `ChibiRoomRules`). Same-keyboard local play left the menu (user decision 2026-11-22). |
 | Private room by code (API) | `NetworkRoomManager.CreatePrivateRoom(name)` / `JoinPrivateRoom(code)`: one-shot room, link on join (kept for automation). |
-| QUICK MATCH (Vs Online > Solo, regional) | Closest waiting player first: see "Regional matchmaking" below. Else host a public lobby and search again every 6-8 s, so two searching players always meet. |
+| QUICK MATCH (Vs Online > Solo, regional) | Battle Royale for 2-4 (protocol 6). Closest waiting host first: see "Regional matchmaking" below. Else host a public 4-seat lobby (tag `p6r25-R`, Relay allocation for 3 guests) and, while nobody has connected, search again every 6-8 s so two searching hosts meet. The host starts at once with 3 connected guests, or with 1-2 guests 20 s (`QuickFillSeconds`) after the first one connected; it then seals the transport and deletes the lobby. A 4th Relay join after that fails and goes back into the search. Guests wait up to 45 s for the Start. |
 | LAN (no services) | `HostLan()` listens on UDP 7777 and shows this PC's IP; `JoinLan(ip)` connects. Same transport, handshake and rollback. |
 | vs AI | offline, `ChibiCpuInputSource` (step 17). |
 
 Once the link is up the host deletes the lobby (no third player can join), then `ChibiOnlineMatch` runs:
 handshake (host decides seed/stage; both compare a hash of RulesVersion + every constant table; mismatched builds are
 refused with a clear message), then rollback play, then a result decided only from the CONFIRMED state.
+
+**2-4 players (protocol 6, star, `four-player-design.md` 2-3).** One Relay allocation `CreateAllocationAsync(guests)`
+and one join code for every guest; the host's `ChibiUtpTransport` accepts up to 3 peers (`Peer(i)` per guest, also on
+the WebGL wss driver) and is `Sealed` at hand-off (`NetworkRoomManager.OnGroupConnected`). The host runs
+`ChibiOnlineMatch.HostGroup` + `ChibiGroupHandshake` (all Hellos, then Start with each guest's slot + Roster with every
+name, then all Ready); each guest runs the ordinary joiner and checks its own seat. During play the host forwards every
+player's inputs and checksums (`ChibiRollbackSession` star links) and never changes one.
 
 Players can be anywhere with internet (Wi-Fi or mobile data, other cities or the same room): Relay connects them,
 and the Relay SDK picks the server region with the best ping (QoS) automatically. No internet → the menu says so
@@ -59,14 +66,18 @@ MATCHMAKING need 13+ and the internet (the card says why otherwise); VS CPU neve
   Click a block to go in: room code with **COPY**, **INVITE A FRIEND BY NAME** (host), seats, fighter, stage. Host at
   most 2 rooms. BACK on every screen.
 - A room is a private Lobby of **2-4 seats** (`MaxPlayers` = `ChibiRoomRules.MaxSeats` = 4) kept alive by the host's
-  heartbeat (also during fights). The fight engine is still 1v1: a fight starts only with **exactly 2** seated
-  (`FightSeats`); with 3-4 seated nothing starts and the room says "3-4 player fights are coming soon: 2 players start
-  the fight." Seat 0 is the host, then join order; only seat 1 ever connects to a launch. Player data: name (no
-  #tag), fighter, OK flag, start nonce, launch ack. Lobby data: stage, `go` nonce, Relay code.
+  heartbeat (also during fights). A fight starts with **2, 3 or 4** seated players who all pressed OK (protocol 6;
+  3-4 = Battle Royale, FFA). Seat 0 is the host, then join order; every guest seat connects to a launch and becomes
+  that sim slot. Player data: name (no #tag), fighter, OK flag, start nonce, launch ack. Lobby data: stage, `go`
+  nonce, Relay code.
 - Inside: pick a fighter, press **OK** (locked in; **CHANGE** unlocks). OK unlocks only after a fresh read of the room.
-  **START FIGHT** works only when exactly 2 are seated and both pressed OK; either player may press it (and the host
-  presses it by itself once both are ready).
-- Host start → host un-readies, opens a fresh Relay link (`HostLinkAsync`), publishes `{relay, go}`. Guest start →
+  **START FIGHT** works when 2-4 are seated and all pressed OK; any player may press it (and the host presses it by
+  itself once all are ready).
+- SEC-001 launch lock for every seat: the host records ALL guest PlayerIds in seat order (`ChibiRoomRules.GuestIds`,
+  "id|id|id"), locks the Lobby, and aborts if any seat changes (`SameFightSeats`) or a guest withdraws OK
+  (`LaunchStillValid`); it waits for EVERY guest's ack (`GuestAcked`). Each guest's handshake refuses a Start whose
+  player count differs from the room's seats (`expectPlayers`), besides the stage / hazards checks.
+- Host start → host un-readies, opens a fresh Relay link (`HostLinkAsync(guests)`), publishes `{relay, go}`. Guest start →
   guest publishes a nonce, the host's 2 s poll launches (max 3 guest starts per 2 min). The guest sees the new `go`,
   acknowledges it (ack = go, OK off), joins (`JoinLink`) → handshake → match. No ack within 8 s or no link within
   25 s → cancelled; both press OK again. After the fight both return to the room.
@@ -128,6 +139,9 @@ MATCHMAKING need 13+ and the internet (the card says why otherwise); VS CPU neve
 |---|---|
 | KO / time-out in the confirmed state | win / loss / draw (same-tick double KO = draw, D-F1) |
 | opponent quits (Leave), goes silent 5 s, or the transport drops | **you win** (decision Q4) |
+| 3-4 players: a guest quits, goes silent 5 s, drops, or is the slowest past the stall limit | that player is eliminated at the exact frame the host announces; the match goes on |
+| 3-4 players: the host leaves | no contest for everyone (`HostLeft`) |
+| 3-4 players: the confirmed end | win = your bit in `WinnerMask`, `Place` shown |
 | you quit | loss |
 | checksum mismatch (desync) | no contest, no rewards |
 

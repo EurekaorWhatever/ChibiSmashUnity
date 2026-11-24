@@ -155,3 +155,116 @@ are View (parallel agent). KO credit (counting KOs per attacker from LastHitBy) 
   HUMAN slot 2/3 would throw in `Bindings.Get`); fighters 2/3 share sprite sort bases with 0/1; CV overlay and gesture
   prompts still cover P1 / P2 only; ChibiSimTestHud stays 2-player; Phase 1 review items 1, 3-9 are sim-side (other agent).
 - Evidence still to take: Play Mode screenshots of the 4-panel HUD, 2v2 colours, 4-fighter camera, results.
+
+## Phase 3: online 2-4 players (star through the host, protocol 6), code complete 2026-11-23, waiting for the lead's Unity run
+
+Spec: `four-player-design.md` sections 2.1-2.5, 3, 7, 9. Rules: `.claude/rules/netcode-core.md` (red zone: needs the
+network-programmer and security-engineer reviews before commit). Nothing committed; the lead verifies in Unity.
+
+Design used:
+- Session-level star: a guest sends ONE block (its own inputs) to the host; the host sends each guest one block per
+  other player, read from its own input ring (so the host also repairs loss on forwarded streams). The host never
+  changes an input; it only forwards actual inputs. 1v1 = the same star with one guest (= the protocol 5 exchange).
+- Protocol 6 input datagram: blocks (slot, lastFrame, count, inputs, checksum), ack of the receiver's stream, extra
+  acks (guest to host), leave frames (host only). `MaxPacketBytes` 64 -> 216 (worst case 209 B, mux limit 256).
+  1v1 readers ignore the slot (one remote), so old 1v1 test messages still parse.
+- Leaves (3-4 players): only the host declares (`DeclareLeft`, its own per-guest timeout, or the stall limit on the
+  slowest guest). Leave frame = first frame the host does not hold for that player; it rides in every host datagram;
+  every peer clears that presentMask bit from it on (`RollbackInputBuffer.SetLeft`, rollback if needed).
+  A guest that sees its own slot in the leave mask was dropped. Host gone = no contest.
+- Guests (3-4 players) treat any accepted host datagram as life (the host may stall on a slow guest); their stall
+  limit is 5/6 of the window so the host acts first.
+
+Checklist:
+- [x] 1. Codec: protocol 6 input datagram (`ChibiInputPacket.cs`), compile OK 0 both assemblies
+- [x] 2. N-stream `RollbackInputBuffer` (per-stream contiguous / prediction, `SetLeft`, `PresentMask`) and
+      `ChibiRollbackSession` for 2-4 peers (star links, forwarding, per-remote checksums, `DeclareLeft`, `StepPresent`),
+      compile OK 0 both assemblies
+- [x] 3. Control codec: Start v6 (count, mode, teams, 4 seats, your slot; `Slot` defaults to 1 = the 1v1 guest), Roster
+      (names), `ChibiGroupHandshake` (host, all Hellos -> Start + Roster per seat -> all Ready), joiner checks its own seat and
+      `expectPlayers` (SEC-001); control `MaxBytes` 48 -> 96
+- [x] 4. `ChibiOnlineMatch` for 2-4 (host with N-1 links, results from WinnerMask, leaver = eliminated, host left = no contest)
+- [x] 5. `ChibiUtpTransport` host accepts up to 3 peers (`Peer(i)` views, `Sealed`, `DropPeer`; 1v1 path unchanged),
+      `NetworkRoomManager` Relay `CreateAllocationAsync(guests)`, `HostLinkAsync(guests)`, `OnGroupConnected`; GameManager
+      `StartOnline` (HostGroup / Join with `expectPlayers` and a longer join timeout), `ChibiMatch.CreateOnline` for N seats
+- [x] 6. Rooms: start with 2-4 ready seats, SEC-001 lock for every seat (`GuestIds` "id|id|id", all acks), "coming soon"
+      removed from rules and room screen; Quick Match = 4-seat public lobby, tag `p6r25-R`, starts at 4 or 20 s after the
+      first guest (`QuickFillSeconds`)
+- [x] 7. Tests: `ChibiStarNetcodeTests` (25: 2/3/4-peer lossy reordering stars, burst loss, leave at the host's frame,
+      silent guest timeout, dropped guest, forged slot / leave / ack, codec v6 round trip + fuzz, Start / Roster, full 4P
+      online match with names, guest forfeit, host forfeit) + `ChibiRoomRulesTests` (3-4 seats start, seat lock, acks).
+      Test edit on purpose: `CanStart_ThreeOrFourSeated_NeverStarts` became `CanStart_ThreeOrFourSeatedAllReady_Starts` (spec change).
+- Mono harness run 2026-11-23 (scratchpad runner, not committed): new `ChibiStarNetcodeTests` 25/25; existing NetcodeContract,
+  PacketCodec, RollbackSession, RollbackInputBuffer, OnlineMatch, PlayerName, SyncVerification, Sanitize, MovesetLifecycle,
+  Determinism, FourPlayer, FourPlayerRules 182/182. Golden edit: `PinnedProtocolVersion` 5 -> 6 and `GoldenHelloHex` byte 1
+  `51` -> `61` (the Hello layout is unchanged; that byte holds the type nibble and the low nibble of the protocol).
+- [x] 8. Docs: Network Engineering Summary (protocol 6, star, results), online-rooms.md (quick match, rooms, results)
+
+Left for the lead / later (not done here):
+- Unity run of the full EditMode suite (the Mono harness cannot load Unity Services / MonoBehaviour tests) and Play Mode
+  evidence of a real 3-4 player Relay match (PC + WebGL wss); no UTP test with 3 real peers yet (`ChibiUtpTransportTests` is 1v1).
+- Red-zone reviews before commit: network-programmer + security-engineer (star forwarding, leave frames, seat lock).
+- Online results for 3-4 players: `ChibiMatch.WonLocal / LostLocal` now read the online outcome; the multi-results
+  screen (`Hud.MultiResults`) was built offline-only in Phase 2b and is not checked online.
+- Known limits: the host can forge forwarded inputs (checksums catch it unless it forges them too); guest-to-guest
+  latency has one extra hop; quick match teams / 2v2 online not wired (mode = FFA); replays are not recorded for 3-4.
+- LAN stays 1v1.
+
+## Phase 3 review fixes (network: CHANGES NEEDED, security: APPROVE WITH NITS), 2026-11-24
+
+Lead's Unity run before the fixes: EditMode 1981/1981. Mono harness after the fixes: 235/235 netcode + rooms tests
+(`ChibiStarNetcodeTests` 40). Each new regression test was watched failing against the unfixed code (H1 cascade at
+8+-2 and 12+-3 ticks one way; M1; M2; M3 x2; SEC-003 x3 by mutation), then passing.
+
+- [x] H1 silent guest cascade: the host counts silence only for the guest(s) with the lowest contiguous frame, and
+      `DeclareLeft` resets the other guests' silence and the stall window. Test `Leave_SilentGuestAtHighRtt_*` (4 cases).
+- [x] M1 a left player's checksum at or after its leave frame is never compared (accept + compare). Test
+      `Checksum_OfALeftPlayerAtOrAfterItsLeaveFrame_IsIgnored`.
+- [x] M2 a guest's Leave(MatchComplete) decides nothing on the host. Test `GroupMatch_GuestSaysMatchComplete_IsNotDropped`.
+- [x] M3 / SEC-002 every guest Leave reason only affects that guest (Desync claim = that guest dropped). Guests compare
+      checksums with the host only (forwarded checksums are no longer sent); the host waits for every live guest's
+      checksum of a frame: exactly one disagreeing guest while another agrees = that guest is dropped (`ChecksumDrops`),
+      anything else = desync, no contest. Tests `Checksum_*` (3), `GroupMatch_GuestClaimsDesync_OnlyThatGuestIsDropped`.
+- [x] SEC-003 + L2 seat binding: each room member publishes `k` = `ChibiRoomRules.SeatKey(secret)` (SHA-256, 16 hex,
+      Member visibility); the joiner sends the secret in an optional Hello trailer (golden Hello unchanged: no secret);
+      the host accepts each seat key once and the connection becomes that SEAT's sim slot (`ChibiGroupHandshake.SlotOf`);
+      a 1v1 room host checks `expectKey`. Anything else is refused (InvalidConfig, the launch aborts). Tests `SeatBinding_*` (4),
+      `Hello_SecretTrailer_RoundTripsAndIsOptional`.
+- [x] SEC-004 room fights draw each seat's lobby name (`ChibiMatch.SetRoomNames`, sanitised by the room snapshot), not the
+      handshake name. Quick match names stay self-reported (PeerDisplayName).
+- [x] Guest Process nit: leaves are validated (`RollbackInputBuffer.CanSetLeft`) before any is applied.
+- [x] SEC-001 documented as an accepted risk (Network Engineering Summary "Limits", four-player-design.md 2.1).
+
+Noted, not changed:
+- L1: guests' stall limit is 5/6 of the window and only the host drops the slowest guest; a griefing host can still slow a
+  match to about a sixth of full speed before guests end it (no contest).
+- L3: a 1v1 quick match waits up to 20 s for more players (spec: start at 4, or with 2-3 after the fill timeout).
+- RTT / clock-sync nits: RTT is sampled from the ack of our own stream only (per link), and a guest's time dilation
+  follows the host's advantage only; both are diagnostics / smoothing, never part of the simulation.
+- A seat-key refusal aborts the whole launch (everyone presses OK again) instead of dropping just the stranger.
+
+## Phase 3 verification-review nits (APPROVE WITH NITS), 2026-11-24
+
+Lead's run before: Unity EditMode 1996/1996; a real 2-instance room match on protocol 6 with seat keys and lobby names.
+Mono harness after: netcode + rooms 222 pass; the 7 failures are SaveData tests (JsonUtility is native: Unity only),
+including the new `DevName_IsNeverWrittenToTheSave`. SEC-007 and SEC-008 tests were watched failing by mutation.
+
+- [x] SEC-005 the seat secret is renewed in `ChibiRoomService.ResetSeat` (room entry, fight end, launch abort, seat
+      change), so each seat / launch has its own secret; the new key goes out with the next player data push (OK).
+- [x] SEC-006 the 1v1 room host binds the seat whenever it is given a key value: "" or a malformed key refuses every
+      Hello (null = no binding: quick match / LAN). Test `OneVsOneRoomHost_GuestPublishedNoKey_RefusesEveryHello`.
+- [x] SEC-008 a guest resets its stall window and silence when it applies a leave (as the host does in `DeclareLeft`).
+      Test `Guest_LeaveAnnounced_ResetsItsStallWindow`.
+- [x] SEC-007 hang fixed: a leave re-decides every pending checksum frame without the leaver (`ReviewPendingChecks`).
+      Tests `Checksum_AwaitedGuestLeaves_*` (2). Documented rest: a guest that never sends a checksum, or copies the
+      host's, is never caught by the check (it can only hide its OWN desync, and a frame waiting for it is decided when
+      it leaves); the check ring is 8 frames, so a frame still waiting after 8 intervals is dropped undecided.
+- [x] DEV-ONLY `ChibiDevFlags` (Netcode/ChibiDevFlags.cs), inert unless `Application.isEditor || Debug.isDebugBuild`:
+      `-authProfile NAME` (or `ChibiDevFlags.SetAuthProfile("p2")` from the editor before going online) switches the
+      Authentication profile before the anonymous sign-in (`NetworkRoomManager.SignInOnce`, `ChibiAccount`);
+      `-devName NAME` uses a run-only name (`SaveData.diskPlayerName` keeps the real name on disk). Tests
+      `DevFlags_ParseAndValidate`, `DevName_IsNeverWrittenToTheSave` (Unity only).
+
+How to run a real 3-player Relay match on one PC (development build):
+`ChibiClash.exe -authProfile p2 -devName Tester2` and `ChibiClash.exe -authProfile p3 -devName Tester3`, plus the
+editor (default profile). Each window is its own anonymous player with its own claimed name.

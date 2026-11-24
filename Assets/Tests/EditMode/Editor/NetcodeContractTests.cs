@@ -59,7 +59,7 @@ namespace ChibiClash.Tests
         /// stage range is 0..7; Hello keeps its layout, only its protocol byte (and the rules field) change.
         /// 5: re-recorded ON PURPOSE (review 2026-11-16, netcode hardening) - same layout, new rollback/result rules
         /// (DisconnectTicks cap, input-progress timeout, MatchComplete and never-started scoring).</remarks>
-        const int PinnedProtocolVersion = 5;
+        const int PinnedProtocolVersion = 6;
         /// <summary>Hash of every gameplay constant table + the fixture config (ChibiMatchConfig.ComputeHash).</summary>
         const uint GoldenConfigHash = 0x3A6558E2u;
         /// <summary>Final state checksum of fixture match A after <see cref="Ticks"/> ticks.</summary>
@@ -75,7 +75,7 @@ namespace ChibiClash.Tests
         /// Rules 23 (2026-11-17): only the rules byte moved (0x60 -> 0x70), as in the v22 bump; layout unchanged, no protocol bump.
         /// Rules 24 (ED-1, 2026-11-17): only the rules byte moved (0x70 -> 0x80); layout unchanged, no protocol bump.
         /// Rules 25 (4-player rules, 2026-11-23): only the rules byte moved (0x80 -> 0x90); layout unchanged, no protocol bump.</remarks>
-        const string GoldenHelloHex = "c9519001208922ae1a";
+        const string GoldenHelloHex = "c9619001208922ae1a";
 
         const int Ticks = 1800;   // 30 s of play: movement, attacks, skills, jumps, hits, KOs
         const int FourTicks = 600;   // 10 s of 4-fighter play: crowded hits, grabs, shots and a few KOs

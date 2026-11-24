@@ -75,6 +75,15 @@ namespace ChibiClash.Netcode
 
         /// <summary>Matchmaking tag: only builds with the same wire protocol and rules version meet.</summary>
         public static string ProtocolTag => "p" + ChibiPacketCodec.ProtocolVersion + "r" + ChibiMatchConfig.RulesVersion;
+        /// <summary>
+        /// Quick match lobbies (VS ONLINE): Battle Royale for 2-4 players. The play style is part of the tag
+        /// (four-player-design.md 3), so modes and builds never mix in one search.
+        /// </summary>
+        public static string QuickTag => ProtocolTag + "-R";
+        /// <summary>Quick match seats (host + up to 3 guests, one Relay allocation).</summary>
+        public const int QuickSeats = ChibiSimState.MaxFighters;
+        /// <summary>Quick match: once a first opponent is connected, wait this long for more (start at once when full).</summary>
+        public const float QuickFillSeconds = 20f;
 
         /// <summary>Current step of the flow.</summary>
         public ChibiRoomState State { get; private set; } = ChibiRoomState.Idle;
@@ -95,6 +104,17 @@ namespace ChibiClash.Netcode
 
         /// <summary>Raised once when the UDP link to the opponent is up. The receiver owns the transport from then on.</summary>
         public event Action<ChibiUtpTransport, bool> OnConnected;
+        /// <summary>
+        /// Host of a star (quick match, or a room of 2-4 seats): raised once when the seats are filled. Arguments: the
+        /// transport (owned by the receiver), the link per guest slot ([0] null), and the player count (2..4).
+        /// </summary>
+        public event Action<ChibiUtpTransport, IChibiTransport[], int> OnGroupConnected;
+
+        /// <summary>Host of a star: guests the room expects (rooms), 0 = fill up to 3 (quick match).</summary>
+        int _expectGuests;
+        float _firstGuestAt = -1f;
+        /// <summary>Host of a star: guests connected right now (for the waiting text).</summary>
+        public int ConnectedGuests => _transport != null && _isHost ? _transport.ConnectedPeers : 0;
 
         ChibiUtpTransport _transport;
         bool _isHost, _quickMode;
@@ -324,6 +344,7 @@ namespace ChibiClash.Netcode
             try
             {
                 if (UnityServices.State != ServicesInitializationState.Initialized) await UnityServices.InitializeAsync();
+                ChibiDevFlags.ApplyAuthProfile();   // dev only: one player per window (-authProfile); inert in release
                 if (!AuthenticationService.Instance.IsSignedIn) await AuthenticationService.Instance.SignInAnonymouslyAsync();
                 return null;
             }
@@ -344,11 +365,16 @@ namespace ChibiClash.Netcode
             Status = isPrivate ? "Creating a private room..." : "No open match found, hosting one...";
             try
             {
-                Allocation alloc = await RelayService.Instance.CreateAllocationAsync(1);
+                // Quick match is a star of up to 4 (one allocation, the same join code for every guest); a private room
+                // made here is the 1v1 room by code.
+                int guests = isPrivate ? 1 : QuickSeats - 1;
+                Allocation alloc = await RelayService.Instance.CreateAllocationAsync(guests);
                 string relayCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
                 if (flow != _flow) return;
-                _transport = ChibiUtpTransport.HostRelay(alloc.ToRelayServerData(RelayConnectionType));
+                _transport = ChibiUtpTransport.HostRelay(alloc.ToRelayServerData(RelayConnectionType), guests);
                 _isHost = true;
+                _expectGuests = 0;
+                _firstGuestAt = -1f;
 
                 var options = new CreateLobbyOptions
                 {
@@ -356,7 +382,7 @@ namespace ChibiClash.Netcode
                     Data = new Dictionary<string, DataObject>
                     {
                         [KeyRelay] = new DataObject(DataObject.VisibilityOptions.Member, relayCode),
-                        [KeyProto] = new DataObject(DataObject.VisibilityOptions.Public, ProtocolTag, DataObject.IndexOptions.S1),
+                        [KeyProto] = new DataObject(DataObject.VisibilityOptions.Public, isPrivate ? ProtocolTag : QuickTag, DataObject.IndexOptions.S1),
                     },
                 };
                 // Matchmaking lobbies show only a 2-letter country code (from the device region setting) so the closest
@@ -369,8 +395,8 @@ namespace ChibiClash.Netcode
                     options.Data[KeyContinent] = new DataObject(DataObject.VisibilityOptions.Public, ChibiRegions.Continent(_myCountry), DataObject.IndexOptions.S4);
                 }
                 // A private room carries the host's chosen name (seen only by members: private lobbies are never listed).
-                string lobbyName = isPrivate ? ChibiSocialRules.SafeRoomName(roomName) : "Chibi Clash " + ProtocolTag;
-                var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, 2, options);
+                string lobbyName = isPrivate ? ChibiSocialRules.SafeRoomName(roomName) : "Chibi Clash " + QuickTag;
+                var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, isPrivate ? 2 : QuickSeats, options);
                 if (flow != _flow) { _ = LeaveLobby(lobby, true); return; }
                 _lobby = lobby;
                 RoomCode = isPrivate ? lobby.LobbyCode : "";
@@ -394,9 +420,12 @@ namespace ChibiClash.Netcode
         /// code). Returns the Relay join code to publish to the guest, or null on failure (see <see cref="Status"/>).
         /// The connected link is handed over through <see cref="OnConnected"/> exactly like every other mode.
         /// </summary>
-        public async Task<string> HostLinkAsync()
+        /// <param name="guests">Seated guests the fight is for (1..3). The link is handed over once all of them connected:
+        /// 1 through <see cref="OnConnected"/> (the 1v1 path), 2-3 through <see cref="OnGroupConnected"/>.</param>
+        public async Task<string> HostLinkAsync(int guests = 1)
         {
             if (Busy || !Gate()) return null;
+            if (guests < 1 || guests > ChibiUtpTransport.MaxGuests) { Fail("A fight needs 2 to 4 players."); return null; }
             int flow = ++_flow;
             _quickMode = false;
             RoomCode = "";
@@ -405,14 +434,15 @@ namespace ChibiClash.Netcode
             Status = "Starting the fight...";
             try
             {
-                Allocation alloc = await RelayService.Instance.CreateAllocationAsync(1);
+                Allocation alloc = await RelayService.Instance.CreateAllocationAsync(guests);
                 string relayCode = await RelayService.Instance.GetJoinCodeAsync(alloc.AllocationId);
                 if (flow != _flow) return null;
-                _transport = ChibiUtpTransport.HostRelay(alloc.ToRelayServerData(RelayConnectionType));
+                _transport = ChibiUtpTransport.HostRelay(alloc.ToRelayServerData(RelayConnectionType), guests);
                 _isHost = true;
+                _expectGuests = guests;
                 _lobby = null;
                 State = ChibiRoomState.WaitingForOpponent;
-                Status = "Waiting for your friend to connect...";
+                Status = guests == 1 ? "Waiting for your friend to connect..." : "Waiting for your friends to connect...";
                 return relayCode;
             }
             catch (Exception e)
@@ -556,7 +586,7 @@ namespace ChibiClash.Netcode
                 var filters = new List<QueryFilter>
                 {
                     new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT),
-                    new QueryFilter(QueryFilter.FieldOptions.S1, ProtocolTag, QueryFilter.OpOptions.EQ),
+                    new QueryFilter(QueryFilter.FieldOptions.S1, QuickTag, QueryFilter.OpOptions.EQ),
                 };
                 if (_myCountry.Length > 0 && maxTier <= ChibiRegions.TierSubregion)
                     filters.Add(new QueryFilter(QueryFilter.FieldOptions.S3, ChibiRegions.Subregion(_myCountry), QueryFilter.OpOptions.EQ));
@@ -686,6 +716,12 @@ namespace ChibiClash.Netcode
             _transport.Pump();
             _transport.Flush();
 
+            if (_isHost && _transport.MaxPeers > 1)
+            {
+                UpdateStarHost();
+                return;
+            }
+
             if (_transport.LinkState == ChibiLinkState.Connected)
             {
                 // Hand the link to the match. The host removes the lobby so no third player can find it.
@@ -716,6 +752,65 @@ namespace ChibiClash.Netcode
                 }
             }
             else if (!_isHost && Time.unscaledTime > _connectDeadline) RetryOrFail("Could not reach your opponent (timed out).");
+        }
+
+        /// <summary>
+        /// Host of a star (quick match up to 4, or a room of 3-4): hand the guests to the match when the seats are filled.
+        /// Quick match starts when 3 guests are connected, or with 1-2 once <see cref="QuickFillSeconds"/> passed since the
+        /// first one arrived. A room starts when every seated guest is connected (the room service times the launch out).
+        /// </summary>
+        void UpdateStarHost()
+        {
+            if (_transport.LinkState == ChibiLinkState.Lost) { Fail("The connection to the Relay server failed."); return; }
+            int n = _transport.ConnectedPeers;
+            float now = Time.unscaledTime;
+            bool start;
+            if (_expectGuests > 0) start = n >= _expectGuests;
+            else
+            {
+                if (n == 0) _firstGuestAt = -1f;
+                else if (_firstGuestAt < 0f) _firstGuestAt = now;
+                start = n >= _transport.MaxPeers || (n >= 1 && now - _firstGuestAt >= QuickFillSeconds);
+                Status = n == 0 ? "Searching for players in " + SearchArea + "..."
+                                : (n + 1) + " of " + QuickSeats + " players. Starting in " +
+                                  Mathf.CeilToInt(QuickFillSeconds - (now - _firstGuestAt)) + " s...";
+            }
+            if (start) { HandOffStar(); return; }
+
+            if (_lobby != null)
+            {
+                if (now >= _heartbeatAt)
+                {
+                    _heartbeatAt = now + HeartbeatSeconds;
+                    _ = Heartbeat(_lobby.Id);
+                }
+                // Two waiting hosts would never meet: the one with nobody connected may move to the other's lobby.
+                if (_quickMode && n == 0 && !_searching && now >= _retryAt)
+                {
+                    _retryAt = now + RetryQuickJoinSeconds + UnityEngine.Random.Range(0f, 2f);
+                    _ = SwitchToJoinerIfSomeoneIsWaiting(_flow);
+                }
+            }
+        }
+
+        /// <summary>Seal the transport (no stranger can take a seat later), drop half-connected guests, close the lobby.</summary>
+        void HandOffStar()
+        {
+            var t = _transport;
+            t.Sealed = true;
+            var guests = new IChibiTransport[ChibiSimState.MaxFighters];
+            int players = 1;
+            for (int i = 0; i < t.MaxPeers; i++)
+            {
+                if (t.PeerState(i) == ChibiLinkState.Connected) guests[players++] = t.Peer(i);
+                else t.DropPeer(i);
+            }
+            _transport = null;
+            _ = LeaveLobby(_lobby, true);
+            _lobby = null;
+            State = ChibiRoomState.Connected;
+            Status = "Connected!";
+            OnGroupConnected?.Invoke(t, guests, players);
         }
 
         /// <summary>

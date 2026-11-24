@@ -84,6 +84,9 @@ namespace ChibiClash
         void Awake()
         {
             Save = SaveData.Load();
+            // DEV ONLY (-devName, ChibiDevFlags; inert in release): a name for this run that is never saved (exes share PlayerPrefs).
+            string devName = Netcode.ChibiDevFlags.DevName;
+            if (devName != null) { Save.diskPlayerName = Save.playerName ?? ""; Save.playerName = devName; }
             Bindings.Data = Save;
             // Perf audit P4 #6: every widget is GUI.* (no GUILayout / GUI.Window anywhere), so skip the Layout event pass;
             // halves OnGUI calls per frame. GUI.TextField / FocusControl do not need it (verify text fields in Play Mode).
@@ -100,6 +103,7 @@ namespace ChibiClash
             menuTracker = new GestureTracker(menuPose);
             rooms = gameObject.AddComponent<Netcode.NetworkRoomManager>();
             rooms.OnConnected += OnRoomConnected;
+            rooms.OnGroupConnected += OnRoomGroupConnected;
             social = gameObject.AddComponent<Netcode.ChibiSocialManager>();
             account = gameObject.AddComponent<Netcode.ChibiAccount>();
             account.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);

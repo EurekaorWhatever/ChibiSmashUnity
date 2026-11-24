@@ -135,6 +135,8 @@ namespace ChibiClash.Netcode
         Reject = 4,
         /// <summary>Either way: I am leaving the match. Carries a <see cref="ChibiLeaveReason"/>.</summary>
         Leave = 5,
+        /// <summary>Host -> guest (protocol 6): every player's name by slot, tied to the match hash. Cosmetic, resent.</summary>
+        Roster = 6,
     }
 
     /// <summary>Why a handshake was refused.</summary>
@@ -190,26 +192,52 @@ namespace ChibiClash.Netcode
         public int NameLength;
         /// <summary>The received name as a string ("" when none). Allocates: call once, not per tick.</summary>
         public string ReceivedName() => NameLength == 0 ? "" : new string(NameChars, 0, NameLength);
+        /// <summary>
+        /// Start (protocol 6): the RECEIVER's player slot (1..PlayerCount-1). Defaults to 1, the 1v1 guest, so a message
+        /// built without it describes a 1v1 Start.
+        /// </summary>
+        public int Slot = 1;
+        /// <summary>
+        /// Hello (protocol 6, optional trailer after the name): the joiner's room seat secret (SEC-003). The host accepts the
+        /// Hello only if <see cref="ChibiRoomRules.SeatKey"/> of it equals the key that seat published in the room. 0 = none.
+        /// </summary>
+        public ulong Secret;
+        /// <summary>Roster, write side: name per slot (cosmetic, filtered to the name alphabet like every name).</summary>
+        public readonly string[] RosterOut = new string[ChibiSimState.MaxFighters];
+        /// <summary>Roster: number of slots (2..4).</summary>
+        public int RosterCount;
+        /// <summary>Roster, read side: name characters per slot (reused buffers, no allocation per message).</summary>
+        public readonly char[][] RosterChars =
+        {
+            new char[ChibiControlCodec.NameMaxChars], new char[ChibiControlCodec.NameMaxChars],
+            new char[ChibiControlCodec.NameMaxChars], new char[ChibiControlCodec.NameMaxChars],
+        };
+        /// <summary>Roster, read side: valid characters per slot.</summary>
+        public readonly int[] RosterLength = new int[ChibiSimState.MaxFighters];
+        /// <summary>Roster name of <paramref name="slot"/> as a string. Allocates: call once per roster, not per tick.</summary>
+        public string RosterName(int slot) => RosterLength[slot] == 0 ? "" : new string(RosterChars[slot], 0, RosterLength[slot]);
     }
 
     /// <summary>
     /// Wire format of control datagrams (bits, LSB first, via <see cref="BitBuffer"/>):
     ///   8 magic 0xC9, 4 type, then
     ///   Hello : 8 protocol, 16 rules, 4 class, 1 passive, [name]
-    ///   Start : 8 protocol, 16 rules, 32 seed, 4 class0, 1 passive0, 4 class1, 1 passive1, 4 stage, 1 hazardsOff (protocol 4),
-    ///           4 inputDelay, 4 maxPrediction, 16 disconnectTicks, 32 matchHash, [name]
+    ///   Start : 8 protocol, 16 rules, 32 seed, 2 playerCount - 1, 1 mode, 4 teamOf, 4 x (4 class, 1 passive), 4 stage,
+    ///           1 hazardsOff, 2 receiver slot, 4 inputDelay, 4 maxPrediction, 16 disconnectTicks, 32 matchHash, [name]
+    ///           (protocol 6: 2-4 players; seats at or above playerCount are written as 0)
+    ///   Roster: 32 matchHash, 2 playerCount - 1, then one [name] per slot (protocol 6)
     ///   Ready : 32 matchHash
     ///   Reject/Leave : 8 reason
     ///   [name] (optional trailer, cosmetic): 5 length (0..24), then 6 bits per character, an index into
     ///          NameAlphabet. A datagram that ends before the trailer means "no name" (older builds), so adding
     ///          it did not change the protocol version. A length above 24 is malformed.
-    /// Largest (Start + 24-char name) = 139 + 5 + 144 = 288 bits = 36 bytes.
+    /// Start + 24-char name = 158 + 149 = 307 bits = 39 bytes; Roster of 4 full names = 46 + 4 x 149 = 642 bits = 81 bytes.
     /// </summary>
     public static class ChibiControlCodec
     {
         public const byte Magic = 0xC9;
         /// <summary>Buffer size for control datagrams.</summary>
-        public const int MaxBytes = 48;
+        public const int MaxBytes = 96;
         const int ClassBits = 4, StageBits = 4, NameLengthBits = 5, NameCharBits = 6;
         /// <summary>Longest name on the wire (equals ChibiSocialRules.DisplayMax).</summary>
         public const int NameMaxChars = 24;
@@ -237,15 +265,17 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>Optional trailer: absent (too few bits left) = no name. Returns false only when malformed.</summary>
-        static bool ReadName(BitBuffer b, ChibiControlMessage m)
+        static bool ReadName(BitBuffer b, ChibiControlMessage m) => ReadName(b, m.NameChars, out m.NameLength);
+
+        static bool ReadName(BitBuffer b, char[] chars, out int length)
         {
-            m.NameLength = 0;
+            length = 0;
             if (b.BitsLeft < NameLengthBits) return true;
             int n = (int)b.Read(NameLengthBits);
             if (n > NameMaxChars) return false;
-            for (int i = 0; i < n; i++) m.NameChars[i] = NameAlphabet[(int)b.Read(NameCharBits)];
+            for (int i = 0; i < n; i++) chars[i] = NameAlphabet[(int)b.Read(NameCharBits)];
             if (b.Overrun) return false;
-            m.NameLength = n;
+            length = n;
             return true;
         }
 
@@ -262,17 +292,29 @@ namespace ChibiClash.Netcode
                     b.Write((uint)m.Class, ClassBits);
                     b.Write((uint)m.Passive, 1);
                     WriteName(b, m.Name);
+                    if (m.Secret != 0)
+                    {
+                        b.Write(1u, 1);
+                        b.Write((uint)m.Secret, 32);
+                        b.Write((uint)(m.Secret >> 32), 32);
+                    }
                     break;
                 case ChibiControlType.Start:
                     b.Write((uint)m.Protocol, 8);
                     b.Write((uint)m.Rules, 16);
                     b.Write(m.Config.Seed, 32);
-                    b.Write((uint)m.Config.Class0, ClassBits);
-                    b.Write((uint)m.Config.Passive0, 1);
-                    b.Write((uint)m.Config.Class1, ClassBits);
-                    b.Write((uint)m.Config.Passive1, 1);
+                    int players = m.Config.Players;
+                    b.Write((uint)(players - 1), 2);                // protocol 6
+                    b.Write((uint)m.Config.Mode, 1);
+                    b.Write((uint)m.Config.TeamOf & 0xF, 4);
+                    for (int i = 0; i < ChibiSimState.MaxFighters; i++)
+                    {
+                        b.Write(i < players ? (uint)m.Config.ClassOf(i) : 0u, ClassBits);
+                        b.Write(i < players ? (uint)(m.Config.PassiveOf(i) & 1) : 0u, 1);
+                    }
                     b.Write((uint)m.Config.Stage, StageBits);
                     b.Write(m.Config.HazardsOff ? 1u : 0u, 1);   // protocol 4 (rules v21, ST-5)
+                    b.Write((uint)m.Slot & 3, 2);                 // protocol 6: the receiver's slot
                     b.Write((uint)m.Settings.InputDelay, 4);
                     b.Write((uint)m.Settings.MaxPrediction, 4);
                     b.Write((uint)m.Settings.DisconnectTicks, 16);
@@ -281,6 +323,13 @@ namespace ChibiClash.Netcode
                     break;
                 case ChibiControlType.Ready:
                     b.Write(m.MatchHash, 32);
+                    break;
+                case ChibiControlType.Roster:
+                    b.Write(m.MatchHash, 32);
+                    if (m.RosterCount < 2 || m.RosterCount > ChibiSimState.MaxFighters)
+                        throw new InvalidOperationException("ChibiControlCodec.Write: RosterCount " + m.RosterCount + " outside 2..4");
+                    b.Write((uint)(m.RosterCount - 1), 2);
+                    for (int i = 0; i < m.RosterCount; i++) WriteName(b, m.RosterOut[i]);
                     break;
                 case ChibiControlType.Reject:
                 case ChibiControlType.Leave:
@@ -306,17 +355,29 @@ namespace ChibiClash.Netcode
                     m.Class = (FighterClass)b.Read(ClassBits);
                     m.Passive = (int)b.Read(1);
                     if (b.Overrun || !ReadName(b, m)) return false;
+                    m.Secret = 0;
+                    if (b.BitsLeft >= 65 && b.Read(1) != 0)                      // optional seat secret (SEC-003)
+                        m.Secret = b.Read(32) | ((ulong)b.Read(32) << 32);
                     break;
                 case ChibiControlType.Start:
                     m.Protocol = (int)b.Read(8);
                     m.Rules = (int)b.Read(16);
                     m.Config.Seed = b.Read(32);
+                    m.Config.PlayerCount = (int)b.Read(2) + 1;      // protocol 6; 1 is malformed (checked below)
+                    m.Config.Mode = (ChibiMatchMode)b.Read(1);
+                    m.Config.TeamOf = (int)b.Read(4);
                     m.Config.Class0 = (FighterClass)b.Read(ClassBits);
                     m.Config.Passive0 = (int)b.Read(1);
                     m.Config.Class1 = (FighterClass)b.Read(ClassBits);
                     m.Config.Passive1 = (int)b.Read(1);
+                    m.Config.Class2 = (FighterClass)b.Read(ClassBits);
+                    m.Config.Passive2 = (int)b.Read(1);
+                    m.Config.Class3 = (FighterClass)b.Read(ClassBits);
+                    m.Config.Passive3 = (int)b.Read(1);
                     m.Config.Stage = (int)b.Read(StageBits);
                     m.Config.HazardsOff = b.Read(1) != 0;          // protocol 4 (rules v21, ST-5)
+                    m.Slot = (int)b.Read(2);
+                    if (m.Config.PlayerCount < 2) return false;
                     m.Settings.InputDelay = (int)b.Read(4);
                     m.Settings.MaxPrediction = (int)b.Read(4);
                     m.Settings.DisconnectTicks = (int)b.Read(16);
@@ -325,6 +386,18 @@ namespace ChibiClash.Netcode
                     break;
                 case ChibiControlType.Ready:
                     m.MatchHash = b.Read(32);
+                    break;
+                case ChibiControlType.Roster:
+                    m.MatchHash = b.Read(32);
+                    m.RosterCount = (int)b.Read(2) + 1;
+                    if (b.Overrun || m.RosterCount < 2) return false;
+                    for (int i = 0; i < ChibiSimState.MaxFighters; i++) m.RosterLength[i] = 0;
+                    for (int i = 0; i < m.RosterCount; i++)
+                    {
+                        // Every name field must be present (an absent trailer would read as "no name" otherwise).
+                        if (b.BitsLeft < NameLengthBits) return false;
+                        if (!ReadName(b, m.RosterChars[i], out m.RosterLength[i])) return false;
+                    }
                     break;
                 case ChibiControlType.Reject:
                 case ChibiControlType.Leave:
@@ -420,6 +493,18 @@ namespace ChibiClash.Netcode
         readonly int _expectStage = -1;
         /// <summary>SEC-001: the hazards switch the joiner agreed to in the room (null = any).</summary>
         readonly bool? _expectHazardsOff;
+        /// <summary>SEC-001 (protocol 6): the number of seated players the joiner agreed to (-1 = any, e.g. quick match).</summary>
+        readonly int _expectPlayers = -1;
+        /// <summary>SEC-003: joiner = our room seat secret sent in Hello (0 = none); host = the key seat 1 published ("" = any).</summary>
+        ulong _secret;
+        string _expectKey = "";
+        /// <summary>SEC-006: host of a room fight: a seat key is REQUIRED (an empty / malformed key refuses every Hello).</summary>
+        bool _bindSeat;
+        /// <summary>Joiner: our slot from Start (1 until then).</summary>
+        int _slot = 1;
+        /// <summary>Names by slot ("" = unknown). Untrusted, alphabet-filtered; draw through ChibiSocialRules.PeerDisplayName.</summary>
+        readonly string[] _names = { "", "", "", "" };
+        bool _haveRoster;
 
         ChibiMatchConfig _cfg;
         ChibiRollbackSettings _settings;
@@ -432,8 +517,13 @@ namespace ChibiClash.Netcode
         public ChibiRollbackSettings Settings => _settings;
         /// <summary>Agreed match hash (valid once Agreed).</summary>
         public uint MatchHash => _hash;
-        /// <summary>Sim player index: host 0, joiner 1.</summary>
-        public int LocalIndex => _isHost ? 0 : 1;
+        /// <summary>Sim player index: host 0, joiner its slot from Start (1 in a 1v1).</summary>
+        public int LocalIndex => _isHost ? 0 : _slot;
+        /// <summary>
+        /// Player name of <paramref name="slot"/> as received ("" = unknown; our own slot = <see cref="LocalName"/>). Untrusted
+        /// but limited to <see cref="ChibiControlCodec.NameAlphabet"/>; draw it through ChibiSocialRules.PeerDisplayName.
+        /// </summary>
+        public string PlayerName(int slot) => slot == LocalIndex ? LocalName : (slot >= 0 && slot < _names.Length ? _names[slot] : "");
         /// <summary>Why it was rejected (local or remote refusal).</summary>
         public ChibiRejectReason RejectReason { get; private set; }
         /// <summary>True when the PEER refused us (false when we refused them).</summary>
@@ -449,26 +539,35 @@ namespace ChibiClash.Netcode
         /// <summary>Host (sim player 0): decides seed, stage and settings.</summary>
         /// <example><code>var hs = ChibiHandshake.ForHost(mux.Control, FighterClass.Melee, 0, stage: 1, seed, ChibiRollbackSettings.Default);</code></example>
         /// <param name="hazardsOff">Rules v20 (ST-5): stage hazards off for this match (host's choice; travels in Start).</param>
+        /// <param name="expectKey">SEC-003: the seat key the room's guest published (<see cref="ChibiRoomRules.SeatKey"/>); a
+        /// Hello whose secret does not hash to it is refused. null = no seat binding (quick match, LAN). SEC-006: any non-null
+        /// value binds the seat, so "" or a malformed key (the guest published none) refuses every Hello.</param>
         public static ChibiHandshake ForHost(IChibiTransport control, FighterClass myClass, int myPassive, int stage, uint seed,
                                              ChibiRollbackSettings settings, int timeoutTicks = DefaultTimeoutTicks,
-                                             string localName = "", bool hazardsOff = false)
-            => new ChibiHandshake(true, control, myClass, myPassive, stage, seed, settings, timeoutTicks, localName, hazardsOff);
+                                             string localName = "", bool hazardsOff = false, string expectKey = null)
+            => new ChibiHandshake(true, control, myClass, myPassive, stage, seed, settings, timeoutTicks, localName, hazardsOff)
+               { _bindSeat = expectKey != null, _expectKey = ChibiRoomRules.CleanSeatKey(expectKey) };
 
         /// <summary>Joiner (sim player 1): sends its fighter, accepts the host's config if it hashes the same locally.</summary>
         /// <example><code>var hs = ChibiHandshake.ForJoiner(mux.Control, FighterClass.Magic, 1);</code></example>
         /// <param name="expectStage">SEC-001: the room's stage the joiner agreed to; a Start with another stage is refused
         /// (InvalidConfig). -1 = accept any stage (quick play, where the host's pick is used).</param>
         /// <param name="expectHazardsOff">SEC-001: the room's hazards switch; a Start that differs is refused. null = any.</param>
+        /// <param name="expectPlayers">SEC-001 (protocol 6): the room's seated player count; a Start for another count is
+        /// refused. -1 = any (quick match).</param>
+        /// <param name="secret">SEC-003: our room seat secret (its key is in our lobby player data); 0 = none.</param>
         public static ChibiHandshake ForJoiner(IChibiTransport control, FighterClass myClass, int myPassive,
                                                int timeoutTicks = DefaultTimeoutTicks, string localName = "",
-                                               int expectStage = -1, bool? expectHazardsOff = null)
+                                               int expectStage = -1, bool? expectHazardsOff = null, int expectPlayers = -1,
+                                               ulong secret = 0)
             => new ChibiHandshake(false, control, myClass, myPassive, 0, 0, default, timeoutTicks, localName, false,
-                                  expectStage, expectHazardsOff);
+                                  expectStage, expectHazardsOff, expectPlayers) { _secret = secret };
 
         ChibiHandshake(bool isHost, IChibiTransport control, FighterClass myClass, int myPassive, int stage, uint seed,
                        ChibiRollbackSettings settings, int timeoutTicks, string localName, bool hazardsOff,
-                       int expectStage = -1, bool? expectHazardsOff = null)
+                       int expectStage = -1, bool? expectHazardsOff = null, int expectPlayers = -1)
         {
+            _expectPlayers = expectPlayers;
             _hazardsOff = hazardsOff;
             _expectStage = expectStage;
             _expectHazardsOff = expectHazardsOff;
@@ -534,6 +633,9 @@ namespace ChibiClash.Netcode
                     if (m.Protocol != ChibiPacketCodec.ProtocolVersion) { Reject(ChibiRejectReason.ProtocolMismatch); return; }
                     if (m.Rules != ChibiMatchConfig.RulesVersion) { Reject(ChibiRejectReason.RulesMismatch); return; }
                     if (!ChibiControlCodec.ValidClass(m.Class)) { Reject(ChibiRejectReason.InvalidConfig); return; }
+                    // SEC-003: in a room only the seated guest (who knows its seat secret) may take the seat.
+                    if (_bindSeat && (_expectKey.Length == 0 || ChibiRoomRules.SeatKey(m.Secret) != _expectKey))
+                    { Reject(ChibiRejectReason.InvalidConfig); return; }
                     _cfg = new ChibiMatchConfig
                     {
                         Seed = _seed, Class0 = _hostClass, Passive0 = _hostPassive, Class1 = m.Class, Passive1 = m.Passive,
@@ -543,6 +645,7 @@ namespace ChibiClash.Netcode
                     _hash = ChibiControlCodec.MatchHash(_cfg, _settings);
                     _haveJoiner = true;
                     PeerName = m.ReceivedName();
+                    _names[1] = PeerName;
                     SendStart();
                     break;
                 case ChibiControlType.Ready:
@@ -581,9 +684,18 @@ namespace ChibiClash.Netcode
                     _cfg = cfg;
                     _settings = m.Settings;
                     _hash = m.MatchHash;
+                    _slot = m.Slot;
                     PeerName = m.ReceivedName();
+                    _names[0] = PeerName;
                     State = ChibiHandshakeState.Agreed;
                     SendReady();
+                    break;
+                case ChibiControlType.Roster:
+                    // Cosmetic names of every seat, accepted once and only for the match we agreed to.
+                    if (State != ChibiHandshakeState.Agreed || _haveRoster || m.MatchHash != _hash || m.RosterCount != _cfg.Players) return;
+                    for (int i = 1; i < m.RosterCount; i++) if (i != _slot) _names[i] = m.RosterName(i);
+                    if (m.RosterLength[0] > 0 && PeerName.Length == 0) { PeerName = m.RosterName(0); _names[0] = PeerName; }
+                    _haveRoster = true;
                     break;
                 case ChibiControlType.Reject:
                     PeerRejected(m);
@@ -593,8 +705,15 @@ namespace ChibiClash.Netcode
 
         bool ValidStart(ChibiControlMessage m)
         {
-            if (!ChibiControlCodec.ValidClass(m.Config.Class0) || !ChibiControlCodec.ValidClass(m.Config.Class1)) return false;
-            if (m.Config.Class1 != _myClass || m.Config.Passive1 != _myPassive) return false;   // host must echo our pick
+            int players = m.Config.PlayerCount;
+            if (players < 2 || players > ChibiSimState.MaxFighters) return false;
+            if (_expectPlayers >= 2 && players != _expectPlayers) return false;   // SEC-001: the room's seat count
+            if (m.Slot < 1 || m.Slot >= players) return false;                    // our seat must exist and not be the host's
+            for (int i = 0; i < players; i++) if (!ChibiControlCodec.ValidClass(m.Config.ClassOf(i))) return false;
+            if ((int)m.Config.Mode > 1 || (m.Config.TeamOf & ~((1 << players) - 1)) != 0) return false;
+            if (m.Config.Mode == ChibiMatchMode.FreeForAll && m.Config.TeamOf != 0) return false;
+            // The host must echo our pick in OUR seat (each guest checks its own seat).
+            if (m.Config.ClassOf(m.Slot) != _myClass || m.Config.PassiveOf(m.Slot) != _myPassive) return false;
             if (m.Config.Stage < 0 || m.Config.Stage >= ChibiStageTable.Count) return false;   // rules v21: stages 0..7
             // SEC-001: in a room the joiner agreed to a stage and a hazards switch; the host cannot swap them in Start.
             if (_expectStage >= 0 && m.Config.Stage != _expectStage) return false;
@@ -631,6 +750,7 @@ namespace ChibiClash.Netcode
             _out.Class = _myClass;
             _out.Passive = _myPassive;
             _out.Name = LocalName;
+            _out.Secret = _secret;
             Send();
         }
 

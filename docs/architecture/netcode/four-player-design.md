@@ -124,6 +124,12 @@ The match ends in `ResolveBoundsAndMatchEnd`, as today. KOs run first, so a KO o
 | Trust | host could forge another player's input. Checksums catch it unless the host also forges those (review item) | each stream comes from its owner |
 | Work | medium: host transport accepts 3 connections | large: connection setup and N drivers |
 
+**Accepted risk (SEC-001, security review 2026-11-24):** a modified host can forge a guest's forwarded inputs AND the
+matching checksums, so nobody detects it. Accepted for v1 (no server; the host can already end any match by leaving; it
+needs a hacked client). Option B (mesh) or a server-side replay check would remove it. Since the review, guests compare
+checksums with the host only and the host arbitrates: a single disagreeing guest is dropped, the host disagreeing with
+the guests is a desync (no contest).
+
 The host stays a **dumb forwarder**, not an authority. Every peer still simulates from inputs only. The session
 API is per-player-stream, so option B can replace A later without touching the sim.
 

@@ -60,6 +60,10 @@ namespace ChibiClash.Netcode
         /// on a bad connection must not both record a win.
         /// </summary>
         OpponentStalled,
+        /// <summary>3-4 players, guest: the host left, timed out or lost the link. No contest (star: nobody relays any more).</summary>
+        HostLeft,
+        /// <summary>3-4 players, guest: the host announced that WE left (our link was too slow or silent). A loss.</summary>
+        Dropped,
     }
 
     /// <summary>Final result of an online match, from the local player's point of view.</summary>
@@ -67,8 +71,12 @@ namespace ChibiClash.Netcode
     {
         public ChibiMatchOutcome Outcome;
         public ChibiEndCause Cause;
-        /// <summary>Sim index of the winner, -1 for draw / no contest / aborted.</summary>
+        /// <summary>Sim index of the winner, -1 for draw / no contest / aborted (3-4 players: the lowest winning slot).</summary>
         public int Winner;
+        /// <summary>Bit per winning player once the match is over in the simulation (0 = draw / none).</summary>
+        public int WinnerMask;
+        /// <summary>Our finish place (1 = first) when the simulation ended the match, else 0.</summary>
+        public int Place;
         /// <summary>Simulated frame when the result was decided.</summary>
         public int Frame;
         /// <summary>Handshake detail when <see cref="Cause"/> is HandshakeFailed.</summary>
@@ -106,8 +114,13 @@ namespace ChibiClash.Netcode
         /// <summary>Ticks to keep the session alive after a confirmed end so the peer can confirm too (1.5 s).</summary>
         public const int LingerTicks = 90;
 
-        readonly ChibiChannelMux _mux;
-        readonly ChibiHandshake _handshake;
+        readonly ChibiChannelMux _mux;               // guest / 1v1 host: the one link
+        readonly ChibiHandshake _handshake;          // null for a group host
+        readonly ChibiGroupHandshake _group;         // host of a 3-4 player (or star 1v1) match, else null
+        readonly ChibiChannelMux[] _muxes;           // group host: one per guest slot ([0] null)
+        readonly IChibiLinkStatus[] _links;          // group host: per guest slot
+        readonly IChibiPumpedTransport _pump;
+        readonly IDisposable _owner;
         readonly IChibiInputSource _input;
         readonly IChibiLinkStatus _link;
         int _linger;
@@ -120,14 +133,40 @@ namespace ChibiClash.Netcode
         /// <summary>Confirmed inputs of the whole match (null until Playing). Save it on a desync for the bug report.</summary>
         public ChibiReplayRecorder Replay { get; private set; }
         public ChibiHandshake Handshake => _handshake;
+        /// <summary>Group host handshake (null unless created by <see cref="HostGroup"/>).</summary>
+        public ChibiGroupHandshake Group => _group;
+        /// <summary>The agreed config (valid once Playing; the host knows it once every Hello arrived).</summary>
+        public ChibiMatchConfig Config => _group != null ? _group.Config : _handshake.Config;
+        /// <summary>Match hash (0 until known).</summary>
+        public uint MatchHash => _group != null ? _group.MatchHash : _handshake.MatchHash;
+        /// <summary>True when a peer refused us (false when we refused, or nobody did).</summary>
+        public bool RejectedByPeer => _group == null && _handshake.RejectedByPeer;
+        /// <summary>Players in the match once agreed (2 before).</summary>
+        public int Players => Session != null ? Session.Players : (_group != null ? _group.Players : 2);
+        /// <summary>
+        /// Raw received name of a seat ("" = unknown); untrusted, alphabet-filtered. Draw it only through
+        /// ChibiSocialRules.PeerDisplayName.
+        /// </summary>
+        public string PlayerName(int slot) => _group != null ? _group.PlayerName(slot) : _handshake.PlayerName(slot);
+        /// <summary>(slot, frame): a player left the running match and was eliminated from that frame (3-4 players).</summary>
+        public event Action<int, int> OnPlayerLeft;
         public ChibiOnlineResult Result { get; private set; }
         /// <summary>True once <see cref="Result"/> is final.</summary>
         public bool HasResult => Result.Outcome != ChibiMatchOutcome.None;
-        /// <summary>Sim index of this peer (host 0, joiner 1).</summary>
-        public int LocalIndex => _handshake.LocalIndex;
+        /// <summary>Sim index of this peer (host 0, joiner its slot).</summary>
+        public int LocalIndex => _group != null ? 0 : _handshake.LocalIndex;
         public float TimeDilation => Phase == ChibiOnlinePhase.Playing && Session != null ? Session.TimeDilation : 1f;
         /// <summary>Datagrams the mux dropped (diagnostics).</summary>
-        public int MuxDropped => _mux.Dropped;
+        public int MuxDropped
+        {
+            get
+            {
+                if (_muxes == null) return _mux.Dropped;
+                int d = 0;
+                foreach (var m in _muxes) if (m != null) d += m.Dropped;
+                return d;
+            }
+        }
 
         /// <summary>Raised once when the handshake agrees and the session exists.</summary>
         public event Action<ChibiOnlineMatch> OnStarted;
@@ -142,6 +181,51 @@ namespace ChibiClash.Netcode
             _handshake = handshake(_mux.Control);
             _input = input ?? throw new ArgumentNullException(nameof(input));
             _link = raw as IChibiLinkStatus;
+            _pump = raw as IChibiPumpedTransport;
+            _owner = raw as IDisposable;
+        }
+
+        ChibiOnlineMatch(IChibiTransport[] guests, int players, Func<IChibiTransport[], ChibiGroupHandshake> handshake,
+                         IChibiInputSource input, IChibiPumpedTransport pump, IDisposable owner)
+        {
+            if (guests == null || guests.Length < players) throw new ArgumentException("one link per seat", nameof(guests));
+            _muxes = new ChibiChannelMux[ChibiSimState.MaxFighters];
+            _links = new IChibiLinkStatus[ChibiSimState.MaxFighters];
+            var controls = new IChibiTransport[ChibiSimState.MaxFighters];
+            for (int g = 1; g < players; g++)
+            {
+                _muxes[g] = new ChibiChannelMux(guests[g] ?? throw new ArgumentNullException(nameof(guests), "seat " + g));
+                _links[g] = guests[g] as IChibiLinkStatus;
+                controls[g] = _muxes[g].Control;
+            }
+            _group = handshake(controls);
+            _input = input ?? throw new ArgumentNullException(nameof(input));
+            _pump = pump;
+            _owner = owner;
+        }
+
+        /// <summary>
+        /// Host of a 2-4 player match over the star (protocol 6): <paramref name="guests"/>[g] is the link to guest slot g
+        /// (1..players-1; [0] unused). <paramref name="pump"/> services a shared driver around each tick; <paramref name="owner"/>
+        /// is disposed with the match (both may be null, e.g. loopback links).
+        /// </summary>
+        /// <example><code>var m = ChibiOnlineMatch.HostGroup(new[] { null, l1, l2, l3 }, 4, input, FighterClass.Melee, 0, 3, seed, settings);</code></example>
+        public static ChibiOnlineMatch HostGroup(IChibiTransport[] guests, int players, IChibiInputSource input, FighterClass myClass,
+                                                 int myPassive, int stage, uint seed, ChibiRollbackSettings settings,
+                                                 ChibiMatchMode mode = ChibiMatchMode.FreeForAll, int teamOf = 0,
+                                                 int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks, string localName = "",
+                                                 bool hazardsOff = false, IChibiPumpedTransport pump = null, IDisposable owner = null,
+                                                 string[] seatKeys = null)
+            => new ChibiOnlineMatch(guests, players,
+                c => new ChibiGroupHandshake(c, players, myClass, myPassive, stage, seed, settings, mode, teamOf,
+                                             handshakeTimeoutTicks, localName, hazardsOff, seatKeys), input, pump, owner);
+
+        /// <summary>Rollback settings for a match of <paramref name="players"/> (design 2.2: the star adds a hop for 3-4).</summary>
+        public static ChibiRollbackSettings SettingsFor(int players)
+        {
+            var s = ChibiRollbackSettings.Default;
+            if (players > 2) { s.InputDelay = ChibiRollbackSession.GroupInputDelay; s.MaxPrediction = ChibiRollbackSession.GroupMaxPrediction; }
+            return s;
         }
 
         /// <summary>Host side (sim player 0). The host decides seed, stage and rollback settings.</summary>
@@ -150,10 +234,10 @@ namespace ChibiClash.Netcode
         public static ChibiOnlineMatch Host(IChibiTransport transport, IChibiInputSource input, FighterClass myClass, int myPassive,
                                             int stage, uint seed, ChibiRollbackSettings settings,
                                             int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks, string localName = "",
-                                            bool hazardsOff = false)
+                                            bool hazardsOff = false, string expectKey = null)
             => new ChibiOnlineMatch(transport,
                 c => ChibiHandshake.ForHost(c, myClass, myPassive, stage, seed, settings, handshakeTimeoutTicks, localName,
-                                            hazardsOff), input);
+                                            hazardsOff, expectKey), input);
 
         /// <summary>Joiner side (sim player 1).</summary>
         /// <example><code>var m = ChibiOnlineMatch.Join(transport, input, FighterClass.Magic, 1);</code></example>
@@ -161,9 +245,10 @@ namespace ChibiClash.Netcode
         /// <param name="expectHazardsOff">SEC-001: room hazards switch the joiner agreed to (null = any).</param>
         public static ChibiOnlineMatch Join(IChibiTransport transport, IChibiInputSource input, FighterClass myClass, int myPassive,
                                             int handshakeTimeoutTicks = ChibiHandshake.DefaultTimeoutTicks, string localName = "",
-                                            int expectStage = -1, bool? expectHazardsOff = null)
+                                            int expectStage = -1, bool? expectHazardsOff = null, int expectPlayers = -1,
+                                            ulong secret = 0)
             => new ChibiOnlineMatch(transport, c => ChibiHandshake.ForJoiner(c, myClass, myPassive, handshakeTimeoutTicks, localName,
-                                                                             expectStage, expectHazardsOff), input);
+                                                                             expectStage, expectHazardsOff, expectPlayers, secret), input);
 
         // ================================================================== tick
 
@@ -171,7 +256,7 @@ namespace ChibiClash.Netcode
         public bool Tick()
         {
             // A real transport (Unity Transport / Relay) is serviced around the tick: receive first, flush sends last.
-            var pumped = _mux.Raw as IChibiPumpedTransport;
+            var pumped = _pump;
             pumped?.Pump();
             bool advanced;
             switch (Phase)
@@ -192,6 +277,24 @@ namespace ChibiClash.Netcode
                 Abort(ChibiHandshakeState.TimedOut);
                 return;
             }
+            if (_group != null)
+            {
+                for (int g = 1; g < _group.Players; g++)
+                    if (_links[g] != null && _links[g].LinkState == ChibiLinkState.Lost)
+                    {
+                        _group.SendLeave(ChibiLeaveReason.Forfeit);   // the match will not start: release everyone
+                        Abort(ChibiHandshakeState.TimedOut);
+                        return;
+                    }
+                _group.Tick();
+                switch (_group.State)
+                {
+                    case ChibiHandshakeState.Agreed: StartSession(); break;
+                    case ChibiHandshakeState.Negotiating: break;
+                    default: _group.SendLeave(ChibiLeaveReason.Forfeit); Abort(_group.State); break;
+                }
+                return;
+            }
             _handshake.Tick();
             switch (_handshake.State)
             {
@@ -203,20 +306,115 @@ namespace ChibiClash.Netcode
 
         void StartSession()
         {
-            var cfg = _handshake.Config;
-            Session = new ChibiRollbackSession(_handshake.LocalIndex, cfg, _mux.Session, _input, _handshake.Settings);
-            Replay = new ChibiReplayRecorder(cfg);
-            Session.OnFrameConfirmed += Replay.Add;
+            if (_group != null)
+            {
+                var links = new IChibiTransport[ChibiSimState.MaxFighters];
+                for (int c = 1; c < _group.Players; c++) links[_group.SlotOf(c)] = _muxes[c].Session;   // L2: slot = room seat
+                Session = new ChibiRollbackSession(0, _group.Config, links, _input, _group.Settings);
+            }
+            else Session = new ChibiRollbackSession(_handshake.LocalIndex, _handshake.Config, _mux.Session, _input, _handshake.Settings);
+            var cfg = _group != null ? _group.Config : _handshake.Config;
+            if (Session.Players == 2)   // the replay file format holds 2 streams
+            {
+                Replay = new ChibiReplayRecorder(cfg);
+                Session.OnFrameConfirmed += Replay.Add;
+            }
             Session.OnDesync += (f, l, r) => _desyncFlag = true;
             Session.OnDisconnect += reason => _disconnect = reason;
+            Session.OnPlayerLeft += (s, f) => OnPlayerLeft?.Invoke(s, f);
             Phase = ChibiOnlinePhase.Playing;
             OnStarted?.Invoke(this);
         }
 
-        bool TickPlaying()
+        bool TickPlaying() => Session.Players == 2 ? TickPair() : _group != null ? TickGroupHost() : TickGroupGuest();
+
+        /// <summary>Next Leave from the one opponent of a 1v1 (a group host with one guest reads seat 1).</summary>
+        bool HandlePair(out ChibiLeaveReason leave) =>
+            _group != null ? _group.Handle(1, out leave) : _handshake.Handle(out leave);
+
+        /// <summary>Host of a star match: a guest that quits, loses its link or times out is eliminated; the match goes on.</summary>
+        bool TickGroupHost()
+        {
+            for (int c = 1; c < _group.Players; c++)
+            {
+                int slot = _group.SlotOf(c);   // connection c plays this seat (L2)
+                if (_links[c] != null && _links[c].LinkState == ChibiLinkState.Lost) Session.DeclareLeft(slot);
+                while (_group.Handle(c, out var leave))
+                {
+                    // Every Leave reason is an unauthenticated claim of ONE guest, so it can only ever affect that guest:
+                    //  - MatchComplete decides nothing (M2, SEC-003 rule): an honest guest says it only after the confirmed end.
+                    //  - Desync cannot be checked by the host: that guest is dropped, the match goes on (M3 / SEC-002). A real
+                    //    desync is found by the host's own checksum comparison (Session.OnDesync).
+                    //  - Forfeit / Stalled: that seat is gone.
+                    if (leave != ChibiLeaveReason.MatchComplete) Session.DeclareLeft(slot);
+                }
+            }
+            bool advanced = Session.Tick();
+            if (advanced) OnAdvanced?.Invoke(Session.Frame);
+            if (_desyncFlag)
+            {
+                _group.SendLeave(ChibiLeaveReason.Desync);
+                Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.Desync, -1, close: true);
+            }
+            else if (Session.ConfirmedState is ChibiSimState confirmed && confirmed.MatchOver) FinishFromState(confirmed);
+            return advanced;
+        }
+
+        /// <summary>Guest of a 3-4 player star match: the host is the only link, so losing it is a no contest.</summary>
+        bool TickGroupGuest()
         {
             if (_link != null && _link.LinkState == ChibiLinkState.Lost) Session.NotifyDisconnected(ChibiDisconnectReason.TransportLost);
             while (_handshake.Handle(out var leave))
+            {
+                switch (leave)
+                {
+                    case ChibiLeaveReason.Desync: _desyncFlag = true; break;
+                    case ChibiLeaveReason.MatchComplete: break;   // SEC-003: decides nothing
+                    default: Session.NotifyDisconnected(ChibiDisconnectReason.RemoteLeft); break;
+                }
+            }
+            bool advanced = Session.Tick();
+            if (advanced) OnAdvanced?.Invoke(Session.Frame);
+            if (_desyncFlag)
+            {
+                _handshake.SendLeave(ChibiLeaveReason.Desync);
+                Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.Desync, -1, close: true);
+            }
+            else if (Session.ConfirmedState is ChibiSimState confirmed && confirmed.MatchOver) FinishFromState(confirmed);
+            else if (Session.LocallyDropped)
+            {
+                _handshake.SendLeave(ChibiLeaveReason.Forfeit);
+                Finish(ChibiMatchOutcome.Loss, ChibiEndCause.Dropped, -1, close: true);
+            }
+            else if (_disconnect.HasValue)
+            {
+                if (!Session.HasInputFrom(0))
+                    Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.PeerNeverStarted, -1, close: true);
+                else if (_disconnect.Value == ChibiDisconnectReason.Stalled)
+                {
+                    _handshake.SendLeave(ChibiLeaveReason.Stalled);   // the host eliminates us; we take no result
+                    Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.OpponentStalled, -1, close: true);
+                }
+                else Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.HostLeft, -1, close: true);
+            }
+            return advanced;
+        }
+
+        /// <summary>3-4 players: the result from the CONFIRMED end state (WinnerMask / Place).</summary>
+        void FinishFromState(ChibiSimState s)
+        {
+            int me = LocalIndex, mask = s.WinnerMask;
+            var outcome = mask == 0 ? ChibiMatchOutcome.Draw : (mask & (1 << me)) != 0 ? ChibiMatchOutcome.Win : ChibiMatchOutcome.Loss;
+            int w = -1;
+            for (int i = 0; i < s.PlayerCount; i++) if ((mask & (1 << i)) != 0) { w = i; break; }
+            Finish(outcome, ChibiEndCause.MatchOver, w, close: false);
+        }
+
+        bool TickPair()
+        {
+            var link = _group != null ? _links[1] : _link;
+            if (link != null && link.LinkState == ChibiLinkState.Lost) Session.NotifyDisconnected(ChibiDisconnectReason.TransportLost);
+            while (HandlePair(out var leave))
             {
                 switch (leave)
                 {
@@ -236,7 +434,7 @@ namespace ChibiClash.Netcode
 
             if (_desyncFlag)
             {
-                _handshake.SendLeave(ChibiLeaveReason.Desync);
+                SendLeaveAll(ChibiLeaveReason.Desync);
                 Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.Desync, -1, close: true);
             }
             else if (Session.ConfirmedState is ChibiSimState confirmed && confirmed.MatchOver)
@@ -252,7 +450,7 @@ namespace ChibiClash.Netcode
                     Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.PeerNeverStarted, -1, close: true);
                 else if (_disconnect.Value == ChibiDisconnectReason.Stalled)
                 {
-                    _handshake.SendLeave(ChibiLeaveReason.Stalled);   // so the other side ends as no contest too
+                    SendLeaveAll(ChibiLeaveReason.Stalled);   // so the other side ends as no contest too
                     Finish(ChibiMatchOutcome.NoContest, ChibiEndCause.OpponentStalled, -1, close: true);
                 }
                 else
@@ -269,10 +467,11 @@ namespace ChibiClash.Netcode
         bool TickLingering()
         {
             bool advanced = Session.Tick();          // keep sending inputs + acks so the peer confirms its end too
-            while (_handshake.Handle(out _)) { }
+            if (_group != null) { for (int g = 1; g < _group.Players; g++) while (_group.Handle(g, out _)) { } }
+            else while (_handshake.Handle(out _)) { }
             if (--_linger <= 0 || Session.Disconnected)
             {
-                _handshake.SendLeave(ChibiLeaveReason.MatchComplete);
+                SendLeaveAll(ChibiLeaveReason.MatchComplete);
                 Phase = ChibiOnlinePhase.Closed;
             }
             return advanced;
@@ -289,18 +488,24 @@ namespace ChibiClash.Netcode
             switch (Phase)
             {
                 case ChibiOnlinePhase.Handshaking:
-                    _handshake.SendLeave(ChibiLeaveReason.Forfeit);
+                    SendLeaveAll(ChibiLeaveReason.Forfeit);
                     Abort(ChibiHandshakeState.PeerLeft);
                     break;
                 case ChibiOnlinePhase.Playing:
-                    _handshake.SendLeave(ChibiLeaveReason.Forfeit);
-                    Finish(ChibiMatchOutcome.Loss, ChibiEndCause.LocalForfeit, 1 - LocalIndex, close: true);
+                    SendLeaveAll(ChibiLeaveReason.Forfeit);
+                    Finish(ChibiMatchOutcome.Loss, ChibiEndCause.LocalForfeit, Players == 2 ? 1 - LocalIndex : -1, close: true);
                     break;
                 case ChibiOnlinePhase.Lingering:
-                    _handshake.SendLeave(ChibiLeaveReason.MatchComplete);
+                    SendLeaveAll(ChibiLeaveReason.MatchComplete);
                     Phase = ChibiOnlinePhase.Closed;
                     break;
             }
+        }
+
+        void SendLeaveAll(ChibiLeaveReason reason)
+        {
+            if (_group != null) _group.SendLeave(reason);
+            else _handshake.SendLeave(reason);
         }
 
         void Abort(ChibiHandshakeState why)
@@ -308,7 +513,7 @@ namespace ChibiClash.Netcode
             Result = new ChibiOnlineResult
             {
                 Outcome = ChibiMatchOutcome.Aborted, Cause = ChibiEndCause.HandshakeFailed, Winner = -1,
-                HandshakeState = why, RejectReason = _handshake.RejectReason,
+                HandshakeState = why, RejectReason = _group != null ? _group.RejectReason : _handshake.RejectReason,
             };
             Phase = ChibiOnlinePhase.Closed;
             OnResult?.Invoke(Result);
@@ -316,14 +521,25 @@ namespace ChibiClash.Netcode
 
         void Finish(ChibiMatchOutcome outcome, ChibiEndCause cause, int winner, bool close)
         {
-            Result = new ChibiOnlineResult { Outcome = outcome, Cause = cause, Winner = winner, Frame = Session.Frame };
+            var s = cause == ChibiEndCause.MatchOver ? Session.ConfirmedState : null;
+            Result = new ChibiOnlineResult
+            {
+                Outcome = outcome, Cause = cause, Winner = winner, Frame = Session.Frame,
+                WinnerMask = s != null ? s.WinnerMask : 0,
+                Place = s != null && LocalIndex < ChibiSimState.MaxFighters ? s.Place[LocalIndex] : 0,
+            };
             if (close) Phase = ChibiOnlinePhase.Closed;
             else { Phase = ChibiOnlinePhase.Lingering; _linger = LingerTicks; }
             OnResult?.Invoke(Result);
         }
 
         /// <summary>Dispose the wrapped transport if it is disposable (Relay/UDP drivers hold native memory).</summary>
-        public void Dispose() => (_mux.Raw as IDisposable)?.Dispose();
+        public void Dispose()
+        {
+            if (_owner != null) { _owner.Dispose(); return; }
+            if (_muxes != null) { foreach (var m in _muxes) (m?.Raw as IDisposable)?.Dispose(); return; }
+            (_mux.Raw as IDisposable)?.Dispose();
+        }
     }
 
     /// <summary>

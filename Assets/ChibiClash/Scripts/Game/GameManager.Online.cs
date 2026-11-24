@@ -396,7 +396,16 @@ namespace ChibiClash
         // ---------------------------------------------------------------- online match start
 
         /// <summary>The room manager connected us: start the online match (handshake first; the view appears once agreed).</summary>
-        void OnRoomConnected(Netcode.ChibiUtpTransport transport, bool isHost)
+        void OnRoomConnected(Netcode.ChibiUtpTransport transport, bool isHost) => StartOnline(transport, isHost, null, 2);
+
+        /// <summary>
+        /// The room manager connected a star of 2-4 players (protocol 6): the host gets one link per guest
+        /// (<paramref name="guests"/>[slot]); a guest gets <c>OnRoomConnected</c> as before and learns its seat from Start.
+        /// </summary>
+        void OnRoomGroupConnected(Netcode.ChibiUtpTransport transport, Netcode.IChibiTransport[] guests, int players)
+            => StartOnline(transport, true, guests, players);
+
+        void StartOnline(Netcode.ChibiUtpTransport transport, bool isHost, Netcode.IChibiTransport[] guests, int players)
         {
             if (!PlayerIdentity.OnlineAllowed(Save.ageBand)) { transport.Dispose(); rooms.Cancel(); return; }   // age gate, last line
             var input = Netcode.ChibiPlayerInputSource.ForPlayer(0);   // the local player always uses P1's devices / camera
@@ -421,14 +430,26 @@ namespace ChibiClash
             onlinePeerSeen = false;
             // ST-5: the host's hazards pick travels in the handshake Start message (protocol 4) and becomes HazardsOff on
             // both peers (the joiner takes it from Start).
-            var online = isHost
+            uint seed = (uint)System.Environment.TickCount ^ 0xC1B1u;
+            // A guest of a group may wait while the host fills seats (quick match: up to QuickFillSeconds), so it waits longer.
+            int joinTimeout = Netcode.ChibiHandshake.DefaultTimeoutTicks + (int)(Netcode.NetworkRoomManager.QuickFillSeconds + 15f) * 60;
+            int roomSeats = roomsSvc.OwnsLink && roomsSvc.Current != null ? roomsSvc.Current.Slots.Count : -1;   // SEC-001
+            // SEC-003 / L2: in a room every Relay connection must prove its seat (secret in Hello, key in the lobby).
+            string[] seatKeys = roomsSvc.OwnsLink ? roomsSvc.SeatKeys() : null;
+            ulong seatSecret = roomsSvc.OwnsLink ? roomsSvc.MySecret : 0UL;
+            var online = guests != null
+                ? Netcode.ChibiOnlineMatch.HostGroup(guests, players, input, pending.cls[0], pending.passive[0], pending.stage, seed,
+                                                     Netcode.ChibiOnlineMatch.SettingsFor(players), Netcode.ChibiMatchMode.FreeForAll, 0,
+                                                     Netcode.ChibiHandshake.DefaultTimeoutTicks, me, !pending.hazards,
+                                                     transport, transport, seatKeys)
+                : isHost
                 ? Netcode.ChibiOnlineMatch.Host(transport, input, pending.cls[0], pending.passive[0], pending.stage,
-                                                (uint)System.Environment.TickCount ^ 0xC1B1u, settings,
-                                                Netcode.ChibiHandshake.DefaultTimeoutTicks, me, !pending.hazards)
-                : Netcode.ChibiOnlineMatch.Join(transport, input, pending.cls[0], pending.passive[0],
-                                                Netcode.ChibiHandshake.DefaultTimeoutTicks, me,
+                                                seed, settings, Netcode.ChibiHandshake.DefaultTimeoutTicks, me, !pending.hazards,
+                                                seatKeys != null ? seatKeys[1] : null)
+                : Netcode.ChibiOnlineMatch.Join(transport, input, pending.cls[0], pending.passive[0], joinTimeout, me,
                                                 roomsSvc.OwnsLink ? pending.stage : -1,                  // SEC-001: the room's
-                                                roomsSvc.OwnsLink ? !pending.hazards : (bool?)null);      // agreed settings
+                                                roomsSvc.OwnsLink ? !pending.hazards : (bool?)null,      // agreed settings
+                                                roomSeats, seatSecret);
             var go = new GameObject("OnlineMatch");
             var runner = go.AddComponent<Netcode.ChibiOnlineMatchRunner>();
             runner.Begin(online, input);
@@ -451,8 +472,8 @@ namespace ChibiClash
         {
             var room = roomsSvc != null && roomsSvc.OwnsLink ? roomsSvc.Current : null;
             if (room == null) return "";
-            // A room fight is always seat 0 (host) against seat 1: read those two directly (seats 2-3 never fight yet).
-            if (room.Slots.Count < Netcode.ChibiRoomRules.FightSeats) return "";
+            // A 1v1 room fight is seat 0 (host) against seat 1; 3-4 seats load the others on demand (hint only).
+            if (room.Slots.Count != 2) return "";
             string me = roomsSvc.MyId;
             var other = room.Slots[0].PlayerId == me ? room.Slots[1] : room.Slots[1].PlayerId == me ? room.Slots[0] : default;
             return string.IsNullOrEmpty(other.PlayerId) ? "" : CharacterRoster.Of(other.Class).Id;
@@ -468,10 +489,10 @@ namespace ChibiClash
         void StepOnlineLoad(Netcode.ChibiOnlineMatch m)
         {
             if (m != null && m.Phase == Netcode.ChibiOnlinePhase.Handshaking && !onlinePeerSeen &&
-                m.Handshake.LocalIndex == 0 && m.Handshake.MatchHash != 0)
+                m.LocalIndex == 0 && m.MatchHash != 0)
             {
                 onlinePeerSeen = true;
-                var cfg = m.Handshake.Config;
+                var cfg = m.Config;
                 onlineLoad = new MatchAssetLoader(cfg.Class0, cfg.Class1);   // resumes: progress lives in SpriteAnimLibrary
             }
             if (onlineLoad == null) return;
@@ -497,10 +518,12 @@ namespace ChibiClash
                 CancelWipe();
                 exitPrompt = false;
                 roomDialog = false;
-                var agreed = m.Handshake.Config;
+                var agreed = m.Config;
                 ChibiMatch.ReleaseUnusedSheets(agreed.Class0, agreed.Class1);   // a wrong room guess is dropped here
                 onlineLoad = new MatchAssetLoader(agreed.Class0, agreed.Class1);   // the rest: READY intro slices
                 match = ChibiMatch.CreateOnline(this, pendingOnline, pendingOnlineInput, pending.weapon[0]);
+                // SEC-004: in a room the names come from the lobby (each player's own claimed name), not from the handshake.
+                if (roomsSvc.OwnsLink) match.SetRoomNames(roomsSvc.SeatNames());
                 match.SetVerifiedOpponentName(social.MatchFriendName);   // invite match: the friends-list name
                 social.ClearMatchFriend();
                 pendingOnline = null;
@@ -514,7 +537,7 @@ namespace ChibiClash
             else if (m.Phase == Netcode.ChibiOnlinePhase.Closed)
             {
                 var r = m.Result;
-                onlineNote = r.RejectReason == Netcode.ChibiRejectReason.InvalidConfig && roomsSvc.OwnsLink && !m.Handshake.RejectedByPeer
+                onlineNote = r.RejectReason == Netcode.ChibiRejectReason.InvalidConfig && roomsSvc.OwnsLink && !m.RejectedByPeer
                     ? "The host's settings changed \u2014 rejoin the room."                                                       // SEC-001
                     : r.RejectReason == Netcode.ChibiRejectReason.RulesMismatch || r.RejectReason == Netcode.ChibiRejectReason.ProtocolMismatch ||
                       r.RejectReason == Netcode.ChibiRejectReason.ContentMismatch
@@ -936,16 +959,15 @@ namespace ChibiClash
             float codeW = RoomCodeBox(r.xMax - 24f, y, cur.Code);
             Gui.Display(new Rect(x, y, w - codeW - 12f, 36f), cur.Name, 30, Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
             y += 44f;
-            // 2-4 seats. WAITING FOR PLAYERS under 2, READY TO FIGHT with exactly 2 (the fight starts once both pressed OK),
-            // and with 3-4 the "coming soon" note: the fight engine is 1 v 1 for now, so nothing starts.
+            // 2-4 seats. WAITING FOR PLAYERS under 2, READY TO FIGHT with 2-4 (protocol 6: 3-4 players fight a Battle
+            // Royale; the fight starts once everyone pressed OK).
             int joined = Mathf.Min(cur.Slots.Count, Netcode.ChibiRoomRules.MaxSeats);
             bool full = joined >= Netcode.ChibiRoomRules.MaxSeats;
-            bool tooMany = joined > Netcode.ChibiRoomRules.FightSeats;
-            bool fightable = joined == Netcode.ChibiRoomRules.FightSeats;
-            string head = full ? "ROOM FULL" : tooMany ? "3-4 PLAYERS" : fightable ? "READY TO FIGHT" : "WAITING FOR PLAYERS";
+            bool fightable = joined >= Netcode.ChibiRoomRules.MinSeats;
+            string head = fightable ? (joined > 2 ? "BATTLE ROYALE" : "READY TO FIGHT") + (full ? " · ROOM FULL" : "") : "WAITING FOR PLAYERS";
             Gui.Text(new Rect(x, y, w, 18f), head + "  ·  " + joined + " / " + Netcode.ChibiRoomRules.MaxSeats + " JOINED",
                      12, fightable ? Gui.Green : Gui.Gold, TextAnchor.MiddleLeft);
-            Gui.Text(new Rect(x, y, w, 18f), tooMany ? "2 players start the fight" : fightable ? "Both press OK: the fight starts by itself." : "Share the code, or invite friends by name.",
+            Gui.Text(new Rect(x, y, w, 18f), fightable ? "Everyone presses OK: the fight starts by itself." : "Share the code, or invite friends by name.",
                      12, Gui.Muted, TextAnchor.MiddleRight);
             y += 24f;
 
@@ -1019,10 +1041,7 @@ namespace ChibiClash
             string hint = Netcode.ChibiRoomRules.WaitingFor(cur, me);
             string status = onlineNote.Length > 0 ? onlineNote : roomsSvc.Status;
             if (!launching && hint.Length > 0 && !roomsSvc.StatusIsError && onlineNote.Length == 0) status = hint;
-            // 3-4 seated: always say why nothing starts (gold, it is not an error).
-            bool soon = tooMany && !launching && onlineNote.Length == 0;
-            if (soon) status = Netcode.ChibiRoomRules.MorePlayersSoon;
-            Gui.Text(new Rect(x, y, w, 50f), status, 14, soon ? Gui.Gold : roomsSvc.StatusIsError || onlineNote.Length > 0 ? Gui.Red : Gui.Paper,
+            Gui.Text(new Rect(x, y, w, 50f), status, 14, roomsSvc.StatusIsError || onlineNote.Length > 0 ? Gui.Red : Gui.Paper,
                      TextAnchor.UpperCenter, false);
 
             // Bottom left (host): INVITE A FRIEND BY NAME (the in-game name they chose at first launch).

@@ -76,6 +76,7 @@ namespace ChibiClash.Netcode
             try
             {
                 if (UnityServices.State != ServicesInitializationState.Initialized) await UnityServices.InitializeAsync();
+                ChibiDevFlags.ApplyAuthProfile();   // dev only (-authProfile); inert in release
                 var auth = AuthenticationService.Instance;
                 if (!auth.IsSignedIn && auth.SessionTokenExists) await auth.SignInAnonymouslyAsync();   // resumes the cached account session
                 if (auth.IsSignedIn && auth.PlayerId == savedAccountId)

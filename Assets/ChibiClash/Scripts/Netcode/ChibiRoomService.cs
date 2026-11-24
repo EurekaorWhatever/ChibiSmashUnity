@@ -25,7 +25,7 @@ namespace ChibiClash.Netcode
     /// <summary>
     /// CREATE ROOM mode (docs/architecture/netcode/online-rooms.md "Rooms"): named private rooms that stay open between
     /// fights. Each room is a private Unity Lobby of 2 to 4 seats (<see cref="ChibiRoomRules.MaxSeats"/>). Inside it
-    /// the players choose a fighter and press OK (Ready); the fight engine is 1 v 1, so START FIGHT works only when exactly
+    /// the players choose a fighter and press OK (Ready); START FIGHT works (protocol 6) when 2-4 seated players are all ready; it used to need exactly
     /// 2 players are seated and both are ready (3-4 seated players wait for the 4-player engine). Either player may press it:
     ///   host presses  -> host un-readies, opens the match link (Relay) and publishes {relay, go} in the lobby
     ///   guest presses -> guest publishes a start nonce; the host sees it on its next poll and does the above
@@ -45,7 +45,35 @@ namespace ChibiClash.Netcode
         const string KeyStage = "stage", KeyGo = "go", KeyRelay = "relay", KeyProto = "proto";
         /// <summary>Rules v20 (ST-5): the host's stage hazards switch, member-visible ("1" on, "0" off).</summary>
         const string KeyHazards = "hz";
-        const string PName = "n", PClass = "c", PPassive = "p", PReady = "r", PStart = "s", PAck = "a";
+        const string PName = "n", PClass = "c", PPassive = "p", PReady = "r", PStart = "s", PAck = "a", PKey = "k";
+
+        /// <summary>
+        /// SEC-003: this device's room seat secret. Only its key (<see cref="ChibiRoomRules.SeatKey"/>) goes into the lobby
+        /// player data (members only); the secret itself travels only in the match Hello to the host. SEC-005: a fresh
+        /// secret for every seat (entering a room) and after every launch (fight over or aborted), so a host that saw it
+        /// once cannot reuse it later to take this player's seat in another room or fight.
+        /// </summary>
+        public ulong MySecret => _mySecret;
+        ulong _mySecret = ChibiRoomRules.NewSeatSecret();
+        string _myKey;
+        string MyKey => _myKey ?? (_myKey = ChibiRoomRules.SeatKey(_mySecret));
+
+        void RenewSeatSecret()
+        {
+            _mySecret = ChibiRoomRules.NewSeatSecret();
+            _myKey = null;
+        }
+
+        /// <summary>SEC-003 / L2: the published seat keys of the current room by seat (host = 0).</summary>
+        public string[] SeatKeys() => ChibiRoomRules.SeatKeys(Current);
+
+        /// <summary>SEC-004: the names to draw for a room fight, by seat = sim slot (lobby data, already sanitised).</summary>
+        public string[] SeatNames()
+        {
+            var names = new string[ChibiRoomRules.MaxSeats];
+            for (int i = 0; i < names.Length; i++) names[i] = Current != null && i < Current.Slots.Count ? Current.Slots[i].Name : "";
+            return names;
+        }
         const float PollSeconds = 2f, HeartbeatSeconds = 15f, ListRefreshMinSeconds = 10f;
         /// <summary>A launch that has not connected after this long is cancelled.</summary>
         public const float LaunchTimeoutSeconds = 25f;
@@ -394,6 +422,7 @@ namespace ChibiClash.Netcode
 
         void ResetSeat(bool synced)
         {
+            RenewSeatSecret();   // SEC-005: every seat / launch gets its own secret (pushed with the next player data)
             LocalReady = false;
             Launching = false;
             OwnsLink = false;
@@ -429,6 +458,7 @@ namespace ChibiClash.Netcode
                 [PReady] = PMember(LocalReady ? "1" : "0"),
                 [PStart] = PMember(_myStartNonce),
                 [PAck] = PMember(_myAck),
+                [PKey] = PMember(MyKey),
             };
         }
 
@@ -517,6 +547,7 @@ namespace ChibiClash.Netcode
                     {
                         Id = p?.Id, Name = PVal(p?.Data, PName), Class = PVal(p?.Data, PClass), Passive = PVal(p?.Data, PPassive),
                         Ready = PVal(p?.Data, PReady), Start = PVal(p?.Data, PStart), Ack = PVal(p?.Data, PAck),
+                        Key = PVal(p?.Data, PKey),
                     });
             var snap = ChibiRoomRules.Snapshot(l.Id, l.Name, l.LobbyCode, l.HostId, Val(l.Data, KeyStage), Val(l.Data, KeyGo),
                                                Val(l.Data, KeyRelay), raw, Val(l.Data, KeyHazards));
@@ -527,9 +558,7 @@ namespace ChibiClash.Netcode
         /// <summary>The guest's current start press (by PlayerId) counts as handled from now on: every press is used once.</summary>
         void RememberGuestPress(ChibiRoomSnapshot s)
         {
-            bool guest = s != null && s.Slots.Count > 1;
-            _lastGuestId = guest ? s.Slots[1].PlayerId : "";
-            _lastGuestNonce = guest ? s.Slots[1].StartNonce : "";
+            ChibiRoomRules.PressKey(s, out _lastGuestId, out _lastGuestNonce);   // every guest's press (2-4 seats)
         }
 
         /// <summary>
@@ -546,7 +575,8 @@ namespace ChibiClash.Netcode
             _launchStarted = Time.unscaledTime;
             _goPublishedAt = float.MaxValue;
             RememberGuestPress(Current);   // every start press is used once
-            _launchGuestId = Current.Slots[1].PlayerId;
+            _launchGuestId = ChibiRoomRules.GuestIds(Current);   // SEC-001: every seated guest, by PlayerId in seat order
+            int guests = Current.Slots.Count - 1;
             LocalReady = false;
             SetStatus("Starting the fight...", false);
             await PushPlayer();
@@ -555,7 +585,7 @@ namespace ChibiClash.Netcode
             if (!locked) { AbortLaunch(Status); return; }
             if (!ChibiRoomRules.LaunchStillValid(Current, MyId, _launchGuestId)) { AbortLaunch("A player left or joined."); return; }
 
-            string relay = Launching && _link != null ? await _link.HostLinkAsync() : null;
+            string relay = Launching && _link != null ? await _link.HostLinkAsync(guests) : null;
             if (!Launching) { _link?.Cancel(); return; }   // cancelled (timeout / room gone) while we waited
             if (relay == null) { AbortLaunch(_link != null ? _link.Status : "No connection."); return; }
             // SEC-001: nobody may have left, joined or moved seats while the link was opening.

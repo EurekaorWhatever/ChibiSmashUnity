@@ -78,18 +78,72 @@ namespace ChibiClash.Tests
         }
 
         [Test]
-        public void CanStart_ThreeOrFourSeated_NeverStarts()
+        public void CanStart_ThreeOrFourSeatedAllReady_Starts()
         {
+            // Protocol 6 (Phase 3): 3-4 seated players fight a Battle Royale. Replaces the Phase 1-2 "never starts" test.
             var three = Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true), P("g2", "Bo", ready: true));
             var four = Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true), P("g2", "Bo", ready: true),
                             P("g3", "Cy", ready: true));
+            var notAll = Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true), P("g2", "Bo"));
 
-            Assert.IsFalse(ChibiRoomRules.CanStart(three), "the fight engine is 1 v 1: 3 players never start");
-            Assert.IsFalse(ChibiRoomRules.CanStart(four), "4 players never start");
-            Assert.IsFalse(ChibiRoomRules.HostShouldLaunch(Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true, start: "n1"),
-                                                                P("g2", "Bo", ready: true)), "", ""), "no launch with 3 seated");
-            Assert.AreEqual(ChibiRoomRules.MorePlayersSoon, ChibiRoomRules.WaitingFor(three, Host));
-            Assert.AreEqual(ChibiRoomRules.MorePlayersSoon, ChibiRoomRules.WaitingFor(four, Host));
+            Assert.IsTrue(ChibiRoomRules.CanStart(three));
+            Assert.IsTrue(ChibiRoomRules.CanStart(four));
+            Assert.IsFalse(ChibiRoomRules.CanStart(notAll), "every seated player must press OK");
+            Assert.IsTrue(ChibiRoomRules.HostShouldLaunch(Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true),
+                                                               P("g2", "Bo", ready: true, start: "n1")), "", ""), "any guest's START launches");
+            Assert.AreEqual("", ChibiRoomRules.WaitingFor(three, Host));
+            StringAssert.Contains("Bo", ChibiRoomRules.WaitingFor(notAll, Host));
+        }
+
+        [Test]
+        public void LaunchSeats_ThreeGuests_LockedByPlayerIdInSeatOrder()
+        {
+            var four = Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true), P("g2", "Bo", ready: true),
+                            P("g3", "Cy", ready: true));
+            string ids = ChibiRoomRules.GuestIds(four);
+            Assert.AreEqual(Guest + "|g2|g3", ids);
+            Assert.IsTrue(ChibiRoomRules.SameFightSeats(four, Host, ids));
+            Assert.IsTrue(ChibiRoomRules.LaunchStillValid(four, Host, ids));
+
+            var left = Room("", "", P(Host, "Kira"), P(Guest, "Pip", ready: true), P("g3", "Cy", ready: true));
+            var swapped = Room("", "", P(Host, "Kira"), P("g2", "Bo", ready: true), P(Guest, "Pip", ready: true), P("g3", "Cy", ready: true));
+            var unready = Room("", "", P(Host, "Kira"), P(Guest, "Pip", ready: true), P("g2", "Bo"), P("g3", "Cy", ready: true));
+            Assert.IsFalse(ChibiRoomRules.SameFightSeats(left, Host, ids), "a guest left during the launch");
+            Assert.IsFalse(ChibiRoomRules.SameFightSeats(swapped, Host, ids), "seats moved");
+            Assert.IsFalse(ChibiRoomRules.LaunchStillValid(unready, Host, ids), "a guest pressed CHANGE");
+        }
+
+        [Test]
+        public void HostShouldLaunch_SeveralGuestPresses_EachHandledOnce()
+        {
+            var room = Room("", "", P(Host, "Kira", ready: true), P(Guest, "Pip", ready: true, start: "n1"), P("g2", "Bo", ready: true, start: "n2"));
+            ChibiRoomRules.PressKey(room, out string ids, out string nonces);
+            Assert.IsFalse(ChibiRoomRules.HostShouldLaunch(room, ids, nonces), "both presses handled");
+            Assert.IsTrue(ChibiRoomRules.HostShouldLaunch(room, Guest, "n1"), "Bo's press is new");
+        }
+
+        [Test]
+        public void GuestAcked_EveryLaunchGuestMustAck()
+        {
+            var raw = new List<ChibiRoomRawPlayer>
+            {
+                P(Host, "Kira"), new ChibiRoomRawPlayer { Id = Guest, Name = "Pip", Class = "1", Ack = "go7" },
+                new ChibiRoomRawPlayer { Id = "g2", Name = "Bo", Class = "1", Ack = "" },
+            };
+            var s = ChibiRoomRules.Snapshot("lobby1", "Room", "k7q2px", Host, "0", "go7", "", raw);
+            Assert.IsFalse(ChibiRoomRules.GuestAcked(s, Guest + "|g2", "go7"), "Bo has not acked yet");
+            raw[2] = new ChibiRoomRawPlayer { Id = "g2", Name = "Bo", Class = "1", Ack = "go7" };
+            s = ChibiRoomRules.Snapshot("lobby1", "Room", "k7q2px", Host, "0", "go7", "", raw);
+            Assert.IsTrue(ChibiRoomRules.GuestAcked(s, Guest + "|g2", "go7"));
+        }
+
+        [Test]
+        public void GuestShouldConnect_AnyGuestSeat()
+        {
+            var raw = new List<ChibiRoomRawPlayer> { P(Host, "Kira"), P(Guest, "Pip"), P("g2", "Bo") };
+            var s = ChibiRoomRules.Snapshot("lobby1", "Room", "k7q2px", Host, "0", "go9", "ABC123", raw);
+            Assert.IsTrue(ChibiRoomRules.GuestShouldConnect(s, "", "g2"), "seat 2 connects too");
+            Assert.IsFalse(ChibiRoomRules.GuestShouldConnect(s, "", Host));
         }
 
         [Test]

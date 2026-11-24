@@ -15,6 +15,8 @@ namespace ChibiClash.Netcode
         public string StartNonce;
         /// <summary>Guest only: the host launch ("go") this guest accepted and is connecting to.</summary>
         public string Ack;
+        /// <summary>SEC-003: the player's seat key (<see cref="ChibiRoomRules.SeatKey"/>), "" when none or malformed.</summary>
+        public string Key;
     }
 
     /// <summary>A room as the screen shows it (built from the Lobby by <see cref="ChibiRoomRules.Snapshot"/>).</summary>
@@ -44,7 +46,7 @@ namespace ChibiClash.Netcode
     /// <summary>Raw lobby fields (one per player), so the rules stay testable without the Unity Lobby SDK.</summary>
     public struct ChibiRoomRawPlayer
     {
-        public string Id, Name, Class, Passive, Ready, Start, Ack;
+        public string Id, Name, Class, Passive, Ready, Start, Ack, Key;
     }
 
     /// <summary>
@@ -63,12 +65,87 @@ namespace ChibiClash.Netcode
         /// <summary>Fewest players a room needs before anything can start.</summary>
         public const int MinSeats = 2;
         /// <summary>
-        /// Players in one fight. The fight engine is 1 v 1 today, so a fight starts only with exactly this many seated;
-        /// 3-4 seated players wait for the 4-player engine (docs/architecture/netcode/four-player-design.md).
+        /// Fewest players in one fight. Since protocol 6 every seated player fights: 2 (1v1) or 3-4 (Battle Royale over
+        /// the star, four-player-design.md 2-3).
         /// </summary>
-        public const int FightSeats = 2;
-        /// <summary>Shown while 3-4 players are seated (no fight starts then).</summary>
-        public const string MorePlayersSoon = "3-4 player fights are coming soon: 2 players start the fight.";
+        public const int FightSeats = MinSeats;
+        /// <summary>No longer shown (3-4 player fights start since protocol 6). Kept for callers built against it.</summary>
+        public const string MorePlayersSoon = "";
+        /// <summary>Separator of a launch's guest list (<see cref="GuestIds"/>); never part of a Unity player id.</summary>
+        public const char IdSeparator = '|';
+
+        /// <summary>
+        /// SEC-003: the public key of a room seat secret: the first 8 bytes of SHA-256(secret) as 16 lower-case hex digits
+        /// ("" for 0 = no secret). Each player publishes its key in its lobby player data (members only) and sends the
+        /// secret itself only in the match Hello, so a Relay connection is bound to exactly one seated player.
+        /// </summary>
+        /// <example><code>string key = ChibiRoomRules.SeatKey(mySecret);</code></example>
+        public static string SeatKey(ulong secret)
+        {
+            if (secret == 0) return "";
+            var bytes = BitConverter.GetBytes(secret);
+            byte[] h;
+            using (var sha = System.Security.Cryptography.SHA256.Create()) h = sha.ComputeHash(bytes);
+            var sb = new System.Text.StringBuilder(16);
+            for (int i = 0; i < 8; i++) sb.Append(h[i].ToString("x2"));
+            return sb.ToString();
+        }
+
+        /// <summary>A well-formed seat key from the network (16 lower-case hex digits), else "".</summary>
+        public static string CleanSeatKey(string key)
+        {
+            if (key == null || key.Length != 16) return "";
+            foreach (char c in key) if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'))) return "";
+            return key;
+        }
+
+        /// <summary>A fresh random seat secret (never 0).</summary>
+        public static ulong NewSeatSecret()
+        {
+            var b = new byte[8];
+            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create()) rng.GetBytes(b);
+            ulong s = BitConverter.ToUInt64(b, 0);
+            return s == 0 ? 1UL : s;
+        }
+
+        /// <summary>SEC-003 / L2: the published seat keys by seat (index 0 = host, unused).</summary>
+        public static string[] SeatKeys(ChibiRoomSnapshot s)
+        {
+            var keys = new string[MaxSeats];
+            for (int i = 0; i < keys.Length; i++) keys[i] = s != null && i < s.Slots.Count ? s.Slots[i].Key ?? "" : "";
+            return keys;
+        }
+
+        /// <summary>SEC-001: the guests a launch is for, by PlayerId in seat order ("id1|id2|id3"; "" when none).</summary>
+        public static string GuestIds(ChibiRoomSnapshot s)
+        {
+            if (s == null || s.Slots.Count < 2) return "";
+            var b = new System.Text.StringBuilder();
+            for (int i = 1; i < s.Slots.Count; i++) { if (i > 1) b.Append(IdSeparator); b.Append(s.Slots[i].PlayerId); }
+            return b.ToString();
+        }
+
+        /// <summary>Every guest's current start press, as parallel "id|id" / "nonce|nonce" lists (guests without a press skipped).</summary>
+        public static void PressKey(ChibiRoomSnapshot s, out string ids, out string nonces)
+        {
+            ids = ""; nonces = "";
+            if (s == null) return;
+            for (int i = 1; i < s.Slots.Count; i++)
+            {
+                var g = s.Slots[i];
+                if (g.StartNonce.Length == 0) continue;
+                if (ids.Length > 0) { ids += IdSeparator; nonces += IdSeparator; }
+                ids += g.PlayerId; nonces += g.StartNonce;
+            }
+        }
+
+        static bool Handled(string id, string nonce, string handledIds, string handledNonces)
+        {
+            var hi = (handledIds ?? "").Split(IdSeparator);
+            var hn = (handledNonces ?? "").Split(IdSeparator);
+            for (int k = 0; k < hi.Length && k < hn.Length; k++) if (hi[k] == id && hn[k] == nonce) return true;
+            return false;
+        }
         /// <summary>Longest nonce accepted from the network.</summary>
         public const int MaxNonce = 16;
 
@@ -108,6 +185,7 @@ namespace ChibiClash.Netcode
                 Ready = classOk && p.Ready == "1",   // a player with no valid fighter is never ready
                 StartNonce = Nonce(p.Start),
                 Ack = Nonce(p.Ack),
+                Key = CleanSeatKey(p.Key),
             };
         }
 
@@ -143,12 +221,12 @@ namespace ChibiClash.Netcode
         static string Nonce(string n) => string.IsNullOrEmpty(n) || n.Length > MaxNonce ? "" : n;
 
         /// <summary>
-        /// START FIGHT works only when EXACTLY <see cref="FightSeats"/> players are seated and every one of them chose a
-        /// fighter and pressed OK (3-4 seated players never start: the fight engine is 1 v 1).
+        /// START FIGHT works when 2 to 4 players are seated and every one of them chose a fighter and pressed OK
+        /// (protocol 6: 3-4 seated players fight a Battle Royale).
         /// </summary>
         public static bool CanStart(ChibiRoomSnapshot s)
         {
-            if (s == null || s.Slots.Count != FightSeats) return false;
+            if (s == null || s.Slots.Count < MinSeats || s.Slots.Count > MaxSeats) return false;
             foreach (var slot in s.Slots) if (!slot.Ready) return false;
             return true;
         }
@@ -158,7 +236,6 @@ namespace ChibiClash.Netcode
         {
             if (s == null) return "Loading the room...";
             if (s.Slots.Count < MinSeats) return "Waiting for your friend to join the room.";
-            if (s.Slots.Count > FightSeats) return MorePlayersSoon;
             int me = s.IndexOf(myId);
             if (me >= 0 && !s.Slots[me].Ready) return "Choose your fighter and press OK.";
             foreach (var slot in s.Slots) if (!slot.Ready) return "Waiting for " + slot.Name + " to press OK.";
@@ -170,22 +247,31 @@ namespace ChibiClash.Netcode
         /// nonce (SEC-001 nit): it is "handled" only if the same player already used that same nonce, so a seat shift
         /// (seat 1 leaves, another player moves into it) can never reuse or hide a press by seat position.
         /// </summary>
+        /// <param name="handledGuestId">Handled presses' player ids ("id" or "id|id", see <see cref="PressKey"/>).</param>
+        /// <param name="handledGuestNonce">Handled presses' nonces, parallel to <paramref name="handledGuestId"/>.</param>
         public static bool HostShouldLaunch(ChibiRoomSnapshot s, string handledGuestId, string handledGuestNonce)
         {
             if (!CanStart(s)) return false;
-            var guest = s.Slots[1];
-            if (guest.StartNonce.Length == 0) return false;
-            return !(guest.PlayerId == (handledGuestId ?? "") && guest.StartNonce == (handledGuestNonce ?? ""));
+            for (int i = 1; i < s.Slots.Count; i++)
+            {
+                var guest = s.Slots[i];
+                if (guest.StartNonce.Length > 0 && !Handled(guest.PlayerId, guest.StartNonce, handledGuestId, handledGuestNonce)) return true;
+            }
+            return false;
         }
 
         /// <summary>
         /// SEC-001: the room still holds exactly the two players a launch began with (host in seat 0, the recorded guest in
         /// seat 1, nobody else). The host aborts the launch the moment this turns false (someone left, joined or moved).
         /// </summary>
+        /// <param name="guestId">The launch's guests in seat order (<see cref="GuestIds"/>; one id for a 1v1).</param>
         public static bool SameFightSeats(ChibiRoomSnapshot s, string hostId, string guestId)
         {
-            if (s == null || s.Slots.Count != FightSeats || string.IsNullOrEmpty(hostId) || string.IsNullOrEmpty(guestId)) return false;
-            return s.Slots[0].PlayerId == hostId && s.Slots[1].PlayerId == guestId;
+            if (s == null || string.IsNullOrEmpty(hostId) || string.IsNullOrEmpty(guestId)) return false;
+            var ids = guestId.Split(IdSeparator);
+            if (s.Slots.Count != ids.Length + 1 || s.Slots.Count > MaxSeats || s.Slots[0].PlayerId != hostId) return false;
+            for (int i = 0; i < ids.Length; i++) if (ids[i].Length == 0 || s.Slots[i + 1].PlayerId != ids[i]) return false;
+            return true;
         }
 
         /// <summary>
@@ -193,8 +279,12 @@ namespace ChibiClash.Netcode
         /// seated and the guest is still ready. (CanStart itself cannot be re-used here: the host withdrew its own OK when
         /// the launch began, so that a failed start never repeats by itself.)
         /// </summary>
-        public static bool LaunchStillValid(ChibiRoomSnapshot s, string hostId, string guestId) =>
-            SameFightSeats(s, hostId, guestId) && s.Slots[1].Ready;
+        public static bool LaunchStillValid(ChibiRoomSnapshot s, string hostId, string guestId)
+        {
+            if (!SameFightSeats(s, hostId, guestId)) return false;
+            for (int i = 1; i < s.Slots.Count; i++) if (!s.Slots[i].Ready) return false;
+            return true;
+        }
 
         /// <summary>
         /// Host: the launch guest (found by PlayerId, never by seat position) acknowledged this launch's go nonce.
@@ -202,14 +292,18 @@ namespace ChibiClash.Netcode
         public static bool GuestAcked(ChibiRoomSnapshot s, string guestId, string publishedGo)
         {
             if (s == null || string.IsNullOrEmpty(guestId) || string.IsNullOrEmpty(publishedGo)) return false;
-            int i = s.IndexOf(guestId);
-            return i > 0 && s.Slots[i].Ack == publishedGo;
+            foreach (var id in guestId.Split(IdSeparator))
+            {
+                int i = s.IndexOf(id);
+                if (i <= 0 || s.Slots[i].Ack != publishedGo) return false;   // every launch guest, found by PlayerId
+            }
+            return true;
         }
 
         /// <summary>Guest: connect when the host announced a NEW launch with a relay code (the baseline is the value seen on entering).</summary>
         public static bool GuestShouldConnect(ChibiRoomSnapshot s, string baselineGo, string myId)
         {
-            if (s == null || s.HostId == myId || s.IndexOf(myId) != 1) return false;
+            if (s == null || s.HostId == myId || s.IndexOf(myId) < 1) return false;
             return s.Go.Length > 0 && s.Go != (baselineGo ?? "") && s.RelayCode.Length > 0;
         }
 

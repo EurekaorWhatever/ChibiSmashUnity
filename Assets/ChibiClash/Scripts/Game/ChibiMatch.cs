@@ -81,13 +81,23 @@ namespace ChibiClash
         /// </summary>
         public string NameOf(int i) => _names[i];
 
+        /// <summary>Room fight: draw every other seat by its lobby name (SEC-004). Ignored offline.</summary>
+        public void SetRoomNames(string[] seatNames)
+        {
+            // SEC-004: a room fight shows each seat's lobby name (already sanitised by ChibiRoomRules.Snapshot through
+            // ChibiSocialRules.PeerDisplayName). Seat = sim slot (SEC-003 / L2 binds every connection to its seat).
+            if (!Online || seatNames == null) return;
+            for (int i = 0; i < PlayerCount && i < seatNames.Length; i++)
+                if (i != LocalPlayer && !string.IsNullOrEmpty(seatNames[i])) _names[i] = seatNames[i];
+        }
+
         /// <summary>
         /// Show the opponent by the name OUR friends list gives them (an invite match): verified, so shown in full with
-        /// its #tag. Ignored offline.
+        /// its #tag. 1v1 only. Ignored offline.
         /// </summary>
         public void SetVerifiedOpponentName(string friendName)
         {
-            if (!Online || string.IsNullOrEmpty(friendName)) return;
+            if (!Online || string.IsNullOrEmpty(friendName) || PlayerCount > 2) return;   // one opponent only (1v1 invite)
             _names[1 - LocalPlayer] = ChibiSocialRules.PeerDisplayName(friendName, verified: true);
         }
         /// <summary>Gesture tracker of a local human fighter (camera / simulated poses), else null.</summary>
@@ -213,13 +223,15 @@ namespace ChibiClash
         public static ChibiMatch CreateOnline(GameManager gm, ChibiOnlineMatchRunner runner, ChibiPlayerInputSource localInput,
                                               int localWeapon)
         {
-            var hs = runner.Match.Handshake;
-            var cfg = hs.Config;
+            var om = runner.Match;
+            var cfg = om.Config;
+            int n = cfg.Players;   // 2-4 (protocol 6 star)
             var mc = new MatchConfig { stage = cfg.Stage, training = false, hazards = !cfg.HazardsOff };   // F3: the agreed switch
-            mc.cls[0] = cfg.Class0; mc.cls[1] = cfg.Class1;
-            mc.passive[0] = cfg.Passive0; mc.passive[1] = cfg.Passive1;
-            mc.cpu[0] = mc.cpu[1] = false;
-            int me = runner.Match.LocalIndex;
+            mc.players = n;
+            mc.team = cfg.Mode == ChibiMatchMode.Team;
+            mc.teamOf = cfg.TeamOf;
+            for (int i = 0; i < n; i++) { mc.cls[i] = cfg.ClassOf(i); mc.passive[i] = cfg.PassiveOf(i); mc.cpu[i] = false; }
+            int me = om.LocalIndex;
             mc.weapon[me] = localWeapon;
 
             var m = runner.gameObject.AddComponent<ChibiMatch>();
@@ -232,9 +244,11 @@ namespace ChibiClash
             m.Feed = runner;
             m._human[me] = localInput;
             // Names travel in the handshake (cosmetic). Sanitised again here: never trust the wire for anything drawn.
-            m._names[me] = hs.LocalName.Length > 0 ? ChibiSocialRules.SafeDisplayName(hs.LocalName) : "";
-            m._names[1 - me] = ChibiSocialRules.PeerDisplayName(hs.PeerName, verified: false);   // not bound to an account
-            for (int i = 0; i < 2; i++)
+            string local = om.PlayerName(me);
+            for (int i = 0; i < n; i++)
+                m._names[i] = i == me ? (local.Length > 0 ? ChibiSocialRules.SafeDisplayName(local) : "")
+                                      : ChibiSocialRules.PeerDisplayName(om.PlayerName(i), verified: false);   // not bound to an account
+            for (int i = 0; i < n; i++)
             {
                 m._def[i] = ClassDef.Get(mc.cls[i]);
                 m._skin[i] = i == me && gm != null && gm.Save != null ? gm.Save.Equipped(m._def[i].type) : Skin.Default(m._def[i].type);
@@ -272,6 +286,8 @@ namespace ChibiClash
                     case ChibiEndCause.HandshakeFailed: return "The match could not start.";
                     case ChibiEndCause.PeerNeverStarted: return "Your opponent never joined the match: no contest.";
                     case ChibiEndCause.OpponentStalled: return "The connection was too slow to play: no contest.";
+                    case ChibiEndCause.HostLeft: return "The host left the match: no contest.";
+                    case ChibiEndCause.Dropped: return "Your connection dropped out of the match.";
                     default: return "";
                 }
             }
@@ -388,11 +404,14 @@ namespace ChibiClash
         }
 
         /// <summary>The local player won (1v1: Winner; more fighters: in WinnerMask, so a 2v2 team wins together).</summary>
-        bool WonLocal => PlayerCount <= 2 || Online ? Winner == LocalPlayer
-                                                    : State != null && (State.WinnerMask & (1 << LocalPlayer)) != 0;
+        /// Online: the match's own outcome (protocol 6: 3-4 players win by WinnerMask, a dropped guest loses).
+        bool WonLocal => Online ? OnlineResult.Outcome == ChibiMatchOutcome.Win
+                       : PlayerCount <= 2 ? Winner == LocalPlayer
+                       : State != null && (State.WinnerMask & (1 << LocalPlayer)) != 0;
         /// <summary>The local player lost (1v1: the other one won; more fighters: someone else won, not a draw).</summary>
-        bool LostLocal => PlayerCount <= 2 || Online ? Winner == 1 - LocalPlayer
-                                                     : State != null && State.WinnerMask != 0 && !WonLocal;
+        bool LostLocal => Online ? OnlineResult.Outcome == ChibiMatchOutcome.Loss
+                        : PlayerCount <= 2 ? Winner == 1 - LocalPlayer
+                        : State != null && State.WinnerMask != 0 && !WonLocal;
 
         void AwardRewards()
         {
