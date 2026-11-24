@@ -10,29 +10,33 @@ namespace ChibiClash
     /// </summary>
     public partial class GameManager
     {
-        static readonly string[] HomeItems = { "PLAY", "TRAINING", "ARCADE", "CHARACTER COLLECTION", "SETTINGS", "EXIT GAME" };
+        // Loc keys, drawn through Loc.T
+        static readonly string[] HomeItems = { "home.play", "home.training", "home.arcade", "home.collection", "home.settings", "home.exit" };
+        // Loc keys, drawn through Loc.T
         static readonly string[] HomeDesc =
         {
-            "Vs Online quick match, Matchmaking rooms with friends, or Vs CPU",
-            "Camera setup, gesture practice and a training dummy",
-            "All five rivals back to back across every stage",
-            "Skins, weapons and the cosmetic banner",
-            "Difficulty, camera options and key bindings",
-            "Close the game",
+            "home.play_desc",
+            "home.training_desc",
+            "home.arcade_desc",
+            "home.collection_desc",
+            "home.settings_desc",
+            "home.exit_desc",
         };
 
+        // Loc keys, drawn through Loc.T
         static readonly string[] Tips =
         {
-            "Fill the ULT meter and press Ultimate - then strike your fighter's pose on camera before the countdown ends.",
-            "Higher DEF shaves damage off every hit and makes your block stronger.",
-            "Good posture tracked by the camera earns bonus coins after each match.",
-            "Skins and weapons are cosmetic only - stats never change with what a fighter wears.",
-            "In Training, press T to fill your ultimate. The dummy always gets back up.",
-            "Every fighter brings one of two passives - choose it in the loadout panel after locking in.",
-            "Online fights use rollback netcode: both games run the same fight from the same inputs.",
+            "tips.1",
+            "tips.2",
+            "tips.3",
+            "tips.4",
+            "tips.5",
+            "tips.6",
+            "tips.7",
         };
 
-        static readonly string[] StatNames = { "POWER", "SPEED", "RANGE", "ENDURANCE", "RECOVERY" };
+        // Loc keys, drawn through Loc.T
+        static readonly string[] StatNames = { "stats.power", "stats.speed", "stats.range", "stats.endurance", "stats.recovery" };
 
         int homeSel;
         /// <summary>Home menu index of EXIT GAME (the last item).</summary>
@@ -102,7 +106,7 @@ namespace ChibiClash
             x += Gui.KeyCap(x, 16f, Gui.Key("Q", "LB"), 20f) + 10f;
             for (int i = 0; i < NavNames.Length; i++)
             {
-                float w = Gui.Measure(NavNames[i], 15) + 30f;
+                float w = Gui.Measure(Loc.T(NavNames[i]), 15) + 30f;
                 var r = new Rect(x, 9f, w, 34f);
                 bool active = NavPages[i] == owner;
                 bool click = Gui.Hit(r, out bool hot);
@@ -114,13 +118,14 @@ namespace ChibiClash
                 }
                 else if (hot) Gui.Skew(r, Gui.Steel);
                 if (hot) Gui.SkewFrame(r, Gui.Paper, 1.5f);
-                Gui.Text(r, NavNames[i], 15, active || hot ? Gui.Paper : Gui.Muted, TextAnchor.MiddleCenter, true, false);
+                Gui.Text(r, Loc.T(NavNames[i]), 15, active || hot ? Gui.Paper : Gui.Muted, TextAnchor.MiddleCenter, true, false);
                 if (i < NavNames.Length - 1) Gui.Skew(new Rect(r.xMax + 4f, 16f, 2f, 20f), Gui.Steel, 0.35f);
                 if (click && NavPages[i] != page) Go(NavPages[i]);
                 x += w + 10f;
             }
             Gui.KeyCap(x, 16f, Gui.Key("E", "RB"), 20f);
             ProfileChip(new Rect(W - 252f, 8f, 236f, 36f));
+            LanguageButton();   // just under the profile chip, on every page with this bar
         }
 
         /// <summary>Who we are (player name, W / L) and coins; click to change the name.</summary>
@@ -133,8 +138,8 @@ namespace ChibiClash
             Gui.Skew(tag, Gui.P1, 0.3f);
             Gui.Display(tag, "1P", 17, Gui.Paper, TextAnchor.MiddleCenter, 0.12f, Color.clear);
             string shown = DisplayedName();
-            Gui.Text(new Rect(r.x + 52f, r.y + 2f, 112f, 18f), shown.Length > 0 ? shown : "SET NAME", 13, Gui.Paper, TextAnchor.MiddleLeft, true, false);
-            Gui.Text(new Rect(r.x + 52f, r.y + 17f, 112f, 16f), hot ? "EDIT NAME" : "W " + Save.wins + "  ·  L " + Save.losses, 11, hot ? Gui.Gold : Gui.Muted, TextAnchor.MiddleLeft, false, false);
+            Gui.Text(new Rect(r.x + 52f, r.y + 2f, 112f, 18f), shown.Length > 0 ? shown : Loc.T("profile.set_name"), 13, Gui.Paper, TextAnchor.MiddleLeft, true, false);
+            Gui.Text(new Rect(r.x + 52f, r.y + 17f, 112f, 16f), hot ? Loc.T("profile.edit_name") : Loc.T("profile.win_loss", Save.wins, Save.losses), 11, hot ? Gui.Gold : Gui.Muted, TextAnchor.MiddleLeft, false, false);
             var cr = new Rect(r.xMax - 76f, r.y, 70f, r.height);
             Gui.Skew(new Rect(cr.x, cr.y + 12f, 12f, 12f), Gui.Gold, 0.6f);
             Gui.Display(new Rect(cr.x + 16f, cr.y, 56f, cr.height), Save.coins.ToString(), 20, Gui.Gold, TextAnchor.MiddleLeft, 0.12f);
@@ -159,6 +164,12 @@ namespace ChibiClash
             return new Rect(40f, 128f, W - 80f, H - 168f);
         }
 
+        /// <summary>COMMON / RARE / EPIC / LEGENDARY in the current language.</summary>
+        static string RarityUpper(Rarity r) => Loc.T("rarity." + r.ToString().ToLowerInvariant());
+
+        /// <summary>A skin's display name ("Mint Pop") in the current language; Skin.id is "Class_key", the Loc key is skin.key.</summary>
+        static string SkinName(Skin s) => Loc.T("skin." + s.id.Substring(s.id.IndexOf('_') + 1));
+
         void EndPage()
         {
             Gui.Pop();
@@ -167,7 +178,7 @@ namespace ChibiClash
 
         void NavHints(string where)
         {
-            Gui.HintBar(where, Gui.Key("WASD", "D-PAD"), "MOVE", Gui.Key("SPACE", "A"), "SELECT", Gui.Key("ESC", "B"), page == Page.Home ? "EXIT" : "BACK", Gui.Key("Q / E", "LB / RB"), "TABS");
+            Gui.HintBar(where, Gui.Key("WASD", "D-PAD"), Loc.T("hint.move"), Gui.Key("SPACE", "A"), Loc.T("hint.select"), Gui.Key("ESC", "B"), page == Page.Home ? Loc.T("hint.exit") : Loc.T("common.back"), Gui.Key("Q / E", "LB / RB"), Loc.T("hint.tabs"));
         }
 
         // ---------------------------------------------------------------- LOADING
@@ -196,25 +207,25 @@ namespace ChibiClash
 
             Gui.FadeUp(new Rect(W * 0.45f, H - 280f, W * 0.55f, 190f), WithA(Gui.Navy, 0.9f));
             Gui.Display(new Rect(W * 0.45f, H - 236f, W * 0.55f - 48f, 92f), Hud.CharNameUpper(ch.Class), 88, Gui.Paper, TextAnchor.MiddleRight);
-            Gui.Display(new Rect(W * 0.45f, H - 152f, W * 0.55f - 50f, 30f), ch.Role.ToUpper() + "  ·  " + ch.Weapon.ToUpper(), 22, Gui.Gold, TextAnchor.MiddleRight, 0.18f);
+            Gui.Display(new Rect(W * 0.45f, H - 152f, W * 0.55f - 50f, 30f), ch.RoleText.ToUpper() + "  ·  " + ch.Weapon.ToUpper(), 22, Gui.Gold, TextAnchor.MiddleRight, 0.18f);
 
             // logo and headline, staggered in from the left
             float a1 = Gui.EaseOut((since - 0.05f) / 0.45f), a2 = Gui.EaseOut((since - 0.18f) / 0.45f);
             Gui.Alpha = a1;
             Logo(new Rect(48f - (1f - a1) * 40f, 34f, 640f, 92f), 82);
-            Gui.Text(new Rect(54f, 124f, 520f, 20f), "ARENA FIGHTER  ·  BODY-GESTURE ULTIMATES", 13, Gui.Muted, TextAnchor.MiddleLeft, true, false);
+            Gui.Text(new Rect(54f, 124f, 520f, 20f), Loc.T("home.tagline"), 13, Gui.Muted, TextAnchor.MiddleLeft, true, false);
             Gui.Alpha = a2;
             float hx = 48f - (1f - a2) * 60f;
-            Gui.Display(new Rect(hx, H * 0.33f, W * 0.55f, 84f), "PREPARE", 78, Gui.Paper);
-            Gui.Display(new Rect(hx + 22f, H * 0.33f + 74f, W * 0.55f, 84f), "FOR BATTLE", 78, Gui.P1);
-            Gui.Text(new Rect(hx + 28f, H * 0.33f + 168f, 520f, 44f), ch.Style, 15, Gui.Muted, TextAnchor.UpperLeft, false);
+            Gui.Display(new Rect(hx, H * 0.33f, W * 0.55f, 84f), Loc.T("loading.prepare"), 78, Gui.Paper);
+            Gui.Display(new Rect(hx + 22f, H * 0.33f + 74f, W * 0.55f, 84f), Loc.T("loading.for_battle"), 78, Gui.P1);
+            Gui.Text(new Rect(hx + 28f, H * 0.33f + 168f, 520f, 44f), ch.StyleText, 15, Gui.Muted, TextAnchor.UpperLeft, false);
             Gui.Alpha = 1f;
 
             var tip = new Rect(48f, H - 168f, 560f, 60f);
             var tag = new Rect(tip.x, tip.y, 52f, 22f);
             Gui.Skew(tag, Gui.Gold, 0.3f);
-            Gui.Text(tag, "TIP", 13, Gui.Ink, TextAnchor.MiddleCenter, true, false);
-            Gui.Text(new Rect(tip.x + 64f, tip.y, tip.width - 64f, 60f), Tips[loadTip], 14, Gui.Paper, TextAnchor.UpperLeft, false);
+            Gui.Text(tag, Loc.T("loading.tip"), 13, Gui.Ink, TextAnchor.MiddleCenter, true, false);
+            Gui.Text(new Rect(tip.x + 64f, tip.y, tip.width - 64f, 60f), Loc.T(Tips[loadTip]), 14, Gui.Paper, TextAnchor.UpperLeft, false);
 
             LoadBar(new Rect(48f, H - 74f, W - 96f, 22f));
         }
@@ -226,7 +237,7 @@ namespace ChibiClash
             float pulse = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 6f);
             for (int i = 0; i < 3; i++)
                 Gui.Chevron(new Rect(r.x + i * 11f, r.y - 22f, 9f, 14f), WithA(Gui.P1, 0.35f + 0.65f * Mathf.Clamp01(pulse * 3f - i)));
-            Gui.Text(new Rect(r.x + 42f, r.y - 30f, 700f, 24f), (loadIndex >= loadSteps.Count ? "READY" : "LOADING") + "  ·  " + LoadLabel.ToUpper(), 13, Gui.Muted, TextAnchor.MiddleLeft, true, false);
+            Gui.Text(new Rect(r.x + 42f, r.y - 30f, 700f, 24f), Loc.T("loading.status", loadIndex >= loadSteps.Count ? Loc.T("loading.ready_upper") : Loc.T("loading.loading"), LoadLabel.ToUpper()), 13, Gui.Muted, TextAnchor.MiddleLeft, true, false);
             Gui.Display(new Rect(r.xMax - 220f, r.y - 56f, 220f, 52f), Mathf.FloorToInt(p * 100f) + "%", 48, Gui.Paper, TextAnchor.MiddleRight);
 
             const float k = 0.6f;
@@ -262,7 +273,7 @@ namespace ChibiClash
             float la = Gui.EaseOut(since / 0.45f);
             Gui.Alpha = la;
             Logo(new Rect(40f - (1f - la) * 40f, 66f, 600f, 80f), 70);
-            Gui.Text(new Rect(46f, 140f, 520f, 20f), "ARENA FIGHTER  ·  BODY-GESTURE ULTIMATES", 13, Gui.Gold, TextAnchor.MiddleLeft, true, false);
+            Gui.Text(new Rect(46f, 140f, 520f, 20f), Loc.T("home.tagline"), 13, Gui.Gold, TextAnchor.MiddleLeft, true, false);
             Gui.Alpha = 1f;
 
             const float y0 = 182f, step = 50f;
@@ -285,7 +296,7 @@ namespace ChibiClash
                 Gui.Alpha = ap;
                 Gui.Text(new Rect(r.x, r.y, 36f, r.height), (i + 1).ToString("00"), 13, sel ? Gui.Paper : Gui.Muted, TextAnchor.MiddleLeft, true, false);
                 float shift = sel ? 14f : 0f;
-                Gui.Display(new Rect(r.x + 40f + shift, r.y, 440f, r.height), HomeItems[i], sel ? 38 : 32, sel ? Gui.Paper : (i == HomeExit ? Gui.Muted : WithA(Gui.Paper, 0.78f)), TextAnchor.MiddleLeft, 0.2f, sel ? Gui.Ink : Color.clear);
+                Gui.Display(new Rect(r.x + 40f + shift, r.y, 440f, r.height), Loc.T(HomeItems[i]), sel ? 38 : 32, sel ? Gui.Paper : (i == HomeExit ? Gui.Muted : WithA(Gui.Paper, 0.78f)), TextAnchor.MiddleLeft, 0.2f, sel ? Gui.Ink : Color.clear);
                 Gui.Alpha = 1f;
                 if (click) HomeSelect(i);
             }
@@ -295,10 +306,10 @@ namespace ChibiClash
             float dy = y0 + HomeItems.Length * step + 14f;
             Gui.Rect(new Rect(40f, dy, 380f, 1f), Gui.Steel);
             Gui.Chevron(new Rect(40f, dy + 12f, 8f, 12f), Gui.Gold);
-            Gui.Text(new Rect(58f, dy + 6f, 500f, 24f), HomeDesc[homeSel], 14, Gui.Muted, TextAnchor.MiddleLeft, false, false);
+            Gui.Text(new Rect(58f, dy + 6f, 500f, 24f), Loc.T(HomeDesc[homeSel]), 14, Gui.Muted, TextAnchor.MiddleLeft, false, false);
             Gui.Alpha = 1f;
 
-            NavHints("MAIN MENU");
+            NavHints(Loc.T("home.hint"));
         }
 
         /// <summary>Featured character: slanted colour panel with the art breaking out of its top edge.</summary>
@@ -320,8 +331,8 @@ namespace ChibiClash
             Gui.FadeUp(new Rect(px, H - 250f, W - px, 210f), WithA(Gui.Navy, 0.92f));
             Gui.Alpha = k;
             Gui.Display(new Rect(px, H - 214f, W - px - 44f, 96f), Hud.CharNameUpper(ch.Class), 92, Gui.Paper, TextAnchor.MiddleRight);
-            Gui.Display(new Rect(px, H - 128f, W - px - 48f, 30f), ch.Role.ToUpper(), 24, Gui.Gold, TextAnchor.MiddleRight, 0.18f);
-            Gui.Text(new Rect(px, H - 98f, W - px - 52f, 20f), ch.Weapon.ToUpper() + "  ·  ULT " + ClassDef.Get(ch.Class).ultName, 12, Gui.Muted, TextAnchor.MiddleRight, true, false);
+            Gui.Display(new Rect(px, H - 128f, W - px - 48f, 30f), ch.RoleText.ToUpper(), 24, Gui.Gold, TextAnchor.MiddleRight, 0.18f);
+            Gui.Text(new Rect(px, H - 98f, W - px - 52f, 20f), Loc.T("home.weapon_ult", ch.Weapon.ToUpper(), ClassDef.Get(ch.Class).ultName), 12, Gui.Muted, TextAnchor.MiddleRight, true, false);
             Gui.Alpha = 1f;
             int n = CharacterRoster.All.Length;
             for (int i = 0; i < n; i++)
@@ -347,18 +358,18 @@ namespace ChibiClash
             var r = new Rect(W * 0.5f - 270f, H * 0.5f - 120f, 540f, 240f);
             Gui.Skew(new Rect(-40f, r.y + 30f, W + 80f, 180f), WithA(Gui.P1, 0.18f), 0f);
             Gui.Box(r, Gui.P1);
-            Gui.Display(new Rect(r.x + 30f, r.y + 24f, r.width - 60f, 64f), "EXIT GAME?", 54, Gui.Paper);
-            Gui.Text(new Rect(r.x + 32f, r.y + 92f, r.width - 64f, 40f), "Your profile, coins and collection are saved on this device.", 14, Gui.Muted, TextAnchor.UpperLeft, false);
+            Gui.Display(new Rect(r.x + 30f, r.y + 24f, r.width - 60f, 64f), Loc.T("exit.title"), 54, Gui.Paper);
+            Gui.Text(new Rect(r.x + 32f, r.y + 92f, r.width - 64f, 40f), Loc.T("exit.saved_note"), 14, Gui.Muted, TextAnchor.UpperLeft, false);
             Gui.PreferNext();
-            if (Gui.Button(new Rect(r.x + 30f, r.yMax - 78f, 220f, 52f), "STAY", Gui.P2, 18)) CloseExitPrompt();
-            if (Gui.Button(new Rect(r.xMax - 250f, r.yMax - 78f, 220f, 52f), "EXIT GAME", Gui.P1, 18)) QuitGame();
+            if (Gui.Button(new Rect(r.x + 30f, r.yMax - 78f, 220f, 52f), Loc.T("exit.stay"), Gui.P2, 18)) CloseExitPrompt();
+            if (Gui.Button(new Rect(r.xMax - 250f, r.yMax - 78f, 220f, 52f), Loc.T("home.exit_upper"), Gui.P1, 18)) QuitGame();
         }
 
         // ---------------------------------------------------------------- PLAY (Vs Online / Matchmaking / Vs CPU)
 
-        const string OnlineLockedMsg = "Online modes are for players 13 and older.";
-        const string NoInternetMsg = "No internet: connect Wi-Fi or mobile data. VS AI works offline.";
-        const string FourPlayerMsg = "2v2 and Battle Royale need 4-player support, coming in a later update.";
+        static string OnlineLockedMsg => Loc.T("menu.online_locked");
+        static string NoInternetMsg => Loc.T("menu.no_internet");
+        static string FourPlayerMsg => Loc.T("menu.four_player_soon");
 
         /// <summary>The internet is reachable (Wi-Fi or mobile data). Vs Online and Matchmaking need it; Vs CPU never does.</summary>
         static bool InternetUp => Application.internetReachability != NetworkReachability.NotReachable;
@@ -369,34 +380,34 @@ namespace ChibiClash
             NavBar();
             bool onlineOk = PlayerIdentity.OnlineAllowed(Save.ageBand);
             bool online = InternetUp;
-            var a = BeginPage("01", "PLAY", "CHOOSE YOUR BATTLE  ·  VS ONLINE · MATCHMAKING · VS CPU");
+            var a = BeginPage("01", Loc.T("nav.play"), Loc.T("play.kicker"));
             float qw = 380f;
             float cw = (a.width - qw - 30f - 44f) / 3f;
             float ch = Mathf.Min(a.height - 16f, 430f);
             // Vs Online and Matchmaking: 13+ and an internet connection, else a locked card that explains why when clicked.
-            string net = !onlineOk ? "13+ ONLY" : !online ? "NO INTERNET" : "1P VS 1P";
+            string net = !onlineOk ? Loc.T("play.age_locked_tag") : !online ? Loc.T("play.no_internet_tag") : Loc.T("play.1p_vs_1p");
             bool onlineLocked = !onlineOk || !online;
-            if (ModeCard(0, new Rect(a.x, a.y + 8f, cw, ch), "VS\nONLINE", net,
-                         "Quick match with a player near you, or answer a friend's invite.", Gui.Gold,   // two lines: clears the footer
-                         onlineLocked ? "LOCKED" : "CHOOSE A PLAY STYLE", onlineLocked))
+            if (ModeCard(0, new Rect(a.x, a.y + 8f, cw, ch), Loc.T("play.online_card"), net,
+                         Loc.T("play.online_desc"), Gui.Gold,   // two lines: clears the footer
+                         onlineLocked ? Loc.T("play.locked") : Loc.T("play.choose_style"), onlineLocked))
             {
                 if (!onlineOk) Deny(OnlineLockedMsg);
                 else if (!online) Deny(NoInternetMsg);
                 else OpenPlayStyle();
             }
-            if (ModeCard(1, new Rect(a.x + cw + 22f, a.y + 8f, cw, ch), "MATCH\nMAKING", !onlineOk ? "13+ ONLY" : !online ? "NO INTERNET" : "ROOMS · 2-4 PLAYERS",
-                         "Make a room, share its code or invite friends by name.", Gui.P2, onlineLocked ? "LOCKED" : "CREATE · JOIN ROOMS", onlineLocked))
+            if (ModeCard(1, new Rect(a.x + cw + 22f, a.y + 8f, cw, ch), Loc.T("play.matchmaking_card"), !onlineOk ? Loc.T("play.age_locked_tag") : !online ? Loc.T("play.no_internet_tag") : Loc.T("play.rooms_tag"),
+                         Loc.T("play.matchmaking_desc"), Gui.P2, onlineLocked ? Loc.T("play.locked") : Loc.T("play.create_join"), onlineLocked))
             {
                 if (!onlineOk) Deny(OnlineLockedMsg);
                 else if (!online) Deny(NoInternetMsg);
                 else OpenRoomsPage();
             }
             // VS CPU runs entirely on this device: no internet, no sign-in, nothing online is touched.
-            if (ModeCard(2, new Rect(a.x + 2f * (cw + 22f), a.y + 8f, cw, ch), "VS\nCPU", "1P VS COM", "You pick your fighter and EASY, MEDIUM or HARD. The CPU gets a random fighter.", Gui.P1, "COM  " + DifficultyUpper[Save.settings.cpuDifficulty]))
+            if (ModeCard(2, new Rect(a.x + 2f * (cw + 22f), a.y + 8f, cw, ch), Loc.T("play.cpu_card"), Loc.T("play.cpu_tag"), Loc.T("play.cpu_desc"), Gui.P1, Loc.T("play.com_difficulty", Loc.T(DifficultyUpper[Save.settings.cpuDifficulty]))))
                 BeginSelect(true, false);
             Quests(new Rect(a.xMax - qw, a.y + 8f, qw, a.height - 8f));
             EndPage();
-            NavHints("PLAY");
+            NavHints(Loc.T("nav.play"));
         }
 
         // ---------------------------------------------------------------- PLAY STYLE (after Vs Online)
@@ -415,24 +426,24 @@ namespace ChibiClash
             Backdrop();
             NavBar();
             bool net = InternetUp;
-            var a = BeginPage("01", "VS ONLINE", "CHOOSE A PLAY STYLE  ·  SOLO · 2V2 · BATTLE ROYALE");
+            var a = BeginPage("01", Loc.T("online.title"), Loc.T("online.kicker"));
             float qw = 380f;
             float cw = (a.width - qw - 30f - 44f) / 3f;
             float ch = Mathf.Min(a.height - 16f, 430f);
 
             bool soloLocked = !net;
-            if (ModeCard(0, new Rect(a.x, a.y + 8f, cw, ch), "SOLO\n1V1", soloLocked ? "NO INTERNET" : "1 VS 1",
-                         "Quick match: fight a player searching now, nearest first.",
-                         Gui.Gold, soloLocked ? "LOCKED" : "QUICK MATCH", soloLocked))
+            if (ModeCard(0, new Rect(a.x, a.y + 8f, cw, ch), Loc.T("online.solo_card"), soloLocked ? Loc.T("play.no_internet_tag") : Loc.T("play.solo_1v1_tag"),
+                         Loc.T("online.solo_desc"),
+                         Gui.Gold, soloLocked ? Loc.T("play.locked") : Loc.T("online.quick_match"), soloLocked))
             {
                 if (soloLocked) Deny(NoInternetMsg);
                 else StartQuickMatch();
             }
-            if (ModeCard(1, new Rect(a.x + cw + 22f, a.y + 8f, cw, ch), "2V2\nTEAM", "4P · 2 TEAMS",
-                         "Two teams of two. No friendly fire: your hits never hurt your teammate.", Gui.P2, "COMING SOON", true))
+            if (ModeCard(1, new Rect(a.x + cw + 22f, a.y + 8f, cw, ch), Loc.T("play.team_card"), Loc.T("play.team_tag"),
+                         Loc.T("online.team_desc"), Gui.P2, Loc.T("play.coming_soon"), true))
                 Deny(FourPlayerMsg);
-            if (ModeCard(2, new Rect(a.x + 2f * (cw + 22f), a.y + 8f, cw, ch), "BATTLE\nROYALE", "4P · FREE-FOR-ALL",
-                         "Everyone for themselves. The last fighter standing wins.", Gui.P1, "COMING SOON", true))
+            if (ModeCard(2, new Rect(a.x + 2f * (cw + 22f), a.y + 8f, cw, ch), Loc.T("play.royale_card"), Loc.T("play.royale_tag"),
+                         Loc.T("online.royale_desc"), Gui.P1, Loc.T("play.coming_soon"), true))
                 Deny(FourPlayerMsg);
 
             // Right: the connection, where invites come from, and BACK to the Play menu.
@@ -440,19 +451,19 @@ namespace ChibiClash
             var sc = net ? Gui.Green : Gui.P1;
             Gui.Box(info, sc);
             float x = info.x + 22f, w = info.width - 44f;
-            Gui.Text(new Rect(x, info.y + 18f, w, 20f), "CONNECTION", 13, Gui.Muted, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(x, info.y + 18f, w, 20f), Loc.T("online.connection"), 13, Gui.Muted, TextAnchor.MiddleLeft);
             float blink = 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 4f);
             Gui.Skew(new Rect(x, info.y + 50f, 14f, 30f), WithA(sc, 0.5f + 0.5f * blink), 0.3f);
-            Gui.Display(new Rect(x + 26f, info.y + 40f, w, 50f), net ? "READY" : "OFFLINE", 42, sc);
-            string body = !net ? "No internet right now. Connect Wi-Fi or mobile data, or play Vs CPU."
-                        : "Rollback netcode: both games run the same fight from the same inputs, so it stays fast and fair.";
+            Gui.Display(new Rect(x + 26f, info.y + 40f, w, 50f), net ? Loc.T("loading.ready_upper") : Loc.T("online.offline"), 42, sc);
+            string body = !net ? Loc.T("online.no_internet_body")
+                        : Loc.T("online.rollback_body");
             Gui.Text(new Rect(x, info.y + 100f, w, 110f), body, 14, Gui.Paper, TextAnchor.UpperLeft, false);
-            Gui.Text(new Rect(x, info.y + 214f, w, 60f), "2v2 and Battle Royale arrive with 4-player support in a later update.", 13, Gui.Muted, TextAnchor.UpperLeft, false);
-            Gui.Text(new Rect(x, info.y + 270f, w, 44f), "Friends' room invites pop up here. Rooms with friends are in PLAY > MATCHMAKING.", 12,
+            Gui.Text(new Rect(x, info.y + 214f, w, 60f), Loc.T("play.four_player_later"), 13, Gui.Muted, TextAnchor.UpperLeft, false);
+            Gui.Text(new Rect(x, info.y + 270f, w, 44f), Loc.T("online.invites_note"), 12,
                      Gui.Gold, TextAnchor.UpperLeft, false);
-            if (Gui.Button(new Rect(x, info.yMax - 70f, w, 50f), "BACK", Gui.Steel, 18)) { UiSound.Back(); Go(Page.Play); }
+            if (Gui.Button(new Rect(x, info.yMax - 70f, w, 50f), Loc.T("common.back"), Gui.Steel, 18)) { UiSound.Back(); Go(Page.Play); }
             EndPage();
-            NavHints("VS ONLINE  ·  PLAY STYLE");
+            NavHints(Loc.T("online.hint"));
         }
 
         /// <summary>Tall slanted mode card; lifts and streaks when hot. A locked card still reports clicks (to explain why).</summary>
@@ -485,7 +496,7 @@ namespace ChibiClash
             {
                 if (enabled)
                 {
-                    Gui.Text(new Rect(b.x + 24f, b.yMax - 32f, b.width - 62f, 24f), "START", 12, Gui.Paper, TextAnchor.MiddleRight, true, false);
+                    Gui.Text(new Rect(b.x + 24f, b.yMax - 32f, b.width - 62f, 24f), Loc.T("home.start"), 12, Gui.Paper, TextAnchor.MiddleRight, true, false);
                     Gui.Chevron(new Rect(b.xMax - 34f, b.yMax - 26f, 8f, 12f), Gui.Paper);
                 }
                 Gui.SkewFrame(b, enabled ? Gui.Paper : Gui.Muted, 2f, k);
@@ -497,19 +508,19 @@ namespace ChibiClash
         void Quests(Rect q)
         {
             Gui.Box(q, Gui.Gold);
-            Gui.Display(new Rect(q.x + 18f, q.y + 10f, 200f, 34f), "QUESTS", 28, Gui.Gold, TextAnchor.MiddleLeft, 0.18f);
-            Gui.Text(new Rect(q.x + 18f, q.y + 12f, q.width - 36f, 30f), "W " + Save.wins + "  ·  L " + Save.losses, 14, Gui.Muted, TextAnchor.MiddleRight);
+            Gui.Display(new Rect(q.x + 18f, q.y + 10f, 200f, 34f), Loc.T("quests.title"), 28, Gui.Gold, TextAnchor.MiddleLeft, 0.18f);
+            Gui.Text(new Rect(q.x + 18f, q.y + 12f, q.width - 36f, 30f), Loc.T("profile.win_loss", Save.wins, Save.losses), 14, Gui.Muted, TextAnchor.MiddleRight);
             float y = q.y + 56f;
             foreach (var quest in Save.quests)
             {
                 if (y > q.yMax - 110f) break;
-                Gui.Text(new Rect(q.x + 18f, y, q.width - 100f, 22f), quest.desc, 14, Gui.Paper, TextAnchor.MiddleLeft, false);
+                Gui.Text(new Rect(q.x + 18f, y, q.width - 100f, 22f), quest.DescText, 14, Gui.Paper, TextAnchor.MiddleLeft, false);
                 Gui.Text(new Rect(q.x + 18f, y, q.width - 36f, 22f), "+" + quest.reward, 15, Gui.Gold, TextAnchor.MiddleRight);
                 Gui.Meter(new Rect(q.x + 18f, y + 26f, q.width - 36f, 8f), (float)quest.progress / quest.target, Gui.P2, 16);
-                Gui.Text(new Rect(q.x + 18f, y + 36f, q.width - 36f, 16f), quest.progress + " / " + quest.target + (quest.completions > 0 ? "   ·   completed x" + quest.completions : ""), 11, Gui.Muted, TextAnchor.MiddleLeft, false);
+                Gui.Text(new Rect(q.x + 18f, y + 36f, q.width - 36f, 16f), (quest.completions > 0 ? Loc.T("quests.progress_completed", quest.progress, quest.target, quest.completions) : Loc.T("quests.progress", quest.progress, quest.target)), 11, Gui.Muted, TextAnchor.MiddleLeft, false);
                 y += 62f;
             }
-            Gui.Text(new Rect(q.x + 18f, q.yMax - 54f, q.width - 36f, 46f), "Coins come only from playing: wins, PvE, quests and good posture tracked by the camera.", 12, Gui.Muted, TextAnchor.MiddleLeft, false);
+            Gui.Text(new Rect(q.x + 18f, q.yMax - 54f, q.width - 36f, 46f), Loc.T("quests.coins_note"), 12, Gui.Muted, TextAnchor.MiddleLeft, false);
         }
 
         // ---------------------------------------------------------------- ARCADE
@@ -518,29 +529,29 @@ namespace ChibiClash
         {
             Backdrop();
             NavBar();
-            var a = BeginPage("03", "ARCADE", "FIVE RIVALS · ONE RUN");
+            var a = BeginPage("03", Loc.T("wipe.arcade"), Loc.T("arcade.kicker"));
             var box = new Rect(a.x, a.y + 8f, 470f, a.height - 8f);
             Gui.Box(box, Gui.P1);
             float x = box.x + 26f, w = box.width - 52f, y = box.y + 22f;
-            Gui.Display(new Rect(x, y, w, 50f), "ARCADE MODE", 44, Gui.Paper);
+            Gui.Display(new Rect(x, y, w, 50f), Loc.T("arcade.mode"), 44, Gui.Paper);
             y += 60f;
             for (int i = 0; i < 5; i++)
             {
                 string rule;
                 switch (i)
                 {
-                    case 0: rule = "Fight all " + ArcadeRounds + " characters in a row, in a random order."; break;
-                    case 1: rule = "The stage changes every round, from the Mountain of the Beginning to the Ocean Monument."; break;
-                    case 2: rule = "Lost a round? Continue and retry it."; break;
-                    case 3: rule = "CPU difficulty: " + DifficultyUpper[Save.settings.cpuDifficulty] + " (change it in Settings)."; break;
-                    default: rule = "Wins earn coins and quest progress, the same as VS CPU."; break;
+                    case 0: rule = Loc.T("arcade.rule_fight_all", ArcadeRounds); break;
+                    case 1: rule = Loc.T("arcade.rule_stages"); break;
+                    case 2: rule = Loc.T("arcade.rule_retry"); break;
+                    case 3: rule = Loc.T("arcade.rule_difficulty", Loc.T(DifficultyUpper[Save.settings.cpuDifficulty])); break;
+                    default: rule = Loc.T("arcade.rule_rewards"); break;
                 }
                 Gui.Skew(new Rect(x, y + 7f, 8f, 8f), Gui.P1, 0.4f);
                 Gui.Text(new Rect(x + 18f, y, w - 18f, 40f), rule, 14, Gui.Paper, TextAnchor.UpperLeft, false);
                 y += 40f;
             }
             Gui.PreferNext();
-            if (Gui.Button(new Rect(x, box.yMax - 82f, w, 58f), "START ARCADE", Gui.P1, 22)) StartArcade();
+            if (Gui.Button(new Rect(x, box.yMax - 82f, w, 58f), Loc.T("arcade.start"), Gui.P1, 22)) StartArcade();
 
             float lx = box.xMax + 40f, lw = a.xMax - lx;
             float rh = (a.height - 8f - (ArcadeRounds - 1) * 12f) / ArcadeRounds;
@@ -553,54 +564,53 @@ namespace ChibiClash
                 Gui.Skew(new Rect(row.x + 5f, row.y + 5f, row.width, row.height), new Color(0f, 0f, 0f, 0.4f), 0.2f);
                 Gui.Skew(row, new Color(0.07f, 0.11f, 0.2f, 0.96f), 0.2f);
                 Gui.Skew(new Rect(row.x, row.y, 10f, row.height), final ? Gui.Gold : Gui.P1, 0.2f);
-                Gui.Display(new Rect(row.x + 26f, row.y, 200f, row.height), final ? "FINAL" : "ROUND " + (i + 1), 30, final ? Gui.Gold : Gui.Paper);
+                Gui.Display(new Rect(row.x + 26f, row.y, 200f, row.height), final ? Loc.T("arcade.final") : Loc.T("arcade.round", i + 1), 30, final ? Gui.Gold : Gui.Paper);
                 int st = ArcadeStage(i);
                 var prev = new Rect(row.x + 230f, row.y + 8f, (row.height - 16f) * 2f, row.height - 16f);
                 StagePreview(prev, st, 1f);
                 Gui.Text(new Rect(prev.xMax + 16f, row.y, 220f, row.height), StageLabel(st, 216f, 15), 15, Gui.Paper, TextAnchor.MiddleLeft);
-                Gui.Display(new Rect(row.x, row.y, row.width - 30f, row.height), "RIVAL  ???", 26, Gui.Muted, TextAnchor.MiddleRight);
+                Gui.Display(new Rect(row.x, row.y, row.width - 30f, row.height), Loc.T("arcade.rival_unknown"), 26, Gui.Muted, TextAnchor.MiddleRight);
                 Gui.Alpha = 1f;
             }
             EndPage();
-            NavHints("ARCADE");
+            NavHints(Loc.T("wipe.arcade"));
         }
 
         // ---------------------------------------------------------------- TRAINING / CV SETUP
 
         static readonly Gesture[] TrainingGestures = { Gesture.CrossArms, Gesture.PunchForward, Gesture.RaiseHands };
-        static readonly string[] TrainingUses = { "Block · Melee & Magic ultimate", "Fireball · Ranged & Polearm ultimate", "Super jump · Heavy ultimate" };
+        // Loc keys, drawn through Loc.T
+        static readonly string[] TrainingUses = { "training.use_block", "training.use_fireball", "training.use_superjump" };
 
         void TrainingView()
         {
             Backdrop();
             NavBar();
-            var a = BeginPage("02", "TRAINING", "CAMERA SETUP & PRACTICE");
+            var a = BeginPage("02", Loc.T("nav.training"), Loc.T("training.kicker"));
             TrainingTab(a);
             EndPage();
-            if (MenuInput.UsingGamepad) Gui.HintBar("TRAINING  /  CV SETUP", "D-PAD", "MOVE", "A", "SELECT", "B", "BACK", "LB / RB", "TABS");
-            else Gui.HintBar("TRAINING  /  CV SETUP", "1 2 3", "SIMULATE POSE", "P", "SLOUCH", "SPACE", "SELECT", "ESC", "BACK", "Q / E", "TABS");
+            if (MenuInput.UsingGamepad) Gui.HintBar(Loc.T("training.hint"), "D-PAD", Loc.T("hint.move"), "A", Loc.T("hint.select"), "B", Loc.T("common.back"), "LB / RB", Loc.T("hint.tabs"));
+            else Gui.HintBar(Loc.T("training.hint"), "1 2 3", Loc.T("training.simulate_pose"), "P", Loc.T("training.slouch"), "SPACE", Loc.T("hint.select"), "ESC", Loc.T("common.back"), "Q / E", Loc.T("hint.tabs"));
         }
 
         void TrainingTab(Rect a)
         {
             var feed = new Rect(a.x, a.y, 520f, 400f);
             var st = menuTracker.Stable != Gesture.None ? Gui.Green : Gui.Gold;
-            Gui.CvPanel(feed, menuTracker, st, Save.settings.useWebcam, "CV SETUP · " + menuTracker.Source.Name);
+            Gui.CvPanel(feed, menuTracker, st, Save.settings.useWebcam, Loc.T("training.cv_setup_source", menuTracker.Source.Name));
 
             var p = new Rect(a.x + 545f, a.y, a.width - 545f, a.height);
             Gui.Box(p, Gui.P2);
             float x = p.x + 20f, w = p.width - 40f, y = p.y + 14f;
-            Gui.Display(new Rect(x, y, w, 30f), "COMPUTER VISION", 26, Gui.Paper, TextAnchor.MiddleLeft, 0.18f);
+            Gui.Display(new Rect(x, y, w, 30f), Loc.T("training.cv"), 26, Gui.Paper, TextAnchor.MiddleLeft, 0.18f);
             y += 36f;
-            string status = "Camera: " + (Save.settings.useWebcam ? WebcamFeed.Status : "off") +
-                            "\nTracking: " + menuPose.Status() +
-                            "\nDetected: " + (menuTracker.Stable == Gesture.None ? "none" : ClassDef.GestureName(menuTracker.Stable)) +
-                            "   ·   Posture " + Mathf.RoundToInt(menuTracker.Posture * 100f) + "%" +
-                            "   ·   Telemetry " + menuTracker.Validator.Reason;
+            string status = Loc.T("training.status", Save.settings.useWebcam ? WebcamFeed.Status : Loc.T("training.off"), menuPose.Status(),
+                                  menuTracker.Stable == Gesture.None ? Loc.T("training.none") : ClassDef.GestureName(menuTracker.Stable)) +
+                            Loc.T("training.status_posture", Mathf.RoundToInt(menuTracker.Posture * 100f), menuTracker.Validator.Reason);
             Gui.Text(new Rect(x, y, w, 70f), status, 13, Gui.Paper, TextAnchor.UpperLeft, false);
             y += 78f;
 
-            Gui.Text(new Rect(x, y, w, 24f), menuTracker.IsLive ? "GESTURES  (do the pose in front of the camera - punch = one arm straight out to the side)" : "GESTURES  (hold the key to simulate the pose)", 14, Gui.Gold, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(x, y, w, 24f), menuTracker.IsLive ? Loc.T("training.gestures_live") : Loc.T("training.gestures_sim"), 14, Gui.Gold, TextAnchor.MiddleLeft);
             y += 30f;
             float gw = (w - 20f) / 3f;
             for (int i = 0; i < 3; i++)
@@ -612,19 +622,19 @@ namespace ChibiClash
                 if (active) Gui.Rect(new Rect(g.x, g.y, g.width, 3f), Gui.Green);
                 Gui.Skeleton(new Rect(g.x + gw * 0.5f - 50f, g.y + 8f, 100f, 110f), SimulatedPoseSource.TemplateCached(TrainingGestures[i], false), active ? Gui.Green : Gui.P2, 2.5f);
                 Gui.Text(new Rect(g.x, g.y + 120f, gw, 22f), "[" + (i + 1) + "] " + ClassDef.GestureName(TrainingGestures[i]), 13, Gui.Paper);
-                Gui.Text(new Rect(g.x + 6f, g.y + 144f, gw - 12f, 40f), TrainingUses[i], 11, Gui.Muted, TextAnchor.UpperCenter, false);
+                Gui.Text(new Rect(g.x + 6f, g.y + 144f, gw - 12f, 40f), Loc.T(TrainingUses[i]), 11, Gui.Muted, TextAnchor.UpperCenter, false);
             }
             y += 205f;
-            Gui.Text(new Rect(x, y, w, 20f), "Press P to toggle a slouching posture and watch the posture score drop.", 12, Gui.Muted, TextAnchor.MiddleLeft, false);
+            Gui.Text(new Rect(x, y, w, 20f), Loc.T("training.slouch_note"), 12, Gui.Muted, TextAnchor.MiddleLeft, false);
 
-            if (Gui.Button(new Rect(a.x, a.y + 415f, 250f, 48f), Save.settings.useWebcam ? "CAMERA TRACKING: ON" : "CAMERA TRACKING: OFF", Gui.P2, 16, true, Save.settings.useWebcam))
+            if (Gui.Button(new Rect(a.x, a.y + 415f, 250f, 48f), Save.settings.useWebcam ? Loc.T("training.camera_on") : Loc.T("training.camera_off"), Gui.P2, 16, true, Save.settings.useWebcam))
             {
                 Save.settings.useWebcam = !Save.settings.useWebcam;
                 WebcamFeed.SetEnabled(Save.settings.useWebcam);
                 Save.Save();
             }
             Gui.PreferNext();
-            if (Gui.Button(new Rect(a.x + 270f, a.y + 415f, 250f, 48f), "PRACTICE VS DUMMY", Gui.Gold, 16))
+            if (Gui.Button(new Rect(a.x + 270f, a.y + 415f, 250f, 48f), Loc.T("training.practice_dummy"), Gui.Gold, 16))
                 BeginSelect(true, true);
         }
 
@@ -637,10 +647,10 @@ namespace ChibiClash
         {
             Backdrop();
             NavBar();
-            var a = BeginPage("04", "COLLECTION", "SKINS · WEAPONS · COSMETIC BANNER");
+            var a = BeginPage("04", Loc.T("nav.collection"), Loc.T("collection.kicker"));
             ArmoryTab(a);
             EndPage();
-            Gui.HintBar("CHARACTER COLLECTION", Gui.Key("WASD", "D-PAD"), "MOVE", Gui.Key("SPACE", "A"), "SELECT", Gui.Key("ESC", "B"), "BACK", Gui.Key("Q / E", "LB / RB"), "TABS");
+            Gui.HintBar(Loc.T("collection.hint"), Gui.Key("WASD", "D-PAD"), Loc.T("hint.move"), Gui.Key("SPACE", "A"), Loc.T("hint.select"), Gui.Key("ESC", "B"), Loc.T("common.back"), Gui.Key("Q / E", "LB / RB"), Loc.T("hint.tabs"));
         }
 
         void ArmoryTab(Rect a)
@@ -686,38 +696,38 @@ namespace ChibiClash
                     Gui.Display(new Rect(r.x + 44f, r.y + 14f, 100f, 100f), "?", 60, Gui.Muted, TextAnchor.MiddleCenter, 0.15f);
                 }
                 Gui.Display(new Rect(r.x, r.y + 118f, r.width, 26f), s.name.ToUpper(), 20, Gui.Paper, TextAnchor.MiddleCenter, 0.15f);
-                Gui.Text(new Rect(r.x, r.y + 144f, r.width, 20f), s.rarity.ToString().ToUpper() + (s.goldCinematic ? " · GOLD CINEMATIC" : ""), 11, rc);
+                Gui.Text(new Rect(r.x, r.y + 144f, r.width, 20f), RarityUpper(s.rarity) + (s.goldCinematic ? Loc.T("collection.gold_cinematic_suffix") : ""), 11, rc);
                 if (owned)
                 {
-                    if (s == equipped) Gui.Text(new Rect(r.x, r.y + 172f, r.width, 36f), "EQUIPPED", 14, Gui.Green);
-                    else if (Gui.Button(new Rect(r.x + 34f, r.y + 172f, 120f, 36f), "EQUIP", Gui.P2, 14)) Save.Equip(s);
+                    if (s == equipped) Gui.Text(new Rect(r.x, r.y + 172f, r.width, 36f), Loc.T("collection.equipped"), 14, Gui.Green);
+                    else if (Gui.Button(new Rect(r.x + 34f, r.y + 172f, 120f, 36f), Loc.T("collection.equip"), Gui.P2, 14)) Save.Equip(s);
                 }
-                else Gui.Text(new Rect(r.x, r.y + 172f, r.width, 36f), "Pull to unlock", 12, Gui.Muted);
+                else Gui.Text(new Rect(r.x, r.y + 172f, r.width, 36f), Loc.T("collection.pull_to_unlock"), 12, Gui.Muted);
             }
 
             var g = new Rect(a.x + 820f, a.y, a.width - 820f, a.height);
             Gui.Box(g, Gui.Gold);
             float x = g.x + 18f, w = g.width - 36f, y = g.y + 14f;
-            Gui.Display(new Rect(x, y, w, 32f), "COSMETIC BANNER", 26, Gui.Gold, TextAnchor.MiddleCenter, 0.18f);
+            Gui.Display(new Rect(x, y, w, 32f), Loc.T("collection.banner"), 26, Gui.Gold, TextAnchor.MiddleCenter, 0.18f);
             y += 36f;
-            Gui.Text(new Rect(x, y, w, 50f), "Skins & ultimate cinematics only. Stats are identical on every skin - nothing is paywalled.", 12, Gui.Muted, TextAnchor.UpperCenter, false);
+            Gui.Text(new Rect(x, y, w, 50f), Loc.T("collection.banner_note"), 12, Gui.Muted, TextAnchor.UpperCenter, false);
             y += 52f;
-            Gui.Text(new Rect(x, y, w, 20f), "Common 60% · Rare 28% · Epic 10% · Legendary 2%", 11, Gui.Paper);
+            Gui.Text(new Rect(x, y, w, 20f), Loc.T("collection.odds"), 11, Gui.Paper);
             y += 28f;
-            if (Gui.Button(new Rect(x, y, w * 0.5f - 5f, 34f), "ALL FIGHTERS", Gui.P2, 12, true, bannerAll)) bannerAll = true;
-            if (Gui.Button(new Rect(x + w * 0.5f + 5f, y, w * 0.5f - 5f, 34f), Hud.CharNameUpper(armoryClass) + " ONLY", Gui.P2, 12, true, !bannerAll)) bannerAll = false;
+            if (Gui.Button(new Rect(x, y, w * 0.5f - 5f, 34f), Loc.T("collection.all_fighters"), Gui.P2, 12, true, bannerAll)) bannerAll = true;
+            if (Gui.Button(new Rect(x + w * 0.5f + 5f, y, w * 0.5f - 5f, 34f), Loc.T("collection.only", Hud.CharNameUpper(armoryClass)), Gui.P2, 12, true, !bannerAll)) bannerAll = false;
             y += 46f;
             FighterClass? banner = bannerAll ? (FighterClass?)null : armoryClass;
-            if (Gui.Button(new Rect(x, y, w, 46f), "PULL x1  ·  " + SaveData.PullCost, Gui.P1, 16, Save.coins >= SaveData.PullCost))
+            if (Gui.Button(new Rect(x, y, w, 46f), Loc.T("collection.pull1", SaveData.PullCost), Gui.P1, 16, Save.coins >= SaveData.PullCost))
                 DoPull(1, banner);
             y += 54f;
-            if (Gui.Button(new Rect(x, y, w, 46f), "PULL x10  ·  " + SaveData.TenPullCost, Gui.Gold, 16, Save.coins >= SaveData.TenPullCost))
+            if (Gui.Button(new Rect(x, y, w, 46f), Loc.T("collection.pull10", SaveData.TenPullCost), Gui.Gold, 16, Save.coins >= SaveData.TenPullCost))
                 DoPull(10, banner);
             y += 60f;
             foreach (var p in lastPull)
             {
                 if (y > g.yMax - 20f) break;
-                Gui.Text(new Rect(x, y, w, 18f), Hud.CharName(p.skin.cls) + " · " + p.skin.name + (p.duplicate ? "  (dup +20)" : "  NEW!"), 12, Skin.RarityColor(p.skin.rarity), TextAnchor.MiddleLeft, false);
+                Gui.Text(new Rect(x, y, w, 18f), Hud.CharName(p.skin.cls) + " · " + SkinName(p.skin) + (p.duplicate ? Loc.T("collection.dup_suffix") : Loc.T("collection.new_suffix")), 12, Skin.RarityColor(p.skin.rarity), TextAnchor.MiddleLeft, false);
                 y += 18f;
             }
         }
@@ -727,7 +737,7 @@ namespace ChibiClash
             lastPull = Save.Pull(n, banner);
             foreach (var p in lastPull)
                 if (p.skin.rarity >= Rarity.Epic && !p.duplicate)
-                    Toast(p.skin.rarity.ToString().ToUpper() + "! " + Hud.CharName(p.skin.cls) + " · " + p.skin.name);
+                    Toast(Loc.T("collection.pull_toast", RarityUpper(p.skin.rarity), Hud.CharName(p.skin.cls), SkinName(p.skin)));
         }
 
         // ---------------------------------------------------------------- SETTINGS
@@ -736,10 +746,10 @@ namespace ChibiClash
         {
             Backdrop();
             NavBar();
-            var a = BeginPage("05", "SETTINGS", "GAME · CAMERA · CONTROLS");
+            var a = BeginPage("05", Loc.T("nav.settings"), Loc.T("settings.kicker"));
             SettingsTab(a);
             EndPage();
-            Gui.HintBar(listening ? "PRESS A KEY OR CLICK THE BOX  ·  ESC / PAD B CANCELS  ·  PAD BUTTONS CAN'T BE BOUND" : "SETTINGS", Gui.Key("WASD", "D-PAD"), "MOVE", Gui.Key("SPACE", "A"), "SELECT", Gui.Key("ESC", "B"), "BACK", Gui.Key("Q / E", "LB / RB"), "TABS");
+            Gui.HintBar(listening ? Loc.T("settings.listening_hint") : Loc.T("nav.settings"), Gui.Key("WASD", "D-PAD"), Loc.T("hint.move"), Gui.Key("SPACE", "A"), Loc.T("hint.select"), Gui.Key("ESC", "B"), Loc.T("common.back"), Gui.Key("Q / E", "LB / RB"), Loc.T("hint.tabs"));
         }
 
         void SettingsTab(Rect a)
@@ -749,15 +759,15 @@ namespace ChibiClash
             Gui.Box(p, Gui.P1);
             float x = p.x + 24f, y = p.y + 20f;
 
-            Gui.Text(new Rect(x, y, 200f, 40f), "MATCH TIME", 16, Gui.Paper, TextAnchor.MiddleLeft);
-            Gui.Text(new Rect(x + 220f, y, 350f, 40f), MatchController.MatchSeconds + " seconds  <size=12><color=#9AA6BC>(fixed for every match)</color></size>", 16, Gui.Paper, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(x, y, 200f, 40f), Loc.T("settings.match_time"), 16, Gui.Paper, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(x + 220f, y, 350f, 40f), Loc.T("settings.match_time_value", MatchController.MatchSeconds), 16, Gui.Paper, TextAnchor.MiddleLeft);
             y += 56f;
 
-            Gui.Text(new Rect(x, y, 200f, 40f), "CPU DIFFICULTY", 16, Gui.Paper, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(x, y, 200f, 40f), Loc.T("settings.cpu_difficulty"), 16, Gui.Paper, TextAnchor.MiddleLeft);
             for (int i = 1; i <= 3; i++)
             {
                 if (s.cpuDifficulty == i) Gui.PreferNext();
-                if (Gui.Button(new Rect(x + 220f + (i - 1) * 120f, y, 110f, 40f), DifficultyUpper[i], Gui.P2, 15, true, s.cpuDifficulty == i))
+                if (Gui.Button(new Rect(x + 220f + (i - 1) * 120f, y, 110f, 40f), Loc.T(DifficultyUpper[i]), Gui.P2, 15, true, s.cpuDifficulty == i))
                 {
                     s.cpuDifficulty = i;
                     Save.Save();
@@ -765,21 +775,21 @@ namespace ChibiClash
             }
             y += 56f;
 
-            if (Toggle(x, ref y, "CAMERA TRACKING (WEBCAM)", ref s.useWebcam)) WebcamFeed.SetEnabled(s.useWebcam);
-            Toggle(x, ref y, "CV OVERLAY IN MATCH", ref s.showCvOverlay);
-            Toggle(x, ref y, "PRE-MATCH CAMERA CHECK", ref s.preMatchCheck);
-            Toggle(x, ref y, "SCREEN SHAKE", ref s.screenShake);
+            if (Toggle(x, ref y, Loc.T("settings.camera_tracking"), ref s.useWebcam)) WebcamFeed.SetEnabled(s.useWebcam);
+            Toggle(x, ref y, Loc.T("settings.cv_overlay"), ref s.showCvOverlay);
+            Toggle(x, ref y, Loc.T("settings.precheck"), ref s.preMatchCheck);
+            Toggle(x, ref y, Loc.T("settings.screen_shake"), ref s.screenShake);
 
             // Volumes live in ChibiAudio (it persists them itself); 10 % steps with - / +, or click the meter.
             float master = Netcode.ChibiAudio.MasterVolume, sfx = Netcode.ChibiAudio.SfxVolume;
-            if (VolumeSlider(x, ref y, "MASTER VOLUME", ref master)) Netcode.ChibiAudio.MasterVolume = master;
-            if (VolumeSlider(x, ref y, "SFX VOLUME", ref sfx)) Netcode.ChibiAudio.SfxVolume = sfx;
+            if (VolumeSlider(x, ref y, Loc.T("settings.master_volume"), ref master)) Netcode.ChibiAudio.MasterVolume = master;
+            if (VolumeSlider(x, ref y, Loc.T("settings.sfx_volume"), ref sfx)) Netcode.ChibiAudio.SfxVolume = sfx;
 
             y += 4f;
             // Two clicks within 3 s (item 22). RESET PROFILE keeps the name, age and sign-in (user decision 2026-11-17).
             bool profileArmed = Time.unscaledTime < resetProfileArmedUntil;
             bool profileLive = profileArmed && Time.unscaledTime > resetProfileArmedUntil - ResetArmSeconds + ResetGraceSeconds;
-            if (Gui.Button(new Rect(x, y, 260f, 44f), profileArmed ? "SURE? ALL PROGRESS GOES" : "RESET PROFILE", Gui.Red, profileArmed ? 13 : 15))
+            if (Gui.Button(new Rect(x, y, 260f, 44f), profileArmed ? Loc.T("settings.sure_reset_profile") : Loc.T("settings.reset_profile"), Gui.Red, profileArmed ? 13 : 15))
             {
                 if (profileLive)
                 {
@@ -787,21 +797,26 @@ namespace ChibiClash
                     Save = Save.ResetProgress(PlayerPrefsSaveStore.Instance);
                     Bindings.Data = Save;
                     WebcamFeed.SetEnabled(Save.settings.useWebcam);
-                    Toast("Profile reset (name and sign-in kept)");
+                    Toast(Loc.T("settings.profile_reset"));
                 }
                 else if (!profileArmed) { resetProfileArmedUntil = Time.unscaledTime + ResetArmSeconds; UiSound.Confirm(); }
             }
             // CHANGE NAME: the same name window and validation as the first launch (and the profile chip).
             string shownName = DisplayedName();
-            if (Gui.Button(new Rect(x + 280f, y, 292f, 44f), shownName.Length > 0 ? "CHANGE NAME  ·  " + shownName : "CHANGE NAME", Gui.Gold, 14))
+            if (Gui.Button(new Rect(x + 280f, y, 292f, 44f), shownName.Length > 0 ? Loc.T("settings.change_name_as", shownName) : Loc.T("settings.change_name"), Gui.Gold, 14))
                 OpenNameDialog();
+            // LANGUAGE: reopens the first-launch language window (the current language in its own name).
+            y += 56f;
+            var li = Loc.Find(Loc.Code);
+            if (Gui.Button(new Rect(x, y, 572f, 44f), Loc.T("settings.language", li != null ? li.native : Loc.Code), Gui.P2, 14))
+                OpenLanguageDialog();
 
             var c = new Rect(a.x + 650f, a.y, a.width - 650f, a.height);
             Gui.Box(c, Gui.Gold);
-            Gui.Display(new Rect(c.x + 20f, c.y + 10f, 300f, 30f), "KEY BINDINGS", 24, Gui.Gold, TextAnchor.MiddleLeft, 0.18f);
+            Gui.Display(new Rect(c.x + 20f, c.y + 10f, 300f, 30f), Loc.T("settings.key_bindings"), 24, Gui.Gold, TextAnchor.MiddleLeft, 0.18f);
             bool keysArmed = Time.unscaledTime < resetKeysArmedUntil;
             bool keysLive = keysArmed && Time.unscaledTime > resetKeysArmedUntil - ResetArmSeconds + ResetGraceSeconds;
-            if (Gui.Button(new Rect(c.xMax - 170f, c.y + 10f, 150f, 30f), keysArmed ? "SURE?" : "RESET KEYS", Gui.Red, 12))
+            if (Gui.Button(new Rect(c.xMax - 170f, c.y + 10f, 150f, 30f), keysArmed ? Loc.T("settings.sure") : Loc.T("settings.reset_keys"), Gui.Red, 12))
             {
                 if (keysLive)
                 {
@@ -809,7 +824,7 @@ namespace ChibiClash
                     Bindings.ResetDefaults(Save);
                     Save.Save();
                     listening = false;
-                    Toast("Keys reset to defaults");
+                    Toast(Loc.T("settings.keys_reset"));
                 }
                 else if (!keysArmed) { resetKeysArmedUntil = Time.unscaledTime + ResetArmSeconds; UiSound.Confirm(); }
             }
@@ -821,16 +836,16 @@ namespace ChibiClash
                 float bx = c.x + 20f + pn * (colW + 20f), by = c.y + 50f;
                 var pc = Gui.PlayerColor(pn);
                 Gui.Skew(new Rect(bx, by + 2f, 4f, 18f), pc, 0.3f);
-                Gui.Text(new Rect(bx + 10f, by, colW, 22f), pn == 0 ? "PLAYER 1" : "PLAYER 2", 15, pc, TextAnchor.MiddleLeft);
+                Gui.Text(new Rect(bx + 10f, by, colW, 22f), pn == 0 ? Loc.T("settings.player1") : Loc.T("settings.player2"), 15, pc, TextAnchor.MiddleLeft);
                 by += 26f;
                 for (int k = 0; k < Bindings.Count; k++)
                 {
                     var act = (BindAction)k;
                     bool mine = listening && listenPlayer == pn && listenAction == act;
-                    Gui.Text(new Rect(bx, by, colW - 106f, rowH - 3f), Bindings.Names[k], 12, Gui.Paper, TextAnchor.MiddleLeft, false);
+                    Gui.Text(new Rect(bx, by, colW - 106f, rowH - 3f), Loc.T(Bindings.Names[k]), 12, Gui.Paper, TextAnchor.MiddleLeft, false);
                     var row = new Rect(bx + colW - 104f, by, 104f, rowH - 3f);
                     if (mine && Event.current.type == EventType.Repaint) listenPointerOnRow = row.Contains(Event.current.mousePosition);
-                    if (Gui.Button(row, mine ? "key or click here" : Bindings.Label(pn, act), mine ? Gui.Gold : pc, 11, true, mine) &&
+                    if (Gui.Button(row, mine ? Loc.T("settings.key_listening") : Bindings.Label(pn, act), mine ? Gui.Gold : pc, 11, true, mine) &&
                         !listening && !listenClickLatch && Time.unscaledTime - listenEndedAt > 0.4f)
                     {
                         listening = true; listenSince = Time.unscaledTime; listenPlayer = pn; listenAction = act;
@@ -840,8 +855,7 @@ namespace ChibiClash
                 }
             }
             Gui.Text(new Rect(c.x + 20f, c.yMax - 52f, c.width - 40f, 46f),
-                "Click a binding, then press a key or click that box with a mouse button (Esc / pad B / a click elsewhere cancels; 5 s timeout). If either player already uses it, the two swap.\n" +
-                "Camera poses: cross arms = block · arm out to the side = fireball · both hands up = super jump (keyboard poses: 1/2/3 and 8/9/0).",
+                Loc.T("settings.keys_help"),
                 11, Gui.Muted, TextAnchor.UpperLeft, false);
         }
 
@@ -872,8 +886,8 @@ namespace ChibiClash
         {
             Gui.Text(new Rect(x, y, 300f, 40f), label, 15, Gui.Paper, TextAnchor.MiddleLeft);
             bool changed = false;
-            if (Gui.Button(new Rect(x + 340f, y, 110f, 40f), "ON", Gui.Green, 15, true, value) && !value) { value = true; changed = true; }
-            if (Gui.Button(new Rect(x + 460f, y, 110f, 40f), "OFF", Gui.Red, 15, true, !value) && value) { value = false; changed = true; }
+            if (Gui.Button(new Rect(x + 340f, y, 110f, 40f), Loc.T("common.on"), Gui.Green, 15, true, value) && !value) { value = true; changed = true; }
+            if (Gui.Button(new Rect(x + 460f, y, 110f, 40f), Loc.T("common.off"), Gui.Red, 15, true, !value) && value) { value = false; changed = true; }
             y += 52f;
             if (changed) Save.Save();
             return changed;

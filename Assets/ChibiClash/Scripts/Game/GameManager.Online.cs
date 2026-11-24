@@ -93,9 +93,9 @@ namespace ChibiClash
         {
             var r = DialogRect(660f, 300f);
             Gui.Box(r, Gui.P2);
-            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), "HOW OLD ARE YOU?", 36, Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), Loc.T("age.title"), 36, Gui.Paper, TextAnchor.MiddleCenter);
             Gui.Text(new Rect(r.x + 30f, r.y + 62f, r.width - 60f, 40f),
-                     "Every age can play every mode. Your age is recorded with your player name for game statistics.", 13, Gui.Muted, TextAnchor.UpperCenter, false);
+                     Loc.T("age.body"), 13, Gui.Muted, TextAnchor.UpperCenter, false);
 
             bool enter = EnterPressed() || TakePadSubmit();
             var field = new Rect(r.x + r.width * 0.5f - 90f, r.y + 106f, 180f, 56f);
@@ -110,10 +110,10 @@ namespace ChibiClash
             if (GUI.GetNameOfFocusedControl() != "Age") GUI.FocusControl("Age");
             Gui.Text(new Rect(r.x + 30f, r.y + 168f, r.width - 60f, 24f), nameError, 14, Gui.Red);
 
-            if (Gui.Button(new Rect(r.x + r.width * 0.5f - 130f, r.y + 210f, 260f, 54f), "NEXT", Gui.P1, 20) || enter)
+            if (Gui.Button(new Rect(r.x + r.width * 0.5f - 130f, r.y + 210f, 260f, 54f), Loc.T("common.next"), Gui.P1, 20) || enter)
             {
                 var band = PlayerIdentity.BandForAnswer(ageInput);
-                if (band == AgeBand.Unknown) { nameError = "Type your age, or set it with the D-pad."; UiSound.Error(); }
+                if (band == AgeBand.Unknown) { nameError = Loc.T("age.error"); UiSound.Error(); }
                 else
                 {
                     Save.ageBand = (int)band;
@@ -124,7 +124,7 @@ namespace ChibiClash
                 }
                 if (enter && Event.current.type == EventType.KeyDown) Event.current.Use();
             }
-            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), "Gamepad: D-pad up/down changes it by 1, left/right by 10 · A = next", 12, Gui.Muted);
+            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), Loc.T("age.pad_hint"), 12, Gui.Muted);
         }
 
         void OpenRoomDialog()
@@ -143,9 +143,9 @@ namespace ChibiClash
         {
             var r = DialogRect(640f, 300f);
             Gui.Box(r, Gui.P1);
-            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), "ENTER THE ROOM NAME", 36, Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), Loc.T("rooms.enter_name"), 36, Gui.Paper, TextAnchor.MiddleCenter);
             Gui.Text(new Rect(r.x + 30f, r.y + 60f, r.width - 60f, 22f),
-                     "3-24 letters, numbers or spaces. Friends see it when they join. Rooms hold 2 to 4 players.",
+                     Loc.T("rooms.name_rules"),
                      13, Gui.Muted, TextAnchor.UpperCenter, false);
 
             bool enter = EnterPressed();
@@ -158,7 +158,7 @@ namespace ChibiClash
             // While the room service is busy (the room list refresh) a create would be ignored: wait for it.
             bool canCreate = !roomsSvc.Working;
             Gui.PreferNext();
-            if ((Gui.Button(new Rect(r.x + r.width * 0.5f - 230f, r.y + 212f, 220f, 56f), canCreate ? "CREATE" : "ONE MOMENT...", Gui.P1, 20, canCreate) || enter) && canCreate)
+            if ((Gui.Button(new Rect(r.x + r.width * 0.5f - 230f, r.y + 212f, 220f, 56f), canCreate ? Loc.T("rooms.create") : Loc.T("common.one_moment"), Gui.P1, 20, canCreate) || enter) && canCreate)
             {
                 string n = (roomNameInput ?? "").Trim();
                 string err = Netcode.ChibiSocialRules.ValidateRoomName(n);
@@ -179,7 +179,7 @@ namespace ChibiClash
                 }
                 if (enter) Event.current.Use();
             }
-            if (Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 212f, 220f, 56f), "CANCEL", Gui.Steel, 18))
+            if (Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 212f, 220f, 56f), Loc.T("common.cancel"), Gui.Steel, 18))
             {
                 roomDialog = false;
                 UiSound.Back();
@@ -195,15 +195,14 @@ namespace ChibiClash
         {
             var r = DialogRect(680f, 330f);
             Gui.Box(r, Gui.P2);
-            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), "KEEP YOUR FIGHTER NAME", 34, Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), Loc.T("account.keep_name"), 34, Gui.Paper, TextAnchor.MiddleCenter);
             Gui.Text(new Rect(r.x + 40f, r.y + 62f, r.width - 80f, 70f),
-                     "Sign in with your Google account and your name and info stay with you: every time you open the game, " +
-                     "and on any computer. Another Google account gets its own new name.", 14, Gui.Paper, TextAnchor.UpperCenter, false);
+                     Loc.T("account.keep_name_body"), 14, Gui.Paper, TextAnchor.UpperCenter, false);
             bool working = account.Working;
-            if (Gui.Button(new Rect(r.x + r.width * 0.5f - 200f, r.y + 146f, 400f, 58f), working ? "FINISH IN YOUR BROWSER..." : "SIGN IN WITH GOOGLE",
+            if (Gui.Button(new Rect(r.x + r.width * 0.5f - 200f, r.y + 146f, 400f, 58f), working ? Loc.T("account.finish_in_browser") : Loc.T("account.sign_in_google"),
                            Gui.P1, 20, !working))
                 account.SignInWithGoogle();
-            if (Gui.Button(new Rect(r.x + r.width * 0.5f - 200f, r.y + 216f, 400f, 46f), "PLAY WITHOUT ACCOUNT", Gui.Steel, 16, !working))
+            if (Gui.Button(new Rect(r.x + r.width * 0.5f - 200f, r.y + 216f, 400f, 46f), Loc.T("account.play_without"), Gui.Steel, 16, !working))
             {
                 Save.accountAsked = true;
                 Save.Save();
@@ -298,7 +297,7 @@ namespace ChibiClash
             // Unity's public name / the account name only change for a name claimed worldwide (unclaimed: pushed by
             // PushClaimedName once the online name gate confirms it).
             if (changed && verified) PushClaimedName(n);
-            Toast(verified ? "You are " + n + "!" : "You are " + n + "! We will check the name when you play online.");
+            Toast(verified ? Loc.T("name.you_are", n) : Loc.T("name.you_are_unchecked", n));
         }
 
         /// <summary>
@@ -324,11 +323,11 @@ namespace ChibiClash
 
         async System.Threading.Tasks.Task<string> ClaimForOnline(string n)
         {
-            if (n.Length == 0) { OpenNameDialog(); return "Choose your player name first."; }
+            if (n.Length == 0) { OpenNameDialog(); return Loc.T("name.choose_first"); }
             Netcode.ChibiNameReply r;
             try { r = await nameRegistry.ClaimAsync(n); }
             catch (System.Exception) { r = Netcode.ChibiNameReply.Unavailable; }
-            if (this == null) return "Cancelled.";
+            if (this == null) return Loc.T("common.cancelled");
             // SEC-003: the saved name changed while we waited: this answer is about the old name, check the new one.
             if (Netcode.ChibiSocialRules.CleanSavedName(Save.playerName) != n) return await EnsureOnlineNameAsync();
             if (Netcode.ChibiNameRegistryRules.IsOwned(r.Status)) { PushClaimedName(n); return null; }
@@ -358,9 +357,9 @@ namespace ChibiClash
             bool first = NeedsFirstName;
             var r = DialogRect(660f, 300f);
             Gui.Box(r, Gui.Gold);
-            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), first ? "WELCOME, FIGHTER! WHAT IS YOUR NAME?" : "CHANGE YOUR NAME", first ? 30 : 36, Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), first ? Loc.T("name.welcome") : Loc.T("name.change_title"), first ? 30 : 36, Gui.Paper, TextAnchor.MiddleCenter);
             Gui.Text(new Rect(r.x + 30f, r.y + 60f, r.width - 60f, 40f),
-                     "3-16 letters, numbers or _. Pick a fun fighter name, not your real name. It is how friends find and invite you, and what everyone sees.",
+                     Loc.T("name.rules"),
                      13, Gui.Muted, TextAnchor.UpperCenter, false);
 
             bool enter = EnterPressed() || TakePadSubmit();
@@ -368,13 +367,13 @@ namespace ChibiClash
             GUI.SetNextControlName("PlayerName");
             nameInput = GUI.TextField(field, nameInput ?? "", Netcode.ChibiSocialRules.NameMax, Field(26));
             if (GUI.GetNameOfFocusedControl() != "PlayerName") GUI.FocusControl("PlayerName");
-            if (Gui.Button(new Rect(field.xMax + 10f, field.y + 3f, 130f, 44f), "SUGGEST", Gui.Gold, 16)) { SuggestName(); UiSound.Step(); }
+            if (Gui.Button(new Rect(field.xMax + 10f, field.y + 3f, 130f, 44f), Loc.T("name.suggest"), Gui.Gold, 16)) { SuggestName(); UiSound.Step(); }
             if (nameClaiming) enter = false;   // one claim at a time
             Gui.Text(new Rect(r.x + 30f, r.y + 168f, r.width - 60f, 24f), nameError, 14, Gui.Red);
 
             float bw = first ? 260f : 200f;
             float bx = first ? r.x + (r.width - bw) * 0.5f : r.x + r.width * 0.5f - bw - 10f;
-            string saveLabel = nameClaiming ? "CHECKING..." : first ? "LET'S FIGHT!" : "SAVE";
+            string saveLabel = nameClaiming ? Loc.T("name.checking") : first ? Loc.T("name.lets_fight") : Loc.T("common.save");
             if (Gui.Button(new Rect(bx, r.y + 210f, bw, 54f), saveLabel, Gui.P1, 20, !nameClaiming) || enter)
             {
                 string n = (nameInput ?? "").Trim();
@@ -383,10 +382,10 @@ namespace ChibiClash
                 else if (!nameClaiming) ClaimAndSaveName(n);   // worldwide-unique claim, then save (or "already taken")
                 if (enter && Event.current.type == EventType.KeyDown) Event.current.Use();
             }
-            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), first ? "Gamepad: A = let's fight · Y = suggest a name" : "Gamepad: A = save · Y = suggest a name", 12, Gui.Muted);
+            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), first ? Loc.T("name.pad_hint_first") : Loc.T("name.pad_hint"), 12, Gui.Muted);
             // No SIGN IN WITH GOOGLE row (user request 2026-11-23): the name stays on this device, tied to its
             // anonymous player id. ChibiAccount remains in the code but nothing in the UI opens it.
-            if (!first && Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 210f, 200f, 54f), "CANCEL", Gui.Steel, 18, !nameClaiming))
+            if (!first && Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 210f, 200f, 54f), Loc.T("common.cancel"), Gui.Steel, 18, !nameClaiming))
             {
                 nameDialog = false;
                 UiSound.Back();
@@ -455,7 +454,7 @@ namespace ChibiClash
             runner.Begin(online, input);
             pendingOnline = runner;
             pendingOnlineInput = input;
-            onlineNote = "Connected. Agreeing on the match...";
+            onlineNote = Loc.T("online.connected_agreeing");
             UiSound.LockIn();   // match found
         }
 
@@ -538,11 +537,11 @@ namespace ChibiClash
             {
                 var r = m.Result;
                 onlineNote = r.RejectReason == Netcode.ChibiRejectReason.InvalidConfig && roomsSvc.OwnsLink && !m.RejectedByPeer
-                    ? "The host's settings changed \u2014 rejoin the room."                                                       // SEC-001
+                    ? Loc.T("online.host_settings_changed")                                                    // SEC-001
                     : r.RejectReason == Netcode.ChibiRejectReason.RulesMismatch || r.RejectReason == Netcode.ChibiRejectReason.ProtocolMismatch ||
                       r.RejectReason == Netcode.ChibiRejectReason.ContentMismatch
-                    ? "Your opponent runs a different version of the game. Both players need the same build."
-                    : "The match could not start (" + r.HandshakeState + ").";
+                    ? Loc.T("online.version_mismatch")
+                    : Loc.T("online.could_not_start", r.HandshakeState);
                 Destroy(pendingOnline.gameObject);
                 pendingOnline = null;
                 pendingOnlineInput = null;
@@ -584,24 +583,24 @@ namespace ChibiClash
             NavBar();
             bool net = InternetUp;
             bool working = roomsSvc.Working;
-            var a = BeginPage("02", "MATCHMAKING", "ROOMS  ·  2-4 PLAYERS  ·  CREATE · JOIN · INVITE BY NAME");
+            var a = BeginPage("02", Loc.T("rooms.title"), Loc.T("rooms.kicker"));
             int count = roomsSvc.MyRooms.Count;
 
             // Top row: YOUR ROOMS on the left, CREATE ROOMS and JOIN ROOM in the top-right corner.
-            Gui.Display(new Rect(a.x, a.y + 4f, 400f, 40f), "YOUR ROOMS", 30, Gui.Gold, TextAnchor.MiddleLeft, 0.18f);
+            Gui.Display(new Rect(a.x, a.y + 4f, 400f, 40f), Loc.T("rooms.your_rooms"), 30, Gui.Gold, TextAnchor.MiddleLeft, 0.18f);
             if (count > 0)
-                Gui.Text(new Rect(a.x + Gui.Measure("YOUR ROOMS", 30, true) + 24f, a.y + 4f, 300f, 40f), count + "  ·  click a room to open it",
+                Gui.Text(new Rect(a.x + Gui.Measure(Loc.T("rooms.your_rooms"), 30, true) + 24f, a.y + 4f, 300f, 40f), Loc.T("rooms.count_click", count),
                          13, Gui.Muted, TextAnchor.MiddleLeft, true, false);
             const float bw = 200f, bh = 48f;
             var joinR = new Rect(a.xMax - bw, a.y, bw, bh);
             var createR = new Rect(joinR.x - bw - 12f, a.y, bw, bh);
             if (count == 0) Gui.PreferNext();
-            if (Gui.Button(createR, "CREATE ROOMS", Gui.P1, 18))
+            if (Gui.Button(createR, Loc.T("rooms.create_rooms"), Gui.P1, 18))
             {
                 if (!net) Deny(NoInternetMsg);
                 else OpenRoomDialog();
             }
-            if (Gui.Button(joinR, "JOIN ROOM", Gui.P2, 18))
+            if (Gui.Button(joinR, Loc.T("rooms.join_room"), Gui.P2, 18))
             {
                 if (!net) Deny(NoInternetMsg);
                 else OpenJoinDialog();
@@ -612,15 +611,15 @@ namespace ChibiClash
             if (count == 0)
             {
                 bool loading = (working || roomCreatePending) && !roomsSvc.ListLoaded;
-                string head = !net ? "NO INTERNET" : roomCreatePending ? "CREATING YOUR ROOM..." : loading ? "LOADING YOUR ROOMS..." : "No room create yet!";
+                string head = !net ? Loc.T("play.no_internet_tag") : roomCreatePending ? Loc.T("rooms.creating") : loading ? Loc.T("rooms.loading") : Loc.T("rooms.none_yet");
                 string sub = !net ? NoInternetMsg
-                           : roomCreatePending || loading ? "One moment."
-                           : "Press CREATE ROOMS to make one, or JOIN ROOM with a friend's room code.";
+                           : roomCreatePending || loading ? Loc.T("rooms.one_moment")
+                           : Loc.T("rooms.empty_help");
                 float cy = area.y + area.height * 0.5f;
                 Gui.Glow(new Rect(area.center.x - 260f, cy - 90f, 520f, 160f), WithA(Gui.P2, 0.12f));
                 Gui.Display(new Rect(area.x, cy - 54f, area.width, 64f), head, 50, Gui.Paper, TextAnchor.MiddleCenter, 0.15f);
                 Gui.Text(new Rect(area.x, cy + 14f, area.width, 26f), sub, 15, Gui.Muted, TextAnchor.MiddleCenter, false);
-                Gui.Text(new Rect(area.x, cy + 42f, area.width, 22f), "Rooms hold 2 to 4 players. Invite friends by their player name.", 12,
+                Gui.Text(new Rect(area.x, cy + 42f, area.width, 22f), Loc.T("rooms.capacity_note"), 12,
                          WithA(Gui.Muted, 0.8f), TextAnchor.MiddleCenter, false, false);
             }
             else RoomBlocks(area);
@@ -631,12 +630,12 @@ namespace ChibiClash
             if (status.Length == 0 && !net) { status = NoInternetMsg; statusErr = true; }
             float by = a.yMax - 52f;
             if (nameInvites != null && nameInvites.Paused)
-                Gui.Text(new Rect(a.x, by - 20f, 600f, 18f), "Room invites paused for a few minutes", 11, Gui.Muted, TextAnchor.MiddleLeft, false, false);
+                Gui.Text(new Rect(a.x, by - 20f, 600f, 18f), Loc.T("rooms.invites_paused"), 11, Gui.Muted, TextAnchor.MiddleLeft, false, false);
             Gui.Text(new Rect(a.x, by, a.width - 420f, 50f), status, 13, statusErr ? Gui.Red : Gui.Paper, TextAnchor.MiddleLeft, false);
-            if (Gui.Button(new Rect(a.xMax - 400f, by + 2f, 150f, 46f), "REFRESH", Gui.P2, 15, !working && net)) roomsSvc.Refresh(force: true);
-            if (Gui.Button(new Rect(a.xMax - 240f, by + 2f, 240f, 46f), "BACK", Gui.Steel, 18)) { UiSound.Back(); Go(Page.Play); }
+            if (Gui.Button(new Rect(a.xMax - 400f, by + 2f, 150f, 46f), Loc.T("rooms.refresh"), Gui.P2, 15, !working && net)) roomsSvc.Refresh(force: true);
+            if (Gui.Button(new Rect(a.xMax - 240f, by + 2f, 240f, 46f), Loc.T("common.back"), Gui.Steel, 18)) { UiSound.Back(); Go(Page.Play); }
             EndPage();
-            NavHints("MATCHMAKING  ·  ROOMS");
+            NavHints(Loc.T("rooms.hint"));
         }
 
         /// <summary>
@@ -672,10 +671,10 @@ namespace ChibiClash
                 Gui.HalftoneFade(new Rect(r.x + 10f, r.y + 8f, r.width - 20f, r.height * 0.5f), WithA(accent, hot ? 0.22f : 0.1f), true);
                 float x = r.x + 20f, w = r.width - 40f;
                 Gui.Display(new Rect(x, r.y + 14f, w, 34f), room.Name, 26, Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
-                Gui.Text(new Rect(x, r.y + 50f, w, 20f), "CODE  " + room.Code, 13, Gui.Gold, TextAnchor.MiddleLeft, true, false);
+                Gui.Text(new Rect(x, r.y + 50f, w, 20f), Loc.T("rooms.code_value", room.Code), 13, Gui.Gold, TextAnchor.MiddleLeft, true, false);
                 if (host || fresh)
                 {
-                    string tag = fresh ? "NEW" : "YOU HOST";
+                    string tag = fresh ? Loc.T("rooms.new") : Loc.T("rooms.you_host");
                     float tw = Gui.Measure(tag, 11) + 18f;
                     var chip = new Rect(r.xMax - 20f - tw, r.y + 52f, tw, 18f);
                     Gui.Skew(chip, fresh ? Gui.Green : Gui.Gold, 0.3f);
@@ -685,10 +684,10 @@ namespace ChibiClash
                 for (int s = 0; s < Netcode.ChibiRoomRules.MaxSeats; s++)
                     Gui.Skew(new Rect(x + s * 26f, r.y + 82f, 20f, 14f), s < taken ? SeatColor(s) : WithA(Gui.Steel, 0.9f), 0.3f);
                 Gui.Text(new Rect(x + Netcode.ChibiRoomRules.MaxSeats * 26f + 8f, r.y + 78f, w, 22f),
-                         taken + " / " + Netcode.ChibiRoomRules.MaxSeats + " PLAYERS", 12, Gui.Muted, TextAnchor.MiddleLeft, true, false);
+                         Loc.T("rooms.players_count", taken, Netcode.ChibiRoomRules.MaxSeats), 12, Gui.Muted, TextAnchor.MiddleLeft, true, false);
                 if (hot)
                 {
-                    Gui.Text(new Rect(x, r.yMax - 28f, w - 12f, 22f), "OPEN", 12, Gui.Paper, TextAnchor.MiddleRight, true, false);
+                    Gui.Text(new Rect(x, r.yMax - 28f, w - 12f, 22f), Loc.T("rooms.open"), 12, Gui.Paper, TextAnchor.MiddleRight, true, false);
                     Gui.Chevron(new Rect(r.xMax - 26f, r.yMax - 23f, 8f, 12f), Gui.Paper);
                     Gui.SkewFrame(r, Gui.Paper, 2f, 0.06f);
                 }
@@ -702,7 +701,7 @@ namespace ChibiClash
             if (shown < count)
             {
                 var r = new Rect(area.x + (shown % cols) * (bw + gap), area.y + (shown / cols) * (bh + gap), bw, bh);
-                Gui.Text(r, "+ " + (count - shown) + " more rooms", 16, Gui.Muted, TextAnchor.MiddleCenter);
+                Gui.Text(r, Loc.T("rooms.more", count - shown), 16, Gui.Muted, TextAnchor.MiddleCenter);
             }
         }
 
@@ -719,7 +718,7 @@ namespace ChibiClash
             newRoomId = made.Id;
             newRoomUntil = Time.unscaledTime + 4f;
             roomsSvc.ExitToList();
-            Toast("Room \"" + made.Name + "\" created. Click it to share the code or invite friends.");
+            Toast(Loc.T("rooms.created", made.Name));
         }
 
         /// <summary>A locked online card was clicked: say why (age first, then the connection).</summary>
@@ -743,9 +742,9 @@ namespace ChibiClash
         {
             var r = DialogRect(600f, 320f);
             Gui.Box(r, Gui.P2);
-            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), "ENTER THE ROOM CODE", 36, Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 44f), Loc.T("join.enter_code"), 36, Gui.Paper, TextAnchor.MiddleCenter);
             Gui.Text(new Rect(r.x + 30f, r.y + 60f, r.width - 60f, 22f),
-                     "Type or paste the room code your friend sent you (Discord, chat...).", 13, Gui.Muted, TextAnchor.UpperCenter, false);
+                     Loc.T("join.body"), 13, Gui.Muted, TextAnchor.UpperCenter, false);
 
             bool enter = EnterPressed();
             var field = new Rect(r.x + 70f, r.y + 96f, r.width - 140f - 120f, 56f);
@@ -753,7 +752,7 @@ namespace ChibiClash
             string typed = GUI.TextField(field, joinCode ?? "", 12, Field(30));
             if (typed != joinCode) { joinCode = typed.Trim().ToUpperInvariant(); joinError = ""; }
             if (GUI.GetNameOfFocusedControl() != "JoinCode") GUI.FocusControl("JoinCode");
-            if (Gui.Button(new Rect(field.xMax + 10f, field.y + 6f, 110f, 44f), "PASTE", Gui.Steel, 15))
+            if (Gui.Button(new Rect(field.xMax + 10f, field.y + 6f, 110f, 44f), Loc.T("join.paste"), Gui.Steel, 15))
             {
                 string clip = (GUIUtility.systemCopyBuffer ?? "").Trim().ToUpperInvariant();
                 joinCode = clip.Length > 12 ? clip.Substring(0, 12) : clip;
@@ -765,10 +764,10 @@ namespace ChibiClash
 
             bool canJoin = !roomsSvc.Working;
             Gui.PreferNext();
-            if ((Gui.Button(new Rect(r.x + r.width * 0.5f - 230f, r.y + 222f, 220f, 56f), canJoin ? "JOIN" : "ONE MOMENT...", Gui.P2, 20, canJoin) || enter) && canJoin)
+            if ((Gui.Button(new Rect(r.x + r.width * 0.5f - 230f, r.y + 222f, 220f, 56f), canJoin ? Loc.T("join.join") : Loc.T("common.one_moment"), Gui.P2, 20, canJoin) || enter) && canJoin)
             {
                 string code = Netcode.ChibiSocialRules.NormalizeCode(joinCode);
-                if (code == null) { joinError = "That is not a room code. Check it and try again (letters and numbers only)."; UiSound.Error(); }
+                if (code == null) { joinError = Loc.T("join.bad_code"); UiSound.Error(); }
                 else if (!PlayerIdentity.OnlineAllowed(Save.ageBand)) { joinError = OnlineLockedMsg; UiSound.Error(); }
                 else
                 {
@@ -782,7 +781,7 @@ namespace ChibiClash
                 }
                 if (enter) Event.current.Use();
             }
-            if (Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 222f, 220f, 56f), "CANCEL", Gui.Steel, 18))
+            if (Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, r.y + 222f, 220f, 56f), Loc.T("common.cancel"), Gui.Steel, 18))
             {
                 joinDialog = false;
                 UiSound.Back();
@@ -800,7 +799,7 @@ namespace ChibiClash
         {
             if (!PlayerIdentity.OnlineAllowed(Save.ageBand)) { Deny(OnlineLockedMsg); return; }
             if (!InternetUp) { Deny(NoInternetMsg); return; }
-            if (roomsSvc.Launching || roomsSvc.OwnsLink) { Deny("A room fight is starting. Wait for it, or leave the room first."); return; }
+            if (roomsSvc.Launching || roomsSvc.OwnsLink) { Deny(Loc.T("rooms.fight_starting")); return; }
             if (roomsSvc.Current != null) roomsSvc.ExitToList();   // not "in" a room during a quick match (the room stays ours)
             pending.cpu[0] = pending.cpu[1] = false;
             pending.training = false;
@@ -839,7 +838,7 @@ namespace ChibiClash
             bool failed = !connecting && (st == Netcode.ChibiRoomState.Failed || onlineNote.Length > 0);
             bool searching = !connecting && st != Netcode.ChibiRoomState.Idle && st != Netcode.ChibiRoomState.Failed;
             bool net = InternetUp;
-            var a = BeginPage("01", "QUICK MATCH", "VS ONLINE  ·  SOLO 1V1  ·  A PLAYER NEAR YOU");
+            var a = BeginPage("01", Loc.T("online.quick_match"), Loc.T("quick.kicker"));
             float ph = a.height - 62f;
 
             var left = new Rect(a.x, a.y, a.width * 0.5f - 10f, ph);
@@ -851,15 +850,15 @@ namespace ChibiClash
             float x = r.x + 24f, w = r.width - 48f, y = r.y + 18f;
             float t = Time.unscaledTime;
             int dots = 1 + (int)(t * 2.5f) % 3;
-            string head = connecting ? "PLAYER FOUND!" : failed ? "SEARCH FAILED" : searching ? "SEARCHING" + new string('.', dots) : "NOT SEARCHING";
+            string head = connecting ? Loc.T("quick.player_found") : failed ? Loc.T("quick.search_failed") : searching ? Loc.T("quick.searching") + new string('.', dots) : Loc.T("quick.not_searching");
             float blink = 0.5f + 0.5f * Mathf.Sin(t * 4f);
             Gui.Skew(new Rect(x, y + 10f, 14f, 30f), WithA(sc, searching || connecting ? 0.5f + 0.5f * blink : 1f), 0.3f);
             Gui.Display(new Rect(x + 26f, y, w - 26f, 50f), head, 40, connecting ? Gui.Green : failed ? Gui.P1 : Gui.Paper);
             y += 60f;
 
             // The animated search line and a sweeping bar.
-            string line = connecting ? "Connecting to your opponent..." : searching ? "Searching for a player near you" + new string('.', dots)
-                        : failed ? "The search stopped. Try again." : "Press SEARCH AGAIN to look for a player.";
+            string line = connecting ? Loc.T("quick.connecting") : searching ? Loc.T("quick.searching_near") + new string('.', dots)
+                        : failed ? Loc.T("quick.stopped") : Loc.T("quick.press_search_again");
             Gui.Text(new Rect(x, y, w, 26f), line, 16, Gui.Paper, TextAnchor.MiddleLeft);
             y += 32f;
             var bar = new Rect(x, y, w, 12f);
@@ -875,7 +874,7 @@ namespace ChibiClash
 
             string area = rooms.SearchArea;
             if (searching && area.Length > 0)
-                Gui.Text(new Rect(x, y, w, 22f), "LOOKING IN:  " + area.ToUpperInvariant(), 13, Gui.Gold, TextAnchor.MiddleLeft);
+                Gui.Text(new Rect(x, y, w, 22f), Loc.T("quick.looking_in", area.ToUpperInvariant()), 13, Gui.Gold, TextAnchor.MiddleLeft);
             if (searching || connecting)
             {
                 int secs = Mathf.Max(0, Mathf.FloorToInt(t - quickMatchSince));
@@ -890,23 +889,23 @@ namespace ChibiClash
             Gui.Text(new Rect(x, y, w, 64f), status, 14, err ? Gui.Red : Gui.Paper, TextAnchor.UpperLeft, false);
             y += 70f;
             // Privacy notice: what quick match shares.
-            Gui.Text(new Rect(x, y, w, 36f), "Quick match shares your country (from device settings), never your location.", 11, Gui.Muted, TextAnchor.UpperLeft, false);
+            Gui.Text(new Rect(x, y, w, 36f), Loc.T("quick.privacy"), 11, Gui.Muted, TextAnchor.UpperLeft, false);
 
             var actionR = new Rect(x, r.yMax - 74f, w, 54f);
             if (searching || connecting)
             {
-                if (Gui.Button(actionR, "CANCEL", Gui.Red, 20)) { UiSound.Back(); StopQuickMatch(); }
+                if (Gui.Button(actionR, Loc.T("common.cancel"), Gui.Red, 20)) { UiSound.Back(); StopQuickMatch(); }
             }
             else
             {
                 Gui.PreferNext();
-                if (Gui.Button(actionR, "SEARCH AGAIN", Gui.P2, 20)) StartQuickMatch();
+                if (Gui.Button(actionR, Loc.T("quick.search_again"), Gui.P2, 20)) StartQuickMatch();
             }
 
             float by = a.yMax - 48f;
-            if (Gui.Button(new Rect(a.xMax - 240f, by, 240f, 46f), "BACK", Gui.Steel, 18)) { UiSound.Back(); OpenPlayStyle(); }   // stops the search
+            if (Gui.Button(new Rect(a.xMax - 240f, by, 240f, 46f), Loc.T("common.back"), Gui.Steel, 18)) { UiSound.Back(); OpenPlayStyle(); }   // stops the search
             EndPage();
-            NavHints("VS ONLINE  ·  QUICK MATCH");
+            NavHints(Loc.T("quick.hint"));
         }
 
         // ---------------------------------------------------------------- ROOM (waiting for players)
@@ -925,13 +924,13 @@ namespace ChibiClash
             if (cur == null)
             {
                 if (!roomsSvc.Working) { Enter(Page.Rooms); return; }   // join / create failed: the rooms screen shows why
-                var w0 = BeginPage("02", "MATCHMAKING", "ROOM  ·  OPENING THE ROOM...");
-                Gui.Text(new Rect(w0.x, w0.y + w0.height * 0.35f, w0.width, 40f), roomsSvc.Status.Length > 0 ? roomsSvc.Status : "Opening the room...", 18, Gui.Paper);
-                if (Gui.Button(new Rect(w0.xMax - 240f, w0.yMax - 48f, 240f, 46f), "BACK", Gui.Steel, 18)) { UiSound.Back(); Enter(Page.Rooms); }
+                var w0 = BeginPage("02", Loc.T("rooms.title"), Loc.T("room.kicker_opening"));
+                Gui.Text(new Rect(w0.x, w0.y + w0.height * 0.35f, w0.width, 40f), roomsSvc.Status.Length > 0 ? roomsSvc.Status : Loc.T("room.opening"), 18, Gui.Paper);
+                if (Gui.Button(new Rect(w0.xMax - 240f, w0.yMax - 48f, 240f, 46f), Loc.T("common.back"), Gui.Steel, 18)) { UiSound.Back(); Enter(Page.Rooms); }
                 EndPage();
                 return;
             }
-            var a = BeginPage("02", "MATCHMAKING", "ROOM  ·  2-4 PLAYERS  ·  " + cur.Name.ToUpperInvariant());
+            var a = BeginPage("02", Loc.T("rooms.title"), Loc.T("room.kicker", cur.Name.ToUpperInvariant()));
             string me = roomsSvc.MyId;
             bool host = roomsSvc.IsHost, ready = roomsSvc.LocalReady, launching = roomsSvc.Launching || pendingOnline != null;
             float ph = a.height - 62f;
@@ -944,10 +943,10 @@ namespace ChibiClash
             if (ready)
             {
                 // LOCKED IN chip right after the YOUR FIGHTER title (the player name keeps the top-right corner).
-                float tx = left.x + 20f + Gui.Measure("YOUR FIGHTER", 24, true) + 18f;
-                var chip = new Rect(tx, left.y + 14f, Gui.Measure("LOCKED IN", 12) + 22f, 20f);
+                float tx = left.x + 20f + Gui.Measure(Loc.T("room.your_fighter"), 24, true) + 18f;
+                var chip = new Rect(tx, left.y + 14f, Gui.Measure(Loc.T("room.locked_in"), 12) + 22f, 20f);
                 Gui.Skew(chip, Gui.Green, 0.3f);
-                Gui.Text(chip, "LOCKED IN", 12, Gui.Ink, TextAnchor.MiddleCenter, true, false);
+                Gui.Text(chip, Loc.T("room.locked_in"), 12, Gui.Ink, TextAnchor.MiddleCenter, true, false);
             }
             roomsSvc.SetPick(pending.cls[0], pending.passive[0]);
             if (host) pending.stage = cur.Stage;   // the handshake uses the host's stage
@@ -964,10 +963,10 @@ namespace ChibiClash
             int joined = Mathf.Min(cur.Slots.Count, Netcode.ChibiRoomRules.MaxSeats);
             bool full = joined >= Netcode.ChibiRoomRules.MaxSeats;
             bool fightable = joined >= Netcode.ChibiRoomRules.MinSeats;
-            string head = fightable ? (joined > 2 ? "BATTLE ROYALE" : "READY TO FIGHT") + (full ? " · ROOM FULL" : "") : "WAITING FOR PLAYERS";
-            Gui.Text(new Rect(x, y, w, 18f), head + "  ·  " + joined + " / " + Netcode.ChibiRoomRules.MaxSeats + " JOINED",
+            string head = fightable ? (joined > 2 ? Loc.T("room.battle_royale") : Loc.T("room.ready_to_fight")) + (full ? Loc.T("room.full_suffix") : "") : Loc.T("room.waiting");
+            Gui.Text(new Rect(x, y, w, 18f), Loc.T("room.joined", head, joined, Netcode.ChibiRoomRules.MaxSeats),
                      12, fightable ? Gui.Green : Gui.Gold, TextAnchor.MiddleLeft);
-            Gui.Text(new Rect(x, y, w, 18f), fightable ? "Everyone presses OK: the fight starts by itself." : "Share the code, or invite friends by name.",
+            Gui.Text(new Rect(x, y, w, 18f), fightable ? Loc.T("room.everyone_ok") : Loc.T("room.share_code"),
                      12, Gui.Muted, TextAnchor.MiddleRight);
             y += 24f;
 
@@ -988,19 +987,19 @@ namespace ChibiClash
                     CharacterArt.DrawPortrait(port, ch);
                     Gui.Frame(port, ch.Primary, 1f);
                     float tx = row.x + 68f, tw = row.width - 76f;
-                    string tag = (i == 0 ? "HOST" : "PLAYER " + (i + 1)) + (slot.PlayerId == me ? " · YOU" : "");
+                    string tag = (i == 0 ? Loc.T("room.host") : Loc.T("room.player_n", i + 1)) + (slot.PlayerId == me ? Loc.T("room.you_suffix") : "");
                     Gui.Text(new Rect(tx, row.y + 4f, tw, 22f), slot.Name, 16, Gui.Paper, TextAnchor.MiddleLeft);
                     Gui.Text(new Rect(tx, row.y + 24f, tw, 18f), tag, 11, SeatColor(i), TextAnchor.MiddleLeft, true, false);
                     Gui.Text(new Rect(tx, row.y + 41f, tw, 18f), Hud.CharNameUpper(ch.Class), 11, Gui.Muted, TextAnchor.MiddleLeft, true, false);
-                    Gui.Display(new Rect(tx, row.y + 34f, tw - 4f, 26f), slot.Ready ? "READY" : "choosing...", slot.Ready ? 18 : 12,
+                    Gui.Display(new Rect(tx, row.y + 34f, tw - 4f, 26f), slot.Ready ? Loc.T("loading.ready_upper") : "choosing...", slot.Ready ? 18 : 12,
                                 slot.Ready ? Gui.Green : Gui.Muted, TextAnchor.MiddleRight, slot.Ready ? 0.15f : 0f);
                 }
-                else Gui.Text(new Rect(row.x + 14f, row.y, row.width - 20f, seatH), "Empty seat", 14, Gui.Muted, TextAnchor.MiddleLeft);
+                else Gui.Text(new Rect(row.x + 14f, row.y, row.width - 20f, seatH), Loc.T("room.empty_seat"), 14, Gui.Muted, TextAnchor.MiddleLeft);
             }
             y += 2f * (seatH + seatGap) + 2f;
 
             // Stage (host chooses; the guest sees it).
-            Gui.Text(new Rect(x, y, 220f, 22f), host ? "STAGE (you choose)" : "STAGE (host chooses)", 13, Gui.Gold, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(x, y, 220f, 22f), host ? Loc.T("room.stage_you") : Loc.T("room.stage_host"), 13, Gui.Gold, TextAnchor.MiddleLeft);
             bool canPick = host && !ready && !launching;
             // Host option (ST-5), stored in the room next to the stage (key "hz"); the guest reads the host's value.
             if (host)
@@ -1012,7 +1011,7 @@ namespace ChibiClash
                     roomsSvc.SetHazards(pending.hazards);
                 }
             }
-            else Gui.Text(new Rect(x + w - 200f, y, 200f, 22f), (roomsSvc.HazardsOn ? "HAZARDS ON" : "HAZARDS OFF") + " · HOST'S PICK",
+            else Gui.Text(new Rect(x + w - 200f, y, 200f, 22f), Loc.T("room.hazards_host_pick", roomsSvc.HazardsOn ? Loc.T("room.hazards_on") : Loc.T("room.hazards_off")),
                           12, Gui.Muted, TextAnchor.MiddleRight, true, false);
             y += 26f;
             int pick = StageGrid(new Rect(x, y, w, StageGridHeight(30f)), cur.Stage, canPick);
@@ -1024,14 +1023,14 @@ namespace ChibiClash
             {
                 bool canOk = !roomsSvc.Working && !launching && roomsSvc.Synced;
                 Gui.PreferNext();
-                if (Gui.Button(new Rect(x, y, w * 0.4f, 54f), roomsSvc.Synced ? "OK" : "LOADING...", Gui.Green, 22, canOk) && canOk) roomsSvc.SetReady(true);
+                if (Gui.Button(new Rect(x, y, w * 0.4f, 54f), roomsSvc.Synced ? Loc.T("common.ok") : Loc.T("room.loading"), Gui.Green, 22, canOk) && canOk) roomsSvc.SetReady(true);
             }
-            else if (Gui.Button(new Rect(x, y, w * 0.4f, 54f), "CHANGE", Gui.Steel, 18, !roomsSvc.Working && !launching)) roomsSvc.SetReady(false);
+            else if (Gui.Button(new Rect(x, y, w * 0.4f, 54f), Loc.T("room.change"), Gui.Steel, 18, !roomsSvc.Working && !launching)) roomsSvc.SetReady(false);
             AutoStartWhenFull(cur, host, ready, launching);
             bool canStart = Netcode.ChibiRoomRules.CanStart(cur) && !launching;
             if (canStart) Gui.Glow(new Rect(x + w * 0.42f - 20f, y - 20f, w * 0.58f + 40f, 94f), new Color(1f, 0.3f, 0.4f, 0.35f));
             if (canStart && ready) Gui.PreferNext();
-            if (Gui.Button(new Rect(x + w * 0.42f, y, w * 0.58f, 54f), launching ? "STARTING..." : "START FIGHT", Gui.P1, 22, canStart) && canStart)
+            if (Gui.Button(new Rect(x + w * 0.42f, y, w * 0.58f, 54f), launching ? Loc.T("room.starting") : Loc.T("room.start_fight"), Gui.P1, 22, canStart) && canStart)
             {
                 onlineNote = "";
                 social.ClearMatchFriend();
@@ -1050,7 +1049,7 @@ namespace ChibiClash
 
             // Bottom right: leave for good, or back to the rooms screen (we stay a member of the room).
             bool armed = leaveArmedId == cur.Id && Time.unscaledTime < leaveArmedUntil;
-            if (Gui.Button(new Rect(a.xMax - 440f, by, 180f, 46f), armed ? "SURE?" : host ? "CLOSE ROOM" : "LEAVE ROOM", Gui.Red, 15, !launching))
+            if (Gui.Button(new Rect(a.xMax - 440f, by, 180f, 46f), armed ? Loc.T("settings.sure") : host ? Loc.T("room.close") : Loc.T("room.leave"), Gui.Red, 15, !launching))
             {
                 if (armed)
                 {
@@ -1061,14 +1060,14 @@ namespace ChibiClash
                 }
                 else { leaveArmedId = cur.Id; leaveArmedUntil = Time.unscaledTime + 3f; }
             }
-            if (Gui.Button(new Rect(a.xMax - 240f, by, 240f, 46f), "BACK", Gui.Steel, 18, !launching))
+            if (Gui.Button(new Rect(a.xMax - 240f, by, 240f, 46f), Loc.T("common.back"), Gui.Steel, 18, !launching))
             {
                 UiSound.Back();
                 roomsSvc.ExitToList();
                 Enter(Page.Rooms);
             }
             EndPage();
-            NavHints("MATCHMAKING  ·  ROOM");
+            NavHints(Loc.T("room.hint"));
         }
 
         /// <summary>
@@ -1084,12 +1083,12 @@ namespace ChibiClash
             Gui.Rect(box, Gui.PanelLight);
             Gui.Frame(box, WithA(Gui.Gold, 0.85f), 1f);
             Gui.Rect(new Rect(box.x, box.y, 4f, box.height), Gui.Gold);
-            Gui.Text(new Rect(box.x + 12f, box.y, 40f, h), "CODE", 11, Gui.Muted, TextAnchor.MiddleLeft, true, false);
+            Gui.Text(new Rect(box.x + 12f, box.y, 40f, h), Loc.T("room.code"), 11, Gui.Muted, TextAnchor.MiddleLeft, true, false);
             Gui.Display(new Rect(box.x + 52f, box.y, cw, h), code, 20, Gui.Gold, TextAnchor.MiddleLeft, 0.12f);
-            if (Gui.Button(new Rect(box.xMax - copyW - 4f, box.y + 4f, copyW, h - 8f), "COPY", Gui.Gold, 12, code.Length > 0))
+            if (Gui.Button(new Rect(box.xMax - copyW - 4f, box.y + 4f, copyW, h - 8f), Loc.T("room.copy"), Gui.Gold, 12, code.Length > 0))
             {
                 GUIUtility.systemCopyBuffer = code;
-                Toast("Room code " + code + " copied. Paste it to your friend.");
+                Toast(Loc.T("room.code_copied", code));
             }
             return bw;
         }
@@ -1102,7 +1101,7 @@ namespace ChibiClash
         {
             if (!host)
             {
-                Gui.Text(new Rect(r.x, r.y, r.width, r.height), "The host can invite a friend by name.", 12, Gui.Muted, TextAnchor.MiddleLeft, false);
+                Gui.Text(new Rect(r.x, r.y, r.width, r.height), Loc.T("room.host_can_invite"), 12, Gui.Muted, TextAnchor.MiddleLeft, false);
                 return;
             }
             bool can = nameInvites != null && nameInvites.Enabled && !nameInvites.Sending && !full && !launching;
@@ -1112,16 +1111,16 @@ namespace ChibiClash
             else GUI.Label(field, inviteNameInput ?? "", Field(17));
             bool focused = GUI.GetNameOfFocusedControl() == "InviteName";
             if (string.IsNullOrEmpty(inviteNameInput) && !focused)
-                Gui.Text(field, "INVITE A FRIEND BY NAME", 12, WithA(Gui.Muted, can ? 0.9f : 0.5f), TextAnchor.MiddleCenter, true, false);
+                Gui.Text(field, Loc.T("room.invite_by_name"), 12, WithA(Gui.Muted, can ? 0.9f : 0.5f), TextAnchor.MiddleCenter, true, false);
             string name = (inviteNameInput ?? "").Trim();
-            bool send = Gui.Button(new Rect(field.xMax + 8f, r.y + 3f, 120f, 40f), "INVITE", Gui.P2, 15, can && name.Length > 0);
+            bool send = Gui.Button(new Rect(field.xMax + 8f, r.y + 3f, 120f, 40f), Loc.T("room.invite"), Gui.P2, 15, can && name.Length > 0);
             if (can && focused && name.Length > 0 && EnterPressed()) { send = true; Event.current.Use(); }
             if (send && can && name.Length > 0)
             {
                 nameInvites.Send(name, cur.Code, cur.Name);   // host of a room: our name was claimed to create it
                 GUIUtility.keyboardControl = 0;
             }
-            string status = full ? "The room is full." : nameInvites != null ? nameInvites.Status : "";
+            string status = full ? Loc.T("room.full") : nameInvites != null ? nameInvites.Status : "";
             bool err = !full && nameInvites != null && nameInvites.StatusIsError;
             float sx = field.xMax + 138f;
             Gui.Text(new Rect(sx, r.y, Mathf.Max(0f, r.xMax - sx), r.height), status, 12, err ? Gui.Red : Gui.Muted, TextAnchor.MiddleLeft, false);
@@ -1166,16 +1165,16 @@ namespace ChibiClash
             var r = InvitePopupRect;
             Gui.Glow(new Rect(r.x - 30f, r.y - 30f, r.width + 60f, r.height + 60f), new Color(1f, 0.8f, 0.2f, 0.35f));
             Gui.Box(r, Gui.Gold);
-            Gui.Display(new Rect(r.x, r.y + 10f, r.width, 40f), "ROOM INVITE", 32, Gui.Gold, TextAnchor.MiddleCenter);
+            Gui.Display(new Rect(r.x, r.y + 10f, r.width, 40f), Loc.T("invite.title"), 32, Gui.Gold, TextAnchor.MiddleCenter);
             int left = Mathf.Max(0, Mathf.CeilToInt(inv.ExpiresAt - Time.unscaledTime));
             string from = Netcode.ChibiSocialRules.SafeDisplayName(inv.FromName);     // names come from the network:
             string room = Netcode.ChibiSocialRules.SafeRoomName(inv.RoomName);        // drawn only through the sanitisers
-            Gui.Text(new Rect(r.x + 20f, r.y + 50f, r.width - 40f, 26f), from + " invites you to " + room + "   (" + left + "s)", 16, Gui.Paper);
+            Gui.Text(new Rect(r.x + 20f, r.y + 50f, r.width - 40f, 26f), Loc.T("invite.body", from, room, left), 16, Gui.Paper);
             // SEC-005: names are self-reported and not unique.
-            Gui.Text(new Rect(r.x + 20f, r.y + 76f, r.width - 40f, 18f), "Names are not checked: only accept invites from people you know.", 11, Gui.Muted, TextAnchor.MiddleCenter, false, false);
+            Gui.Text(new Rect(r.x + 20f, r.y + 76f, r.width - 40f, 18f), Loc.T("invite.warning"), 11, Gui.Muted, TextAnchor.MiddleCenter, false, false);
             bool canAccept = !roomsSvc.Working && !roomsSvc.Launching && pendingOnline == null;
             Gui.PreferNext();
-            if (Gui.Button(new Rect(r.x + 70f, r.y + 102f, 200f, 46f), canAccept ? "ACCEPT" : "ONE MOMENT...", Gui.Green, 17, canAccept) && canAccept)
+            if (Gui.Button(new Rect(r.x + 70f, r.y + 102f, 200f, 46f), canAccept ? Loc.T("invite.accept") : Loc.T("common.one_moment"), Gui.Green, 17, canAccept) && canAccept)
             {
                 string code = nameInvites.Accept(0);
                 if (!string.IsNullOrEmpty(code))
@@ -1188,7 +1187,7 @@ namespace ChibiClash
                     Enter(Page.Room);   // leaving QUICK MATCH this way stops its search (Enter)
                 }
             }
-            if (Gui.Button(new Rect(r.xMax - 270f, r.y + 102f, 200f, 46f), "DECLINE", Gui.Red, 17)) nameInvites.Decline(0);
+            if (Gui.Button(new Rect(r.xMax - 270f, r.y + 102f, 200f, 46f), Loc.T("invite.decline"), Gui.Red, 17)) nameInvites.Decline(0);
         }
 
         /// <summary>
@@ -1234,14 +1233,14 @@ namespace ChibiClash
             {
                 int st = StageAt(k);
                 var b = new Rect(area.x + (k % StageGridCols) * (bw + StageGridGap), area.y + (k / StageGridCols) * (bh + StageGridGap), bw, bh);
-                if (Gui.Button(b, StageBuilder.ShortNames[st].ToUpperInvariant(), Gui.Gold, size, enabled, selected == st) && enabled) picked = st;
+                if (Gui.Button(b, StageBuilder.ShortNameText(st).ToUpperInvariant(), Gui.Gold, size, enabled, selected == st) && enabled) picked = st;
             }
             return picked;
         }
 
         /// <summary>HAZARDS ON / OFF toggle button (ST-5). Returns true when pressed; the caller flips its own value.</summary>
         static bool HazardsButton(Rect r, bool on, bool enabled) =>
-            Gui.Button(r, on ? "HAZARDS  ON" : "HAZARDS  OFF", on ? Gui.P1 : Gui.Steel, 12, enabled, on);
+            Gui.Button(r, on ? Loc.T("room.hazards_on_btn") : Loc.T("room.hazards_off_btn"), on ? Gui.P1 : Gui.Steel, 12, enabled, on);
 
         // ---------------------------------------------------------------- compact fighter picker (room / quick match)
 
@@ -1254,7 +1253,7 @@ namespace ChibiClash
             Gui.Box(r, Gui.P1);
             float x = r.x + 20f, w = r.width - 40f, y = r.y + 10f;
             string myName = DisplayedName();
-            Gui.Display(new Rect(x, y, w, 28f), "YOUR FIGHTER", 24, Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
+            Gui.Display(new Rect(x, y, w, 28f), Loc.T("room.your_fighter"), 24, Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
             if (myName.Length > 0) Gui.Text(new Rect(x, y, w, 28f), myName, 13, Gui.Gold, TextAnchor.MiddleRight);
             y += 36f;
 
@@ -1287,24 +1286,24 @@ namespace ChibiClash
             var def = ClassDef.Get(pending.cls[0]);
             Gui.Display(new Rect(x, y, w, 40f), Hud.CharNameUpper(ch.Class), 36, Gui.Paper, TextAnchor.MiddleLeft, 0.2f, ch.Primary, 3f);
             float nw = Gui.Measure(Hud.CharNameUpper(ch.Class), 36, true) + 20f;
-            Gui.Display(new Rect(x + nw, y + 4f, w - nw, 22f), ch.Role.ToUpper(), 18, Gui.Gold, TextAnchor.MiddleLeft, 0.15f);
+            Gui.Display(new Rect(x + nw, y + 4f, w - nw, 22f), ch.RoleText.ToUpper(), 18, Gui.Gold, TextAnchor.MiddleLeft, 0.15f);
             Gui.Text(new Rect(x + nw, y + 24f, w - nw, 16f), ch.Weapon.ToUpper(), 11, Gui.Muted, TextAnchor.MiddleLeft, true, false);
             y += 44f;
-            Gui.Text(new Rect(x, y, w, 30f), ch.Style, 11, Gui.Paper, TextAnchor.UpperLeft, false, false);
+            Gui.Text(new Rect(x, y, w, 30f), ch.StyleText, 11, Gui.Paper, TextAnchor.UpperLeft, false, false);
             y += 30f;
-            for (int i = 0; i < 5; i++) StatRow(x, y + i * 12f, w * 0.6f, StatNames[i], Stat(ch, i), ch.Primary);
+            for (int i = 0; i < 5; i++) StatRow(x, y + i * 12f, w * 0.6f, Loc.T(StatNames[i]), Stat(ch, i), ch.Primary);
             for (int p = 0; p < 3; p++)
                 Gui.Skew(new Rect(x + w - 66f + p * 22f, y + 4f, 16f, 10f), p == 0 ? ch.Primary : p == 1 ? ch.Accent : ch.Fx, 0.3f);
-            Gui.Text(new Rect(x + w * 0.62f, y + 18f, w * 0.38f, 40f), "ULT  " + def.ultName, 11, Gui.Gold, TextAnchor.UpperRight, true, false);
+            Gui.Text(new Rect(x + w * 0.62f, y + 18f, w * 0.38f, 40f), Loc.T("select.ult_name", def.ultName), 11, Gui.Gold, TextAnchor.UpperRight, true, false);
             y += 66f;
 
             // passive
-            Gui.Text(new Rect(x, y, w, 16f), "PASSIVE", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
+            Gui.Text(new Rect(x, y, w, 16f), Loc.T("select.passive"), 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
             float pw = (w - 8f) * 0.5f;
             for (int p = 0; p < 2; p++)
                 if (Gui.Button(new Rect(x + p * (pw + 8f), y + 17f, pw, 26f), def.passiveNames[p].ToUpper(), Gui.P1, 12, enabled, pending.passive[0] == p) && enabled)
                     pending.passive[0] = p;
-            Gui.Text(new Rect(x, y + 44f, w, 16f), def.passiveDescs[Mathf.Clamp(pending.passive[0], 0, 1)], 11, Gui.Muted, TextAnchor.MiddleLeft, false, false);
+            Gui.Text(new Rect(x, y + 44f, w, 16f), def.PassiveDesc(Mathf.Clamp(pending.passive[0], 0, 1)), 11, Gui.Muted, TextAnchor.MiddleLeft, false, false);
             y += 64f;
 
             // Secondary: the cosmetic weapon look from the armory (signature weapon shown under the name).
@@ -1313,13 +1312,13 @@ namespace ChibiClash
             var weapon = WeaponDef.Get(def.type, pending.weapon[0]);
             if (variants.Count > 1 && y + 24f <= r.yMax)
             {
-                Gui.Text(new Rect(x, y, 70f, 24f), "LOOK", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
+                Gui.Text(new Rect(x, y, 70f, 24f), Loc.T("select.look"), 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
                 if (Gui.Hit(new Rect(x + 64f, y, 26f, 24f), out bool hl, enabled) && enabled) { pending.weapon[0] = Mod(pending.weapon[0] - 1, variants.Count); UiSound.Step(); }
                 Gui.Chevron(new Rect(x + 72f, y + 5f, 9f, 14f), hl ? Gui.Paper : Gui.P1, false);
                 Gui.Text(new Rect(x + 92f, y, w - 184f, 24f), weapon.name.ToUpper() + "  <color=#9AA6BC>" + (pending.weapon[0] + 1) + "/" + variants.Count + "</color>", 13, Gui.Paper, TextAnchor.MiddleCenter, true, false);
                 if (Gui.Hit(new Rect(x + w - 90f, y, 26f, 24f), out bool hr, enabled) && enabled) { pending.weapon[0] = Mod(pending.weapon[0] + 1, variants.Count); UiSound.Step(); }
                 Gui.Chevron(new Rect(x + w - 82f, y + 5f, 9f, 14f), hr ? Gui.Paper : Gui.P1);
-                Gui.Text(new Rect(x, y, w, 24f), "COSMETIC", 10, Gui.Muted, TextAnchor.MiddleRight, true, false);
+                Gui.Text(new Rect(x, y, w, 24f), Loc.T("select.cosmetic"), 10, Gui.Muted, TextAnchor.MiddleRight, true, false);
             }
         }
     }

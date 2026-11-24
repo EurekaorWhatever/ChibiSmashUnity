@@ -31,15 +31,53 @@ namespace ChibiClash
 
         public int SkillCount => skillNames.Length;
 
+        // Loc keys of the translated descriptions (class.kaia.passive1_desc ...), built once. Names stay English.
+        string[] passiveKeys, skillKeys;
+        string ultKey;
+
+        void BuildKeys()
+        {
+            string h = "class." + heroName.ToLowerInvariant() + ".";
+            passiveKeys = new string[passiveDescs.Length];
+            for (int i = 0; i < passiveKeys.Length; i++) passiveKeys[i] = h + "passive" + (i + 1) + "_desc";
+            skillKeys = new string[skillDescs.Length];
+            for (int i = 0; i < skillKeys.Length; i++) skillKeys[i] = h + "skill" + (i + 1) + "_desc";
+            ultKey = h + "ult_desc";
+        }
+
+        /// <summary>Passive i's description in the current language (no allocation after the first call).</summary>
+        public string PassiveDesc(int i)
+        {
+            if (passiveKeys == null) BuildKeys();
+            return Loc.T(passiveKeys[i]);
+        }
+
+        /// <summary>Skill i's description in the current language.</summary>
+        public string SkillDesc(int i)
+        {
+            if (skillKeys == null) BuildKeys();
+            return Loc.T(skillKeys[i]);
+        }
+
+        /// <summary>The ultimate's description in the current language.</summary>
+        public string UltDesc
+        {
+            get
+            {
+                if (ultKey == null) BuildKeys();
+                return Loc.T(ultKey);
+            }
+        }
+
         public static ClassDef Get(FighterClass c) => All[(int)c];
 
         public static string GestureName(Gesture g)
         {
             switch (g)
             {
-                case Gesture.CrossArms: return "CROSS ARMS";
-                case Gesture.PunchForward: return "PUNCH FORWARD";
-                case Gesture.RaiseHands: return "RAISE BOTH HANDS";
+                case Gesture.CrossArms: return Loc.T("gesture.cross_arms");
+                case Gesture.PunchForward: return Loc.T("gesture.punch_forward");
+                case Gesture.RaiseHands: return Loc.T("gesture.raise_hands");
                 default: return "-";
             }
         }

@@ -242,10 +242,10 @@ namespace ChibiClash
 
         string ModeLabel()
         {
-            if (arcade) return "ARCADE  ·  ROUND " + (arcadeRound + 1) + " / " + ArcadeRounds;
-            if (pending.training) return "TRAINING";
-            if (pending.cpu[1]) return "VS CPU  ·  " + DifficultyUpper[Save.settings.cpuDifficulty];
-            return "LOCAL VERSUS";
+            if (arcade) return Loc.T("select.arcade_round", arcadeRound + 1, ArcadeRounds);
+            if (pending.training) return Loc.T("nav.training");
+            if (pending.cpu[1]) return Loc.T("select.vs_cpu", Loc.T(DifficultyUpper[Save.settings.cpuDifficulty]));
+            return Loc.T("select.local_versus");
         }
 
         string SlotName(int s)
@@ -253,12 +253,12 @@ namespace ChibiClash
             if (s == 0)
             {
                 string me = Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);   // P1 is the profile owner
-                return me.Length > 0 ? me.ToUpperInvariant() : "PLAYER 1";
+                return me.Length > 0 ? me.ToUpperInvariant() : Loc.T("settings.player1");
             }
-            if (arcade) return "ARCADE RIVAL";
-            if (pending.training) return "TRAINING DUMMY";
-            if (pending.cpu[1]) return "CPU  ·  " + DifficultyUpper[Save.settings.cpuDifficulty];
-            return "PLAYER 2";
+            if (arcade) return Loc.T("select.arcade_rival");
+            if (pending.training) return Loc.T("select.training_dummy");
+            if (pending.cpu[1]) return Loc.T("select.cpu_difficulty", Loc.T(DifficultyUpper[Save.settings.cpuDifficulty]));
+            return Loc.T("settings.player2");
         }
 
         string ConfirmKey(int s) => MenuInput.UsingGamepad ? "A" : (Solo || s == 0 ? "SPACE" : "ENTER");
@@ -282,7 +282,7 @@ namespace ChibiClash
             float cx = W * 0.5f;
             float ha = Gui.EaseOut(Since / 0.35f);
             Gui.Alpha = ha;
-            Gui.Display(new Rect(0f, 8f - (1f - ha) * 20f, W, 52f), "CHARACTER SELECT", 42, Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Display(new Rect(0f, 8f - (1f - ha) * 20f, W, 52f), Loc.T("wipe.character_select"), 42, Gui.Paper, TextAnchor.MiddleCenter);
             var ml = ModeLabel();
             float mw = Gui.Measure(ml, 13) + 30f;
             var mr = new Rect(cx - mw * 0.5f, 58f, mw, 20f);
@@ -290,20 +290,20 @@ namespace ChibiClash
             Gui.Text(mr, ml, 13, Gui.Paper, TextAnchor.MiddleCenter, true, false);
             Gui.Alpha = 1f;
 
-            if (Gui.Button(new Rect(16f, 12f, 112f, 32f), "BACK", Gui.Steel, 14)) LeaveSelect();
+            if (Gui.Button(new Rect(16f, 12f, 112f, 32f), Loc.T("common.back"), Gui.Steel, 14)) LeaveSelect();
 
             Roster(new Rect(cx - 238f, 90f, 476f, 290f));
             StageCarousel(cx, 392f);
             FightButton(new Rect(cx - 150f, 586f, 300f, 54f));
 
             if (AllReady)
-                Gui.HintBar(ml, Gui.Key(Solo ? "A / D" : "A D / ARROWS", "D-PAD"), "STAGE", Gui.Key(Solo ? "R" : "R / DEL", "Y"), "HAZARDS",
-                            Gui.Key(Solo ? "SPACE" : "SPACE / ENTER", "A"), "FIGHT", Gui.Key(Solo ? "ESC" : "ESC / BKSP", "B"), "CHANGE");
+                Gui.HintBar(ml, Gui.Key(Solo ? "A / D" : "A D / ARROWS", "D-PAD"), Loc.T("select.stage"), Gui.Key(Solo ? "R" : "R / DEL", "Y"), Loc.T("select.hazards"),
+                            Gui.Key(Solo ? "SPACE" : "SPACE / ENTER", "A"), Loc.T("select.fight"), Gui.Key(Solo ? "ESC" : "ESC / BKSP", "B"), Loc.T("select.change"));
             else if (Solo)
-                Gui.HintBar(ml, Gui.Key("WASD", "D-PAD"), "MOVE", Gui.Key("SPACE", "A"), "CONFIRM", Gui.Key("R", "Y"), "RANDOM", Gui.Key("ESC", "B"), "BACK");
+                Gui.HintBar(ml, Gui.Key("WASD", "D-PAD"), Loc.T("hint.move"), Gui.Key("SPACE", "A"), Loc.T("select.confirm"), Gui.Key("R", "Y"), Loc.T("select.random"), Gui.Key("ESC", "B"), Loc.T("common.back"));
             else
-                Gui.HintBar(MenuInput.UsingGamepad ? ml + "   ·   GAMEPAD 1 = 1P, GAMEPAD 2 = 2P" : ml + "   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL",
-                    Gui.Key("SPACE / ENTER", "A"), "CONFIRM", Gui.Key("R / DEL", "Y"), "RANDOM", Gui.Key("ESC / BKSP", "B"), "BACK");
+                Gui.HintBar(MenuInput.UsingGamepad ? ml + Loc.T("select.hint_pads") : ml + Loc.T("select.hint_keys"),
+                    Gui.Key("SPACE / ENTER", "A"), Loc.T("select.confirm"), Gui.Key("R / DEL", "Y"), Loc.T("select.random"), Gui.Key("ESC / BKSP", "B"), Loc.T("common.back"));
         }
 
         void Roster(Rect g)
@@ -362,7 +362,7 @@ namespace ChibiClash
                 Gui.Rect(bar, new Color(0.03f, 0.05f, 0.1f, 0.92f));
                 Gui.Rect(new Rect(bar.x, bar.y, bar.width, 2f), ch.Primary);
                 Gui.Display(new Rect(bar.x + 8f, bar.y + 1f, bar.width - 16f, 18f), Hud.CharNameUpper(ch.Class), 17, Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
-                Gui.Text(new Rect(bar.x + 8f, bar.y + 17f, bar.width - 16f, 12f), ch.Role.ToUpper(), 9, ch.Accent, TextAnchor.MiddleLeft, true, false);
+                Gui.Text(new Rect(bar.x + 8f, bar.y + 17f, bar.width - 16f, 12f), ch.RoleText.ToUpper(), 9, ch.Accent, TextAnchor.MiddleLeft, true, false);
             }
             else
             {
@@ -370,8 +370,8 @@ namespace ChibiClash
                 Gui.Display(new Rect(r.x, r.y, r.width, r.height - 26f), "?", 64, Gui.Gold, TextAnchor.MiddleCenter, 0.15f);
                 Gui.Rect(bar, new Color(0.03f, 0.05f, 0.1f, 0.92f));
                 Gui.Rect(new Rect(bar.x, bar.y, bar.width, 2f), Gui.Gold);
-                Gui.Display(new Rect(bar.x + 8f, bar.y + 1f, bar.width - 16f, 18f), "RANDOM", 17, Gui.Gold, TextAnchor.MiddleLeft, 0.15f);
-                Gui.Text(new Rect(bar.x + 8f, bar.y + 17f, bar.width - 16f, 12f), "LEAVE IT TO FATE", 9, Gui.Muted, TextAnchor.MiddleLeft, true, false);
+                Gui.Display(new Rect(bar.x + 8f, bar.y + 1f, bar.width - 16f, 18f), Loc.T("select.random"), 17, Gui.Gold, TextAnchor.MiddleLeft, 0.15f);
+                Gui.Text(new Rect(bar.x + 8f, bar.y + 17f, bar.width - 16f, 12f), Loc.T("select.fate"), 9, Gui.Muted, TextAnchor.MiddleLeft, true, false);
             }
             Gui.Frame(r, Gui.Steel, 1f);
             if (hot) Gui.Frame(new Rect(r.x - 1f, r.y - 1f, r.width + 2f, r.height + 2f), Gui.Paper, 2f);
@@ -387,7 +387,7 @@ namespace ChibiClash
                 float flash = 1f - Mathf.Clamp01((now - lockTime[s]) / 0.35f);
                 if (flash > 0f) Gui.Rect(r, WithA(Gui.Paper, 0.6f * flash));
                 float bob = lockedIn ? 0f : Mathf.Sin(now * 8f + s * 1.7f) * 2f;
-                string label = s == 0 ? "1P" : pending.training ? "DUMMY" : Solo ? "CPU" : "2P";
+                string label = s == 0 ? "1P" : pending.training ? Loc.T("select.dummy") : Solo ? "CPU" : "2P";
                 float lw = Gui.Measure(label, 12) + 14f;
                 var tag = s == 0 ? new Rect(r.x - 6f, r.y - 9f + bob, lw, 16f) : new Rect(r.xMax + 6f - lw, r.y - 9f + bob, lw, 16f);
                 Gui.Skew(tag, pc, 0.3f);
@@ -396,7 +396,7 @@ namespace ChibiClash
                 {
                     var ok = s == 0 ? new Rect(r.x + 2f, r.yMax - 46f, 24f, 13f) : new Rect(r.xMax - 26f, r.yMax - 46f, 24f, 13f);
                     Gui.Skew(ok, Gui.Gold, 0.3f);
-                    Gui.Text(ok, "OK", 11, Gui.Ink, TextAnchor.MiddleCenter, true, false);
+                    Gui.Text(ok, Loc.T("common.ok"), 11, Gui.Ink, TextAnchor.MiddleCenter, true, false);
                 }
             }
         }
@@ -454,12 +454,12 @@ namespace ChibiClash
             string state;
             Color stateC = Gui.Muted;
             bool blink = false;
-            if (rivalHidden) { state = arcade ? "ROUND " + (arcadeRound + 1) + " RIVAL" : "PICKS AT FIGHT START"; stateC = Gui.Gold; }
-            else if (slotState[s] == SlotState.Ready) { state = "READY!"; stateC = Gui.Gold; }
-            else if (slotState[s] == SlotState.Loadout) { state = "LOADOUT"; stateC = Gui.Paper; }
-            else if (s == 1 && Solo && slotState[0] != SlotState.Ready) state = "WAITING FOR 1P";
-            else if (s == 1 && Solo) { state = "1P PICKS THE DUMMY"; stateC = Gui.Paper; blink = true; }
-            else { state = "SELECTING"; blink = true; }
+            if (rivalHidden) { state = arcade ? Loc.T("select.round_rival", arcadeRound + 1) : Loc.T("select.picks_at_start"); stateC = Gui.Gold; }
+            else if (slotState[s] == SlotState.Ready) { state = Loc.T("select.ready_bang"); stateC = Gui.Gold; }
+            else if (slotState[s] == SlotState.Loadout) { state = Loc.T("select.loadout"); stateC = Gui.Paper; }
+            else if (s == 1 && Solo && slotState[0] != SlotState.Ready) state = Loc.T("select.waiting_1p");
+            else if (s == 1 && Solo) { state = Loc.T("select.1p_picks_dummy"); stateC = Gui.Paper; blink = true; }
+            else { state = Loc.T("select.selecting"); blink = true; }
             if (blink) stateC = WithA(stateC, 0.55f + 0.45f * Mathf.Abs(Mathf.Sin(now * 3f)));
             Gui.Text(new Rect(ix, 110f, iw, 20f), state, 13, stateC, anchor, true, false);
 
@@ -469,18 +469,18 @@ namespace ChibiClash
                 float sc = Mathf.Lerp(1.6f, 1f, st);
                 var stamp = new Rect(z.x + z.width * 0.5f - 130f * sc, T - 150f - 30f * sc, 260f * sc, 60f * sc);
                 Gui.Skew(stamp, WithA(Gui.Gold, 0.92f * st), 0.25f);
-                Gui.Display(stamp, "READY", Mathf.RoundToInt(46f * sc), WithA(Gui.Ink, st), TextAnchor.MiddleCenter, 0.2f, Color.clear);
+                Gui.Display(stamp, Loc.T("loading.ready_upper"), Mathf.RoundToInt(46f * sc), WithA(Gui.Ink, st), TextAnchor.MiddleCenter, 0.2f, Color.clear);
             }
 
             string name, role, line;
-            if (rivalHidden && arcade) { name = "???"; role = "IDENTITY HIDDEN"; line = "REVEALED WHEN THE ROUND STARTS"; }
-            else if (rivalHidden) { name = "???"; role = "THE AI PICKS ITS FIGHTER"; line = "A RANDOM CHARACTER EVERY FIGHT"; }
-            else if (mystery) { name = "RANDOM"; role = "LEAVE IT TO FATE"; line = "ANY CHARACTER · RANDOM PASSIVE AND WEAPON"; }
+            if (rivalHidden && arcade) { name = "???"; role = Loc.T("select.identity_hidden"); line = Loc.T("select.revealed_at_start"); }
+            else if (rivalHidden) { name = "???"; role = Loc.T("select.ai_picks"); line = Loc.T("select.random_every_fight"); }
+            else if (mystery) { name = Loc.T("select.random"); role = Loc.T("select.fate"); line = Loc.T("select.any_character"); }
             else
             {
                 name = Hud.CharNameUpper(ch.Class);
-                role = ch.Role.ToUpper();
-                line = "SIGNATURE WEAPON  ·  " + ch.Weapon.ToUpper();
+                role = ch.RoleText.ToUpper();
+                line = Loc.T("select.signature_weapon", ch.Weapon.ToUpper());
             }
             Gui.Display(new Rect(ix, T - 4f, iw, 68f), name, 62, Gui.Paper, anchor, 0.2f, mystery ? pc : ch.Primary, 4f);
             Gui.Display(new Rect(ix, T + 60f, iw, 24f), role, 20, Gui.Gold, anchor, 0.18f);
@@ -494,7 +494,7 @@ namespace ChibiClash
             }
             if (mystery) return;
 
-            Gui.Text(new Rect(ix, T + 100f, iw, 28f), ch.Style, 11, Gui.Paper, right ? TextAnchor.UpperRight : TextAnchor.UpperLeft, false, false);
+            Gui.Text(new Rect(ix, T + 100f, iw, 28f), ch.StyleText, 11, Gui.Paper, right ? TextAnchor.UpperRight : TextAnchor.UpperLeft, false, false);
             // palette swatches (main, accent, effect colour from the character sheet)
             for (int p = 0; p < 3; p++)
             {
@@ -505,8 +505,8 @@ namespace ChibiClash
 
             float sy = T + 130f;
             for (int i = 0; i < 5; i++)
-                StatRow(ix, sy + i * 12f, iw, StatNames[i], Stat(ch, i), pc);
-            Gui.Text(new Rect(ix, sy + 61f, iw, 14f), "<color=#F6C74C>ULT</color>  " + def.ultName + "  <color=#9AA6BC>·  " + ClassDef.GestureName(def.ultGesture) + "</color>", 11, Gui.Paper, anchor, true, false);
+                StatRow(ix, sy + i * 12f, iw, Loc.T(StatNames[i]), Stat(ch, i), pc);
+            Gui.Text(new Rect(ix, sy + 61f, iw, 14f), Loc.T("select.ult_line", def.ultName, ClassDef.GestureName(def.ultGesture)), 11, Gui.Paper, anchor, true, false);
 
             LoadoutPanel(s, def, new Rect(ix, T + 210f, iw, H - 36f - (T + 210f)));
         }
@@ -530,7 +530,7 @@ namespace ChibiClash
             Gui.Alpha = picking ? 0.4f : 1f;
 
             // passive
-            Gui.Text(new Rect(r.x, r.y, r.width, 16f), "PASSIVE", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
+            Gui.Text(new Rect(r.x, r.y, r.width, 16f), Loc.T("select.passive"), 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
             if (focusRows && loadRow[s] == 0) Gui.Chevron(new Rect(r.x - 16f, r.y + 20f, 8f, 16f), pc);
             float pw = (r.width - 8f) * 0.5f;
             for (int p = 0; p < 2; p++)
@@ -541,7 +541,7 @@ namespace ChibiClash
                     loadRow[s] = 0;
                 }
             }
-            Gui.Text(new Rect(r.x, r.y + 44f, r.width, 16f), def.passiveDescs[pending.passive[s]], 11, Gui.Muted, TextAnchor.MiddleLeft, false, false);
+            Gui.Text(new Rect(r.x, r.y + 44f, r.width, 16f), def.PassiveDesc(pending.passive[s]), 11, Gui.Muted, TextAnchor.MiddleLeft, false, false);
 
             // Secondary: the cosmetic weapon look from the armory (the signature weapon is shown above). Only classes with
             // more than one look get the selector.
@@ -550,14 +550,14 @@ namespace ChibiClash
             var weapon = WeaponDef.Get(def.type, pending.weapon[s]);
             if (variants.Count > 1)
             {
-                Gui.Text(new Rect(r.x, wy, 70f, 24f), "LOOK", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
+                Gui.Text(new Rect(r.x, wy, 70f, 24f), Loc.T("select.look"), 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
                 if (focusRows && loadRow[s] == 1) Gui.Chevron(new Rect(r.x - 16f, wy + 4f, 8f, 16f), pc);
                 if (Gui.Hit(new Rect(r.x + 64f, wy, 26f, 24f), out bool hl, !picking)) { loadRow[s] = 1; ChangeLoadout(s, -1); }
                 Gui.Chevron(new Rect(r.x + 72f, wy + 5f, 9f, 14f), hl ? Gui.Paper : pc, false);
                 Gui.Text(new Rect(r.x + 92f, wy, r.width - 184f, 24f), weapon.name.ToUpper() + "  <color=#9AA6BC>" + (pending.weapon[s] + 1) + "/" + variants.Count + "</color>", 13, Gui.Paper, TextAnchor.MiddleCenter, true, false);
                 if (Gui.Hit(new Rect(r.xMax - 90f, wy, 26f, 24f), out bool hr, !picking)) { loadRow[s] = 1; ChangeLoadout(s, 1); }
                 Gui.Chevron(new Rect(r.xMax - 82f, wy + 5f, 9f, 14f), hr ? Gui.Paper : pc);
-                Gui.Text(new Rect(r.x, wy, r.width, 24f), "COSMETIC", 10, Gui.Muted, TextAnchor.MiddleRight, true, false);
+                Gui.Text(new Rect(r.x, wy, r.width, 24f), Loc.T("select.cosmetic"), 10, Gui.Muted, TextAnchor.MiddleRight, true, false);
             }
             Gui.Alpha = 1f;
 
@@ -569,38 +569,38 @@ namespace ChibiClash
                 if (!cpuWaiting)
                 {
                     float kw = Gui.KeyCap(row.x, row.y + 4f, ConfirmKey(s), 20f);
-                    Gui.Text(new Rect(row.x + kw + 8f, row.y, row.width - kw - 8f, row.height), "LOCK IN  ·  OR CLICK A CHARACTER", 12, Gui.Paper, TextAnchor.MiddleLeft, true, false);
+                    Gui.Text(new Rect(row.x + kw + 8f, row.y, row.width - kw - 8f, row.height), Loc.T("select.lock_in_hint"), 12, Gui.Paper, TextAnchor.MiddleLeft, true, false);
                 }
             }
             else if (st == SlotState.Loadout)
             {
-                if (Gui.Button(new Rect(row.x, row.y, 150f, row.height), "READY!", pc, 15)) SetReady(s);
+                if (Gui.Button(new Rect(row.x, row.y, 150f, row.height), Loc.T("select.ready_bang"), pc, 15)) SetReady(s);
                 float kx = row.x + 164f;
                 kx += Gui.KeyCap(kx, row.y + 4f, ConfirmKey(s), 20f) + 6f;
-                Gui.Text(new Rect(kx, row.y, row.xMax - kx, row.height), "TO READY UP", 11, Gui.Muted, TextAnchor.MiddleLeft, true, false);
+                Gui.Text(new Rect(kx, row.y, row.xMax - kx, row.height), Loc.T("select.to_ready"), 11, Gui.Muted, TextAnchor.MiddleLeft, true, false);
             }
             else
             {
                 Gui.Skew(new Rect(row.x, row.y + 2f, 120f, row.height - 4f), Gui.Gold, 0.3f);
-                Gui.Display(new Rect(row.x, row.y, 120f, row.height), "READY", 20, Gui.Ink, TextAnchor.MiddleCenter, 0.15f, Color.clear);
-                if (Gui.Button(new Rect(row.x + 134f, row.y, 110f, row.height), "CHANGE", Gui.Steel, 12)) Unready(s);
+                Gui.Display(new Rect(row.x, row.y, 120f, row.height), Loc.T("loading.ready_upper"), 20, Gui.Ink, TextAnchor.MiddleCenter, 0.15f, Color.clear);
+                if (Gui.Button(new Rect(row.x + 134f, row.y, 110f, row.height), Loc.T("select.change"), Gui.Steel, 12)) Unready(s);
             }
         }
 
         /// <summary>VS CPU: the CPU difficulty (Easy / Medium / Hard), saved as the profile's CPU difficulty (also in SETTINGS).</summary>
         void CpuLevelPanel(Rect r)
         {
-            Gui.Text(new Rect(r.x, r.y, r.width, 16f), "CPU DIFFICULTY  ·  PICK BEFORE THE FIGHT", 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
+            Gui.Text(new Rect(r.x, r.y, r.width, 16f), Loc.T("select.cpu_difficulty_pick"), 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
             float bw = (r.width - 16f) / 3f;
             for (int lvl = 1; lvl <= 3; lvl++)
-                if (Gui.Button(new Rect(r.x + (lvl - 1) * (bw + 8f), r.y + 20f, bw, 34f), DifficultyUpper[lvl], Gui.P2, 14, true, Save.settings.cpuDifficulty == lvl))
+                if (Gui.Button(new Rect(r.x + (lvl - 1) * (bw + 8f), r.y + 20f, bw, 34f), Loc.T(DifficultyUpper[lvl]), Gui.P2, 14, true, Save.settings.cpuDifficulty == lvl))
                 {
                     Save.settings.cpuDifficulty = lvl;
                     Save.Save();
                 }
-            Gui.Text(new Rect(r.x, r.y + 60f, r.width, 34f), "No internet needed. The AI picks a new character, passive and weapon for every fight, rematches too.", 11, Gui.Muted, TextAnchor.UpperLeft, false, false);
+            Gui.Text(new Rect(r.x, r.y + 60f, r.width, 34f), Loc.T("select.ai_note"), 11, Gui.Muted, TextAnchor.UpperLeft, false, false);
             if (AllReady)
-                Gui.Text(new Rect(r.x, r.y + 96f, r.width, 16f), MenuInput.UsingGamepad ? "D-PAD UP / DOWN  ·  DIFFICULTY" : "W / S  ·  DIFFICULTY", 10, Gui.Muted, TextAnchor.MiddleLeft, true, false);
+                Gui.Text(new Rect(r.x, r.y + 96f, r.width, 16f), MenuInput.UsingGamepad ? Loc.T("select.pad_difficulty") : Loc.T("select.key_difficulty"), 10, Gui.Muted, TextAnchor.MiddleLeft, true, false);
         }
 
         void ArcadeLadder(Rect r)
@@ -611,9 +611,9 @@ namespace ChibiClash
                 var row = new Rect(r.x, r.y + i * rh, r.width, rh - 4f);
                 bool done = i < arcadeRound, current = i == arcadeRound;
                 Gui.Skew(row, current ? WithA(Gui.P2, 0.85f) : new Color(0.07f, 0.11f, 0.2f, 0.9f), 0.25f);
-                Gui.Text(new Rect(row.x + 12f, row.y, 90f, row.height), i == ArcadeRounds - 1 ? "FINAL" : "ROUND " + (i + 1), 12, current ? Gui.Paper : Gui.Muted, TextAnchor.MiddleLeft, true, false);
+                Gui.Text(new Rect(row.x + 12f, row.y, 90f, row.height), i == ArcadeRounds - 1 ? Loc.T("arcade.final") : Loc.T("arcade.round", i + 1), 12, current ? Gui.Paper : Gui.Muted, TextAnchor.MiddleLeft, true, false);
                 Gui.Text(new Rect(row.x + 100f, row.y, 120f, row.height), StageLabel(ArcadeStage(i), 116f, 12), 12, Gui.Paper, TextAnchor.MiddleLeft, true, false);
-                string rival = done ? Hud.CharNameUpper(arcadeLadder[i]) + "  DEFEATED" : "???";
+                string rival = done ? Loc.T("select.defeated", Hud.CharNameUpper(arcadeLadder[i])) : "???";
                 Gui.Text(new Rect(row.x, row.y, row.width - 12f, row.height), rival, 12, done ? Gui.Gold : Gui.Paper, TextAnchor.MiddleRight, true, false);
             }
         }
@@ -624,7 +624,7 @@ namespace ChibiClash
         {
             int n = StageCount;
             bool focus = AllReady;
-            Gui.Text(new Rect(cx - 250f, y, 500f, 18f), arcade ? "ARCADE ROUTE  ·  STAGE " + (arcadeRound + 1) + " / " + ArcadeRounds : "SELECT STAGE", 13, focus ? Gui.Gold : Gui.Muted, TextAnchor.MiddleCenter, true, false);
+            Gui.Text(new Rect(cx - 250f, y, 500f, 18f), arcade ? Loc.T("select.arcade_route", arcadeRound + 1, ArcadeRounds) : Loc.T("select.select_stage"), 13, focus ? Gui.Gold : Gui.Muted, TextAnchor.MiddleCenter, true, false);
             float py = y + 24f;
             const float bigW = 230f, bigH = 104f, spread = 168f;
             int baseI = Mathf.RoundToInt(stageAnim);
@@ -662,11 +662,11 @@ namespace ChibiClash
             float ny = py + bigH + 6f;
             int cur = Mathf.Clamp(pending.stage, 0, StageBuilder.Names.Length - 1);
             int curPos = StagePos(cur);
-            string stageName = StageBuilder.Names[cur].ToUpperInvariant();
+            string stageName = StageBuilder.NameText(cur).ToUpperInvariant();
             int nameSize = 30;
             while (nameSize > 20 && Gui.Measure(stageName, nameSize, true) > 270f) nameSize -= 2;   // long design-stage names shrink between the chevrons
             Gui.Display(new Rect(cx - 200f, ny, 400f, 34f), stageName, nameSize, Gui.Paper, TextAnchor.MiddleCenter);
-            Gui.Text(new Rect(cx - 200f, ny + 32f, 400f, 16f), StageBuilder.Taglines[cur], 12, Gui.Muted, TextAnchor.MiddleCenter, false, false);
+            Gui.Text(new Rect(cx - 200f, ny + 32f, 400f, 16f), StageBuilder.TaglineText(cur), 12, Gui.Muted, TextAnchor.MiddleCenter, false, false);
             if (!arcade)
             {
                 if (Gui.Hit(new Rect(cx - 170f, ny + 2f, 30f, 30f), out bool hl)) StageStep(-1);
@@ -691,7 +691,7 @@ namespace ChibiClash
             Gui.Skew(new Rect(r.x + 3f, r.y + 3f, r.width, r.height), new Color(0f, 0f, 0f, 0.45f), 0.3f);
             Gui.Skew(r, hot ? Color.Lerp(c, Gui.Paper, 0.2f) : c, 0.3f);
             Gui.SkewFrame(r, hot ? Gui.Paper : WithA(Gui.Paper, on ? 0.6f : 0.3f), 1f, 0.3f);
-            Gui.Text(r, on ? "HAZARDS  ON" : "HAZARDS  OFF", 11, on ? Gui.Paper : Gui.Muted, TextAnchor.MiddleCenter, true, false);
+            Gui.Text(r, on ? Loc.T("room.hazards_on_btn") : Loc.T("room.hazards_off_btn"), 11, on ? Gui.Paper : Gui.Muted, TextAnchor.MiddleCenter, true, false);
             if (focus)
             {
                 Gui.KeyCap(r.xMax + 6f, r.y + 2f, Gui.Key("R", "Y"), 16f);
@@ -775,14 +775,14 @@ namespace ChibiClash
             Gui.Skew(new Rect(b.x - 20f, b.y, 10f, b.height), Gui.P1, 0.25f);
             Gui.Skew(new Rect(b.xMax + 10f, b.y, 10f, b.height), Gui.P2, 0.25f);
             Gui.SkewFrame(b, ready || hot ? Gui.Paper : Gui.Steel, 2f, 0.25f);
-            Gui.Display(b, pending.training ? "START TRAINING" : "FIGHT!", ready ? 40 : 34, ready || hot ? Gui.Paper : WithA(Gui.Paper, 0.75f), TextAnchor.MiddleCenter, 0.2f);
+            Gui.Display(b, pending.training ? Loc.T("select.start_training") : Loc.T("select.fight_bang"), ready ? 40 : 34, ready || hot ? Gui.Paper : WithA(Gui.Paper, 0.75f), TextAnchor.MiddleCenter, 0.2f);
             if (ready)
             {
                 string key = MenuInput.UsingGamepad ? "A" : Solo ? "SPACE" : "SPACE / ENTER";
                 float kw = Gui.KeyWidth(key, 20f);
                 Gui.KeyCap(r.center.x - kw * 0.5f, r.yMax + 8f, key, 20f);
             }
-            else Gui.Text(new Rect(r.x - 40f, r.yMax + 6f, r.width + 80f, 18f), "OR CLICK TO START WITH THE CURRENT PICKS", 10, Gui.Muted, TextAnchor.MiddleCenter, true, false);
+            else Gui.Text(new Rect(r.x - 40f, r.yMax + 6f, r.width + 80f, 18f), Loc.T("select.click_to_start"), 10, Gui.Muted, TextAnchor.MiddleCenter, true, false);
             if (click && wipeStart < 0f) QuickFight();
         }
     }

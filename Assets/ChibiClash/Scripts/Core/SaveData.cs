@@ -68,6 +68,17 @@ namespace ChibiClash
         public int progress;
         public int reward;
         public int completions;
+
+        [NonSerialized] string descKey;
+        /// <summary>The description in the current language (key quest.&lt;id&gt;); the saved English desc if there is no key.</summary>
+        public string DescText
+        {
+            get
+            {
+                if (descKey == null) descKey = "quest." + id;
+                return Loc.Has(descKey) ? Loc.T(descKey) : desc;
+            }
+        }
     }
 
     [Serializable]
@@ -155,6 +166,11 @@ namespace ChibiClash
         public bool accountAsked;
         /// <summary>Name and age group of every account used on this computer (+ "guest"); see PlayerIdentity.SwitchProfile.</summary>
         public List<AccountProfile> profiles = new List<AccountProfile>();
+        /// <summary>
+        /// UI language of this device (a Resources/Loc/languages.json code, see Loc); "" = not chosen yet, so the
+        /// first-launch language window opens after the age question. Per device, never sent online.
+        /// </summary>
+        public string language = "";
 
         /// <summary>Load the profile from PlayerPrefs.</summary>
         public static SaveData Load() => Load(PlayerPrefsSaveStore.Instance);
@@ -256,6 +272,7 @@ namespace ChibiClash
                 accountId = accountId ?? "",
                 accountAsked = accountAsked,
                 profiles = profiles != null ? new List<AccountProfile>(profiles) : new List<AccountProfile>(),
+                language = language ?? "",
             };
             // Privacy: a player who turned the camera off keeps it off (a fresh Settings would switch it on by default).
             if (settings != null) { d.settings.useWebcam = settings.useWebcam; d.settings.camInit = settings.camInit; }
@@ -272,6 +289,7 @@ namespace ChibiClash
         public void Repair()
         {
             if (settings == null) settings = new Settings();
+            if (language == null) language = "";
             if (keybinds == null) keybinds = new List<string>();
             if (owned == null) owned = new List<string>();
             if (equipped == null) equipped = new List<string>();
@@ -333,7 +351,7 @@ namespace ChibiClash
                 q.progress -= q.target;
                 q.completions++;
                 earned += q.reward;
-                log?.Add("Quest: " + q.desc + "  +" + q.reward);
+                log?.Add(Loc.T("rewards.quest", q.DescText, q.reward));
             }
             coins = (int)Math.Min(MaxCoins, (long)coins + earned);
             return earned;

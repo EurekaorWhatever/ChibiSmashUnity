@@ -1,0 +1,260 @@
+room.waiting	กำลังรอผู้เล่น
+room.joined	{0}  ·  เข้าร่วมแล้ว {1} / {2}
+room.host	เจ้าของห้อง
+room.player_n	ผู้เล่น {0}
+room.you_suffix	 · คุณ
+room.hazards_host_pick	{0} · เจ้าของห้องเลือก
+room.hazards_on	กับดัก เปิด
+room.hazards_off	กับดัก ปิด
+room.code_copied	คัดลอกรหัสห้อง {0} แล้ว วางส่งให้เพื่อนได้เลย
+invite.body	{0} เชิญคุณเข้า {1}   ({2} วิ)
+select.ult_name	ULT  {0}
+age.title	คุณอายุเท่าไร?
+age.body	ทุกวัยเล่นได้ทุกโหมด อายุของคุณจะถูกบันทึกพร้อมชื่อผู้เล่นเพื่อใช้เป็นสถิติของเกม
+common.next	ถัดไป
+age.error	พิมพ์อายุของคุณ หรือตั้งด้วย D-pad
+age.pad_hint	จอย: D-pad ขึ้น/ลง เปลี่ยนทีละ 1, ซ้าย/ขวา ทีละ 10 · A = ถัดไป
+rooms.enter_name	ใส่ชื่อห้อง
+rooms.name_rules	ตัวอักษร ตัวเลข หรือเว้นวรรค 3-24 ตัว เพื่อนจะเห็นชื่อนี้ตอนเข้าห้อง ห้องรับได้ 2 ถึง 4 ผู้เล่น
+rooms.create	สร้าง
+common.one_moment	รอสักครู่...
+account.keep_name	เก็บชื่อนักสู้ของคุณไว้
+account.finish_in_browser	ทำต่อในเบราว์เซอร์...
+account.sign_in_google	ลงชื่อเข้าใช้ด้วย GOOGLE
+account.play_without	เล่นโดยไม่ใช้บัญชี
+name.choose_first	เลือกชื่อผู้เล่นก่อน
+common.cancelled	ยกเลิกแล้ว
+name.welcome	ยินดีต้อนรับ นักสู้! คุณชื่ออะไร?
+name.change_title	เปลี่ยนชื่อของคุณ
+name.rules	ตัวอักษร ตัวเลข หรือ _ 3-16 ตัว เลือกชื่อนักสู้สนุก ๆ ไม่ใช่ชื่อจริง เพื่อนจะใช้ชื่อนี้ค้นหาและเชิญคุณ และทุกคนจะเห็นชื่อนี้
+name.suggest	สุ่มชื่อ
+name.checking	กำลังตรวจสอบ...
+name.lets_fight	ลุยกันเลย!
+common.save	บันทึก
+name.pad_hint_first	จอย: A = ลุยกันเลย · Y = สุ่มชื่อ
+name.pad_hint	จอย: A = บันทึก · Y = สุ่มชื่อ
+online.connected_agreeing	เชื่อมต่อแล้ว กำลังตกลงรายละเอียดแมตช์...
+online.host_settings_changed	เจ้าของห้องเปลี่ยนการตั้งค่า — เข้าห้องใหม่อีกครั้ง
+online.version_mismatch	คู่แข่งใช้เกมคนละเวอร์ชัน ผู้เล่นทั้งสองต้องใช้บิลด์เดียวกัน
+rooms.title	จับคู่
+rooms.kicker	ห้อง  ·  2-4 ผู้เล่น  ·  สร้าง · เข้าร่วม · เชิญด้วยชื่อ
+rooms.create_rooms	สร้างห้อง
+rooms.join_room	เข้าห้อง
+rooms.creating	กำลังสร้างห้องของคุณ...
+rooms.loading	กำลังโหลดห้องของคุณ...
+rooms.none_yet	ยังไม่ได้สร้างห้องเลย!
+rooms.one_moment	รอสักครู่
+rooms.empty_help	กด สร้างห้อง เพื่อสร้างห้องใหม่ หรือ เข้าห้อง ด้วยรหัสห้องจากเพื่อน
+rooms.capacity_note	ห้องรับได้ 2 ถึง 4 ผู้เล่น เชิญเพื่อนด้วยชื่อผู้เล่นของเขา
+rooms.invites_paused	หยุดคำเชิญเข้าห้องชั่วคราวสักครู่
+rooms.refresh	รีเฟรช
+rooms.hint	จับคู่  ·  ห้อง
+rooms.new	ใหม่
+rooms.you_host	คุณเป็นเจ้าของ
+rooms.open	เปิด
+join.enter_code	ใส่รหัสห้อง
+join.body	พิมพ์หรือวางรหัสห้องที่เพื่อนส่งมา (Discord, แชต...)
+join.paste	วาง
+join.join	เข้าร่วม
+join.bad_code	นี่ไม่ใช่รหัสห้อง ตรวจสอบแล้วลองใหม่ (ตัวอักษรและตัวเลขเท่านั้น)
+rooms.fight_starting	การต่อสู้ในห้องกำลังเริ่ม รอสักครู่ หรือออกจากห้องก่อน
+quick.kicker	VS ONLINE  ·  เดี่ยว 1V1  ·  ผู้เล่นใกล้คุณ
+quick.player_found	พบผู้เล่นแล้ว!
+quick.search_failed	ค้นหาไม่สำเร็จ
+quick.not_searching	ไม่ได้ค้นหา
+quick.connecting	กำลังเชื่อมต่อกับคู่แข่ง...
+quick.searching_near	กำลังหาผู้เล่นใกล้คุณ
+quick.stopped	การค้นหาหยุดลง ลองใหม่อีกครั้ง
+quick.press_search_again	กด ค้นหาอีกครั้ง เพื่อหาผู้เล่น
+quick.privacy	จับคู่เร็วจะแชร์ประเทศของคุณ (จากการตั้งค่าเครื่อง) แต่ไม่แชร์ตำแหน่งของคุณ
+quick.search_again	ค้นหาอีกครั้ง
+quick.hint	VS ONLINE  ·  จับคู่เร็ว
+room.kicker_opening	ห้อง  ·  กำลังเปิดห้อง...
+room.opening	กำลังเปิดห้อง...
+room.your_fighter	นักสู้ของคุณ
+room.locked_in	ล็อกแล้ว
+room.everyone_ok	ทุกคนกด OK แล้วการต่อสู้จะเริ่มเอง
+room.share_code	แชร์รหัส หรือเชิญเพื่อนด้วยชื่อ
+room.empty_seat	ที่นั่งว่าง
+room.stage_you	ด่าน (คุณเลือก)
+room.stage_host	ด่าน (เจ้าของห้องเลือก)
+common.ok	OK
+room.loading	กำลังโหลด...
+room.change	เปลี่ยน
+room.starting	กำลังเริ่ม...
+room.start_fight	เริ่มการต่อสู้
+room.close	ปิดห้อง
+room.leave	ออกจากห้อง
+room.hint	จับคู่  ·  ห้อง
+room.code	รหัส
+room.copy	คัดลอก
+room.host_can_invite	เจ้าของห้องเชิญเพื่อนด้วยชื่อได้
+room.invite_by_name	เชิญเพื่อนด้วยชื่อ
+room.invite	เชิญ
+room.full	ห้องเต็มแล้ว
+invite.title	คำเชิญเข้าห้อง
+invite.warning	ชื่อไม่ได้รับการยืนยัน: ตอบรับคำเชิญจากคนที่คุณรู้จักเท่านั้น
+invite.accept	ตอบรับ
+invite.decline	ปฏิเสธ
+room.hazards_on_btn	กับดัก  เปิด
+room.hazards_off_btn	กับดัก  ปิด
+select.passive	พาสซีฟ
+select.look	รูปลักษณ์
+select.cosmetic	ของตกแต่ง
+select.arcade_round	อาร์เคด  ·  รอบที่ {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   จอย 1 = 1P, จอย 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ลูกศร  ENTER  BACKSPACE  DEL
+select.dummy	หุ่นซ้อม
+select.round_rival	คู่แข่งรอบที่ {0}
+select.picks_at_start	เลือกตอนเริ่มสู้
+select.signature_weapon	อาวุธประจำตัว  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  พ่ายแพ้แล้ว
+select.arcade_route	เส้นทางอาร์เคด  ·  ด่าน {0} / {1}
+select.select_stage	เลือกด่าน
+select.local_versus	ประลองในเครื่อง
+select.arcade_rival	คู่แข่งอาร์เคด
+select.training_dummy	หุ่นซ้อม
+select.stage	ด่าน
+select.hazards	กับดัก
+select.fight	สู้
+select.change	เปลี่ยน
+select.confirm	ยืนยัน
+select.random	สุ่ม
+select.fate	ปล่อยให้โชคชะตาเลือก
+select.ready_bang	พร้อม!
+select.loadout	อุปกรณ์
+select.waiting_1p	รอ 1P
+select.1p_picks_dummy	1P เลือกหุ่นซ้อม
+select.selecting	กำลังเลือก
+select.identity_hidden	ซ่อนตัวตน
+select.revealed_at_start	เปิดเผยเมื่อเริ่มรอบ
+select.ai_picks	AI เลือกนักสู้เอง
+select.random_every_fight	สุ่มตัวละครทุกการต่อสู้
+select.any_character	ตัวละครใดก็ได้ · สุ่มพาสซีฟและอาวุธ
+select.lock_in_hint	ล็อก  ·  หรือคลิกตัวละคร
+select.to_ready	เพื่อพร้อม
+select.cpu_difficulty_pick	ความยากของ CPU  ·  เลือกก่อนสู้
+select.ai_note	ไม่ต้องใช้อินเทอร์เน็ต AI จะเลือกตัวละคร พาสซีฟ และอาวุธใหม่ทุกการต่อสู้ รวมถึงตอนแข่งอีกรอบ
+select.pad_difficulty	D-PAD ขึ้น / ลง  ·  ความยาก
+select.key_difficulty	W / S  ·  ความยาก
+select.start_training	เริ่มฝึกซ้อม
+select.fight_bang	สู้!
+select.click_to_start	หรือคลิกเพื่อเริ่มด้วยตัวเลือกปัจจุบัน
+hud.ready	เตรียมพร้อม...
+hud.rival	คู่แข่ง
+hud.you	คุณ
+hud.ultimate_ready	{0} · อัลติเมตพร้อม
+hud.move_detected	{0} · ตรวจพบท่า
+hud.failed	{0} · ล้มเหลว
+hud.training_title	ฝึกซ้อม · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  ฝึกซ้อม
+hud.intro_online	  ·  ออนไลน์  ·  ESC / START: ออก
+hud.ult_ready_press	ULT พร้อม - กด {0}
+hud.ult_ready	ULT พร้อม
+hud.sim_key	ปุ่มจำลอง: {0}
+hud.poses_live	 · ท่าทาง: ไขว้แขน = ป้องกัน / กางแขน = ลูกไฟ / ชูมือ = กระโดด
+hud.poses_keys	 · ท่าทาง 1 ไขว้ / 2 ต่อย / 3 ชู · P หลังค่อม
+hud.poses_p2	 · ท่าทาง 8/9/0
+hud.training_help	ฝึกซ้อม: T เติมอัลติเมต · นักสู้ที่โดน KO จะเกิดใหม่ที่ 0% · Esc หยุดชั่วคราว
+hud.ult_pct	ULT {0}%
+hud.last_hit	ตีล่าสุด  {0}
+hud.combo_hits	คอมโบ  {0} ฮิต  +{1}%
+hud.combo	คอมโบ  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	กล้อง P1 · จำลอง
+hud.cv_p1_live	กล้อง P1 · สด
+hud.cv_p2_sim	กล้อง P2 · จำลอง
+hud.cv_p2_live	กล้อง P2 · สด
+hud.hits_prefix	{0} ฮิต
+results.no_contest	ไม่มีผลการแข่ง
+results.draw	เสมอ!
+results.cpu_wins	CPU ชนะ
+results.you_win	คุณชนะ!
+results.rival_wins	คู่แข่งชนะ
+results.wins	{0} ชนะ!
+results.takes_round	{0} ชนะรอบนี้
+results.stats	ตีโดน  {0}\nคอมโบเต็ม  {1}   ·   คอมโบสูงสุด  {2}
+results.stats2	\nอัลติเมตท่าทาง  {0}\nแพร์รี  {1}
+results.posture	\nท่านั่งดี  {0}%
+results.rewards_named	รางวัล (โปรไฟล์ของ {0})
+results.rewards_your	รางวัล (โปรไฟล์ของคุณ)
+results.rewards_p1	รางวัล (โปรไฟล์ P1)
+results.coins	+{0} เหรียญ  (รวม {1})
+hud.do_pose	ทำท่าหน้ากล้อง
+results.place_1	ที่ 1
+results.place_2	ที่ 2
+results.place_3	ที่ 3
+results.place_4	ที่ 4
+results.out	ตกรอบ
+results.out_1	ตกรอบ · ที่ 1
+results.out_2	ตกรอบ · ที่ 2
+results.out_3	ตกรอบ · ที่ 3
+results.out_4	ตกรอบ · ที่ 4
+results.red_team	ทีมแดง
+results.blue_team	ทีมน้ำเงิน
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} ผู้เล่น
+hud.keys_line1	P{0}: {1} เดิน · {2} กระโดด ·
+hud.keys_line2	{0} โจมตีเบา · {1} โจมตีหนัก · {2} ท่าพิเศษ ·
+hud.keys_line3	{0} ป้องกัน · {1} พุ่ง ·
+hud.keys_line4	{0} สกิล · {1} อัลติเมต
+results.characters	ตัวละคร
+results.stock_one	เหลือ 1 ชีวิต
+results.stocks	เหลือ {0} ชีวิต
+hud.respawn	เกิดใหม่
+hud.drop_in	ลงสนาม!
+results.main_menu	เมนูหลัก
+pause.title	หยุดชั่วคราว
+pause.resume	เล่นต่อ
+pause.quit	กลับเมนู
+pause.hint	B / Backspace เพื่อเล่นต่อ
+leave.title	ออกจากแมตช์?
+leave.body	แมตช์ยังดำเนินต่อ การออกจะนับเป็นแพ้
+leave.leave	ออก
+leave.hint	B / Backspace / Esc / Start เพื่ออยู่ต่อ
+results.winner	ผู้ชนะ
+results.training_no_rewards	ฝึกซ้อม: ไม่มีรางวัล
+cv.posture	ท่านั่ง {0}%
+cv.posture_low	ท่านั่ง {0}% - นั่งหลังตรง!
+cv.telemetry_ok	ข้อมูลตรวจวัดปกติ
+net.rooms_load_failed	โหลดห้องของคุณไม่ได้: {0}
+net.host_limit	คุณเป็นเจ้าของห้องอยู่แล้ว {0} ห้อง ปิดห้องหนึ่งก่อน
+net.creating_named	กำลังสร้าง "{0}"...
+net.room_ready_code	ห้อง "{0}" พร้อมแล้ว แชร์รหัส {1} หรือเชิญเพื่อน
+net.create_failed	สร้างห้องไม่ได้: {0}
+net.joining_room	กำลังเข้าห้อง {0}...
+net.you_joined	คุณเข้าห้อง "{0}" แล้ว เลือกนักสู้แล้วกด OK
+net.no_room_code	ไม่พบห้องรหัส {0} ตรวจสอบรหัสแล้วลองใหม่
+net.room_full_n	ห้องนั้นเต็มแล้ว ({0} ผู้เล่น)
+net.join_failed	เข้าร่วมไม่ได้: {0}
+net.update_failed	อัปเดตห้องไม่ได้: {0}
+net.could_not_what	ไม่สามารถ{0}ได้: {1}
+net.what_stage	เปลี่ยนด่าน
+net.what_hazards	เปลี่ยนกับดัก
+net.press_ok_again	{0} ทั้งสองฝ่ายกด OK และ เริ่มการต่อสู้ อีกครั้ง
+net.udp_port	เปิดพอร์ต UDP {0} ไม่ได้ (ถูกใช้งานอยู่หรือเปล่า?)
+net.lan_ready	โฮสต์ LAN พร้อมแล้ว เพื่อนเข้าที่: {0}  (พอร์ต {1})
+net.bad_ip	"{0}" ไม่ใช่ที่อยู่ IP ที่ถูกต้อง
+net.connecting_to	กำลังเชื่อมต่อกับ {0}...
+net.sign_in_failed	ลงชื่อเข้าใช้ไม่สำเร็จ: {0}
+net.room_ready	ห้อง "{0}" พร้อมแล้ว แชร์รหัสให้เพื่อน
+net.searching_in	กำลังหาผู้เล่นใน{0}...
+net.start_failed	เริ่มการต่อสู้ไม่ได้: {0}
+net.host_unreachable	ติดต่อเจ้าของห้องไม่ได้: {0}
+net.area_world	ทั่วโลก
+net.area_country_and	ประเทศของคุณและ{0}
+region.africa	แอฟริกา
+region.americas	ทวีปอเมริกา
+region.asia	เอเชีย
+region.europe	ยุโรป
+region.oceania	โอเชียเนีย
+region.northern_africa	แอฟริกาเหนือ
+region.eastern_africa	แอฟริกาตะวันออก
+region.middle_africa	แอฟริกากลาง
+region.southern_africa	แอฟริกาใต้
+region.western_africa	แอฟริกาตะวันตก
+region.caribbean	แคริบเบียน

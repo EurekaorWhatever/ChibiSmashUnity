@@ -152,10 +152,10 @@ namespace ChibiClash
             f.CopyTo(ref prev);                             // reuses prev's array (perf fix B)
             hasPrev = true;
 
-            if (f.confidence < GestureClassifier.MinConfidence) { Valid = false; Reason = "Low tracking confidence"; }
-            else if (frozenSamples > 20) { Valid = false; Reason = "Frozen feed (spoof?)"; }
-            else if (now - lastSnap < 1f) { Valid = false; Reason = "Instant pose snap (macro?)"; }
-            else { Valid = true; Reason = "OK"; }
+            if (f.confidence < GestureClassifier.MinConfidence) { Valid = false; Reason = Loc.T("cv.low_confidence"); }
+            else if (frozenSamples > 20) { Valid = false; Reason = Loc.T("cv.frozen"); }
+            else if (now - lastSnap < 1f) { Valid = false; Reason = Loc.T("cv.snap"); }
+            else { Valid = true; Reason = Loc.T("cv.ok"); }
         }
     }
 
@@ -340,13 +340,13 @@ namespace ChibiClash
         {
             get
             {
-                if (WebCamTexture.devices.Length == 0) return "No camera found";
-                if (tex == null) return "Camera off";
-                if (!tex.isPlaying) return "Camera starting...";
+                if (WebCamTexture.devices.Length == 0) return Loc.T("cam.none");
+                if (tex == null) return Loc.T("cam.off");
+                if (!tex.isPlaying) return Loc.T("cam.starting");
                 if (tex.width <= 16) return Time.unscaledTime - startedAt > 4f
-                        ? "Waiting for camera frames - allow camera access for Unity in System Settings > Privacy > Camera"
-                        : "Camera starting...";
-                return "Camera live (" + tex.width + "x" + tex.height + ")";
+                        ? Loc.T("cam.waiting_frames")
+                        : Loc.T("cam.starting");
+                return Loc.T("cam.live", tex.width, tex.height);
             }
         }
 

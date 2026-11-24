@@ -1,0 +1,250 @@
+region.central_america	อเมริกากลาง
+region.south_america	อเมริกาใต้
+region.northern_america	อเมริกาเหนือ
+region.central_asia	เอเชียกลาง
+region.eastern_asia	เอเชียตะวันออก
+region.south_eastern_asia	เอเชียตะวันออกเฉียงใต้
+region.southern_asia	เอเชียใต้
+region.western_asia	เอเชียตะวันตก
+region.eastern_europe	ยุโรปตะวันออก
+region.northern_europe	ยุโรปเหนือ
+region.southern_europe	ยุโรปใต้
+region.western_europe	ยุโรปตะวันตก
+region.australia_and_new_zealand	ออสเตรเลียและนิวซีแลนด์
+region.melanesia	เมลานีเซีย
+region.micronesia	ไมโครนีเซีย
+region.polynesia	โพลินีเซีย
+net.joined_connecting	เข้าห้อง "{0}" แล้ว กำลังเชื่อมต่อกับเจ้าของห้อง...
+net.opponent_unreachable	ติดต่อคู่แข่งไม่ได้: {0}
+net.quick_filling	ผู้เล่น {0} จาก {1} คน เริ่มใน {2} วินาที...
+invite.inviting	กำลังเชิญ {0}...
+invite.sent_lasts	ส่งคำเชิญถึง {0} แล้ว คำเชิญมีอายุ {1} วินาที
+invite.send_failed	ส่งคำเชิญไม่ได้: {0}
+invite.joining_room_of	กำลังเข้าห้องของ {0}...
+invite.paused	หยุดคำเชิญชั่วคราว {0} นาที
+invite.invited_you	{0} เชิญคุณเข้า "{1}"
+invite.ran_out	คำเชิญถึง {0} หมดเวลาแล้ว
+friends.choose_name	เลือกชื่อผู้เล่นเพื่อให้เพื่อนค้นหาคุณเจอ
+friends.unavailable	ใช้งานระบบเพื่อนไม่ได้: {0}
+friends.your_name_is	ชื่อของคุณคือ {0} บอกชื่อนี้กับเพื่อนเพื่อให้เพิ่มคุณได้
+friends.set_name_failed	ตั้งชื่อไม่ได้: {0}
+friends.request_sent	ส่งคำขอเป็นเพื่อนถึง {0} แล้ว
+friends.add_failed	เพิ่ม {0} ไม่ได้: {1}
+friends.offline	{0} ออฟไลน์อยู่ตอนนี้
+friends.request_then_invite	ส่งคำขอเป็นเพื่อนถึง {0} แล้ว คำเชิญจะส่งไปทันทีที่เขาตอบรับ
+friends.unreachable	ติดต่อ {0} ไม่ได้: {1}
+friends.creating_room_for	กำลังสร้างห้องให้ {0}...
+friends.joining	กำลังเข้าร่วมกับ {0}...
+friends.declined	{0} ปฏิเสธคำเชิญ
+friends.version_mismatch	{0} เชิญคุณ แต่ใช้เกมคนละเวอร์ชัน
+friends.invite_sent_waiting	ส่งคำเชิญถึง {0} แล้ว รอให้เขาเข้าร่วม...
+name.too_short	ชื่อสั้นเกินไป (อย่างน้อย {0} ตัวอักษร)
+name.too_long	ชื่อยาวเกินไป (ไม่เกิน {0} ตัวอักษร)
+rooms.name_too_short	ชื่อห้องสั้นเกินไป (อย่างน้อย {0} ตัวอักษร)
+rooms.name_too_long	ชื่อห้องยาวเกินไป (ไม่เกิน {0} ตัวอักษร)
+net.bad_code	รหัสห้องไม่ถูกต้อง (ตัวอักษรและตัวเลขเท่านั้น)
+net.version_mismatch	ห้องนั้นสร้างจาก Chibi Clash คนละเวอร์ชัน ผู้เล่นทั้งสองต้องใช้เวอร์ชันเดียวกัน
+net.loading_room	กำลังโหลดห้อง...
+net.room_closed	ปิดห้องแล้ว
+net.you_left	คุณออกจากห้องแล้ว
+net.waiting_host_game	กำลังเริ่ม... รอเกมของเจ้าของห้อง
+net.choose_next_fight	เลือกนักสู้แล้วกด OK สำหรับการต่อสู้ครั้งถัดไป
+net.host_changed_stage	เจ้าของห้องเปลี่ยนการตั้งค่าด่าน กด OK อีกครั้ง
+net.room_closed_host_left	ห้องถูกปิดแล้ว (เจ้าของห้องออกไป)
+net.starting_fight	กำลังเริ่มการต่อสู้...
+net.player_left_joined	มีผู้เล่นออกหรือเข้ามา
+net.no_connection	ไม่มีการเชื่อมต่อ
+net.fight_could_not_start	เริ่มการต่อสู้ไม่ได้
+net.fight_starting_wait	การต่อสู้กำลังเริ่ม! รอเพื่อนเชื่อมต่อ...
+net.choose_press_ok	เลือกนักสู้แล้วกด OK
+net.too_many_starts	เริ่มบ่อยเกินไป รอหนึ่งนาที แล้วกด เริ่มการต่อสู้
+net.fight_starting_connecting	การต่อสู้กำลังเริ่ม! กำลังเชื่อมต่อ...
+net.could_not_connect	เชื่อมต่อไม่ได้
+net.friend_no_answer	เพื่อนไม่ตอบกลับ
+net.start_cancelled	ยกเลิกการเริ่มแล้ว
+net.friend_no_connect	เพื่อนเชื่อมต่อไม่สำเร็จ
+net.enter_code	ใส่รหัสห้องที่เพื่อนแสดง
+net.lan_browser	เล่น LAN บนเบราว์เซอร์ไม่ได้ ใช้ ห้อง หรือ จับคู่ หรือใช้เวอร์ชัน PC สำหรับ LAN
+net.enter_ip	ใส่ที่อยู่ IP ของเครื่องโฮสต์
+net.this_pc_ip	IP ของเครื่องนี้
+net.signing_in	กำลังลงชื่อเข้าใช้...
+net.creating_private	กำลังสร้างห้องส่วนตัว...
+net.hosting_one	ไม่พบแมตช์ที่เปิดอยู่ กำลังเปิดแมตช์ใหม่...
+net.needs_2_to_4	การต่อสู้ต้องมีผู้เล่น 2 ถึง 4 คน
+net.waiting_friend	รอเพื่อนเชื่อมต่อ...
+net.waiting_friends	รอเพื่อน ๆ เชื่อมต่อ...
+net.connection_running	ยังมีการเชื่อมต่ออื่นทำงานอยู่
+net.no_valid_info	ห้องไม่มีข้อมูลการเชื่อมต่อที่ถูกต้อง (เจ้าของห้องออกไปแล้ว?)
+net.connecting_host	กำลังเชื่อมต่อกับเจ้าของห้อง...
+net.already_full	ห้องนั้นเต็มแล้ว
+net.no_info	ห้องไม่มีข้อมูลการเชื่อมต่อ (เจ้าของห้องออกไปแล้ว?)
+net.player_left_searching	ผู้เล่นคนนั้นออกไปแล้ว กำลังค้นหาใหม่...
+net.connected	เชื่อมต่อแล้ว!
+net.relay_failed	เชื่อมต่อเซิร์ฟเวอร์ Relay ไม่สำเร็จ
+net.opponent_timeout	ติดต่อคู่แข่งไม่ได้ (หมดเวลา)
+net.no_internet	ไม่มีการเชื่อมต่ออินเทอร์เน็ต เชื่อมต่อ Wi-Fi หรืออินเทอร์เน็ตมือถือเพื่อเล่นกับเพื่อนได้ทุกที่ (เล่น LAN ได้ในเครือข่ายเดียวกัน)
+invite.wait	รอสักครู่ก่อนส่งคำเชิญอีกครั้ง
+invite.type_name	พิมพ์ชื่อในเกมของเพื่อน (ตัวอักษร ตัวเลข หรือ _ 3-16 ตัว)
+invite.own_name	นั่นคือชื่อของคุณเอง
+invite.open_room_first	เปิดห้องของคุณก่อน แล้วค่อยเชิญ
+invite.room_full	ห้องของคุณเต็มแล้ว
+invite.could_not_send	ส่งคำเชิญไม่ได้
+invite.too_many	มีคำเชิญมากเกินไปตอนนี้ ลองใหม่ในอีกไม่กี่วินาที
+invite.cancelled	ยกเลิกคำเชิญแล้ว
+invite.expired	คำเชิญนั้นหมดอายุแล้ว
+invite.closed_full	ห้องของคุณเต็มแล้ว ปิดคำเชิญ
+invite.closed_joined	มีผู้เล่นเข้าห้องของคุณแล้ว ปิดคำเชิญ
+invite.closed_room	ยกเลิกคำเชิญ: ห้องถูกปิดแล้ว
+name.taken	ชื่อนี้มีคนใช้แล้ว
+name.check_unavailable	ตรวจสอบชื่อออนไลน์ไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่
+name.too_soon	คุณเพิ่งเปลี่ยนชื่อไป ลองใหม่ในอีกหนึ่งนาที
+name.choose_different	โปรดเลือกชื่ออื่น
+friends.type_tag	พิมพ์ชื่อเพื่อนในรูปแบบ Kira#4821
+friends.added	เพิ่มเพื่อนแล้ว
+friends.declined_request	ปฏิเสธคำขอแล้ว
+friends.removed	ลบเพื่อนแล้ว
+friends.blocked	บล็อกผู้เล่นแล้ว
+friends.a_friend	เพื่อนคนหนึ่ง
+friends.type_player_tag	พิมพ์ชื่อผู้เล่นในรูปแบบ Kira#4821
+friends.wait_invite	รอสักครู่ก่อนเชิญอีกครั้ง
+name.enter	ใส่ชื่อ
+name.bad_chars	ใช้ได้เฉพาะตัวอักษร ตัวเลข และ _ (ไม่มีเว้นวรรคหรือสัญลักษณ์)
+rooms.name_bad_chars	ชื่อห้องใช้ได้เฉพาะตัวอักษร ตัวเลข เว้นวรรค และ _ - ' ! เท่านั้น
+rooms.name_double_space	ชื่อห้องห้ามมีเว้นวรรคติดกันสองช่อง
+rooms.name_choose_different	โปรดเลือกชื่อห้องอื่น
+gesture.cross_arms	ไขว้แขน
+gesture.punch_forward	ต่อยไปข้างหน้า
+gesture.raise_hands	ชูมือทั้งสองข้าง
+class.kaia.passive1_desc	ความเร็วโจมตี +15%
+class.kaia.passive2_desc	ดูดเลือด 5%
+class.kaia.skill1_desc	พุ่งไปข้างหน้าแล้วแทงใส่คู่ต่อสู้
+class.kaia.skill2_desc	จังหวะพอดีจะสะท้อนความเสียหายกลับ
+class.kaia.skill3_desc	แทงรัวหลายครั้งอย่างรวดเร็ว
+class.kaia.ult_desc	10 วิ: การโจมตีปกติปล่อยคลื่นแนวนอน
+class.bruna.passive1_desc	ความเสียหาย +20%, ความเร็วโจมตี -15%
+class.bruna.passive2_desc	ความเสียหาย +20%, ความเร็วเคลื่อนที่ -15%
+class.bruna.skill1_desc	จับคู่ต่อสู้แล้วทุ่มลงพื้น
+class.bruna.skill2_desc	หมุนตัวเหมือนพายุทอร์นาโด โจมตีต่อเนื่อง
+class.bruna.ult_desc	ทุบพื้นให้เกิดคลื่นกระแทก
+class.ren.passive1_desc	อัตราคริติคอล +20%
+class.ren.passive2_desc	ความเร็วเคลื่อนที่ +10% เป็นเวลา 10 วิ (คูลดาวน์ 30 วิ)
+class.ren.skill1_desc	ถอยหลังในแนวนอนแล้วยิง
+class.ren.skill2_desc	รัดคอคู่ต่อสู้ระยะประชิดแล้วผลักออกไป
+class.ren.skill3_desc	ยิงห่าธนูในแนวนอน
+class.ren.ult_desc	ลูกธนูหนึ่งดอกแตกตัวเป็นพายุลูกธนู
+class.lyra.passive1_desc	โอกาส 10% เมื่อโจมตีโดน: ความเร็วเคลื่อนที่ -15%, ความเสียหาย -10%, ความเร็วโจมตี -15%
+class.lyra.passive2_desc	โอกาส 20% ที่จะป้องกันความเสียหาย
+class.lyra.skill1_desc	ยิงลูกไฟติดตามเป้าหมาย
+class.lyra.skill2_desc	อัญเชิญสมุน 3 ตัว
+class.lyra.skill3_desc	เมฆตามติดศัตรูและฟาดสายฟ้าใส่
+class.lyra.ult_desc	วงแหวนไฟ 10 วิ: เผาศัตรู และกันกระสุน
+class.taro.passive1_desc	โอกาส 10% เมื่อโจมตีโดน: พลังป้องกันศัตรู -15%
+class.taro.passive2_desc	หลังไม่โจมตี 3 วิ การโจมตีครั้งถัดไป +50%
+class.taro.skill1_desc	ยืดทวน กระโดด แล้วฟาดลงด้านล่าง
+class.taro.skill2_desc	หมุนทวนเพื่อป้องกันกระสุน
+class.taro.skill3_desc	ขว้างหอกออกไปแล้วเรียกกลับมา
+class.taro.ult_desc	แทงศัตรู แล้วเตะด้ามให้ลึกยิ่งขึ้น
+char.kaia.role	นักสู้คล่องแคล่ว
+char.kaia.style	ต่อสู้ระยะประชิดที่เร็วและคล่องตัว ด้วยการฟันที่แม่นยำและต่อคอมโบได้
+char.bruna.role	สายบู๊หนัก
+char.bruna.style	นักต่อสู้พลังทำลายสูง ทนทานสูง คุมพื้นที่ด้วยการโจมตีหนักหน่วง
+char.ren.role	นักแม่นธนูคล่องแคล่ว
+char.ren.style	คล่องตัวสูง คุมระยะและกดดันอย่างแม่นยำด้วยเทคนิคธนูหลากหลาย
+char.lyra.role	คุมพื้นที่ / วางกับดัก
+char.lyra.style	จอมเวทคล่องแคล่วที่คุมพื้นที่ด้วยการร่ายเร็ว การเคลื่อนที่ที่หลอกล่อ และเวทมนตร์ที่แม่นยำ
+char.taro.role	ผู้เชี่ยวชาญระยะไกล
+char.taro.style	ควบคุมเกมอย่างมีวินัยและคล่องตัว กดดันด้วยระยะที่ยาวและการโจมตีที่แม่นยำ
+stage.0.name	โดโจลอยฟ้า
+stage.0.short	โดโจลอยฟ้า
+stage.0.tagline	ศาลเจ้าบนภูเขาเหนือเมฆ
+stage.1.name	นครนีออน
+stage.1.short	นครนีออน
+stage.1.tagline	สังเวียนบนดาดฟ้าใต้สายฝนนีออน
+stage.2.name	โรงตีเหล็กลาวา
+stage.2.short	โรงตีเหล็กลาวา
+stage.2.tagline	โรงหลอมเหนือทะเลลาวา
+stage.3.name	ภูเขาแห่งการเริ่มต้น
+stage.3.short	ภูเขา
+stage.3.tagline	KO แนวตั้ง · แท่นหยกเคลื่อนที่เหนือหุบเหวหมอก
+stage.4.name	ทุ่งราบแห่งความสามัคคี
+stage.4.short	ทุ่งราบ
+stage.4.tagline	KO แนวนอน · ทุ่งยาวผืนเดียว ไม่มีที่ให้ซ่อน
+stage.5.name	ห้วงเหวภูเขาไฟ
+stage.5.short	ภูเขาไฟ
+stage.5.tagline	KO ได้ทุกขอบ · ไฟพวยพุ่งจากทะเลสาบแมกมา
+stage.6.name	รังนกยักษ์
+stage.6.short	รังนก
+stage.6.tagline	KO แนวนอน · นกยักษ์กวาดทั่วสังเวียน
+stage.7.name	อนุสรณ์สถานใต้มหาสมุทรที่ถูกทิ้งร้าง
+stage.7.short	มหาสมุทร
+stage.7.tagline	KO ได้ทุกขอบ · วาฬดิ่งลงมา ให้กระโดดลงชั้นล่าง
+end.opponent_left	คู่แข่งออกจากแมตช์แล้ว
+end.opponent_timeout	คู่แข่งไม่ตอบสนอง
+end.connection_lost	การเชื่อมต่อกับคู่แข่งขาดหาย
+end.you_left	คุณออกจากแมตช์แล้ว
+end.desync	เกมทั้งสองฝั่งไม่ตรงกัน (desync): ไม่มีผลการแข่ง
+end.unconfirmed	ยืนยันผลจบแมตช์ไม่ได้: ไม่มีผลการแข่ง
+end.handshake_failed	ไม่สามารถเริ่มแมตช์ได้
+end.peer_never_started	คู่แข่งไม่ได้เข้าแมตช์: ไม่มีผลการแข่ง
+end.too_slow	การเชื่อมต่อช้าเกินกว่าจะเล่นได้: ไม่มีผลการแข่ง
+end.host_left	เจ้าของห้องออกจากแมตช์: ไม่มีผลการแข่ง
+end.dropped	การเชื่อมต่อของคุณหลุดจากแมตช์
+status.aura	ออร่า {0}
+status.fire_ring	วงแหวนไฟ {0}
+status.tailwind	ลมส่ง
+status.guard_broken	การ์ดแตก {0} วิ
+status.guard	การ์ด {0}%
+status.reloading	กำลังบรรจุ {0} วิ
+status.recharging	กำลังชาร์จ {0} วิ
+status.hexed	โดนสาป
+status.armor_break	เกราะ -15%
+hud.perform	ทำท่า: {0}
+hud.times_up	หมดเวลา!
+rewards.no_contest	ไม่มีผลการแข่ง: ไม่มีรางวัล
+rewards.pve_victory	ชนะ PvE  +{0}
+rewards.pve_match	แข่ง PvE  +{0}
+rewards.victory	ชนะ  +{0}
+rewards.match_played	เล่นจบแมตช์  +{0}
+rewards.posture	ท่านั่งดี {0}%  +{1}
+hud.revived	ฟื้นคืนชีพ
+quest.win	ชนะ 3 แมตช์
+quest.pve	ชนะ CPU สองครั้ง (PvE)
+quest.combo	ทำคอมโบเต็ม 10 ครั้ง
+quest.ult	ใช้อัลติเมตท่าทาง 3 ครั้ง
+quest.parry	แพร์รีการโจมตี 5 ครั้ง
+quest.posture	จบแมตช์ด้วยท่านั่งดี 80% ขึ้นไป
+rewards.quest	ภารกิจ: {0}  +{1}
+bind.move_left	เดินซ้าย
+bind.move_right	เดินขวา
+bind.drop	ลง / ตกเร็ว
+bind.jump	กระโดด
+bind.jump_alt	กระโดด (สำรอง)
+bind.light	โจมตีเบา
+bind.heavy	โจมตีหนัก
+bind.block	ป้องกัน
+bind.dash	พุ่ง
+bind.skill1	สกิล 1
+bind.skill2	สกิล 2
+bind.skill3	สกิล 3
+bind.ultimate	อัลติเมต
+bind.aim_up	เล็งขึ้น
+bind.special	ท่าพิเศษ
+hud.rejected	ถูกปฏิเสธ: {0}
+cv.low_confidence	ความมั่นใจในการจับท่าต่ำ
+cv.frozen	ภาพค้าง (ปลอมแปลง?)
+cv.snap	ท่าเปลี่ยนทันที (มาโคร?)
+cv.ok	ปกติ
+cam.none	ไม่พบกล้อง
+cam.off	ปิดกล้อง
+cam.starting	กำลังเปิดกล้อง...
+cam.waiting_frames	กำลังรอภาพจากกล้อง - อนุญาตให้ Unity เข้าถึงกล้องใน การตั้งค่าระบบ > ความเป็นส่วนตัว > กล้อง
+cam.live	กล้องทำงาน ({0}x{1})
+pose.simulated	จำลอง (ท่าทางจากคีย์บอร์ด)
+pose.camera_off	ปิดการจับท่าด้วยกล้อง - ใช้ท่าทางจำลองจากคีย์บอร์ด
+pose.model_failed	โมเดลท่าทางล้มเหลว: {0}
+pose.loading	กำลังโหลดโมเดลท่าทาง...
+pose.live	จับท่าทางร่างกายสด (MoveNet, {0} Hz)
+pose.step_back	เปิดกล้องแล้ว - ถอยหลังอีกนิดให้เห็นไหล่
+account.finish_browser	ลงชื่อเข้าใช้ต่อในเบราว์เซอร์ให้เสร็จ (เลือก ดำเนินการต่อด้วย Google)...
+account.signed_out_again	ออกจากระบบแล้ว ลงชื่อเข้าใช้อีกครั้งเพื่อใช้บัญชีของคุณ
+account.signed_in_kept	ลงชื่อเข้าใช้แล้ว ชื่อและความคืบหน้าของคุณจะอยู่กับบัญชีนี้

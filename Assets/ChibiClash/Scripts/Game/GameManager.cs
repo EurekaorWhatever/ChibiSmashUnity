@@ -74,8 +74,8 @@ namespace ChibiClash
         readonly FighterClass[] arcadeLadder = new FighterClass[ArcadeRounds];
 
         // Vs CPU levels 1-3 are easy / medium / hard (the user's words); 0 is the training dummy.
-        static readonly string[] Difficulty = { "Dummy", "Easy", "Medium", "Hard" };
-        static readonly string[] DifficultyUpper = { "DUMMY", "EASY", "MEDIUM", "HARD" };
+        static readonly string[] Difficulty = { "difficulty.dummy", "difficulty.easy", "difficulty.medium", "difficulty.hard" };   // Loc keys
+        static readonly string[] DifficultyUpper = { "difficulty.dummy_upper", "difficulty.easy_upper", "difficulty.medium_upper", "difficulty.hard_upper" };   // Loc keys
 
         static float W => Gui.W;
         static float H => Gui.H;
@@ -88,6 +88,8 @@ namespace ChibiClash
             string devName = Netcode.ChibiDevFlags.DevName;
             if (devName != null) { Save.diskPlayerName = Save.playerName ?? ""; Save.playerName = devName; }
             Bindings.Data = Save;
+            // UI language (per device): the saved choice, else the device's own language until the player picks one.
+            Loc.Use(Save.language.Length > 0 ? Save.language : Loc.DeviceLanguage());
             // Perf audit P4 #6: every widget is GUI.* (no GUILayout / GUI.Window anywhere), so skip the Layout event pass;
             // halves OnGUI calls per frame. GUI.TextField / FocusControl do not need it (verify text fields in Play Mode).
             useGUILayout = false;
@@ -166,7 +168,7 @@ namespace ChibiClash
             if (accountId.Length > 0 && string.IsNullOrEmpty(serverName) && local.Length > 0 && nameRegistry.IsVerified(local))
                 account.PushName(local);
             nameDialog = false;   // re-evaluated: NeedsFirstName opens it again when this account has no name
-            Toast(accountId.Length > 0 ? "Signed in" + (local.Length > 0 ? " as " + local : "") + "." : "Signed out.");
+            Toast(accountId.Length > 0 ? (local.Length > 0 ? Loc.T("account.signed_in_as", local) : Loc.T("account.signed_in")) : Loc.T("account.signed_out"));
         }
 
         void ResetCamera()
@@ -216,13 +218,15 @@ namespace ChibiClash
             if (wipeStart >= 0f || wasListening || page == Page.Loading) return;
             if (DialogOpen)
             {
-                PadDialogInput();
+                if (LanguageShown && !PlayerIdentity.NeedsAge(Save.ageBand) && Save.age > 0) PadLanguageInput();
+                else PadDialogInput();
                 // CREATE ROOM / JOIN ROOM windows: the gamepad moves between their buttons (keys type into the field).
                 if (roomDialog || joinDialog) PadDialogNav();
                 // Text-entry dialogs own the keyboard; only Back closes the ones that may be closed.
                 if (MenuInput.Any(NavCmd.Back))
                 {
-                    if (roomDialog) { roomDialog = false; UiSound.Back(); }
+                    if (langDialog && !NeedsLanguage) { langDialog = false; UiSound.Back(); }
+                    else if (roomDialog) { roomDialog = false; UiSound.Back(); }
                     else if (joinDialog) { joinDialog = false; UiSound.Back(); }
                     else if (nameDialog && !NeedsFirstName) { nameDialog = false; UiSound.Back(); }
                 }
@@ -274,7 +278,7 @@ namespace ChibiClash
         }
 
         /// <summary>A modal onboarding / text-entry dialog is on screen (keyboard menu navigation is off).</summary>
-        bool DialogOpen => NeedsOnboarding || nameDialog || roomDialog || joinDialog || NeedsFirstName;
+        bool DialogOpen => NeedsOnboarding || LanguageShown || nameDialog || roomDialog || joinDialog || NeedsFirstName;
 
         /// <summary>Gamepad only (the keyboard is typing): D-pad moves the focus, A presses the focused button.</summary>
         static void PadDialogNav()
@@ -434,19 +438,19 @@ namespace ChibiClash
             listenEndedAt = Time.unscaledTime;
             if (f.MouseButton != null) listenClickLatch = true;
             if (step == RebindStep.Cancel) { UiSound.Back(); return; }
-            string who = "P" + (listenPlayer + 1) + " " + Bindings.Names[(int)listenAction];
+            string who = Loc.T("keys.who", listenPlayer + 1, Loc.T(Bindings.Names[(int)listenAction]));
             string oldKey = Bindings.Get(listenPlayer, listenAction);
             string otherName = "";
             for (int k = 0; k < Bindings.Count; k++)
-                if (Bindings.Get(1 - listenPlayer, (BindAction)k) == bound) { otherName = Bindings.Names[k]; break; }
+                if (Bindings.Get(1 - listenPlayer, (BindAction)k) == bound) { otherName = Loc.T(Bindings.Names[k]); break; }
             switch (Bindings.Set(listenPlayer, listenAction, bound))
             {
                 case BindResult.Reserved:
-                    Deny(Bindings.BindingLabel(bound) + " is a pose / posture key (1 2 3, 8 9 0, numpad 7 8 9, P, -). Pick another.");
+                    Deny(Loc.T("keys.reserved", Bindings.BindingLabel(bound)));
                     break;
                 case BindResult.SwappedOtherPlayer:
-                    Toast(who + " = " + Bindings.BindingLabel(bound) + ";  P" + (2 - listenPlayer) + " " + otherName + " is now " +
-                          Bindings.BindingLabel(oldKey));
+                    Toast(Loc.T("keys.swapped", who + " = " + Bindings.BindingLabel(bound), Loc.T("keys.who", 2 - listenPlayer, otherName),
+                          Bindings.BindingLabel(oldKey)));
                     break;
                 default:
                     Toast(who + " = " + Bindings.BindingLabel(bound));
@@ -462,7 +466,7 @@ namespace ChibiClash
 
         // ---------------------------------------------------------------- navigation
 
-        static readonly string[] NavNames = { "HOME", "PLAY", "TRAINING", "ARCADE", "COLLECTION", "SETTINGS" };
+        static readonly string[] NavNames = { "nav.home", "nav.play", "nav.training", "nav.arcade", "nav.collection", "nav.settings" };   // Loc keys
         static readonly Page[] NavPages = { Page.Home, Page.Play, Page.Training, Page.Arcade, Page.Collection, Page.Settings };
 
         static bool IsNavPage(Page p) => Array.IndexOf(NavPages, p) >= 0;
@@ -578,7 +582,7 @@ namespace ChibiClash
             Gui.ResetFocus();
         }
 
-        string VersusCaption() => Hud.CharNameUpper(pending.cls[0]) + "  VS  " + Hud.CharNameUpper(pending.cls[1]);
+        string VersusCaption() => Loc.T("match.versus", Hud.CharNameUpper(pending.cls[0]), Hud.CharNameUpper(pending.cls[1]));
 
         /// <summary>VS AI picks its opponent here (so the wipe caption shows it), then the wipe starts the match.</summary>
         void LaunchMatch()
@@ -681,14 +685,14 @@ namespace ChibiClash
         /// styles), matchmaking / rooms / local (the MATCHMAKING rooms screen), createroom / joinroom (that screen with its
         /// pop-up open), quickmatch (Vs Online QUICK MATCH, starts a real regional search), cpu (Vs CPU character select
         /// with the difficulty), select, precheck, training, arcade, collection (or armory), settings, changename (the
-        /// change-name window).
+        /// change-name window), language (the LANGUAGE window over SETTINGS).
         /// </summary>
         public void ShowScreen(string screen)
         {
             FinishLoadingNow();
             CancelWipe();
             if (match != null) LeaveMatch(Page.Home);
-            const string Locked = "Online play is for players 13 and older.";
+            string Locked = Loc.T("online.locked_age");
             bool onlineOk = PlayerIdentity.OnlineAllowed(Save.ageBand);
             switch (screen)
             {
@@ -708,6 +712,7 @@ namespace ChibiClash
                 case "armory":
                 case "collection": Enter(Page.Collection); return;
                 case "settings": Enter(Page.Settings); return;
+                case "language": Enter(Page.Settings); OpenLanguageDialog(); return;
                 case "quickmatch":
                     if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
                     StartQuickMatch();
@@ -764,7 +769,7 @@ namespace ChibiClash
         /// <summary>Opens character select for a mode (diagonal wipe).</summary>
         void BeginSelect(bool cpu, bool training)
         {
-            Wipe("CHARACTER SELECT", () =>
+            Wipe(Loc.T("wipe.character_select"), () =>
             {
                 SetupSelect(cpu, training, false);
                 Enter(Page.Select);
@@ -783,7 +788,7 @@ namespace ChibiClash
                 pool.RemoveAt(k);
             }
             arcadeRound = 0;
-            Wipe("ARCADE", () =>
+            Wipe(Loc.T("wipe.arcade"), () =>
             {
                 SetupSelect(true, false, true);
                 Enter(Page.Select);
@@ -826,8 +831,8 @@ namespace ChibiClash
         /// <summary>Stage name that fits <paramref name="width"/> at <paramref name="size"/>: full name, else the short one.</summary>
         static string StageLabel(int stage, float width, int size, bool display = false)
         {
-            string full = StageBuilder.Names[stage].ToUpperInvariant();
-            return Gui.Measure(full, size, display) <= width ? full : StageBuilder.ShortNames[stage].ToUpperInvariant();
+            string full = StageBuilder.NameText(stage).ToUpperInvariant();
+            return Gui.Measure(full, size, display) <= width ? full : StageBuilder.ShortNameText(stage).ToUpperInvariant();
         }
 
         /// <summary>Label of the results screen's first button (arcade continues the ladder instead of a rematch).</summary>
@@ -835,9 +840,9 @@ namespace ChibiClash
         {
             get
             {
-                if (!arcade || match == null) return "REMATCH";
-                if (match.Winner != 0) return "CONTINUE";
-                return arcadeRound + 1 >= ArcadeRounds ? "FINISH" : "NEXT BATTLE";
+                if (!arcade || match == null) return Loc.T("results.rematch");
+                if (match.Winner != 0) return Loc.T("results.continue");
+                return arcadeRound + 1 >= ArcadeRounds ? Loc.T("results.finish") : Loc.T("results.next_battle");
             }
         }
 
@@ -851,10 +856,10 @@ namespace ChibiClash
                     if (arcadeRound >= ArcadeRounds)
                     {
                         arcade = false;
-                        Wipe("ARCADE CLEAR", () =>
+                        Wipe(Loc.T("wipe.arcade_clear"), () =>
                         {
                             LeaveMatch(Page.Arcade);
-                            Toast("ARCADE CLEAR! All " + ArcadeRounds + " rivals defeated");
+                            Toast(Loc.T("arcade.clear_toast", ArcadeRounds));
                         });
                         return;
                     }
@@ -869,7 +874,7 @@ namespace ChibiClash
             UiSound.Confirm();
             if (arcade) PrepareArcadeRound();
             if (Save.settings.preMatchCheck && !pending.training)
-                Wipe("CAMERA CHECK", () =>
+                Wipe(Loc.T("precheck.title"), () =>
                 {
                     Enter(Page.PreCheck);
                     preCheckT = 0f;
@@ -884,18 +889,18 @@ namespace ChibiClash
             if (Save.settings.useWebcam)
             {
                 float b = WebcamFeed.Brightness();
-                if (b < 0f) { lightOk = false; lightMsg = "Camera not available"; }
-                else if (b < 0.18f) { lightOk = false; lightMsg = "Too dark (" + Mathf.RoundToInt(b * 100f) + "%) - add light"; }
-                else if (b > 0.92f) { lightOk = false; lightMsg = "Too bright (" + Mathf.RoundToInt(b * 100f) + "%) - reduce glare"; }
-                else { lightOk = true; lightMsg = "Good (" + Mathf.RoundToInt(b * 100f) + "%)"; }
+                if (b < 0f) { lightOk = false; lightMsg = Loc.T("precheck.camera_unavailable"); }
+                else if (b < 0.18f) { lightOk = false; lightMsg = Loc.T("precheck.too_dark", Mathf.RoundToInt(b * 100f)); }
+                else if (b > 0.92f) { lightOk = false; lightMsg = Loc.T("precheck.too_bright", Mathf.RoundToInt(b * 100f)); }
+                else { lightOk = true; lightMsg = Loc.T("precheck.good", Mathf.RoundToInt(b * 100f)); }
             }
-            else { lightOk = true; lightMsg = "Simulated feed (webcam off)"; }
+            else { lightOk = true; lightMsg = Loc.T("precheck.simulated_feed"); }
 
             var f = menuTracker.Source.Current;
             bool inFrame = f.confidence >= 0.6f;
             foreach (var p in f.p) inFrame &= p.x > 0.03f && p.x < 0.97f && p.y > 0.03f && p.y < 0.97f;
             frameOk = inFrame;
-            frameMsg = inFrame ? "Upper body in frame" : "Step back - shoulders and hips must be visible";
+            frameMsg = inFrame ? Loc.T("precheck.upper_body_ok") : Loc.T("precheck.step_back");
 
             if (preCheckT >= 5.6f && lightOk && frameOk && wipeStart < 0f) LaunchMatch();
         }
@@ -928,15 +933,15 @@ namespace ChibiClash
         void BuildLoadSteps()
         {
             loadSteps.Clear();
-            loadSteps.Add(new LoadStep { label = "Interface graphics", run = () => { GuiArt.WarmUp(); return 1f; } });
-            loadSteps.Add(new LoadStep { label = "Typefaces", run = () => { Gui.WarmUpFonts(); return 1f; } });
+            loadSteps.Add(new LoadStep { label = Loc.T("loading.interface"), run = () => { GuiArt.WarmUp(); return 1f; } });
+            loadSteps.Add(new LoadStep { label = Loc.T("loading.typefaces"), run = () => { Gui.WarmUpFonts(); return 1f; } });
             foreach (var w in WeaponDef.All)
             {
                 var weapon = w;
                 ResourceRequest req = null;
                 loadSteps.Add(new LoadStep
                 {
-                    label = "Weapon art: " + weapon.name,
+                    label = Loc.T("loading.weapon_art", weapon.name),
                     run = () =>
                     {
                         if (req == null) req = Resources.LoadAsync<Sprite>("Weapons/" + weapon.resource);
@@ -950,10 +955,10 @@ namespace ChibiClash
             foreach (var ch in CharacterRoster.All)
             {
                 var c = ch;
-                loadSteps.Add(new LoadStep { label = "Fighter: " + c.Name, run = () => { CharacterArt.Preload(c); return 1f; } });
+                loadSteps.Add(new LoadStep { label = Loc.T("loading.fighter", c.Name), run = () => { CharacterArt.Preload(c); return 1f; } });
             }
             if (Save.settings.useWebcam)
-                loadSteps.Add(new LoadStep { label = "Pose tracking model", run = () => { MoveNetPoseSource.Shared.EnsureLoaded(); return 1f; } });
+                loadSteps.Add(new LoadStep { label = Loc.T("loading.pose_model"), run = () => { MoveNetPoseSource.Shared.EnsureLoaded(); return 1f; } });
             loadIndex = 0;
             loadFrac = 0f;
             loadShown = 0f;
@@ -963,7 +968,7 @@ namespace ChibiClash
         }
 
         float LoadProgress => loadSteps.Count == 0 ? 1f : Mathf.Clamp01((loadIndex + loadFrac) / loadSteps.Count);
-        string LoadLabel => loadIndex < loadSteps.Count ? loadSteps[loadIndex].label : "Ready";
+        string LoadLabel => loadIndex < loadSteps.Count ? loadSteps[loadIndex].label : Loc.T("loading.ready");
 
         void UpdateLoading()
         {
@@ -1067,7 +1072,7 @@ namespace ChibiClash
                         break;
                     }
                     bool toMenu = choice == Hud.Action.Menu;
-                    Wipe(toMenu ? null : "CHARACTER SELECT", () =>
+                    Wipe(toMenu ? null : Loc.T("wipe.character_select"), () =>
                     {
                         if (toMenu) arcade = false;
                         LeaveMatch(toMenu ? Page.Home : Page.Select);
@@ -1087,34 +1092,42 @@ namespace ChibiClash
             // First launch onboarding: age group, then the player name (their identity everywhere in the game).
             if (PlayerIdentity.NeedsAge(Save.ageBand) || Save.age <= 0)
             {
-                DialogBackdrop("WELCOME!");
+                DialogBackdrop(Loc.T("onboarding.welcome"));
                 AgeDialog();
+                return;
+            }
+            // First launch step 2 (user order 2026-11-24: age, then language, then name); also SETTINGS > LANGUAGE and
+            // the globe button at the top right of the menu pages.
+            if (LanguageShown)
+            {
+                DialogBackdrop(Loc.T("lang.backdrop"));
+                LanguageDialog();
                 return;
             }
             // No sign-in step: the identity is kept automatically for this computer's user profile (every launch, no
             // button). The SIGN IN WITH GOOGLE button was removed from the name window (user request 2026-11-23).
             if (ShowAccountStep)
             {
-                DialogBackdrop("YOUR ACCOUNT");
+                DialogBackdrop(Loc.T("onboarding.your_account"));
                 AccountDialog();
                 return;
             }
             if (NeedsFirstName && !nameDialog) OpenNameDialog();
             if (nameDialog)
             {
-                DialogBackdrop("YOUR PLAYER NAME");
+                DialogBackdrop(Loc.T("onboarding.your_name"));
                 NameDialog();
                 return;
             }
             if (roomDialog)
             {
-                DialogBackdrop("MATCHMAKING  ·  CREATE ROOMS");
+                DialogBackdrop(Loc.T("rooms.backdrop_create"));
                 RoomDialog();
                 return;
             }
             if (joinDialog)
             {
-                DialogBackdrop("MATCHMAKING  ·  JOIN ROOM");
+                DialogBackdrop(Loc.T("rooms.backdrop_join"));
                 JoinDialog();
                 return;
             }
@@ -1156,34 +1169,34 @@ namespace ChibiClash
         {
             Backdrop();
             float k = Gui.EaseOut(Since / 0.35f);
-            Gui.Display(new Rect(40f, 24f, 700f, 70f), "CAMERA CHECK", 56, Gui.Paper, TextAnchor.MiddleLeft);
-            Gui.Text(new Rect(44f, 88f, 700f, 22f), VersusCaption() + "  ·  " + StageBuilder.Names[Mathf.Clamp(pending.stage, 0, StageBuilder.Names.Length - 1)].ToUpper(), 14, Gui.Gold, TextAnchor.MiddleLeft);
+            Gui.Display(new Rect(40f, 24f, 700f, 70f), Loc.T("precheck.title"), 56, Gui.Paper, TextAnchor.MiddleLeft);
+            Gui.Text(new Rect(44f, 88f, 700f, 22f), VersusCaption() + "  ·  " + StageBuilder.NameText(Mathf.Clamp(pending.stage, 0, StageBuilder.Names.Length - 1)).ToUpper(), 14, Gui.Gold, TextAnchor.MiddleLeft);
 
             Gui.Alpha = k;
             var feed = new Rect(W * 0.5f - 420f, 130f, 440f, 340f);
             bool ok = lightOk && frameOk;
             var state = preCheckT < 5f ? Gui.Gold : ok ? Gui.Green : Gui.Red;
-            Gui.CvPanel(feed, menuTracker, state, Save.settings.useWebcam, "CAMERA CHECK");
+            Gui.CvPanel(feed, menuTracker, state, Save.settings.useWebcam, Loc.T("precheck.title"));
 
             var p = new Rect(feed.xMax + 20f, 130f, 380f, 340f);
             Gui.Box(p, state);
             float x = p.x + 20f, w = p.width - 40f;
-            Gui.Display(new Rect(x, p.y + 14f, w, 34f), preCheckT < 5f ? "CHECKING... " + Mathf.CeilToInt(5f - preCheckT) : ok ? "ALL CHECKS PASSED" : "CHECK FAILED", 28, state, TextAnchor.MiddleLeft, 0.18f);
+            Gui.Display(new Rect(x, p.y + 14f, w, 34f), preCheckT < 5f ? Loc.T("precheck.checking", Mathf.CeilToInt(5f - preCheckT)) : ok ? Loc.T("precheck.all_passed") : Loc.T("precheck.failed"), 28, state, TextAnchor.MiddleLeft, 0.18f);
             Gui.Meter(new Rect(x, p.y + 56f, w, 10f), preCheckT / 5f, state, 20);
-            Check(x, p.y + 80f, w, "LIGHTING", lightOk, lightMsg);
-            Check(x, p.y + 140f, w, "FRAMING", frameOk, frameMsg);
-            Check(x, p.y + 200f, w, "POSTURE", menuTracker.Posture >= 0.6f, menuTracker.Posture >= 0.6f ? "Nice and upright" : "Sit up straight for bonus coins");
+            Check(x, p.y + 80f, w, Loc.T("precheck.lighting"), lightOk, lightMsg);
+            Check(x, p.y + 140f, w, Loc.T("precheck.framing"), frameOk, frameMsg);
+            Check(x, p.y + 200f, w, Loc.T("precheck.posture"), menuTracker.Posture >= 0.6f, menuTracker.Posture >= 0.6f ? Loc.T("precheck.upright") : Loc.T("precheck.sit_up"));
 
             if (preCheckT >= 5f && !ok)
             {
                 Gui.PreferNext();
-                if (Gui.Button(new Rect(x, p.yMax - 60f, 160f, 44f), "RETRY", Gui.Gold, 16)) preCheckT = 0f;
-                if (Gui.Button(new Rect(x + 180f, p.yMax - 60f, 160f, 44f), "PLAY ANYWAY", Gui.P1, 14)) LaunchMatch();
+                if (Gui.Button(new Rect(x, p.yMax - 60f, 160f, 44f), Loc.T("common.retry"), Gui.Gold, 16)) preCheckT = 0f;
+                if (Gui.Button(new Rect(x + 180f, p.yMax - 60f, 160f, 44f), Loc.T("precheck.play_anyway"), Gui.P1, 14)) LaunchMatch();
             }
-            if (Gui.Button(new Rect(W * 0.5f - 90f, 500f, 180f, 48f), "BACK", Gui.Steel, 16)) { UiSound.Back(); Go(Page.Select); }
-            Gui.Text(new Rect(0f, 560f, W, 40f), "Ranked queues require this check to pass. Casual matches may skip it.", 13, Gui.Muted, TextAnchor.MiddleCenter, false);
+            if (Gui.Button(new Rect(W * 0.5f - 90f, 500f, 180f, 48f), Loc.T("common.back"), Gui.Steel, 16)) { UiSound.Back(); Go(Page.Select); }
+            Gui.Text(new Rect(0f, 560f, W, 40f), Loc.T("precheck.ranked_note"), 13, Gui.Muted, TextAnchor.MiddleCenter, false);
             Gui.Alpha = 1f;
-            Gui.HintBar("PRE-MATCH CAMERA CHECK", Gui.Key("SPACE", "A"), "SELECT", Gui.Key("ESC", "B"), "BACK");
+            Gui.HintBar(Loc.T("precheck.hint"), Gui.Key("SPACE", "A"), Loc.T("hint.select"), Gui.Key("ESC", "B"), Loc.T("common.back"));
         }
 
         void Check(float x, float y, float w, string label, bool ok, string msg)

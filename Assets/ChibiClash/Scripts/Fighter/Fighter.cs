@@ -153,15 +153,15 @@ namespace ChibiClash
         {
             var s = new List<string>();
             float t = Time.time;
-            if (t < swordAuraUntil) s.Add("AURA " + Mathf.CeilToInt(swordAuraUntil - t));
-            if (t < FireRingUntil) s.Add("FIRE RING " + Mathf.CeilToInt(FireRingUntil - t));
-            if (t < tailwindUntil) s.Add("TAILWIND");
-            if (GuardBroken) s.Add("GUARD BROKEN " + (guardBrokenUntil - t).ToString("0.0") + "s");
-            else if (GuardHp < GuardMax - 0.5f) s.Add("GUARD " + Mathf.RoundToInt(GuardHp / GuardMax * 100f) + "%");
+            if (t < swordAuraUntil) s.Add(Loc.T("status.aura", Mathf.CeilToInt(swordAuraUntil - t)));
+            if (t < FireRingUntil) s.Add(Loc.T("status.fire_ring", Mathf.CeilToInt(FireRingUntil - t)));
+            if (t < tailwindUntil) s.Add(Loc.T("status.tailwind"));
+            if (GuardBroken) s.Add(Loc.T("status.guard_broken", (guardBrokenUntil - t).ToString("0.0")));
+            else if (GuardHp < GuardMax - 0.5f) s.Add(Loc.T("status.guard", Mathf.RoundToInt(GuardHp / GuardMax * 100f)));
             if (Def.rangedNormals && t < setCooldownUntil)
-                s.Add((Def.type == FighterClass.Ranged ? "RELOADING " : "RECHARGING ") + (setCooldownUntil - t).ToString("0.0") + "s");
-            if (t < slowUntil) s.Add("HEXED");
-            if (t < defDownUntil) s.Add("ARMOR -15%");
+                s.Add(Loc.T(Def.type == FighterClass.Ranged ? "status.reloading" : "status.recharging", (setCooldownUntil - t).ToString("0.0")));
+            if (t < slowUntil) s.Add(Loc.T("status.hexed"));
+            if (t < defDownUntil) s.Add(Loc.T("status.armor_break"));
             return s;
         }
 
@@ -400,7 +400,7 @@ namespace ChibiClash
             UltWindow = true;
             UltWindowLeft = UltWindowDuration;
             Prompt = PromptState.Preparing;
-            PromptMessage = "Perform: " + ClassDef.GestureName(Def.ultGesture);
+            PromptMessage = Loc.T("hud.perform", ClassDef.GestureName(Def.ultGesture));
         }
 
         /// <summary>One frame of the ult window countdown: unscaled so hitstop/cinematic slow-mo don't stretch it, frozen while paused.</summary>
@@ -413,7 +413,7 @@ namespace ChibiClash
             bool match = Gestures.Stable == Def.ultGesture && Gestures.StableTime >= 0.15f;
             if (match && !Gestures.TelemetryValid)
             {
-                PromptMessage = "Rejected: " + Gestures.Validator.Reason;
+                PromptMessage = Loc.T("hud.rejected", Gestures.Validator.Reason);
             }
             else if (match && Match.InputEnabled && !IsDead)
             {
@@ -428,7 +428,7 @@ namespace ChibiClash
             {
                 UltWindow = false;
                 Prompt = PromptState.Failed;
-                PromptMessage = "Time's up!";
+                PromptMessage = Loc.T("hud.times_up");
                 promptTimer = 1.3f;
                 ultRetryCd = 1.5f;
             }

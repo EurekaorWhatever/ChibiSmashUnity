@@ -143,8 +143,8 @@ namespace ChibiClash
         static readonly GUIContent measureContent = new GUIContent();   // reused: Measure runs many times per frame
 
         // First installed family wins; the rest stay as glyph fallbacks.
-        static readonly string[] DisplayNames = { "Anton", "Bebas Neue", "Oswald", "Impact", "Barlow Condensed ExtraBold", "Bahnschrift", "Arial Black", "Segoe UI Symbol", "Arial" };
-        static readonly string[] BodyNames = { "Barlow Condensed", "Oswald", "Bahnschrift SemiCondensed", "Bahnschrift", "Roboto Condensed", "Arial Narrow", "Segoe UI", "Segoe UI Symbol", "Arial" };
+        static readonly string[] DisplayNames = { "Anton", "Bebas Neue", "Oswald", "Impact", "Barlow Condensed ExtraBold", "Bahnschrift", "Arial Black", "Segoe UI Symbol", "Arial", "Leelawadee UI", "Tahoma" };
+        static readonly string[] BodyNames = { "Barlow Condensed", "Oswald", "Bahnschrift SemiCondensed", "Bahnschrift", "Roboto Condensed", "Arial Narrow", "Segoe UI", "Segoe UI Symbol", "Arial", "Leelawadee UI", "Tahoma" };
 
         /// <summary>Resolves the condensed OS fonts once (loading screen).</summary>
         public static void WarmUpFonts()
@@ -656,6 +656,7 @@ namespace ChibiClash
 
         /// <summary>Camera feed panel with tracked skeleton, posture and telemetry readouts (GDD 5).</summary>
         static readonly string[] PostureText = new string[202];
+        static int postureVersion = -1;   // Loc.Version the cache was built for
 
         public static void CvPanel(Rect r, GestureTracker tracker, Color stateColor, bool showFeed, string title)
         {
@@ -681,9 +682,10 @@ namespace ChibiClash
             var pc = posture >= 0.6f ? Green : Yellow;
             int pp = Mathf.Clamp(Mathf.RoundToInt(posture * 100f), 0, 100);
             int pk = pp * 2 + (posture < 0.6f ? 1 : 0);
-            string pt = PostureText[pk] ?? (PostureText[pk] = "Posture " + pp + "%" + (posture < 0.6f ? " - sit up!" : ""));   // cached (perf audit P4)
+            if (postureVersion != Loc.Version) { System.Array.Clear(PostureText, 0, PostureText.Length); postureVersion = Loc.Version; }
+            string pt = PostureText[pk] ?? (PostureText[pk] = posture < 0.6f ? Loc.T("cv.posture_low", pp) : Loc.T("cv.posture", pp));   // cached (perf audit P4)
             Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), pt, 11, pc, TextAnchor.MiddleLeft);
-            Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), tracker.TelemetryValid ? "Telemetry OK" : tracker.Validator.Reason, 11, tracker.TelemetryValid ? Muted : Red, TextAnchor.MiddleRight);
+            Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), tracker.TelemetryValid ? Loc.T("cv.telemetry_ok") : tracker.Validator.Reason, 11, tracker.TelemetryValid ? Muted : Red, TextAnchor.MiddleRight);
         }
 
         public static void Skeleton(Rect area, PoseFrame f, Color c, float width)

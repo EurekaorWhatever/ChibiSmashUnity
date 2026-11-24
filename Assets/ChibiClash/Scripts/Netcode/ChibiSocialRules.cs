@@ -154,12 +154,12 @@ namespace ChibiClash.Netcode
         /// <example><code>string err = ChibiSocialRules.ValidateName(input); if (err == null) await SetName(input);</code></example>
         public static string ValidateName(string name)
         {
-            if (string.IsNullOrEmpty(name)) return "Enter a name.";
-            if (name.Length < NameMin) return "Name is too short (at least " + NameMin + " characters).";
-            if (name.Length > NameMax) return "Name is too long (at most " + NameMax + " characters).";
-            if (ContainsBlockedWord(name)) return "Please choose a different name.";
+            if (string.IsNullOrEmpty(name)) return Loc.T("name.enter");
+            if (name.Length < NameMin) return Loc.T("name.too_short", NameMin);
+            if (name.Length > NameMax) return Loc.T("name.too_long", NameMax);
+            if (ContainsBlockedWord(name)) return Loc.T("name.choose_different");
             foreach (char c in name)
-                if (!IsNameChar(c)) return "Use only letters, numbers and _ (no spaces or symbols).";
+                if (!IsNameChar(c)) return Loc.T("name.bad_chars");
             return null;
         }
 
@@ -253,12 +253,12 @@ namespace ChibiClash.Netcode
         public static string ValidateRoomName(string name)
         {
             string s = (name ?? "").Trim();
-            if (s.Length < RoomNameMin) return "Room name is too short (at least " + RoomNameMin + " characters).";
-            if (s.Length > RoomNameMax) return "Room name is too long (at most " + RoomNameMax + " characters).";
+            if (s.Length < RoomNameMin) return Loc.T("rooms.name_too_short", RoomNameMin);
+            if (s.Length > RoomNameMax) return Loc.T("rooms.name_too_long", RoomNameMax);
             foreach (char c in s)
-                if (!IsRoomChar(c)) return "Room names use letters, numbers, spaces and _ - ' ! only.";
-            if (s.Contains("  ")) return "Room names cannot have double spaces.";
-            if (ContainsBlockedWord(s)) return "Please choose a different room name.";
+                if (!IsRoomChar(c)) return Loc.T("rooms.name_bad_chars");
+            if (s.Contains("  ")) return Loc.T("rooms.name_double_space");
+            if (ContainsBlockedWord(s)) return Loc.T("rooms.name_choose_different");
             return null;
         }
 

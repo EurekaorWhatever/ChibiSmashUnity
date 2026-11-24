@@ -277,17 +277,17 @@ namespace ChibiClash
                 if (!Online) return "";
                 switch (OnlineResult.Cause)
                 {
-                    case ChibiEndCause.OpponentLeft: return "Your opponent left the match.";
-                    case ChibiEndCause.OpponentTimedOut: return "Your opponent stopped responding.";
-                    case ChibiEndCause.ConnectionLost: return "The connection to your opponent was lost.";
-                    case ChibiEndCause.LocalForfeit: return "You left the match.";
-                    case ChibiEndCause.Desync: return "The two games disagreed (desync): no contest.";
-                    case ChibiEndCause.UnconfirmedEnd: return "The match end could not be confirmed: no contest.";
-                    case ChibiEndCause.HandshakeFailed: return "The match could not start.";
-                    case ChibiEndCause.PeerNeverStarted: return "Your opponent never joined the match: no contest.";
-                    case ChibiEndCause.OpponentStalled: return "The connection was too slow to play: no contest.";
-                    case ChibiEndCause.HostLeft: return "The host left the match: no contest.";
-                    case ChibiEndCause.Dropped: return "Your connection dropped out of the match.";
+                    case ChibiEndCause.OpponentLeft: return Loc.T("end.opponent_left");
+                    case ChibiEndCause.OpponentTimedOut: return Loc.T("end.opponent_timeout");
+                    case ChibiEndCause.ConnectionLost: return Loc.T("end.connection_lost");
+                    case ChibiEndCause.LocalForfeit: return Loc.T("end.you_left");
+                    case ChibiEndCause.Desync: return Loc.T("end.desync");
+                    case ChibiEndCause.UnconfirmedEnd: return Loc.T("end.unconfirmed");
+                    case ChibiEndCause.HandshakeFailed: return Loc.T("end.handshake_failed");
+                    case ChibiEndCause.PeerNeverStarted: return Loc.T("end.peer_never_started");
+                    case ChibiEndCause.OpponentStalled: return Loc.T("end.too_slow");
+                    case ChibiEndCause.HostLeft: return Loc.T("end.host_left");
+                    case ChibiEndCause.Dropped: return Loc.T("end.dropped");
                     default: return "";
                 }
             }
@@ -380,16 +380,16 @@ namespace ChibiClash
             var f = State.F[i];
             var def = _def[i];
             const float tr = ChibiSimConst.TickRate;
-            if (f.AuraTicks > 0) into.Add("AURA " + Mathf.CeilToInt(f.AuraTicks / tr));
-            if (f.RingTicks > 0) into.Add("FIRE RING " + Mathf.CeilToInt(f.RingTicks / tr));
-            if (f.TailwindTicks > 0) into.Add("TAILWIND");
+            if (f.AuraTicks > 0) into.Add(Loc.T("status.aura", Mathf.CeilToInt(f.AuraTicks / tr)));
+            if (f.RingTicks > 0) into.Add(Loc.T("status.fire_ring", Mathf.CeilToInt(f.RingTicks / tr)));
+            if (f.TailwindTicks > 0) into.Add(Loc.T("status.tailwind"));
             int guardMax = ChibiCombatStats.GuardMaxU(f.Stats.Defense);
-            if (f.GuardBrokenTicks > 0) into.Add("GUARD BROKEN " + (f.GuardBrokenTicks / tr).ToString("0.0") + "s");
-            else if (f.GuardU < guardMax - ChibiCombatStats.HpScale / 2) into.Add("GUARD " + Mathf.RoundToInt(100f * f.GuardU / guardMax) + "%");
+            if (f.GuardBrokenTicks > 0) into.Add(Loc.T("status.guard_broken", (f.GuardBrokenTicks / tr).ToString("0.0")));
+            else if (f.GuardU < guardMax - ChibiCombatStats.HpScale / 2) into.Add(Loc.T("status.guard", Mathf.RoundToInt(100f * f.GuardU / guardMax)));
             if (def.rangedNormals && f.SetCd > 0)
-                into.Add((def.type == FighterClass.Ranged ? "RELOADING " : "RECHARGING ") + (f.SetCd / tr).ToString("0.0") + "s");
-            if (f.SlowTicks > 0) into.Add("HEXED");
-            if (f.ArmorBreakTicks > 0) into.Add("ARMOR -15%");
+                into.Add(Loc.T(def.type == FighterClass.Ranged ? "status.reloading" : "status.recharging", (f.SetCd / tr).ToString("0.0")));
+            if (f.SlowTicks > 0) into.Add(Loc.T("status.hexed"));
+            if (f.ArmorBreakTicks > 0) into.Add(Loc.T("status.armor_break"));
             return into;
         }
 
@@ -397,9 +397,9 @@ namespace ChibiClash
         public string PromptMessage(int i)
         {
             var f = State.F[i];
-            if (f.UltWindowTicks > 0) return "Perform: " + ClassDef.GestureName(_def[i].ultGesture);
+            if (f.UltWindowTicks > 0) return Loc.T("hud.perform", ClassDef.GestureName(_def[i].ultGesture));
             if (f.UltPrompt == (int)ChibiUltPrompt.Detected) return _def[i].ultName + "!";
-            if (f.UltPrompt == (int)ChibiUltPrompt.Failed) return "Time's up!";
+            if (f.UltPrompt == (int)ChibiUltPrompt.Failed) return Loc.T("hud.times_up");
             return "";
         }
 
@@ -422,7 +422,7 @@ namespace ChibiClash
                 var o = OnlineResult.Outcome;
                 if (o != ChibiMatchOutcome.Win && o != ChibiMatchOutcome.Loss && o != ChibiMatchOutcome.Draw)
                 {
-                    RewardLog.Add("No contest: no rewards");
+                    RewardLog.Add(Loc.T("rewards.no_contest"));
                     return;
                 }
             }

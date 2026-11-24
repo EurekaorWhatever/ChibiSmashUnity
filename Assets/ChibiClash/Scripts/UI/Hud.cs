@@ -65,7 +65,7 @@ namespace ChibiClash
                 {
                     var tr = m.Tracker(i);
                     if (tr == null) continue;
-                    Gui.CvPanel(CvRect(i), tr, StateColor(m, i), i == 0 && settings.useWebcam, CvTitles[i * 2 + (tr.IsLive ? 1 : 0)]);
+                    Gui.CvPanel(CvRect(i), tr, StateColor(m, i), i == 0 && settings.useWebcam, Loc.T(CvTitles[i * 2 + (tr.IsLive ? 1 : 0)]));
                 }
             }
 
@@ -87,7 +87,7 @@ namespace ChibiClash
                 Gui.Skew(band, new Color(Gui.Ink.r, Gui.Ink.g, Gui.Ink.b, 0.75f), 0f);
                 Gui.Rect(new Rect(0f, band.y, Gui.W, 3f), fight ? Gui.P1 : Gui.P2);
                 Gui.Rect(new Rect(0f, band.yMax - 3f, Gui.W, 3f), fight ? Gui.P2 : Gui.P1);
-                Gui.Display(new Rect(0f, Gui.H * 0.38f, Gui.W, 120f), fight ? "FIGHT!" : "READY...", Mathf.RoundToInt((fight ? 104 : 80) * pulse),
+                Gui.Display(new Rect(0f, Gui.H * 0.38f, Gui.W, 120f), fight ? "FIGHT!" : Loc.T("hud.ready"), Mathf.RoundToInt((fight ? 104 : 80) * pulse),
                             fight ? Gui.P1 : Gui.Paper, TextAnchor.MiddleCenter, 0.2f, Gui.Ink, 6f);
                 Gui.Text(new Rect(0f, Gui.H * 0.38f + 122f, Gui.W, 30f), introLine, 18, Gui.Gold);
             }
@@ -172,17 +172,17 @@ namespace ChibiClash
                 if (!force && ReferenceEquals(n, whoSrc[i])) continue;
                 whoSrc[i] = n;
                 n = n ?? "";
-                if (m.IsCpu(i)) whoShort[i] = whoFull[i] = m.Config.training ? "DUMMY" : m.PlayerCount > 2 ? CpuNames[i] : "CPU";
+                if (m.IsCpu(i)) whoShort[i] = whoFull[i] = m.Config.training ? Loc.T("select.dummy") : m.PlayerCount > 2 ? CpuNames[i] : "CPU";
                 else if (m.Online)
                 {
-                    whoFull[i] = n.Length > 0 ? n : i != m.LocalPlayer ? "RIVAL" : "YOU";
+                    whoFull[i] = n.Length > 0 ? n : i != m.LocalPlayer ? Loc.T("hud.rival") : Loc.T("hud.you");
                     whoShort[i] = n.Length > 0 ? ChibiSocialRules.BaseName(n) : whoFull[i];
                 }
                 else whoShort[i] = whoFull[i] = n.Length > 0 ? n : PNames[i];
-                promptHead[i * 3] = whoShort[i] + " · ULTIMATE READY";
-                promptHead[i * 3 + 1] = whoShort[i] + " · MOVE DETECTED";
-                promptHead[i * 3 + 2] = whoShort[i] + " · FAILED";
-                trainTitle[i] = "TRAINING · " + whoShort[i];
+                promptHead[i * 3] = Loc.T("hud.ultimate_ready", whoShort[i]);
+                promptHead[i * 3 + 1] = Loc.T("hud.move_detected", whoShort[i]);
+                promptHead[i * 3 + 2] = Loc.T("hud.failed", whoShort[i]);
+                trainTitle[i] = Loc.T("hud.training_title", whoShort[i]);
             }
         }
 
@@ -193,10 +193,10 @@ namespace ChibiClash
         static void BuildMatchText(ChibiMatch m)
         {
             int st = Mathf.Clamp(m.Config.stage, 0, StageBuilder.Names.Length - 1);
-            string stage = StageBuilder.Names[st].ToUpperInvariant();
-            stageUpper = Gui.Measure(stage, 10) <= 118f ? stage : StageBuilder.ShortNames[st].ToUpperInvariant();
-            introLine = CharNameUpper(m.Def(0).type) + "  VS  " + CharNameUpper(m.Def(1).type) + "  ·  " + stage +
-                        (m.Config.training ? "  ·  TRAINING" : "") + (m.Online ? "  ·  ONLINE  ·  ESC / START: LEAVE" : "");
+            string stage = StageBuilder.NameText(st).ToUpperInvariant();
+            stageUpper = Gui.Measure(stage, 10) <= 118f ? stage : StageBuilder.ShortNameText(st).ToUpperInvariant();
+            introLine = Loc.T("hud.intro", CharNameUpper(m.Def(0).type), CharNameUpper(m.Def(1).type), stage) +
+                        (m.Config.training ? Loc.T("hud.intro_training") : "") + (m.Online ? Loc.T("hud.intro_online") : "");
             for (int i = 0; i < m.PlayerCount; i++)
             {
                 var def = m.Def(i);
@@ -205,7 +205,7 @@ namespace ChibiClash
                 bool showKeys = !m.IsCpu(i) && (!m.Online || i == m.LocalPlayer) && (m.Online || i < 2);   // key layouts exist for P1 / P2 only
                 int keyPlayer = m.Online ? 0 : i;
                 subLine[i] = ch.Weapon + " · " + def.passiveNames[f.Passive];
-                ultReady[i] = showKeys ? "ULT READY - press " + Bindings.Label(keyPlayer, BindAction.Ultimate) : "ULT READY";
+                ultReady[i] = showKeys ? Loc.T("hud.ult_ready_press", Bindings.Label(keyPlayer, BindAction.Ultimate)) : Loc.T("hud.ult_ready");
                 for (int s = 0; s < 3; s++)
                 {
                     string key = showKeys ? Bindings.Label(keyPlayer, (BindAction)((int)BindAction.Skill1 + s)) + " " : "";
@@ -213,17 +213,17 @@ namespace ChibiClash
                     skillText[i * 3 + s] = skillBase[i * 3 + s];
                     skillKey[i * 3 + s] = 0;
                 }
-                simKey[i] = "sim key: " + PoseKeys[Mathf.Min(keyPlayer, 1)][Mathf.Clamp((int)def.ultGesture - 1, 0, 2)];
+                simKey[i] = Loc.T("hud.sim_key", PoseKeys[Mathf.Min(keyPlayer, 1)][Mathf.Clamp((int)def.ultGesture - 1, 0, 2)]);
                 promptKey[i] = -1;
                 statusKey[i * StatusKeyLen] = int.MinValue;   // force the first status build
             }
             // Control hints: both camera states, built once (each KeyHint is ~12 Bindings.Label calls).
             for (int live = 0; live < 2; live++)
             {
-                string h = KeyHint(0) + (live == 1 ? " · poses: cross arms block / arm out = fireball / hands up = jump"
-                                                   : " · poses 1 cross / 2 punch / 3 raise · P slouch");
-                if (!m.Online && !m.IsCpu(1)) h += "\n" + KeyHint(1) + " · poses 8/9/0";
-                if (m.Config.training) h += "\nTRAINING: T fills your ultimate · KO'd fighters respawn at 0% · Esc pause";
+                string h = KeyHint(0) + (live == 1 ? Loc.T("hud.poses_live")
+                                          : Loc.T("hud.poses_keys"));
+                if (!m.Online && !m.IsCpu(1)) h += "\n" + KeyHint(1) + Loc.T("hud.poses_p2");
+                if (m.Config.training) h += "\n" + Loc.T("hud.training_help");
                 hintText[live] = h;
             }
             trainPctKey = trainLastKey = trainComboKey = trainKosKey = -1;
@@ -273,7 +273,7 @@ namespace ChibiClash
             if (full) Gui.Glow(new Rect(ultRect.x - 10f, ultRect.y - 10f, ultRect.width + 20f, ultRect.height + 20f), new Color(1f, 0.8f, 0.2f, 0.5f));
             Gui.Meter(ultRect, ult, ultColor, 20);
             int ultN = Mathf.Clamp(Mathf.FloorToInt(ult * 100f), 0, 100);
-            string ultLabel = full ? ultReady[i] : UltPctText[ultN] ?? (UltPctText[ultN] = "ULT " + ultN + "%");
+            string ultLabel = full ? ultReady[i] : UltPct(ultN);
             Gui.Text(ultRect, ultLabel, 11, full ? Gui.Ink : Gui.Paper, TextAnchor.MiddleCenter, true, !full);
 
             float sw = (bw - 8f) / 3f;
@@ -505,7 +505,7 @@ namespace ChibiClash
             if (f.OutTicks > 0)
             {
                 float t = 1f - f.OutTicks / (float)ChibiPercentConst.RespawnDelay;
-                Gui.Text(new Rect(sr.x, sr.y - 2f, sw, 16f), "RESPAWN", 11, Gui.Muted, anchor, true, false);
+                Gui.Text(new Rect(sr.x, sr.y - 2f, sw, 16f), Loc.T("hud.respawn"), 11, Gui.Muted, anchor, true, false);
                 var bar = new Rect(sr.x, sr.y + 16f, sw - 10f, 4f);
                 if (right) bar.x += 10f;
                 Gui.Bar(bar, t, pc, new Color(0f, 0f, 0f, 0.5f));
@@ -513,7 +513,7 @@ namespace ChibiClash
             else if (f.HoverTicks > 0)
             {
                 float pulse = 0.6f + 0.4f * Mathf.Sin(now * 8f);
-                Gui.Text(sr, "DROP IN!", 13, new Color(Gui.Gold.r, Gui.Gold.g, Gui.Gold.b, pulse), anchor, true, true);
+                Gui.Text(sr, Loc.T("hud.drop_in"), 13, new Color(Gui.Gold.r, Gui.Gold.g, Gui.Gold.b, pulse), anchor, true, true);
             }
         }
 
@@ -549,15 +549,15 @@ namespace ChibiClash
             if (lastKey != trainLastKey)
             {
                 trainLastKey = lastKey;
-                trainLast = "LAST HIT  " + (lastHitM[t] > 0 ? "+" + (lastHitM[t] / 100 / 10f).ToString("0.0") + "%" : "-");
+                trainLast = Loc.T("hud.last_hit", lastHitM[t] > 0 ? "+" + (lastHitM[t] / 100 / 10f).ToString("0.0") + "%" : "-");
             }
             int comboKey = comboN[t] >= 2 ? comboN[t] * 100_000 + comboM[t] / 100 : 0;
             if (comboKey != trainComboKey)
             {
                 trainComboKey = comboKey;
-                trainCombo = "COMBO  " + (comboN[t] >= 2 ? comboN[t] + " HITS  +" + (comboM[t] / 100 / 10f).ToString("0.0") + "%" : "-");
+                trainCombo = comboN[t] >= 2 ? Loc.T("hud.combo_hits", comboN[t], (comboM[t] / 100 / 10f).ToString("0.0")) : Loc.T("hud.combo", "-");
             }
-            if (f.KosTaken != trainKosKey) { trainKosKey = f.KosTaken; trainKos = "KOs  " + f.KosTaken; }
+            if (f.KosTaken != trainKosKey) { trainKosKey = f.KosTaken; trainKos = Loc.T("hud.kos", f.KosTaken); }
             Gui.Text(new Rect(r.x + 14f, r.y + 6f, 150f, 20f), trainTitle[t], 11, Gui.Gold, TextAnchor.MiddleLeft, true, false);
             Gui.Display(new Rect(r.x + 14f, r.y + 22f, 130f, 36f), trainPct, 30, PctColor(pct), TextAnchor.MiddleLeft, 0.15f);
             var lr = new Rect(r.x + 150f, r.y + 6f, r.width - 164f, 18f);
@@ -568,9 +568,17 @@ namespace ChibiClash
 
         // ================================================================ cached text (perf audit P4: no per-OnGUI strings)
 
-        static readonly string[] CvTitles = { "P1 CAMERA · SIM", "P1 CAMERA · LIVE", "P2 CAMERA · SIM", "P2 CAMERA · LIVE" };
+        static readonly string[] CvTitles = { "hud.cv_p1_sim", "hud.cv_p1_live", "hud.cv_p2_sim", "hud.cv_p2_live" };
         static readonly string[] Digits = { "0", "1", "2", "3" };
         static readonly string[] UltPctText = new string[101];
+        static int ultPctVersion = -1;
+
+        /// <summary>"ULT 42%" in the current language, built once per value (rebuilt after a language change).</summary>
+        static string UltPct(int n)
+        {
+            if (ultPctVersion != Loc.Version) { System.Array.Clear(UltPctText, 0, UltPctText.Length); ultPctVersion = Loc.Version; }
+            return UltPctText[n] ?? (UltPctText[n] = Loc.T("hud.ult_pct", n));
+        }
         static readonly string[] whoShort = { "P1", "P2", "P3", "P4" }, whoFull = { "P1", "P2", "P3", "P4" }, whoSrc = new string[4];
         static readonly string[] PNames = { "P1", "P2", "P3", "P4" }, CpuNames = { "CPU 1", "CPU 2", "CPU 3", "CPU 4" };
         static readonly string[] promptHead = new string[12], trainTitle = new string[4], promptMsg = { "", "", "", "" };
@@ -611,7 +619,7 @@ namespace ChibiClash
             SKey(o + 8, f.ComboHits >= 2 ? f.ComboHits : 0, ref changed);
             if (!changed) return statusText[i];
             var st = string.Join("  ", m.Statuses(i, StatusScratch));
-            if (f.ComboHits >= 2) st = f.ComboHits + " HITS  " + st;
+            if (f.ComboHits >= 2) st = Loc.T("hud.hits_prefix", f.ComboHits) + st;
             return statusText[i] = st;
         }
 
@@ -627,28 +635,27 @@ namespace ChibiClash
             {
                 resultsFor = m;
                 resultsRewards = -1;
-                resTitle = noContest ? "NO CONTEST" : w < 0 ? "DRAW!" : m.IsCpu(w) ? "CPU WINS" : m.Online ? (w == m.LocalPlayer ? "YOU WIN!" : "RIVAL WINS")
-                         : CharNameUpper(m.Def(w).type) + " WINS!";
+                resTitle = noContest ? Loc.T("results.no_contest") : w < 0 ? Loc.T("results.draw") : m.IsCpu(w) ? Loc.T("results.cpu_wins") : m.Online ? (w == m.LocalPlayer ? Loc.T("results.you_win") : Loc.T("results.rival_wins"))
+                         : Loc.T("results.wins", CharNameUpper(m.Def(w).type));
                 string why = m.OnlineEndText;
-                resWhy = why.Length > 0 ? why : !noContest && w >= 0 && !m.Online && !m.IsCpu(w) ? Who(m, w, true) + " takes the round" : "";
+                resWhy = why.Length > 0 ? why : !noContest && w >= 0 && !m.Online && !m.IsCpu(w) ? Loc.T("results.takes_round", Who(m, w, true)) : "";
                 for (int i = 0; i < 2; i++)
                 {
                     var f = m.State.F[i];
-                    resStocks[i] = (f.Stocks == 1 ? "1 STOCK" : f.Stocks + " STOCKS") + "  ·";
+                    resStocks[i] = Stocks(f.Stocks) + "  ·";
                     resPct[i] = (Mathf.Min(f.PctM, ChibiPercentConst.PctCapM) / 100 / 10f).ToString("0.0") + "%";
                     var tr = m.Tracker(i);
-                    resStats[i] = "Hits landed  " + f.HitsLanded + "\nFull combos  " + f.CombosLanded + "   ·   Best combo  " + f.MaxCombo +
-                                  "\nGesture ultimates  " + f.UltsUsed + "\nParries  " + f.Parries +
-                                  (tr == null ? "" : "\nGood posture  " + Mathf.RoundToInt(tr.PostureAverage * 100f) + "%");
+                    resStats[i] = Loc.T("results.stats", f.HitsLanded, f.CombosLanded, f.MaxCombo) + Loc.T("results.stats2", f.UltsUsed, f.Parries) +
+                             (tr == null ? "" : Loc.T("results.posture", Mathf.RoundToInt(tr.PostureAverage * 100f)));
                 }
                 string me = m.NameOf(m.LocalPlayer) ?? "";
-                resRewardsHead = "REWARDS (" + (me.Length > 0 ? ChibiSocialRules.BaseName(me) + "'s" : m.Online ? "your" : "P1") + " profile)";
+                resRewardsHead = me.Length > 0 ? Loc.T("results.rewards_named", ChibiSocialRules.BaseName(me)) : m.Online ? Loc.T("results.rewards_your") : Loc.T("results.rewards_p1");
             }
             if (m.RewardLog.Count != resultsRewards)
             {
                 resultsRewards = m.RewardLog.Count;
                 resRewards = string.Join("\n", m.RewardLog);
-                resCoins = "+" + m.CoinsEarned + " coins  (total " + m.GM.Save.coins + ")";
+                resCoins = Loc.T("results.coins", m.CoinsEarned, m.GM.Save.coins);
             }
         }
 
@@ -702,7 +709,7 @@ namespace ChibiClash
                 Gui.Frame(c, state, 4f, ring * 0.5f);
                 Gui.Display(new Rect(info.x, info.y + 52f, info.width, 60f), Digits[n], 46, state, TextAnchor.MiddleCenter, 0.1f);
                 var tr = m.Tracker(i);
-                if (tr != null) Gui.Text(new Rect(info.x, info.y + 118f, info.width, 30f), tr.IsLive ? "do the pose on camera" : simKey[i], 11, Gui.Muted);
+                if (tr != null) Gui.Text(new Rect(info.x, info.y + 118f, info.width, 30f), tr.IsLive ? Loc.T("hud.do_pose") : simKey[i], 11, Gui.Muted);
             }
             else
             {
@@ -730,7 +737,7 @@ namespace ChibiClash
             {
                 cinematicSubFor = v.CinematicStart;
                 int who = Mathf.Clamp(v.CinematicFighter, 0, 1);
-                cinematicSub = CharNameUpper(m.Def(who).type) + " · " + m.Def(who).ultDesc;
+                cinematicSub = CharNameUpper(m.Def(who).type) + " · " + m.Def(who).UltDesc;
             }
 
             var c = v.CinematicColor;
@@ -789,8 +796,8 @@ namespace ChibiClash
         // View-only: they READ the state (PctM, Stocks, Ult, Place) like everything else in the HUD.
 
         const float MiniH = 96f, MiniGap = 12f, MiniBottom = 12f, MiniMaxW = 360f;
-        static readonly string[] PlaceText = { "", "1ST", "2ND", "3RD", "4TH" };
-        static readonly string[] OutPlaceText = { "OUT", "OUT · 1ST", "OUT · 2ND", "OUT · 3RD", "OUT · 4TH" };
+        static readonly string[] PlaceText = { "", "results.place_1", "results.place_2", "results.place_3", "results.place_4" };   // Loc keys
+        static readonly string[] OutPlaceText = { "results.out", "results.out_1", "results.out_2", "results.out_3", "results.out_4" };   // Loc keys
         static readonly Color GreyVeil = new Color(0.08f, 0.08f, 0.1f, 0.62f);
 
         /// <summary>
@@ -855,18 +862,21 @@ namespace ChibiClash
             var ultColor = full ? Color.Lerp(Gui.Gold, Color.white, 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 8f)) : Color.Lerp(Gui.Accent2, Gui.Accent, ult);
             Gui.Meter(ultRect, ult, ultColor, 16);
             int ultN = Mathf.Clamp(Mathf.FloorToInt(ult * 100f), 0, 100);
-            string ultLabel = full ? "ULT READY" : UltPctText[ultN] ?? (UltPctText[ultN] = "ULT " + ultN + "%");
+            string ultLabel = full ? Loc.T("hud.ult_ready") : UltPct(ultN);
             Gui.Text(ultRect, ultLabel, 10, full ? Gui.Ink : Gui.Paper, TextAnchor.MiddleCenter, true, !full);
 
             if (gone)
             {
                 Gui.Skew(r, GreyVeil, k);
-                Gui.Display(new Rect(r.x, r.y + r.height * 0.5f - 18f, r.width, 36f), OutPlaceText[Mathf.Clamp(place, 0, 4)], 26,
+                Gui.Display(new Rect(r.x, r.y + r.height * 0.5f - 18f, r.width, 36f), Loc.T(OutPlaceText[Mathf.Clamp(place, 0, 4)]), 26,
                             Gui.Muted, TextAnchor.MiddleCenter, 0.15f);
             }
         }
 
-        static string TeamName(int team) => team == 0 ? "RED TEAM" : "BLUE TEAM";
+        /// <summary>"1 STOCK" / "3 STOCKS" in the current language.</summary>
+        static string Stocks(int n) => n == 1 ? Loc.T("results.stock_one") : Loc.T("results.stocks", n);
+
+        static string TeamName(int team) => team == 0 ? Loc.T("results.red_team") : Loc.T("results.blue_team");
 
         /// <summary>
         /// Results for three or four fighters: title (winner, winning team or draw), then one row per fighter in place
@@ -881,13 +891,13 @@ namespace ChibiClash
             int w = s.Winner;
             bool draw = s.WinnerMask == 0;
             int winTeam = m.TeamMode && !draw && w >= 0 ? m.TeamOf(w) : -1;
-            string title = draw ? "DRAW!" : winTeam >= 0 ? TeamName(winTeam) + " WINS!"
-                         : w >= 0 ? (m.IsCpu(w) ? Who(m, w) + " WINS!" : CharNameUpper(m.Def(w).type) + " WINS!") : "DRAW!";
+            string title = draw ? Loc.T("results.draw") : winTeam >= 0 ? Loc.T("results.wins", TeamName(winTeam))
+                         : w >= 0 ? Loc.T("results.wins", m.IsCpu(w) ? Who(m, w) : CharNameUpper(m.Def(w).type)) : Loc.T("results.draw");
             var frame = draw ? Gui.Gold : winTeam >= 0 ? (winTeam == 0 ? Gui.P1 : Gui.P2) : w >= 0 ? Gui.PlayerColor(w) : Gui.Gold;
             bool iWon = !draw && (s.WinnerMask & (1 << m.LocalPlayer)) != 0;
             Gui.Box(r, frame);
             Gui.Display(new Rect(r.x, r.y + 10f, r.width, 64f), title, 50, iWon ? Gui.Gold : Gui.Paper, TextAnchor.MiddleCenter);
-            Gui.Text(new Rect(r.x, r.y + 70f, r.width, 20f), m.TeamMode ? "2 VS 2" : "BATTLE ROYALE · " + n + " PLAYERS", 14, Gui.Muted);
+            Gui.Text(new Rect(r.x, r.y + 70f, r.width, 20f), m.TeamMode ? Loc.T("results.2v2") : Loc.T("results.royale_players", n), 14, Gui.Muted);
 
             float y = r.y + 96f;
             const float rowH = 50f;
@@ -901,7 +911,7 @@ namespace ChibiClash
                     Gui.Rect(row, Gui.PanelLight);
                     Gui.Rect(new Rect(row.x, row.y, 4f, row.height), SlotColor(m, i));
                     bool top = place == 1 && !draw;
-                    Gui.Display(new Rect(row.x + 10f, row.y, 64f, row.height), PlaceText[place], 22, top ? Gui.Gold : Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
+                    Gui.Display(new Rect(row.x + 10f, row.y, 64f, row.height), Loc.T(PlaceText[place]), 22, top ? Gui.Gold : Gui.Paper, TextAnchor.MiddleLeft, 0.15f);
                     var port = new Rect(row.x + 76f, row.y + 4f, 36f, 36f);
                     CharacterArt.DrawPortrait(port, ch);
                     Gui.Frame(port, ch.Primary, 2f);
@@ -909,7 +919,7 @@ namespace ChibiClash
                     Gui.Text(new Rect(row.x + 122f, row.y + 24f, 220f, 18f), Who(m, i, true), 12, SlotColor(m, i), TextAnchor.MiddleLeft);
                     if (m.TeamMode) Gui.Text(new Rect(row.x + 340f, row.y, 110f, row.height), TeamName(m.TeamOf(i)), 12, SlotColor(m, i), TextAnchor.MiddleLeft);
                     float fp = Mathf.Min(f.PctM, ChibiPercentConst.PctCapM) / 1000f;
-                    Gui.Text(new Rect(row.x + 450f, row.y, 90f, row.height), f.Stocks == 1 ? "1 STOCK" : f.Stocks + " STOCKS", 12, Gui.Muted, TextAnchor.MiddleLeft);
+                    Gui.Text(new Rect(row.x + 450f, row.y, 90f, row.height), Stocks(f.Stocks), 12, Gui.Muted, TextAnchor.MiddleLeft);
                     Gui.Display(new Rect(row.xMax - 110f, row.y, 100f, row.height), ChibiSimView.DamageText(Mathf.FloorToInt(fp)) + "%", 20,
                                 PctColor(fp), TextAnchor.MiddleRight, 0.15f);
                     y += rowH;
@@ -925,8 +935,8 @@ namespace ChibiClash
             float by = r.yMax - 78f;
             Gui.PreferNext();
             if (Gui.Button(new Rect(r.x + 30f, by, 210f, 52f), gm.RematchLabel, Gui.Accent)) return Action.Rematch;
-            if (Gui.Button(new Rect(r.x + 255f, by, 210f, 52f), "CHARACTERS", Gui.Accent2)) return Action.CharacterSelect;
-            if (Gui.Button(new Rect(r.x + 480f, by, 210f, 52f), "MAIN MENU", Gui.Muted)) return Action.Menu;
+            if (Gui.Button(new Rect(r.x + 255f, by, 210f, 52f), Loc.T("results.characters"), Gui.Accent2)) return Action.CharacterSelect;
+            if (Gui.Button(new Rect(r.x + 480f, by, 210f, 52f), Loc.T("results.main_menu"), Gui.Muted)) return Action.Menu;
             return Action.None;
         }
 
@@ -1079,10 +1089,10 @@ namespace ChibiClash
         static string KeyHint(int p)
         {
             string L(BindAction a) => Bindings.Label(p, a);
-            return "P" + (p + 1) + ": " + L(BindAction.Left) + "/" + L(BindAction.Right) + " move · " + L(BindAction.Jump) + " jump · " +
-                   L(BindAction.Light) + " light · " + L(BindAction.Heavy) + " heavy · " + L(BindAction.Special) + " special · " +
-                   L(BindAction.Block) + " block · " + L(BindAction.Dash) + " dash · " +
-                   L(BindAction.Skill1) + " " + L(BindAction.Skill2) + " " + L(BindAction.Skill3) + " skills · " + L(BindAction.Ultimate) + " ult";
+            return Loc.T("hud.keys_line1", p + 1, L(BindAction.Left) + "/" + L(BindAction.Right), L(BindAction.Jump)) +
+                   Loc.T("hud.keys_line2", L(BindAction.Light), L(BindAction.Heavy), L(BindAction.Special)) +
+                   Loc.T("hud.keys_line3", L(BindAction.Block), L(BindAction.Dash)) +
+                   Loc.T("hud.keys_line4", L(BindAction.Skill1) + " " + L(BindAction.Skill2) + " " + L(BindAction.Skill3), L(BindAction.Ultimate));
         }
 
         static Action Pause()
@@ -1090,11 +1100,11 @@ namespace ChibiClash
             Gui.Rect(new Rect(0f, 0f, Gui.W, Gui.H), new Color(0f, 0f, 0f, 0.55f));
             var r = new Rect(Gui.W * 0.5f - 170f, Gui.H * 0.5f - 130f, 340f, 260f);
             Gui.Box(r, Gui.P1);
-            Gui.Display(new Rect(r.x, r.y + 16f, r.width, 56f), "PAUSED", 48, Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Display(new Rect(r.x, r.y + 16f, r.width, 56f), Loc.T("pause.title"), 48, Gui.Paper, TextAnchor.MiddleCenter);
             Gui.PreferNext();
-            if (Gui.Button(new Rect(r.x + 40f, r.y + 90f, 260f, 50f), "RESUME", Gui.Accent2)) return Action.Resume;
-            if (Gui.Button(new Rect(r.x + 40f, r.y + 160f, 260f, 50f), "QUIT TO MENU", Gui.Accent)) return Action.Menu;
-            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), "B / Backspace to resume", 12, Gui.Muted);
+            if (Gui.Button(new Rect(r.x + 40f, r.y + 90f, 260f, 50f), Loc.T("pause.resume"), Gui.Accent2)) return Action.Resume;
+            if (Gui.Button(new Rect(r.x + 40f, r.y + 160f, 260f, 50f), Loc.T("pause.quit"), Gui.Accent)) return Action.Menu;
+            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), Loc.T("pause.hint"), 12, Gui.Muted);
             return Action.None;
         }
 
@@ -1104,12 +1114,12 @@ namespace ChibiClash
             Gui.Rect(new Rect(0f, 0f, Gui.W, Gui.H), new Color(0f, 0f, 0f, 0.35f));
             var r = new Rect(Gui.W * 0.5f - 200f, Gui.H * 0.5f - 130f, 400f, 270f);
             Gui.Box(r, Gui.Red);
-            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 50f), "LEAVE MATCH?", 40, Gui.Paper, TextAnchor.MiddleCenter);
-            Gui.Text(new Rect(r.x + 20f, r.y + 66f, r.width - 40f, 22f), "The match keeps going. Leaving counts as a loss.", 13, Gui.Muted);
+            Gui.Display(new Rect(r.x, r.y + 14f, r.width, 50f), Loc.T("leave.title"), 40, Gui.Paper, TextAnchor.MiddleCenter);
+            Gui.Text(new Rect(r.x + 20f, r.y + 66f, r.width - 40f, 22f), Loc.T("leave.body"), 13, Gui.Muted);
             Gui.PreferNext();
-            if (Gui.Button(new Rect(r.x + 70f, r.y + 100f, 260f, 50f), "STAY", Gui.Accent2)) return Action.Resume;
-            if (Gui.Button(new Rect(r.x + 70f, r.y + 165f, 260f, 50f), "LEAVE", Gui.Red)) return Action.Forfeit;
-            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), "B / Backspace / Esc / Start to stay", 12, Gui.Muted);
+            if (Gui.Button(new Rect(r.x + 70f, r.y + 100f, 260f, 50f), Loc.T("exit.stay"), Gui.Accent2)) return Action.Resume;
+            if (Gui.Button(new Rect(r.x + 70f, r.y + 165f, 260f, 50f), Loc.T("leave.leave"), Gui.Red)) return Action.Forfeit;
+            Gui.Text(new Rect(r.x, r.yMax - 30f, r.width, 22f), Loc.T("leave.hint"), 12, Gui.Muted);
             return Action.None;
         }
 
@@ -1143,7 +1153,7 @@ namespace ChibiClash
                 Gui.Rect(col, Gui.PanelLight);
                 Gui.Rect(new Rect(col.x, col.y, col.width, 3f), Gui.PlayerColor(i));
                 if (!noContest && i == w) Gui.Skew(new Rect(col.xMax - 86f, col.y - 10f, 76f, 20f), Gui.Gold, 0.3f);
-                if (!noContest && i == w) Gui.Text(new Rect(col.xMax - 86f, col.y - 10f, 76f, 20f), "WINNER", 12, Gui.Ink, TextAnchor.MiddleCenter, true, false);
+                if (!noContest && i == w) Gui.Text(new Rect(col.xMax - 86f, col.y - 10f, 76f, 20f), Loc.T("results.winner"), 12, Gui.Ink, TextAnchor.MiddleCenter, true, false);
                 var port = new Rect(col.x + 10f, col.y + 10f, 64f, 64f);
                 CharacterArt.DrawPortrait(port, ch);
                 Gui.Frame(port, ch.Primary, 2f);
@@ -1169,7 +1179,7 @@ namespace ChibiClash
             var rw = new Rect(r.x + 30f, r.y + 298f, r.width - 60f, 160f);
             Gui.Rect(rw, new Color(0f, 0f, 0f, 0.3f));
             if (m.Config.training)
-                Gui.Text(rw, "Training: no rewards", 16, Gui.Muted);
+                Gui.Text(rw, Loc.T("results.training_no_rewards"), 16, Gui.Muted);
             else
             {
                 Gui.Text(new Rect(rw.x + 14f, rw.y + 6f, rw.width, 24f), resRewardsHead, 14, Gui.Gold, TextAnchor.MiddleLeft);
@@ -1180,8 +1190,8 @@ namespace ChibiClash
             float by = r.yMax - 78f;
             Gui.PreferNext();
             if (!m.Online && Gui.Button(new Rect(r.x + 30f, by, 210f, 52f), gm.RematchLabel, Gui.Accent)) return Action.Rematch;
-            if (Gui.Button(new Rect(r.x + 255f, by, 210f, 52f), m.Online ? "BACK" : "CHARACTERS", Gui.Accent2)) return Action.CharacterSelect;
-            if (Gui.Button(new Rect(r.x + 480f, by, 210f, 52f), "MAIN MENU", Gui.Muted)) return Action.Menu;
+            if (Gui.Button(new Rect(r.x + 255f, by, 210f, 52f), m.Online ? Loc.T("common.back") : Loc.T("results.characters"), Gui.Accent2)) return Action.CharacterSelect;
+            if (Gui.Button(new Rect(r.x + 480f, by, 210f, 52f), Loc.T("results.main_menu"), Gui.Muted)) return Action.Menu;
             return Action.None;
         }
     }

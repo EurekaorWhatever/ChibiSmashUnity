@@ -41,10 +41,11 @@ namespace ChibiClash
 
         public const string MouseLeft = "Mouse0", MouseRight = "Mouse1", MouseMiddle = "Mouse2";
 
+        /// <summary>Loc keys of the action names (draw them with Loc.T).</summary>
         public static readonly string[] Names =
         {
-            "Move left", "Move right", "Drop / fast-fall", "Jump", "Jump (alt)", "Light attack", "Heavy attack",
-            "Block", "Dash", "Skill 1", "Skill 2", "Skill 3", "Ultimate", "Aim up", "Special"
+            "bind.move_left", "bind.move_right", "bind.drop", "bind.jump", "bind.jump_alt", "bind.light", "bind.heavy",
+            "bind.block", "bind.dash", "bind.skill1", "bind.skill2", "bind.skill3", "bind.ultimate", "bind.aim_up", "bind.special"
         };
 
         static readonly string[][] Defaults =
