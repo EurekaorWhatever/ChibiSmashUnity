@@ -268,3 +268,30 @@ including the new `DevName_IsNeverWrittenToTheSave`. SEC-007 and SEC-008 tests w
 How to run a real 3-player Relay match on one PC (development build):
 `ChibiClash.exe -authProfile p2 -devName Tester2` and `ChibiClash.exe -authProfile p3 -devName Tester3`, plus the
 editor (default profile). Each window is its own anonymous player with its own claimed name.
+
+## Proposed, not started: signed star (closes "a modified host can forge inputs") — 2026-11-24
+
+**Status: proposal waiting for this branch's owner to confirm they are not changing the star.** Written by a second
+Claude session (TP-9) so the two sessions don't collide again. Its parallel mesh port was dropped in favour of this star.
+
+- **Goal:** the host can no longer forge or alter another player's inputs or checksums. Drop, delay and withholding stay
+  possible and still end in a stall or no contest.
+- **Why a hash chain:** the host does not forward guest bytes. `AddForwardBlock` (`ChibiP2PPeerLoop.cs:667`) rebuilds
+  each guest's window per recipient from `_fwdAck`, so a tag over a datagram never matches what a recipient receives.
+  Per stream s: `H_s(f) = HMAC(chainKey_s, H_s(f-1) | f | input)`. Each guest puts one 8-byte tag per other guest,
+  `Trunc8(HMAC(pairKey(s,r), dir | L | H_s(L)))`, in block 0 for its newest frame L. The host stores the last 32 tag
+  sets per guest and forwards the tag for the largest stored L it can cover. The recipient extends the chain from its
+  own `H(contiguous)` and checks the tag in constant time.
+- **Keys:** each player publishes an ephemeral X25519 public key (member-only player data, renewed per seat/launch).
+  Pair key = `HMAC(shared, "chibi-star7"|lobbyId|launchNonce|minId|maxId)`. Refused: wrong length, non-canonical,
+  own key, duplicate, low-order (all-zero secret). Host↔guest links are also wrapped in an 8-byte HMAC link tag
+  (`ChibiAuthLink`). The X25519 (RFC 7748 vectors) and zero-alloc HMAC-SHA256 come from the reviewed feat/team-play code.
+- **Protocol 7** (`p7r25`): worst-case datagram 227 B (MaxPacketBytes 216 → 232), about 20 % more bandwidth, no new
+  Relay links, WebGL unaffected.
+- **False leaves (owner decision TP-9):** a dropped guest keeps main's rule (Loss), **unless the host contradicted
+  itself**: a link-tagged host datagram acked the guest's frame ≥ the drop frame, or another guest already holds that
+  player's signed inputs past it. Then the result is No Contest (cause HostContradiction).
+- **Still possible after it (documented):** the host sending different copies of its own inputs to different guests (a
+  checksum catches it), and dropping, delaying or withholding packets.
+- **Size:** about 900 lines of code and 700 of tests, then network + security review. Full plan with file:line targets is
+  in the TP-9 session notes; ask before starting.

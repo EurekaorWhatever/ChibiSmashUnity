@@ -110,8 +110,20 @@ namespace ChibiClash
             return kb[k];
         }
 
-        public static bool Held(int player, BindAction a) => Control(Get(player, a))?.isPressed ?? false;
-        public static bool Pressed(int player, BindAction a) => Control(Get(player, a))?.wasPressedThisFrame ?? false;
+        /// <summary>
+        /// Whether <paramref name="player"/> has a keyboard half. Only players 0 and 1 (P1 / P2) do; fighters 3 and 4 play
+        /// on gamepads 3 / 4. <see cref="Get"/> would index past <c>Defaults</c> for players 2 and 3.
+        /// </summary>
+        /// <example><code>if (Bindings.HasKeys(player) &amp;&amp; Bindings.Held(player, BindAction.Jump)) jump = true;</code></example>
+        public static bool HasKeys(int player) => player == 0 || player == 1;
+
+        /// <summary>The bound key / button of <paramref name="player"/> is held. Always false for players without keys.</summary>
+        /// <example><code>bool jump = Bindings.Held(0, BindAction.Jump);</code></example>
+        public static bool Held(int player, BindAction a) => HasKeys(player) && (Control(Get(player, a))?.isPressed ?? false);
+
+        /// <summary>The bound key / button of <paramref name="player"/> went down this frame. Always false for players without keys.</summary>
+        /// <example><code>if (Bindings.Pressed(1, BindAction.Light)) attack = true;</code></example>
+        public static bool Pressed(int player, BindAction a) => HasKeys(player) && (Control(Get(player, a))?.wasPressedThisFrame ?? false);
 
         /// <summary>Fill missing entries with defaults and upgrade old saves (light/heavy move from J/K to the mouse).</summary>
         public static void Normalize(SaveData d)
