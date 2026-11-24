@@ -109,8 +109,12 @@ namespace ChibiClash
             return kb[k];
         }
 
-        public static bool Held(int player, BindAction a) => Control(Get(player, a))?.isPressed ?? false;
-        public static bool Pressed(int player, BindAction a) => Control(Get(player, a))?.wasPressedThisFrame ?? false;
+        /// <summary>Whether player has a keyboard half (TP-6: only P1 and P2; players 3 and 4 play on gamepads 3 / 4).</summary>
+        public static bool HasKeys(int player) => player == 0 || player == 1;
+        /// <summary>The bound key / button of player is held. Always false for players without keys (index 2 and 3).</summary>
+        public static bool Held(int player, BindAction a) => HasKeys(player) && (Control(Get(player, a))?.isPressed ?? false);
+        /// <summary>The bound key / button of player was pressed this frame. Always false for players without keys.</summary>
+        public static bool Pressed(int player, BindAction a) => HasKeys(player) && (Control(Get(player, a))?.wasPressedThisFrame ?? false);
 
         /// <summary>Fill missing entries with defaults and upgrade old saves (light/heavy move from J/K to the mouse).</summary>
         public static void Normalize(SaveData d)

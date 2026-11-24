@@ -45,6 +45,20 @@ namespace ChibiClash
 
         public static Color PlayerColor(int i) => i == 0 ? P1 : P2;
 
+        /// <summary>
+        /// In-match colour of a fighter (TP-6). 2v2: team 0 = <see cref="P1"/> red, team 1 = <see cref="P2"/> blue.
+        /// FFA: per slot P1 red, P2 blue, P3 <see cref="Gold"/>, P4 <see cref="Green"/>. 1v1 (or any other format) =
+        /// <see cref="PlayerColor"/>. Pure: no GUI state is read.
+        /// </summary>
+        /// <example><code>Color c = Gui.SlotColor(State.Format, State.Team[i], i);</code></example>
+        public static Color SlotColor(int format, int team, int slot)
+        {
+            if (format == Netcode.ChibiMatchConfig.Format2v2) return team == 0 ? P1 : P2;
+            if (format == Netcode.ChibiMatchConfig.FormatFfa)
+                switch (slot) { case 0: return P1; case 1: return P2; case 2: return Gold; default: return Green; }
+            return PlayerColor(slot);
+        }
+
         /// <summary>Global opacity multiplier applied to everything drawn through Gui (screen fades).</summary>
         public static float Alpha = 1f;
         static Color A(Color c) { c.a *= Alpha; return c; }
@@ -78,6 +92,9 @@ namespace ChibiClash
             lastLive.Clear();
             lastLive.AddRange(live);
             lastPreferred = preferred;
+            lastClaimLR = claimLR;
+            claimLR = false;
+            segStep = 0;   // a step nobody consumed this frame (focus was not on a row) must not jump a row later
             activate = -1;
             if (focus >= 0)
             {
@@ -539,6 +556,104 @@ namespace ChibiClash
             bool darkText = lum > 0.6f;
             Text(b, label, size, !enabled ? Muted * 0.8f : (darkText ? Ink : Paper), TextAnchor.MiddleCenter, true, !darkText);
             return click;
+        }
+
+        // ---- segmented control (TP-6 format picker): one focusable row that owns left / right while focused.
+        static bool claimLR, lastClaimLR;
+        static int segStep;
+
+        /// <summary>
+        /// The focused widget is a <see cref="Segmented"/> row: menu navigation should send left / right (and LB / RB)
+        /// to <see cref="StepFocused"/> instead of moving focus.
+        /// </summary>
+        public static bool FocusClaimsHorizontal => NavMode && lastClaimLR;
+
+        /// <summary>Step the focused <see cref="Segmented"/> row by dir (-1 / +1) on its next draw.</summary>
+        public static void StepFocused(int dir) => segStep = dir;
+
+        /// <summary>
+        /// Invisible focusable row over a custom widget (TP-6: the stage carousel). While focused it owns left / right
+        /// and LB / RB like <see cref="Segmented"/>: <paramref name="step"/> is -1 / +1 for this draw. Draw it after
+        /// the widget's own mouse hit areas so they keep their clicks. Returns true when activated (confirm / click).
+        /// </summary>
+        /// <example><code>if (Gui.FocusRow(r, out bool f, out int d)) Gui.FocusPreferred(); if (d != 0) StageStep(d);</code></example>
+        public static bool FocusRow(Rect r, out bool focused, out int step, bool enabled = true)
+        {
+            step = 0;
+            bool click = HitId(r, enabled, out _, out focused);
+            if (focused)
+            {
+                claimLR = true;
+                if (segStep != 0) { step = segStep; segStep = 0; }
+                float pulse = 0.6f + 0.4f * Mathf.Sin(Time.unscaledTime * 8f);
+                Frame(new Rect(r.x - 4f, r.y - 4f, r.width + 8f, r.height + 8f), new Color(Gold.r, Gold.g, Gold.b, pulse), 2f);
+            }
+            return click;
+        }
+
+        /// <summary>Move keyboard / gamepad focus to this screen's preferred widget (the one after <see cref="PreferNext"/>).</summary>
+        public static void FocusPreferred()
+        {
+            int f = DefaultFocus();
+            if (f < 0) return;
+            NavMode = true;
+            focus = f;
+            focusRect = lastRects[f];
+        }
+
+        /// <summary>
+        /// Segmented control: one focusable row of <paramref name="labels"/>, <paramref name="index"/> filled with
+        /// <paramref name="c"/>. Mouse: click a segment to pick it. Keyboard / gamepad: focus the row, left / right or
+        /// LB / RB cycle (wrapping), confirm sets <paramref name="confirmed"/>. Returns the (possibly new) index.
+        /// </summary>
+        /// <example><code>i = Gui.Segmented(r, i, TeamPlaySetup.CycleLabels, Gui.P2, out bool ok, !busy);</code></example>
+        public static int Segmented(Rect r, int index, string[] labels, Color c, out bool confirmed, bool enabled = true)
+        {
+            confirmed = false;
+            int n = labels.Length;
+            bool click = HitId(r, enabled, out bool hot, out bool focused);
+            if (focused)
+            {
+                claimLR = true;
+                if (segStep != 0)
+                {
+                    index = ((index + segStep) % n + n) % n;
+                    segStep = 0;
+                    UiSound.Navigate();
+                }
+            }
+            if (click)
+            {
+                if (NavMode) confirmed = true;
+                else
+                {
+                    float t = (Event.current.mousePosition.x - r.x) / Mathf.Max(r.width, 1f);
+                    index = Mathf.Clamp((int)(t * n), 0, n - 1);
+                }
+            }
+            float k = Mathf.Clamp(10f / Mathf.Max(r.height, 1f), 0.08f, 0.3f);
+            float sw = r.width / n;
+            PushSkew(k, r.center.y);
+            if (enabled) Rect(new Rect(r.x + 3f, r.y + 3f, r.width, r.height), new Color(0f, 0f, 0f, 0.45f));
+            Rect(r, enabled ? ButtonFill : Disabled);
+            for (int i = 0; i < n; i++)
+            {
+                var s = new Rect(r.x + i * sw, r.y, sw, r.height);
+                bool sel = i == index;
+                if (sel) Rect(new Rect(s.x + 2f, s.y + 2f, s.width - 4f, s.height - 4f), enabled ? c : Steel);
+                if (i > 0) Rect(new Rect(s.x, s.y + 6f, 1f, s.height - 12f), new Color(Muted.r, Muted.g, Muted.b, 0.35f));
+                Text(s, labels[i], 16, !enabled ? Muted * 0.8f : sel ? Paper : Muted, TextAnchor.MiddleCenter, true, sel);
+            }
+            Frame(r, !enabled ? new Color(Muted.r, Muted.g, Muted.b, 0.25f) : hot ? Paper : new Color(c.r, c.g, c.b, 0.6f), hot ? 2f : 1f);
+            if (focused)
+            {
+                float pulse = 0.6f + 0.4f * Mathf.Sin(Time.unscaledTime * 8f);
+                Frame(new Rect(r.x - 4f, r.y - 4f, r.width + 8f, r.height + 8f), new Color(Gold.r, Gold.g, Gold.b, pulse), 2f);
+                Text(new Rect(r.x, r.y, 22f, r.height), "<", 16, Gold);
+                Text(new Rect(r.xMax - 22f, r.y, 22f, r.height), ">", 16, Gold);
+            }
+            Pop();
+            return index;
         }
 
         public static void Bar(Rect r, float t, Color fill, Color back, float radius = 0f)

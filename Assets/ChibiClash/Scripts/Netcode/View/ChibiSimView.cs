@@ -1171,13 +1171,16 @@ namespace ChibiClash.Netcode
         {
             _finishFocusSet = true;
             // Rules v25: Winner is a team id; focus the first member of the winning team still on screen (1v1: the winner).
-            int win = -1;
-            for (int k = 0; k < _vis.Length && win < 0; k++)
-                if (_seen.Winner >= 0 && _seen.Team[k] == _seen.Winner && !_launchFx.IsOut(k)) win = k;
-            bool hasWinner = win >= 0 && win < _vis.Length && _vis[win] != null && !_launchFx.IsOut(win);
+            // TP-6: the centroid of the winning team's members still on screen (1v1: the winner itself).
+            Vector2 sum = Vector2.zero;
+            int cnt = 0;
+            for (int k = 0; k < _vis.Length; k++)
+                if (_seen.Winner >= 0 && _seen.Team[k] == _seen.Winner && _vis[k] != null && !_launchFx.IsOut(k)) { sum += Center(k); cnt++; }
+            bool hasWinner = cnt > 0;
+            Vector2 winAt = hasWinner ? sum / cnt : fallback;
             if (_launchFx.KoFocus(out var ko))
-                _finishFocus = hasWinner ? Vector2.Lerp(ko, Center(win), ChibiFeel.FinishFocusToWinner) : ko;
-            else _finishFocus = hasWinner ? Center(win) : fallback;
+                _finishFocus = hasWinner ? Vector2.Lerp(ko, winAt, ChibiFeel.FinishFocusToWinner) : ko;
+            else _finishFocus = winAt;
         }
 
         /// <summary>
@@ -1214,9 +1217,19 @@ namespace ChibiClash.Netcode
             goal.y = Mathf.Max(goal.y, Mathf.Min(GroundY + CamGroundLift, lowest + CamLowLift));
             goal += Vector2.ClampMagnitude(motion / n * CamMoveLeadSec, CamMoveLeadMax);
             float dist = Mathf.Max((maxX - minX) * 0.5f / aspect, (maxY - minY) * 0.5f);
-            size = Mathf.Clamp(dist + CamPad + CamLaunchZoom * launch, CamMinSize, CamMaxSize);
+            size = Mathf.Clamp(dist + CamPad + CamLaunchZoom * launch, Mathf.Min(MinSizeFor(_vis.Length, CamMinSize), CamMaxSize), CamMaxSize);
             return true;
         }
+
+        /// <summary>View tuning knob (TP-6): extra minimum camera size per fighter beyond two, so 3-4 fighters never frame too tight.</summary>
+        public const float CamExtraFighterMin = 0.6f;
+
+        /// <summary>
+        /// Minimum framing size for <paramref name="fighters"/> fighters: <paramref name="baseMin"/> for 1v1 (unchanged), plus
+        /// <see cref="CamExtraFighterMin"/> per extra fighter. Pure; the result is still capped by the stage's MaxSize.
+        /// </summary>
+        /// <example><code>float min = ChibiSimView.MinSizeFor(4, CamMinSize);</code></example>
+        public static float MinSizeFor(int fighters, float baseMin) => baseMin + System.Math.Max(0, fighters - 2) * CamExtraFighterMin;
 
         static void Encapsulate(Vector2 p, ref float minX, ref float maxX, ref float minY, ref float maxY)
         {

@@ -55,6 +55,13 @@ namespace ChibiClash
                                        : State != null && State.MatchOver;
         /// <summary>Offline pause (Esc); always false online.</summary>
         public bool Paused => _local != null && _local.Paused;
+        /// <summary>Automation runs (GameManager.DebugTeamMatch): no rewards and no profile save, whatever the result.</summary>
+        public bool DebugNoRewards { get; set; }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>Automation only: run the offline sim with <paramref name="extraTicks"/> extra ticks per frame (0 = normal). No-op online.</summary>
+        /// <example><code>gm.QuickMatchTeams(2, classes, 0).DebugFastForward(30);</code></example>
+        public void DebugFastForward(int extraTicks) { if (_local != null) _local.DebugExtraTicks = System.Math.Max(0, extraTicks); }
+#endif
         /// <summary>Winner 0 / 1, or -1 for a draw / no contest (valid once finished).</summary>
         public int Winner => Online ? OnlineResult.Winner : State != null ? State.Winner : -1;
         /// <summary>Stage display name.</summary>
@@ -171,8 +178,8 @@ namespace ChibiClash
             for (int i = 0; i < n; i++)
             {
                 _cpu[i] = Config.cpu[i];
-                if (_cpu[i]) src[i] = new ChibiCpuInputSource(i, Config.training ? 0 : Config.difficulty, SimConfig.Seed);
-                else src[i] = _human[i] = ChibiPlayerInputSource.ForPlayer(i);
+                if (_cpu[i]) src[i] = new ChibiCpuInputSource(i, Config.training ? 0 : Config.CpuLevelOf(i), SimConfig.Seed);
+                else src[i] = _human[i] = ChibiPlayerInputSource.ForPlayer(Config.InputOf(i));   // TP-6 pad mapping
             }
             // The profile owner (P1) is shown by their chosen name; P2 / CPU keep their labels.
             if (!_cpu[0] && GM != null && GM.Save != null) _names[0] = ChibiSocialRules.CleanSavedName(GM.Save.playerName);
@@ -387,14 +394,22 @@ namespace ChibiClash
                     return;
                 }
             }
-            var me = State.F[LocalPlayer];
-            var tracker = Tracker(LocalPlayer);
+            // TP-6: rewards follow the slot the profile owner actually played (input remap aware); a spectator / all-CPU
+            // or automation match awards nothing and never saves.
+            int slot = MatchRewardRules.RewardSlot(Online, LocalPlayer, Config.training, DebugNoRewards, _cpu, Config.inputOf, State.Count);
+            if (slot < 0 || slot >= State.Count)
+            {
+                RewardLog.Add("Spectator match: no rewards");
+                return;
+            }
+            var me = State.F[slot];
+            var tracker = Tracker(slot);
             var stats = new MatchStatsForRewards
             {
                 // Rules v25: Winner is a team id (1v1: the player index, unchanged).
                 // Online: the match's own confirmed outcome (team play: a local forfeit is a Loss with no winner team).
-                Won = Online ? OnlineResult.Outcome == ChibiMatchOutcome.Win : Winner >= 0 && Winner == State.Team[LocalPlayer],
-                Lost = Online ? OnlineResult.Outcome == ChibiMatchOutcome.Loss : Winner >= 0 && Winner != State.Team[LocalPlayer],
+                Won = Online ? OnlineResult.Outcome == ChibiMatchOutcome.Win : Winner >= 0 && Winner == State.Team[slot],
+                Lost = Online ? OnlineResult.Outcome == ChibiMatchOutcome.Loss : Winner >= 0 && Winner != State.Team[slot],
                 Pve = Config.pve && !Online,
                 Training = Config.training,
                 CombosLanded = me.CombosLanded, UltsUsed = me.UltsUsed, Parries = me.Parries,

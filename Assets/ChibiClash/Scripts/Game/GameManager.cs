@@ -258,15 +258,27 @@ namespace ChibiClash
         {
             if (MenuInput.Any(NavCmd.Up)) Gui.Navigate(0, -1);
             if (MenuInput.Any(NavCmd.Down)) Gui.Navigate(0, 1);
-            if (MenuInput.Any(NavCmd.Left)) Gui.Navigate(-1, 0);
-            if (MenuInput.Any(NavCmd.Right)) Gui.Navigate(1, 0);
+            // TP-6: a focused segmented row (format picker) takes left / right and LB / RB.
+            bool lr = Gui.FocusClaimsHorizontal;
+            if (MenuInput.Any(NavCmd.Left)) { if (lr) Gui.StepFocused(-1); else Gui.Navigate(-1, 0); }
+            if (MenuInput.Any(NavCmd.Right)) { if (lr) Gui.StepFocused(1); else Gui.Navigate(1, 0); }
             if (MenuInput.Any(NavCmd.Confirm)) Gui.Activate();
-            if (exitPrompt)
+            formatModal.KeepOnlyOn(page == Page.Online);
+            if (formatModal.Open)
+            {
+                if (MenuInput.Any(NavCmd.PrevTab)) { formatModal.Step(-1); UiSound.Navigate(); }
+                else if (MenuInput.Any(NavCmd.NextTab)) { formatModal.Step(1); UiSound.Navigate(); }
+                if (MenuInput.Any(NavCmd.Back)) { UiSound.Back(); formatModal.Back(); }   // closes the modal only
+                return;
+            }
+            if (lr && (MenuInput.Any(NavCmd.PrevTab) || MenuInput.Any(NavCmd.NextTab)))
+                Gui.StepFocused(MenuInput.Any(NavCmd.PrevTab) ? -1 : 1);
+            else if (exitPrompt)
             {
                 if (MenuInput.Any(NavCmd.Back)) CloseExitPrompt();
                 return;
             }
-            if (IsNavPage(page))
+            if (!lr && IsNavPage(page))
             {
                 if (MenuInput.Any(NavCmd.PrevTab)) CycleTab(-1);
                 else if (MenuInput.Any(NavCmd.NextTab)) CycleTab(1);
@@ -453,6 +465,7 @@ namespace ChibiClash
             page = p;
             pageSince = Time.unscaledTime;
             exitPrompt = false;
+            formatModal.KeepOnlyOn(p == Page.Online);   // TP-6: the format modal never outlives the ONLINE page
             Gui.ResetFocus();
             GUIUtility.keyboardControl = 0;   // a text field of the previous page must not keep the keyboard
             if (p != Page.Settings) listening = false;
@@ -535,6 +548,7 @@ namespace ChibiClash
             matchLoad = null;
             match = ChibiMatch.Create(this, pending);
             page = Page.Match;
+            formatModal.Back();
             pageSince = Time.unscaledTime;
             resultsSeen = false;
             exitPrompt = false;
@@ -613,17 +627,49 @@ namespace ChibiClash
             if (classes == null || classes.Length < 2) throw new System.ArgumentException("at least two classes", nameof(classes));
             FinishLoadingNow();
             CancelWipe();
+            return LaunchTeamMatch(format, classes, classes.Length, humanMask, null, null, stage);
+        }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>
+        /// Automation only (TP-6 screenshots): an all-CPU offline team match run fast so its results screen comes up in a
+        /// few seconds. <paramref name="format"/> 2 = 2v2, 1 = FFA (<paramref name="count"/> 3 or 4). Pass extraTicks 0 to
+        /// watch the in-match HUD at normal speed. Never changes rules or sim state.
+        /// </summary>
+        /// <example><code>gm.DebugTeamMatch(1, 4, 30);   // FFA of 4, results after ~6 s</code></example>
+        public ChibiMatch DebugTeamMatch(int format, int count = 4, int extraTicks = 30)
+        {
+            var cls = count == 3 ? new[] { FighterClass.Melee, FighterClass.Heavy, FighterClass.Ranged }
+                                 : new[] { FighterClass.Melee, FighterClass.Heavy, FighterClass.Ranged, FighterClass.Magic };
+            if (OnlineBusy) return null;   // never start over a search or online match
+            var m = QuickMatchTeams(format, cls, 0, 0);
+            if (m != null) { m.DebugNoRewards = true; m.DebugFastForward(extraTicks); }   // never awards or saves
+            return m;
+        }
+#endif
+
+        /// <summary>
+        /// The one entry that starts an offline team-play match (TP-6), shared by <see cref="QuickMatchTeams"/> and the
+        /// 4-column select. <paramref name="count"/> classes are used (wrapping if fewer); bit i of
+        /// <paramref name="humanMask"/> = sim slot i is a local human. <paramref name="cpuLevels"/> (null = global
+        /// difficulty) is per sim slot; <paramref name="inputSource"/> (null = identity) is the select slot / local player
+        /// whose pad drives each sim slot, so a compacted FFA reads the right gamepad.
+        /// </summary>
+        ChibiMatch LaunchTeamMatch(int format, FighterClass[] classes, int count, int humanMask, int[] cpuLevels, int[] inputSource, int stage)
+        {
             arcade = false;
             pending.format = format;
-            pending.count = classes.Length;
+            pending.count = count;
             int n = pending.FighterCount;
             for (int i = 0; i < Netcode.ChibiSimConst.MaxFighters; i++)
             {
-                pending.cls[i] = i < classes.Length ? classes[i] : classes[i % classes.Length];
+                pending.cls[i] = classes[i < count ? i : i % count];
                 pending.passive[i] = 0;
                 pending.weapon[i] = 0;
                 pending.cpu[i] = i >= n || (humanMask & (1 << i)) == 0;
                 pending.team[i] = i < 2 ? 0 : 1;
+                pending.cpuLevel[i] = cpuLevels != null && i < n ? cpuLevels[i] : 0;
+                pending.inputOf[i] = inputSource != null && i < n && inputSource[i] >= 0 ? inputSource[i] : i;
             }
             pending.stage = stage;
             pending.training = false;
@@ -646,6 +692,14 @@ namespace ChibiClash
             switch (screen)
             {
                 case "select": SetupSelect(true, false, false); Enter(Page.Select); return;
+                // TP-6 automation: the 4-column select in VS CPU mode (select2v2 / selectffa), or Local versus (versus2v2).
+                case "select2v2":
+                case "selectffa":
+                case "versus2v2":
+                    SetupSelect(screen != "versus2v2", false, false);
+                    Enter(Page.Select);
+                    selectFormat = screen == "selectffa" ? Netcode.ChibiMatchConfig.FormatFfa : Netcode.ChibiMatchConfig.Format2v2;
+                    return;
                 case "precheck": SetupSelect(true, false, false); Enter(Page.PreCheck); preCheckT = 0f; return;
                 case "brawl":
                 case "play": Enter(Page.Play); return;
@@ -657,6 +711,12 @@ namespace ChibiClash
                 case "settings": Enter(Page.Settings); return;
                 case "matchmaking":
                     if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
+                    BeginMatchmaking(Save.settings.lastFormatOnline);
+                    return;
+                case "format":
+                    // TP-6: the online format modal over the ONLINE page (offline formats live on the select screen).
+                    if (!onlineOk) { Enter(Page.Home); Toast(Locked); return; }
+                    Enter(Page.Online);
                     StartMatchmaking();
                     return;
                 case "createroom":
@@ -709,6 +769,8 @@ namespace ChibiClash
             pending.cpu[1] = cpu;
             pending.training = training;
             aiPicksItself = cpu && !training && !arcadeMode;
+            for (int i = 0; i < Netcode.ChibiSimConst.MaxFighters; i++) { pending.inputOf[i] = i; pending.cpuLevel[i] = 0; }
+            SetupTeamSelect(cpu);   // TP-6: remembered offline format + default team slots
         }
 
         /// <summary>Opens character select for a mode (diagonal wipe).</summary>
@@ -959,6 +1021,7 @@ namespace ChibiClash
         void OnGUI()
         {
             Gui.Begin();
+            formatModal.KeepOnlyOn(page == Page.Online);
             if (page == Page.Match && match != null)
             {
                 Gui.Interactive = wipeStart < 0f;
@@ -967,9 +1030,14 @@ namespace ChibiClash
             }
             else
             {
-                Gui.Interactive = wipeStart < 0f && !exitPrompt;
+                Gui.Interactive = wipeStart < 0f && !exitPrompt && !formatModal.Open;
                 DrawMenus();
                 Gui.Alpha = 1f;
+                if (formatModal.Open)
+                {
+                    Gui.Interactive = wipeStart < 0f;
+                    FormatModalView();
+                }
                 if (exitPrompt)
                 {
                     Gui.Interactive = wipeStart < 0f;

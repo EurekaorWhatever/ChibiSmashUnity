@@ -144,6 +144,13 @@ namespace ChibiClash
         }
 
         /// <summary>
+        /// Fired this frame on one source: 0 = P1 keys, 1 = P2 keys, 2..5 = gamepads 1..4 in connection order (TP-6: the
+        /// team-play select reads gamepads 3 and 4 for P3 / P4).
+        /// </summary>
+        /// <example><code>if (MenuInput.Source(4, NavCmd.Confirm)) JoinSlot(2);</code></example>
+        public static bool Source(int source, NavCmd c) => source >= 0 && source < Sources && fired[source, (int)c];
+
+        /// <summary>
         /// Fired this frame on a gamepad only (with key repeat). Text-entry dialogs use it: there the keyboard keys type
         /// (W, A, Space... are letters), so <see cref="Any"/> cannot be used.
         /// </summary>

@@ -55,7 +55,7 @@ namespace ChibiClash
         public override void Tick(Fighter self, float dt)
         {
             Clear();
-            var kb = Keyboard.current;
+            var kb = Bindings.HasKeys(player) ? Keyboard.current : null;   // TP-6: players 3 / 4 are gamepad-only
             if (kb != null)
             {
                 if (Held(kb, BindAction.Left)) MoveX -= 1f;
@@ -119,7 +119,7 @@ namespace ChibiClash
         {
             get
             {
-                var kb = Keyboard.current;
+                var kb = Bindings.HasKeys(player) ? Keyboard.current : null;   // TP-6: players 3 / 4 are gamepad-only
                 if (kb != null)
                 {
                     if (player == 0)

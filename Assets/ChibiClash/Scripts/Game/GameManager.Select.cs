@@ -61,6 +61,8 @@ namespace ChibiClash
 
         void UpdateSelect()
         {
+            if (FormatCycleInput()) return;
+            if (TeamSelect) { TeamSelectInput(); return; }   // TP-6: 4-column select uses Gui focus for P1
             // Select uses its own per-player cursors instead of Gui's single focus.
             Gui.NavMode = false;
             Gui.ResetFocus();
@@ -266,6 +268,7 @@ namespace ChibiClash
 
         void SelectView()
         {
+            if (TeamSelect) { TeamSelectView(); return; }
             float t = Time.unscaledTime;
             var full = new Rect(0f, 0f, W, H);
             float sideW = Mathf.Clamp((W - 520f) * 0.5f, 300f, 520f);
@@ -290,6 +293,7 @@ namespace ChibiClash
             Gui.Alpha = 1f;
 
             if (Gui.Button(new Rect(16f, 12f, 112f, 32f), "BACK", Gui.Steel, 14)) LeaveSelect();
+            FormatStrip();   // TP-6 (VS CPU / Local versus only)
 
             Roster(new Rect(cx - 238f, 90f, 476f, 290f));
             StageCarousel(cx, 392f);

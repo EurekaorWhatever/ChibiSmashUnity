@@ -114,7 +114,20 @@ namespace ChibiClash.Netcode
 
             int n = _clock.Advance(PacedDelta(), Dilation);
             for (int i = 0; i < n; i++) Session.Tick();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // Automation only (TP-6 results screenshots): extra ticks of the same sim, same inputs. No rule or state change.
+            for (int i = 0; i < DebugExtraTicks && !Session.State.MatchOver; i++) Session.Tick();
+#endif
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        /// <summary>
+        /// Editor / development builds only: extra <c>Session.Tick()</c> calls per rendered frame (0 = normal speed), so an
+        /// all-CPU automation match reaches its results quickly. It only runs the simulation faster; rules, state and
+        /// inputs are untouched. Offline loop only (online loops stay locked to wall time).
+        /// </summary>
+        public int DebugExtraTicks;
+#endif
 
         // ------------------------------------------------------------------ frame pacing (perf audit 2026-11-11)
         // docs/performance/2026-11-11-smoothness-audit.md F2/F3. Offline only: ChibiOnlineMatch / ChibiP2PPeerLoop

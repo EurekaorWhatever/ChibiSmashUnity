@@ -80,6 +80,10 @@ namespace ChibiClash
         public bool showCvOverlay = true;
         public bool screenShake = true;
         public bool preMatchCheck = true;
+        /// <summary>Last match format picked for VS CPU / Local versus (ChibiMatchConfig.Format*; schema 2, default 1v1).</summary>
+        public int lastFormatOffline;
+        /// <summary>Last match format picked for online matchmaking (ChibiMatchConfig.Format*; schema 2, default 1v1).</summary>
+        public int lastFormatOnline;
     }
 
     /// <summary>Key/value storage behind SaveData. The game uses PlayerPrefs; tests pass an in-memory store.</summary>
@@ -124,7 +128,7 @@ namespace ChibiClash
         public const int PullCost = 100;
         public const int TenPullCost = 900;
         /// <summary>Layout version of this class; <see cref="Migrate"/> upgrades older saves to it.</summary>
-        public const int SchemaVersion = 1;
+        public const int SchemaVersion = 2;
         /// <summary>Coins are clamped to 0..MaxCoins on load (an edited save cannot overflow the shop).</summary>
         public const int MaxCoins = 9_999_999;
 
@@ -215,12 +219,19 @@ namespace ChibiClash
 
         /// <summary>
         /// Upgrade an older layout to <see cref="SchemaVersion"/>. Version 1 (2026-11-17) only adds the field itself, so a
-        /// version-0 save needs no change; add a step here for each later layout change, oldest first.
+        /// version-0 save needs no change. Version 2 (team play, TP-6) adds Settings.lastFormatOffline / lastFormatOnline,
+        /// which start at 1v1. Add a step here for each later layout change, oldest first.
         /// </summary>
         /// <example><code>if (schemaVersion &lt; 2) { /* move field X to Y */ }</code></example>
         public void Migrate()
         {
             // 0 -> 1: nothing to move.
+            if (schemaVersion < 2 && settings != null)
+            {
+                // 1 -> 2: the remembered match formats start at 1v1.
+                settings.lastFormatOffline = Netcode.ChibiMatchConfig.Format1v1;
+                settings.lastFormatOnline = Netcode.ChibiMatchConfig.Format1v1;
+            }
         }
 
         /// <summary>
@@ -266,6 +277,8 @@ namespace ChibiClash
             coins = Mathf.Clamp(coins, 0, MaxCoins);
             Bindings.Normalize(this);
             settings.matchTime = MatchController.MatchSeconds;   // match length is locked
+            settings.lastFormatOffline = TeamPlaySetup.ValidFormat(settings.lastFormatOffline);
+            settings.lastFormatOnline = TeamPlaySetup.ValidFormat(settings.lastFormatOnline);
             if (!settings.camInit) { settings.useWebcam = true; settings.camInit = true; }   // camera is on by default
             foreach (var def in ClassDef.All)
             {

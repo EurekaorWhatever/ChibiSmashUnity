@@ -63,6 +63,10 @@ namespace ChibiClash.Netcode
         public string Status { get; private set; } = "";
         public bool Busy { get; private set; }
         public int Format { get; private set; }
+        /// <summary>Players in the lobby being filled, us included (0 until a lobby is joined). Read-only, for the UI.</summary>
+        public int PlayersFound { get; private set; }
+        /// <summary>Seats the lobby being filled needs (4 for 2v2, 3-4 for FFA; 0 until a lobby is joined). Read-only, for the UI.</summary>
+        public int Seats { get; private set; }
 
         /// <summary>Everything one queue attempt owns.</summary>
         sealed class Attempt
@@ -83,6 +87,7 @@ namespace ChibiClash.Netcode
         /// <summary>Queue for <paramref name="format"/> (<see cref="ChibiMatchConfig.Format2v2"/> or <see cref="ChibiMatchConfig.FormatFfa"/>).</summary>
         public void QuickMatch(int format)
         {
+            PlayersFound = 0; Seats = 0;
             if (Busy) return;
             if (format != ChibiMatchConfig.Format2v2 && format != ChibiMatchConfig.FormatFfa)
                 throw new ArgumentOutOfRangeException(nameof(format), "1v1 uses NetworkRoomManager.QuickMatch");
@@ -180,7 +185,7 @@ namespace ChibiClash.Netcode
                         if (host && !a.IsHost) hostSince = Time.unscaledTime;   // review B2: the host left, we took over
                         a.IsHost = host;
                         int n = lobby.Players?.Count ?? 0;
-                        Status = "Waiting for players (" + n + "/" + seats + ")...";
+                        Status = "Waiting for players (" + n + "/" + seats + ")..."; PlayersFound = n; Seats = seats;
 
                         if (a.IsHost)
                         {

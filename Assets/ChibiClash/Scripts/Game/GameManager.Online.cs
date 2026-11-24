@@ -446,6 +446,7 @@ namespace ChibiClash
                 pendingOnline = null;
                 pendingOnlineInput = null;
                 page = Page.Match;
+                formatModal.Back();
                 pageSince = Time.unscaledTime;
                 resultsSeen = false;
                 Gui.ResetFocus();
@@ -480,16 +481,75 @@ namespace ChibiClash
             pending.training = false;
             onlineNote = "";
             showFriends = friends;
+            if (!OnlineBusy) pendingFormat = TeamPlaySetup.ValidFormat(Save.settings.lastFormatOnline);   // TP-6: remembered format
             Enter(Page.Lobby);
             if (friends && !social.Ready && !social.Working) social.Connect();
         }
 
-        /// <summary>MATCHMAKING card: open the lobby and start searching at once (pick a fighter while it searches).</summary>
+        /// <summary>TP-6 online format modal (1v1 / 2v2 / FFA) shown before matchmaking starts.</summary>
+        readonly FormatModalState formatModal = new FormatModalState();
+        string teamSearchText = "";
+        int teamSearchKey = -1;
+
+        /// <summary>
+        /// MATCHMAKING card: ask for the format first (TP-6 modal), then open the lobby and search. While a search or
+        /// match is already running the modal is skipped and the lobby opens as before.
+        /// </summary>
         void StartMatchmaking()
+        {
+            if (!formatModal.Show(Save.settings.lastFormatOnline, OnlineBusy)) { OpenLobby(false); return; }
+            Gui.ResetFocus();
+        }
+
+        /// <summary>Open the lobby and start searching for <paramref name="format"/> (pick a fighter while it searches).</summary>
+        void BeginMatchmaking(int format)
         {
             OpenLobby(false);
             social.ClearMatchFriend();
-            if (!OnlineBusy) rooms.QuickMatch(pendingFormat);
+            if (OnlineBusy) return;
+            SetOnlineFormat(format);
+            rooms.QuickMatch(pendingFormat);
+        }
+
+        /// <summary>Use and remember the online format (Settings.lastFormatOnline).</summary>
+        void SetOnlineFormat(int format)
+        {
+            pendingFormat = TeamPlaySetup.ValidFormat(format);
+            if (Save.settings.lastFormatOnline != pendingFormat) { Save.settings.lastFormatOnline = pendingFormat; Save.Save(); }
+        }
+
+        /// <summary>The format modal: segmented 1V1 / 2V2 / FFA row, FIND MATCH and CANCEL.</summary>
+        void FormatModalView()
+        {
+            Gui.Rect(new Rect(0f, 0f, Gui.W, Gui.H), new Color(0f, 0f, 0f, 0.6f));
+            var r = new Rect(Gui.W * 0.5f - 260f, Gui.H * 0.5f - 130f, 520f, 260f);
+            Gui.Box(r, Gui.P2);
+            Gui.Text(new Rect(r.x, r.y + 18f, r.width, 34f), "CHOOSE A FORMAT", 24, Gui.Paper);
+            Gui.Text(new Rect(r.x, r.y + 52f, r.width, 20f), FormatBlurb(formatModal.Format), 13, Gui.Muted, TextAnchor.MiddleCenter, true, false);
+            Gui.PreferNext();
+            int i = Gui.Segmented(new Rect(r.x + 40f, r.y + 88f, r.width - 80f, 50f), formatModal.Index, TeamPlaySetup.CycleLabels, Gui.P2, out bool ok);
+            formatModal.SetIndex(i);
+            float bw = (r.width - 100f) * 0.5f;
+            if (Gui.Button(new Rect(r.x + 40f, r.yMax - 76f, bw, 46f), "FIND MATCH", Gui.P1, 18)) ok = true;
+            if (Gui.Button(new Rect(r.xMax - 40f - bw, r.yMax - 76f, bw, 46f), "CANCEL", Gui.Steel, 18)) { UiSound.Back(); formatModal.Back(); }
+            if (ok && formatModal.Confirm(out int format)) BeginMatchmaking(format);
+        }
+
+        static string FormatBlurb(int format) =>
+            format == Netcode.ChibiMatchConfig.Format2v2 ? "Two teams of two. Red vs blue."
+            : format == Netcode.ChibiMatchConfig.FormatFfa ? "Free-for-all: everyone for themselves, 3-4 players."
+            : "One on one.";
+
+        /// <summary>Lobby line while the team matchmaker searches: "Searching 2v2..." / "FFA - waiting n/4" (cached per change).</summary>
+        string TeamSearchText()
+        {
+            var t = rooms.Teams;
+            int key = t.Format * 100 + t.PlayersFound * 10 + t.Seats;
+            if (key == teamSearchKey) return teamSearchText;
+            teamSearchKey = key;
+            string fmt = t.Format == Netcode.ChibiMatchConfig.Format2v2 ? "2v2" : t.Format == Netcode.ChibiMatchConfig.FormatFfa ? "FFA" : "1v1";
+            teamSearchText = t.Seats > 0 ? fmt + "  -  waiting " + t.PlayersFound + "/" + t.Seats : "Searching " + fmt + "...";
+            return teamSearchText;
         }
 
         void LobbyView()
@@ -542,9 +602,17 @@ namespace ChibiClash
                 OpenRoomsPage();
             y += 60f;
 
+            // TP-6: format row above MATCHMAKING (greyed while a search or match runs).
+            int fi = Gui.Segmented(new Rect(x, y, w, 36f), TeamPlaySetup.CycleIndex(pendingFormat), TeamPlaySetup.CycleLabels, Gui.P2, out bool fmtOk, !busy);
+            if (!busy && TeamPlaySetup.CycleOrder[fi] != pendingFormat) SetOnlineFormat(TeamPlaySetup.CycleOrder[fi]);
+            y += 44f;
+            if (rooms.Teams.Busy)
+                Gui.Text(new Rect(x, y - 8f, w, 18f), TeamSearchText(), 12, Gui.Gold);
             Gui.PreferNext();
-            if (Gui.Button(new Rect(x, y, w, 44f), "MATCHMAKING (closest players)", Gui.P2, 17, !busy) && !busy)
+            if (fmtOk) Gui.FocusPreferred();   // A on the format row goes to MATCHMAKING (no search from the row itself)
+            if (Gui.Button(new Rect(x, y + 8f, w, 44f), "MATCHMAKING (closest players)", Gui.P2, 17, !busy) && !busy)
             { onlineNote = ""; social.ClearMatchFriend(); rooms.QuickMatch(pendingFormat); }
+            y += 8f;
             // Privacy notice: what matchmaking shares.
             Gui.Text(new Rect(x, y + 46f, w, 18f), "Finds the closest players. Shares your country (from device settings), never your location.",
                      11, Gui.Muted);

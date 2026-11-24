@@ -24,6 +24,22 @@ namespace ChibiClash
         public bool hazards = true;
         public int timeLimit = MatchController.MatchSeconds;
         public int difficulty = 2;
+        /// <summary>
+        /// Per-slot CPU difficulty (1..3) chosen on the team-play select screen; 0 = use <see cref="difficulty"/>.
+        /// Local-only: CPU input is not part of the online sim, so this never touches the config hash.
+        /// </summary>
+        public int[] cpuLevel = new int[Netcode.ChibiSimConst.MaxFighters];
+        /// <summary>CPU difficulty of slot i: its <see cref="cpuLevel"/> when set, else <see cref="difficulty"/>.</summary>
+        /// <example><code>new CpuInput(cfg.CpuLevelOf(2));</code></example>
+        /// <summary>
+        /// Local player (keys / gamepad set) that drives each sim slot; identity by default. TP-6: an FFA with an Off
+        /// select slot compacts the fighters, so the human from select slot 3 can play sim slot 2 with gamepad 4.
+        /// </summary>
+        public int[] inputOf = { 0, 1, 2, 3 };
+        /// <summary>Local input player of sim slot i (<see cref="inputOf"/>, identity when unset).</summary>
+        /// <example><code>ChibiPlayerInputSource.ForPlayer(cfg.InputOf(i));</code></example>
+        public int InputOf(int i) => inputOf != null && i >= 0 && i < inputOf.Length && inputOf[i] >= 0 ? inputOf[i] : i;
+        public int CpuLevelOf(int i) => cpuLevel != null && i >= 0 && i < cpuLevel.Length && cpuLevel[i] > 0 ? cpuLevel[i] : difficulty;
         public bool training;
         public bool pve => cpu[1];
     }
@@ -100,7 +116,7 @@ namespace ChibiClash
             var f = go.AddComponent<Fighter>();
 
             bool cpu = Config.cpu[i];
-            FighterInput input = cpu ? new CpuInput(Config.training ? 0 : Config.difficulty) : (FighterInput)new HumanInput(i);
+            FighterInput input = cpu ? new CpuInput(Config.training ? 0 : Config.CpuLevelOf(i)) : (FighterInput)new HumanInput(Config.InputOf(i));
             var sim = new SimulatedPoseSource((cpu ? "CPU" : "P" + (i + 1)) + " simulated", () => input.SimulatedGesture, () => input.Slouching);
             // Player 1 uses the real camera when it's on and the pose model is running; everyone else uses the simulator.
             IPoseSource pose = cpu ? (IPoseSource)sim : new AutoPoseSource(i, sim, () => GM.Save.settings.useWebcam);
