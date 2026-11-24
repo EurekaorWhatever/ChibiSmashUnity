@@ -1,0 +1,262 @@
+net.area_country_and	بلدك و{0}
+region.africa	أفريقيا
+region.americas	الأمريكتان
+region.asia	آسيا
+region.europe	أوروبا
+region.oceania	أوقيانوسيا
+region.northern_africa	شمال أفريقيا
+region.eastern_africa	شرق أفريقيا
+region.middle_africa	وسط أفريقيا
+region.southern_africa	جنوب أفريقيا
+region.western_africa	غرب أفريقيا
+region.caribbean	الكاريبي
+region.central_america	أمريكا الوسطى
+region.south_america	أمريكا الجنوبية
+region.northern_america	أمريكا الشمالية
+region.central_asia	آسيا الوسطى
+region.eastern_asia	شرق آسيا
+region.south_eastern_asia	جنوب شرق آسيا
+region.southern_asia	جنوب آسيا
+region.western_asia	غرب آسيا
+region.eastern_europe	أوروبا الشرقية
+region.northern_europe	أوروبا الشمالية
+region.southern_europe	أوروبا الجنوبية
+region.western_europe	أوروبا الغربية
+region.australia_and_new_zealand	أستراليا ونيوزيلندا
+region.melanesia	ميلانيزيا
+region.micronesia	ميكرونيزيا
+region.polynesia	بولينيزيا
+net.joined_connecting	انضممت إلى "{0}". جارٍ الاتصال بالمضيف...
+net.opponent_unreachable	تعذّر الوصول إلى خصمك: {0}
+net.quick_filling	{0} من {1} لاعبين. البدء خلال {2} ث...
+invite.inviting	جارٍ دعوة {0}...
+invite.sent_lasts	أُرسلت الدعوة إلى {0}. تبقى صالحة {1} ثانية.
+invite.send_failed	تعذّر إرسال الدعوة: {0}
+invite.joining_room_of	جارٍ الانضمام إلى غرفة {0}...
+invite.paused	الدعوات متوقفة مؤقتًا لمدة {0} دقائق.
+invite.invited_you	دعاك {0} إلى "{1}".
+invite.ran_out	انتهت صلاحية دعوتك إلى {0}.
+friends.choose_name	اختر اسمًا في اللعبة ليجدك أصدقاؤك.
+friends.unavailable	الأصدقاء غير متاحين: {0}
+friends.your_name_is	اسمك {0}. أعطه لأصدقائك ليضيفوك.
+friends.set_name_failed	تعذّر تعيين الاسم: {0}
+friends.request_sent	أُرسل طلب الصداقة إلى {0}.
+friends.add_failed	تعذّرت إضافة {0}: {1}
+friends.offline	{0} غير متصل الآن.
+friends.request_then_invite	أُرسل طلب الصداقة إلى {0}. ستُرسل الدعوة فور قبوله.
+friends.unreachable	تعذّر الوصول إلى {0}: {1}
+friends.creating_room_for	جارٍ إنشاء غرفة لـ {0}...
+friends.joining	جارٍ الانضمام إلى {0}...
+friends.declined	رفض {0} الدعوة.
+friends.version_mismatch	دعاك {0}، لكنه يستخدم إصدارًا مختلفًا من اللعبة.
+friends.invite_sent_waiting	أُرسلت الدعوة إلى {0}. بانتظار انضمامه...
+name.too_short	الاسم قصير جدًا ({0} أحرف على الأقل).
+name.too_long	الاسم طويل جدًا ({0} حرفًا كحد أقصى).
+rooms.name_too_short	اسم الغرفة قصير جدًا ({0} أحرف على الأقل).
+rooms.name_too_long	اسم الغرفة طويل جدًا ({0} حرفًا كحد أقصى).
+net.bad_code	هذا ليس رمز غرفة صالحًا (أحرف وأرقام فقط).
+net.version_mismatch	أُنشئت تلك الغرفة بإصدار مختلف من Chibi Clash. يحتاج اللاعبان إلى الإصدار نفسه.
+net.loading_room	جارٍ تحميل الغرفة...
+net.room_closed	أُغلقت الغرفة.
+net.you_left	غادرت الغرفة.
+net.waiting_host_game	جارٍ البدء... بانتظار لعبة المضيف.
+net.choose_next_fight	اختر مقاتلك واضغط موافق للمعركة التالية.
+net.host_changed_stage	غيّر المضيف إعدادات الساحة. اضغط موافق مجددًا.
+net.room_closed_host_left	أُغلقت الغرفة (غادر المضيف).
+net.starting_fight	جارٍ بدء المعركة...
+net.player_left_joined	غادر لاعب أو انضم.
+net.no_connection	لا يوجد اتصال.
+net.fight_could_not_start	تعذّر بدء المعركة.
+net.fight_starting_wait	المعركة تبدأ! بانتظار اتصال صديقك...
+net.choose_press_ok	اختر مقاتلك واضغط موافق.
+net.too_many_starts	محاولات بدء كثيرة. انتظر دقيقة، ثم اضغط ابدأ المعركة.
+net.fight_starting_connecting	المعركة تبدأ! جارٍ الاتصال...
+net.could_not_connect	تعذّر الاتصال.
+net.friend_no_answer	لم يستجب صديقك.
+net.start_cancelled	أُلغي البدء.
+net.friend_no_connect	لم يتصل صديقك.
+net.enter_code	أدخل رمز الغرفة الذي يعرضه صديقك.
+net.lan_browser	اللعب عبر LAN غير متاح في المتصفح. استخدم الغرف أو المطابقة، أو نسخة الكمبيوتر للعب عبر LAN.
+net.enter_ip	أدخل عنوان IP للمضيف.
+net.this_pc_ip	عنوان IP لهذا الكمبيوتر
+net.signing_in	جارٍ تسجيل الدخول...
+net.creating_private	جارٍ إنشاء غرفة خاصة...
+net.hosting_one	لا توجد مباراة مفتوحة، جارٍ استضافة واحدة...
+net.needs_2_to_4	تحتاج المعركة من 2 إلى 4 لاعبين.
+net.waiting_friend	بانتظار اتصال صديقك...
+net.waiting_friends	بانتظار اتصال أصدقائك...
+net.connection_running	هناك اتصال آخر ما زال قيد التشغيل.
+net.no_valid_info	لا تحتوي الغرفة على بيانات اتصال صالحة (غادر المضيف؟).
+net.connecting_host	جارٍ الاتصال بالمضيف...
+net.already_full	تلك الغرفة ممتلئة بالفعل.
+net.no_info	لا تحتوي الغرفة على بيانات اتصال (غادر المضيف؟).
+net.player_left_searching	غادر ذلك اللاعب. جارٍ البحث مجددًا...
+net.connected	تم الاتصال!
+net.relay_failed	فشل الاتصال بخادم Relay.
+net.opponent_timeout	تعذّر الوصول إلى خصمك (انتهت المهلة).
+net.no_internet	لا يوجد اتصال بالإنترنت. اتصل بشبكة Wi-Fi أو بيانات الجوال لتلعب مع أصدقائك في أي مكان. (اللعب عبر LAN يعمل على الشبكة نفسها.)
+invite.wait	انتظر قليلًا قبل إرسال دعوة أخرى.
+invite.type_name	اكتب اسم صديقك في اللعبة (من 3 إلى 16 حرفًا أو رقمًا أو _).
+invite.own_name	هذا اسمك أنت.
+invite.open_room_first	افتح غرفتك أولًا، ثم ادعُ.
+invite.room_full	غرفتك ممتلئة بالفعل.
+invite.could_not_send	تعذّر إرسال الدعوة.
+invite.too_many	دعوات كثيرة الآن. حاول مجددًا بعد بضع ثوانٍ.
+invite.cancelled	أُلغيت الدعوة.
+invite.expired	انتهت صلاحية تلك الدعوة.
+invite.closed_full	غرفتك ممتلئة. أُغلقت الدعوة.
+invite.closed_joined	انضم لاعب إلى غرفتك. أُغلقت الدعوة.
+invite.closed_room	أُلغيت الدعوة: أُغلقت الغرفة.
+name.taken	هذا الاسم مأخوذ بالفعل
+name.check_unavailable	تعذّر التحقق من اسمك عبر الإنترنت. تحقق من اتصالك وحاول مجددًا.
+name.too_soon	غيّرت اسمك قبل لحظات. حاول مجددًا بعد دقيقة.
+name.choose_different	يُرجى اختيار اسم آخر.
+friends.type_tag	اكتب اسم صديقك بهذا الشكل Kira#4821.
+friends.added	أُضيف الصديق.
+friends.declined_request	رُفض الطلب.
+friends.removed	أُزيل الصديق.
+friends.blocked	حُظر اللاعب.
+friends.a_friend	صديق
+friends.type_player_tag	اكتب اسم اللاعب بهذا الشكل Kira#4821.
+friends.wait_invite	انتظر قليلًا قبل الدعوة مجددًا.
+name.enter	أدخل اسمًا.
+name.bad_chars	استخدم الأحرف والأرقام و_ فقط (بلا مسافات أو رموز).
+rooms.name_bad_chars	أسماء الغرف تستخدم الأحرف والأرقام والمسافات و_ - ' ! فقط.
+rooms.name_double_space	لا يمكن أن تحتوي أسماء الغرف على مسافتين متتاليتين.
+rooms.name_choose_different	يُرجى اختيار اسم غرفة آخر.
+gesture.cross_arms	اعقد ذراعيك
+gesture.punch_forward	لكمة للأمام
+gesture.raise_hands	ارفع يديك
+class.kaia.passive1_desc	+15% سرعة الهجوم
+class.kaia.passive2_desc	5% سرقة حياة
+class.kaia.skill1_desc	اندفع للأمام واطعن الخصم
+class.kaia.skill2_desc	التوقيت المثالي يعكس الضرر
+class.kaia.skill3_desc	اطعن مرات عديدة بسرعة
+class.kaia.ult_desc	10 ث: الهجمات العادية تطلق موجة أفقية
+class.bruna.passive1_desc	+20% ضرر، -15% سرعة الهجوم
+class.bruna.passive2_desc	+20% ضرر، -15% سرعة الحركة
+class.bruna.skill1_desc	أمسك الخصم واضربه بالأرض
+class.bruna.skill2_desc	دُر كالإعصار وأصب مرارًا
+class.bruna.ult_desc	اضرب الأرض لتطلق موجة صدمية
+class.ren.passive1_desc	+20% نسبة الضربة الحرجة
+class.ren.passive2_desc	+10% سرعة الحركة لمدة 10 ث (تبريد 30 ث)
+class.ren.skill1_desc	اندفع للخلف أفقيًا وأطلق
+class.ren.skill2_desc	اخنق خصمًا قريبًا وادفعه بعيدًا
+class.ren.skill3_desc	أطلق وابلًا من الأسهم أفقيًا
+class.ren.ult_desc	سهم واحد يتكاثر إلى عاصفة من الأسهم
+class.lyra.passive1_desc	فرصة 10% عند الإصابة: -15% حركة، -10% ضرر، -15% سرعة هجوم
+class.lyra.passive2_desc	فرصة 20% لصدّ الضرر
+class.lyra.skill1_desc	أطلق قذيفة نارية موجهة
+class.lyra.skill2_desc	استدعِ 3 أتباع
+class.lyra.skill3_desc	سحابة تلاحق العدو وتضربه بالرعد
+class.lyra.ult_desc	حلقة نار 10 ث: تحرق الأعداء وتصدّ القذائف
+class.taro.passive1_desc	فرصة 10% عند الإصابة: -15% دفاع العدو
+class.taro.passive2_desc	بعد 3 ث دون هجوم، الضربة التالية +50%
+class.taro.skill1_desc	امتد واقفز واضرب للأسفل
+class.taro.skill2_desc	دوّر الرمح لصدّ القذائف
+class.taro.skill3_desc	ارمِ الرمح واستدعه للعودة
+class.taro.ult_desc	اطعن العدو، ثم اركل المقبض ليتعمق أكثر
+char.kaia.role	مهاجمة رشيقة
+char.kaia.style	قتال قريب سريع ومتحرك بضربات سيف دقيقة ومتتالية.
+char.bruna.role	مقاتلة قوية
+char.bruna.style	مشاجِرة عالية الضرر والتحمل تسيطر على المساحة بهجمات ثقيلة.
+char.ren.role	رامٍ رشيق
+char.ren.style	تحكم بالمسافة عالي الحركة وضغط دقيق بتقنيات سهام متنوعة.
+char.lyra.role	تحكم بالمساحة / فخاخ
+char.lyra.style	ساحرة رشيقة تسيطر على المساحة بتعاويذ سريعة وحركة مخادعة وسحر دقيق.
+char.taro.role	خبير المدى الطويل
+char.taro.style	تحكم منضبط ومتحرك بضغط بعيد المدى وضربات دقيقة.
+stage.0.name	دوجو السماء
+stage.0.short	دوجو السماء
+stage.0.tagline	ضريح جبلي فوق السحاب
+stage.1.name	مدينة النيون
+stage.1.short	مدينة النيون
+stage.1.tagline	ساحة على السطح تحت مطر النيون
+stage.2.name	مصهر الحمم
+stage.2.short	مصهر الحمم
+stage.2.tagline	مسبك منصهر فوق بحر من الحمم
+stage.3.name	جبل البداية
+stage.3.short	الجبل
+stage.3.tagline	KO عمودي · منصات يشم متحركة فوق هاوية ضبابية
+stage.4.name	سهل الوحدة
+stage.4.short	السهل
+stage.4.tagline	KO أفقي · حقل طويل واحد، لا مكان للاختباء
+stage.5.name	هاوية البركان
+stage.5.short	البركان
+stage.5.tagline	كل حافة KO · ألسنة نار تنفجر من بحيرة الصهارة
+stage.6.name	عرين الطائر العملاق
+stage.6.short	عرين الطائر
+stage.6.tagline	KO أفقي · الطائر الهائل يجتاح الساحة
+stage.7.name	نصب المحيط المهجور
+stage.7.short	المحيط
+stage.7.tagline	كل حافة KO · الحوت يهبط، انزل إلى الطوابق
+end.opponent_left	غادر خصمك المباراة.
+end.opponent_timeout	توقف خصمك عن الاستجابة.
+end.connection_lost	انقطع الاتصال بخصمك.
+end.you_left	غادرت المباراة.
+end.desync	اختلفت اللعبتان (عدم تزامن): بلا نتيجة.
+end.unconfirmed	تعذّر تأكيد نهاية المباراة: بلا نتيجة.
+end.handshake_failed	تعذّر بدء المباراة.
+end.peer_never_started	لم ينضم خصمك إلى المباراة أبدًا: بلا نتيجة.
+end.too_slow	الاتصال بطيء جدًا للعب: بلا نتيجة.
+end.host_left	غادر المضيف المباراة: بلا نتيجة.
+end.dropped	انقطع اتصالك بالمباراة.
+status.aura	هالة {0}
+status.fire_ring	حلقة النار {0}
+status.tailwind	ريح مساندة
+status.guard_broken	الدفاع مكسور {0} ث
+status.guard	الدفاع {0}%
+status.reloading	إعادة التعبئة {0} ث
+status.recharging	إعادة الشحن {0} ث
+status.hexed	ملعون
+status.armor_break	الدرع -15%
+hud.perform	نفّذ: {0}
+hud.times_up	انتهى الوقت!
+rewards.no_contest	بلا نتيجة: بلا مكافآت
+rewards.pve_victory	فوز PvE  +{0}
+rewards.pve_match	مباراة PvE  +{0}
+rewards.victory	فوز  +{0}
+rewards.match_played	مباراة لُعبت  +{0}
+rewards.posture	جلسة جيدة {0}%  +{1}
+hud.revived	عاد للحياة
+quest.win	افز بـ 3 مباريات
+quest.pve	اهزم الكمبيوتر مرتين (PvE)
+quest.combo	نفّذ 10 كومبو كاملة
+quest.ult	فعّل 3 ضربات قاضية بالحركة
+quest.parry	صدّ 5 هجمات بصدّ مضاد
+quest.posture	أنهِ مباراة بجلسة جيدة 80%+
+rewards.quest	مهمة: {0}  +{1}
+bind.move_left	تحرك يسارًا
+bind.move_right	تحرك يمينًا
+bind.drop	نزول / سقوط سريع
+bind.jump	قفز
+bind.jump_alt	قفز (بديل)
+bind.light	هجوم خفيف
+bind.heavy	هجوم ثقيل
+bind.block	صدّ
+bind.dash	اندفاع
+bind.skill1	مهارة 1
+bind.skill2	مهارة 2
+bind.skill3	مهارة 3
+bind.ultimate	الضربة القاضية
+bind.aim_up	تصويب للأعلى
+bind.special	خاص
+hud.rejected	مرفوض: {0}
+cv.low_confidence	ثقة التتبع منخفضة
+cv.frozen	بث متجمد (تزييف؟)
+cv.snap	تغير فوري للوضعية (ماكرو؟)
+cv.ok	OK
+cam.none	لم يُعثر على كاميرا
+cam.off	الكاميرا متوقفة
+cam.starting	جارٍ تشغيل الكاميرا...
+cam.waiting_frames	بانتظار صور الكاميرا - اسمح لـ Unity بالوصول إلى الكاميرا من System Settings > Privacy > Camera
+cam.live	الكاميرا تعمل ({0}x{1})
+pose.simulated	محاكاة (وضعيات لوحة المفاتيح)
+pose.camera_off	التتبع بالكاميرا متوقف - تُستخدم وضعيات محاكاة بلوحة المفاتيح
+pose.model_failed	فشل نموذج الوضعية: {0}
+pose.loading	جارٍ تحميل نموذج الوضعية...
+pose.live	تتبع مباشر للجسم (MoveNet، {0} Hz)
+pose.step_back	الكاميرا تعمل - ارجع للخلف حتى تظهر كتفاك
+account.finish_browser	أكمل تسجيل الدخول في متصفحك (اختر Continue with Google)...
+account.signed_out_again	تم تسجيل الخروج. سجّل الدخول مجددًا لاستخدام حسابك.
+account.signed_in_kept	تم تسجيل الدخول. يبقى اسمك وتقدمك مع هذا الحساب.

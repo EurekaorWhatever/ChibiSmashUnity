@@ -1,0 +1,256 @@
+rooms.more	+ {0} phòng nữa
+rooms.created	Đã tạo phòng "{0}". Bấm vào để chia sẻ mã hoặc mời bạn bè.
+quick.searching	ĐANG TÌM
+quick.looking_in	ĐANG TÌM Ở:  {0}
+room.kicker	PHÒNG  ·  2-4 NGƯỜI  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	SẴN SÀNG CHIẾN
+room.full_suffix	 · PHÒNG ĐẦY
+room.waiting	ĐANG CHỜ NGƯỜI CHƠI
+room.joined	{0}  ·  {1} / {2} ĐÃ VÀO
+room.host	CHỦ PHÒNG
+room.player_n	NGƯỜI CHƠI {0}
+room.you_suffix	 · BẠN
+room.hazards_host_pick	{0} · CHỦ PHÒNG CHỌN
+room.hazards_on	CHƯỚNG NGẠI BẬT
+room.hazards_off	CHƯỚNG NGẠI TẮT
+room.code_copied	Đã sao chép mã phòng {0}. Dán gửi cho bạn của bạn.
+invite.body	{0} mời bạn vào {1}   ({2} giây)
+select.ult_name	ULT  {0}
+age.title	BẠN BAO NHIÊU TUỔI?
+age.body	Mọi lứa tuổi đều chơi được mọi chế độ. Tuổi của bạn được lưu cùng tên người chơi để làm thống kê game.
+common.next	TIẾP
+age.error	Nhập tuổi của bạn, hoặc chỉnh bằng D-pad.
+age.pad_hint	Tay cầm: D-pad lên/xuống đổi 1, trái/phải đổi 10 · A = tiếp
+rooms.enter_name	NHẬP TÊN PHÒNG
+rooms.name_rules	3-24 chữ cái, số hoặc dấu cách. Bạn bè sẽ thấy khi vào phòng. Phòng chứa 2 đến 4 người.
+rooms.create	TẠO
+common.one_moment	ĐỢI CHÚT...
+account.keep_name	GIỮ TÊN ĐẤU SĨ CỦA BẠN
+account.finish_in_browser	HOÀN TẤT TRONG TRÌNH DUYỆT...
+account.sign_in_google	ĐĂNG NHẬP BẰNG GOOGLE
+account.play_without	CHƠI KHÔNG CẦN TÀI KHOẢN
+name.choose_first	Hãy chọn tên người chơi trước.
+common.cancelled	Đã hủy.
+name.welcome	CHÀO ĐẤU SĨ! BẠN TÊN GÌ?
+name.change_title	ĐỔI TÊN CỦA BẠN
+name.rules	3-16 chữ cái, số hoặc _. Hãy chọn tên đấu sĩ thật vui, không dùng tên thật. Bạn bè dùng tên này để tìm và mời bạn, và mọi người đều thấy nó.
+name.suggest	GỢI Ý
+name.checking	ĐANG KIỂM TRA...
+name.lets_fight	CHIẾN THÔI!
+common.save	LƯU
+name.pad_hint_first	Tay cầm: A = chiến thôi · Y = gợi ý tên
+name.pad_hint	Tay cầm: A = lưu · Y = gợi ý tên
+online.connected_agreeing	Đã kết nối. Đang thống nhất trận đấu...
+online.host_settings_changed	Chủ phòng đã đổi cài đặt — hãy vào lại phòng.
+online.version_mismatch	Đối thủ dùng phiên bản game khác. Hai người chơi cần cùng một bản.
+rooms.title	GHÉP TRẬN
+rooms.kicker	PHÒNG  ·  2-4 NGƯỜI  ·  TẠO · VÀO · MỜI BẰNG TÊN
+rooms.create_rooms	TẠO PHÒNG
+rooms.join_room	VÀO PHÒNG
+rooms.creating	ĐANG TẠO PHÒNG...
+rooms.loading	ĐANG TẢI PHÒNG...
+rooms.none_yet	Chưa có phòng nào!
+rooms.one_moment	Đợi chút.
+rooms.empty_help	Nhấn TẠO PHÒNG để tạo, hoặc VÀO PHÒNG bằng mã phòng của bạn bè.
+rooms.capacity_note	Phòng chứa 2 đến 4 người. Mời bạn bè bằng tên người chơi.
+rooms.invites_paused	Tạm dừng lời mời vào phòng trong vài phút
+rooms.refresh	LÀM MỚI
+rooms.hint	GHÉP TRẬN  ·  PHÒNG
+rooms.new	MỚI
+rooms.you_host	BẠN LÀ CHỦ
+rooms.open	MỞ
+join.enter_code	NHẬP MÃ PHÒNG
+join.body	Gõ hoặc dán mã phòng bạn của bạn gửi (Discord, chat...).
+join.paste	DÁN
+join.join	VÀO
+join.bad_code	Đó không phải mã phòng. Kiểm tra rồi thử lại (chỉ chữ và số).
+rooms.fight_starting	Một trận trong phòng sắp bắt đầu. Hãy chờ, hoặc rời phòng trước.
+quick.kicker	VS ONLINE  ·  ĐƠN 1V1  ·  NGƯỜI CHƠI GẦN BẠN
+quick.player_found	ĐÃ TÌM THẤY NGƯỜI CHƠI!
+quick.search_failed	TÌM KIẾM THẤT BẠI
+quick.not_searching	KHÔNG TÌM KIẾM
+quick.connecting	Đang kết nối với đối thủ...
+quick.searching_near	Đang tìm người chơi gần bạn
+quick.stopped	Đã dừng tìm kiếm. Hãy thử lại.
+quick.press_search_again	Nhấn TÌM LẠI để tìm người chơi.
+quick.privacy	Đấu nhanh chia sẻ quốc gia của bạn (từ cài đặt thiết bị), không bao giờ chia sẻ vị trí.
+quick.search_again	TÌM LẠI
+quick.hint	VS ONLINE  ·  ĐẤU NHANH
+room.kicker_opening	PHÒNG  ·  ĐANG MỞ PHÒNG...
+room.opening	Đang mở phòng...
+room.your_fighter	ĐẤU SĨ CỦA BẠN
+room.locked_in	ĐÃ CHỐT
+room.everyone_ok	Mọi người nhấn OK: trận đấu tự bắt đầu.
+room.share_code	Chia sẻ mã, hoặc mời bạn bè bằng tên.
+room.empty_seat	Chỗ trống
+room.stage_you	ĐẤU TRƯỜNG (bạn chọn)
+room.stage_host	ĐẤU TRƯỜNG (chủ phòng chọn)
+common.ok	OK
+room.loading	ĐANG TẢI...
+room.change	ĐỔI
+room.starting	ĐANG BẮT ĐẦU...
+room.start_fight	BẮT ĐẦU ĐẤU
+room.close	ĐÓNG PHÒNG
+room.leave	RỜI PHÒNG
+room.hint	GHÉP TRẬN  ·  PHÒNG
+room.code	MÃ
+room.copy	SAO CHÉP
+room.host_can_invite	Chủ phòng có thể mời bạn bè bằng tên.
+room.invite_by_name	MỜI BẠN BÈ BẰNG TÊN
+room.invite	MỜI
+room.full	Phòng đã đầy.
+invite.title	LỜI MỜI VÀO PHÒNG
+invite.warning	Tên không được xác minh: chỉ nhận lời mời từ người bạn quen.
+invite.accept	ĐỒNG Ý
+invite.decline	TỪ CHỐI
+room.hazards_on_btn	CHƯỚNG NGẠI  BẬT
+room.hazards_off_btn	CHƯỚNG NGẠI  TẮT
+select.passive	NỘI TẠI
+select.look	NGOẠI HÌNH
+select.cosmetic	TRANG TRÍ
+select.arcade_round	ARCADE  ·  HIỆP {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   TAY CẦM 1 = 1P, TAY CẦM 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  PHÍM MŨI TÊN  ENTER  BACKSPACE  DEL
+select.dummy	HÌNH NỘM
+select.round_rival	ĐỐI THỦ HIỆP {0}
+select.picks_at_start	CHỌN KHI TRẬN BẮT ĐẦU
+select.signature_weapon	VŨ KHÍ ĐẶC TRƯNG  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	ĐÃ HẠ {0}
+select.arcade_route	LỘ TRÌNH ARCADE  ·  ĐẤU TRƯỜNG {0} / {1}
+select.select_stage	CHỌN ĐẤU TRƯỜNG
+select.local_versus	ĐỐI KHÁNG CÙNG MÁY
+select.arcade_rival	ĐỐI THỦ ARCADE
+select.training_dummy	HÌNH NỘM LUYỆN TẬP
+select.stage	ĐẤU TRƯỜNG
+select.hazards	CHƯỚNG NGẠI
+select.fight	CHIẾN
+select.change	ĐỔI
+select.confirm	XÁC NHẬN
+select.random	NGẪU NHIÊN
+select.fate	PHÓ MẶC SỐ PHẬN
+select.ready_bang	SẴN SÀNG!
+select.loadout	TRANG BỊ
+select.waiting_1p	ĐANG CHỜ 1P
+select.1p_picks_dummy	1P CHỌN HÌNH NỘM
+select.selecting	ĐANG CHỌN
+select.identity_hidden	DANH TÍNH ẨN
+select.revealed_at_start	LỘ DIỆN KHI HIỆP BẮT ĐẦU
+select.ai_picks	AI TỰ CHỌN ĐẤU SĨ
+select.random_every_fight	NHÂN VẬT NGẪU NHIÊN MỖI TRẬN
+select.any_character	NHÂN VẬT BẤT KỲ · NỘI TẠI VÀ VŨ KHÍ NGẪU NHIÊN
+select.lock_in_hint	CHỐT  ·  HOẶC BẤM VÀO NHÂN VẬT
+select.to_ready	ĐỂ SẴN SÀNG
+select.cpu_difficulty_pick	ĐỘ KHÓ CPU  ·  CHỌN TRƯỚC TRẬN
+select.ai_note	Không cần internet. AI chọn nhân vật, nội tại và vũ khí mới cho mỗi trận, kể cả khi đấu lại.
+select.pad_difficulty	D-PAD LÊN / XUỐNG  ·  ĐỘ KHÓ
+select.key_difficulty	W / S  ·  ĐỘ KHÓ
+select.start_training	BẮT ĐẦU LUYỆN TẬP
+select.fight_bang	CHIẾN!
+select.click_to_start	HOẶC BẤM ĐỂ BẮT ĐẦU VỚI LỰA CHỌN HIỆN TẠI
+hud.ready	SẴN SÀNG...
+hud.rival	ĐỐI THỦ
+hud.you	BẠN
+hud.ultimate_ready	{0} · TUYỆT CHIÊU SẴN SÀNG
+hud.move_detected	{0} · ĐÃ NHẬN ĐỘNG TÁC
+hud.failed	{0} · THẤT BẠI
+hud.training_title	LUYỆN TẬP · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  LUYỆN TẬP
+hud.intro_online	  ·  ONLINE  ·  ESC / START: RỜI ĐI
+hud.ult_ready_press	ULT SẴN SÀNG - nhấn {0}
+hud.ult_ready	ULT SẴN SÀNG
+hud.sim_key	phím mô phỏng: {0}
+hud.poses_live	 · tư thế: khoanh tay = đỡ / dang tay = cầu lửa / giơ tay = nhảy
+hud.poses_keys	 · tư thế 1 khoanh / 2 đấm / 3 giơ · P gù lưng
+hud.poses_p2	 · tư thế 8/9/0
+hud.training_help	LUYỆN TẬP: T nạp đầy tuyệt chiêu · đấu sĩ bị KO hồi sinh ở 0% · Esc tạm dừng
+hud.ult_pct	ULT {0}%
+hud.last_hit	ĐÒN CUỐI  {0}
+hud.combo_hits	COMBO  {0} ĐÒN  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	CAMERA P1 · MÔ PHỎNG
+hud.cv_p1_live	CAMERA P1 · TRỰC TIẾP
+hud.cv_p2_sim	CAMERA P2 · MÔ PHỎNG
+hud.cv_p2_live	CAMERA P2 · TRỰC TIẾP
+hud.hits_prefix	{0} ĐÒN
+results.no_contest	KHÔNG KẾT QUẢ
+results.draw	HÒA!
+results.cpu_wins	CPU THẮNG
+results.you_win	BẠN THẮNG!
+results.rival_wins	ĐỐI THỦ THẮNG
+results.wins	{0} THẮNG!
+results.takes_round	{0} thắng hiệp này
+results.stats	Đòn trúng  {0}\nCombo trọn vẹn  {1}   ·   Combo dài nhất  {2}
+results.stats2	\nTuyệt chiêu động tác  {0}\nĐỡ phản  {1}
+results.posture	\nTư thế tốt  {0}%
+results.rewards_named	PHẦN THƯỞNG (hồ sơ của {0})
+results.rewards_your	PHẦN THƯỞNG (hồ sơ của bạn)
+results.rewards_p1	PHẦN THƯỞNG (hồ sơ P1)
+results.coins	+{0} xu  (tổng {1})
+hud.do_pose	làm tư thế trước camera
+results.place_1	HẠNG 1
+results.place_2	HẠNG 2
+results.place_3	HẠNG 3
+results.place_4	HẠNG 4
+results.out	BỊ LOẠI
+results.out_1	BỊ LOẠI · HẠNG 1
+results.out_2	BỊ LOẠI · HẠNG 2
+results.out_3	BỊ LOẠI · HẠNG 3
+results.out_4	BỊ LOẠI · HẠNG 4
+results.red_team	ĐỘI ĐỎ
+results.blue_team	ĐỘI XANH
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} NGƯỜI CHƠI
+hud.keys_line1	P{0}: {1} di chuyển · {2} nhảy ·
+hud.keys_line2	{0} đánh nhẹ · {1} đánh mạnh · {2} đặc biệt ·
+hud.keys_line3	{0} đỡ · {1} lướt ·
+hud.keys_line4	{0} kỹ năng · {1} ult
+results.characters	NHÂN VẬT
+results.stock_one	1 MẠNG
+results.stocks	{0} MẠNG
+hud.respawn	HỒI SINH
+hud.drop_in	VÀO TRẬN!
+results.main_menu	MENU CHÍNH
+pause.title	TẠM DỪNG
+pause.resume	TIẾP TỤC
+pause.quit	VỀ MENU
+pause.hint	B / Backspace để tiếp tục
+leave.title	RỜI TRẬN?
+leave.body	Trận đấu vẫn tiếp diễn. Rời đi sẽ bị tính là thua.
+leave.leave	RỜI ĐI
+leave.hint	B / Backspace / Esc / Start để ở lại
+results.winner	NGƯỜI THẮNG
+results.training_no_rewards	Luyện tập: không có thưởng
+cv.posture	Tư thế {0}%
+cv.posture_low	Tư thế {0}% - ngồi thẳng lên!
+cv.telemetry_ok	Đo đạc OK
+net.rooms_load_failed	Không thể tải phòng của bạn: {0}
+net.host_limit	Bạn đang làm chủ {0} phòng. Hãy đóng bớt một phòng.
+net.creating_named	Đang tạo "{0}"...
+net.room_ready_code	Phòng "{0}" đã sẵn sàng. Chia sẻ mã {1} hoặc mời một người bạn.
+net.create_failed	Không thể tạo phòng: {0}
+net.joining_room	Đang vào phòng {0}...
+net.you_joined	Bạn đã vào "{0}". Chọn đấu sĩ và nhấn OK.
+net.no_room_code	Không có phòng nào mã {0}. Kiểm tra mã và thử lại.
+net.room_full_n	Phòng đó đã đầy ({0} người).
+net.join_failed	Không thể vào: {0}
+net.update_failed	Không thể cập nhật phòng: {0}
+net.could_not_what	Không thể {0}: {1}
+net.what_stage	đổi đấu trường
+net.what_hazards	đổi chướng ngại
+net.press_ok_again	{0} Cả hai hãy nhấn OK và BẮT ĐẦU ĐẤU lại.
+net.udp_port	Không thể mở cổng UDP {0} (đang bị dùng?).
+net.lan_ready	Máy chủ LAN đã sẵn sàng. Bạn của bạn vào: {0}  (cổng {1})
+net.bad_ip	"{0}" không phải địa chỉ IP hợp lệ.
+net.connecting_to	Đang kết nối tới {0}...
+net.sign_in_failed	Đăng nhập thất bại: {0}
+net.room_ready	Phòng "{0}" đã sẵn sàng. Hãy chia sẻ mã cho bạn của bạn.
+net.searching_in	Đang tìm người chơi ở {0}...
+net.start_failed	Không thể bắt đầu trận: {0}
+net.host_unreachable	Không thể kết nối tới chủ phòng: {0}
+net.area_world	toàn thế giới

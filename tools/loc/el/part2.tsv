@@ -1,0 +1,264 @@
+name.you_are	Είσαι ο/η {0}!
+name.you_are_unchecked	Είσαι ο/η {0}! Θα ελέγξουμε το όνομα όταν παίξεις online.
+online.could_not_start	Ο αγώνας δεν μπόρεσε να ξεκινήσει ({0}).
+rooms.your_rooms	ΤΑ ΔΩΜΑΤΙΑ ΣΟΥ
+rooms.count_click	{0}  ·  κάνε κλικ σε δωμάτιο για να το ανοίξεις
+rooms.code_value	ΚΩΔΙΚΟΣ  {0}
+rooms.players_count	{0} / {1} ΠΑΙΚΤΕΣ
+rooms.more	+ {0} ακόμα δωμάτια
+rooms.created	Το δωμάτιο «{0}» δημιουργήθηκε. Κάνε κλικ για να μοιραστείς τον κωδικό ή να καλέσεις φίλους.
+quick.searching	ΑΝΑΖΗΤΗΣΗ
+quick.looking_in	ΑΝΑΖΗΤΗΣΗ ΣΕ:  {0}
+room.kicker	ΔΩΜΑΤΙΟ  ·  2-4 ΠΑΙΚΤΕΣ  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	ΕΤΟΙΜΟΙ ΓΙΑ ΜΑΧΗ
+room.full_suffix	 · ΓΕΜΑΤΟ ΔΩΜΑΤΙΟ
+room.waiting	ΑΝΑΜΟΝΗ ΠΑΙΚΤΩΝ
+room.joined	{0}  ·  ΜΠΗΚΑΝ {1} / {2}
+room.host	ΟΙΚΟΔΕΣΠΟΤΗΣ
+room.player_n	ΠΑΙΚΤΗΣ {0}
+room.you_suffix	 · ΕΣΥ
+room.hazards_host_pick	{0} · ΕΠΙΛΟΓΗ ΟΙΚΟΔΕΣΠΟΤΗ
+room.hazards_on	ΠΑΓΙΔΕΣ ΝΑΙ
+room.hazards_off	ΠΑΓΙΔΕΣ ΟΧΙ
+room.code_copied	Ο κωδικός δωματίου {0} αντιγράφηκε. Επικόλλησέ τον στον φίλο σου.
+invite.body	Ο/Η {0} σε καλεί στο {1}   ({2}δ)
+select.ult_name	ULT  {0}
+age.title	ΠΟΣΟ ΧΡΟΝΩΝ ΕΙΣΑΙ;
+age.body	Κάθε ηλικία παίζει κάθε mode. Η ηλικία σου καταγράφεται με το όνομα παίκτη για στατιστικά του παιχνιδιού.
+common.next	ΕΠΟΜΕΝΟ
+age.error	Γράψε την ηλικία σου ή όρισέ τη με το D-pad.
+age.pad_hint	Χειριστήριο: D-pad πάνω/κάτω αλλάζει κατά 1, αριστερά/δεξιά κατά 10 · A = επόμενο
+rooms.enter_name	ΓΡΑΨΕ ΤΟ ΟΝΟΜΑ ΤΟΥ ΔΩΜΑΤΙΟΥ
+rooms.name_rules	3-24 γράμματα, αριθμοί ή κενά. Οι φίλοι το βλέπουν όταν μπαίνουν. Τα δωμάτια χωράνε 2 έως 4 παίκτες.
+rooms.create	ΔΗΜΙΟΥΡΓΙΑ
+common.one_moment	ΜΙΑ ΣΤΙΓΜΗ...
+account.keep_name	ΚΡΑΤΑ ΤΟ ΟΝΟΜΑ ΜΑΧΗΤΗ ΣΟΥ
+account.finish_in_browser	ΟΛΟΚΛΗΡΩΣΕ ΣΤΟΝ BROWSER...
+account.sign_in_google	ΣΥΝΔΕΣΗ ΜΕ GOOGLE
+account.play_without	ΠΑΙΞΕ ΧΩΡΙΣ ΛΟΓΑΡΙΑΣΜΟ
+name.choose_first	Διάλεξε πρώτα το όνομα παίκτη σου.
+common.cancelled	Ακυρώθηκε.
+name.welcome	ΚΑΛΩΣ ΗΡΘΕΣ, ΜΑΧΗΤΗ! ΠΩΣ ΣΕ ΛΕΝΕ;
+name.change_title	ΑΛΛΑΞΕ ΤΟ ΟΝΟΜΑ ΣΟΥ
+name.rules	3-16 γράμματα, αριθμοί ή _. Διάλεξε ένα αστείο όνομα μαχητή, όχι το πραγματικό σου. Με αυτό σε βρίσκουν και σε καλούν οι φίλοι, και αυτό βλέπουν όλοι.
+name.suggest	ΠΡΟΤΑΣΗ
+name.checking	ΕΛΕΓΧΟΣ...
+name.lets_fight	ΠΑΜΕ ΓΙΑ ΜΑΧΗ!
+common.save	ΑΠΟΘΗΚΕΥΣΗ
+name.pad_hint_first	Χειριστήριο: A = πάμε για μάχη · Y = πρόταση ονόματος
+name.pad_hint	Χειριστήριο: A = αποθήκευση · Y = πρόταση ονόματος
+online.connected_agreeing	Συνδέθηκε. Συμφωνία για τον αγώνα...
+online.host_settings_changed	Οι ρυθμίσεις του οικοδεσπότη άλλαξαν — μπες ξανά στο δωμάτιο.
+online.version_mismatch	Ο αντίπαλός σου έχει άλλη έκδοση του παιχνιδιού. Και οι δύο παίκτες χρειάζονται την ίδια έκδοση.
+rooms.title	MATCHMAKING
+rooms.kicker	ΔΩΜΑΤΙΑ  ·  2-4 ΠΑΙΚΤΕΣ  ·  ΔΗΜΙΟΥΡΓΙΑ · ΕΙΣΟΔΟΣ · ΠΡΟΣΚΛΗΣΗ ΜΕ ΟΝΟΜΑ
+rooms.create_rooms	ΔΗΜΙΟΥΡΓΙΑ ΔΩΜΑΤΙΩΝ
+rooms.join_room	ΕΙΣΟΔΟΣ ΣΕ ΔΩΜΑΤΙΟ
+rooms.creating	ΔΗΜΙΟΥΡΓΙΑ ΔΩΜΑΤΙΟΥ...
+rooms.loading	ΦΟΡΤΩΣΗ ΔΩΜΑΤΙΩΝ...
+rooms.none_yet	Δεν υπάρχει δωμάτιο ακόμα!
+rooms.one_moment	Μια στιγμή.
+rooms.empty_help	Πάτα ΔΗΜΙΟΥΡΓΙΑ ΔΩΜΑΤΙΩΝ για να φτιάξεις ένα, ή ΕΙΣΟΔΟΣ ΣΕ ΔΩΜΑΤΙΟ με τον κωδικό ενός φίλου.
+rooms.capacity_note	Τα δωμάτια χωράνε 2 έως 4 παίκτες. Κάλεσε φίλους με το όνομα παίκτη τους.
+rooms.invites_paused	Οι προσκλήσεις σε δωμάτια σταμάτησαν για λίγα λεπτά
+rooms.refresh	ΑΝΑΝΕΩΣΗ
+rooms.hint	MATCHMAKING  ·  ΔΩΜΑΤΙΑ
+rooms.new	ΝΕΟ
+rooms.you_host	ΕΙΣΑΙ ΟΙΚΟΔΕΣΠΟΤΗΣ
+rooms.open	ΑΝΟΙΓΜΑ
+join.enter_code	ΓΡΑΨΕ ΤΟΝ ΚΩΔΙΚΟ ΔΩΜΑΤΙΟΥ
+join.body	Γράψε ή επικόλλησε τον κωδικό που σου έστειλε ο φίλος σου (Discord, chat...).
+join.paste	ΕΠΙΚΟΛΛΗΣΗ
+join.join	ΕΙΣΟΔΟΣ
+join.bad_code	Αυτός δεν είναι κωδικός δωματίου. Έλεγξέ τον και ξαναδοκίμασε (μόνο γράμματα και αριθμοί).
+rooms.fight_starting	Ξεκινά μάχη σε δωμάτιο. Περίμενε ή βγες πρώτα από το δωμάτιο.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  ΠΑΙΚΤΗΣ ΚΟΝΤΑ ΣΟΥ
+quick.player_found	ΒΡΕΘΗΚΕ ΠΑΙΚΤΗΣ!
+quick.search_failed	Η ΑΝΑΖΗΤΗΣΗ ΑΠΕΤΥΧΕ
+quick.not_searching	ΚΑΜΙΑ ΑΝΑΖΗΤΗΣΗ
+quick.connecting	Σύνδεση με τον αντίπαλο...
+quick.searching_near	Αναζήτηση παίκτη κοντά σου
+quick.stopped	Η αναζήτηση σταμάτησε. Ξαναδοκίμασε.
+quick.press_search_again	Πάτα ΝΕΑ ΑΝΑΖΗΤΗΣΗ για να βρεις παίκτη.
+quick.privacy	Ο γρήγορος αγώνας μοιράζεται τη χώρα σου (από τις ρυθμίσεις συσκευής), ποτέ την τοποθεσία σου.
+quick.search_again	ΝΕΑ ΑΝΑΖΗΤΗΣΗ
+quick.hint	VS ONLINE  ·  ΓΡΗΓΟΡΟΣ ΑΓΩΝΑΣ
+room.kicker_opening	ΔΩΜΑΤΙΟ  ·  ΑΝΟΙΓΜΑ ΔΩΜΑΤΙΟΥ...
+room.opening	Άνοιγμα δωματίου...
+room.your_fighter	Ο ΜΑΧΗΤΗΣ ΣΟΥ
+room.locked_in	ΚΛΕΙΔΩΘΗΚΕ
+room.everyone_ok	Όλοι πατάνε OK: η μάχη ξεκινά μόνη της.
+room.share_code	Μοιράσου τον κωδικό ή κάλεσε φίλους με το όνομά τους.
+room.empty_seat	Κενή θέση
+room.stage_you	ΑΡΕΝΑ (διαλέγεις εσύ)
+room.stage_host	ΑΡΕΝΑ (διαλέγει ο οικοδεσπότης)
+common.ok	OK
+room.loading	ΦΟΡΤΩΣΗ...
+room.change	ΑΛΛΑΓΗ
+room.starting	ΕΝΑΡΞΗ...
+room.start_fight	ΕΝΑΡΞΗ ΜΑΧΗΣ
+room.close	ΚΛΕΙΣΙΜΟ ΔΩΜΑΤΙΟΥ
+room.leave	ΑΠΟΧΩΡΗΣΗ
+room.hint	MATCHMAKING  ·  ΔΩΜΑΤΙΟ
+room.code	ΚΩΔΙΚΟΣ
+room.copy	ΑΝΤΙΓΡΑΦΗ
+room.host_can_invite	Ο οικοδεσπότης μπορεί να καλέσει φίλο με το όνομα.
+room.invite_by_name	ΠΡΟΣΚΑΛΕΣΕ ΦΙΛΟ ΜΕ ΟΝΟΜΑ
+room.invite	ΠΡΟΣΚΛΗΣΗ
+room.full	Το δωμάτιο είναι γεμάτο.
+invite.title	ΠΡΟΣΚΛΗΣΗ ΣΕ ΔΩΜΑΤΙΟ
+invite.warning	Τα ονόματα δεν ελέγχονται: δέξου προσκλήσεις μόνο από άτομα που ξέρεις.
+invite.accept	ΑΠΟΔΟΧΗ
+invite.decline	ΑΠΟΡΡΙΨΗ
+room.hazards_on_btn	ΠΑΓΙΔΕΣ  ΝΑΙ
+room.hazards_off_btn	ΠΑΓΙΔΕΣ  ΟΧΙ
+select.passive	ΠΑΘΗΤΙΚΗ
+select.look	ΕΜΦΑΝΙΣΗ
+select.cosmetic	ΔΙΑΚΟΣΜΗΤΙΚΟ
+select.arcade_round	ARCADE  ·  ΓΥΡΟΣ {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   ΧΕΙΡΙΣΤΗΡΙΟ 1 = 1P, ΧΕΙΡΙΣΤΗΡΙΟ 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	ΟΜΟΙΩΜΑ
+select.round_rival	ΑΝΤΙΠΑΛΟΣ ΓΥΡΟΥ {0}
+select.picks_at_start	ΔΙΑΛΕΓΕΙ ΣΤΗΝ ΑΡΧΗ ΤΗΣ ΜΑΧΗΣ
+select.signature_weapon	ΧΑΡΑΚΤΗΡΙΣΤΙΚΟ ΟΠΛΟ  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  ΗΤΤΗΘΗΚΕ
+select.arcade_route	ΔΙΑΔΡΟΜΗ ARCADE  ·  ΑΡΕΝΑ {0} / {1}
+select.select_stage	ΕΠΙΛΟΓΗ ΑΡΕΝΑΣ
+select.local_versus	ΤΟΠΙΚΟ VERSUS
+select.arcade_rival	ΑΝΤΙΠΑΛΟΣ ARCADE
+select.training_dummy	ΟΜΟΙΩΜΑ ΠΡΟΠΟΝΗΣΗΣ
+select.stage	ΑΡΕΝΑ
+select.hazards	ΠΑΓΙΔΕΣ
+select.fight	ΜΑΧΗ
+select.change	ΑΛΛΑΓΗ
+select.confirm	ΕΠΙΒΕΒΑΙΩΣΗ
+select.random	ΤΥΧΑΙΟ
+select.fate	ΑΣ ΤΟ ΣΤΗ ΜΟΙΡΑ
+select.ready_bang	ΕΤΟΙΜΟΣ!
+select.loadout	ΕΞΟΠΛΙΣΜΟΣ
+select.waiting_1p	ΑΝΑΜΟΝΗ ΓΙΑ 1P
+select.1p_picks_dummy	Ο 1P ΔΙΑΛΕΓΕΙ ΤΟ ΟΜΟΙΩΜΑ
+select.selecting	ΕΠΙΛΕΓΕΙ
+select.identity_hidden	ΚΡΥΦΗ ΤΑΥΤΟΤΗΤΑ
+select.revealed_at_start	ΑΠΟΚΑΛΥΠΤΕΤΑΙ ΣΤΗΝ ΑΡΧΗ ΤΟΥ ΓΥΡΟΥ
+select.ai_picks	ΤΟ AI ΔΙΑΛΕΓΕΙ ΜΑΧΗΤΗ
+select.random_every_fight	ΤΥΧΑΙΟΣ ΧΑΡΑΚΤΗΡΑΣ ΣΕ ΚΑΘΕ ΜΑΧΗ
+select.any_character	ΟΠΟΙΟΣΔΗΠΟΤΕ ΧΑΡΑΚΤΗΡΑΣ · ΤΥΧΑΙΑ ΠΑΘΗΤΙΚΗ ΚΑΙ ΟΠΛΟ
+select.lock_in_hint	ΚΛΕΙΔΩΜΑ  ·  Η ΚΛΙΚ ΣΕ ΧΑΡΑΚΤΗΡΑ
+select.to_ready	ΓΙΑ ΝΑ ΕΙΣΑΙ ΕΤΟΙΜΟΣ
+select.cpu_difficulty_pick	ΔΥΣΚΟΛΙΑ CPU  ·  ΔΙΑΛΕΞΕ ΠΡΙΝ ΤΗ ΜΑΧΗ
+select.ai_note	Δεν χρειάζεται internet. Το AI διαλέγει νέο χαρακτήρα, παθητική και όπλο σε κάθε μάχη, και στα ρεβάνς.
+select.pad_difficulty	D-PAD ΠΑΝΩ / ΚΑΤΩ  ·  ΔΥΣΚΟΛΙΑ
+select.key_difficulty	W / S  ·  ΔΥΣΚΟΛΙΑ
+select.start_training	ΕΝΑΡΞΗ ΠΡΟΠΟΝΗΣΗΣ
+select.fight_bang	ΣΤΗ ΜΑΧΗ!
+select.click_to_start	Η ΚΛΙΚ ΓΙΑ ΕΝΑΡΞΗ ΜΕ ΤΙΣ ΤΩΡΙΝΕΣ ΕΠΙΛΟΓΕΣ
+hud.ready	ΕΤΟΙΜΟΙ...
+hud.rival	ΑΝΤΙΠΑΛΟΣ
+hud.you	ΕΣΥ
+hud.ultimate_ready	{0} · ULTIMATE ΕΤΟΙΜΟ
+hud.move_detected	{0} · ΚΙΝΗΣΗ ΑΝΙΧΝΕΥΤΗΚΕ
+hud.failed	{0} · ΑΠΟΤΥΧΙΑ
+hud.training_title	ΠΡΟΠΟΝΗΣΗ · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  ΠΡΟΠΟΝΗΣΗ
+hud.intro_online	  ·  ONLINE  ·  ESC / START: ΑΠΟΧΩΡΗΣΗ
+hud.ult_ready_press	ULT ΕΤΟΙΜΟ - πάτα {0}
+hud.ult_ready	ULT ΕΤΟΙΜΟ
+hud.sim_key	πλήκτρο sim: {0}
+hud.poses_live	 · πόζες: σταυρωμένα χέρια = άμυνα / χέρι στο πλάι = πύρινη σφαίρα / χέρια πάνω = άλμα
+hud.poses_keys	 · πόζες 1 σταύρωμα / 2 γροθιά / 3 σήκωμα · P καμπούρα
+hud.poses_p2	 · πόζες 8/9/0
+hud.training_help	ΠΡΟΠΟΝΗΣΗ: το T γεμίζει το ultimate · οι μαχητές με KO επιστρέφουν στο 0% · Esc παύση
+hud.ult_pct	ULT {0}%
+hud.last_hit	ΤΕΛΕΥΤΑΙΟ ΧΤΥΠΗΜΑ  {0}
+hud.combo_hits	COMBO  {0} ΧΤΥΠΗΜΑΤΑ  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	ΚΑΜΕΡΑ P1 · SIM
+hud.cv_p1_live	ΚΑΜΕΡΑ P1 · LIVE
+hud.cv_p2_sim	ΚΑΜΕΡΑ P2 · SIM
+hud.cv_p2_live	ΚΑΜΕΡΑ P2 · LIVE
+hud.hits_prefix	{0} ΧΤΥΠΗΜΑΤΑ
+results.no_contest	ΧΩΡΙΣ ΑΠΟΤΕΛΕΣΜΑ
+results.draw	ΙΣΟΠΑΛΙΑ!
+results.cpu_wins	ΚΕΡΔΙΖΕΙ Η CPU
+results.you_win	ΚΕΡΔΙΣΕΣ!
+results.rival_wins	ΚΕΡΔΙΖΕΙ Ο ΑΝΤΙΠΑΛΟΣ
+results.wins	ΚΕΡΔΙΖΕΙ: {0}!
+results.takes_round	Ο γύρος στον/στην {0}
+results.stats	Επιτυχή χτυπήματα  {0}\nΠλήρη combo  {1}   ·   Καλύτερο combo  {2}
+results.stats2	\nUltimate με κινήσεις  {0}\nΑποκρούσεις  {1}
+results.posture	\nΚαλή στάση  {0}%
+results.rewards_named	ΑΝΤΑΜΟΙΒΕΣ (προφίλ: {0})
+results.rewards_your	ΑΝΤΑΜΟΙΒΕΣ (το προφίλ σου)
+results.rewards_p1	ΑΝΤΑΜΟΙΒΕΣ (προφίλ P1)
+results.coins	+{0} νομίσματα  (σύνολο {1})
+hud.do_pose	κάνε την πόζα στην κάμερα
+results.place_1	1ΟΣ
+results.place_2	2ΟΣ
+results.place_3	3ΟΣ
+results.place_4	4ΟΣ
+results.out	ΕΚΤΟΣ
+results.out_1	ΕΚΤΟΣ · 1ΟΣ
+results.out_2	ΕΚΤΟΣ · 2ΟΣ
+results.out_3	ΕΚΤΟΣ · 3ΟΣ
+results.out_4	ΕΚΤΟΣ · 4ΟΣ
+results.red_team	ΚΟΚΚΙΝΗ ΟΜΑΔΑ
+results.blue_team	ΜΠΛΕ ΟΜΑΔΑ
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} ΠΑΙΚΤΕΣ
+hud.keys_line1	P{0}: {1} κίνηση · {2} άλμα ·
+hud.keys_line2	{0} ελαφριά · {1} βαριά · {2} ειδική ·
+hud.keys_line3	{0} άμυνα · {1} εφόρμηση ·
+hud.keys_line4	{0} ικανότητες · {1} ult
+results.characters	ΧΑΡΑΚΤΗΡΕΣ
+results.stock_one	1 ΖΩΗ
+results.stocks	{0} ΖΩΕΣ
+hud.respawn	ΕΠΑΝΑΦΟΡΑ
+hud.drop_in	ΜΕΣΑ!
+results.main_menu	ΚΥΡΙΟ ΜΕΝΟΥ
+pause.title	ΠΑΥΣΗ
+pause.resume	ΣΥΝΕΧΕΙΑ
+pause.quit	ΕΞΟΔΟΣ ΣΤΟ ΜΕΝΟΥ
+pause.hint	B / Backspace για συνέχεια
+leave.title	ΑΠΟΧΩΡΗΣΗ ΑΠΟ ΤΟΝ ΑΓΩΝΑ;
+leave.body	Ο αγώνας συνεχίζεται. Η αποχώρηση μετράει ως ήττα.
+leave.leave	ΑΠΟΧΩΡΗΣΗ
+leave.hint	B / Backspace / Esc / Start για να μείνεις
+results.winner	ΝΙΚΗΤΗΣ
+results.training_no_rewards	Προπόνηση: χωρίς ανταμοιβές
+cv.posture	Στάση {0}%
+cv.posture_low	Στάση {0}% - κάτσε ίσια!
+cv.telemetry_ok	Τηλεμετρία OK
+net.rooms_load_failed	Δεν φορτώθηκαν τα δωμάτιά σου: {0}
+net.host_limit	Φιλοξενείς ήδη {0} δωμάτια. Κλείσε πρώτα ένα.
+net.creating_named	Δημιουργία «{0}»...
+net.room_ready_code	Το δωμάτιο «{0}» είναι έτοιμο. Μοιράσου τον κωδικό {1} ή κάλεσε έναν φίλο.
+net.create_failed	Δεν δημιουργήθηκε το δωμάτιο: {0}
+net.joining_room	Είσοδος στο δωμάτιο {0}...
+net.you_joined	Μπήκες στο «{0}». Διάλεξε μαχητή και πάτα OK.
+net.no_room_code	Δεν υπάρχει δωμάτιο με κωδικό {0}. Έλεγξε τον κωδικό και ξαναδοκίμασε.
+net.room_full_n	Το δωμάτιο είναι γεμάτο ({0} παίκτες).
+net.join_failed	Η είσοδος απέτυχε: {0}
+net.update_failed	Δεν ενημερώθηκε το δωμάτιο: {0}
+net.could_not_what	Δεν ήταν δυνατή η {0}: {1}
+net.what_stage	αλλαγή αρένας
+net.what_hazards	αλλαγή παγίδων
+net.press_ok_again	{0} Πατήστε και οι δύο ξανά OK και ΕΝΑΡΞΗ ΜΑΧΗΣ.
+net.udp_port	Δεν άνοιξε η θύρα UDP {0} (χρησιμοποιείται ήδη;).
+net.lan_ready	Ο LAN host είναι έτοιμος. Ο φίλος σου συνδέεται: {0}  (θύρα {1})
+net.bad_ip	Το «{0}» δεν είναι έγκυρη διεύθυνση IP.
+net.connecting_to	Σύνδεση με {0}...
+net.sign_in_failed	Η σύνδεση απέτυχε: {0}
+net.room_ready	Το δωμάτιο «{0}» είναι έτοιμο. Μοιράσου τον κωδικό με τον φίλο σου.
+net.searching_in	Αναζήτηση παικτών: {0}...
+net.start_failed	Η μάχη δεν ξεκίνησε: {0}
+net.host_unreachable	Ο οικοδεσπότης δεν είναι προσβάσιμος: {0}
+net.area_world	όλος ο κόσμος
+net.area_country_and	η χώρα σου και {0}

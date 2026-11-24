@@ -1,0 +1,262 @@
+net.area_country_and	quốc gia của bạn và {0}
+region.africa	Châu Phi
+region.americas	Châu Mỹ
+region.asia	Châu Á
+region.europe	Châu Âu
+region.oceania	Châu Đại Dương
+region.northern_africa	Bắc Phi
+region.eastern_africa	Đông Phi
+region.middle_africa	Trung Phi
+region.southern_africa	Nam Phi
+region.western_africa	Tây Phi
+region.caribbean	Caribe
+region.central_america	Trung Mỹ
+region.south_america	Nam Mỹ
+region.northern_america	Bắc Mỹ
+region.central_asia	Trung Á
+region.eastern_asia	Đông Á
+region.south_eastern_asia	Đông Nam Á
+region.southern_asia	Nam Á
+region.western_asia	Tây Á
+region.eastern_europe	Đông Âu
+region.northern_europe	Bắc Âu
+region.southern_europe	Nam Âu
+region.western_europe	Tây Âu
+region.australia_and_new_zealand	Úc và New Zealand
+region.melanesia	Melanesia
+region.micronesia	Micronesia
+region.polynesia	Polynesia
+net.joined_connecting	Đã vào "{0}". Đang kết nối tới chủ phòng...
+net.opponent_unreachable	Không thể kết nối tới đối thủ: {0}
+net.quick_filling	{0} / {1} người chơi. Bắt đầu sau {2} giây...
+invite.inviting	Đang mời {0}...
+invite.sent_lasts	Đã gửi lời mời tới {0}. Hiệu lực {1} giây.
+invite.send_failed	Không thể gửi lời mời: {0}
+invite.joining_room_of	Đang vào phòng của {0}...
+invite.paused	Tạm dừng lời mời trong {0} phút.
+invite.invited_you	{0} đã mời bạn vào "{1}".
+invite.ran_out	Lời mời của bạn tới {0} đã hết hạn.
+friends.choose_name	Hãy chọn tên người chơi để bạn bè tìm thấy bạn.
+friends.unavailable	Không dùng được bạn bè: {0}
+friends.your_name_is	Tên của bạn là {0}. Gửi cho bạn bè để họ kết bạn với bạn.
+friends.set_name_failed	Không thể đặt tên: {0}
+friends.request_sent	Đã gửi lời mời kết bạn tới {0}.
+friends.add_failed	Không thể thêm {0}: {1}
+friends.offline	{0} hiện đang ngoại tuyến.
+friends.request_then_invite	Đã gửi lời mời kết bạn tới {0}. Lời mời vào phòng sẽ được gửi ngay khi họ đồng ý.
+friends.unreachable	Không thể kết nối tới {0}: {1}
+friends.creating_room_for	Đang tạo phòng cho {0}...
+friends.joining	Đang vào cùng {0}...
+friends.declined	{0} đã từ chối lời mời.
+friends.version_mismatch	{0} đã mời bạn, nhưng đang dùng phiên bản game khác.
+friends.invite_sent_waiting	Đã gửi lời mời tới {0}. Đang chờ họ vào...
+name.too_short	Tên quá ngắn (ít nhất {0} ký tự).
+name.too_long	Tên quá dài (tối đa {0} ký tự).
+rooms.name_too_short	Tên phòng quá ngắn (ít nhất {0} ký tự).
+rooms.name_too_long	Tên phòng quá dài (tối đa {0} ký tự).
+net.bad_code	Mã phòng không hợp lệ (chỉ chữ và số).
+net.version_mismatch	Phòng đó được tạo bằng phiên bản Chibi Clash khác. Hai người chơi cần cùng phiên bản.
+net.loading_room	Đang tải phòng...
+net.room_closed	Đã đóng phòng.
+net.you_left	Bạn đã rời phòng.
+net.waiting_host_game	Đang bắt đầu... chờ game của chủ phòng.
+net.choose_next_fight	Chọn đấu sĩ và nhấn OK cho trận tiếp theo.
+net.host_changed_stage	Chủ phòng đã đổi cài đặt đấu trường. Hãy nhấn OK lại.
+net.room_closed_host_left	Phòng đã đóng (chủ phòng đã rời đi).
+net.starting_fight	Đang bắt đầu trận...
+net.player_left_joined	Có người chơi vừa rời hoặc vào phòng.
+net.no_connection	Không có kết nối.
+net.fight_could_not_start	Không thể bắt đầu trận.
+net.fight_starting_wait	Trận sắp bắt đầu! Đang chờ bạn của bạn kết nối...
+net.choose_press_ok	Chọn đấu sĩ và nhấn OK.
+net.too_many_starts	Bắt đầu quá nhiều lần. Đợi một phút rồi nhấn BẮT ĐẦU ĐẤU.
+net.fight_starting_connecting	Trận sắp bắt đầu! Đang kết nối...
+net.could_not_connect	Không thể kết nối.
+net.friend_no_answer	Bạn của bạn không phản hồi.
+net.start_cancelled	Đã hủy bắt đầu.
+net.friend_no_connect	Bạn của bạn không kết nối được.
+net.enter_code	Nhập mã phòng bạn của bạn đưa.
+net.lan_browser	Chơi LAN không có trên trình duyệt. Hãy dùng PHÒNG hoặc GHÉP TRẬN, hoặc bản PC để chơi LAN.
+net.enter_ip	Nhập địa chỉ IP của máy chủ.
+net.this_pc_ip	IP của máy này
+net.signing_in	Đang đăng nhập...
+net.creating_private	Đang tạo phòng riêng...
+net.hosting_one	Không có trận mở nào, đang tự tạo trận...
+net.needs_2_to_4	Một trận cần 2 đến 4 người chơi.
+net.waiting_friend	Đang chờ bạn của bạn kết nối...
+net.waiting_friends	Đang chờ các bạn của bạn kết nối...
+net.connection_running	Một kết nối khác vẫn đang chạy.
+net.no_valid_info	Phòng không có thông tin kết nối hợp lệ (chủ phòng đã rời?).
+net.connecting_host	Đang kết nối tới chủ phòng...
+net.already_full	Phòng đó đã đầy.
+net.no_info	Phòng không có thông tin kết nối (chủ phòng đã rời?).
+net.player_left_searching	Người chơi đó đã rời đi. Đang tìm lại...
+net.connected	Đã kết nối!
+net.relay_failed	Kết nối tới máy chủ Relay thất bại.
+net.opponent_timeout	Không thể kết nối tới đối thủ (hết thời gian chờ).
+net.no_internet	Không có kết nối internet. Hãy kết nối Wi-Fi hoặc dữ liệu di động để chơi với bạn bè ở bất cứ đâu. (Chơi LAN vẫn được trong cùng mạng.)
+invite.wait	Đợi một chút trước khi gửi lời mời khác.
+invite.type_name	Gõ tên trong game của bạn bè (3-16 chữ cái, số hoặc _).
+invite.own_name	Đó là tên của chính bạn.
+invite.open_room_first	Hãy mở phòng trước, rồi mời.
+invite.room_full	Phòng của bạn đã đầy.
+invite.could_not_send	Không thể gửi lời mời.
+invite.too_many	Đang có quá nhiều lời mời. Thử lại sau vài giây.
+invite.cancelled	Đã hủy lời mời.
+invite.expired	Lời mời đó đã hết hạn.
+invite.closed_full	Phòng của bạn đã đầy. Đã đóng lời mời.
+invite.closed_joined	Một người chơi đã vào phòng. Đã đóng lời mời.
+invite.closed_room	Đã hủy lời mời: phòng đã đóng.
+name.taken	Tên này đã có người dùng
+name.check_unavailable	Không thể kiểm tra tên trực tuyến. Kiểm tra internet rồi thử lại.
+name.too_soon	Bạn vừa đổi tên. Hãy thử lại sau một phút.
+name.choose_different	Vui lòng chọn tên khác.
+friends.type_tag	Gõ tên bạn bè theo dạng Kira#4821.
+friends.added	Đã thêm bạn.
+friends.declined_request	Đã từ chối lời mời.
+friends.removed	Đã xóa bạn.
+friends.blocked	Đã chặn người chơi.
+friends.a_friend	Một người bạn
+friends.type_player_tag	Gõ tên người chơi theo dạng Kira#4821.
+friends.wait_invite	Đợi một chút trước khi mời lại.
+name.enter	Nhập tên.
+name.bad_chars	Chỉ dùng chữ cái, số và _ (không dấu cách hay ký hiệu).
+rooms.name_bad_chars	Tên phòng chỉ dùng chữ cái, số, dấu cách và _ - ' !.
+rooms.name_double_space	Tên phòng không được có hai dấu cách liền nhau.
+rooms.name_choose_different	Vui lòng chọn tên phòng khác.
+gesture.cross_arms	KHOANH TAY
+gesture.punch_forward	ĐẤM VỀ TRƯỚC
+gesture.raise_hands	GIƠ CẢ HAI TAY
+class.kaia.passive1_desc	+15% tốc độ đánh
+class.kaia.passive2_desc	5% hút máu
+class.kaia.skill1_desc	Lướt tới và đâm vào đối thủ
+class.kaia.skill2_desc	Canh đúng thời điểm để phản lại sát thương
+class.kaia.skill3_desc	Đâm liên tục thật nhanh
+class.kaia.ult_desc	10 giây: đòn đánh thường tung ra sóng ngang
+class.bruna.passive1_desc	+20% sát thương, -15% tốc độ đánh
+class.bruna.passive2_desc	+20% sát thương, -15% tốc độ di chuyển
+class.bruna.skill1_desc	Tóm đối thủ và nện xuống đất
+class.bruna.skill2_desc	Xoay như lốc xoáy, đánh trúng liên tục
+class.bruna.ult_desc	Đập mạnh xuống sàn tạo sóng xung kích
+class.ren.passive1_desc	+20% tỉ lệ chí mạng
+class.ren.passive2_desc	+10% tốc độ di chuyển trong 10 giây (hồi chiêu 30 giây)
+class.ren.skill1_desc	Lướt lùi theo phương ngang và bắn
+class.ren.skill2_desc	Siết cổ đối thủ ở gần và đẩy ra xa
+class.ren.skill3_desc	Bắn loạt tên theo phương ngang
+class.ren.ult_desc	Một mũi tên nhân lên thành cơn bão tên
+class.lyra.passive1_desc	10% khi đánh trúng: -15% di chuyển, -10% sát thương, -15% tốc độ đánh
+class.lyra.passive2_desc	20% cơ hội chặn sát thương
+class.lyra.skill1_desc	Bắn một quả cầu lửa đuổi mục tiêu
+class.lyra.skill2_desc	Triệu hồi 3 tay sai
+class.lyra.skill3_desc	Đám mây bám theo kẻ địch và giáng sét
+class.lyra.ult_desc	Vòng lửa 10 giây: thiêu đốt kẻ địch, chặn đạn
+class.taro.passive1_desc	10% khi đánh trúng: -15% phòng thủ của địch
+class.taro.passive2_desc	Sau 3 giây không tấn công, đòn kế tiếp +50%
+class.taro.skill1_desc	Vươn dài, nhảy lên và bổ xuống
+class.taro.skill2_desc	Xoay thương để chặn đạn
+class.taro.skill3_desc	Phóng thương rồi gọi về
+class.taro.ult_desc	Đâm kẻ địch, rồi đá cán thương lún sâu hơn
+char.kaia.role	Đấu sĩ nhanh nhẹn
+char.kaia.style	Cận chiến nhanh, cơ động với những nhát chém chính xác, nối liền.
+char.bruna.role	Đấu sĩ hạng nặng
+char.bruna.style	Đấu sĩ sát thương cao, cực trâu, kiểm soát không gian bằng những đòn nặng.
+char.ren.role	Xạ thủ nhanh nhẹn
+char.ren.style	Khống chế khoảng cách cơ động cao và gây áp lực chính xác với kỹ thuật bắn cung đa dạng.
+char.lyra.role	Khống chế / Bày bẫy
+char.lyra.style	Pháp sư nhanh nhẹn kiểm soát không gian bằng phép nhanh, di chuyển khó lường và phép thuật chính xác.
+char.taro.role	Chuyên gia tầm xa
+char.taro.style	Kiểm soát kỷ luật, cơ động với áp lực tầm xa và đòn đánh chính xác.
+stage.0.name	Võ đường Trên Mây
+stage.0.short	Võ đường Mây
+stage.0.tagline	Đền núi phía trên những tầng mây
+stage.1.name	Thành phố Neon
+stage.1.short	Thành phố Neon
+stage.1.tagline	Đấu trường sân thượng dưới mưa neon
+stage.2.name	Lò Rèn Dung Nham
+stage.2.short	Lò Rèn
+stage.2.tagline	Xưởng đúc nóng chảy trên biển dung nham
+stage.3.name	Ngọn Núi Khởi Đầu
+stage.3.short	Ngọn Núi
+stage.3.tagline	KO theo chiều dọc · bệ ngọc di động trên vực sương mù
+stage.4.name	Đồng Bằng Hợp Nhất
+stage.4.short	Đồng Bằng
+stage.4.tagline	KO theo chiều ngang · một cánh đồng dài, không chỗ nấp
+stage.5.name	Vực Thẳm Núi Lửa
+stage.5.short	Núi Lửa
+stage.5.tagline	Mọi mép đều KO · lửa phun trào từ hồ magma
+stage.6.name	Hang Ổ Chim Khổng Lồ
+stage.6.short	Ổ Chim
+stage.6.tagline	KO theo chiều ngang · chim khổng lồ quét qua đấu trường
+stage.7.name	Đài Tưởng Niệm Đại Dương Bị Bỏ Hoang
+stage.7.short	Đại Dương
+stage.7.tagline	Mọi mép đều KO · cá voi hạ xuống, nhảy xuống các tầng
+end.opponent_left	Đối thủ đã rời trận.
+end.opponent_timeout	Đối thủ đã ngừng phản hồi.
+end.connection_lost	Mất kết nối với đối thủ.
+end.you_left	Bạn đã rời trận.
+end.desync	Hai máy không khớp nhau (desync): không kết quả.
+end.unconfirmed	Không thể xác nhận kết thúc trận: không kết quả.
+end.handshake_failed	Không thể bắt đầu trận.
+end.peer_never_started	Đối thủ chưa từng vào trận: không kết quả.
+end.too_slow	Kết nối quá chậm để chơi: không kết quả.
+end.host_left	Chủ phòng đã rời trận: không kết quả.
+end.dropped	Kết nối của bạn đã rơi khỏi trận.
+status.aura	HÀO QUANG {0}
+status.fire_ring	VÒNG LỬA {0}
+status.tailwind	THUẬN GIÓ
+status.guard_broken	VỠ THẾ ĐỠ {0} giây
+status.guard	THẾ ĐỠ {0}%
+status.reloading	NẠP ĐẠN {0} giây
+status.recharging	HỒI NĂNG LƯỢNG {0} giây
+status.hexed	BỊ NGUYỀN
+status.armor_break	GIÁP -15%
+hud.perform	Thực hiện: {0}
+hud.times_up	Hết giờ!
+rewards.no_contest	Không kết quả: không có thưởng
+rewards.pve_victory	Thắng PvE  +{0}
+rewards.pve_match	Trận PvE  +{0}
+rewards.victory	Chiến thắng  +{0}
+rewards.match_played	Đã chơi trận  +{0}
+rewards.posture	Tư thế tốt {0}%  +{1}
+hud.revived	ĐÃ HỒI SINH
+quest.win	Thắng 3 trận
+quest.pve	Đánh bại CPU hai lần (PvE)
+quest.combo	Đánh 10 combo trọn vẹn
+quest.ult	Kích hoạt 3 tuyệt chiêu động tác
+quest.parry	Đỡ phản 5 đòn
+quest.posture	Kết thúc một trận với 80%+ tư thế tốt
+rewards.quest	Nhiệm vụ: {0}  +{1}
+bind.move_left	Sang trái
+bind.move_right	Sang phải
+bind.drop	Xuống / rơi nhanh
+bind.jump	Nhảy
+bind.jump_alt	Nhảy (phụ)
+bind.light	Đánh nhẹ
+bind.heavy	Đánh mạnh
+bind.block	Đỡ đòn
+bind.dash	Lướt
+bind.skill1	Kỹ năng 1
+bind.skill2	Kỹ năng 2
+bind.skill3	Kỹ năng 3
+bind.ultimate	Tuyệt chiêu
+bind.aim_up	Ngắm lên
+bind.special	Đặc biệt
+hud.rejected	Bị từ chối: {0}
+cv.low_confidence	Độ tin cậy nhận diện thấp
+cv.frozen	Hình bị đứng (giả mạo?)
+cv.snap	Đổi tư thế tức thì (macro?)
+cv.ok	OK
+cam.none	Không tìm thấy camera
+cam.off	Camera tắt
+cam.starting	Đang bật camera...
+cam.waiting_frames	Đang chờ hình từ camera - cho phép Unity truy cập camera trong System Settings > Privacy > Camera
+cam.live	Camera đang chạy ({0}x{1})
+pose.simulated	Mô phỏng (tư thế bàn phím)
+pose.camera_off	Nhận diện camera tắt - dùng tư thế mô phỏng bằng bàn phím
+pose.model_failed	Mô hình tư thế lỗi: {0}
+pose.loading	Đang tải mô hình tư thế...
+pose.live	Nhận diện cơ thể trực tiếp (MoveNet, {0} Hz)
+pose.step_back	Camera đang bật - lùi lại để thấy vai của bạn
+account.finish_browser	Hoàn tất đăng nhập trong trình duyệt (chọn Continue with Google)...
+account.signed_out_again	Đã đăng xuất. Đăng nhập lại để dùng tài khoản của bạn.
+account.signed_in_kept	Đã đăng nhập. Tên và tiến trình của bạn được giữ trong tài khoản này.

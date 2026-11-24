@@ -1,0 +1,260 @@
+room.waiting	プレイヤーを待っています
+room.joined	{0}  ·  {1} / {2} 人参加
+room.host	ホスト
+room.player_n	プレイヤー {0}
+room.you_suffix	 · あなた
+room.hazards_host_pick	{0} · ホストが選択
+room.hazards_on	ギミック オン
+room.hazards_off	ギミック オフ
+room.code_copied	ルームコード {0} をコピーしました。フレンドに貼り付けて送りましょう。
+invite.body	{0} が {1} に招待しています   （{2}秒）
+select.ult_name	ULT  {0}
+age.title	何歳ですか？
+age.body	どの年齢でもすべてのモードで遊べます。年齢はゲーム統計のためにプレイヤー名と一緒に記録されます。
+common.next	次へ
+age.error	年齢を入力するか、十字キーで設定してください。
+age.pad_hint	パッド：十字キー上/下で1ずつ、左/右で10ずつ変更 · A = 次へ
+rooms.enter_name	ルーム名を入力
+rooms.name_rules	英数字またはスペースで3-24文字。参加したフレンドに表示されます。ルームは2〜4人用です。
+rooms.create	作成
+common.one_moment	少々お待ちください...
+account.keep_name	ファイター名を保存しよう
+account.finish_in_browser	ブラウザで続けてください...
+account.sign_in_google	GOOGLE でサインイン
+account.play_without	アカウントなしでプレイ
+name.choose_first	先にプレイヤー名を決めてください。
+common.cancelled	キャンセルしました。
+name.welcome	ようこそ、ファイター！名前は？
+name.change_title	名前を変更
+name.rules	英数字または _ で3-16文字。本名ではなく、楽しいファイター名にしよう。フレンドがあなたを探して招待するときに使い、全員に表示されます。
+name.suggest	おまかせ
+name.checking	チェック中...
+name.lets_fight	さあ、戦おう！
+common.save	保存
+name.pad_hint_first	パッド：A = 戦おう · Y = 名前をおまかせ
+name.pad_hint	パッド：A = 保存 · Y = 名前をおまかせ
+online.connected_agreeing	接続しました。試合内容を確認中...
+online.host_settings_changed	ホストが設定を変更しました — ルームに再参加してください。
+online.version_mismatch	対戦相手のゲームのバージョンが異なります。両プレイヤーが同じビルドを使う必要があります。
+rooms.title	マッチメイク
+rooms.kicker	ルーム  ·  2-4人  ·  作成 · 参加 · 名前で招待
+rooms.create_rooms	ルーム作成
+rooms.join_room	ルームに参加
+rooms.creating	ルームを作成中...
+rooms.loading	ルームを読み込み中...
+rooms.none_yet	まだルームがありません！
+rooms.one_moment	少々お待ちください。
+rooms.empty_help	ルーム作成 で新しく作るか、フレンドのルームコードで ルームに参加 しましょう。
+rooms.capacity_note	ルームは2〜4人用です。フレンドはプレイヤー名で招待できます。
+rooms.invites_paused	ルーム招待を数分間停止中
+rooms.refresh	更新
+rooms.hint	マッチメイク  ·  ルーム
+rooms.new	新規
+rooms.you_host	あなたがホスト
+rooms.open	開く
+join.enter_code	ルームコードを入力
+join.body	フレンドから届いたルームコードを入力または貼り付けてください（Discord、チャットなど）。
+join.paste	貼り付け
+join.join	参加
+join.bad_code	ルームコードではありません。確認してもう一度お試しください（英数字のみ）。
+rooms.fight_starting	ルームの対戦が始まります。待つか、先にルームを退出してください。
+quick.kicker	VS ONLINE  ·  ソロ 1V1  ·  近くのプレイヤー
+quick.player_found	プレイヤーが見つかりました！
+quick.search_failed	検索失敗
+quick.not_searching	検索していません
+quick.connecting	対戦相手に接続中...
+quick.searching_near	近くのプレイヤーを検索中
+quick.stopped	検索が止まりました。もう一度お試しください。
+quick.press_search_again	再検索 を押してプレイヤーを探しましょう。
+quick.privacy	クイックマッチでは国（デバイスの設定から）を共有しますが、位置情報は共有しません。
+quick.search_again	再検索
+quick.hint	VS ONLINE  ·  クイックマッチ
+room.kicker_opening	ルーム  ·  ルームを開いています...
+room.opening	ルームを開いています...
+room.your_fighter	あなたのファイター
+room.locked_in	決定済み
+room.everyone_ok	全員が OK を押すと、対戦が自動で始まります。
+room.share_code	コードを共有するか、名前でフレンドを招待しましょう。
+room.empty_seat	空き席
+room.stage_you	ステージ（あなたが選択）
+room.stage_host	ステージ（ホストが選択）
+common.ok	OK
+room.loading	ロード中...
+room.change	変更
+room.starting	開始中...
+room.start_fight	対戦開始
+room.close	ルームを閉じる
+room.leave	ルームを退出
+room.hint	マッチメイク  ·  ルーム
+room.code	コード
+room.copy	コピー
+room.host_can_invite	ホストは名前でフレンドを招待できます。
+room.invite_by_name	名前でフレンドを招待
+room.invite	招待
+room.full	ルームは満員です。
+invite.title	ルーム招待
+invite.warning	名前は確認されていません：知っている人からの招待だけを受けてください。
+invite.accept	受ける
+invite.decline	断る
+room.hazards_on_btn	ギミック  オン
+room.hazards_off_btn	ギミック  オフ
+select.passive	パッシブ
+select.look	外見
+select.cosmetic	コスメ
+select.arcade_round	アーケード  ·  ラウンド {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   パッド 1 = 1P、パッド 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  矢印キー  ENTER  BACKSPACE  DEL
+select.dummy	ダミー
+select.round_rival	ラウンド {0} のライバル
+select.picks_at_start	対戦開始時に選択
+select.signature_weapon	専用武器  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  撃破
+select.arcade_route	アーケードルート  ·  ステージ {0} / {1}
+select.select_stage	ステージ選択
+select.local_versus	ローカル対戦
+select.arcade_rival	アーケードのライバル
+select.training_dummy	トレーニング用ダミー
+select.stage	ステージ
+select.hazards	ギミック
+select.fight	対戦
+select.change	変更
+select.confirm	決定
+select.random	ランダム
+select.fate	運命にまかせる
+select.ready_bang	準備OK！
+select.loadout	ロードアウト
+select.waiting_1p	1P を待っています
+select.1p_picks_dummy	1P がダミーを選択
+select.selecting	選択中
+select.identity_hidden	正体は秘密
+select.revealed_at_start	ラウンド開始時に判明
+select.ai_picks	AI がファイターを選択
+select.random_every_fight	毎試合ランダムなキャラクター
+select.any_character	全キャラクター · パッシブと武器はランダム
+select.lock_in_hint	決定  ·  またはキャラクターをクリック
+select.to_ready	で準備完了
+select.cpu_difficulty_pick	CPU の難易度  ·  対戦前に選択
+select.ai_note	インターネット不要。AI は毎試合、再戦でも新しいキャラクター、パッシブ、武器を選びます。
+select.pad_difficulty	十字キー 上 / 下  ·  難易度
+select.key_difficulty	W / S  ·  難易度
+select.start_training	トレーニング開始
+select.fight_bang	ファイト！
+select.click_to_start	または現在の選択でクリックして開始
+hud.ready	準備...
+hud.rival	ライバル
+hud.you	あなた
+hud.ultimate_ready	{0} · アルティメット準備完了
+hud.move_detected	{0} · ポーズを検出
+hud.failed	{0} · 失敗
+hud.training_title	トレーニング · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  トレーニング
+hud.intro_online	  ·  オンライン  ·  ESC / START：退出
+hud.ult_ready_press	ULT 準備完了 - {0} を押す
+hud.ult_ready	ULT 準備完了
+hud.sim_key	シミュレートキー：{0}
+hud.poses_live	 · ポーズ：腕を交差 = ガード / 腕を伸ばす = ファイアボール / 両手を上げる = ジャンプ
+hud.poses_keys	 · ポーズ 1 交差 / 2 パンチ / 3 上げる · P 猫背
+hud.poses_p2	 · ポーズ 8/9/0
+hud.training_help	トレーニング：T でアルティメットをチャージ · KO されたファイターは0%で復活 · Esc でポーズ
+hud.ult_pct	ULT {0}%
+hud.last_hit	ラストヒット  {0}
+hud.combo_hits	コンボ  {0} ヒット  +{1}%
+hud.combo	コンボ  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	P1 カメラ · シミュレート
+hud.cv_p1_live	P1 カメラ · ライブ
+hud.cv_p2_sim	P2 カメラ · シミュレート
+hud.cv_p2_live	P2 カメラ · ライブ
+hud.hits_prefix	{0} ヒット  
+results.no_contest	ノーコンテスト
+results.draw	引き分け！
+results.cpu_wins	CPU の勝ち
+results.you_win	あなたの勝ち！
+results.rival_wins	ライバルの勝ち
+results.wins	{0} の勝ち！
+results.takes_round	{0} がラウンドを取った
+results.stats	ヒット数  {0}\nフルコンボ  {1}   ·   最大コンボ  {2}
+results.stats2	\nジェスチャーアルティメット  {0}\nパリィ  {1}
+results.posture	\nいい姿勢  {0}%
+results.rewards_named	報酬（{0} のプロフィール）
+results.rewards_your	報酬（あなたのプロフィール）
+results.rewards_p1	報酬（P1 のプロフィール）
+results.coins	+{0} コイン  （合計 {1}）
+hud.do_pose	カメラの前でポーズ
+results.place_1	1位
+results.place_2	2位
+results.place_3	3位
+results.place_4	4位
+results.out	脱落
+results.out_1	脱落 · 1位
+results.out_2	脱落 · 2位
+results.out_3	脱落 · 3位
+results.out_4	脱落 · 4位
+results.red_team	レッドチーム
+results.blue_team	ブルーチーム
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0}人
+hud.keys_line1	P{0}：{1} 移動 · {2} ジャンプ · 
+hud.keys_line2	{0} 弱攻撃 · {1} 強攻撃 · {2} 必殺技 · 
+hud.keys_line3	{0} ガード · {1} ダッシュ · 
+hud.keys_line4	{0} スキル · {1} アルティメット
+results.characters	キャラクター
+results.stock_one	残り1ストック
+results.stocks	残り{0}ストック
+hud.respawn	復活
+hud.drop_in	参戦！
+results.main_menu	メインメニュー
+pause.title	ポーズ中
+pause.resume	再開
+pause.quit	メニューに戻る
+pause.hint	B / Backspace で再開
+leave.title	試合から退出しますか？
+leave.body	試合は続行されます。退出すると負けになります。
+leave.leave	退出
+leave.hint	B / Backspace / Esc / Start で残る
+results.winner	勝者
+results.training_no_rewards	トレーニング：報酬なし
+cv.posture	姿勢 {0}%
+cv.posture_low	姿勢 {0}% - 背筋を伸ばそう！
+cv.telemetry_ok	テレメトリ OK
+net.rooms_load_failed	ルームを読み込めませんでした：{0}
+net.host_limit	すでに {0} 個のルームのホストです。先にどれかを閉じてください。
+net.creating_named	「{0}」を作成中...
+net.room_ready_code	ルーム「{0}」の準備ができました。コード {1} を共有するか、フレンドを招待しましょう。
+net.create_failed	ルームを作成できませんでした：{0}
+net.joining_room	ルーム {0} に参加中...
+net.you_joined	「{0}」に参加しました。ファイターを選んで OK を押してください。
+net.no_room_code	コード {0} のルームはありません。コードを確認してもう一度お試しください。
+net.room_full_n	そのルームは満員です（{0}人）。
+net.join_failed	参加できませんでした：{0}
+net.update_failed	ルームを更新できませんでした：{0}
+net.could_not_what	{0}できませんでした：{1}
+net.what_stage	ステージを変更
+net.what_hazards	ギミックを変更
+net.press_ok_again	{0} 両者とも OK と 対戦開始 をもう一度押してください。
+net.udp_port	UDP ポート {0} を開けませんでした（使用中？）。
+net.lan_ready	LAN ホストの準備完了。フレンドの接続先：{0}  （ポート {1}）
+net.bad_ip	「{0}」は有効な IP アドレスではありません。
+net.connecting_to	{0} に接続中...
+net.sign_in_failed	サインイン失敗：{0}
+net.room_ready	ルーム「{0}」の準備ができました。フレンドにコードを共有しましょう。
+net.searching_in	{0}のプレイヤーを検索中...
+net.start_failed	対戦を開始できませんでした：{0}
+net.host_unreachable	ホストに接続できませんでした：{0}
+net.area_world	全世界
+net.area_country_and	あなたの国と{0}
+region.africa	アフリカ
+region.americas	南北アメリカ
+region.asia	アジア
+region.europe	ヨーロッパ
+region.oceania	オセアニア
+region.northern_africa	北アフリカ
+region.eastern_africa	東アフリカ
+region.middle_africa	中部アフリカ
+region.southern_africa	南部アフリカ
+region.western_africa	西アフリカ
+region.caribbean	カリブ

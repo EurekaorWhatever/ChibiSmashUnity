@@ -1,0 +1,250 @@
+region.central_america	中央アメリカ
+region.south_america	南アメリカ
+region.northern_america	北アメリカ
+region.central_asia	中央アジア
+region.eastern_asia	東アジア
+region.south_eastern_asia	東南アジア
+region.southern_asia	南アジア
+region.western_asia	西アジア
+region.eastern_europe	東ヨーロッパ
+region.northern_europe	北ヨーロッパ
+region.southern_europe	南ヨーロッパ
+region.western_europe	西ヨーロッパ
+region.australia_and_new_zealand	オーストラリアとニュージーランド
+region.melanesia	メラネシア
+region.micronesia	ミクロネシア
+region.polynesia	ポリネシア
+net.joined_connecting	「{0}」に参加しました。ホストに接続中...
+net.opponent_unreachable	対戦相手に接続できませんでした：{0}
+net.quick_filling	{0} / {1} 人。{2} 秒後に開始...
+invite.inviting	{0} を招待中...
+invite.sent_lasts	{0} に招待を送りました。有効時間は {1} 秒です。
+invite.send_failed	招待を送れませんでした：{0}
+invite.joining_room_of	{0} のルームに参加中...
+invite.paused	招待を {0} 分間停止中です。
+invite.invited_you	{0} が「{1}」に招待しています。
+invite.ran_out	{0} への招待の期限が切れました。
+friends.choose_name	フレンドに見つけてもらえるよう、プレイヤー名を決めてください。
+friends.unavailable	フレンド機能を利用できません：{0}
+friends.your_name_is	あなたの名前は {0} です。フレンドに伝えれば追加してもらえます。
+friends.set_name_failed	名前を設定できませんでした：{0}
+friends.request_sent	{0} にフレンド申請を送りました。
+friends.add_failed	{0} を追加できませんでした：{1}
+friends.offline	{0} は現在オフラインです。
+friends.request_then_invite	{0} にフレンド申請を送りました。承認されるとすぐに招待が送られます。
+friends.unreachable	{0} に接続できませんでした：{1}
+friends.creating_room_for	{0} のためにルームを作成中...
+friends.joining	{0} に参加中...
+friends.declined	{0} が招待を断りました。
+friends.version_mismatch	{0} から招待されましたが、ゲームのバージョンが異なります。
+friends.invite_sent_waiting	{0} に招待を送りました。参加を待っています...
+name.too_short	名前が短すぎます（{0} 文字以上）。
+name.too_long	名前が長すぎます（{0} 文字以内）。
+rooms.name_too_short	ルーム名が短すぎます（{0} 文字以上）。
+rooms.name_too_long	ルーム名が長すぎます（{0} 文字以内）。
+net.bad_code	有効なルームコードではありません（英数字のみ）。
+net.version_mismatch	そのルームは別のバージョンの Chibi Clash で作られました。両プレイヤーが同じバージョンを使う必要があります。
+net.loading_room	ルームを読み込み中...
+net.room_closed	ルームを閉じました。
+net.you_left	ルームを退出しました。
+net.waiting_host_game	開始中... ホストのゲームを待っています。
+net.choose_next_fight	ファイターを選んで OK を押すと次の対戦へ進みます。
+net.host_changed_stage	ホストがステージ設定を変更しました。もう一度 OK を押してください。
+net.room_closed_host_left	ルームが閉じられました（ホストが退出しました）。
+net.starting_fight	対戦を開始中...
+net.player_left_joined	プレイヤーが退出または参加しました。
+net.no_connection	接続がありません。
+net.fight_could_not_start	対戦を開始できませんでした。
+net.fight_starting_wait	対戦開始！フレンドの接続を待っています...
+net.choose_press_ok	ファイターを選んで OK を押してください。
+net.too_many_starts	開始の回数が多すぎます。1分待ってから 対戦開始 を押してください。
+net.fight_starting_connecting	対戦開始！接続中...
+net.could_not_connect	接続できませんでした。
+net.friend_no_answer	フレンドから応答がありませんでした。
+net.start_cancelled	開始をキャンセルしました。
+net.friend_no_connect	フレンドが接続できませんでした。
+net.enter_code	フレンドに表示されているルームコードを入力してください。
+net.lan_browser	ブラウザでは LAN プレイを利用できません。ルーム や マッチメイク を使うか、LAN は PC 版で遊んでください。
+net.enter_ip	ホストの IP アドレスを入力してください。
+net.this_pc_ip	このPCのIP
+net.signing_in	サインイン中...
+net.creating_private	プライベートルームを作成中...
+net.hosting_one	開いている試合が見つかりません。新しく作成しています...
+net.needs_2_to_4	対戦には2〜4人のプレイヤーが必要です。
+net.waiting_friend	フレンドの接続を待っています...
+net.waiting_friends	フレンドたちの接続を待っています...
+net.connection_running	別の接続がまだ実行中です。
+net.no_valid_info	ルームに有効な接続情報がありません（ホストが退出した？）。
+net.connecting_host	ホストに接続中...
+net.already_full	そのルームはすでに満員です。
+net.no_info	ルームに接続情報がありません（ホストが退出した？）。
+net.player_left_searching	そのプレイヤーは退出しました。再検索中...
+net.connected	接続しました！
+net.relay_failed	Relay サーバーへの接続に失敗しました。
+net.opponent_timeout	対戦相手に接続できませんでした（タイムアウト）。
+net.no_internet	インターネットに接続されていません。Wi-Fiかモバイルデータに接続すれば、どこでもフレンドと遊べます（同じネットワークなら LAN プレイが可能です）。
+invite.wait	次の招待を送るまで少しお待ちください。
+invite.type_name	フレンドのゲーム内の名前を入力してください（英数字または _ で3-16文字）。
+invite.own_name	それはあなた自身の名前です。
+invite.open_room_first	先にルームを開いてから招待してください。
+invite.room_full	あなたのルームはすでに満員です。
+invite.could_not_send	招待を送れませんでした。
+invite.too_many	現在招待が多すぎます。数秒後にもう一度お試しください。
+invite.cancelled	招待をキャンセルしました。
+invite.expired	その招待は期限切れです。
+invite.closed_full	ルームが満員になりました。招待を終了しました。
+invite.closed_joined	プレイヤーがルームに参加しました。招待を終了しました。
+invite.closed_room	招待はキャンセルされました：ルームが閉じられました。
+name.taken	この名前はすでに使われています
+name.check_unavailable	オンラインで名前を確認できませんでした。インターネット接続を確認してもう一度お試しください。
+name.too_soon	少し前に名前を変更したばかりです。1分後にもう一度お試しください。
+name.choose_different	別の名前を選んでください。
+friends.type_tag	フレンドの名前を Kira#4821 のように入力してください。
+friends.added	フレンドを追加しました。
+friends.declined_request	申請を断りました。
+friends.removed	フレンドを削除しました。
+friends.blocked	プレイヤーをブロックしました。
+friends.a_friend	フレンド
+friends.type_player_tag	プレイヤーの名前を Kira#4821 のように入力してください。
+friends.wait_invite	もう一度招待するまで少しお待ちください。
+name.enter	名前を入力してください。
+name.bad_chars	使えるのは英数字と _ だけです（スペースや記号は使えません）。
+rooms.name_bad_chars	ルーム名に使えるのは英数字、スペース、_ - ' ! だけです。
+rooms.name_double_space	ルーム名に連続したスペースは使えません。
+rooms.name_choose_different	別のルーム名を選んでください。
+gesture.cross_arms	腕を交差
+gesture.punch_forward	前にパンチ
+gesture.raise_hands	両手を上げる
+class.kaia.passive1_desc	攻撃速度 +15%
+class.kaia.passive2_desc	ライフスティール 5%
+class.kaia.skill1_desc	前にダッシュして相手を突く
+class.kaia.skill2_desc	完璧なタイミングでダメージを反射
+class.kaia.skill3_desc	素早く何度も突く
+class.kaia.ult_desc	10秒間：通常攻撃が横向きの衝撃波を放つ
+class.bruna.passive1_desc	ダメージ +20%、攻撃速度 -15%
+class.bruna.passive2_desc	ダメージ +20%、移動速度 -15%
+class.bruna.skill1_desc	相手をつかんで地面に叩きつける
+class.bruna.skill2_desc	竜巻のように回転して連続攻撃
+class.bruna.ult_desc	床を叩きつけて衝撃波を起こす
+class.ren.passive1_desc	クリティカル率 +20%
+class.ren.passive2_desc	移動速度 +10%（10秒間、クールダウン30秒）
+class.ren.skill1_desc	横に後退しながら射撃
+class.ren.skill2_desc	近くの相手を締め上げて押し返す
+class.ren.skill3_desc	横方向に矢の雨を放つ
+class.ren.ult_desc	1本の矢が分裂して矢の嵐になる
+class.lyra.passive1_desc	ヒット時10%の確率：移動 -15%、ダメージ -10%、攻撃速度 -15%
+class.lyra.passive2_desc	20%の確率でダメージを防ぐ
+class.lyra.skill1_desc	追尾する炎の弾を放つ
+class.lyra.skill2_desc	手下を3体召喚
+class.lyra.skill3_desc	雲が敵を追いかけて雷を落とす
+class.lyra.ult_desc	10秒間の炎の輪：敵を焼き、飛び道具を防ぐ
+class.taro.passive1_desc	ヒット時10%の確率：敵の防御 -15%
+class.taro.passive2_desc	3秒間攻撃しないと、次の攻撃 +50%
+class.taro.skill1_desc	伸ばして跳び、振り下ろす
+class.taro.skill2_desc	長柄武器を回して飛び道具を防ぐ
+class.taro.skill3_desc	槍を投げて呼び戻す
+class.taro.ult_desc	敵を突き刺し、柄を蹴ってさらに深く
+char.kaia.role	俊敏なアタッカー
+char.kaia.style	素早く機動力のある近接戦闘。正確でつながる斬撃が持ち味。
+char.bruna.role	パワーファイター
+char.bruna.style	高火力・高耐久のファイター。重い攻撃で空間を支配する。
+char.ren.role	俊敏な射手
+char.ren.style	高い機動力で間合いを管理し、多彩な弓の技で正確に圧をかける。
+char.lyra.role	ゾーニング / セットアップ
+char.lyra.style	素早い詠唱、トリッキーな動き、正確な魔法で空間を支配する俊敏な魔法使い。
+char.taro.role	リーチのスペシャリスト
+char.taro.style	規律正しく機動的なコントロール型。長いリーチの圧と正確な攻撃が持ち味。
+stage.0.name	空の道場
+stage.0.short	空の道場
+stage.0.tagline	雲の上にある山の神社
+stage.1.name	ネオンシティ
+stage.1.short	ネオンシティ
+stage.1.tagline	ネオンの雨が降る屋上アリーナ
+stage.2.name	溶岩の鍛冶場
+stage.2.short	溶岩の鍛冶場
+stage.2.tagline	溶岩の海の上の鋳造所
+stage.3.name	始まりの山
+stage.3.short	山
+stage.3.tagline	縦方向KO · 霧の奈落の上を動く翡翠の足場
+stage.4.name	結束の平原
+stage.4.short	平原
+stage.4.tagline	横方向KO · 隠れる場所のない広い平原
+stage.5.name	火山の奈落
+stage.5.short	火山
+stage.5.tagline	すべての端でKO · マグマの湖から炎が噴き出す
+stage.6.name	巨鳥の巣
+stage.6.short	鳥の巣
+stage.6.tagline	横方向KO · 巨大な鳥がアリーナを薙ぎ払う
+stage.7.name	見捨てられた海底遺跡
+stage.7.short	海底遺跡
+stage.7.tagline	すべての端でKO · クジラが降りてきたら下の段へ
+end.opponent_left	対戦相手が試合から退出しました。
+end.opponent_timeout	対戦相手が応答しなくなりました。
+end.connection_lost	対戦相手との接続が切れました。
+end.you_left	試合から退出しました。
+end.desync	2つのゲームの状態が一致しませんでした（desync）：ノーコンテスト。
+end.unconfirmed	試合結果を確認できませんでした：ノーコンテスト。
+end.handshake_failed	試合を開始できませんでした。
+end.peer_never_started	対戦相手が試合に参加しませんでした：ノーコンテスト。
+end.too_slow	接続が遅すぎてプレイできません：ノーコンテスト。
+end.host_left	ホストが試合から退出しました：ノーコンテスト。
+end.dropped	あなたの接続が試合から切断されました。
+status.aura	オーラ {0}
+status.fire_ring	炎の輪 {0}
+status.tailwind	追い風
+status.guard_broken	ガードブレイク {0}秒
+status.guard	ガード {0}%
+status.reloading	リロード中 {0}秒
+status.recharging	チャージ中 {0}秒
+status.hexed	呪い
+status.armor_break	アーマー -15%
+hud.perform	ポーズ：{0}
+hud.times_up	タイムアップ！
+rewards.no_contest	ノーコンテスト：報酬なし
+rewards.pve_victory	PvE 勝利  +{0}
+rewards.pve_match	PvE 試合  +{0}
+rewards.victory	勝利  +{0}
+rewards.match_played	試合参加  +{0}
+rewards.posture	いい姿勢 {0}%  +{1}
+hud.revived	復活
+quest.win	3試合に勝利する
+quest.pve	CPU に2回勝つ（PvE）
+quest.combo	フルコンボを10回決める
+quest.ult	ジェスチャーアルティメットを3回発動する
+quest.parry	攻撃を5回パリィする
+quest.posture	いい姿勢80%以上で試合を終える
+rewards.quest	クエスト：{0}  +{1}
+bind.move_left	左に移動
+bind.move_right	右に移動
+bind.drop	降りる / 急降下
+bind.jump	ジャンプ
+bind.jump_alt	ジャンプ（予備）
+bind.light	弱攻撃
+bind.heavy	強攻撃
+bind.block	ガード
+bind.dash	ダッシュ
+bind.skill1	スキル 1
+bind.skill2	スキル 2
+bind.skill3	スキル 3
+bind.ultimate	アルティメット
+bind.aim_up	上に狙う
+bind.special	必殺技
+hud.rejected	却下：{0}
+cv.low_confidence	トラッキングの信頼度が低い
+cv.frozen	映像が停止（なりすまし？）
+cv.snap	ポーズが瞬時に変化（マクロ？）
+cv.ok	OK
+cam.none	カメラが見つかりません
+cam.off	カメラオフ
+cam.starting	カメラを起動中...
+cam.waiting_frames	カメラ映像を待っています - システム設定 > プライバシー > カメラ で Unity にカメラへのアクセスを許可してください
+cam.live	カメラ動作中（{0}x{1}）
+pose.simulated	シミュレーション（キーボードポーズ）
+pose.camera_off	カメラトラッキングオフ - キーボードでシミュレートしたポーズを使用
+pose.model_failed	ポーズモデルのエラー：{0}
+pose.loading	ポーズモデルを読み込み中...
+pose.live	ライブ全身トラッキング（MoveNet、{0} Hz）
+pose.step_back	カメラオン - 肩が映るように後ろに下がってください
+account.finish_browser	ブラウザでサインインを完了してください（「Google で続行」を選択）...
+account.signed_out_again	サインアウトしました。アカウントを使うにはもう一度サインインしてください。
+account.signed_in_kept	サインインしました。名前と進行状況はこのアカウントに保存されます。

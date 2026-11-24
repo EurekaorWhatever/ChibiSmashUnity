@@ -166,7 +166,7 @@ namespace ChibiClash
             if (Config.training)
             {
                 f.Revive();
-                Fx.Text(f.Center + Vector2.up * 1.5f, "REVIVED", Color.white, 1f);
+                Fx.Text(f.Center + Vector2.up * 1.5f, Loc.T("hud.revived"), Color.white, 1f);
                 return;
             }
             Fx.Text(f.Center + Vector2.up * 2f, "K.O.!", new Color(1f, 0.3f, 0.3f), 2f);
@@ -211,12 +211,12 @@ namespace ChibiClash
             bool won = Winner == 0;
 
             int matchCoins = Config.pve ? (won ? 50 : 15) : (won ? 40 : 15);
-            RewardLog.Add((Config.pve ? (won ? "PvE victory" : "PvE match") : won ? "Victory" : "Match played") + "  +" + matchCoins);
+            RewardLog.Add(Loc.T(Config.pve ? (won ? "rewards.pve_victory" : "rewards.pve_match") : won ? "rewards.victory" : "rewards.match_played", matchCoins));
             s.coins += matchCoins;
 
             float posture = me.Gestures.PostureAverage;
             int postureCoins = Mathf.RoundToInt(posture * 30f);
-            RewardLog.Add("Good posture " + Mathf.RoundToInt(posture * 100f) + "%  +" + postureCoins);
+            RewardLog.Add(Loc.T("rewards.posture", Mathf.RoundToInt(posture * 100f), postureCoins));
             s.coins += postureCoins;
 
             if (won) s.Progress("win", 1, RewardLog);

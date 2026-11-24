@@ -1,0 +1,259 @@
+lang.backdrop	IDIOMA
+lang.title	ELIGE TU IDIOMA
+lang.subtitle	Todo el juego usará este idioma. Puedes cambiarlo cuando quieras en AJUSTES.
+lang.search_hint	Buscar idiomas...
+lang.no_match	Ningún idioma coincide con tu búsqueda.
+lang.english_text	Texto en inglés por ahora
+lang.confirm	CONFIRMAR  ·  {0}
+lang.confirm_none	CONFIRMAR
+lang.pad_hint	Escribe para buscar · Arriba / Abajo para elegir · Enter o A del mando = confirmar
+common.cancel	CANCELAR
+settings.language	IDIOMA  ·  {0}
+difficulty.dummy	Muñeco
+difficulty.easy	Fácil
+difficulty.medium	Normal
+difficulty.hard	Difícil
+difficulty.dummy_upper	MUÑECO
+difficulty.easy_upper	FÁCIL
+difficulty.medium_upper	NORMAL
+difficulty.hard_upper	DIFÍCIL
+nav.home	INICIO
+nav.play	JUGAR
+nav.training	ENTRENAMIENTO
+nav.arcade	ARCADE
+nav.collection	COLECCIÓN
+nav.settings	AJUSTES
+account.signed_in_as	Sesión iniciada como {0}.
+account.signed_in	Sesión iniciada.
+account.signed_out	Sesión cerrada.
+keys.who	P{0} {1}
+keys.reserved	{0} es una tecla de pose / postura (1 2 3, 8 9 0, teclado numérico 7 8 9, P, -). Elige otra.
+keys.swapped	{0};  {1} ahora es {2}
+match.versus	{0}  VS  {1}
+online.locked_age	El juego en línea es para jugadores de 13 años o más.
+arcade.clear_toast	¡ARCADE COMPLETADO! Derrotaste a los {0} rivales
+precheck.too_dark	Muy oscuro ({0}%) - añade luz
+precheck.too_bright	Muy claro ({0}%) - reduce los reflejos
+precheck.good	Bien ({0}%)
+loading.weapon_art	Arte de armas: {0}
+loading.fighter	Luchador: {0}
+precheck.checking	COMPROBANDO... {0}
+wipe.character_select	SELECCIÓN DE PERSONAJE
+wipe.arcade	ARCADE
+results.rematch	REVANCHA
+results.continue	CONTINUAR
+results.finish	TERMINAR
+results.next_battle	SIGUIENTE COMBATE
+wipe.arcade_clear	ARCADE COMPLETADO
+precheck.title	COMPROBACIÓN DE CÁMARA
+precheck.camera_unavailable	Cámara no disponible
+precheck.simulated_feed	Imagen simulada (webcam apagada)
+precheck.upper_body_ok	Torso dentro del encuadre
+precheck.step_back	Aléjate un poco - deben verse los hombros y la cadera
+loading.interface	Gráficos de la interfaz
+loading.typefaces	Tipografías
+loading.pose_model	Modelo de detección de poses
+loading.ready	Listo
+onboarding.welcome	¡BIENVENIDO!
+onboarding.your_account	TU CUENTA
+onboarding.your_name	TU NOMBRE DE JUGADOR
+rooms.backdrop_create	MATCHMAKING  ·  CREAR SALAS
+rooms.backdrop_join	MATCHMAKING  ·  UNIRSE A SALA
+precheck.all_passed	TODO EN ORDEN
+precheck.failed	COMPROBACIÓN FALLIDA
+precheck.lighting	ILUMINACIÓN
+precheck.framing	ENCUADRE
+precheck.posture	POSTURA
+precheck.upright	Bien erguido
+precheck.sit_up	Siéntate derecho para ganar monedas extra
+common.retry	REINTENTAR
+precheck.play_anyway	JUGAR IGUALMENTE
+common.back	ATRÁS
+precheck.ranked_note	Las colas clasificatorias exigen pasar esta comprobación. Las partidas casuales pueden saltarla.
+precheck.hint	COMPROBACIÓN DE CÁMARA PREVIA
+hint.select	ELEGIR
+home.play	JUGAR
+home.training	ENTRENAMIENTO
+home.arcade	ARCADE
+home.collection	COLECCIÓN DE PERSONAJES
+home.settings	AJUSTES
+home.exit	SALIR DEL JUEGO
+home.play_desc	Partida rápida Vs Online, salas de matchmaking con amigos o Vs CPU
+home.training_desc	Configuración de cámara, práctica de gestos y un muñeco de entrenamiento
+home.arcade_desc	Los cinco rivales seguidos, en todos los escenarios
+home.collection_desc	Aspectos, armas y el banner de cosméticos
+home.settings_desc	Dificultad, opciones de cámara y controles
+home.exit_desc	Cerrar el juego
+tips.1	Llena el medidor ULT y pulsa Definitiva - luego haz la pose de tu luchador ante la cámara antes de que acabe la cuenta atrás.
+tips.2	Más DEF reduce el daño de cada golpe y hace más fuerte tu bloqueo.
+tips.3	Una buena postura detectada por la cámara da monedas extra tras cada partida.
+tips.4	Los aspectos y las armas son solo estéticos - las estadísticas nunca cambian por lo que lleve un luchador.
+tips.5	En Entrenamiento, pulsa T para llenar tu definitiva. El muñeco siempre se levanta.
+tips.6	Cada luchador tiene una de dos pasivas - elígela en el panel de equipo tras confirmar.
+tips.7	Las partidas en línea usan rollback netcode: ambos juegos ejecutan el mismo combate con las mismas entradas.
+stats.power	PODER
+stats.speed	VELOCIDAD
+stats.range	ALCANCE
+stats.endurance	AGUANTE
+stats.recovery	RECUPERACIÓN
+training.use_block	Bloqueo · definitiva de Cuerpo a cuerpo y Magia
+training.use_fireball	Bola de fuego · definitiva de A distancia y Asta
+training.use_superjump	Supersalto · definitiva de Pesado
+menu.online_locked	Los modos en línea son para jugadores de 13 años o más.
+menu.no_internet	Sin internet: conéctate a Wi-Fi o datos móviles. VS AI funciona sin conexión.
+menu.four_player_soon	2v2 y Battle Royale necesitan soporte para 4 jugadores, que llegará en una actualización.
+profile.edit_name	EDITAR NOMBRE
+profile.win_loss	V {0}  ·  D {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	LISTO
+loading.loading	CARGANDO
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   completada x{2}
+arcade.rule_fight_all	Lucha contra los {0} personajes seguidos, en orden aleatorio.
+arcade.rule_difficulty	Dificultad de la CPU: {0} (cámbiala en Ajustes).
+arcade.final	FINAL
+arcade.round	RONDA {0}
+training.cv_setup_source	CONFIG. CV · {0}
+training.status	Cámara: {0}\nSeguimiento: {1}\nDetectado: {2}
+training.off	apagada
+training.none	ninguno
+training.status_posture	   ·   Postura {0}%   ·   Telemetría {1}
+collection.gold_cinematic_suffix	 · CINEMÁTICA DORADA
+collection.only	SOLO {0}
+collection.pull1	TIRADA x1  ·  {0}
+collection.pull10	TIRADA x10  ·  {0}
+collection.dup_suffix	  (repetido +20)
+collection.new_suffix	  ¡NUEVO!
+collection.pull_toast	¡{0}! {1} · {2}
+settings.match_time_value	{0} segundos  <size=12><color=#9AA6BC>(igual en todas las partidas)</color></size>
+settings.change_name_as	CAMBIAR NOMBRE  ·  {0}
+settings.change_name	CAMBIAR NOMBRE
+settings.keys_help	Haz clic en un control y pulsa una tecla, o haz clic en esa casilla con un botón del ratón (Esc / B del mando / un clic en otro sitio cancela; 5 s de límite). Si otro jugador ya la usa, se intercambian.\nPoses de cámara: cruzar brazos = bloqueo · brazo extendido al lado = bola de fuego · ambas manos arriba = supersalto (poses con teclado: 1/2/3 y 8/9/0).
+rarity.common	COMÚN
+rarity.rare	RARO
+rarity.epic	ÉPICO
+rarity.legendary	LEGENDARIO
+skin.default	Clásico
+skin.mint	Menta Pop
+skin.shadow	Sombra
+skin.sakura	Sakura
+skin.inferno	Infierno
+skin.celestial	Celestial
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	SOLO +13
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nEQUIPOS
+play.four_player_later	2v2 y Battle Royale llegarán con el soporte para 4 jugadores en una actualización.
+play.team_tag	4P · 2 EQUIPOS
+play.royale_tag	4P · TODOS CONTRA TODOS
+collection.all_fighters	TODOS LOS LUCHADORES
+arcade.mode	MODO ARCADE
+home.tagline	LUCHA EN ARENA  ·  DEFINITIVAS CON GESTOS CORPORALES
+play.royale_card	BATTLE\nROYALE
+training.kicker	CONFIGURACIÓN DE CÁMARA Y PRÁCTICA
+settings.camera_tracking	SEGUIMIENTO POR CÁMARA (WEBCAM)
+training.camera_off	SEGUIMIENTO POR CÁMARA: NO
+training.camera_on	SEGUIMIENTO POR CÁMARA: SÍ
+collection.hint	COLECCIÓN DE PERSONAJES
+play.choose_style	ELIGE UN ESTILO DE JUEGO
+online.kicker	ELIGE UN ESTILO DE JUEGO  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	ELIGE TU COMBATE  ·  VS ONLINE · MATCHMAKING · VS CPU
+play.coming_soon	PRÓXIMAMENTE
+training.cv	VISIÓN ARTIFICIAL
+online.connection	CONEXIÓN
+collection.banner	BANNER DE COSMÉTICOS
+settings.cpu_difficulty	DIFICULTAD DE LA CPU
+play.create_join	CREAR · UNIRSE A SALAS
+settings.cv_overlay	CV EN PANTALLA DURANTE LA PARTIDA
+quests.coins_note	Las monedas solo se ganan jugando: victorias, PvE, misiones y buena postura detectada por la cámara.
+collection.odds	Común 60% · Raro 28% · Épico 10% · Legendario 2%
+collection.equip	EQUIPAR
+collection.equipped	EQUIPADO
+hint.exit	SALIR
+home.exit_upper	SALIR DEL JUEGO
+exit.title	¿SALIR DEL JUEGO?
+online.royale_desc	Cada uno por su cuenta. Gana el último luchador en pie.
+arcade.kicker	CINCO RIVALES · UNA PARTIDA
+loading.for_battle	PARA EL COMBATE
+online.invites_note	Las invitaciones de amigos a salas aparecen aquí. Las salas con amigos están en JUGAR > MATCHMAKING.
+settings.kicker	JUEGO · CÁMARA · CONTROLES
+training.gestures_live	GESTOS  (haz la pose ante la cámara - puñetazo = un brazo estirado hacia el lado)
+training.gestures_sim	GESTOS  (mantén pulsada la tecla para simular la pose)
+settings.key_bindings	CONTROLES
+settings.keys_reset	Controles restablecidos
+play.locked	BLOQUEADO
+arcade.rule_retry	¿Perdiste una ronda? Continúa y vuelve a intentarlo.
+home.hint	MENÚ PRINCIPAL
+settings.master_volume	VOLUMEN GENERAL
+settings.match_time	DURACIÓN DE PARTIDA
+play.matchmaking_card	MATCH\nMAKING
+hint.move	MOVER
+play.matchmaking_desc	Crea una sala, comparte su código o invita a amigos por su nombre.
+play.no_internet_tag	SIN INTERNET
+online.no_internet_body	Ahora mismo no hay internet. Conéctate a Wi-Fi o datos móviles, o juega Vs CPU.
+common.off	NO
+online.offline	SIN CONEXIÓN
+common.on	SÍ
+settings.player1	JUGADOR 1
+settings.player2	JUGADOR 2
+training.practice_dummy	PRACTICAR CON EL MUÑECO
+settings.precheck	COMPROBACIÓN DE CÁMARA PREVIA
+loading.prepare	PREPÁRATE
+settings.listening_hint	PULSA UNA TECLA O HAZ CLIC EN LA CASILLA  ·  ESC / B DEL MANDO CANCELA  ·  LOS BOTONES DEL MANDO NO SE PUEDEN ASIGNAR
+training.slouch_note	Pulsa P para alternar una postura encorvada y ver cómo baja la puntuación de postura.
+settings.profile_reset	Perfil restablecido (se conservan el nombre y la sesión)
+collection.pull_to_unlock	Tira para desbloquear
+quests.title	MISIONES
+online.quick_match	PARTIDA RÁPIDA
+play.online_desc	Partida rápida con un jugador cerca de ti, o responde a la invitación de un amigo.
+online.solo_desc	Partida rápida: lucha contra alguien que esté buscando ahora, primero los más cercanos.
+settings.reset_keys	RESTABLECER CONTROLES
+settings.reset_profile	RESTABLECER PERFIL
+arcade.rival_unknown	RIVAL  ???
+play.rooms_tag	SALAS · 2-4 JUGADORES
+online.rollback_body	Rollback netcode: ambos juegos ejecutan el mismo combate con las mismas entradas, así es rápido y justo.
+settings.screen_shake	VIBRACIÓN DE PANTALLA
+profile.set_name	PONER NOMBRE
+settings.sfx_volume	VOLUMEN DE EFECTOS
+training.simulate_pose	SIMULAR POSE
+collection.kicker	ASPECTOS · ARMAS · BANNER DE COSMÉTICOS
+training.slouch	ENCORVARSE
+online.solo_card	SOLO\n1V1
+home.start	EMPEZAR
+arcade.start	EMPEZAR ARCADE
+exit.stay	QUEDARSE
+settings.sure	¿SEGURO?
+settings.sure_reset_profile	¿SEGURO? SE BORRA TODO EL PROGRESO
+collection.banner_note	Solo aspectos y cinemáticas de definitiva. Las estadísticas son iguales en todos los aspectos - nada se gana pagando.
+hint.tabs	PESTAÑAS
+loading.tip	CONSEJO
+training.hint	ENTRENAMIENTO  /  CONFIG. CV
+arcade.rule_stages	El escenario cambia cada ronda, desde la Montaña del Comienzo hasta el Monumento Oceánico.
+online.team_desc	Dos equipos de dos. Sin fuego amigo: tus golpes nunca dañan a tu compañero.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  ESTILO DE JUEGO
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Las victorias dan monedas y progreso de misiones, igual que en VS CPU.
+exit.saved_note	Tu perfil, monedas y colección se guardan en este dispositivo.
+settings.key_listening	tecla o clic aquí
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Eliges tu luchador y FÁCIL, NORMAL o DIFÍCIL. La CPU recibe un luchador al azar.
+account.keep_name_body	Inicia sesión con tu cuenta de Google y tu nombre y datos irán contigo: cada vez que abras el juego y en cualquier ordenador. Otra cuenta de Google recibe su propio nombre nuevo.
+name.you_are	¡Eres {0}!
+name.you_are_unchecked	¡Eres {0}! Comprobaremos el nombre cuando juegues en línea.
+online.could_not_start	La partida no pudo empezar ({0}).
+rooms.your_rooms	TUS SALAS
+rooms.count_click	{0}  ·  haz clic en una sala para abrirla
+rooms.code_value	CÓDIGO  {0}
+rooms.players_count	{0} / {1} JUGADORES
+rooms.more	+ {0} salas más
+rooms.created	Sala "{0}" creada. Haz clic en ella para compartir el código o invitar a amigos.
+quick.searching	BUSCANDO
+quick.looking_in	BUSCANDO EN:  {0}
+room.kicker	SALA  ·  2-4 JUGADORES  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	LISTOS PARA LUCHAR
+room.full_suffix	 · SALA LLENA

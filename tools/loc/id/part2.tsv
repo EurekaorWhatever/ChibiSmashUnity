@@ -1,0 +1,256 @@
+rooms.more	+ {0} room lagi
+rooms.created	Room "{0}" dibuat. Klik untuk membagikan kode atau mengundang teman.
+quick.searching	MENCARI
+quick.looking_in	MENCARI DI:  {0}
+room.kicker	ROOM  ·  2-4 PEMAIN  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	SIAP BERTARUNG
+room.full_suffix	 · ROOM PENUH
+room.waiting	MENUNGGU PEMAIN
+room.joined	{0}  ·  {1} / {2} BERGABUNG
+room.host	HOST
+room.player_n	PEMAIN {0}
+room.you_suffix	 · KAMU
+room.hazards_host_pick	{0} · PILIHAN HOST
+room.hazards_on	RINTANGAN NYALA
+room.hazards_off	RINTANGAN MATI
+room.code_copied	Kode room {0} disalin. Tempel untuk temanmu.
+invite.body	{0} mengundangmu ke {1}   ({2} dtk)
+select.ult_name	ULT  {0}
+age.title	BERAPA USIAMU?
+age.body	Semua usia bisa memainkan semua mode. Usiamu dicatat bersama nama pemain untuk statistik game.
+common.next	LANJUT
+age.error	Ketik usiamu, atau atur dengan D-pad.
+age.pad_hint	Gamepad: D-pad atas/bawah mengubah 1, kiri/kanan mengubah 10 · A = lanjut
+rooms.enter_name	MASUKKAN NAMA ROOM
+rooms.name_rules	3-24 huruf, angka, atau spasi. Teman melihatnya saat bergabung. Room menampung 2 sampai 4 pemain.
+rooms.create	BUAT
+common.one_moment	TUNGGU SEBENTAR...
+account.keep_name	SIMPAN NAMA PETARUNGMU
+account.finish_in_browser	SELESAIKAN DI BROWSER...
+account.sign_in_google	MASUK DENGAN GOOGLE
+account.play_without	MAIN TANPA AKUN
+name.choose_first	Pilih nama pemainmu dulu.
+common.cancelled	Dibatalkan.
+name.welcome	SELAMAT DATANG, PETARUNG! SIAPA NAMAMU?
+name.change_title	GANTI NAMAMU
+name.rules	3-16 huruf, angka, atau _. Pilih nama petarung yang seru, bukan nama aslimu. Nama ini dipakai teman untuk menemukan dan mengundangmu, dan dilihat semua orang.
+name.suggest	SARANKAN
+name.checking	MEMERIKSA...
+name.lets_fight	AYO BERTARUNG!
+common.save	SIMPAN
+name.pad_hint_first	Gamepad: A = ayo bertarung · Y = sarankan nama
+name.pad_hint	Gamepad: A = simpan · Y = sarankan nama
+online.connected_agreeing	Terhubung. Menyepakati pertandingan...
+online.host_settings_changed	Pengaturan host berubah — gabung ulang ke room.
+online.version_mismatch	Lawanmu memakai versi game yang berbeda. Kedua pemain butuh build yang sama.
+rooms.title	MATCHMAKING
+rooms.kicker	ROOM  ·  2-4 PEMAIN  ·  BUAT · GABUNG · UNDANG LEWAT NAMA
+rooms.create_rooms	BUAT ROOM
+rooms.join_room	GABUNG ROOM
+rooms.creating	MEMBUAT ROOM-MU...
+rooms.loading	MEMUAT ROOM-MU...
+rooms.none_yet	Belum ada room!
+rooms.one_moment	Tunggu sebentar.
+rooms.empty_help	Tekan BUAT ROOM untuk membuatnya, atau GABUNG ROOM dengan kode room teman.
+rooms.capacity_note	Room menampung 2 sampai 4 pemain. Undang teman lewat nama pemain mereka.
+rooms.invites_paused	Undangan room dijeda beberapa menit
+rooms.refresh	MUAT ULANG
+rooms.hint	MATCHMAKING  ·  ROOM
+rooms.new	BARU
+rooms.you_host	KAMU HOST
+rooms.open	BUKA
+join.enter_code	MASUKKAN KODE ROOM
+join.body	Ketik atau tempel kode room yang dikirim temanmu (Discord, chat...).
+join.paste	TEMPEL
+join.join	GABUNG
+join.bad_code	Itu bukan kode room. Periksa lalu coba lagi (hanya huruf dan angka).
+rooms.fight_starting	Pertarungan room akan dimulai. Tunggu, atau keluar dari room dulu.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  PEMAIN DI DEKATMU
+quick.player_found	PEMAIN DITEMUKAN!
+quick.search_failed	PENCARIAN GAGAL
+quick.not_searching	TIDAK MENCARI
+quick.connecting	Menghubungkan ke lawanmu...
+quick.searching_near	Mencari pemain di dekatmu
+quick.stopped	Pencarian berhenti. Coba lagi.
+quick.press_search_again	Tekan CARI LAGI untuk mencari pemain.
+quick.privacy	Quick match membagikan negaramu (dari pengaturan perangkat), bukan lokasimu.
+quick.search_again	CARI LAGI
+quick.hint	VS ONLINE  ·  QUICK MATCH
+room.kicker_opening	ROOM  ·  MEMBUKA ROOM...
+room.opening	Membuka room...
+room.your_fighter	PETARUNGMU
+room.locked_in	TERKUNCI
+room.everyone_ok	Semua menekan OK: pertarungan mulai otomatis.
+room.share_code	Bagikan kodenya, atau undang teman lewat nama.
+room.empty_seat	Kursi kosong
+room.stage_you	ARENA (kamu yang pilih)
+room.stage_host	ARENA (host yang pilih)
+common.ok	OK
+room.loading	MEMUAT...
+room.change	GANTI
+room.starting	MEMULAI...
+room.start_fight	MULAI BERTARUNG
+room.close	TUTUP ROOM
+room.leave	KELUAR ROOM
+room.hint	MATCHMAKING  ·  ROOM
+room.code	KODE
+room.copy	SALIN
+room.host_can_invite	Host bisa mengundang teman lewat nama.
+room.invite_by_name	UNDANG TEMAN LEWAT NAMA
+room.invite	UNDANG
+room.full	Room sudah penuh.
+invite.title	UNDANGAN ROOM
+invite.warning	Nama tidak diverifikasi: terima undangan hanya dari orang yang kamu kenal.
+invite.accept	TERIMA
+invite.decline	TOLAK
+room.hazards_on_btn	RINTANGAN  NYALA
+room.hazards_off_btn	RINTANGAN  MATI
+select.passive	PASIF
+select.look	TAMPILAN
+select.cosmetic	KOSMETIK
+select.arcade_round	ARCADE  ·  RONDE {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   GAMEPAD 1 = 1P, GAMEPAD 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  PANAH  ENTER  BACKSPACE  DEL
+select.dummy	BONEKA
+select.round_rival	RIVAL RONDE {0}
+select.picks_at_start	MEMILIH SAAT PERTARUNGAN MULAI
+select.signature_weapon	SENJATA KHAS  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  DIKALAHKAN
+select.arcade_route	RUTE ARCADE  ·  ARENA {0} / {1}
+select.select_stage	PILIH ARENA
+select.local_versus	VERSUS LOKAL
+select.arcade_rival	RIVAL ARCADE
+select.training_dummy	BONEKA LATIHAN
+select.stage	ARENA
+select.hazards	RINTANGAN
+select.fight	BERTARUNG
+select.change	GANTI
+select.confirm	KONFIRMASI
+select.random	ACAK
+select.fate	SERAHKAN PADA NASIB
+select.ready_bang	SIAP!
+select.loadout	LOADOUT
+select.waiting_1p	MENUNGGU 1P
+select.1p_picks_dummy	1P MEMILIH BONEKA
+select.selecting	MEMILIH
+select.identity_hidden	IDENTITAS TERSEMBUNYI
+select.revealed_at_start	TERUNGKAP SAAT RONDE DIMULAI
+select.ai_picks	AI MEMILIH PETARUNGNYA
+select.random_every_fight	KARAKTER ACAK TIAP PERTARUNGAN
+select.any_character	KARAKTER APA SAJA · PASIF DAN SENJATA ACAK
+select.lock_in_hint	KUNCI  ·  ATAU KLIK KARAKTER
+select.to_ready	UNTUK SIAP
+select.cpu_difficulty_pick	KESULITAN CPU  ·  PILIH SEBELUM BERTARUNG
+select.ai_note	Tidak perlu internet. AI memilih karakter, pasif, dan senjata baru di setiap pertarungan, termasuk tanding ulang.
+select.pad_difficulty	D-PAD ATAS / BAWAH  ·  KESULITAN
+select.key_difficulty	W / S  ·  KESULITAN
+select.start_training	MULAI LATIHAN
+select.fight_bang	BERTARUNG!
+select.click_to_start	ATAU KLIK UNTUK MULAI DENGAN PILIHAN SAAT INI
+hud.ready	SIAP...
+hud.rival	RIVAL
+hud.you	KAMU
+hud.ultimate_ready	{0} · ULTIMATE SIAP
+hud.move_detected	{0} · GERAKAN TERDETEKSI
+hud.failed	{0} · GAGAL
+hud.training_title	LATIHAN · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  LATIHAN
+hud.intro_online	  ·  ONLINE  ·  ESC / START: KELUAR
+hud.ult_ready_press	ULT SIAP - tekan {0}
+hud.ult_ready	ULT SIAP
+hud.sim_key	tombol simulasi: {0}
+hud.poses_live	 · pose: silangkan lengan = tangkis / lengan ke samping = bola api / tangan ke atas = lompat
+hud.poses_keys	 · pose 1 silang / 2 pukul / 3 angkat · P bungkuk
+hud.poses_p2	 · pose 8/9/0
+hud.training_help	LATIHAN: T mengisi ultimate · petarung yang KO muncul lagi di 0% · Esc jeda
+hud.ult_pct	ULT {0}%
+hud.last_hit	SERANGAN TERAKHIR  {0}
+hud.combo_hits	KOMBO  {0} HIT  +{1}%
+hud.combo	KOMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	KAMERA P1 · SIMULASI
+hud.cv_p1_live	KAMERA P1 · LANGSUNG
+hud.cv_p2_sim	KAMERA P2 · SIMULASI
+hud.cv_p2_live	KAMERA P2 · LANGSUNG
+hud.hits_prefix	{0} HIT
+results.no_contest	TANPA HASIL
+results.draw	SERI!
+results.cpu_wins	CPU MENANG
+results.you_win	KAMU MENANG!
+results.rival_wins	RIVAL MENANG
+results.wins	{0} MENANG!
+results.takes_round	{0} memenangkan ronde
+results.stats	Serangan kena  {0}\nKombo penuh  {1}   ·   Kombo terbaik  {2}
+results.stats2	\nUltimate gerakan  {0}\nParry  {1}
+results.posture	\nPostur baik  {0}%
+results.rewards_named	HADIAH (profil {0})
+results.rewards_your	HADIAH (profilmu)
+results.rewards_p1	HADIAH (profil P1)
+results.coins	+{0} koin  (total {1})
+hud.do_pose	peragakan pose di depan kamera
+results.place_1	KE-1
+results.place_2	KE-2
+results.place_3	KE-3
+results.place_4	KE-4
+results.out	GUGUR
+results.out_1	GUGUR · KE-1
+results.out_2	GUGUR · KE-2
+results.out_3	GUGUR · KE-3
+results.out_4	GUGUR · KE-4
+results.red_team	TIM MERAH
+results.blue_team	TIM BIRU
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} PEMAIN
+hud.keys_line1	P{0}: {1} gerak · {2} lompat ·
+hud.keys_line2	{0} ringan · {1} berat · {2} spesial ·
+hud.keys_line3	{0} tangkis · {1} dash ·
+hud.keys_line4	{0} skill · {1} ult
+results.characters	KARAKTER
+results.stock_one	1 NYAWA
+results.stocks	{0} NYAWA
+hud.respawn	MUNCUL LAGI
+hud.drop_in	MASUK!
+results.main_menu	MENU UTAMA
+pause.title	JEDA
+pause.resume	LANJUTKAN
+pause.quit	KELUAR KE MENU
+pause.hint	B / Backspace untuk melanjutkan
+leave.title	TINGGALKAN PERTANDINGAN?
+leave.body	Pertandingan tetap berjalan. Keluar dihitung sebagai kekalahan.
+leave.leave	KELUAR
+leave.hint	B / Backspace / Esc / Start untuk tetap bermain
+results.winner	PEMENANG
+results.training_no_rewards	Latihan: tanpa hadiah
+cv.posture	Postur {0}%
+cv.posture_low	Postur {0}% - duduk tegak!
+cv.telemetry_ok	Telemetri OK
+net.rooms_load_failed	Tidak bisa memuat room-mu: {0}
+net.host_limit	Kamu sudah menjadi host {0} room. Tutup satu dulu.
+net.creating_named	Membuat "{0}"...
+net.room_ready_code	Room "{0}" siap. Bagikan kode {1} atau undang teman.
+net.create_failed	Tidak bisa membuat room: {0}
+net.joining_room	Bergabung ke room {0}...
+net.you_joined	Kamu bergabung ke "{0}". Pilih petarungmu dan tekan OK.
+net.no_room_code	Tidak ada room dengan kode {0}. Periksa kodenya dan coba lagi.
+net.room_full_n	Room itu penuh ({0} pemain).
+net.join_failed	Tidak bisa bergabung: {0}
+net.update_failed	Tidak bisa memperbarui room: {0}
+net.could_not_what	Tidak bisa {0}: {1}
+net.what_stage	mengganti arena
+net.what_hazards	mengganti rintangan
+net.press_ok_again	{0} Kalian berdua tekan OK dan MULAI BERTARUNG lagi.
+net.udp_port	Tidak bisa membuka port UDP {0} (sudah dipakai?).
+net.lan_ready	Host LAN siap. Temanmu bergabung ke: {0}  (port {1})
+net.bad_ip	"{0}" bukan alamat IP yang valid.
+net.connecting_to	Menghubungkan ke {0}...
+net.sign_in_failed	Gagal masuk: {0}
+net.room_ready	Room "{0}" siap. Bagikan kodenya ke temanmu.
+net.searching_in	Mencari pemain di {0}...
+net.start_failed	Tidak bisa memulai pertarungan: {0}
+net.host_unreachable	Tidak bisa menjangkau host: {0}
+net.area_world	seluruh dunia

@@ -1,0 +1,256 @@
+rooms.more	+ {0} غرف أخرى
+rooms.created	أُنشئت الغرفة "{0}". انقر عليها لمشاركة الرمز أو دعوة الأصدقاء.
+quick.searching	جارٍ البحث
+quick.looking_in	البحث في:  {0}
+room.kicker	غرفة  ·  2-4 لاعبين  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	جاهز للقتال
+room.full_suffix	 · الغرفة ممتلئة
+room.waiting	بانتظار اللاعبين
+room.joined	{0}  ·  انضم {1} / {2}
+room.host	المضيف
+room.player_n	اللاعب {0}
+room.you_suffix	 · أنت
+room.hazards_host_pick	{0} · اختيار المضيف
+room.hazards_on	المخاطر مفعّلة
+room.hazards_off	المخاطر متوقفة
+room.code_copied	نُسخ رمز الغرفة {0}. الصقه لصديقك.
+invite.body	{0} يدعوك إلى {1}   ({2} ث)
+select.ult_name	ULT  {0}
+age.title	كم عمرك؟
+age.body	يمكن لكل الأعمار لعب كل الأنماط. يُسجَّل عمرك مع اسمك في اللعبة لأغراض الإحصاءات.
+common.next	التالي
+age.error	اكتب عمرك، أو اضبطه بأزرار الاتجاه.
+age.pad_hint	وحدة التحكم: أعلى/أسفل يغيّر بمقدار 1، يمين/يسار بمقدار 10 · A = التالي
+rooms.enter_name	أدخل اسم الغرفة
+rooms.name_rules	من 3 إلى 24 حرفًا أو رقمًا أو مسافة. يراه أصدقاؤك عند الانضمام. تتسع الغرفة من 2 إلى 4 لاعبين.
+rooms.create	إنشاء
+common.one_moment	لحظة واحدة...
+account.keep_name	احتفظ باسم مقاتلك
+account.finish_in_browser	أكمل في المتصفح...
+account.sign_in_google	تسجيل الدخول عبر GOOGLE
+account.play_without	العب بدون حساب
+name.choose_first	اختر اسمك في اللعبة أولًا.
+common.cancelled	أُلغي.
+name.welcome	أهلًا أيها المقاتل! ما اسمك؟
+name.change_title	غيّر اسمك
+name.rules	من 3 إلى 16 حرفًا أو رقمًا أو _. اختر اسم مقاتل ممتعًا، لا اسمك الحقيقي. به يجدك أصدقاؤك ويدعونك، ويراه الجميع.
+name.suggest	اقتراح
+name.checking	جارٍ التحقق...
+name.lets_fight	هيا نقاتل!
+common.save	حفظ
+name.pad_hint_first	وحدة التحكم: A = هيا نقاتل · Y = اقتراح اسم
+name.pad_hint	وحدة التحكم: A = حفظ · Y = اقتراح اسم
+online.connected_agreeing	تم الاتصال. جارٍ الاتفاق على المباراة...
+online.host_settings_changed	تغيّرت إعدادات المضيف — انضم إلى الغرفة من جديد.
+online.version_mismatch	خصمك يستخدم إصدارًا مختلفًا من اللعبة. يحتاج اللاعبان إلى الإصدار نفسه.
+rooms.title	المطابقة
+rooms.kicker	الغرف  ·  2-4 لاعبين  ·  إنشاء · انضمام · دعوة بالاسم
+rooms.create_rooms	إنشاء غرف
+rooms.join_room	الانضمام إلى غرفة
+rooms.creating	جارٍ إنشاء غرفتك...
+rooms.loading	جارٍ تحميل غرفك...
+rooms.none_yet	لا توجد غرف بعد!
+rooms.one_moment	لحظة واحدة.
+rooms.empty_help	اضغط إنشاء غرف لإنشاء غرفة، أو الانضمام إلى غرفة برمز غرفة صديقك.
+rooms.capacity_note	تتسع الغرف من 2 إلى 4 لاعبين. ادعُ أصدقاءك بأسمائهم في اللعبة.
+rooms.invites_paused	دعوات الغرف متوقفة مؤقتًا لبضع دقائق
+rooms.refresh	تحديث
+rooms.hint	المطابقة  ·  الغرف
+rooms.new	جديد
+rooms.you_host	أنت المضيف
+rooms.open	فتح
+join.enter_code	أدخل رمز الغرفة
+join.body	اكتب أو الصق رمز الغرفة الذي أرسله صديقك (Discord، الدردشة...).
+join.paste	لصق
+join.join	انضمام
+join.bad_code	هذا ليس رمز غرفة. تحقق منه وحاول مجددًا (أحرف وأرقام فقط).
+rooms.fight_starting	معركة في الغرفة على وشك البدء. انتظرها، أو غادر الغرفة أولًا.
+quick.kicker	VS ONLINE  ·  فردي 1V1  ·  لاعب قريب منك
+quick.player_found	تم العثور على لاعب!
+quick.search_failed	فشل البحث
+quick.not_searching	لا يوجد بحث
+quick.connecting	جارٍ الاتصال بخصمك...
+quick.searching_near	جارٍ البحث عن لاعب قريب منك
+quick.stopped	توقف البحث. حاول مجددًا.
+quick.press_search_again	اضغط ابحث مجددًا للبحث عن لاعب.
+quick.privacy	المباراة السريعة تشارك بلدك (من إعدادات الجهاز)، ولا تشارك موقعك أبدًا.
+quick.search_again	ابحث مجددًا
+quick.hint	VS ONLINE  ·  مباراة سريعة
+room.kicker_opening	غرفة  ·  جارٍ فتح الغرفة...
+room.opening	جارٍ فتح الغرفة...
+room.your_fighter	مقاتلك
+room.locked_in	تم التثبيت
+room.everyone_ok	يضغط الجميع موافق: تبدأ المعركة تلقائيًا.
+room.share_code	شارك الرمز، أو ادعُ أصدقاءك بالاسم.
+room.empty_seat	مقعد فارغ
+room.stage_you	الساحة (أنت تختار)
+room.stage_host	الساحة (المضيف يختار)
+common.ok	OK
+room.loading	جارٍ التحميل...
+room.change	تغيير
+room.starting	جارٍ البدء...
+room.start_fight	ابدأ المعركة
+room.close	إغلاق الغرفة
+room.leave	مغادرة الغرفة
+room.hint	المطابقة  ·  الغرفة
+room.code	الرمز
+room.copy	نسخ
+room.host_can_invite	يمكن للمضيف دعوة صديق بالاسم.
+room.invite_by_name	ادعُ صديقًا بالاسم
+room.invite	دعوة
+room.full	الغرفة ممتلئة.
+invite.title	دعوة إلى غرفة
+invite.warning	الأسماء غير موثّقة: اقبل الدعوات فقط ممن تعرفهم.
+invite.accept	قبول
+invite.decline	رفض
+room.hazards_on_btn	المخاطر  مفعّلة
+room.hazards_off_btn	المخاطر  متوقفة
+select.passive	قدرة سلبية
+select.look	المظهر
+select.cosmetic	تجميلي
+select.arcade_round	الأركيد  ·  الجولة {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   وحدة التحكم 1 = 1P، وحدة التحكم 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  الأسهم  ENTER  BACKSPACE  DEL
+select.dummy	دمية
+select.round_rival	منافس الجولة {0}
+select.picks_at_start	يختار عند بدء المعركة
+select.signature_weapon	السلاح المميز  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	هُزم {0}
+select.arcade_route	مسار الأركيد  ·  الساحة {0} / {1}
+select.select_stage	اختر الساحة
+select.local_versus	نزال محلي
+select.arcade_rival	منافس الأركيد
+select.training_dummy	دمية التدريب
+select.stage	الساحة
+select.hazards	المخاطر
+select.fight	قتال
+select.change	تغيير
+select.confirm	تأكيد
+select.random	عشوائي
+select.fate	اتركها للقدر
+select.ready_bang	جاهز!
+select.loadout	التجهيز
+select.waiting_1p	بانتظار 1P
+select.1p_picks_dummy	1P يختار الدمية
+select.selecting	جارٍ الاختيار
+select.identity_hidden	الهوية مخفية
+select.revealed_at_start	تُكشف عند بدء الجولة
+select.ai_picks	الذكاء الاصطناعي يختار مقاتله
+select.random_every_fight	شخصية عشوائية في كل معركة
+select.any_character	أي شخصية · قدرة سلبية وسلاح عشوائيان
+select.lock_in_hint	تثبيت  ·  أو انقر على شخصية
+select.to_ready	للاستعداد
+select.cpu_difficulty_pick	صعوبة الكمبيوتر  ·  اختر قبل المعركة
+select.ai_note	لا حاجة للإنترنت. يختار الذكاء الاصطناعي شخصية وقدرة سلبية وسلاحًا جديدًا لكل معركة، حتى في إعادة النزال.
+select.pad_difficulty	أعلى / أسفل  ·  الصعوبة
+select.key_difficulty	W / S  ·  الصعوبة
+select.start_training	ابدأ التدريب
+select.fight_bang	قاتل!
+select.click_to_start	أو انقر للبدء بالاختيارات الحالية
+hud.ready	استعد...
+hud.rival	المنافس
+hud.you	أنت
+hud.ultimate_ready	{0} · الضربة القاضية جاهزة
+hud.move_detected	{0} · رُصدت الحركة
+hud.failed	{0} · فشل
+hud.training_title	التدريب · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  التدريب
+hud.intro_online	  ·  عبر الإنترنت  ·  ESC / START: مغادرة
+hud.ult_ready_press	ULT جاهزة - اضغط {0}
+hud.ult_ready	ULT جاهزة
+hud.sim_key	مفتاح المحاكاة: {0}
+hud.poses_live	 · الوضعيات: ذراعان متقاطعتان = صدّ / ذراع للجانب = كرة نار / اليدان للأعلى = قفز
+hud.poses_keys	 · وضعيات 1 تقاطع / 2 لكمة / 3 رفع · P انحناء
+hud.poses_p2	 · وضعيات 8/9/0
+hud.training_help	التدريب: T يملأ الضربة القاضية · المقاتل المهزوم يعود عند 0% · Esc إيقاف مؤقت
+hud.ult_pct	ULT {0}%
+hud.last_hit	آخر ضربة  {0}
+hud.combo_hits	كومبو  {0} ضربات  +{1}%
+hud.combo	كومبو  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	كاميرا P1 · محاكاة
+hud.cv_p1_live	كاميرا P1 · مباشر
+hud.cv_p2_sim	كاميرا P2 · محاكاة
+hud.cv_p2_live	كاميرا P2 · مباشر
+hud.hits_prefix	{0} ضربات
+results.no_contest	بلا نتيجة
+results.draw	تعادل!
+results.cpu_wins	فاز الكمبيوتر
+results.you_win	لقد فزت!
+results.rival_wins	فاز المنافس
+results.wins	فاز {0}!
+results.takes_round	{0} يفوز بالجولة
+results.stats	ضربات أصابت  {0}\nكومبو كامل  {1}   ·   أفضل كومبو  {2}
+results.stats2	\nضربات قاضية بالحركة  {0}\nصدّ مضاد  {1}
+results.posture	\nجلسة جيدة  {0}%
+results.rewards_named	المكافآت (ملف {0})
+results.rewards_your	المكافآت (ملفك)
+results.rewards_p1	المكافآت (ملف P1)
+results.coins	+{0} عملة  (المجموع {1})
+hud.do_pose	اتخذ الوضعية أمام الكاميرا
+results.place_1	الأول
+results.place_2	الثاني
+results.place_3	الثالث
+results.place_4	الرابع
+results.out	خارج
+results.out_1	خارج · الأول
+results.out_2	خارج · الثاني
+results.out_3	خارج · الثالث
+results.out_4	خارج · الرابع
+results.red_team	الفريق الأحمر
+results.blue_team	الفريق الأزرق
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} لاعبين
+hud.keys_line1	P{0}: {1} حركة · {2} قفز ·
+hud.keys_line2	{0} خفيفة · {1} ثقيلة · {2} خاصة ·
+hud.keys_line3	{0} صدّ · {1} اندفاع ·
+hud.keys_line4	{0} مهارات · {1} ult
+results.characters	الشخصيات
+results.stock_one	حياة واحدة
+results.stocks	{0} أرواح
+hud.respawn	العودة
+hud.drop_in	انضم!
+results.main_menu	القائمة الرئيسية
+pause.title	متوقف مؤقتًا
+pause.resume	استئناف
+pause.quit	الخروج إلى القائمة
+pause.hint	B / Backspace للاستئناف
+leave.title	مغادرة المباراة؟
+leave.body	تستمر المباراة. المغادرة تُحتسب خسارة.
+leave.leave	مغادرة
+leave.hint	B / Backspace / Esc / Start للبقاء
+results.winner	الفائز
+results.training_no_rewards	التدريب: بلا مكافآت
+cv.posture	الجلسة {0}%
+cv.posture_low	الجلسة {0}% - اجلس مستقيمًا!
+cv.telemetry_ok	القياس سليم
+net.rooms_load_failed	تعذّر تحميل غرفك: {0}
+net.host_limit	أنت تستضيف {0} غرف بالفعل. أغلق واحدة أولًا.
+net.creating_named	جارٍ إنشاء "{0}"...
+net.room_ready_code	الغرفة "{0}" جاهزة. شارك الرمز {1} أو ادعُ صديقًا.
+net.create_failed	تعذّر إنشاء الغرفة: {0}
+net.joining_room	جارٍ الانضمام إلى الغرفة {0}...
+net.you_joined	انضممت إلى "{0}". اختر مقاتلك واضغط موافق.
+net.no_room_code	لا توجد غرفة بالرمز {0}. تحقق من الرمز وحاول مجددًا.
+net.room_full_n	تلك الغرفة ممتلئة ({0} لاعبين).
+net.join_failed	تعذّر الانضمام: {0}
+net.update_failed	تعذّر تحديث الغرفة: {0}
+net.could_not_what	تعذّر {0}: {1}
+net.what_stage	تغيير الساحة
+net.what_hazards	تغيير المخاطر
+net.press_ok_again	{0} اضغطا موافق وابدأ المعركة من جديد.
+net.udp_port	تعذّر فتح منفذ UDP {0} (مستخدم بالفعل؟).
+net.lan_ready	مضيف LAN جاهز. ينضم صديقك إلى: {0}  (المنفذ {1})
+net.bad_ip	"{0}" ليس عنوان IP صالحًا.
+net.connecting_to	جارٍ الاتصال بـ {0}...
+net.sign_in_failed	فشل تسجيل الدخول: {0}
+net.room_ready	الغرفة "{0}" جاهزة. شارك الرمز مع صديقك.
+net.searching_in	جارٍ البحث عن لاعبين في {0}...
+net.start_failed	تعذّر بدء المعركة: {0}
+net.host_unreachable	تعذّر الوصول إلى المضيف: {0}
+net.area_world	العالم كله

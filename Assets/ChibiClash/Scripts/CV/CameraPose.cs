@@ -181,13 +181,13 @@ namespace ChibiClash
         /// <summary>One line describing what the tracker is doing, for the setup screen.</summary>
         public string Status()
         {
-            if (playerIndex != 0) return "Simulated (keyboard poses)";
-            if (!wantCamera()) return "Camera tracking off - using keyboard-simulated poses";
+            if (playerIndex != 0) return Loc.T("pose.simulated");
+            if (!wantCamera()) return Loc.T("pose.camera_off");
             if (!WebcamFeed.Running) return WebcamFeed.Status;
             var m = MoveNetPoseSource.Shared;
-            if (m.Failed) return "Pose model failed: " + m.Error;
-            if (!m.Ready) return "Loading pose model...";
-            return m.HasPose ? "Live body tracking (MoveNet, " + Mathf.RoundToInt(m.Fps) + " Hz)" : "Camera on - step back so your shoulders are in view";
+            if (m.Failed) return Loc.T("pose.model_failed", m.Error);
+            if (!m.Ready) return Loc.T("pose.loading");
+            return m.HasPose ? Loc.T("pose.live", Mathf.RoundToInt(m.Fps)) : Loc.T("pose.step_back");
         }
     }
 }

@@ -1,0 +1,256 @@
+rooms.more	+ {0} और रूम
+rooms.created	रूम "{0}" बन गया। कोड शेयर करने या दोस्तों को बुलाने के लिए उस पर क्लिक करें।
+quick.searching	खोज रहे हैं
+quick.looking_in	यहाँ खोज रहे हैं:  {0}
+room.kicker	रूम  ·  2-4 खिलाड़ी  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	लड़ने को तैयार
+room.full_suffix	 · रूम भरा है
+room.waiting	खिलाड़ियों का इंतज़ार
+room.joined	{0}  ·  {1} / {2} जुड़े
+room.host	होस्ट
+room.player_n	खिलाड़ी {0}
+room.you_suffix	 · आप
+room.hazards_host_pick	{0} · होस्ट की पसंद
+room.hazards_on	खतरे चालू
+room.hazards_off	खतरे बंद
+room.code_copied	रूम कोड {0} कॉपी हो गया। इसे अपने दोस्त को पेस्ट करें।
+invite.body	{0} आपको {1} में बुला रहे हैं   ({2} से.)
+select.ult_name	ULT  {0}
+age.title	आपकी उम्र क्या है?
+age.body	हर उम्र के लोग हर मोड खेल सकते हैं। गेम आँकड़ों के लिए आपकी उम्र आपके खिलाड़ी नाम के साथ दर्ज होती है।
+common.next	आगे
+age.error	अपनी उम्र टाइप करें, या D-pad से सेट करें।
+age.pad_hint	गेमपैड: D-pad ऊपर/नीचे 1 बदलता है, बाएँ/दाएँ 10 · A = आगे
+rooms.enter_name	रूम का नाम डालें
+rooms.name_rules	3-24 अक्षर, अंक या स्पेस। जुड़ने पर दोस्त इसे देखते हैं। एक रूम में 2 से 4 खिलाड़ी।
+rooms.create	बनाएँ
+common.one_moment	एक पल...
+account.keep_name	अपना फ़ाइटर नाम बनाए रखें
+account.finish_in_browser	ब्राउज़र में पूरा करें...
+account.sign_in_google	GOOGLE से साइन इन करें
+account.play_without	बिना अकाउंट खेलें
+name.choose_first	पहले अपना खिलाड़ी नाम चुनें।
+common.cancelled	रद्द किया गया।
+name.welcome	स्वागत है, फ़ाइटर! आपका नाम क्या है?
+name.change_title	अपना नाम बदलें
+name.rules	3-16 अक्षर, अंक या _। कोई मज़ेदार फ़ाइटर नाम चुनें, अपना असली नाम नहीं। इसी से दोस्त आपको ढूँढते और बुलाते हैं, और इसे सब देखते हैं।
+name.suggest	सुझाव दें
+name.checking	जाँच हो रही है...
+name.lets_fight	चलो लड़ें!
+common.save	सेव करें
+name.pad_hint_first	गेमपैड: A = चलो लड़ें · Y = नाम सुझाएँ
+name.pad_hint	गेमपैड: A = सेव · Y = नाम सुझाएँ
+online.connected_agreeing	कनेक्ट हो गया। मैच तय हो रहा है...
+online.host_settings_changed	होस्ट की सेटिंग्स बदल गईं — रूम में फिर से जुड़ें।
+online.version_mismatch	आपका प्रतिद्वंद्वी गेम का दूसरा वर्शन चला रहा है। दोनों खिलाड़ियों को एक ही बिल्ड चाहिए।
+rooms.title	मैचमेकिंग
+rooms.kicker	रूम  ·  2-4 खिलाड़ी  ·  बनाएँ · जुड़ें · नाम से बुलाएँ
+rooms.create_rooms	रूम बनाएँ
+rooms.join_room	रूम में जुड़ें
+rooms.creating	आपका रूम बन रहा है...
+rooms.loading	आपके रूम लोड हो रहे हैं...
+rooms.none_yet	अभी तक कोई रूम नहीं!
+rooms.one_moment	एक पल।
+rooms.empty_help	रूम बनाने के लिए रूम बनाएँ दबाएँ, या दोस्त के रूम कोड से रूम में जुड़ें।
+rooms.capacity_note	एक रूम में 2 से 4 खिलाड़ी। दोस्तों को उनके खिलाड़ी नाम से बुलाएँ।
+rooms.invites_paused	रूम इनवाइट कुछ मिनटों के लिए रुके हैं
+rooms.refresh	रिफ़्रेश
+rooms.hint	मैचमेकिंग  ·  रूम
+rooms.new	नया
+rooms.you_host	आप होस्ट हैं
+rooms.open	खोलें
+join.enter_code	रूम कोड डालें
+join.body	दोस्त का भेजा रूम कोड टाइप या पेस्ट करें (Discord, चैट...)।
+join.paste	पेस्ट
+join.join	जुड़ें
+join.bad_code	यह रूम कोड नहीं है। जाँचें और फिर कोशिश करें (सिर्फ़ अक्षर और अंक)।
+rooms.fight_starting	रूम की लड़ाई शुरू होने वाली है। इंतज़ार करें, या पहले रूम छोड़ें।
+quick.kicker	VS ONLINE  ·  सोलो 1V1  ·  आपके पास का खिलाड़ी
+quick.player_found	खिलाड़ी मिल गया!
+quick.search_failed	खोज विफल
+quick.not_searching	खोज नहीं हो रही
+quick.connecting	आपके प्रतिद्वंद्वी से कनेक्ट हो रहे हैं...
+quick.searching_near	आपके पास खिलाड़ी खोज रहे हैं
+quick.stopped	खोज रुक गई। फिर कोशिश करें।
+quick.press_search_again	खिलाड़ी ढूँढने के लिए फिर खोजें दबाएँ।
+quick.privacy	क्विक मैच आपका देश (डिवाइस सेटिंग्स से) शेयर करता है, आपकी लोकेशन कभी नहीं।
+quick.search_again	फिर खोजें
+quick.hint	VS ONLINE  ·  क्विक मैच
+room.kicker_opening	रूम  ·  रूम खुल रहा है...
+room.opening	रूम खुल रहा है...
+room.your_fighter	आपका फ़ाइटर
+room.locked_in	लॉक हो गया
+room.everyone_ok	सब OK दबाएँ: लड़ाई अपने आप शुरू होगी।
+room.share_code	कोड शेयर करें, या दोस्तों को नाम से बुलाएँ।
+room.empty_seat	खाली सीट
+room.stage_you	स्टेज (आप चुनें)
+room.stage_host	स्टेज (होस्ट चुनें)
+common.ok	OK
+room.loading	लोड हो रहा है...
+room.change	बदलें
+room.starting	शुरू हो रहा है...
+room.start_fight	लड़ाई शुरू करें
+room.close	रूम बंद करें
+room.leave	रूम छोड़ें
+room.hint	मैचमेकिंग  ·  रूम
+room.code	कोड
+room.copy	कॉपी
+room.host_can_invite	होस्ट किसी दोस्त को नाम से बुला सकता है।
+room.invite_by_name	दोस्त को नाम से बुलाएँ
+room.invite	बुलाएँ
+room.full	रूम भरा हुआ है।
+invite.title	रूम इनवाइट
+invite.warning	नामों की पुष्टि नहीं होती: सिर्फ़ जान-पहचान वालों के इनवाइट स्वीकारें।
+invite.accept	स्वीकारें
+invite.decline	मना करें
+room.hazards_on_btn	खतरे  चालू
+room.hazards_off_btn	खतरे  बंद
+select.passive	पैसिव
+select.look	लुक
+select.cosmetic	कॉस्मेटिक
+select.arcade_round	आर्केड  ·  राउंड {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   गेमपैड 1 = 1P, गेमपैड 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  एरो  ENTER  BACKSPACE  DEL
+select.dummy	डमी
+select.round_rival	राउंड {0} का प्रतिद्वंद्वी
+select.picks_at_start	लड़ाई शुरू होने पर चुनेगा
+select.signature_weapon	खास हथियार  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  हारा
+select.arcade_route	आर्केड रूट  ·  स्टेज {0} / {1}
+select.select_stage	स्टेज चुनें
+select.local_versus	लोकल मुकाबला
+select.arcade_rival	आर्केड प्रतिद्वंद्वी
+select.training_dummy	ट्रेनिंग डमी
+select.stage	स्टेज
+select.hazards	खतरे
+select.fight	लड़ें
+select.change	बदलें
+select.confirm	पुष्टि करें
+select.random	रैंडम
+select.fate	किस्मत पर छोड़ें
+select.ready_bang	तैयार!
+select.loadout	लोडआउट
+select.waiting_1p	1P का इंतज़ार
+select.1p_picks_dummy	1P डमी चुनता है
+select.selecting	चुन रहे हैं
+select.identity_hidden	पहचान छिपी है
+select.revealed_at_start	राउंड शुरू होने पर पता चलेगा
+select.ai_picks	AI अपना फ़ाइटर चुनता है
+select.random_every_fight	हर लड़ाई में रैंडम कैरेक्टर
+select.any_character	कोई भी कैरेक्टर · रैंडम पैसिव और हथियार
+select.lock_in_hint	लॉक इन  ·  या किसी कैरेक्टर पर क्लिक करें
+select.to_ready	तैयार होने के लिए
+select.cpu_difficulty_pick	CPU कठिनाई  ·  लड़ाई से पहले चुनें
+select.ai_note	इंटरनेट की ज़रूरत नहीं। AI हर लड़ाई के लिए नया कैरेक्टर, पैसिव और हथियार चुनता है, रीमैच में भी।
+select.pad_difficulty	D-PAD ऊपर / नीचे  ·  कठिनाई
+select.key_difficulty	W / S  ·  कठिनाई
+select.start_training	ट्रेनिंग शुरू करें
+select.fight_bang	लड़ो!
+select.click_to_start	या मौजूदा चुनाव के साथ शुरू करने के लिए क्लिक करें
+hud.ready	तैयार...
+hud.rival	प्रतिद्वंद्वी
+hud.you	आप
+hud.ultimate_ready	{0} · अल्टीमेट तैयार
+hud.move_detected	{0} · मूव पहचाना गया
+hud.failed	{0} · विफल
+hud.training_title	ट्रेनिंग · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  ट्रेनिंग
+hud.intro_online	  ·  ऑनलाइन  ·  ESC / START: छोड़ें
+hud.ult_ready_press	ULT तैयार - {0} दबाएँ
+hud.ult_ready	ULT तैयार
+hud.sim_key	नकल की: {0}
+hud.poses_live	 · पोज़: हाथ क्रॉस = ब्लॉक / हाथ बगल में = फ़ायरबॉल / हाथ ऊपर = जंप
+hud.poses_keys	 · पोज़ 1 क्रॉस / 2 पंच / 3 ऊपर · P झुकना
+hud.poses_p2	 · पोज़ 8/9/0
+hud.training_help	ट्रेनिंग: T से अल्टीमेट भरें · KO हुए फ़ाइटर 0% पर लौटते हैं · Esc पॉज़
+hud.ult_pct	ULT {0}%
+hud.last_hit	आखिरी वार  {0}
+hud.combo_hits	कॉम्बो  {0} वार  +{1}%
+hud.combo	कॉम्बो  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	P1 कैमरा · नकल
+hud.cv_p1_live	P1 कैमरा · लाइव
+hud.cv_p2_sim	P2 कैमरा · नकल
+hud.cv_p2_live	P2 कैमरा · लाइव
+hud.hits_prefix	{0} वार
+results.no_contest	कोई नतीजा नहीं
+results.draw	ड्रॉ!
+results.cpu_wins	CPU जीता
+results.you_win	आप जीते!
+results.rival_wins	प्रतिद्वंद्वी जीता
+results.wins	{0} जीता!
+results.takes_round	{0} ने राउंड जीता
+results.stats	लगे वार  {0}\nपूरे कॉम्बो  {1}   ·   सबसे अच्छा कॉम्बो  {2}
+results.stats2	\nजेस्चर अल्टीमेट  {0}\nपैरी  {1}
+results.posture	\nअच्छा पोस्चर  {0}%
+results.rewards_named	इनाम ({0} की प्रोफ़ाइल)
+results.rewards_your	इनाम (आपकी प्रोफ़ाइल)
+results.rewards_p1	इनाम (P1 प्रोफ़ाइल)
+results.coins	+{0} सिक्के  (कुल {1})
+hud.do_pose	कैमरे के सामने पोज़ बनाएँ
+results.place_1	पहला
+results.place_2	दूसरा
+results.place_3	तीसरा
+results.place_4	चौथा
+results.out	बाहर
+results.out_1	बाहर · पहला
+results.out_2	बाहर · दूसरा
+results.out_3	बाहर · तीसरा
+results.out_4	बाहर · चौथा
+results.red_team	लाल टीम
+results.blue_team	नीली टीम
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} खिलाड़ी
+hud.keys_line1	P{0}: {1} चलें · {2} कूदें ·
+hud.keys_line2	{0} हल्का · {1} भारी · {2} स्पेशल ·
+hud.keys_line3	{0} ब्लॉक · {1} डैश ·
+hud.keys_line4	{0} स्किल · {1} ult
+results.characters	कैरेक्टर
+results.stock_one	1 जान
+results.stocks	{0} जानें
+hud.respawn	वापसी
+hud.drop_in	उतरो!
+results.main_menu	मुख्य मेनू
+pause.title	रुका हुआ
+pause.resume	जारी रखें
+pause.quit	मेनू पर जाएँ
+pause.hint	जारी रखने के लिए B / Backspace
+leave.title	मैच छोड़ें?
+leave.body	मैच चलता रहेगा। छोड़ना हार गिना जाएगा।
+leave.leave	छोड़ें
+leave.hint	रुकने के लिए B / Backspace / Esc / Start
+results.winner	विजेता
+results.training_no_rewards	ट्रेनिंग: कोई इनाम नहीं
+cv.posture	पोस्चर {0}%
+cv.posture_low	पोस्चर {0}% - सीधे बैठें!
+cv.telemetry_ok	टेलीमेट्री ठीक
+net.rooms_load_failed	आपके रूम लोड नहीं हो सके: {0}
+net.host_limit	आप पहले से {0} रूम होस्ट कर रहे हैं। पहले एक बंद करें।
+net.creating_named	"{0}" बन रहा है...
+net.room_ready_code	रूम "{0}" तैयार है। कोड {1} शेयर करें या किसी दोस्त को बुलाएँ।
+net.create_failed	रूम नहीं बन सका: {0}
+net.joining_room	रूम {0} में जुड़ रहे हैं...
+net.you_joined	आप "{0}" में जुड़ गए। अपना फ़ाइटर चुनें और OK दबाएँ।
+net.no_room_code	कोड {0} वाला कोई रूम नहीं है। कोड जाँचें और फिर कोशिश करें।
+net.room_full_n	वह रूम भरा है ({0} खिलाड़ी)।
+net.join_failed	जुड़ नहीं सके: {0}
+net.update_failed	रूम अपडेट नहीं हो सका: {0}
+net.could_not_what	{0} नहीं हो सका: {1}
+net.what_stage	स्टेज बदलना
+net.what_hazards	खतरे बदलना
+net.press_ok_again	{0} दोनों फिर से OK और लड़ाई शुरू करें दबाएँ।
+net.udp_port	UDP पोर्ट {0} नहीं खुल सका (पहले से इस्तेमाल में?)।
+net.lan_ready	LAN होस्ट तैयार। आपका दोस्त यहाँ जुड़े: {0}  (पोर्ट {1})
+net.bad_ip	"{0}" सही IP पता नहीं है।
+net.connecting_to	{0} से कनेक्ट हो रहे हैं...
+net.sign_in_failed	साइन इन विफल: {0}
+net.room_ready	रूम "{0}" तैयार है। कोड अपने दोस्त के साथ शेयर करें।
+net.searching_in	{0} में खिलाड़ी खोज रहे हैं...
+net.start_failed	लड़ाई शुरू नहीं हो सकी: {0}
+net.host_unreachable	होस्ट तक नहीं पहुँच सके: {0}
+net.area_world	पूरी दुनिया

@@ -1,0 +1,261 @@
+region.africa	Afrika
+region.americas	Amerika kıtası
+region.asia	Asya
+region.europe	Avrupa
+region.oceania	Okyanusya
+region.northern_africa	Kuzey Afrika
+region.eastern_africa	Doğu Afrika
+region.middle_africa	Orta Afrika
+region.southern_africa	Güney Afrika
+region.western_africa	Batı Afrika
+region.caribbean	Karayipler
+region.central_america	Orta Amerika
+region.south_america	Güney Amerika
+region.northern_america	Kuzey Amerika
+region.central_asia	Orta Asya
+region.eastern_asia	Doğu Asya
+region.south_eastern_asia	Güneydoğu Asya
+region.southern_asia	Güney Asya
+region.western_asia	Batı Asya
+region.eastern_europe	Doğu Avrupa
+region.northern_europe	Kuzey Avrupa
+region.southern_europe	Güney Avrupa
+region.western_europe	Batı Avrupa
+region.australia_and_new_zealand	Avustralya ve Yeni Zelanda
+region.melanesia	Melanezya
+region.micronesia	Mikronezya
+region.polynesia	Polinezya
+net.joined_connecting	"{0}" odasına katıldın. Ev sahibine bağlanılıyor...
+net.opponent_unreachable	Rakibine ulaşılamadı: {0}
+net.quick_filling	{1} oyuncudan {0}. {2} sn içinde başlıyor...
+invite.inviting	Davet ediliyor: {0}...
+invite.sent_lasts	Davet gönderildi: {0}. {1} saniye geçerli.
+invite.send_failed	Davet gönderilemedi: {0}
+invite.joining_room_of	Odaya katılınıyor: {0}...
+invite.paused	Davetler {0} dakikalığına durduruldu.
+invite.invited_you	{0} seni "{1}" odasına davet etti.
+invite.ran_out	Davetinin süresi doldu: {0}.
+friends.choose_name	Arkadaşlarının seni bulabilmesi için bir oyuncu adı seç.
+friends.unavailable	Arkadaşlar kullanılamıyor: {0}
+friends.your_name_is	Adın {0}. Seni eklemeleri için arkadaşlarına ver.
+friends.set_name_failed	Ad ayarlanamadı: {0}
+friends.request_sent	Arkadaşlık isteği gönderildi: {0}.
+friends.add_failed	Eklenemedi ({0}): {1}
+friends.offline	{0} şu an çevrimdışı.
+friends.request_then_invite	Arkadaşlık isteği gönderildi: {0}. Kabul edildiği anda davet gönderilecek.
+friends.unreachable	Ulaşılamadı ({0}): {1}
+friends.creating_room_for	Oda kuruluyor: {0}...
+friends.joining	Katılınıyor: {0}...
+friends.declined	{0} daveti reddetti.
+friends.version_mismatch	{0} seni davet etti ama oyunun farklı bir sürümünü kullanıyor.
+friends.invite_sent_waiting	Davet gönderildi: {0}. Katılması bekleniyor...
+name.too_short	Ad çok kısa (en az {0} karakter).
+name.too_long	Ad çok uzun (en fazla {0} karakter).
+rooms.name_too_short	Oda adı çok kısa (en az {0} karakter).
+rooms.name_too_long	Oda adı çok uzun (en fazla {0} karakter).
+net.bad_code	Bu geçerli bir oda kodu değil (sadece harf ve rakam).
+net.version_mismatch	Bu oda Chibi Clash'in farklı bir sürümüyle kurulmuş. İki oyuncunun da aynı sürüme ihtiyacı var.
+net.loading_room	Oda yükleniyor...
+net.room_closed	Oda kapatıldı.
+net.you_left	Odadan çıktın.
+net.waiting_host_game	Başlıyor... ev sahibinin oyunu bekleniyor.
+net.choose_next_fight	Sonraki dövüş için dövüşçünü seç ve OK'e bas.
+net.host_changed_stage	Ev sahibi arena ayarlarını değiştirdi. Tekrar OK'e bas.
+net.room_closed_host_left	Oda kapatıldı (ev sahibi ayrıldı).
+net.starting_fight	Dövüş başlıyor...
+net.player_left_joined	Bir oyuncu ayrıldı veya katıldı.
+net.no_connection	Bağlantı yok.
+net.fight_could_not_start	Dövüş başlatılamadı.
+net.fight_starting_wait	Dövüş başlıyor! Arkadaşının bağlanması bekleniyor...
+net.choose_press_ok	Dövüşçünü seç ve OK'e bas.
+net.too_many_starts	Çok fazla başlatma. Bir dakika bekle, sonra DÖVÜŞÜ BAŞLAT'a bas.
+net.fight_starting_connecting	Dövüş başlıyor! Bağlanılıyor...
+net.could_not_connect	Bağlanılamadı.
+net.friend_no_answer	Arkadaşın yanıt vermedi.
+net.start_cancelled	Başlatma iptal edildi.
+net.friend_no_connect	Arkadaşın bağlanmadı.
+net.enter_code	Arkadaşının gösterdiği oda kodunu gir.
+net.lan_browser	LAN oyunu tarayıcıda kullanılamaz. ODALAR veya EŞLEŞTİRME'yi ya da LAN için PC sürümünü kullan.
+net.enter_ip	Ev sahibinin IP adresini gir.
+net.this_pc_ip	bu PC'nin IP'si
+net.signing_in	Giriş yapılıyor...
+net.creating_private	Özel oda kuruluyor...
+net.hosting_one	Açık maç bulunamadı, yeni bir tane açılıyor...
+net.needs_2_to_4	Bir dövüş için 2 ila 4 oyuncu gerekir.
+net.waiting_friend	Arkadaşının bağlanması bekleniyor...
+net.waiting_friends	Arkadaşlarının bağlanması bekleniyor...
+net.connection_running	Başka bir bağlantı hâlâ sürüyor.
+net.no_valid_info	Odanın geçerli bağlantı bilgisi yok (ev sahibi ayrıldı mı?).
+net.connecting_host	Ev sahibine bağlanılıyor...
+net.already_full	Bu oda zaten dolu.
+net.no_info	Odanın bağlantı bilgisi yok (ev sahibi ayrıldı mı?).
+net.player_left_searching	O oyuncu ayrıldı. Yeniden aranıyor...
+net.connected	Bağlandı!
+net.relay_failed	Relay sunucusuna bağlantı başarısız oldu.
+net.opponent_timeout	Rakibine ulaşılamadı (zaman aşımı).
+net.no_internet	İnternet bağlantısı yok. Arkadaşlarınla her yerden oynamak için Wi-Fi'ye veya mobil veriye bağlan. (LAN oyunu aynı ağda çalışır.)
+invite.wait	Başka bir davet göndermeden önce biraz bekle.
+invite.type_name	Arkadaşının oyun içi adını yaz (3-16 harf, rakam veya _).
+invite.own_name	Bu senin kendi adın.
+invite.open_room_first	Önce odanı aç, sonra davet et.
+invite.room_full	Odan zaten dolu.
+invite.could_not_send	Davet gönderilemedi.
+invite.too_many	Şu an çok fazla davet var. Birkaç saniye sonra tekrar dene.
+invite.cancelled	Davet iptal edildi.
+invite.expired	Bu davetin süresi doldu.
+invite.closed_full	Odan dolu. Davet kapatıldı.
+invite.closed_joined	Odana bir oyuncu katıldı. Davet kapatıldı.
+invite.closed_room	Davet iptal edildi: oda kapandı.
+name.taken	Bu ad zaten alınmış
+name.check_unavailable	Adın çevrimiçi kontrol edilemedi. İnternetini kontrol edip tekrar dene.
+name.too_soon	Adını az önce değiştirdin. Bir dakika sonra tekrar dene.
+name.choose_different	Lütfen farklı bir ad seç.
+friends.type_tag	Arkadaşının adını Kira#4821 gibi yaz.
+friends.added	Arkadaş eklendi.
+friends.declined_request	İstek reddedildi.
+friends.removed	Arkadaş kaldırıldı.
+friends.blocked	Oyuncu engellendi.
+friends.a_friend	Bir arkadaş
+friends.type_player_tag	Oyuncunun adını Kira#4821 gibi yaz.
+friends.wait_invite	Tekrar davet etmeden önce biraz bekle.
+name.enter	Bir ad gir.
+name.bad_chars	Sadece harf, rakam ve _ kullan (boşluk veya sembol yok).
+rooms.name_bad_chars	Oda adlarında sadece harf, rakam, boşluk ve _ - ' ! kullanılabilir.
+rooms.name_double_space	Oda adlarında çift boşluk olamaz.
+rooms.name_choose_different	Lütfen farklı bir oda adı seç.
+gesture.cross_arms	KOLLARI ÇAPRAZLA
+gesture.punch_forward	İLERİ YUMRUK
+gesture.raise_hands	İKİ ELİ KALDIR
+class.kaia.passive1_desc	+%15 saldırı hızı
+class.kaia.passive2_desc	%5 can çalma
+class.kaia.skill1_desc	İleri atılıp rakibe saplar
+class.kaia.skill2_desc	Kusursuz zamanlama hasarı yansıtır
+class.kaia.skill3_desc	Hızla defalarca saplar
+class.kaia.ult_desc	10 sn: normal saldırılar yatay bir dalga salar
+class.bruna.passive1_desc	+%20 hasar, -%15 saldırı hızı
+class.bruna.passive2_desc	+%20 hasar, -%15 hareket hızı
+class.bruna.skill1_desc	Rakibi yakalayıp yere çarpar
+class.bruna.skill2_desc	Kasırga gibi dönüp tekrar tekrar vurur
+class.bruna.ult_desc	Yere vurup şok dalgası yaratır
+class.ren.passive1_desc	+%20 kritik şansı
+class.ren.passive2_desc	10 sn boyunca +%10 hareket hızı (30 sn bekleme)
+class.ren.skill1_desc	Yatay olarak geri atılıp ateş eder
+class.ren.skill2_desc	Yakındaki rakibi boğup uzağa iter
+class.ren.skill3_desc	Yatay bir ok yağmuru atar
+class.ren.ult_desc	Tek ok çoğalıp ok fırtınasına dönüşür
+class.lyra.passive1_desc	Vuruşta %10 şans: -%15 hareket, -%10 hasar, -%15 saldırı hızı
+class.lyra.passive2_desc	%20 şansla hasarı engeller
+class.lyra.skill1_desc	Hedef takipli bir ateş mermisi fırlatır
+class.lyra.skill2_desc	3 yardakçı çağırır
+class.lyra.skill3_desc	Bir bulut düşmanı izler ve yıldırımla çarpar
+class.lyra.ult_desc	10 sn ateş halkası: düşmanları yakar, mermileri engeller
+class.taro.passive1_desc	Vuruşta %10 şans: -%15 düşman savunması
+class.taro.passive2_desc	3 sn saldırmadan sonra sonraki vuruş +%50
+class.taro.skill1_desc	Uzanır, zıplar ve aşağı savurur
+class.taro.skill2_desc	Mızrağı döndürüp mermileri engeller
+class.taro.skill3_desc	Mızrağı fırlatıp geri çağırır
+class.taro.ult_desc	Düşmanı şişler, sonra sapı tekmeyle daha derine iter
+char.kaia.role	Çevik Saldırgan
+char.kaia.style	Hassas, zincirlenebilen kesiklerle hızlı ve hareketli yakın dövüş.
+char.bruna.role	Kavgacı
+char.bruna.style	Ağır saldırılarla alanı kontrol eden, yüksek hasarlı ve dayanıklı kavgacı.
+char.ren.role	Çevik Nişancı
+char.ren.style	Çok yönlü ok teknikleriyle yüksek hareketli alan kontrolü ve isabetli baskı.
+char.lyra.role	Alan Kontrolü / Tuzak
+char.lyra.style	Hızlı büyüler, aldatıcı hareketler ve isabetli sihirle alanı kontrol eden çevik büyücü.
+char.taro.role	Menzil Uzmanı
+char.taro.style	Uzun menzilli baskı ve isabetli vuruşlarla disiplinli, hareketli kontrol.
+stage.0.name	Gök Dojosu
+stage.0.short	Gök Dojosu
+stage.0.tagline	Bulutların üstünde dağ tapınağı
+stage.1.name	Neon Şehir
+stage.1.short	Neon Şehir
+stage.1.tagline	Neon yağmuru altında çatı arenası
+stage.2.name	Lav Demirhanesi
+stage.2.short	Lav Demirhanesi
+stage.2.tagline	Lav denizi üstünde erimiş dökümhane
+stage.3.name	Başlangıç Dağı
+stage.3.short	Dağ
+stage.3.tagline	Dikey KO · sisli uçurum üstünde hareketli yeşim platformlar
+stage.4.name	Birlik Ovası
+stage.4.short	Ova
+stage.4.tagline	Yatay KO · uzun bir alan, saklanacak yer yok
+stage.5.name	Yanardağ Uçurumu
+stage.5.short	Yanardağ
+stage.5.tagline	Her kenar KO · magma gölünden ateş fışkırır
+stage.6.name	Dev Kuş İni
+stage.6.short	Kuş İni
+stage.6.tagline	Yatay KO · devasa kuş arenayı süpürür
+stage.7.name	Terk Edilmiş Okyanus Anıtı
+stage.7.short	Okyanus
+stage.7.tagline	Her kenar KO · balina iner, basamaklara atla
+end.opponent_left	Rakibin maçtan ayrıldı.
+end.opponent_timeout	Rakibin yanıt vermeyi bıraktı.
+end.connection_lost	Rakibinle bağlantı koptu.
+end.you_left	Maçtan ayrıldın.
+end.desync	İki oyun uyuşmadı (desync): sonuçsuz.
+end.unconfirmed	Maç sonu doğrulanamadı: sonuçsuz.
+end.handshake_failed	Maç başlatılamadı.
+end.peer_never_started	Rakibin maça hiç katılmadı: sonuçsuz.
+end.too_slow	Bağlantı oynamak için çok yavaştı: sonuçsuz.
+end.host_left	Ev sahibi maçtan ayrıldı: sonuçsuz.
+end.dropped	Bağlantın maçtan düştü.
+status.aura	AURA {0}
+status.fire_ring	ATEŞ HALKASI {0}
+status.tailwind	ARKA RÜZGÂR
+status.guard_broken	SAVUNMA KIRILDI {0} sn
+status.guard	SAVUNMA %{0}
+status.reloading	DOLDURULUYOR {0} sn
+status.recharging	ŞARJ OLUYOR {0} sn
+status.hexed	LANETLİ
+status.armor_break	ZIRH -%15
+hud.perform	Yap: {0}
+hud.times_up	Süre doldu!
+rewards.no_contest	Sonuçsuz: ödül yok
+rewards.pve_victory	PvE galibiyeti  +{0}
+rewards.pve_match	PvE maçı  +{0}
+rewards.victory	Galibiyet  +{0}
+rewards.match_played	Oynanan maç  +{0}
+rewards.posture	İyi duruş %{0}  +{1}
+hud.revived	CANLANDI
+quest.win	3 maç kazan
+quest.pve	CPU'yu iki kez yen (PvE)
+quest.combo	10 tam kombo yap
+quest.ult	3 hareketli ultimate tetikle
+quest.parry	5 saldırıyı savuştur
+quest.posture	Bir maçı %80+ iyi duruşla bitir
+rewards.quest	Görev: {0}  +{1}
+bind.move_left	Sola git
+bind.move_right	Sağa git
+bind.drop	İn / hızlı düş
+bind.jump	Zıpla
+bind.jump_alt	Zıpla (alt.)
+bind.light	Hafif saldırı
+bind.heavy	Ağır saldırı
+bind.block	Blok
+bind.dash	Atılma
+bind.skill1	Yetenek 1
+bind.skill2	Yetenek 2
+bind.skill3	Yetenek 3
+bind.ultimate	Ultimate
+bind.aim_up	Yukarı nişan
+bind.special	Özel
+hud.rejected	Reddedildi: {0}
+cv.low_confidence	Düşük takip güveni
+cv.frozen	Donmuş görüntü (hile?)
+cv.snap	Anlık poz geçişi (makro?)
+cv.ok	OK
+cam.none	Kamera bulunamadı
+cam.off	Kamera kapalı
+cam.starting	Kamera başlatılıyor...
+cam.waiting_frames	Kamera görüntüsü bekleniyor - Sistem Ayarları > Gizlilik > Kamera'dan Unity'ye kamera izni ver
+cam.live	Kamera canlı ({0}x{1})
+pose.simulated	Simüle (klavye pozları)
+pose.camera_off	Kamera takibi kapalı - klavyeyle simüle pozlar kullanılıyor
+pose.model_failed	Poz modeli başarısız: {0}
+pose.loading	Poz modeli yükleniyor...
+pose.live	Canlı beden takibi (MoveNet, {0} Hz)
+pose.step_back	Kamera açık - omuzların görünsün diye geri çekil
+account.finish_browser	Girişi tarayıcında tamamla (Google ile devam et'i seç)...
+account.signed_out_again	Çıkış yapıldı. Hesabını kullanmak için tekrar giriş yap.
+account.signed_in_kept	Giriş yapıldı. Adın ve ilerlemen bu hesapta kalır.

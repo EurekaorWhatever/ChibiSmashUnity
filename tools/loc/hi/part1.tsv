@@ -1,0 +1,251 @@
+lang.backdrop	भाषा
+lang.title	अपनी भाषा चुनें
+lang.subtitle	गेम में सब कुछ इसी भाषा में दिखेगा। आप इसे कभी भी सेटिंग्स में बदल सकते हैं।
+lang.search_hint	भाषा खोजें...
+lang.no_match	आपकी खोज से कोई भाषा नहीं मिली।
+lang.english_text	अभी अंग्रेज़ी में टेक्स्ट
+lang.confirm	पुष्टि करें  ·  {0}
+lang.confirm_none	पुष्टि करें
+lang.pad_hint	खोजने के लिए टाइप करें · चुनने के लिए ऊपर / नीचे · Enter या पैड A = पुष्टि
+common.cancel	रद्द करें
+settings.language	भाषा  ·  {0}
+difficulty.dummy	डमी
+difficulty.easy	आसान
+difficulty.medium	मध्यम
+difficulty.hard	कठिन
+difficulty.dummy_upper	डमी
+difficulty.easy_upper	आसान
+difficulty.medium_upper	मध्यम
+difficulty.hard_upper	कठिन
+nav.home	होम
+nav.play	खेलें
+nav.training	ट्रेनिंग
+nav.arcade	आर्केड
+nav.collection	कलेक्शन
+nav.settings	सेटिंग्स
+account.signed_in_as	{0} के रूप में साइन इन किया।
+account.signed_in	साइन इन हो गया।
+account.signed_out	साइन आउट हो गया।
+keys.who	P{0} {1}
+keys.reserved	{0} पोज़ / पोस्चर की है (1 2 3, 8 9 0, numpad 7 8 9, P, -)। कोई दूसरी की चुनें।
+keys.swapped	{0};  {1} अब {2} है
+match.versus	{0}  VS  {1}
+online.locked_age	ऑनलाइन खेल 13 साल और उससे बड़े खिलाड़ियों के लिए है।
+arcade.clear_toast	आर्केड पूरा! सभी {0} प्रतिद्वंद्वी हराए गए
+precheck.too_dark	बहुत अंधेरा ({0}%) - रोशनी बढ़ाएँ
+precheck.too_bright	बहुत ज़्यादा रोशनी ({0}%) - चमक कम करें
+precheck.good	अच्छा ({0}%)
+loading.weapon_art	हथियार की तस्वीर: {0}
+loading.fighter	फ़ाइटर: {0}
+precheck.checking	जाँच हो रही है... {0}
+wipe.character_select	कैरेक्टर चुनें
+wipe.arcade	आर्केड
+results.rematch	दोबारा मुकाबला
+results.continue	जारी रखें
+results.finish	समाप्त
+results.next_battle	अगली लड़ाई
+wipe.arcade_clear	आर्केड पूरा
+precheck.title	कैमरा जाँच
+precheck.camera_unavailable	कैमरा उपलब्ध नहीं है
+precheck.simulated_feed	नकली फ़ीड (वेबकैम बंद)
+precheck.upper_body_ok	ऊपरी शरीर फ़्रेम में है
+precheck.step_back	थोड़ा पीछे हटें - कंधे और कूल्हे दिखने चाहिए
+loading.interface	इंटरफ़ेस ग्राफ़िक्स
+loading.typefaces	फ़ॉन्ट
+loading.pose_model	पोज़ ट्रैकिंग मॉडल
+loading.ready	तैयार
+onboarding.welcome	स्वागत है!
+onboarding.your_account	आपका अकाउंट
+onboarding.your_name	आपका खिलाड़ी नाम
+rooms.backdrop_create	मैचमेकिंग  ·  रूम बनाएँ
+rooms.backdrop_join	मैचमेकिंग  ·  रूम में जुड़ें
+precheck.all_passed	सभी जाँच पास
+precheck.failed	जाँच फ़ेल
+precheck.lighting	रोशनी
+precheck.framing	फ़्रेम में स्थिति
+precheck.posture	पोस्चर
+precheck.upright	बढ़िया, सीधे बैठे हैं
+precheck.sit_up	बोनस सिक्कों के लिए सीधे बैठें
+common.retry	फिर कोशिश करें
+precheck.play_anyway	फिर भी खेलें
+common.back	वापस
+precheck.ranked_note	रैंक्ड कतार के लिए यह जाँच पास करना ज़रूरी है। कैज़ुअल मैच में इसे छोड़ सकते हैं।
+precheck.hint	मैच से पहले कैमरा जाँच
+hint.select	चुनें
+home.play	खेलें
+home.training	ट्रेनिंग
+home.arcade	आर्केड
+home.collection	कैरेक्टर कलेक्शन
+home.settings	सेटिंग्स
+home.exit	गेम से बाहर निकलें
+home.play_desc	Vs Online क्विक मैच, दोस्तों के साथ मैचमेकिंग रूम, या Vs CPU
+home.training_desc	कैमरा सेटअप, जेस्चर अभ्यास और ट्रेनिंग डमी
+home.arcade_desc	हर स्टेज पर पाँचों प्रतिद्वंद्वियों से लगातार मुकाबला
+home.collection_desc	स्किन, हथियार और कॉस्मेटिक बैनर
+home.settings_desc	कठिनाई, कैमरा विकल्प और की बाइंडिंग
+home.exit_desc	गेम बंद करें
+tips.1	ULT मीटर भरें और अल्टीमेट दबाएँ - फिर उलटी गिनती खत्म होने से पहले कैमरे के सामने अपने फ़ाइटर का पोज़ बनाएँ।
+tips.2	ज़्यादा DEF हर वार का नुकसान घटाता है और आपका ब्लॉक मज़बूत बनाता है।
+tips.3	कैमरे से ट्रैक किया गया अच्छा पोस्चर हर मैच के बाद बोनस सिक्के देता है।
+tips.4	स्किन और हथियार सिर्फ़ दिखावे के लिए हैं - फ़ाइटर क्या पहनता है, इससे स्टैट्स कभी नहीं बदलते।
+tips.5	ट्रेनिंग में अल्टीमेट भरने के लिए T दबाएँ। डमी हमेशा फिर से उठ जाता है।
+tips.6	हर फ़ाइटर के पास दो में से एक पैसिव होता है - लॉक इन करने के बाद लोडआउट पैनल में चुनें।
+tips.7	ऑनलाइन लड़ाइयाँ रोलबैक नेटकोड इस्तेमाल करती हैं: दोनों गेम एक ही इनपुट से एक ही लड़ाई चलाते हैं।
+stats.power	ताक़त
+stats.speed	गति
+stats.range	रेंज
+stats.endurance	सहनशक्ति
+stats.recovery	रिकवरी
+training.use_block	ब्लॉक · मेली और मैजिक अल्टीमेट
+training.use_fireball	फ़ायरबॉल · रेंज्ड और भाला अल्टीमेट
+training.use_superjump	सुपर जंप · हेवी अल्टीमेट
+menu.online_locked	ऑनलाइन मोड 13 साल और उससे बड़े खिलाड़ियों के लिए हैं।
+menu.no_internet	इंटरनेट नहीं है: Wi-Fi या मोबाइल डेटा जोड़ें। VS AI ऑफ़लाइन चलता है।
+menu.four_player_soon	2v2 और Battle Royale के लिए 4 खिलाड़ियों का सपोर्ट चाहिए, जो अगले अपडेट में आएगा।
+profile.edit_name	नाम बदलें
+profile.win_loss	जीत {0}  ·  हार {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	तैयार
+loading.loading	लोड हो रहा है
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   पूरा x{2}
+arcade.rule_fight_all	सभी {0} कैरेक्टर से लगातार, बेतरतीब क्रम में लड़ें।
+arcade.rule_difficulty	CPU कठिनाई: {0} (सेटिंग्स में बदलें)।
+arcade.final	फ़ाइनल
+arcade.round	राउंड {0}
+training.cv_setup_source	CV सेटअप · {0}
+training.status	कैमरा: {0}\nट्रैकिंग: {1}\nपहचाना गया: {2}
+training.off	बंद
+training.none	कोई नहीं
+training.status_posture	   ·   पोस्चर {0}%   ·   टेलीमेट्री {1}
+collection.gold_cinematic_suffix	 · गोल्ड सिनेमैटिक
+collection.only	केवल {0}
+collection.pull1	पुल x1  ·  {0}
+collection.pull10	पुल x10  ·  {0}
+collection.dup_suffix	  (डुप्लिकेट +20)
+collection.new_suffix	  नया!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} सेकंड  <size=12><color=#9AA6BC>(हर मैच के लिए तय)</color></size>
+settings.change_name_as	नाम बदलें  ·  {0}
+settings.change_name	नाम बदलें
+settings.keys_help	किसी बाइंडिंग पर क्लिक करें, फिर कोई की दबाएँ या उस बॉक्स पर माउस बटन से क्लिक करें (Esc / पैड B / कहीं और क्लिक करने से रद्द; 5 सेकंड की समय-सीमा)। अगर कोई खिलाड़ी उसे पहले से इस्तेमाल कर रहा है, तो दोनों आपस में बदल जाती हैं।\nकैमरा पोज़: हाथ क्रॉस करें = ब्लॉक · हाथ बगल में फैलाएँ = फ़ायरबॉल · दोनों हाथ ऊपर = सुपर जंप (कीबोर्ड पोज़: 1/2/3 और 8/9/0)।
+rarity.common	साधारण
+rarity.rare	दुर्लभ
+rarity.epic	एपिक
+rarity.legendary	लेजेंडरी
+skin.default	क्लासिक
+skin.mint	मिंट पॉप
+skin.shadow	छाया
+skin.sakura	साकुरा
+skin.inferno	इन्फ़र्नो
+skin.celestial	दिव्य
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	केवल 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nटीम
+play.four_player_later	2v2 और Battle Royale अगले अपडेट में 4 खिलाड़ियों के सपोर्ट के साथ आएँगे।
+play.team_tag	4P · 2 टीमें
+play.royale_tag	4P · सब बनाम सब
+collection.all_fighters	सभी फ़ाइटर
+arcade.mode	आर्केड मोड
+home.tagline	एरीना फ़ाइटर  ·  शरीर की हरकत से अल्टीमेट
+play.royale_card	BATTLE\nROYALE
+training.kicker	कैमरा सेटअप और अभ्यास
+settings.camera_tracking	कैमरा ट्रैकिंग (वेबकैम)
+training.camera_off	कैमरा ट्रैकिंग: बंद
+training.camera_on	कैमरा ट्रैकिंग: चालू
+collection.hint	कैरेक्टर कलेक्शन
+play.choose_style	खेलने का तरीका चुनें
+online.kicker	खेलने का तरीका चुनें  ·  सोलो · 2V2 · BATTLE ROYALE
+play.kicker	अपनी लड़ाई चुनें  ·  VS ONLINE · मैचमेकिंग · VS CPU
+play.coming_soon	जल्द आ रहा है
+training.cv	कंप्यूटर विज़न
+online.connection	कनेक्शन
+collection.banner	कॉस्मेटिक बैनर
+settings.cpu_difficulty	CPU कठिनाई
+play.create_join	रूम बनाएँ · जुड़ें
+settings.cv_overlay	मैच में CV ओवरले
+quests.coins_note	सिक्के सिर्फ़ खेलने से मिलते हैं: जीत, PvE, क्वेस्ट और कैमरे से ट्रैक किया गया अच्छा पोस्चर।
+collection.odds	साधारण 60% · दुर्लभ 28% · एपिक 10% · लेजेंडरी 2%
+collection.equip	पहनें
+collection.equipped	पहना हुआ
+hint.exit	बाहर
+home.exit_upper	गेम से बाहर निकलें
+exit.title	गेम से बाहर निकलें?
+online.royale_desc	हर कोई अपने लिए। आख़िर तक टिका रहने वाला फ़ाइटर जीतता है।
+arcade.kicker	पाँच प्रतिद्वंद्वी · एक रन
+loading.for_battle	लड़ाई के लिए
+online.invites_note	दोस्तों के रूम इनवाइट यहाँ दिखते हैं। दोस्तों वाले रूम खेलें > मैचमेकिंग में हैं।
+settings.kicker	गेम · कैमरा · कंट्रोल
+training.gestures_live	जेस्चर  (कैमरे के सामने पोज़ बनाएँ - पंच = एक हाथ सीधा बगल में)
+training.gestures_sim	जेस्चर  (पोज़ की नकल के लिए की दबाए रखें)
+settings.key_bindings	की बाइंडिंग
+settings.keys_reset	की डिफ़ॉल्ट पर रीसेट हो गईं
+play.locked	लॉक
+arcade.rule_retry	राउंड हार गए? जारी रखें और फिर कोशिश करें।
+home.hint	मुख्य मेनू
+settings.master_volume	मास्टर वॉल्यूम
+settings.match_time	मैच का समय
+play.matchmaking_card	मैच\nमेकिंग
+hint.move	चलें
+play.matchmaking_desc	रूम बनाएँ, उसका कोड शेयर करें या दोस्तों को नाम से बुलाएँ।
+play.no_internet_tag	इंटरनेट नहीं
+online.no_internet_body	अभी इंटरनेट नहीं है। Wi-Fi या मोबाइल डेटा जोड़ें, या Vs CPU खेलें।
+common.off	बंद
+online.offline	ऑफ़लाइन
+common.on	चालू
+settings.player1	खिलाड़ी 1
+settings.player2	खिलाड़ी 2
+training.practice_dummy	डमी के साथ अभ्यास
+settings.precheck	मैच से पहले कैमरा जाँच
+loading.prepare	तैयार हो जाइए
+settings.listening_hint	कोई की दबाएँ या बॉक्स पर क्लिक करें  ·  ESC / पैड B से रद्द  ·  पैड बटन बाइंड नहीं हो सकते
+training.slouch_note	झुके हुए पोस्चर को चालू/बंद करने के लिए P दबाएँ और पोस्चर स्कोर गिरते देखें।
+settings.profile_reset	प्रोफ़ाइल रीसेट हो गई (नाम और साइन-इन बने रहे)
+collection.pull_to_unlock	अनलॉक करने के लिए पुल करें
+quests.title	क्वेस्ट
+online.quick_match	क्विक मैच
+play.online_desc	पास के खिलाड़ी के साथ क्विक मैच, या दोस्त का इनवाइट स्वीकारें।
+online.solo_desc	क्विक मैच: अभी खोज रहे खिलाड़ी से लड़ें, सबसे पास वाले पहले।
+settings.reset_keys	की रीसेट करें
+settings.reset_profile	प्रोफ़ाइल रीसेट करें
+arcade.rival_unknown	प्रतिद्वंद्वी  ???
+play.rooms_tag	रूम · 2-4 खिलाड़ी
+online.rollback_body	रोलबैक नेटकोड: दोनों गेम एक ही इनपुट से एक ही लड़ाई चलाते हैं, इसलिए खेल तेज़ और निष्पक्ष रहता है।
+settings.screen_shake	स्क्रीन शेक
+profile.set_name	नाम रखें
+settings.sfx_volume	SFX वॉल्यूम
+training.simulate_pose	पोज़ की नकल
+collection.kicker	स्किन · हथियार · कॉस्मेटिक बैनर
+training.slouch	झुककर बैठना
+online.solo_card	सोलो\n1V1
+home.start	शुरू करें
+arcade.start	आर्केड शुरू करें
+exit.stay	रुकें
+settings.sure	पक्का?
+settings.sure_reset_profile	पक्का? सारी प्रगति मिट जाएगी
+collection.banner_note	सिर्फ़ स्किन और अल्टीमेट सिनेमैटिक। हर स्किन पर स्टैट्स एक जैसे हैं - कुछ भी पैसे से नहीं मिलता।
+hint.tabs	टैब
+loading.tip	टिप
+training.hint	ट्रेनिंग  /  CV सेटअप
+arcade.rule_stages	हर राउंड में स्टेज बदलता है, आरंभ के पर्वत से लेकर सागर स्मारक तक।
+online.team_desc	दो-दो खिलाड़ियों की दो टीमें। फ़्रेंडली फ़ायर नहीं: आपके वार साथी को चोट नहीं पहुँचाते।
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  खेलने का तरीका
+play.online_card	VS\nONLINE
+arcade.rule_rewards	जीत पर सिक्के और क्वेस्ट प्रगति मिलती है, बिल्कुल VS CPU की तरह।
+exit.saved_note	आपकी प्रोफ़ाइल, सिक्के और कलेक्शन इस डिवाइस पर सेव हैं।
+settings.key_listening	की या यहाँ क्लिक करें
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	आप अपना फ़ाइटर और आसान, मध्यम या कठिन चुनते हैं। CPU को बेतरतीब फ़ाइटर मिलता है।
+account.keep_name_body	अपने Google अकाउंट से साइन इन करें, ताकि आपका नाम और जानकारी आपके साथ रहें: हर बार गेम खोलने पर, और किसी भी कंप्यूटर पर। दूसरे Google अकाउंट को अपना नया नाम मिलता है।
+name.you_are	आप {0} हैं!
+name.you_are_unchecked	आप {0} हैं! ऑनलाइन खेलने पर हम नाम की जाँच करेंगे।
+online.could_not_start	मैच शुरू नहीं हो सका ({0})।
+rooms.your_rooms	आपके रूम
+rooms.count_click	{0}  ·  खोलने के लिए रूम पर क्लिक करें
+rooms.code_value	कोड  {0}
+rooms.players_count	{0} / {1} खिलाड़ी

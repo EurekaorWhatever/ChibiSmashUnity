@@ -1,0 +1,251 @@
+lang.backdrop	BAHASA
+lang.title	PILIH BAHASA ANDA
+lang.subtitle	Semua teks dalam permainan akan menggunakan bahasa ini. Anda boleh menukarnya bila-bila masa dalam TETAPAN.
+lang.search_hint	Cari bahasa...
+lang.no_match	Tiada bahasa yang sepadan.
+lang.english_text	Teks bahasa Inggeris buat masa ini
+lang.confirm	SAHKAN  ·  {0}
+lang.confirm_none	SAHKAN
+lang.pad_hint	Taip untuk mencari · Atas / Bawah untuk memilih · Enter atau butang A = sahkan
+common.cancel	BATAL
+settings.language	BAHASA  ·  {0}
+difficulty.dummy	Patung
+difficulty.easy	Mudah
+difficulty.medium	Sederhana
+difficulty.hard	Sukar
+difficulty.dummy_upper	PATUNG
+difficulty.easy_upper	MUDAH
+difficulty.medium_upper	SEDERHANA
+difficulty.hard_upper	SUKAR
+nav.home	UTAMA
+nav.play	MAIN
+nav.training	LATIHAN
+nav.arcade	ARKED
+nav.collection	KOLEKSI
+nav.settings	TETAPAN
+account.signed_in_as	Log masuk sebagai {0}.
+account.signed_in	Sudah log masuk.
+account.signed_out	Sudah log keluar.
+keys.who	P{0} {1}
+keys.reserved	{0} ialah kekunci pose / postur (1 2 3, 8 9 0, numpad 7 8 9, P, -). Pilih kekunci lain.
+keys.swapped	{0};  {1} kini {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Main dalam talian untuk pemain berumur 13 tahun ke atas.
+arcade.clear_toast	ARKED SELESAI! Kesemua {0} saingan ditewaskan
+precheck.too_dark	Terlalu gelap ({0}%) - tambah cahaya
+precheck.too_bright	Terlalu terang ({0}%) - kurangkan silau
+precheck.good	Baik ({0}%)
+loading.weapon_art	Gambar senjata: {0}
+loading.fighter	Pejuang: {0}
+precheck.checking	MENYEMAK... {0}
+wipe.character_select	PILIH WATAK
+wipe.arcade	ARKED
+results.rematch	LAWAN SEMULA
+results.continue	TERUSKAN
+results.finish	TAMAT
+results.next_battle	PERTARUNGAN SETERUSNYA
+wipe.arcade_clear	ARKED SELESAI
+precheck.title	SEMAKAN KAMERA
+precheck.camera_unavailable	Kamera tidak tersedia
+precheck.simulated_feed	Paparan simulasi (kamera web dimatikan)
+precheck.upper_body_ok	Badan atas dalam bingkai
+precheck.step_back	Undur sedikit - bahu dan pinggul mesti kelihatan
+loading.interface	Grafik antara muka
+loading.typefaces	Fon
+loading.pose_model	Model penjejakan pose
+loading.ready	Sedia
+onboarding.welcome	SELAMAT DATANG!
+onboarding.your_account	AKAUN ANDA
+onboarding.your_name	NAMA PEMAIN ANDA
+rooms.backdrop_create	PADANAN  ·  CIPTA BILIK
+rooms.backdrop_join	PADANAN  ·  SERTAI BILIK
+precheck.all_passed	SEMUA SEMAKAN LULUS
+precheck.failed	SEMAKAN GAGAL
+precheck.lighting	PENCAHAYAAN
+precheck.framing	KEDUDUKAN DALAM BINGKAI
+precheck.posture	POSTUR
+precheck.upright	Tegak, bagus
+precheck.sit_up	Duduk tegak untuk bonus syiling
+common.retry	CUBA LAGI
+precheck.play_anyway	MAIN JUGA
+common.back	KEMBALI
+precheck.ranked_note	Giliran ranked memerlukan semakan ini lulus. Perlawanan kasual boleh melangkauinya.
+precheck.hint	SEMAKAN KAMERA SEBELUM PERLAWANAN
+hint.select	PILIH
+home.play	MAIN
+home.training	LATIHAN
+home.arcade	ARKED
+home.collection	KOLEKSI WATAK
+home.settings	TETAPAN
+home.exit	KELUAR PERMAINAN
+home.play_desc	Perlawanan pantas Vs Online, bilik Padanan bersama rakan, atau Vs CPU
+home.training_desc	Persediaan kamera, latihan gerak isyarat dan patung latihan
+home.arcade_desc	Lawan kelima-lima saingan berturut-turut merentas setiap pentas
+home.collection_desc	Skin, senjata dan banner kosmetik
+home.settings_desc	Tahap kesukaran, pilihan kamera dan kekunci kawalan
+home.exit_desc	Tutup permainan
+tips.1	Penuhkan meter ULT dan tekan Ultimate - kemudian buat pose pejuang anda di depan kamera sebelum kiraan detik tamat.
+tips.2	DEF yang lebih tinggi mengurangkan kerosakan setiap pukulan dan menguatkan tangkisan anda.
+tips.3	Postur yang baik dijejak oleh kamera memberi bonus syiling selepas setiap perlawanan.
+tips.4	Skin dan senjata hanya kosmetik - statistik tidak pernah berubah mengikut pakaian pejuang.
+tips.5	Dalam Latihan, tekan T untuk memenuhkan ultimate. Patung itu sentiasa bangun semula.
+tips.6	Setiap pejuang membawa satu daripada dua pasif - pilih dalam panel loadout selepas mengunci pilihan.
+tips.7	Pertarungan dalam talian menggunakan netcode rollback: kedua-dua permainan menjalankan pertarungan yang sama daripada input yang sama.
+stats.power	KUASA
+stats.speed	KELAJUAN
+stats.range	JARAK
+stats.endurance	DAYA TAHAN
+stats.recovery	PEMULIHAN
+training.use_block	Tangkis · ultimate Jarak Dekat & Sihir
+training.use_fireball	Bebola api · ultimate Jarak Jauh & Lembing
+training.use_superjump	Lompatan super · ultimate Berat
+menu.online_locked	Mod dalam talian untuk pemain berumur 13 tahun ke atas.
+menu.no_internet	Tiada internet: sambungkan Wi-Fi atau data mudah alih. VS AI boleh dimainkan luar talian.
+menu.four_player_soon	2v2 dan Battle Royale memerlukan sokongan 4 pemain, akan tiba dalam kemas kini akan datang.
+profile.edit_name	UBAH NAMA
+profile.win_loss	M {0}  ·  K {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	SEDIA
+loading.loading	MEMUATKAN
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   selesai x{2}
+arcade.rule_fight_all	Lawan kesemua {0} watak berturut-turut, dalam susunan rawak.
+arcade.rule_difficulty	Kesukaran CPU: {0} (ubah dalam Tetapan).
+arcade.final	AKHIR
+arcade.round	PUSINGAN {0}
+training.cv_setup_source	PERSEDIAAN CV · {0}
+training.status	Kamera: {0}\nPenjejakan: {1}\nDikesan: {2}
+training.off	mati
+training.none	tiada
+training.status_posture	   ·   Postur {0}%   ·   Telemetri {1}
+collection.gold_cinematic_suffix	 · SINEMATIK EMAS
+collection.only	{0} SAHAJA
+collection.pull1	TARIK x1  ·  {0}
+collection.pull10	TARIK x10  ·  {0}
+collection.dup_suffix	  (pendua +20)
+collection.new_suffix	  BAHARU!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} saat  <size=12><color=#9AA6BC>(tetap untuk setiap perlawanan)</color></size>
+settings.change_name_as	TUKAR NAMA  ·  {0}
+settings.change_name	TUKAR NAMA
+settings.keys_help	Klik satu kawalan, kemudian tekan kekunci atau klik kotak itu dengan butang tetikus (Esc / pad B / klik di tempat lain membatalkan; tamat masa 5 saat). Jika mana-mana pemain sudah menggunakannya, kedua-duanya bertukar.\nPose kamera: silang tangan = tangkis · hulur tangan ke sisi = bebola api · kedua-dua tangan ke atas = lompatan super (pose papan kekunci: 1/2/3 dan 8/9/0).
+rarity.common	BIASA
+rarity.rare	JARANG
+rarity.epic	EPIK
+rarity.legendary	LEGENDA
+skin.default	Klasik
+skin.mint	Pop Pudina
+skin.shadow	Bayang
+skin.sakura	Sakura
+skin.inferno	Inferno
+skin.celestial	Kayangan
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	13+ SAHAJA
+play.1p_vs_1p	1P VS 1P
+play.team_card	PASUKAN\n2V2
+play.four_player_later	2v2 dan Battle Royale akan tiba bersama sokongan 4 pemain dalam kemas kini akan datang.
+play.team_tag	4P · 2 PASUKAN
+play.royale_tag	4P · BEBAS UNTUK SEMUA
+collection.all_fighters	SEMUA PEJUANG
+arcade.mode	MOD ARKED
+home.tagline	PERTARUNGAN ARENA  ·  ULTIMATE GERAK BADAN
+play.royale_card	BATTLE\nROYALE
+training.kicker	PERSEDIAAN KAMERA & LATIHAN
+settings.camera_tracking	PENJEJAKAN KAMERA (KAMERA WEB)
+training.camera_off	PENJEJAKAN KAMERA: MATI
+training.camera_on	PENJEJAKAN KAMERA: HIDUP
+collection.hint	KOLEKSI WATAK
+play.choose_style	PILIH GAYA PERMAINAN
+online.kicker	PILIH GAYA PERMAINAN  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	PILIH PERTARUNGAN ANDA  ·  VS ONLINE · PADANAN · VS CPU
+play.coming_soon	AKAN DATANG
+training.cv	PENGLIHATAN KOMPUTER
+online.connection	SAMBUNGAN
+collection.banner	BANNER KOSMETIK
+settings.cpu_difficulty	KESUKARAN CPU
+play.create_join	CIPTA · SERTAI BILIK
+settings.cv_overlay	TINDANAN CV DALAM PERLAWANAN
+quests.coins_note	Syiling hanya diperoleh dengan bermain: menang, PvE, misi dan postur baik yang dijejak oleh kamera.
+collection.odds	Biasa 60% · Jarang 28% · Epik 10% · Legenda 2%
+collection.equip	PAKAI
+collection.equipped	DIPAKAI
+hint.exit	KELUAR
+home.exit_upper	KELUAR PERMAINAN
+exit.title	KELUAR PERMAINAN?
+online.royale_desc	Setiap orang untuk diri sendiri. Pejuang terakhir yang bertahan menang.
+arcade.kicker	LIMA SAINGAN · SATU LARIAN
+loading.for_battle	UNTUK BERTARUNG
+online.invites_note	Jemputan bilik daripada rakan muncul di sini. Bilik bersama rakan ada dalam MAIN > PADANAN.
+settings.kicker	PERMAINAN · KAMERA · KAWALAN
+training.gestures_live	GERAK ISYARAT  (buat pose di depan kamera - tumbuk = satu tangan lurus ke sisi)
+training.gestures_sim	GERAK ISYARAT  (tahan kekunci untuk mensimulasikan pose)
+settings.key_bindings	KEKUNCI KAWALAN
+settings.keys_reset	Kekunci ditetapkan semula kepada lalai
+play.locked	DIKUNCI
+arcade.rule_retry	Kalah satu pusingan? Teruskan dan cuba lagi.
+home.hint	MENU UTAMA
+settings.master_volume	KELANTANGAN UTAMA
+settings.match_time	MASA PERLAWANAN
+play.matchmaking_card	PADA\nNAN
+hint.move	GERAK
+play.matchmaking_desc	Cipta bilik, kongsi kodnya atau jemput rakan dengan nama.
+play.no_internet_tag	TIADA INTERNET
+online.no_internet_body	Tiada internet sekarang. Sambungkan Wi-Fi atau data mudah alih, atau main Vs CPU.
+common.off	MATI
+online.offline	LUAR TALIAN
+common.on	HIDUP
+settings.player1	PEMAIN 1
+settings.player2	PEMAIN 2
+training.practice_dummy	LATIHAN VS PATUNG
+settings.precheck	SEMAKAN KAMERA SEBELUM PERLAWANAN
+loading.prepare	BERSEDIA
+settings.listening_hint	TEKAN KEKUNCI ATAU KLIK KOTAK  ·  ESC / PAD B MEMBATALKAN  ·  BUTANG PAD TIDAK BOLEH DITETAPKAN
+training.slouch_note	Tekan P untuk menukar ke postur bongkok dan lihat skor postur jatuh.
+settings.profile_reset	Profil ditetapkan semula (nama dan log masuk dikekalkan)
+collection.pull_to_unlock	Tarik untuk membuka
+quests.title	MISI
+online.quick_match	PERLAWANAN PANTAS
+play.online_desc	Perlawanan pantas dengan pemain berhampiran, atau terima jemputan rakan.
+online.solo_desc	Perlawanan pantas: lawan pemain yang sedang mencari, yang terdekat dahulu.
+settings.reset_keys	TETAP SEMULA KEKUNCI
+settings.reset_profile	TETAP SEMULA PROFIL
+arcade.rival_unknown	SAINGAN  ???
+play.rooms_tag	BILIK · 2-4 PEMAIN
+online.rollback_body	Netcode rollback: kedua-dua permainan menjalankan pertarungan yang sama daripada input yang sama, jadi ia kekal pantas dan adil.
+settings.screen_shake	GEGARAN SKRIN
+profile.set_name	TETAPKAN NAMA
+settings.sfx_volume	KELANTANGAN SFX
+training.simulate_pose	SIMULASI POSE
+collection.kicker	SKIN · SENJATA · BANNER KOSMETIK
+training.slouch	BONGKOK
+online.solo_card	SOLO\n1V1
+home.start	MULA
+arcade.start	MULA ARKED
+exit.stay	KEKAL
+settings.sure	PASTI?
+settings.sure_reset_profile	PASTI? SEMUA KEMAJUAN HILANG
+collection.banner_note	Hanya skin & sinematik ultimate. Statistik sama pada setiap skin - tiada apa yang perlu dibayar.
+hint.tabs	TAB
+loading.tip	PETUA
+training.hint	LATIHAN  /  PERSEDIAAN CV
+arcade.rule_stages	Pentas bertukar setiap pusingan, dari Gunung Permulaan hingga Monumen Lautan.
+online.team_desc	Dua pasukan berdua. Tiada tembakan kawan: pukulan anda tidak mencederakan rakan sepasukan.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  GAYA PERMAINAN
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Kemenangan memberi syiling dan kemajuan misi, sama seperti VS CPU.
+exit.saved_note	Profil, syiling dan koleksi anda disimpan pada peranti ini.
+settings.key_listening	kekunci atau klik di sini
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Anda pilih pejuang dan MUDAH, SEDERHANA atau SUKAR. CPU mendapat pejuang rawak.
+account.keep_name_body	Log masuk dengan akaun Google anda dan nama serta maklumat anda kekal bersama anda: setiap kali anda membuka permainan, dan pada mana-mana komputer. Akaun Google lain mendapat nama baharunya sendiri.
+name.you_are	Anda ialah {0}!
+name.you_are_unchecked	Anda ialah {0}! Kami akan menyemak nama apabila anda bermain dalam talian.
+online.could_not_start	Perlawanan tidak dapat dimulakan ({0}).
+rooms.your_rooms	BILIK ANDA
+rooms.count_click	{0}  ·  klik bilik untuk membukanya
+rooms.code_value	KOD  {0}
+rooms.players_count	{0} / {1} PEMAIN

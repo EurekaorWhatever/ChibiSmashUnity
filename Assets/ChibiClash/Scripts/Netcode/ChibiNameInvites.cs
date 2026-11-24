@@ -100,25 +100,25 @@ namespace ChibiClash.Netcode
             if (!Allowed()) { SetStatus(NetworkRoomManager.NotAllowedMessage, true); return; }
             float now = Time.unscaledTime;
             if (now - _lastSendAt < ChibiNameInviteRules.SendCooldownSeconds)
-            { SetStatus("Wait a moment before sending another invite.", true); return; }
+            { SetStatus(Loc.T("invite.wait"), true); return; }
             string friend = ChibiNameInviteRules.NormalizeName(friendName);
-            if (friend == null) { SetStatus("Type your friend's in-game name (3-16 letters, numbers or _).", true); return; }
-            if (friend == ChibiNameInviteRules.NormalizeName(MyNameNow())) { SetStatus("That is your own name.", true); return; }
+            if (friend == null) { SetStatus(Loc.T("invite.type_name"), true); return; }
+            if (friend == ChibiNameInviteRules.NormalizeName(MyNameNow())) { SetStatus(Loc.T("invite.own_name"), true); return; }
             string code = ChibiSocialRules.NormalizeCode(roomCode);
-            if (code == null) { SetStatus("Open your room first, then invite.", true); return; }
+            if (code == null) { SetStatus(Loc.T("invite.open_room_first"), true); return; }
             var room = Rooms();
             if (room != null && room.ListLoaded)
             {
                 var snap = FindRoom(room, code);
-                if (snap == null) { SetStatus("Open your room first, then invite.", true); return; }
-                if (snap.Slots.Count >= ChibiRoomRules.MaxSeats) { SetStatus("Your room is already full.", true); return; }
+                if (snap == null) { SetStatus(Loc.T("invite.open_room_first"), true); return; }
+                if (snap.Slots.Count >= ChibiRoomRules.MaxSeats) { SetStatus(Loc.T("invite.room_full"), true); return; }
             }
             string shown = ChibiSocialRules.BaseName(ChibiSocialRules.SafeDisplayName(friendName.Trim()));
 
             _lastSendAt = now;
             Sending = true;
             int gen = ++_sendGen;
-            SetStatus("Inviting " + shown + "...", false);
+            SetStatus(Loc.T("invite.inviting", shown), false);
             try
             {
                 string err = await NetworkRoomManager.EnsureSignedInAsync() ?? await GateName();
@@ -127,7 +127,7 @@ namespace ChibiClash.Netcode
                 if (gen != _sendGen) return;   // cancelled while we waited
                 if (!ChibiNameInviteRules.TryBuildBeacon(friend, NetworkRoomManager.ProtocolTag, code, ChibiNameInviteRules.NewSalt(),
                                                          MyNameNow(), roomName, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), out var b))
-                { SetStatus("Could not send the invite.", true); return; }
+                { SetStatus(Loc.T("invite.could_not_send"), true); return; }
                 var options = new CreateLobbyOptions
                 {
                     IsPrivate = false,
@@ -144,7 +144,7 @@ namespace ChibiClash.Netcode
                     },
                 };
                 var lobby = await LobbyService.Instance.CreateLobbyAsync(ChibiNameInviteRules.Marker, ChibiNameInviteRules.BeaconSeats, options);
-                if (lobby == null || string.IsNullOrEmpty(lobby.Id)) { SetStatus("Could not send the invite.", true); return; }
+                if (lobby == null || string.IsNullOrEmpty(lobby.Id)) { SetStatus(Loc.T("invite.could_not_send"), true); return; }
                 if (gen != _sendGen || this == null) { _ = DeleteQuietly(lobby.Id); return; }   // cancelled while creating
                 _outId = lobby.Id;
                 _outCode = code;
@@ -155,11 +155,11 @@ namespace ChibiClash.Netcode
                 _outExpires = Time.unscaledTime + ChibiNameInviteRules.LifetimeSeconds;
                 _outHeartbeatAt = Time.unscaledTime + ChibiNameInviteRules.FirstHeartbeatSeconds;
                 OutgoingTo = shown;
-                SetStatus("Invite sent to " + shown + ". It lasts " + (int)ChibiNameInviteRules.LifetimeSeconds + " seconds.", false);
+                SetStatus(Loc.T("invite.sent_lasts", shown, (int)ChibiNameInviteRules.LifetimeSeconds), false);
             }
             catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.RateLimited)
-            { SetStatus("Too many invites right now. Try again in a few seconds.", true); }
-            catch (Exception e) { SetStatus("Could not send the invite: " + NetworkRoomManager.Explain(e), true); }
+            { SetStatus(Loc.T("invite.too_many"), true); }
+            catch (Exception e) { SetStatus(Loc.T("invite.send_failed", NetworkRoomManager.Explain(e)), true); }
             finally { Sending = false; }
         }
 
@@ -169,7 +169,7 @@ namespace ChibiClash.Netcode
             bool had = HasOutgoing;
             _sendGen++;
             _ = DeleteOutgoing();
-            if (had) SetStatus("Invite cancelled.", false);
+            if (had) SetStatus(Loc.T("invite.cancelled"), false);
         }
 
         // ================================================================== answer
@@ -184,8 +184,8 @@ namespace ChibiClash.Netcode
             var inv = _pending[index];
             _pending.RemoveAt(index);
             ChibiNameInviteRules.Dismiss(_dismissed, inv, 0f);
-            if (inv.ExpiresAt <= Time.unscaledTime) { SetStatus("That invite expired.", true); return ""; }
-            SetStatus("Joining " + inv.FromName + "'s room...", false);
+            if (inv.ExpiresAt <= Time.unscaledTime) { SetStatus(Loc.T("invite.expired"), true); return ""; }
+            SetStatus(Loc.T("invite.joining_room_of", inv.FromName), false);
             return inv.RoomCode;
         }
 
@@ -207,7 +207,7 @@ namespace ChibiClash.Netcode
                 // SEC-003: too many declines: stop listening for a while and drop what is waiting.
                 for (int i = 0; i < _pending.Count; i++) ChibiNameInviteRules.Dismiss(_dismissed, _pending[i], 0f);
                 _pending.Clear();
-                SetStatus("Invites paused for " + (int)(ChibiNameInviteRules.PauseSeconds / 60f) + " minutes.", false);
+                SetStatus(Loc.T("invite.paused", (int)(ChibiNameInviteRules.PauseSeconds / 60f)), false);
             }
             else SetStatus("", false);
         }
@@ -272,7 +272,7 @@ namespace ChibiClash.Netcode
                         if (ChibiNameInviteRules.Validate(b, _myIndex, _myNorm, proto, me, now, nowUnix, out var inv) != ChibiNameInviteVerdict.Ok)
                             continue;
                         if (ChibiNameInviteRules.Offer(_pending, inv, _dismissed, now, _hostsThisQuery) == ChibiNameInviteVerdict.Ok && !IsInMatch())
-                            SetStatus(inv.FromName + " invited you to \"" + inv.RoomName + "\".", false);
+                            SetStatus(Loc.T("invite.invited_you", inv.FromName, inv.RoomName), false);
                     }
                 // beacon gone = invite withdrawn. A FULL page may have pushed a live beacon off it (junk beacons from
                 // throwaway accounts), so then absence proves nothing: only expiry removes invites (review 2026-11-22).
@@ -318,10 +318,10 @@ namespace ChibiClash.Netcode
             {
                 string who = OutgoingTo;
                 _ = DeleteOutgoing();
-                if (end == ChibiNameInviteEnd.Expired) SetStatus("Your invite to " + who + " ran out.", false);
-                else if (end == ChibiNameInviteEnd.RoomFull) SetStatus("Your room is full. Invite closed.", false);
-                else if (end == ChibiNameInviteEnd.Joined) SetStatus("A player joined your room. Invite closed.", false);
-                else SetStatus("Invite cancelled: the room closed.", false);
+                if (end == ChibiNameInviteEnd.Expired) SetStatus(Loc.T("invite.ran_out", who), false);
+                else if (end == ChibiNameInviteEnd.RoomFull) SetStatus(Loc.T("invite.closed_full"), false);
+                else if (end == ChibiNameInviteEnd.Joined) SetStatus(Loc.T("invite.closed_joined"), false);
+                else SetStatus(Loc.T("invite.closed_room"), false);
                 return;
             }
             if (now >= _outHeartbeatAt)

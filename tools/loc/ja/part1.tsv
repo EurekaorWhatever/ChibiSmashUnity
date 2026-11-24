@@ -1,0 +1,259 @@
+lang.backdrop	言語
+lang.title	言語を選択
+lang.subtitle	ゲーム内のすべての表示がこの言語になります。設定からいつでも変更できます。
+lang.search_hint	言語を検索...
+lang.no_match	検索に一致する言語がありません。
+lang.english_text	現在は英語で表示
+lang.confirm	決定  ·  {0}
+lang.confirm_none	決定
+lang.pad_hint	入力して検索 · 上 / 下で選択 · Enter またはパッドA = 決定
+common.cancel	キャンセル
+settings.language	言語  ·  {0}
+difficulty.dummy	ダミー
+difficulty.easy	イージー
+difficulty.medium	ノーマル
+difficulty.hard	ハード
+difficulty.dummy_upper	ダミー
+difficulty.easy_upper	イージー
+difficulty.medium_upper	ノーマル
+difficulty.hard_upper	ハード
+nav.home	ホーム
+nav.play	プレイ
+nav.training	トレーニング
+nav.arcade	アーケード
+nav.collection	コレクション
+nav.settings	設定
+account.signed_in_as	{0} としてサインインしました。
+account.signed_in	サインインしました。
+account.signed_out	サインアウトしました。
+keys.who	P{0} {1}
+keys.reserved	{0} はポーズ / 姿勢用のキーです（1 2 3、8 9 0、テンキー 7 8 9、P、-）。別のキーを選んでください。
+keys.swapped	{0}；{1} は {2} になりました
+match.versus	{0}  VS  {1}
+online.locked_age	オンラインプレイは13歳以上のプレイヤー向けです。
+arcade.clear_toast	アーケードクリア！ライバル {0} 人をすべて撃破
+precheck.too_dark	暗すぎます（{0}%）- 明るくしてください
+precheck.too_bright	明るすぎます（{0}%）- まぶしさを抑えてください
+precheck.good	良好（{0}%）
+loading.weapon_art	武器グラフィック：{0}
+loading.fighter	ファイター：{0}
+precheck.checking	チェック中... {0}
+wipe.character_select	キャラクター選択
+wipe.arcade	アーケード
+results.rematch	再戦
+results.continue	コンティニュー
+results.finish	終了
+results.next_battle	次の対戦へ
+wipe.arcade_clear	アーケードクリア
+precheck.title	カメラチェック
+precheck.camera_unavailable	カメラを使用できません
+precheck.simulated_feed	シミュレーション映像（Webカメラオフ）
+precheck.upper_body_ok	上半身がフレーム内にあります
+precheck.step_back	後ろに下がってください - 肩と腰が映るようにしてください
+loading.interface	インターフェース画像
+loading.typefaces	フォント
+loading.pose_model	ポーズ認識モデル
+loading.ready	準備完了
+onboarding.welcome	ようこそ！
+onboarding.your_account	アカウント
+onboarding.your_name	プレイヤー名
+rooms.backdrop_create	マッチメイク  ·  ルーム作成
+rooms.backdrop_join	マッチメイク  ·  ルームに参加
+precheck.all_passed	すべてのチェックに合格
+precheck.failed	チェック失敗
+precheck.lighting	明るさ
+precheck.framing	フレーミング
+precheck.posture	姿勢
+precheck.upright	いい姿勢です
+precheck.sit_up	背筋を伸ばすとボーナスコイン獲得
+common.retry	リトライ
+precheck.play_anyway	このままプレイ
+common.back	戻る
+precheck.ranked_note	ランクマッチではこのチェックの合格が必要です。カジュアルマッチではスキップできます。
+precheck.hint	試合前カメラチェック
+hint.select	選択
+home.play	プレイ
+home.training	トレーニング
+home.arcade	アーケード
+home.collection	キャラクターコレクション
+home.settings	設定
+home.exit	ゲーム終了
+home.play_desc	オンラインのクイックマッチ、フレンドとのマッチメイクルーム、または Vs CPU
+home.training_desc	カメラ設定、ジェスチャー練習、トレーニング用ダミー
+home.arcade_desc	全ステージで5人のライバルと連続バトル
+home.collection_desc	スキン、武器、コスメティックガチャ
+home.settings_desc	難易度、カメラ設定、キー設定
+home.exit_desc	ゲームを閉じる
+tips.1	ULTゲージを溜めてアルティメットを押そう - カウントダウンが終わる前に、カメラの前でファイターのポーズをとろう。
+tips.2	DEFが高いほど、受けるダメージが減り、ガードも強くなる。
+tips.3	カメラが認識したいい姿勢で、試合後にボーナスコインがもらえる。
+tips.4	スキンと武器は見た目だけ - 装備でステータスは変わらない。
+tips.5	トレーニングでは T でアルティメットをフルチャージ。ダミーは何度でも起き上がる。
+tips.6	ファイターごとに2つのパッシブから1つを選べる - キャラ決定後にロードアウト画面で選ぼう。
+tips.7	オンライン対戦はロールバックネットコードを採用：両方のゲームが同じ入力から同じ試合を再現する。
+stats.power	パワー
+stats.speed	スピード
+stats.range	リーチ
+stats.endurance	耐久力
+stats.recovery	回復力
+training.use_block	ガード · 近接と魔法のアルティメット
+training.use_fireball	ファイアボール · 遠距離と長柄のアルティメット
+training.use_superjump	スーパージャンプ · ヘビーのアルティメット
+menu.online_locked	オンラインモードは13歳以上のプレイヤー向けです。
+menu.no_internet	インターネット未接続：Wi-Fiかモバイルデータに接続してください。VS AI はオフラインで遊べます。
+menu.four_player_soon	2v2 と Battle Royale には4人対戦が必要です。今後のアップデートで追加予定です。
+profile.edit_name	名前を編集
+profile.win_loss	勝 {0}  ·  敗 {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	準備完了
+loading.loading	ロード中
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   達成 x{2}
+arcade.rule_fight_all	{0} 人のキャラクター全員とランダムな順番で連続対戦。
+arcade.rule_difficulty	CPU の難易度：{0}（設定で変更できます）。
+arcade.final	ファイナル
+arcade.round	ラウンド {0}
+training.cv_setup_source	CV 設定 · {0}
+training.status	カメラ：{0}\nトラッキング：{1}\n検出：{2}
+training.off	オフ
+training.none	なし
+training.status_posture	   ·   姿勢 {0}%   ·   テレメトリ {1}
+collection.gold_cinematic_suffix	 · ゴールドシネマティック
+collection.only	{0} 専用
+collection.pull1	1回引く  ·  {0}
+collection.pull10	10回引く  ·  {0}
+collection.dup_suffix	  (重複 +20)
+collection.new_suffix	  NEW!
+collection.pull_toast	{0}！{1} · {2}
+settings.match_time_value	{0} 秒  <size=12><color=#9AA6BC>（全試合共通）</color></size>
+settings.change_name_as	名前を変更  ·  {0}
+settings.change_name	名前を変更
+settings.keys_help	割り当てをクリックしてから、キーを押すか、マウスボタンでその枠をクリックします（Esc / パッドB / 他の場所をクリックでキャンセル。5秒でタイムアウト）。どちらかのプレイヤーが既に使っている場合は入れ替わります。\nカメラポーズ：腕を交差 = ガード · 腕を横に伸ばす = ファイアボール · 両手を上げる = スーパージャンプ（キーボードのポーズ：1/2/3 と 8/9/0）。
+rarity.common	コモン
+rarity.rare	レア
+rarity.epic	エピック
+rarity.legendary	レジェンド
+skin.default	クラシック
+skin.mint	ミントポップ
+skin.shadow	シャドウ
+skin.sakura	サクラ
+skin.inferno	インフェルノ
+skin.celestial	セレスティアル
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	13歳以上限定
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nチーム
+play.four_player_later	2v2 と Battle Royale は今後のアップデートで4人対戦とともに登場します。
+play.team_tag	4P · 2チーム
+play.royale_tag	4P · バトルロイヤル
+collection.all_fighters	全ファイター
+arcade.mode	アーケードモード
+home.tagline	アリーナ格闘  ·  全身ジェスチャーでアルティメット
+play.royale_card	BATTLE\nROYALE
+training.kicker	カメラ設定と練習
+settings.camera_tracking	カメラトラッキング（Webカメラ）
+training.camera_off	カメラトラッキング：オフ
+training.camera_on	カメラトラッキング：オン
+collection.hint	キャラクターコレクション
+play.choose_style	プレイスタイルを選択
+online.kicker	プレイスタイルを選択  ·  ソロ · 2V2 · BATTLE ROYALE
+play.kicker	バトルを選択  ·  VS ONLINE · マッチメイク · VS CPU
+play.coming_soon	近日登場
+training.cv	コンピュータビジョン
+online.connection	接続
+collection.banner	コスメティックガチャ
+settings.cpu_difficulty	CPU の難易度
+play.create_join	ルーム作成 · 参加
+settings.cv_overlay	試合中の CV 表示
+quests.coins_note	コインはプレイでのみ獲得できます：勝利、PvE、クエスト、カメラが認識したいい姿勢。
+collection.odds	コモン 60% · レア 28% · エピック 10% · レジェンド 2%
+collection.equip	装備
+collection.equipped	装備中
+hint.exit	終了
+home.exit_upper	ゲーム終了
+exit.title	ゲームを終了しますか？
+online.royale_desc	全員が敵。最後まで立っていたファイターの勝ち。
+arcade.kicker	5人のライバル · 一気に勝ち抜け
+loading.for_battle	バトル開始
+online.invites_note	フレンドからのルーム招待はここに表示されます。フレンドとのルームは プレイ > マッチメイク にあります。
+settings.kicker	ゲーム · カメラ · 操作
+training.gestures_live	ジェスチャー  （カメラの前でポーズ - パンチ = 片腕を横にまっすぐ伸ばす）
+training.gestures_sim	ジェスチャー  （キーを長押しでポーズをシミュレート）
+settings.key_bindings	キー設定
+settings.keys_reset	キー設定を初期化しました
+play.locked	ロック中
+arcade.rule_retry	ラウンドに負けても、コンティニューで再挑戦できます。
+home.hint	メインメニュー
+settings.master_volume	マスター音量
+settings.match_time	試合時間
+play.matchmaking_card	マッチ\nメイク
+hint.move	移動
+play.matchmaking_desc	ルームを作って、コードを共有するか名前でフレンドを招待。
+play.no_internet_tag	オフライン
+online.no_internet_body	現在インターネットに接続されていません。Wi-Fiかモバイルデータに接続するか、Vs CPU で遊んでください。
+common.off	オフ
+online.offline	オフライン
+common.on	オン
+settings.player1	プレイヤー 1
+settings.player2	プレイヤー 2
+training.practice_dummy	ダミーで練習
+settings.precheck	試合前カメラチェック
+loading.prepare	準備
+settings.listening_hint	キーを押すか枠をクリック  ·  ESC / パッドB でキャンセル  ·  パッドのボタンは割り当て不可
+training.slouch_note	P で猫背の姿勢に切り替えて、姿勢スコアが下がるのを確認しよう。
+settings.profile_reset	プロフィールをリセットしました（名前とサインインは保持）
+collection.pull_to_unlock	ガチャで解放
+quests.title	クエスト
+online.quick_match	クイックマッチ
+play.online_desc	近くのプレイヤーとクイックマッチ、またはフレンドの招待に応じる。
+online.solo_desc	クイックマッチ：今検索中のプレイヤーと対戦、近い人から優先。
+settings.reset_keys	キーをリセット
+settings.reset_profile	プロフィールをリセット
+arcade.rival_unknown	ライバル  ???
+play.rooms_tag	ルーム · 2-4人
+online.rollback_body	ロールバックネットコード：両方のゲームが同じ入力から同じ試合を再現するので、速くて公平。
+settings.screen_shake	画面の揺れ
+profile.set_name	名前を設定
+settings.sfx_volume	効果音の音量
+training.simulate_pose	ポーズをシミュレート
+collection.kicker	スキン · 武器 · コスメティックガチャ
+training.slouch	猫背
+online.solo_card	ソロ\n1V1
+home.start	スタート
+arcade.start	アーケード開始
+exit.stay	続ける
+settings.sure	よろしいですか？
+settings.sure_reset_profile	本当に？進行状況がすべて消えます
+collection.banner_note	スキンとアルティメット演出のみ。どのスキンでもステータスは同じ - 課金で有利になる要素はありません。
+hint.tabs	タブ
+loading.tip	ヒント
+training.hint	トレーニング  /  CV 設定
+arcade.rule_stages	ステージはラウンドごとに変わります。始まりの山から海底遺跡まで。
+online.team_desc	2人ずつの2チーム。フレンドリーファイアなし：味方には攻撃が当たりません。
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  プレイスタイル
+play.online_card	VS\nONLINE
+arcade.rule_rewards	勝利するとコインとクエストの進行を獲得。VS CPU と同じです。
+exit.saved_note	プロフィール、コイン、コレクションはこのデバイスに保存されています。
+settings.key_listening	キーを押すかここをクリック
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	ファイターと難易度（イージー、ノーマル、ハード）を選択。CPU のファイターはランダムです。
+account.keep_name_body	Google アカウントでサインインすると、名前とデータがずっと引き継がれます：ゲームを開くたびに、どのパソコンでも。別の Google アカウントには新しい名前が付きます。
+name.you_are	あなたは {0}！
+name.you_are_unchecked	あなたは {0}！オンラインでプレイするときに名前をチェックします。
+online.could_not_start	試合を開始できませんでした（{0}）。
+rooms.your_rooms	あなたのルーム
+rooms.count_click	{0}  ·  ルームをクリックして開く
+rooms.code_value	コード  {0}
+rooms.players_count	{0} / {1} 人
+rooms.more	+ 他 {0} ルーム
+rooms.created	ルーム「{0}」を作成しました。クリックしてコードを共有するか、フレンドを招待しましょう。
+quick.searching	検索中
+quick.looking_in	検索範囲：  {0}
+room.kicker	ルーム  ·  2-4人  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	準備完了
+room.full_suffix	 · 満員

@@ -1,0 +1,260 @@
+room.waiting	CZEKAMY NA GRACZY
+room.joined	{0}  ·  DOŁĄCZYŁO {1} / {2}
+room.host	GOSPODARZ
+room.player_n	GRACZ {0}
+room.you_suffix	 · TY
+room.hazards_host_pick	{0} · WYBÓR GOSPODARZA
+room.hazards_on	PUŁAPKI WŁ.
+room.hazards_off	PUŁAPKI WYŁ.
+room.code_copied	Skopiowano kod pokoju {0}. Wklej go przyjacielowi.
+invite.body	{0} zaprasza cię do {1}   ({2} s)
+select.ult_name	ULT  {0}
+age.title	ILE MASZ LAT?
+age.body	W każdym wieku można grać we wszystkie tryby. Twój wiek jest zapisywany z nazwą gracza do statystyk gry.
+common.next	DALEJ
+age.error	Wpisz swój wiek lub ustaw go krzyżakiem.
+age.pad_hint	Pad: krzyżak góra/dół zmienia o 1, lewo/prawo o 10 · A = dalej
+rooms.enter_name	WPISZ NAZWĘ POKOJU
+rooms.name_rules	3-24 litery, cyfry lub spacje. Przyjaciele zobaczą ją po dołączeniu. Pokój mieści od 2 do 4 graczy.
+rooms.create	UTWÓRZ
+common.one_moment	CHWILECZKĘ...
+account.keep_name	ZACHOWAJ NAZWĘ WOJOWNIKA
+account.finish_in_browser	DOKOŃCZ W PRZEGLĄDARCE...
+account.sign_in_google	ZALOGUJ PRZEZ GOOGLE
+account.play_without	GRAJ BEZ KONTA
+name.choose_first	Najpierw wybierz nazwę gracza.
+common.cancelled	Anulowano.
+name.welcome	WITAJ, WOJOWNIKU! JAK SIĘ NAZYWASZ?
+name.change_title	ZMIEŃ NAZWĘ
+name.rules	3-16 liter, cyfr lub _. Wybierz zabawną nazwę wojownika, nie prawdziwe imię. Po niej przyjaciele cię znajdą i zaproszą, i to ją widzą wszyscy.
+name.suggest	PODPOWIEDZ
+name.checking	SPRAWDZANIE...
+name.lets_fight	DO WALKI!
+common.save	ZAPISZ
+name.pad_hint_first	Pad: A = do walki · Y = podpowiedz nazwę
+name.pad_hint	Pad: A = zapisz · Y = podpowiedz nazwę
+online.connected_agreeing	Połączono. Uzgadnianie meczu...
+online.host_settings_changed	Gospodarz zmienił ustawienia — dołącz ponownie do pokoju.
+online.version_mismatch	Twój przeciwnik ma inną wersję gry. Obaj gracze potrzebują tej samej wersji.
+rooms.title	DOBIERANIE
+rooms.kicker	POKOJE  ·  2-4 GRACZY  ·  TWÓRZ · DOŁĄCZ · ZAPROŚ PO NAZWIE
+rooms.create_rooms	UTWÓRZ POKOJE
+rooms.join_room	DOŁĄCZ DO POKOJU
+rooms.creating	TWORZENIE POKOJU...
+rooms.loading	WCZYTYWANIE POKOI...
+rooms.none_yet	Nie utworzono jeszcze żadnego pokoju!
+rooms.one_moment	Chwileczkę.
+rooms.empty_help	Naciśnij UTWÓRZ POKOJE, aby stworzyć pokój, albo DOŁĄCZ DO POKOJU z kodem od przyjaciela.
+rooms.capacity_note	Pokój mieści od 2 do 4 graczy. Zapraszaj przyjaciół po nazwie gracza.
+rooms.invites_paused	Zaproszenia do pokoi wstrzymane na kilka minut
+rooms.refresh	ODŚWIEŻ
+rooms.hint	DOBIERANIE  ·  POKOJE
+rooms.new	NOWY
+rooms.you_host	TWÓJ POKÓJ
+rooms.open	OTWÓRZ
+join.enter_code	WPISZ KOD POKOJU
+join.body	Wpisz lub wklej kod pokoju od przyjaciela (Discord, czat...).
+join.paste	WKLEJ
+join.join	DOŁĄCZ
+join.bad_code	To nie jest kod pokoju. Sprawdź go i spróbuj ponownie (tylko litery i cyfry).
+rooms.fight_starting	W pokoju zaczyna się walka. Poczekaj lub najpierw opuść pokój.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  GRACZ W POBLIŻU
+quick.player_found	ZNALEZIONO GRACZA!
+quick.search_failed	WYSZUKIWANIE NIEUDANE
+quick.not_searching	NIE SZUKAM
+quick.connecting	Łączenie z przeciwnikiem...
+quick.searching_near	Szukanie gracza w pobliżu
+quick.stopped	Wyszukiwanie zatrzymane. Spróbuj ponownie.
+quick.press_search_again	Naciśnij SZUKAJ PONOWNIE, aby znaleźć gracza.
+quick.privacy	Szybki mecz udostępnia twój kraj (z ustawień urządzenia), nigdy lokalizację.
+quick.search_again	SZUKAJ PONOWNIE
+quick.hint	VS ONLINE  ·  SZYBKI MECZ
+room.kicker_opening	POKÓJ  ·  OTWIERANIE POKOJU...
+room.opening	Otwieranie pokoju...
+room.your_fighter	TWÓJ WOJOWNIK
+room.locked_in	ZATWIERDZONO
+room.everyone_ok	Wszyscy naciskają OK: walka zacznie się sama.
+room.share_code	Udostępnij kod lub zaproś przyjaciół po nazwie.
+room.empty_seat	Wolne miejsce
+room.stage_you	ARENA (wybierasz ty)
+room.stage_host	ARENA (wybiera gospodarz)
+common.ok	OK
+room.loading	WCZYTYWANIE...
+room.change	ZMIEŃ
+room.starting	START...
+room.start_fight	ROZPOCZNIJ WALKĘ
+room.close	ZAMKNIJ POKÓJ
+room.leave	OPUŚĆ POKÓJ
+room.hint	DOBIERANIE  ·  POKÓJ
+room.code	KOD
+room.copy	KOPIUJ
+room.host_can_invite	Gospodarz może zaprosić przyjaciela po nazwie.
+room.invite_by_name	ZAPROŚ PRZYJACIELA PO NAZWIE
+room.invite	ZAPROŚ
+room.full	Pokój jest pełny.
+invite.title	ZAPROSZENIE DO POKOJU
+invite.warning	Nazwy nie są weryfikowane: przyjmuj zaproszenia tylko od osób, które znasz.
+invite.accept	PRZYJMIJ
+invite.decline	ODRZUĆ
+room.hazards_on_btn	PUŁAPKI  WŁ.
+room.hazards_off_btn	PUŁAPKI  WYŁ.
+select.passive	PASYWKA
+select.look	WYGLĄD
+select.cosmetic	KOSMETYKA
+select.arcade_round	ARCADE  ·  RUNDA {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   PAD 1 = 1P, PAD 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  STRZAŁKI  ENTER  BACKSPACE  DEL
+select.dummy	MANEKIN
+select.round_rival	RYWAL RUNDY {0}
+select.picks_at_start	WYBÓR NA POCZĄTKU WALKI
+select.signature_weapon	BROŃ POPISOWA  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  POKONANY
+select.arcade_route	TRASA ARCADE  ·  ARENA {0} / {1}
+select.select_stage	WYBIERZ ARENĘ
+select.local_versus	POJEDYNEK LOKALNY
+select.arcade_rival	RYWAL ARCADE
+select.training_dummy	MANEKIN TRENINGOWY
+select.stage	ARENA
+select.hazards	PUŁAPKI
+select.fight	WALCZ
+select.change	ZMIEŃ
+select.confirm	POTWIERDŹ
+select.random	LOSOWO
+select.fate	ZDAJ SIĘ NA LOS
+select.ready_bang	GOTOWY!
+select.loadout	WYPOSAŻENIE
+select.waiting_1p	CZEKAMY NA 1P
+select.1p_picks_dummy	1P WYBIERA MANEKINA
+select.selecting	WYBIERA
+select.identity_hidden	TOŻSAMOŚĆ UKRYTA
+select.revealed_at_start	UJAWNIONA NA POCZĄTKU RUNDY
+select.ai_picks	AI WYBIERA WOJOWNIKA
+select.random_every_fight	LOSOWA POSTAĆ W KAŻDEJ WALCE
+select.any_character	DOWOLNA POSTAĆ · LOSOWA PASYWKA I BROŃ
+select.lock_in_hint	ZATWIERDŹ  ·  LUB KLIKNIJ POSTAĆ
+select.to_ready	ABY BYĆ GOTOWYM
+select.cpu_difficulty_pick	POZIOM CPU  ·  WYBIERZ PRZED WALKĄ
+select.ai_note	Internet niepotrzebny. AI wybiera nową postać, pasywkę i broń w każdej walce, także w rewanżach.
+select.pad_difficulty	KRZYŻAK GÓRA / DÓŁ  ·  POZIOM
+select.key_difficulty	W / S  ·  POZIOM
+select.start_training	ROZPOCZNIJ TRENING
+select.fight_bang	DO WALKI!
+select.click_to_start	LUB KLIKNIJ, ABY ZACZĄĆ Z OBECNYM WYBOREM
+hud.ready	PRZYGOTUJ SIĘ...
+hud.rival	RYWAL
+hud.you	TY
+hud.ultimate_ready	{0} · SUPERATAK GOTOWY
+hud.move_detected	{0} · WYKRYTO RUCH
+hud.failed	{0} · NIEUDANE
+hud.training_title	TRENING · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  TRENING
+hud.intro_online	  ·  ONLINE  ·  ESC / START: WYJDŹ
+hud.ult_ready_press	ULT GOTOWY - naciśnij {0}
+hud.ult_ready	ULT GOTOWY
+hud.sim_key	klawisz sym.: {0}
+hud.poses_live	 · pozy: skrzyżowane ręce = blok / ręka w bok = kula ognia / ręce w górę = skok
+hud.poses_keys	 · pozy 1 skrzyżuj / 2 cios / 3 unieś · P garbienie
+hud.poses_p2	 · pozy 8/9/0
+hud.training_help	TRENING: T napełnia superatak · znokautowani wracają z 0% · Esc pauza
+hud.ult_pct	ULT {0}%
+hud.last_hit	OSTATNI CIOS  {0}
+hud.combo_hits	COMBO  {0} TRAFIEŃ  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	KAMERA P1 · SYM.
+hud.cv_p1_live	KAMERA P1 · NA ŻYWO
+hud.cv_p2_sim	KAMERA P2 · SYM.
+hud.cv_p2_live	KAMERA P2 · NA ŻYWO
+hud.hits_prefix	{0} TRAFIEŃ  
+results.no_contest	BEZ ROZSTRZYGNIĘCIA
+results.draw	REMIS!
+results.cpu_wins	WYGRYWA CPU
+results.you_win	WYGRANA!
+results.rival_wins	WYGRYWA RYWAL
+results.wins	WYGRYWA {0}!
+results.takes_round	{0} wygrywa rundę
+results.stats	Trafienia  {0}\nPełne combo  {1}   ·   Najlepsze combo  {2}
+results.stats2	\nSuperataki gestami  {0}\nParowania  {1}
+results.posture	\nDobra postawa  {0}%
+results.rewards_named	NAGRODY (profil {0})
+results.rewards_your	NAGRODY (twój profil)
+results.rewards_p1	NAGRODY (profil P1)
+results.coins	+{0} monet  (razem {1})
+hud.do_pose	zrób pozę przed kamerą
+results.place_1	1.
+results.place_2	2.
+results.place_3	3.
+results.place_4	4.
+results.out	ODPADA
+results.out_1	ODPADA · 1.
+results.out_2	ODPADA · 2.
+results.out_3	ODPADA · 3.
+results.out_4	ODPADA · 4.
+results.red_team	CZERWONI
+results.blue_team	NIEBIESCY
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · GRACZE: {0}
+hud.keys_line1	P{0}: {1} ruch · {2} skok · 
+hud.keys_line2	{0} lekki · {1} mocny · {2} specjalny · 
+hud.keys_line3	{0} blok · {1} zryw · 
+hud.keys_line4	{0} umiejętności · {1} superatak
+results.characters	POSTACIE
+results.stock_one	1 ŻYCIE
+results.stocks	ŻYCIA: {0}
+hud.respawn	ODRODZENIE
+hud.drop_in	WCHODZI!
+results.main_menu	MENU GŁÓWNE
+pause.title	PAUZA
+pause.resume	WZNÓW
+pause.quit	WYJDŹ DO MENU
+pause.hint	B / Backspace, aby wznowić
+leave.title	OPUŚCIĆ MECZ?
+leave.body	Mecz trwa dalej. Wyjście liczy się jako porażka.
+leave.leave	WYJDŹ
+leave.hint	B / Backspace / Esc / Start, aby zostać
+results.winner	ZWYCIĘZCA
+results.training_no_rewards	Trening: brak nagród
+cv.posture	Postawa {0}%
+cv.posture_low	Postawa {0}% - usiądź prosto!
+cv.telemetry_ok	Telemetria OK
+net.rooms_load_failed	Nie udało się wczytać pokoi: {0}
+net.host_limit	Jesteś już gospodarzem pokoi: {0}. Najpierw zamknij jeden.
+net.creating_named	Tworzenie „{0}”...
+net.room_ready_code	Pokój „{0}” gotowy. Udostępnij kod {1} lub zaproś przyjaciela.
+net.create_failed	Nie udało się utworzyć pokoju: {0}
+net.joining_room	Dołączanie do pokoju {0}...
+net.you_joined	Dołączono do „{0}”. Wybierz wojownika i naciśnij OK.
+net.no_room_code	Brak pokoju z kodem {0}. Sprawdź kod i spróbuj ponownie.
+net.room_full_n	Ten pokój jest pełny (graczy: {0}).
+net.join_failed	Nie udało się dołączyć: {0}
+net.update_failed	Nie udało się zaktualizować pokoju: {0}
+net.could_not_what	Nie udało się {0}: {1}
+net.what_stage	zmienić areny
+net.what_hazards	zmienić pułapek
+net.press_ok_again	{0} Obaj naciśnijcie ponownie OK i ROZPOCZNIJ WALKĘ.
+net.udp_port	Nie udało się otworzyć portu UDP {0} (już zajęty?).
+net.lan_ready	Host LAN gotowy. Przyjaciel dołącza do: {0}  (port {1})
+net.bad_ip	„{0}” to nieprawidłowy adres IP.
+net.connecting_to	Łączenie z {0}...
+net.sign_in_failed	Logowanie nieudane: {0}
+net.room_ready	Pokój „{0}” gotowy. Udostępnij kod przyjacielowi.
+net.searching_in	Szukanie graczy: {0}...
+net.start_failed	Nie udało się rozpocząć walki: {0}
+net.host_unreachable	Nie można połączyć się z gospodarzem: {0}
+net.area_world	cały świat
+net.area_country_and	twój kraj i {0}
+region.africa	Afryka
+region.americas	Ameryki
+region.asia	Azja
+region.europe	Europa
+region.oceania	Oceania
+region.northern_africa	Afryka Północna
+region.eastern_africa	Afryka Wschodnia
+region.middle_africa	Afryka Środkowa
+region.southern_africa	Afryka Południowa
+region.western_africa	Afryka Zachodnia
+region.caribbean	Karaiby

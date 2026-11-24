@@ -1,0 +1,262 @@
+net.area_country_and	negara anda dan {0}
+region.africa	Afrika
+region.americas	Amerika
+region.asia	Asia
+region.europe	Eropah
+region.oceania	Oceania
+region.northern_africa	Afrika Utara
+region.eastern_africa	Afrika Timur
+region.middle_africa	Afrika Tengah
+region.southern_africa	Afrika Selatan
+region.western_africa	Afrika Barat
+region.caribbean	Caribbean
+region.central_america	Amerika Tengah
+region.south_america	Amerika Selatan
+region.northern_america	Amerika Utara
+region.central_asia	Asia Tengah
+region.eastern_asia	Asia Timur
+region.south_eastern_asia	Asia Tenggara
+region.southern_asia	Asia Selatan
+region.western_asia	Asia Barat
+region.eastern_europe	Eropah Timur
+region.northern_europe	Eropah Utara
+region.southern_europe	Eropah Selatan
+region.western_europe	Eropah Barat
+region.australia_and_new_zealand	Australia dan New Zealand
+region.melanesia	Melanesia
+region.micronesia	Mikronesia
+region.polynesia	Polinesia
+net.joined_connecting	Menyertai "{0}". Menyambung kepada hos...
+net.opponent_unreachable	Tidak dapat mencapai lawan anda: {0}
+net.quick_filling	{0} daripada {1} pemain. Bermula dalam {2} s...
+invite.inviting	Menjemput {0}...
+invite.sent_lasts	Jemputan dihantar kepada {0}. Sah selama {1} saat.
+invite.send_failed	Tidak dapat menghantar jemputan: {0}
+invite.joining_room_of	Menyertai bilik {0}...
+invite.paused	Jemputan dijeda selama {0} minit.
+invite.invited_you	{0} menjemput anda ke "{1}".
+invite.ran_out	Jemputan anda kepada {0} telah tamat.
+friends.choose_name	Pilih nama pemain supaya rakan boleh mencari anda.
+friends.unavailable	Rakan tidak tersedia: {0}
+friends.your_name_is	Nama anda {0}. Berikan kepada rakan supaya mereka boleh menambah anda.
+friends.set_name_failed	Tidak dapat menetapkan nama: {0}
+friends.request_sent	Permintaan rakan dihantar kepada {0}.
+friends.add_failed	Tidak dapat menambah {0}: {1}
+friends.offline	{0} berada di luar talian sekarang.
+friends.request_then_invite	Permintaan rakan dihantar kepada {0}. Jemputan dihantar sebaik sahaja mereka menerima.
+friends.unreachable	Tidak dapat mencapai {0}: {1}
+friends.creating_room_for	Mencipta bilik untuk {0}...
+friends.joining	Menyertai {0}...
+friends.declined	{0} menolak jemputan.
+friends.version_mismatch	{0} menjemput anda, tetapi menggunakan versi permainan yang berbeza.
+friends.invite_sent_waiting	Jemputan dihantar kepada {0}. Menunggu mereka menyertai...
+name.too_short	Nama terlalu pendek (sekurang-kurangnya {0} aksara).
+name.too_long	Nama terlalu panjang (paling banyak {0} aksara).
+rooms.name_too_short	Nama bilik terlalu pendek (sekurang-kurangnya {0} aksara).
+rooms.name_too_long	Nama bilik terlalu panjang (paling banyak {0} aksara).
+net.bad_code	Itu bukan kod bilik yang sah (huruf dan nombor sahaja).
+net.version_mismatch	Bilik itu dibuat dengan versi Chibi Clash yang berbeza. Kedua-dua pemain perlukan versi yang sama.
+net.loading_room	Memuatkan bilik...
+net.room_closed	Bilik ditutup.
+net.you_left	Anda meninggalkan bilik.
+net.waiting_host_game	Memulakan... menunggu permainan hos.
+net.choose_next_fight	Pilih pejuang anda dan tekan OK untuk pertarungan seterusnya.
+net.host_changed_stage	Hos menukar tetapan pentas. Tekan OK sekali lagi.
+net.room_closed_host_left	Bilik telah ditutup (hos keluar).
+net.starting_fight	Memulakan pertarungan...
+net.player_left_joined	Seorang pemain keluar atau menyertai.
+net.no_connection	Tiada sambungan.
+net.fight_could_not_start	Pertarungan tidak dapat dimulakan.
+net.fight_starting_wait	Pertarungan bermula! Menunggu rakan anda bersambung...
+net.choose_press_ok	Pilih pejuang anda dan tekan OK.
+net.too_many_starts	Terlalu banyak kali mula. Tunggu seminit, kemudian tekan MULA BERTARUNG.
+net.fight_starting_connecting	Pertarungan bermula! Menyambung...
+net.could_not_connect	Tidak dapat bersambung.
+net.friend_no_answer	Rakan anda tidak menjawab.
+net.start_cancelled	Permulaan dibatalkan.
+net.friend_no_connect	Rakan anda tidak bersambung.
+net.enter_code	Masukkan kod bilik yang ditunjukkan oleh rakan anda.
+net.lan_browser	Main LAN tidak tersedia dalam pelayar. Gunakan BILIK atau PADANAN, atau versi PC untuk LAN.
+net.enter_ip	Masukkan alamat IP hos.
+net.this_pc_ip	IP PC ini
+net.signing_in	Sedang log masuk...
+net.creating_private	Mencipta bilik peribadi...
+net.hosting_one	Tiada perlawanan terbuka ditemui, menganjurkan satu...
+net.needs_2_to_4	Pertarungan memerlukan 2 hingga 4 pemain.
+net.waiting_friend	Menunggu rakan anda bersambung...
+net.waiting_friends	Menunggu rakan-rakan anda bersambung...
+net.connection_running	Sambungan lain masih berjalan.
+net.no_valid_info	Bilik tiada maklumat sambungan yang sah (hos keluar?).
+net.connecting_host	Menyambung kepada hos...
+net.already_full	Bilik itu sudah penuh.
+net.no_info	Bilik tiada maklumat sambungan (hos keluar?).
+net.player_left_searching	Pemain itu keluar. Mencari semula...
+net.connected	Bersambung!
+net.relay_failed	Sambungan ke pelayan Relay gagal.
+net.opponent_timeout	Tidak dapat mencapai lawan anda (tamat masa).
+net.no_internet	Tiada sambungan internet. Sambungkan Wi-Fi atau data mudah alih untuk bermain dengan rakan di mana-mana. (Main LAN berfungsi dalam rangkaian yang sama.)
+invite.wait	Tunggu sebentar sebelum menghantar jemputan lain.
+invite.type_name	Taip nama dalam permainan rakan anda (3-16 huruf, nombor atau _).
+invite.own_name	Itu nama anda sendiri.
+invite.open_room_first	Buka bilik anda dahulu, kemudian jemput.
+invite.room_full	Bilik anda sudah penuh.
+invite.could_not_send	Tidak dapat menghantar jemputan.
+invite.too_many	Terlalu banyak jemputan sekarang. Cuba lagi dalam beberapa saat.
+invite.cancelled	Jemputan dibatalkan.
+invite.expired	Jemputan itu telah tamat.
+invite.closed_full	Bilik anda penuh. Jemputan ditutup.
+invite.closed_joined	Seorang pemain menyertai bilik anda. Jemputan ditutup.
+invite.closed_room	Jemputan dibatalkan: bilik ditutup.
+name.taken	Nama ini sudah diambil
+name.check_unavailable	Tidak dapat menyemak nama anda dalam talian. Semak internet anda dan cuba lagi.
+name.too_soon	Anda baru sahaja menukar nama. Cuba lagi dalam seminit.
+name.choose_different	Sila pilih nama lain.
+friends.type_tag	Taip nama rakan anda seperti Kira#4821.
+friends.added	Rakan ditambah.
+friends.declined_request	Permintaan ditolak.
+friends.removed	Rakan dibuang.
+friends.blocked	Pemain disekat.
+friends.a_friend	Seorang rakan
+friends.type_player_tag	Taip nama pemain seperti Kira#4821.
+friends.wait_invite	Tunggu sebentar sebelum menjemput lagi.
+name.enter	Masukkan nama.
+name.bad_chars	Gunakan huruf, nombor dan _ sahaja (tiada ruang atau simbol).
+rooms.name_bad_chars	Nama bilik hanya menggunakan huruf, nombor, ruang dan _ - ' !.
+rooms.name_double_space	Nama bilik tidak boleh mempunyai ruang berganda.
+rooms.name_choose_different	Sila pilih nama bilik lain.
+gesture.cross_arms	SILANG TANGAN
+gesture.punch_forward	TUMBUK KE DEPAN
+gesture.raise_hands	ANGKAT KEDUA-DUA TANGAN
+class.kaia.passive1_desc	+15% kelajuan serangan
+class.kaia.passive2_desc	5% curi nyawa
+class.kaia.skill1_desc	Pecut ke depan dan tikam lawan
+class.kaia.skill2_desc	Masa yang tepat memantulkan kerosakan
+class.kaia.skill3_desc	Tikam banyak kali dengan pantas
+class.kaia.ult_desc	10s: serangan biasa melepaskan gelombang mendatar
+class.bruna.passive1_desc	+20% kerosakan, -15% kelajuan serangan
+class.bruna.passive2_desc	+20% kerosakan, -15% kelajuan gerak
+class.bruna.skill1_desc	Tangkap lawan dan hempas ke tanah
+class.bruna.skill2_desc	Berpusing seperti puting beliung, memukul berulang kali
+class.bruna.ult_desc	Hentak lantai untuk mencipta gelombang kejutan
+class.ren.passive1_desc	+20% kadar kritikal
+class.ren.passive2_desc	+10% kelajuan gerak selama 10s (masa tunggu 30s)
+class.ren.skill1_desc	Pecut ke belakang secara mendatar dan tembak
+class.ren.skill2_desc	Cekik lawan yang dekat dan tolak mereka jauh
+class.ren.skill3_desc	Tembak hujan anak panah secara mendatar
+class.ren.ult_desc	Satu anak panah berganda menjadi ribut anak panah
+class.lyra.passive1_desc	10% peluang apabila kena: -15% gerak, -10% dmg, -15% kelajuan serangan
+class.lyra.passive2_desc	20% peluang menghalang kerosakan
+class.lyra.skill1_desc	Lepaskan peluru api yang memburu sasaran
+class.lyra.skill2_desc	Seru 3 orang suruhan
+class.lyra.skill3_desc	Awan mengekori musuh dan menyambar dengan petir
+class.lyra.ult_desc	Gelang api 10s: membakar musuh, menghalang peluru
+class.taro.passive1_desc	10% peluang apabila kena: -15% pertahanan musuh
+class.taro.passive2_desc	Selepas 3s tanpa menyerang, pukulan seterusnya +50%
+class.taro.skill1_desc	Panjangkan, lompat dan hayun ke bawah
+class.taro.skill2_desc	Putar lembing untuk menghalang peluru
+class.taro.skill3_desc	Baling lembing dan panggil ia kembali
+class.taro.ult_desc	Tikam musuh, kemudian sepak pemegangnya lebih dalam
+char.kaia.role	Penyerang Tangkas
+char.kaia.style	Pertarungan jarak dekat yang pantas dan lincah dengan tetakan tepat yang boleh dirangkai.
+char.bruna.role	Petarung Lasak
+char.bruna.style	Petarung berkerosakan tinggi dan sangat tahan lasak yang menguasai ruang dengan serangan berat.
+char.ren.role	Penembak Tepat Tangkas
+char.ren.style	Kawalan jarak yang sangat lincah dan tekanan tepat dengan teknik anak panah serba boleh.
+char.lyra.role	Kawalan Ruang / Perangkap
+char.lyra.style	Ahli sihir tangkas yang menguasai ruang dengan sihir pantas, gerakan licik dan magik yang tepat.
+char.taro.role	Pakar Jangkauan
+char.taro.style	Kawalan berdisiplin dan lincah dengan tekanan jangkauan jauh dan serangan tepat.
+stage.0.name	Dojo Langit
+stage.0.short	Dojo Langit
+stage.0.tagline	Kuil gunung di atas awan
+stage.1.name	Bandar Neon
+stage.1.short	Bandar Neon
+stage.1.tagline	Arena atas bumbung di bawah hujan neon
+stage.2.name	Tempaan Lava
+stage.2.short	Tempaan Lava
+stage.2.tagline	Faundri cair di atas lautan lava
+stage.3.name	Gunung Permulaan
+stage.3.short	Gunung
+stage.3.tagline	KO menegak · pelantar jed bergerak di atas jurang berkabus
+stage.4.name	Dataran Perpaduan
+stage.4.short	Dataran
+stage.4.tagline	KO mendatar · satu padang panjang, tiada tempat bersembunyi
+stage.5.name	Jurang Gunung Berapi
+stage.5.short	Gunung Berapi
+stage.5.tagline	Setiap tepi KO · api memancut dari tasik magma
+stage.6.name	Sarang Burung Gergasi
+stage.6.short	Sarang Burung
+stage.6.tagline	KO mendatar · burung raksasa menyapu arena
+stage.7.name	Monumen Lautan Terbiar
+stage.7.short	Lautan
+stage.7.tagline	Setiap tepi KO · ikan paus turun, lompat ke tingkat bawah
+end.opponent_left	Lawan anda meninggalkan perlawanan.
+end.opponent_timeout	Lawan anda berhenti bertindak balas.
+end.connection_lost	Sambungan kepada lawan anda terputus.
+end.you_left	Anda meninggalkan perlawanan.
+end.desync	Kedua-dua permainan tidak sepadan (desync): tiada keputusan.
+end.unconfirmed	Penamat perlawanan tidak dapat disahkan: tiada keputusan.
+end.handshake_failed	Perlawanan tidak dapat dimulakan.
+end.peer_never_started	Lawan anda tidak pernah menyertai perlawanan: tiada keputusan.
+end.too_slow	Sambungan terlalu perlahan untuk bermain: tiada keputusan.
+end.host_left	Hos meninggalkan perlawanan: tiada keputusan.
+end.dropped	Sambungan anda terputus daripada perlawanan.
+status.aura	AURA {0}
+status.fire_ring	GELANG API {0}
+status.tailwind	ANGIN BURITAN
+status.guard_broken	PERTAHANAN PECAH {0}s
+status.guard	PERTAHANAN {0}%
+status.reloading	MENGISI SEMULA {0}s
+status.recharging	MENGECAS {0}s
+status.hexed	DISUMPAH
+status.armor_break	PERISAI -15%
+hud.perform	Lakukan: {0}
+hud.times_up	Masa tamat!
+rewards.no_contest	Tiada keputusan: tiada ganjaran
+rewards.pve_victory	Kemenangan PvE  +{0}
+rewards.pve_match	Perlawanan PvE  +{0}
+rewards.victory	Kemenangan  +{0}
+rewards.match_played	Perlawanan dimainkan  +{0}
+rewards.posture	Postur baik {0}%  +{1}
+hud.revived	HIDUP SEMULA
+quest.win	Menang 3 perlawanan
+quest.pve	Tewaskan CPU dua kali (PvE)
+quest.combo	Lakukan 10 kombo penuh
+quest.ult	Cetuskan 3 ultimate gerak isyarat
+quest.parry	Parry 5 serangan
+quest.posture	Tamatkan perlawanan dengan 80%+ postur baik
+rewards.quest	Misi: {0}  +{1}
+bind.move_left	Gerak kiri
+bind.move_right	Gerak kanan
+bind.drop	Turun / jatuh pantas
+bind.jump	Lompat
+bind.jump_alt	Lompat (alt)
+bind.light	Serangan ringan
+bind.heavy	Serangan berat
+bind.block	Tangkis
+bind.dash	Pecut
+bind.skill1	Skil 1
+bind.skill2	Skil 2
+bind.skill3	Skil 3
+bind.ultimate	Ultimate
+bind.aim_up	Halakan ke atas
+bind.special	Khas
+hud.rejected	Ditolak: {0}
+cv.low_confidence	Keyakinan penjejakan rendah
+cv.frozen	Paparan beku (palsu?)
+cv.snap	Pose bertukar serta-merta (makro?)
+cv.ok	OK
+cam.none	Tiada kamera ditemui
+cam.off	Kamera dimatikan
+cam.starting	Kamera dihidupkan...
+cam.waiting_frames	Menunggu bingkai kamera - benarkan akses kamera untuk Unity dalam System Settings > Privacy > Camera
+cam.live	Kamera langsung ({0}x{1})
+pose.simulated	Simulasi (pose papan kekunci)
+pose.camera_off	Penjejakan kamera dimatikan - menggunakan pose simulasi papan kekunci
+pose.model_failed	Model pose gagal: {0}
+pose.loading	Memuatkan model pose...
+pose.live	Penjejakan badan langsung (MoveNet, {0} Hz)
+pose.step_back	Kamera hidup - undur supaya bahu anda kelihatan
+account.finish_browser	Selesaikan log masuk dalam pelayar anda (pilih Continue with Google)...
+account.signed_out_again	Sudah log keluar. Log masuk semula untuk menggunakan akaun anda.
+account.signed_in_kept	Sudah log masuk. Nama dan kemajuan anda kekal dengan akaun ini.

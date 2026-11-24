@@ -1,0 +1,250 @@
+region.central_america	중앙아메리카
+region.south_america	남아메리카
+region.northern_america	북아메리카
+region.central_asia	중앙아시아
+region.eastern_asia	동아시아
+region.south_eastern_asia	동남아시아
+region.southern_asia	남아시아
+region.western_asia	서아시아
+region.eastern_europe	동유럽
+region.northern_europe	북유럽
+region.southern_europe	남유럽
+region.western_europe	서유럽
+region.australia_and_new_zealand	호주 및 뉴질랜드
+region.melanesia	멜라네시아
+region.micronesia	미크로네시아
+region.polynesia	폴리네시아
+net.joined_connecting	"{0}"에 참가했습니다. 방장에게 연결하는 중...
+net.opponent_unreachable	상대에게 연결할 수 없습니다: {0}
+net.quick_filling	{1}명 중 {0}명. {2}초 후 시작...
+invite.inviting	{0}님을 초대하는 중...
+invite.sent_lasts	{0}님에게 초대를 보냈습니다. {1}초 동안 유효합니다.
+invite.send_failed	초대를 보낼 수 없습니다: {0}
+invite.joining_room_of	{0}님의 방에 참가하는 중...
+invite.paused	초대가 {0}분 동안 일시 중지되었습니다.
+invite.invited_you	{0}님이 "{1}"(으)로 초대했습니다.
+invite.ran_out	{0}님에게 보낸 초대가 만료되었습니다.
+friends.choose_name	친구가 찾을 수 있도록 플레이어 이름을 정하세요.
+friends.unavailable	친구 기능을 사용할 수 없음: {0}
+friends.your_name_is	내 이름은 {0}입니다. 친구에게 알려 주면 추가할 수 있습니다.
+friends.set_name_failed	이름을 설정할 수 없습니다: {0}
+friends.request_sent	{0}님에게 친구 요청을 보냈습니다.
+friends.add_failed	{0}님을 추가할 수 없습니다: {1}
+friends.offline	{0}님은 지금 오프라인입니다.
+friends.request_then_invite	{0}님에게 친구 요청을 보냈습니다. 수락하는 즉시 초대가 전송됩니다.
+friends.unreachable	{0}님에게 연결할 수 없습니다: {1}
+friends.creating_room_for	{0}님을 위한 방을 만드는 중...
+friends.joining	{0}님에게 참가하는 중...
+friends.declined	{0}님이 초대를 거절했습니다.
+friends.version_mismatch	{0}님이 초대했지만, 다른 버전의 게임을 실행 중입니다.
+friends.invite_sent_waiting	{0}님에게 초대를 보냈습니다. 참가를 기다리는 중...
+name.too_short	이름이 너무 짧습니다(최소 {0}자).
+name.too_long	이름이 너무 깁니다(최대 {0}자).
+rooms.name_too_short	방 이름이 너무 짧습니다(최소 {0}자).
+rooms.name_too_long	방 이름이 너무 깁니다(최대 {0}자).
+net.bad_code	올바른 방 코드가 아닙니다(영문자와 숫자만).
+net.version_mismatch	그 방은 다른 버전의 Chibi Clash로 만들어졌습니다. 두 플레이어 모두 같은 버전이 필요합니다.
+net.loading_room	방을 불러오는 중...
+net.room_closed	방이 닫혔습니다.
+net.you_left	방에서 나갔습니다.
+net.waiting_host_game	시작하는 중... 방장의 게임을 기다리는 중입니다.
+net.choose_next_fight	다음 대결을 위해 파이터를 고르고 OK를 누르세요.
+net.host_changed_stage	방장이 스테이지 설정을 바꿨습니다. OK를 다시 누르세요.
+net.room_closed_host_left	방이 닫혔습니다(방장이 나감).
+net.starting_fight	대결을 시작하는 중...
+net.player_left_joined	플레이어가 나가거나 들어왔습니다.
+net.no_connection	연결 없음.
+net.fight_could_not_start	대결을 시작할 수 없습니다.
+net.fight_starting_wait	대결 시작! 친구의 연결을 기다리는 중...
+net.choose_press_ok	파이터를 고르고 OK를 누르세요.
+net.too_many_starts	시작을 너무 많이 했습니다. 1분 기다린 다음 대결 시작을 누르세요.
+net.fight_starting_connecting	대결 시작! 연결하는 중...
+net.could_not_connect	연결할 수 없습니다.
+net.friend_no_answer	친구가 응답하지 않았습니다.
+net.start_cancelled	시작이 취소되었습니다.
+net.friend_no_connect	친구가 연결하지 못했습니다.
+net.enter_code	친구 화면에 표시된 방 코드를 입력하세요.
+net.lan_browser	브라우저에서는 LAN 플레이를 할 수 없습니다. 방이나 매치메이킹을 이용하거나, LAN은 PC 버전을 이용하세요.
+net.enter_ip	호스트의 IP 주소를 입력하세요.
+net.this_pc_ip	이 PC의 IP
+net.signing_in	로그인하는 중...
+net.creating_private	비공개 방을 만드는 중...
+net.hosting_one	열린 경기가 없어 새로 여는 중...
+net.needs_2_to_4	대결에는 2~4명의 플레이어가 필요합니다.
+net.waiting_friend	친구의 연결을 기다리는 중...
+net.waiting_friends	친구들의 연결을 기다리는 중...
+net.connection_running	다른 연결이 아직 진행 중입니다.
+net.no_valid_info	방에 올바른 연결 정보가 없습니다(방장이 나갔나요?).
+net.connecting_host	방장에게 연결하는 중...
+net.already_full	그 방은 이미 가득 찼습니다.
+net.no_info	방에 연결 정보가 없습니다(방장이 나갔나요?).
+net.player_left_searching	그 플레이어가 나갔습니다. 다시 검색하는 중...
+net.connected	연결되었습니다!
+net.relay_failed	Relay 서버 연결에 실패했습니다.
+net.opponent_timeout	상대에게 연결할 수 없습니다(시간 초과).
+net.no_internet	인터넷에 연결되어 있지 않습니다. Wi-Fi나 모바일 데이터에 연결하면 어디서든 친구와 플레이할 수 있습니다. (같은 네트워크에서는 LAN 플레이가 가능합니다.)
+invite.wait	다른 초대를 보내기 전에 잠시 기다리세요.
+invite.type_name	친구의 게임 내 이름을 입력하세요(영문자, 숫자 또는 _ 3-16자).
+invite.own_name	내 이름입니다.
+invite.open_room_first	먼저 방을 연 다음 초대하세요.
+invite.room_full	내 방이 이미 가득 찼습니다.
+invite.could_not_send	초대를 보낼 수 없습니다.
+invite.too_many	지금은 초대가 너무 많습니다. 몇 초 후에 다시 시도하세요.
+invite.cancelled	초대가 취소되었습니다.
+invite.expired	그 초대는 만료되었습니다.
+invite.closed_full	방이 가득 찼습니다. 초대가 종료되었습니다.
+invite.closed_joined	플레이어가 방에 참가했습니다. 초대가 종료되었습니다.
+invite.closed_room	초대 취소: 방이 닫혔습니다.
+name.taken	이미 사용 중인 이름입니다
+name.check_unavailable	온라인으로 이름을 확인할 수 없습니다. 인터넷 연결을 확인하고 다시 시도하세요.
+name.too_soon	방금 이름을 바꿨습니다. 1분 후에 다시 시도하세요.
+name.choose_different	다른 이름을 고르세요.
+friends.type_tag	친구 이름을 Kira#4821 형식으로 입력하세요.
+friends.added	친구를 추가했습니다.
+friends.declined_request	요청을 거절했습니다.
+friends.removed	친구를 삭제했습니다.
+friends.blocked	플레이어를 차단했습니다.
+friends.a_friend	친구
+friends.type_player_tag	플레이어 이름을 Kira#4821 형식으로 입력하세요.
+friends.wait_invite	다시 초대하기 전에 잠시 기다리세요.
+name.enter	이름을 입력하세요.
+name.bad_chars	영문자, 숫자, _만 사용할 수 있습니다(공백이나 기호 불가).
+rooms.name_bad_chars	방 이름에는 영문자, 숫자, 공백, _ - ' !만 사용할 수 있습니다.
+rooms.name_double_space	방 이름에 공백을 두 번 연속 쓸 수 없습니다.
+rooms.name_choose_different	다른 방 이름을 고르세요.
+gesture.cross_arms	팔 교차
+gesture.punch_forward	앞으로 펀치
+gesture.raise_hands	두 손 들기
+class.kaia.passive1_desc	공격 속도 +15%
+class.kaia.passive2_desc	생명력 흡수 5%
+class.kaia.skill1_desc	앞으로 돌진해 상대를 찌른다
+class.kaia.skill2_desc	완벽한 타이밍에 피해를 반사
+class.kaia.skill3_desc	빠르게 여러 번 찌른다
+class.kaia.ult_desc	10초: 일반 공격이 수평 파동을 발사
+class.bruna.passive1_desc	피해 +20%, 공격 속도 -15%
+class.bruna.passive2_desc	피해 +20%, 이동 속도 -15%
+class.bruna.skill1_desc	상대를 붙잡아 바닥에 내리꽂는다
+class.bruna.skill2_desc	토네이도처럼 회전하며 연속 공격
+class.bruna.ult_desc	바닥을 내려쳐 충격파를 일으킨다
+class.ren.passive1_desc	치명타 확률 +20%
+class.ren.passive2_desc	10초 동안 이동 속도 +10%(재사용 대기시간 30초)
+class.ren.skill1_desc	수평으로 뒤로 대시하며 사격
+class.ren.skill2_desc	가까운 상대의 목을 조르고 밀쳐낸다
+class.ren.skill3_desc	수평으로 화살 세례를 쏜다
+class.ren.ult_desc	화살 하나가 화살 폭풍으로 늘어난다
+class.lyra.passive1_desc	적중 시 10% 확률: 이동 -15%, 피해 -10%, 공격 속도 -15%
+class.lyra.passive2_desc	20% 확률로 피해 방어
+class.lyra.skill1_desc	유도 화염탄 발사
+class.lyra.skill2_desc	하수인 3마리 소환
+class.lyra.skill3_desc	구름이 적을 따라가며 벼락을 내린다
+class.lyra.ult_desc	10초 화염 고리: 적을 태우고 투사체를 막는다
+class.taro.passive1_desc	적중 시 10% 확률: 적 방어력 -15%
+class.taro.passive2_desc	3초 동안 공격하지 않으면 다음 공격 +50%
+class.taro.skill1_desc	늘려서 뛰어오른 뒤 아래로 휘두른다
+class.taro.skill2_desc	장병기를 돌려 투사체를 막는다
+class.taro.skill3_desc	창을 던지고 다시 불러온다
+class.taro.ult_desc	적을 찌른 뒤 손잡이를 차서 더 깊이 박는다
+char.kaia.role	민첩한 공격수
+char.kaia.style	빠르고 기동성 있는 근접 전투, 정확하고 연계되는 베기.
+char.bruna.role	브루저
+char.bruna.style	높은 피해와 내구력을 갖춘 싸움꾼, 묵직한 공격으로 공간을 장악한다.
+char.ren.role	민첩한 명사수
+char.ren.style	높은 기동성으로 거리를 조절하고, 다양한 화살 기술로 정확하게 압박한다.
+char.lyra.role	구역 장악 / 설치
+char.lyra.style	빠른 시전, 변칙적인 움직임, 정확한 마법으로 공간을 장악하는 민첩한 마법사.
+char.taro.role	리치 전문가
+char.taro.style	절제되고 기동성 있는 컨트롤형, 긴 리치의 압박과 정확한 공격.
+stage.0.name	하늘 도장
+stage.0.short	하늘 도장
+stage.0.tagline	구름 위 산속 신사
+stage.1.name	네온 시티
+stage.1.short	네온 시티
+stage.1.tagline	네온 비 아래의 옥상 아레나
+stage.2.name	용암 대장간
+stage.2.short	용암 대장간
+stage.2.tagline	용암 바다 위의 주조소
+stage.3.name	시작의 산
+stage.3.short	산
+stage.3.tagline	수직 KO · 안개 낀 낭떠러지 위를 움직이는 옥 발판
+stage.4.name	화합의 평원
+stage.4.short	평원
+stage.4.tagline	수평 KO · 숨을 곳 없는 기다란 들판
+stage.5.name	화산 심연
+stage.5.short	화산
+stage.5.tagline	모든 가장자리에서 KO · 마그마 호수에서 불길이 치솟는다
+stage.6.name	거대 새의 둥지
+stage.6.short	새 둥지
+stage.6.tagline	수평 KO · 거대한 새가 아레나를 휩쓴다
+stage.7.name	버려진 해저 유적
+stage.7.short	해저
+stage.7.tagline	모든 가장자리에서 KO · 고래가 내려오면 아래층으로
+end.opponent_left	상대가 경기에서 나갔습니다.
+end.opponent_timeout	상대가 응답하지 않습니다.
+end.connection_lost	상대와의 연결이 끊어졌습니다.
+end.you_left	경기에서 나갔습니다.
+end.desync	두 게임의 상태가 일치하지 않음(desync): 무효 경기.
+end.unconfirmed	경기 결과를 확인할 수 없음: 무효 경기.
+end.handshake_failed	경기를 시작할 수 없습니다.
+end.peer_never_started	상대가 경기에 참가하지 않음: 무효 경기.
+end.too_slow	연결이 너무 느려 플레이할 수 없음: 무효 경기.
+end.host_left	방장이 경기에서 나감: 무효 경기.
+end.dropped	내 연결이 경기에서 끊어졌습니다.
+status.aura	오라 {0}
+status.fire_ring	화염 고리 {0}
+status.tailwind	순풍
+status.guard_broken	가드 브레이크 {0}초
+status.guard	가드 {0}%
+status.reloading	재장전 {0}초
+status.recharging	충전 중 {0}초
+status.hexed	저주
+status.armor_break	방어구 -15%
+hud.perform	동작: {0}
+hud.times_up	시간 종료!
+rewards.no_contest	무효 경기: 보상 없음
+rewards.pve_victory	PvE 승리  +{0}
+rewards.pve_match	PvE 경기  +{0}
+rewards.victory	승리  +{0}
+rewards.match_played	경기 완료  +{0}
+rewards.posture	바른 자세 {0}%  +{1}
+hud.revived	부활
+quest.win	3경기 승리
+quest.pve	CPU 두 번 이기기(PvE)
+quest.combo	풀 콤보 10회 성공
+quest.ult	동작 궁극기 3회 발동
+quest.parry	공격 5회 패리
+quest.posture	바른 자세 80% 이상으로 경기 마치기
+rewards.quest	퀘스트: {0}  +{1}
+bind.move_left	왼쪽 이동
+bind.move_right	오른쪽 이동
+bind.drop	내려가기 / 빠른 낙하
+bind.jump	점프
+bind.jump_alt	점프(보조)
+bind.light	약공격
+bind.heavy	강공격
+bind.block	방어
+bind.dash	대시
+bind.skill1	스킬 1
+bind.skill2	스킬 2
+bind.skill3	스킬 3
+bind.ultimate	궁극기
+bind.aim_up	위로 조준
+bind.special	특수기
+hud.rejected	거부됨: {0}
+cv.low_confidence	추적 신뢰도 낮음
+cv.frozen	화면 멈춤(위조?)
+cv.snap	포즈 순간 전환(매크로?)
+cv.ok	정상
+cam.none	카메라를 찾을 수 없음
+cam.off	카메라 꺼짐
+cam.starting	카메라 시작 중...
+cam.waiting_frames	카메라 화면을 기다리는 중 - 시스템 설정 > 개인정보 보호 > 카메라에서 Unity의 카메라 접근을 허용하세요
+cam.live	카메라 작동 중({0}x{1})
+pose.simulated	시뮬레이션(키보드 포즈)
+pose.camera_off	카메라 추적 꺼짐 - 키보드 시뮬레이션 포즈 사용 중
+pose.model_failed	포즈 모델 오류: {0}
+pose.loading	포즈 모델 불러오는 중...
+pose.live	실시간 전신 추적(MoveNet, {0} Hz)
+pose.step_back	카메라 켜짐 - 어깨가 보이도록 뒤로 물러나세요
+account.finish_browser	브라우저에서 로그인을 완료하세요(Google로 계속하기 선택)...
+account.signed_out_again	로그아웃했습니다. 계정을 사용하려면 다시 로그인하세요.
+account.signed_in_kept	로그인했습니다. 이름과 진행 상황은 이 계정에 유지됩니다.

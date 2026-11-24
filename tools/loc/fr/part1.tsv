@@ -1,0 +1,244 @@
+lang.backdrop	LANGUE
+lang.title	CHOISIS TA LANGUE
+lang.subtitle	Tout le jeu utilisera cette langue. Tu peux la changer à tout moment dans PARAMÈTRES.
+lang.search_hint	Rechercher une langue...
+lang.no_match	Aucune langue ne correspond à ta recherche.
+lang.english_text	Texte en anglais pour l'instant
+lang.confirm	CONFIRMER  ·  {0}
+lang.confirm_none	CONFIRMER
+lang.pad_hint	Tape pour chercher · Haut / Bas pour choisir · Entrée ou bouton A = confirmer
+common.cancel	ANNULER
+settings.language	LANGUE  ·  {0}
+difficulty.dummy	Mannequin
+difficulty.easy	Facile
+difficulty.medium	Moyen
+difficulty.hard	Difficile
+difficulty.dummy_upper	MANNEQUIN
+difficulty.easy_upper	FACILE
+difficulty.medium_upper	MOYEN
+difficulty.hard_upper	DIFFICILE
+nav.home	ACCUEIL
+nav.play	JOUER
+nav.training	ENTRAÎNEMENT
+nav.arcade	ARCADE
+nav.collection	COLLECTION
+nav.settings	PARAMÈTRES
+account.signed_in_as	Connecté en tant que {0}.
+account.signed_in	Connecté.
+account.signed_out	Déconnecté.
+keys.who	P{0} {1}
+keys.reserved	{0} est une touche de pose / posture (1 2 3, 8 9 0, pavé num. 7 8 9, P, -). Choisis-en une autre.
+keys.swapped	{0} ;  {1} est maintenant {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Le jeu en ligne est réservé aux joueurs de 13 ans et plus.
+arcade.clear_toast	ARCADE TERMINÉ ! Les {0} rivaux sont vaincus
+precheck.too_dark	Trop sombre ({0}%) - ajoute de la lumière
+precheck.too_bright	Trop lumineux ({0}%) - réduis les reflets
+precheck.good	Bon ({0}%)
+loading.weapon_art	Visuels des armes : {0}
+loading.fighter	Combattant : {0}
+precheck.checking	VÉRIFICATION... {0}
+wipe.character_select	CHOIX DU PERSONNAGE
+wipe.arcade	ARCADE
+results.rematch	REVANCHE
+results.continue	CONTINUER
+results.finish	TERMINER
+results.next_battle	COMBAT SUIVANT
+wipe.arcade_clear	ARCADE TERMINÉ
+precheck.title	VÉRIFICATION CAMÉRA
+precheck.camera_unavailable	Caméra indisponible
+precheck.simulated_feed	Flux simulé (webcam éteinte)
+precheck.upper_body_ok	Haut du corps dans le cadre
+precheck.step_back	Recule - épaules et hanches doivent être visibles
+loading.interface	Graphismes de l'interface
+loading.typefaces	Polices
+loading.pose_model	Modèle de suivi des poses
+loading.ready	Prêt
+onboarding.welcome	BIENVENUE !
+onboarding.your_account	TON COMPTE
+onboarding.your_name	TON NOM DE JOUEUR
+rooms.backdrop_create	MATCHMAKING  ·  CRÉER DES SALONS
+rooms.backdrop_join	MATCHMAKING  ·  REJOINDRE UN SALON
+precheck.all_passed	TOUT EST BON
+precheck.failed	ÉCHEC DE LA VÉRIFICATION
+precheck.lighting	ÉCLAIRAGE
+precheck.framing	CADRAGE
+precheck.posture	POSTURE
+precheck.upright	Bien droit, parfait
+precheck.sit_up	Tiens-toi droit pour des pièces bonus
+common.retry	RÉESSAYER
+precheck.play_anyway	JOUER QUAND MÊME
+common.back	RETOUR
+precheck.ranked_note	Les files classées exigent cette vérification. Les matchs amicaux peuvent la passer.
+precheck.hint	VÉRIFICATION CAMÉRA AVANT LE MATCH
+hint.select	CHOISIR
+home.play	JOUER
+home.training	ENTRAÎNEMENT
+home.arcade	ARCADE
+home.collection	COLLECTION DE PERSONNAGES
+home.settings	PARAMÈTRES
+home.exit	QUITTER LE JEU
+home.play_desc	Match rapide en ligne, salons de matchmaking entre amis, ou contre le CPU
+home.training_desc	Réglage caméra, entraînement aux gestes et mannequin d'entraînement
+home.arcade_desc	Les cinq rivaux à la suite, sur toutes les arènes
+home.collection_desc	Skins, armes et bannière cosmétique
+home.settings_desc	Difficulté, options caméra et touches
+home.exit_desc	Fermer le jeu
+tips.1	Remplis la jauge ULT et appuie sur Ultime - puis prends la pose de ton combattant devant la caméra avant la fin du compte à rebours.
+tips.2	Plus de DEF réduit les dégâts de chaque coup et renforce ta garde.
+tips.3	Une bonne posture suivie par la caméra rapporte des pièces bonus après chaque match.
+tips.4	Les skins et les armes sont purement cosmétiques - les stats ne changent jamais selon la tenue.
+tips.5	En Entraînement, appuie sur T pour remplir ton ultime. Le mannequin se relève toujours.
+tips.6	Chaque combattant a deux passifs au choix - choisis-le dans l'équipement après avoir validé.
+tips.7	Les combats en ligne utilisent le netcode rollback : les deux jeux calculent le même combat avec les mêmes commandes.
+stats.power	PUISSANCE
+stats.speed	VITESSE
+stats.range	PORTÉE
+stats.endurance	ENDURANCE
+stats.recovery	RÉCUPÉRATION
+training.use_block	Garde · ultime Melee & Magic
+training.use_fireball	Boule de feu · ultime Ranged & Polearm
+training.use_superjump	Super saut · ultime Heavy
+menu.online_locked	Les modes en ligne sont réservés aux joueurs de 13 ans et plus.
+menu.no_internet	Pas d'internet : connecte le Wi-Fi ou les données mobiles. VS IA marche hors ligne.
+menu.four_player_soon	Le 2v2 et le Battle Royale nécessitent le mode 4 joueurs, prévu dans une prochaine mise à jour.
+profile.edit_name	MODIFIER LE NOM
+profile.win_loss	V {0}  ·  D {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	PRÊT
+loading.loading	CHARGEMENT
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   terminée x{2}
+arcade.rule_fight_all	Affronte les {0} personnages à la suite, dans un ordre aléatoire.
+arcade.rule_difficulty	Difficulté du CPU : {0} (modifiable dans Paramètres).
+arcade.final	FINALE
+arcade.round	MANCHE {0}
+training.cv_setup_source	RÉGLAGE CV · {0}
+training.status	Caméra : {0}\nSuivi : {1}\nDétecté : {2}
+training.off	désactivé
+training.none	aucun
+training.status_posture	   ·   Posture {0}%   ·   Télémétrie {1}
+collection.gold_cinematic_suffix	 · CINÉMATIQUE DORÉE
+collection.only	{0} UNIQUEMENT
+collection.pull1	TIRAGE x1  ·  {0}
+collection.pull10	TIRAGE x10  ·  {0}
+collection.dup_suffix	  (doublon +20)
+collection.new_suffix	  NOUVEAU !
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} secondes  <size=12><color=#9AA6BC>(identique pour chaque match)</color></size>
+settings.change_name_as	CHANGER DE NOM  ·  {0}
+settings.change_name	CHANGER DE NOM
+settings.keys_help	Clique sur une touche, puis appuie sur une touche ou clique la case avec un bouton de souris (Échap / bouton B / un clic ailleurs annule ; délai 5 s). Si un joueur l'utilise déjà, les deux sont échangées.\nPoses caméra : bras croisés = garde · bras tendu sur le côté = boule de feu · deux mains en l'air = super saut (poses clavier : 1/2/3 et 8/9/0).
+rarity.common	COMMUN
+rarity.rare	RARE
+rarity.epic	ÉPIQUE
+rarity.legendary	LÉGENDAIRE
+skin.default	Classique
+skin.mint	Menthe Pop
+skin.shadow	Ombre
+skin.sakura	Sakura
+skin.inferno	Inferno
+skin.celestial	Céleste
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	13+ UNIQUEMENT
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nÉQUIPE
+play.four_player_later	Le 2v2 et le Battle Royale arrivent avec le mode 4 joueurs dans une prochaine mise à jour.
+play.team_tag	4P · 2 ÉQUIPES
+play.royale_tag	4P · CHACUN POUR SOI
+collection.all_fighters	TOUS LES COMBATTANTS
+arcade.mode	MODE ARCADE
+home.tagline	JEU DE COMBAT EN ARÈNE  ·  ULTIMES PAR GESTES
+play.royale_card	BATTLE\nROYALE
+training.kicker	RÉGLAGE CAMÉRA & ENTRAÎNEMENT
+settings.camera_tracking	SUIVI CAMÉRA (WEBCAM)
+training.camera_off	SUIVI CAMÉRA : OFF
+training.camera_on	SUIVI CAMÉRA : ON
+collection.hint	COLLECTION DE PERSONNAGES
+play.choose_style	CHOISIS UN STYLE DE JEU
+online.kicker	CHOISIS UN STYLE DE JEU  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	CHOISIS TON COMBAT  ·  VS EN LIGNE · MATCHMAKING · VS CPU
+play.coming_soon	BIENTÔT
+training.cv	VISION PAR ORDINATEUR
+online.connection	CONNEXION
+collection.banner	BANNIÈRE COSMÉTIQUE
+settings.cpu_difficulty	DIFFICULTÉ DU CPU
+play.create_join	CRÉER · REJOINDRE DES SALONS
+settings.cv_overlay	AFFICHAGE CV EN MATCH
+quests.coins_note	Les pièces s'obtiennent uniquement en jouant : victoires, PvE, quêtes et bonne posture suivie par la caméra.
+collection.odds	Commun 60% · Rare 28% · Épique 10% · Légendaire 2%
+collection.equip	ÉQUIPER
+collection.equipped	ÉQUIPÉ
+hint.exit	QUITTER
+home.exit_upper	QUITTER LE JEU
+exit.title	QUITTER LE JEU ?
+online.royale_desc	Chacun pour soi. Le dernier combattant debout gagne.
+arcade.kicker	CINQ RIVAUX · UNE PARTIE
+loading.for_battle	POUR LE COMBAT
+online.invites_note	Les invitations de salon de tes amis s'affichent ici. Les salons entre amis sont dans JOUER > MATCHMAKING.
+settings.kicker	JEU · CAMÉRA · COMMANDES
+training.gestures_live	GESTES  (fais la pose devant la caméra - coup de poing = un bras tendu sur le côté)
+training.gestures_sim	GESTES  (maintiens la touche pour simuler la pose)
+settings.key_bindings	TOUCHES
+settings.keys_reset	Touches réinitialisées
+play.locked	VERROUILLÉ
+arcade.rule_retry	Manche perdue ? Continue et retente-la.
+home.hint	MENU PRINCIPAL
+settings.master_volume	VOLUME GÉNÉRAL
+settings.match_time	DURÉE DU MATCH
+play.matchmaking_card	MATCH\nMAKING
+hint.move	DÉPLACER
+play.matchmaking_desc	Crée un salon, partage son code ou invite des amis par leur nom.
+play.no_internet_tag	PAS D'INTERNET
+online.no_internet_body	Pas d'internet pour l'instant. Connecte le Wi-Fi ou les données mobiles, ou joue contre le CPU.
+common.off	OFF
+online.offline	HORS LIGNE
+common.on	ON
+settings.player1	JOUEUR 1
+settings.player2	JOUEUR 2
+training.practice_dummy	ENTRAÎNEMENT VS MANNEQUIN
+settings.precheck	VÉRIFICATION CAMÉRA AVANT LE MATCH
+loading.prepare	PRÉPARE-TOI
+settings.listening_hint	APPUIE SUR UNE TOUCHE OU CLIQUE LA CASE  ·  ÉCHAP / BOUTON B ANNULE  ·  BOUTONS DE MANETTE NON ASSIGNABLES
+training.slouch_note	Appuie sur P pour activer une posture avachie et voir le score de posture baisser.
+settings.profile_reset	Profil réinitialisé (nom et connexion conservés)
+collection.pull_to_unlock	Tire pour débloquer
+quests.title	QUÊTES
+online.quick_match	MATCH RAPIDE
+play.online_desc	Match rapide contre un joueur proche de toi, ou réponds à l'invitation d'un ami.
+online.solo_desc	Match rapide : affronte un joueur qui cherche en ce moment, le plus proche d'abord.
+settings.reset_keys	RÉINIT. TOUCHES
+settings.reset_profile	RÉINIT. PROFIL
+arcade.rival_unknown	RIVAL  ???
+play.rooms_tag	SALONS · 2-4 JOUEURS
+online.rollback_body	Netcode rollback : les deux jeux calculent le même combat avec les mêmes commandes, pour rester rapide et équitable.
+settings.screen_shake	TREMBLEMENT D'ÉCRAN
+profile.set_name	CHOISIR UN NOM
+settings.sfx_volume	VOLUME EFFETS
+training.simulate_pose	SIMULER UNE POSE
+collection.kicker	SKINS · ARMES · BANNIÈRE COSMÉTIQUE
+training.slouch	AVACHI
+online.solo_card	SOLO\n1V1
+home.start	COMMENCER
+arcade.start	LANCER L'ARCADE
+exit.stay	RESTER
+settings.sure	SÛR ?
+settings.sure_reset_profile	SÛR ? TOUT SERA PERDU
+collection.banner_note	Skins et cinématiques d'ultime uniquement. Stats identiques sur chaque skin - rien n'est payant pour gagner.
+hint.tabs	ONGLETS
+loading.tip	ASTUCE
+training.hint	ENTRAÎNEMENT  /  RÉGLAGE CV
+arcade.rule_stages	L'arène change à chaque manche, de la Montagne des Origines au Monument Océanique.
+online.team_desc	Deux équipes de deux. Pas de tir ami : tes coups ne blessent jamais ton coéquipier.
+online.title	VS ONLINE
+online.hint	VS EN LIGNE  ·  STYLE DE JEU
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Les victoires rapportent des pièces et font avancer les quêtes, comme en VS CPU.
+exit.saved_note	Ton profil, tes pièces et ta collection sont sauvegardés sur cet appareil.
+settings.key_listening	touche ou clic ici
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Tu choisis ton combattant et FACILE, MOYEN ou DIFFICILE. Le CPU reçoit un combattant au hasard.
+account.keep_name_body	Connecte-toi avec ton compte Google et tu gardes ton nom et tes infos : à chaque lancement du jeu, et sur n'importe quel ordinateur. Un autre compte Google reçoit son propre nouveau nom.

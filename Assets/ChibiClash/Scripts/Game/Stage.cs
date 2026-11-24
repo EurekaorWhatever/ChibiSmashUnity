@@ -37,6 +37,18 @@ namespace ChibiClash
             "Sky Dojo", "Neon City", "Lava Forge",
             ChibiDesignStage.ShortNames[0], ChibiDesignStage.ShortNames[1], ChibiDesignStage.ShortNames[2], ChibiDesignStage.ShortNames[3], ChibiDesignStage.ShortNames[4],
         };
+        // Loc keys per stage index (stage.3.name ...); the English arrays above stay the source.
+        static readonly string[] NameKeys = { "stage.0.name", "stage.1.name", "stage.2.name", "stage.3.name", "stage.4.name", "stage.5.name", "stage.6.name", "stage.7.name" };
+        static readonly string[] ShortKeys = { "stage.0.short", "stage.1.short", "stage.2.short", "stage.3.short", "stage.4.short", "stage.5.short", "stage.6.short", "stage.7.short" };
+        static readonly string[] TaglineKeys = { "stage.0.tagline", "stage.1.tagline", "stage.2.tagline", "stage.3.tagline", "stage.4.tagline", "stage.5.tagline", "stage.6.tagline", "stage.7.tagline" };
+
+        /// <summary>Stage i's name in the current language.</summary>
+        public static string NameText(int i) => i >= 0 && i < NameKeys.Length ? Loc.T(NameKeys[i]) : Names[i];
+        /// <summary>Stage i's compact name in the current language.</summary>
+        public static string ShortNameText(int i) => i >= 0 && i < ShortKeys.Length ? Loc.T(ShortKeys[i]) : ShortNames[i];
+        /// <summary>Stage i's tagline in the current language.</summary>
+        public static string TaglineText(int i) => i >= 0 && i < TaglineKeys.Length ? Loc.T(TaglineKeys[i]) : Taglines[i];
+
         /// <summary>Order stages are offered in menus: the five design stages first, then the classics (ST-1).</summary>
         public static readonly int[] MenuOrder = { 3, 4, 5, 6, 7, 0, 1, 2 };
         /// <summary>Default stage for new matches (Mountain of the Beginning).</summary>

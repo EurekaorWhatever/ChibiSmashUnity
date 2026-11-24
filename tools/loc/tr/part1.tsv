@@ -1,0 +1,244 @@
+lang.backdrop	DİL
+lang.title	DİLİNİ SEÇ
+lang.subtitle	Oyunun tamamı bu dili kullanacak. İstediğin zaman AYARLAR'dan değiştirebilirsin.
+lang.search_hint	Dil ara...
+lang.no_match	Aramanla eşleşen dil yok.
+lang.english_text	Şimdilik İngilizce metin
+lang.confirm	ONAYLA  ·  {0}
+lang.confirm_none	ONAYLA
+lang.pad_hint	Aramak için yaz · Yukarı / Aşağı ile seç · Enter veya A tuşu = onayla
+common.cancel	İPTAL
+settings.language	DİL  ·  {0}
+difficulty.dummy	Kukla
+difficulty.easy	Kolay
+difficulty.medium	Orta
+difficulty.hard	Zor
+difficulty.dummy_upper	KUKLA
+difficulty.easy_upper	KOLAY
+difficulty.medium_upper	ORTA
+difficulty.hard_upper	ZOR
+nav.home	ANA SAYFA
+nav.play	OYNA
+nav.training	ANTRENMAN
+nav.arcade	ARCADE
+nav.collection	KOLEKSİYON
+nav.settings	AYARLAR
+account.signed_in_as	Giriş yapıldı: {0}.
+account.signed_in	Giriş yapıldı.
+account.signed_out	Çıkış yapıldı.
+keys.who	P{0} {1}
+keys.reserved	{0} bir poz / duruş tuşu (1 2 3, 8 9 0, sayı tuşları 7 8 9, P, -). Başka bir tuş seç.
+keys.swapped	{0};  {1} artık {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Çevrimiçi oyun 13 yaş ve üzeri oyuncular içindir.
+arcade.clear_toast	ARCADE TAMAMLANDI! {0} rakibin hepsi yenildi
+precheck.too_dark	Çok karanlık (%{0}) - ışık ekle
+precheck.too_bright	Çok parlak (%{0}) - parlamayı azalt
+precheck.good	İyi (%{0})
+loading.weapon_art	Silah görselleri: {0}
+loading.fighter	Dövüşçü: {0}
+precheck.checking	KONTROL EDİLİYOR... {0}
+wipe.character_select	KARAKTER SEÇİMİ
+wipe.arcade	ARCADE
+results.rematch	RÖVANŞ
+results.continue	DEVAM
+results.finish	BİTİR
+results.next_battle	SONRAKİ DÖVÜŞ
+wipe.arcade_clear	ARCADE TAMAMLANDI
+precheck.title	KAMERA KONTROLÜ
+precheck.camera_unavailable	Kamera kullanılamıyor
+precheck.simulated_feed	Simüle görüntü (web kamerası kapalı)
+precheck.upper_body_ok	Üst beden kadrajda
+precheck.step_back	Geri çekil - omuzlar ve kalçalar görünmeli
+loading.interface	Arayüz grafikleri
+loading.typefaces	Yazı tipleri
+loading.pose_model	Poz takip modeli
+loading.ready	Hazır
+onboarding.welcome	HOŞ GELDİN!
+onboarding.your_account	HESABIN
+onboarding.your_name	OYUNCU ADIN
+rooms.backdrop_create	EŞLEŞTİRME  ·  ODA KUR
+rooms.backdrop_join	EŞLEŞTİRME  ·  ODAYA KATIL
+precheck.all_passed	TÜM KONTROLLER GEÇTİ
+precheck.failed	KONTROL BAŞARISIZ
+precheck.lighting	IŞIK
+precheck.framing	KADRAJ
+precheck.posture	DURUŞ
+precheck.upright	Gayet dik
+precheck.sit_up	Bonus jeton için dik otur
+common.retry	TEKRAR DENE
+precheck.play_anyway	YİNE DE OYNA
+common.back	GERİ
+precheck.ranked_note	Dereceli sıralar bu kontrolün geçmesini ister. Normal maçlar atlayabilir.
+precheck.hint	MAÇ ÖNCESİ KAMERA KONTROLÜ
+hint.select	SEÇ
+home.play	OYNA
+home.training	ANTRENMAN
+home.arcade	ARCADE
+home.collection	KARAKTER KOLEKSİYONU
+home.settings	AYARLAR
+home.exit	OYUNDAN ÇIK
+home.play_desc	Çevrimiçi hızlı maç, arkadaşlarla eşleştirme odaları veya CPU'ya karşı
+home.training_desc	Kamera kurulumu, hareket pratiği ve antrenman kuklası
+home.arcade_desc	Beş rakibin hepsi art arda, tüm arenalarda
+home.collection_desc	Kostümler, silahlar ve kozmetik afiş
+home.settings_desc	Zorluk, kamera seçenekleri ve tuş atamaları
+home.exit_desc	Oyunu kapat
+tips.1	ULT göstergesini doldur ve Ultimate'e bas - sonra geri sayım bitmeden dövüşçünün pozunu kameraya ver.
+tips.2	Yüksek DEF her vuruşun hasarını azaltır ve bloğunu güçlendirir.
+tips.3	Kameranın takip ettiği iyi duruş, her maçtan sonra bonus jeton kazandırır.
+tips.4	Kostümler ve silahlar sadece görünüş içindir - dövüşçünün giydiği şey istatistikleri asla değiştirmez.
+tips.5	Antrenmanda ultimate'ini doldurmak için T'ye bas. Kukla her zaman ayağa kalkar.
+tips.6	Her dövüşçünün iki pasifi var - seçimi onayladıktan sonra donanım panelinden birini seç.
+tips.7	Çevrimiçi dövüşler rollback netcode kullanır: iki oyun da aynı girdilerle aynı dövüşü çalıştırır.
+stats.power	GÜÇ
+stats.speed	HIZ
+stats.range	MENZİL
+stats.endurance	DAYANIKLILIK
+stats.recovery	TOPARLANMA
+training.use_block	Blok · Melee & Magic ultimate'i
+training.use_fireball	Ateş topu · Ranged & Polearm ultimate'i
+training.use_superjump	Süper zıplama · Heavy ultimate'i
+menu.online_locked	Çevrimiçi modlar 13 yaş ve üzeri oyuncular içindir.
+menu.no_internet	İnternet yok: Wi-Fi'ye veya mobil veriye bağlan. VS YZ çevrimdışı çalışır.
+menu.four_player_soon	2v2 ve Battle Royale için 4 oyuncu desteği gerekiyor, sonraki bir güncellemeyle gelecek.
+profile.edit_name	ADI DÜZENLE
+profile.win_loss	G {0}  ·  M {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	HAZIR
+loading.loading	YÜKLENİYOR
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   tamamlandı x{2}
+arcade.rule_fight_all	{0} karakterin hepsiyle art arda, rastgele sırayla dövüş.
+arcade.rule_difficulty	CPU zorluğu: {0} (Ayarlar'dan değiştir).
+arcade.final	FİNAL
+arcade.round	RAUNT {0}
+training.cv_setup_source	CV KURULUMU · {0}
+training.status	Kamera: {0}\nTakip: {1}\nAlgılanan: {2}
+training.off	kapalı
+training.none	yok
+training.status_posture	   ·   Duruş %{0}   ·   Telemetri {1}
+collection.gold_cinematic_suffix	 · ALTIN SİNEMATİK
+collection.only	SADECE {0}
+collection.pull1	ÇEK x1  ·  {0}
+collection.pull10	ÇEK x10  ·  {0}
+collection.dup_suffix	  (kopya +20)
+collection.new_suffix	  YENİ!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} saniye  <size=12><color=#9AA6BC>(her maç için sabit)</color></size>
+settings.change_name_as	ADI DEĞİŞTİR  ·  {0}
+settings.change_name	ADI DEĞİŞTİR
+settings.keys_help	Bir atamaya tıkla, sonra bir tuşa bas veya kutuya bir fare tuşuyla tıkla (Esc / B tuşu / başka yere tıklamak iptal eder; 5 sn süre). Tuşu oyunculardan biri zaten kullanıyorsa ikisi yer değiştirir.\nKamera pozları: kolları çaprazla = blok · kolu yana aç = ateş topu · iki el yukarı = süper zıplama (klavye pozları: 1/2/3 ve 8/9/0).
+rarity.common	SIRADAN
+rarity.rare	NADİR
+rarity.epic	EPİK
+rarity.legendary	EFSANEVİ
+skin.default	Klasik
+skin.mint	Nane Pop
+skin.shadow	Gölge
+skin.sakura	Sakura
+skin.inferno	Cehennem
+skin.celestial	Göksel
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	SADECE 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nTAKIM
+play.four_player_later	2v2 ve Battle Royale, 4 oyuncu desteğiyle sonraki bir güncellemede geliyor.
+play.team_tag	4P · 2 TAKIM
+play.royale_tag	4P · HERKES TEK
+collection.all_fighters	TÜM DÖVÜŞÇÜLER
+arcade.mode	ARCADE MODU
+home.tagline	ARENA DÖVÜŞÜ  ·  BEDEN HAREKETİYLE ULTIMATE
+play.royale_card	BATTLE\nROYALE
+training.kicker	KAMERA KURULUMU & PRATİK
+settings.camera_tracking	KAMERA TAKİBİ (WEB KAMERASI)
+training.camera_off	KAMERA TAKİBİ: KAPALI
+training.camera_on	KAMERA TAKİBİ: AÇIK
+collection.hint	KARAKTER KOLEKSİYONU
+play.choose_style	BİR OYUN TARZI SEÇ
+online.kicker	BİR OYUN TARZI SEÇ  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	DÖVÜŞÜNÜ SEÇ  ·  VS ONLINE · EŞLEŞTİRME · VS CPU
+play.coming_soon	YAKINDA
+training.cv	BİLGİSAYARLI GÖRÜ
+online.connection	BAĞLANTI
+collection.banner	KOZMETİK AFİŞ
+settings.cpu_difficulty	CPU ZORLUĞU
+play.create_join	ODA KUR · KATIL
+settings.cv_overlay	MAÇTA CV KATMANI
+quests.coins_note	Jetonlar sadece oynayarak gelir: galibiyetler, PvE, görevler ve kameranın takip ettiği iyi duruş.
+collection.odds	Sıradan %60 · Nadir %28 · Epik %10 · Efsanevi %2
+collection.equip	KUŞAN
+collection.equipped	KUŞANILDI
+hint.exit	ÇIKIŞ
+home.exit_upper	OYUNDAN ÇIK
+exit.title	OYUNDAN ÇIKILSIN MI?
+online.royale_desc	Herkes kendi için. Ayakta kalan son dövüşçü kazanır.
+arcade.kicker	BEŞ RAKİP · TEK KOŞU
+loading.for_battle	DÖVÜŞE
+online.invites_note	Arkadaşlarının oda davetleri burada çıkar. Arkadaşlarla odalar OYNA > EŞLEŞTİRME'de.
+settings.kicker	OYUN · KAMERA · KONTROLLER
+training.gestures_live	HAREKETLER  (pozu kameranın önünde yap - yumruk = bir kolu yana doğru uzat)
+training.gestures_sim	HAREKETLER  (pozu simüle etmek için tuşu basılı tut)
+settings.key_bindings	TUŞ ATAMALARI
+settings.keys_reset	Tuşlar varsayılana döndü
+play.locked	KİLİTLİ
+arcade.rule_retry	Raundu mu kaybettin? Devam et ve yeniden dene.
+home.hint	ANA MENÜ
+settings.master_volume	ANA SES
+settings.match_time	MAÇ SÜRESİ
+play.matchmaking_card	EŞLEŞ\nTİRME
+hint.move	HAREKET
+play.matchmaking_desc	Bir oda kur, kodunu paylaş veya arkadaşlarını adıyla davet et.
+play.no_internet_tag	İNTERNET YOK
+online.no_internet_body	Şu an internet yok. Wi-Fi'ye veya mobil veriye bağlan ya da CPU'ya karşı oyna.
+common.off	KAPALI
+online.offline	ÇEVRİMDIŞI
+common.on	AÇIK
+settings.player1	OYUNCU 1
+settings.player2	OYUNCU 2
+training.practice_dummy	KUKLAYA KARŞI PRATİK
+settings.precheck	MAÇ ÖNCESİ KAMERA KONTROLÜ
+loading.prepare	HAZIRLAN
+settings.listening_hint	BİR TUŞA BAS VEYA KUTUYA TIKLA  ·  ESC / B TUŞU İPTAL EDER  ·  KOL TUŞLARI ATANAMAZ
+training.slouch_note	Kambur duruşu açıp kapatmak için P'ye bas ve duruş puanının düşüşünü izle.
+settings.profile_reset	Profil sıfırlandı (ad ve giriş korundu)
+collection.pull_to_unlock	Kilidi açmak için çek
+quests.title	GÖREVLER
+online.quick_match	HIZLI MAÇ
+play.online_desc	Yakınındaki bir oyuncuyla hızlı maç yap veya bir arkadaşının davetine yanıt ver.
+online.solo_desc	Hızlı maç: şu an arayan bir oyuncuyla dövüş, en yakını önce.
+settings.reset_keys	TUŞLARI SIFIRLA
+settings.reset_profile	PROFİLİ SIFIRLA
+arcade.rival_unknown	RAKİP  ???
+play.rooms_tag	ODALAR · 2-4 OYUNCU
+online.rollback_body	Rollback netcode: iki oyun da aynı girdilerle aynı dövüşü çalıştırır, böylece hızlı ve adil kalır.
+settings.screen_shake	EKRAN SARSINTISI
+profile.set_name	AD BELİRLE
+settings.sfx_volume	EFEKT SESİ
+training.simulate_pose	POZ SİMÜLE ET
+collection.kicker	KOSTÜMLER · SİLAHLAR · KOZMETİK AFİŞ
+training.slouch	KAMBUR
+online.solo_card	SOLO\n1V1
+home.start	BAŞLA
+arcade.start	ARCADE'İ BAŞLAT
+exit.stay	KAL
+settings.sure	EMİN MİSİN?
+settings.sure_reset_profile	EMİN MİSİN? TÜM İLERLEME SİLİNİR
+collection.banner_note	Sadece kostümler ve ultimate sinematikleri. İstatistikler her kostümde aynı - hiçbir şey parayla kilitli değil.
+hint.tabs	SEKMELER
+loading.tip	İPUCU
+training.hint	ANTRENMAN  /  CV KURULUMU
+arcade.rule_stages	Arena her raunt değişir: Başlangıç Dağı'ndan Okyanus Anıtı'na kadar.
+online.team_desc	İkişer kişilik iki takım. Dost ateşi yok: vuruşların takım arkadaşına asla zarar vermez.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  OYUN TARZI
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Galibiyetler, VS CPU'daki gibi jeton ve görev ilerlemesi kazandırır.
+exit.saved_note	Profilin, jetonların ve koleksiyonun bu cihazda kayıtlı.
+settings.key_listening	tuş veya buraya tıkla
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Dövüşçünü ve KOLAY, ORTA veya ZOR'u sen seçersin. CPU rastgele bir dövüşçü alır.
+account.keep_name_body	Google hesabınla giriş yap, adın ve bilgilerin seninle kalsın: oyunu her açtığında ve her bilgisayarda. Başka bir Google hesabı kendi yeni adını alır.

@@ -70,11 +70,11 @@ namespace ChibiClash.Netcode
     public static class ChibiNameRegistryRules
     {
         /// <summary>Exactly what the player sees when another player owns the name (spec, 2026-11-22).</summary>
-        public const string TakenMessage = "This name is already taken";
+        public static string TakenMessage => Loc.T("name.taken");
         /// <summary>Shown when the name could not be checked before an online action.</summary>
-        public const string UnavailableMessage = "Could not check your name online. Check your internet and try again.";
+        public static string UnavailableMessage => Loc.T("name.check_unavailable");
         /// <summary>Shown when the server's rename cooldown refuses a new name.</summary>
-        public const string TooSoonMessage = "You changed your name a moment ago. Try again in a minute.";
+        public static string TooSoonMessage => Loc.T("name.too_soon");
         /// <summary>Names the dev automation uses (GameManager.DevAutomation.cs).</summary>
         static readonly string[] DevNames = { "DevHost", "DevGuest", "DevPlayer" };
 
@@ -117,7 +117,7 @@ namespace ChibiClash.Netcode
             switch (s)
             {
                 case ChibiNameStatus.Taken: return TakenMessage;
-                case ChibiNameStatus.Invalid: return "Please choose a different name.";
+                case ChibiNameStatus.Invalid: return Loc.T("name.choose_different");
                 case ChibiNameStatus.TooSoon: return TooSoonMessage;
                 default: return null;
             }

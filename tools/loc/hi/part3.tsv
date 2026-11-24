@@ -1,0 +1,262 @@
+net.area_country_and	आपका देश और {0}
+region.africa	अफ़्रीका
+region.americas	अमेरिका महाद्वीप
+region.asia	एशिया
+region.europe	यूरोप
+region.oceania	ओशिनिया
+region.northern_africa	उत्तरी अफ़्रीका
+region.eastern_africa	पूर्वी अफ़्रीका
+region.middle_africa	मध्य अफ़्रीका
+region.southern_africa	दक्षिणी अफ़्रीका
+region.western_africa	पश्चिमी अफ़्रीका
+region.caribbean	कैरिबियन
+region.central_america	मध्य अमेरिका
+region.south_america	दक्षिण अमेरिका
+region.northern_america	उत्तरी अमेरिका
+region.central_asia	मध्य एशिया
+region.eastern_asia	पूर्वी एशिया
+region.south_eastern_asia	दक्षिण-पूर्व एशिया
+region.southern_asia	दक्षिण एशिया
+region.western_asia	पश्चिमी एशिया
+region.eastern_europe	पूर्वी यूरोप
+region.northern_europe	उत्तरी यूरोप
+region.southern_europe	दक्षिणी यूरोप
+region.western_europe	पश्चिमी यूरोप
+region.australia_and_new_zealand	ऑस्ट्रेलिया और न्यूज़ीलैंड
+region.melanesia	मेलानेशिया
+region.micronesia	माइक्रोनेशिया
+region.polynesia	पोलिनेशिया
+net.joined_connecting	"{0}" में जुड़े। होस्ट से कनेक्ट हो रहे हैं...
+net.opponent_unreachable	आपके प्रतिद्वंद्वी तक नहीं पहुँच सके: {0}
+net.quick_filling	{1} में से {0} खिलाड़ी। {2} से. में शुरू...
+invite.inviting	{0} को बुला रहे हैं...
+invite.sent_lasts	{0} को इनवाइट भेजा गया। यह {1} सेकंड तक रहेगा।
+invite.send_failed	इनवाइट नहीं भेजा जा सका: {0}
+invite.joining_room_of	{0} के रूम में जुड़ रहे हैं...
+invite.paused	इनवाइट {0} मिनट के लिए रुके हैं।
+invite.invited_you	{0} ने आपको "{1}" में बुलाया।
+invite.ran_out	{0} को भेजे आपके इनवाइट का समय खत्म हो गया।
+friends.choose_name	खिलाड़ी नाम चुनें ताकि दोस्त आपको ढूँढ सकें।
+friends.unavailable	दोस्त सुविधा उपलब्ध नहीं: {0}
+friends.your_name_is	आपका नाम {0} है। इसे दोस्तों को दें ताकि वे आपको जोड़ सकें।
+friends.set_name_failed	नाम सेट नहीं हो सका: {0}
+friends.request_sent	{0} को फ़्रेंड रिक्वेस्ट भेजी गई।
+friends.add_failed	{0} को जोड़ नहीं सके: {1}
+friends.offline	{0} अभी ऑफ़लाइन है।
+friends.request_then_invite	{0} को फ़्रेंड रिक्वेस्ट भेजी गई। स्वीकार करते ही इनवाइट चला जाएगा।
+friends.unreachable	{0} तक नहीं पहुँच सके: {1}
+friends.creating_room_for	{0} के लिए रूम बना रहे हैं...
+friends.joining	{0} से जुड़ रहे हैं...
+friends.declined	{0} ने इनवाइट मना कर दिया।
+friends.version_mismatch	{0} ने आपको बुलाया, लेकिन वे गेम का दूसरा वर्शन चला रहे हैं।
+friends.invite_sent_waiting	{0} को इनवाइट भेजा गया। उनके जुड़ने का इंतज़ार...
+name.too_short	नाम बहुत छोटा है (कम से कम {0} अक्षर)।
+name.too_long	नाम बहुत लंबा है (ज़्यादा से ज़्यादा {0} अक्षर)।
+rooms.name_too_short	रूम का नाम बहुत छोटा है (कम से कम {0} अक्षर)।
+rooms.name_too_long	रूम का नाम बहुत लंबा है (ज़्यादा से ज़्यादा {0} अक्षर)।
+net.bad_code	यह सही रूम कोड नहीं है (सिर्फ़ अक्षर और अंक)।
+net.version_mismatch	वह रूम Chibi Clash के दूसरे वर्शन से बना था। दोनों खिलाड़ियों को एक ही वर्शन चाहिए।
+net.loading_room	रूम लोड हो रहा है...
+net.room_closed	रूम बंद हो गया।
+net.you_left	आपने रूम छोड़ दिया।
+net.waiting_host_game	शुरू हो रहा है... होस्ट के गेम का इंतज़ार।
+net.choose_next_fight	अगली लड़ाई के लिए अपना फ़ाइटर चुनें और OK दबाएँ।
+net.host_changed_stage	होस्ट ने स्टेज सेटिंग्स बदलीं। फिर से OK दबाएँ।
+net.room_closed_host_left	रूम बंद हो गया (होस्ट चला गया)।
+net.starting_fight	लड़ाई शुरू हो रही है...
+net.player_left_joined	कोई खिलाड़ी गया या जुड़ा।
+net.no_connection	कोई कनेक्शन नहीं।
+net.fight_could_not_start	लड़ाई शुरू नहीं हो सकी।
+net.fight_starting_wait	लड़ाई शुरू हो रही है! आपके दोस्त के कनेक्ट होने का इंतज़ार...
+net.choose_press_ok	अपना फ़ाइटर चुनें और OK दबाएँ।
+net.too_many_starts	बहुत बार शुरू किया। एक मिनट रुकें, फिर लड़ाई शुरू करें दबाएँ।
+net.fight_starting_connecting	लड़ाई शुरू हो रही है! कनेक्ट हो रहे हैं...
+net.could_not_connect	कनेक्ट नहीं हो सका।
+net.friend_no_answer	आपके दोस्त ने जवाब नहीं दिया।
+net.start_cancelled	शुरुआत रद्द हुई।
+net.friend_no_connect	आपका दोस्त कनेक्ट नहीं हुआ।
+net.enter_code	आपके दोस्त का दिखाया रूम कोड डालें।
+net.lan_browser	ब्राउज़र में LAN खेल उपलब्ध नहीं है। रूम या मैचमेकिंग इस्तेमाल करें, या LAN के लिए PC वर्शन।
+net.enter_ip	होस्ट का IP पता डालें।
+net.this_pc_ip	इस PC का IP
+net.signing_in	साइन इन हो रहा है...
+net.creating_private	प्राइवेट रूम बन रहा है...
+net.hosting_one	कोई खुला मैच नहीं मिला, एक होस्ट कर रहे हैं...
+net.needs_2_to_4	लड़ाई के लिए 2 से 4 खिलाड़ी चाहिए।
+net.waiting_friend	आपके दोस्त के कनेक्ट होने का इंतज़ार...
+net.waiting_friends	आपके दोस्तों के कनेक्ट होने का इंतज़ार...
+net.connection_running	एक और कनेक्शन अभी चल रहा है।
+net.no_valid_info	रूम में सही कनेक्शन जानकारी नहीं है (होस्ट चला गया?)।
+net.connecting_host	होस्ट से कनेक्ट हो रहे हैं...
+net.already_full	वह रूम पहले से भरा है।
+net.no_info	रूम में कनेक्शन जानकारी नहीं है (होस्ट चला गया?)।
+net.player_left_searching	वह खिलाड़ी चला गया। फिर से खोज रहे हैं...
+net.connected	कनेक्ट हो गया!
+net.relay_failed	Relay सर्वर से कनेक्शन विफल रहा।
+net.opponent_timeout	आपके प्रतिद्वंद्वी तक नहीं पहुँच सके (समय खत्म)।
+net.no_internet	इंटरनेट कनेक्शन नहीं है। कहीं भी दोस्तों के साथ खेलने के लिए Wi-Fi या मोबाइल डेटा जोड़ें। (एक ही नेटवर्क पर LAN खेल चलता है।)
+invite.wait	दूसरा इनवाइट भेजने से पहले थोड़ा रुकें।
+invite.type_name	अपने दोस्त का इन-गेम नाम टाइप करें (3-16 अक्षर, अंक या _)।
+invite.own_name	यह आपका अपना नाम है।
+invite.open_room_first	पहले अपना रूम खोलें, फिर बुलाएँ।
+invite.room_full	आपका रूम पहले से भरा है।
+invite.could_not_send	इनवाइट नहीं भेजा जा सका।
+invite.too_many	अभी बहुत ज़्यादा इनवाइट हैं। कुछ सेकंड बाद फिर कोशिश करें।
+invite.cancelled	इनवाइट रद्द हुआ।
+invite.expired	उस इनवाइट की समय-सीमा खत्म हो गई।
+invite.closed_full	आपका रूम भर गया। इनवाइट बंद हुआ।
+invite.closed_joined	एक खिलाड़ी आपके रूम में जुड़ा। इनवाइट बंद हुआ।
+invite.closed_room	इनवाइट रद्द: रूम बंद हो गया।
+name.taken	यह नाम पहले से लिया जा चुका है
+name.check_unavailable	आपका नाम ऑनलाइन जाँचा नहीं जा सका। इंटरनेट जाँचें और फिर कोशिश करें।
+name.too_soon	आपने अभी-अभी नाम बदला है। एक मिनट बाद फिर कोशिश करें।
+name.choose_different	कृपया कोई दूसरा नाम चुनें।
+friends.type_tag	अपने दोस्त का नाम Kira#4821 की तरह टाइप करें।
+friends.added	दोस्त जोड़ा गया।
+friends.declined_request	रिक्वेस्ट मना की गई।
+friends.removed	दोस्त हटाया गया।
+friends.blocked	खिलाड़ी ब्लॉक किया गया।
+friends.a_friend	एक दोस्त
+friends.type_player_tag	खिलाड़ी का नाम Kira#4821 की तरह टाइप करें।
+friends.wait_invite	फिर से बुलाने से पहले थोड़ा रुकें।
+name.enter	नाम डालें।
+name.bad_chars	सिर्फ़ अक्षर, अंक और _ इस्तेमाल करें (स्पेस या चिह्न नहीं)।
+rooms.name_bad_chars	रूम के नाम में सिर्फ़ अक्षर, अंक, स्पेस और _ - ' ! चलते हैं।
+rooms.name_double_space	रूम के नाम में दोहरे स्पेस नहीं हो सकते।
+rooms.name_choose_different	कृपया रूम का कोई दूसरा नाम चुनें।
+gesture.cross_arms	हाथ क्रॉस करें
+gesture.punch_forward	आगे पंच करें
+gesture.raise_hands	दोनों हाथ ऊपर करें
+class.kaia.passive1_desc	+15% हमला गति
+class.kaia.passive2_desc	5% लाइफ़ स्टील
+class.kaia.skill1_desc	आगे झपटें और प्रतिद्वंद्वी को भोंकें
+class.kaia.skill2_desc	सही टाइमिंग से नुकसान लौटाएँ
+class.kaia.skill3_desc	तेज़ी से कई बार भोंकें
+class.kaia.ult_desc	10 से.: सामान्य हमले क्षैतिज लहर छोड़ते हैं
+class.bruna.passive1_desc	+20% नुकसान, -15% हमला गति
+class.bruna.passive2_desc	+20% नुकसान, -15% चलने की गति
+class.bruna.skill1_desc	प्रतिद्वंद्वी को पकड़कर ज़मीन पर पटकें
+class.bruna.skill2_desc	बवंडर की तरह घूमें, बार-बार वार करें
+class.bruna.ult_desc	ज़मीन पर प्रहार कर शॉकवेव बनाएँ
+class.ren.passive1_desc	+20% क्रिट दर
+class.ren.passive2_desc	10 से. के लिए +10% चलने की गति (30 से. कूलडाउन)
+class.ren.skill1_desc	क्षैतिज रूप से पीछे झपटें और तीर चलाएँ
+class.ren.skill2_desc	पास के प्रतिद्वंद्वी का गला दबाएँ और दूर धकेलें
+class.ren.skill3_desc	क्षैतिज रूप से तीरों की बौछार करें
+class.ren.ult_desc	एक तीर बढ़कर तीरों का तूफ़ान बन जाता है
+class.lyra.passive1_desc	वार पर 10% संभावना: -15% चाल, -10% नुकसान, -15% हमला गति
+class.lyra.passive2_desc	20% संभावना नुकसान रोकने की
+class.lyra.skill1_desc	पीछा करने वाला आग का गोला छोड़ें
+class.lyra.skill2_desc	3 सेवक बुलाएँ
+class.lyra.skill3_desc	एक बादल दुश्मन का पीछा कर बिजली गिराता है
+class.lyra.ult_desc	10 से. आग का घेरा: दुश्मनों को जलाता है, प्रोजेक्टाइल रोकता है
+class.taro.passive1_desc	वार पर 10% संभावना: दुश्मन की रक्षा -15%
+class.taro.passive2_desc	3 से. तक हमला न करने पर अगला वार +50%
+class.taro.skill1_desc	फैलाएँ, कूदें और नीचे घुमाकर वार करें
+class.taro.skill2_desc	प्रोजेक्टाइल रोकने के लिए भाला घुमाएँ
+class.taro.skill3_desc	भाला फेंकें और वापस बुलाएँ
+class.taro.ult_desc	दुश्मन को भोंकें, फिर हत्थे को लात मारकर और गहरा धँसाएँ
+char.kaia.role	फुर्तीली स्ट्राइकर
+char.kaia.style	सटीक, जुड़ने वाले वारों के साथ तेज़ और फुर्तीली नज़दीकी लड़ाई।
+char.bruna.role	दमदार लड़ाका
+char.bruna.style	भारी नुकसान और ज़बरदस्त सहनशक्ति वाली लड़ाका, जो भारी हमलों से जगह पर कब्ज़ा रखती है।
+char.ren.role	फुर्तीला निशानेबाज़
+char.ren.style	तेज़ चाल वाला ज़ोनिंग और बहुमुखी तीर तकनीकों से सटीक दबाव।
+char.lyra.role	ज़ोनिंग / सेटअप
+char.lyra.style	फुर्तीली जादूगरनी जो तेज़ मंत्रों, चालाक चाल और सटीक जादू से जगह पर नियंत्रण रखती है।
+char.taro.role	लंबी पहुँच का विशेषज्ञ
+char.taro.style	लंबी पहुँच के दबाव और सटीक वारों के साथ अनुशासित, फुर्तीला नियंत्रण।
+stage.0.name	आकाश दोजो
+stage.0.short	आकाश दोजो
+stage.0.tagline	बादलों के ऊपर पहाड़ी मंदिर
+stage.1.name	नियॉन सिटी
+stage.1.short	नियॉन सिटी
+stage.1.tagline	नियॉन बारिश में छत पर अखाड़ा
+stage.2.name	लावा भट्ठी
+stage.2.short	लावा भट्ठी
+stage.2.tagline	लावा सागर पर पिघलती ढलाईशाला
+stage.3.name	आरंभ का पर्वत
+stage.3.short	पर्वत
+stage.3.tagline	ऊर्ध्व KO · धुंधली खाई के ऊपर चलते जेड प्लेटफ़ॉर्म
+stage.4.name	एकता का मैदान
+stage.4.short	मैदान
+stage.4.tagline	क्षैतिज KO · एक लंबा मैदान, छिपने की कोई जगह नहीं
+stage.5.name	ज्वालामुखी की गहराई
+stage.5.short	ज्वालामुखी
+stage.5.tagline	हर किनारा KO · मैग्मा झील से आग फूटती है
+stage.6.name	विशाल पक्षी की मांद
+stage.6.short	पक्षी मांद
+stage.6.tagline	क्षैतिज KO · विशाल पक्षी अखाड़े को झाड़ता है
+stage.7.name	वीरान सागर स्मारक
+stage.7.short	सागर
+stage.7.tagline	हर किनारा KO · व्हेल उतरती है, निचली मंज़िलों पर कूदें
+end.opponent_left	आपके प्रतिद्वंद्वी ने मैच छोड़ दिया।
+end.opponent_timeout	आपके प्रतिद्वंद्वी ने जवाब देना बंद कर दिया।
+end.connection_lost	आपके प्रतिद्वंद्वी से कनेक्शन टूट गया।
+end.you_left	आपने मैच छोड़ दिया।
+end.desync	दोनों गेम मेल नहीं खाए (डीसिंक): कोई नतीजा नहीं।
+end.unconfirmed	मैच के अंत की पुष्टि नहीं हो सकी: कोई नतीजा नहीं।
+end.handshake_failed	मैच शुरू नहीं हो सका।
+end.peer_never_started	आपका प्रतिद्वंद्वी मैच में कभी नहीं जुड़ा: कोई नतीजा नहीं।
+end.too_slow	कनेक्शन खेलने के लिए बहुत धीमा था: कोई नतीजा नहीं।
+end.host_left	होस्ट ने मैच छोड़ दिया: कोई नतीजा नहीं।
+end.dropped	आपका कनेक्शन मैच से टूट गया।
+status.aura	आभा {0}
+status.fire_ring	आग का घेरा {0}
+status.tailwind	पीछे की हवा
+status.guard_broken	गार्ड टूटा {0} से.
+status.guard	गार्ड {0}%
+status.reloading	रीलोड {0} से.
+status.recharging	रीचार्ज {0} से.
+status.hexed	शापित
+status.armor_break	कवच -15%
+hud.perform	करें: {0}
+hud.times_up	समय खत्म!
+rewards.no_contest	कोई नतीजा नहीं: कोई इनाम नहीं
+rewards.pve_victory	PvE जीत  +{0}
+rewards.pve_match	PvE मैच  +{0}
+rewards.victory	जीत  +{0}
+rewards.match_played	मैच खेला  +{0}
+rewards.posture	अच्छा पोस्चर {0}%  +{1}
+hud.revived	फिर से ज़िंदा
+quest.win	3 मैच जीतें
+quest.pve	CPU को दो बार हराएँ (PvE)
+quest.combo	10 पूरे कॉम्बो लगाएँ
+quest.ult	3 जेस्चर अल्टीमेट चलाएँ
+quest.parry	5 हमले पैरी करें
+quest.posture	80%+ अच्छे पोस्चर के साथ मैच खत्म करें
+rewards.quest	क्वेस्ट: {0}  +{1}
+bind.move_left	बाएँ चलें
+bind.move_right	दाएँ चलें
+bind.drop	नीचे / तेज़ गिरना
+bind.jump	कूदें
+bind.jump_alt	कूदें (वैकल्पिक)
+bind.light	हल्का हमला
+bind.heavy	भारी हमला
+bind.block	ब्लॉक
+bind.dash	डैश
+bind.skill1	स्किल 1
+bind.skill2	स्किल 2
+bind.skill3	स्किल 3
+bind.ultimate	अल्टीमेट
+bind.aim_up	ऊपर निशाना
+bind.special	स्पेशल
+hud.rejected	अस्वीकृत: {0}
+cv.low_confidence	ट्रैकिंग का भरोसा कम है
+cv.frozen	रुकी हुई फ़ीड (नकली?)
+cv.snap	पोज़ अचानक बदला (मैक्रो?)
+cv.ok	OK
+cam.none	कोई कैमरा नहीं मिला
+cam.off	कैमरा बंद
+cam.starting	कैमरा शुरू हो रहा है...
+cam.waiting_frames	कैमरा फ़्रेम का इंतज़ार - System Settings > Privacy > Camera में Unity को कैमरा की अनुमति दें
+cam.live	कैमरा लाइव ({0}x{1})
+pose.simulated	नकल (कीबोर्ड पोज़)
+pose.camera_off	कैमरा ट्रैकिंग बंद - कीबोर्ड से नकली पोज़ इस्तेमाल हो रहे हैं
+pose.model_failed	पोज़ मॉडल विफल: {0}
+pose.loading	पोज़ मॉडल लोड हो रहा है...
+pose.live	लाइव बॉडी ट्रैकिंग (MoveNet, {0} Hz)
+pose.step_back	कैमरा चालू - पीछे हटें ताकि आपके कंधे दिखें
+account.finish_browser	अपने ब्राउज़र में साइन इन पूरा करें (Continue with Google चुनें)...
+account.signed_out_again	साइन आउट हो गया। अपना अकाउंट इस्तेमाल करने के लिए फिर से साइन इन करें।
+account.signed_in_kept	साइन इन हो गया। आपका नाम और प्रगति इसी अकाउंट के साथ रहेंगे।

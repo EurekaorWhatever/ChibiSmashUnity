@@ -1,0 +1,259 @@
+lang.backdrop	ภาษา
+lang.title	เลือกภาษาของคุณ
+lang.subtitle	ทุกอย่างในเกมจะใช้ภาษานี้ เปลี่ยนได้ทุกเมื่อในหน้าตั้งค่า
+lang.search_hint	ค้นหาภาษา...
+lang.no_match	ไม่พบภาษาที่ตรงกับคำค้นหา
+lang.english_text	ตอนนี้ยังเป็นภาษาอังกฤษ
+lang.confirm	ยืนยัน  ·  {0}
+lang.confirm_none	ยืนยัน
+lang.pad_hint	พิมพ์เพื่อค้นหา · ขึ้น / ลง เพื่อเลือก · Enter หรือปุ่ม A = ยืนยัน
+common.cancel	ยกเลิก
+settings.language	ภาษา  ·  {0}
+difficulty.dummy	หุ่นซ้อม
+difficulty.easy	ง่าย
+difficulty.medium	ปานกลาง
+difficulty.hard	ยาก
+difficulty.dummy_upper	หุ่นซ้อม
+difficulty.easy_upper	ง่าย
+difficulty.medium_upper	ปานกลาง
+difficulty.hard_upper	ยาก
+nav.home	หน้าหลัก
+nav.play	เล่น
+nav.training	ฝึกซ้อม
+nav.arcade	อาร์เคด
+nav.collection	คอลเลกชัน
+nav.settings	ตั้งค่า
+account.signed_in_as	ลงชื่อเข้าใช้ในชื่อ {0} แล้ว
+account.signed_in	ลงชื่อเข้าใช้แล้ว
+account.signed_out	ออกจากระบบแล้ว
+keys.who	P{0} {1}
+keys.reserved	{0} เป็นปุ่มท่าทาง / ท่านั่ง (1 2 3, 8 9 0, numpad 7 8 9, P, -) โปรดเลือกปุ่มอื่น
+keys.swapped	{0};  {1} เปลี่ยนเป็น {2}
+match.versus	{0}  VS  {1}
+online.locked_age	การเล่นออนไลน์สำหรับผู้เล่นอายุ 13 ปีขึ้นไป
+arcade.clear_toast	ผ่านอาร์เคด! ชนะคู่แข่งครบทั้ง {0} คน
+precheck.too_dark	มืดเกินไป ({0}%) - เพิ่มแสงสว่าง
+precheck.too_bright	สว่างเกินไป ({0}%) - ลดแสงสะท้อน
+precheck.good	ดี ({0}%)
+loading.weapon_art	ภาพอาวุธ: {0}
+loading.fighter	นักสู้: {0}
+precheck.checking	กำลังตรวจสอบ... {0}
+wipe.character_select	เลือกตัวละคร
+wipe.arcade	อาร์เคด
+results.rematch	แข่งอีกรอบ
+results.continue	สู้ต่อ
+results.finish	จบ
+results.next_battle	ศึกถัดไป
+wipe.arcade_clear	ผ่านอาร์เคด
+precheck.title	ตรวจสอบกล้อง
+precheck.camera_unavailable	ไม่พบกล้อง
+precheck.simulated_feed	ภาพจำลอง (ปิดเว็บแคม)
+precheck.upper_body_ok	ร่างกายท่อนบนอยู่ในกรอบ
+precheck.step_back	ถอยหลังอีกนิด - ต้องเห็นไหล่และสะโพก
+loading.interface	กราฟิกหน้าจอ
+loading.typefaces	แบบอักษร
+loading.pose_model	โมเดลจับท่าทาง
+loading.ready	พร้อม
+onboarding.welcome	ยินดีต้อนรับ!
+onboarding.your_account	บัญชีของคุณ
+onboarding.your_name	ชื่อผู้เล่นของคุณ
+rooms.backdrop_create	จับคู่  ·  สร้างห้อง
+rooms.backdrop_join	จับคู่  ·  เข้าห้อง
+precheck.all_passed	ผ่านการตรวจสอบทั้งหมด
+precheck.failed	ตรวจสอบไม่ผ่าน
+precheck.lighting	แสงสว่าง
+precheck.framing	ตำแหน่งในกรอบ
+precheck.posture	ท่านั่ง
+precheck.upright	นั่งหลังตรงดีมาก
+precheck.sit_up	นั่งหลังตรงเพื่อรับเหรียญโบนัส
+common.retry	ลองใหม่
+precheck.play_anyway	เล่นเลย
+common.back	กลับ
+precheck.ranked_note	การแข่งแรงก์ต้องผ่านการตรวจสอบนี้ การแข่งทั่วไปข้ามได้
+precheck.hint	ตรวจสอบกล้องก่อนแข่ง
+hint.select	เลือก
+home.play	เล่น
+home.training	ฝึกซ้อม
+home.arcade	อาร์เคด
+home.collection	คอลเลกชันตัวละคร
+home.settings	ตั้งค่า
+home.exit	ออกจากเกม
+home.play_desc	จับคู่เร็ว Vs Online, ห้องจับคู่กับเพื่อน หรือ Vs CPU
+home.training_desc	ตั้งค่ากล้อง ฝึกท่าทาง และหุ่นซ้อม
+home.arcade_desc	สู้คู่แข่งทั้งห้าติดต่อกันในทุกด่าน
+home.collection_desc	สกิน อาวุธ และตู้สุ่มของตกแต่ง
+home.settings_desc	ความยาก ตัวเลือกกล้อง และการตั้งปุ่ม
+home.exit_desc	ปิดเกม
+tips.1	เติมเกจ ULT ให้เต็มแล้วกดอัลติเมต - จากนั้นทำท่าของนักสู้หน้ากล้องก่อนนับถอยหลังจบ
+tips.2	DEF ยิ่งสูงยิ่งลดความเสียหายทุกครั้งที่โดนตี และทำให้การป้องกันแข็งแกร่งขึ้น
+tips.3	นั่งหลังตรงขณะกล้องจับท่าทาง จะได้เหรียญโบนัสหลังจบทุกแมตช์
+tips.4	สกินและอาวุธเป็นของตกแต่งเท่านั้น - ค่าสถานะไม่เปลี่ยนตามสิ่งที่นักสู้สวมใส่
+tips.5	ในโหมดฝึกซ้อม กด T เพื่อเติมอัลติเมต หุ่นซ้อมจะลุกขึ้นมาใหม่เสมอ
+tips.6	นักสู้ทุกตัวมีพาสซีฟให้เลือกหนึ่งในสองแบบ - เลือกได้ในแผงอุปกรณ์หลังล็อกตัวละคร
+tips.7	การสู้ออนไลน์ใช้ระบบ rollback netcode: ทั้งสองเครื่องจำลองการต่อสู้เดียวกันจากอินพุตเดียวกัน
+stats.power	พลัง
+stats.speed	ความเร็ว
+stats.range	ระยะ
+stats.endurance	ความอึด
+stats.recovery	การฟื้นตัว
+training.use_block	ป้องกัน · อัลติเมตของ Melee และ Magic
+training.use_fireball	ลูกไฟ · อัลติเมตของ Ranged และ Polearm
+training.use_superjump	ซูเปอร์จัมพ์ · อัลติเมตของ Heavy
+menu.online_locked	โหมดออนไลน์สำหรับผู้เล่นอายุ 13 ปีขึ้นไป
+menu.no_internet	ไม่มีอินเทอร์เน็ต: เชื่อมต่อ Wi-Fi หรืออินเทอร์เน็ตมือถือ โหมด VS AI เล่นออฟไลน์ได้
+menu.four_player_soon	2v2 และ Battle Royale ต้องรองรับ 4 ผู้เล่น จะมาในอัปเดตถัดไป
+profile.edit_name	แก้ไขชื่อ
+profile.win_loss	ชนะ {0}  ·  แพ้ {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	พร้อม
+loading.loading	กำลังโหลด
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   สำเร็จแล้ว x{2}
+arcade.rule_fight_all	สู้กับตัวละครทั้ง {0} ตัวติดต่อกัน เรียงแบบสุ่ม
+arcade.rule_difficulty	ความยากของ CPU: {0} (เปลี่ยนได้ในตั้งค่า)
+arcade.final	รอบสุดท้าย
+arcade.round	รอบที่ {0}
+training.cv_setup_source	ตั้งค่า CV · {0}
+training.status	กล้อง: {0}\nการจับท่าทาง: {1}\nตรวจพบ: {2}
+training.off	ปิด
+training.none	ไม่มี
+training.status_posture	   ·   ท่านั่ง {0}%   ·   ข้อมูลตรวจวัด {1}
+collection.gold_cinematic_suffix	 · ฉากพิเศษสีทอง
+collection.only	เฉพาะ {0}
+collection.pull1	สุ่ม x1  ·  {0}
+collection.pull10	สุ่ม x10  ·  {0}
+collection.dup_suffix	  (ซ้ำ +20)
+collection.new_suffix	  ใหม่!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} วินาที  <size=12><color=#9AA6BC>(คงที่ทุกแมตช์)</color></size>
+settings.change_name_as	เปลี่ยนชื่อ  ·  {0}
+settings.change_name	เปลี่ยนชื่อ
+settings.keys_help	คลิกปุ่มที่ตั้งไว้ แล้วกดปุ่มคีย์บอร์ดหรือคลิกช่องนั้นด้วยปุ่มเมาส์ (Esc / ปุ่ม B / คลิกที่อื่นเพื่อยกเลิก; หมดเวลา 5 วินาที) ถ้าผู้เล่นอีกคนใช้ปุ่มนั้นอยู่ จะสลับปุ่มกัน\nท่าทางหน้ากล้อง: ไขว้แขน = ป้องกัน · กางแขนออกด้านข้าง = ลูกไฟ · ชูมือทั้งสองข้าง = ซูเปอร์จัมพ์ (ท่าทางด้วยคีย์บอร์ด: 1/2/3 และ 8/9/0)
+rarity.common	ธรรมดา
+rarity.rare	หายาก
+rarity.epic	มหากาพย์
+rarity.legendary	ตำนาน
+skin.default	คลาสสิก
+skin.mint	มินต์ป๊อป
+skin.shadow	เงามืด
+skin.sakura	ซากุระ
+skin.inferno	เพลิงนรก
+skin.celestial	สรวงสวรรค์
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	13+ เท่านั้น
+play.1p_vs_1p	1P VS 1P
+play.team_card	ทีม\n2V2
+play.four_player_later	2v2 และ Battle Royale จะมาพร้อมระบบ 4 ผู้เล่นในอัปเดตถัดไป
+play.team_tag	4P · 2 ทีม
+play.royale_tag	4P · ทุกคนเป็นศัตรู
+collection.all_fighters	นักสู้ทั้งหมด
+arcade.mode	โหมดอาร์เคด
+home.tagline	เกมต่อสู้ในอารีนา  ·  อัลติเมตด้วยท่าทางร่างกาย
+play.royale_card	BATTLE\nROYALE
+training.kicker	ตั้งค่ากล้องและฝึกซ้อม
+settings.camera_tracking	จับท่าทางด้วยกล้อง (เว็บแคม)
+training.camera_off	จับท่าทางด้วยกล้อง: ปิด
+training.camera_on	จับท่าทางด้วยกล้อง: เปิด
+collection.hint	คอลเลกชันตัวละคร
+play.choose_style	เลือกรูปแบบการเล่น
+online.kicker	เลือกรูปแบบการเล่น  ·  เดี่ยว · 2V2 · BATTLE ROYALE
+play.kicker	เลือกการต่อสู้ของคุณ  ·  VS ONLINE · จับคู่ · VS CPU
+play.coming_soon	เร็ว ๆ นี้
+training.cv	คอมพิวเตอร์วิชัน
+online.connection	การเชื่อมต่อ
+collection.banner	ตู้สุ่มของตกแต่ง
+settings.cpu_difficulty	ความยากของ CPU
+play.create_join	สร้าง · เข้าห้อง
+settings.cv_overlay	แสดงภาพ CV ระหว่างแมตช์
+quests.coins_note	เหรียญได้จากการเล่นเท่านั้น: ชนะ, PvE, ภารกิจ และการนั่งหลังตรงที่กล้องจับได้
+collection.odds	ธรรมดา 60% · หายาก 28% · มหากาพย์ 10% · ตำนาน 2%
+collection.equip	สวมใส่
+collection.equipped	สวมใส่อยู่
+hint.exit	ออก
+home.exit_upper	ออกจากเกม
+exit.title	ออกจากเกม?
+online.royale_desc	ทุกคนสู้เพื่อตัวเอง นักสู้คนสุดท้ายที่ยืนอยู่คือผู้ชนะ
+arcade.kicker	คู่แข่งห้าคน · รวดเดียว
+loading.for_battle	ลุยศึก
+online.invites_note	คำเชิญเข้าห้องจากเพื่อนจะเด้งขึ้นที่นี่ ห้องกับเพื่อนอยู่ใน เล่น > จับคู่
+settings.kicker	เกม · กล้อง · การควบคุม
+training.gestures_live	ท่าทาง  (ทำท่าหน้ากล้อง - ต่อย = เหยียดแขนข้างหนึ่งออกไปด้านข้าง)
+training.gestures_sim	ท่าทาง  (กดปุ่มค้างไว้เพื่อจำลองท่า)
+settings.key_bindings	การตั้งปุ่ม
+settings.keys_reset	รีเซ็ตปุ่มเป็นค่าเริ่มต้นแล้ว
+play.locked	ล็อกอยู่
+arcade.rule_retry	แพ้รอบไหน? กดสู้ต่อเพื่อลองใหม่ได้
+home.hint	เมนูหลัก
+settings.master_volume	เสียงหลัก
+settings.match_time	เวลาแมตช์
+play.matchmaking_card	จับคู่
+hint.move	เลื่อน
+play.matchmaking_desc	สร้างห้อง แชร์รหัสห้อง หรือเชิญเพื่อนด้วยชื่อ
+play.no_internet_tag	ไม่มีอินเทอร์เน็ต
+online.no_internet_body	ตอนนี้ไม่มีอินเทอร์เน็ต เชื่อมต่อ Wi-Fi หรืออินเทอร์เน็ตมือถือ หรือเล่น Vs CPU
+common.off	ปิด
+online.offline	ออฟไลน์
+common.on	เปิด
+settings.player1	ผู้เล่น 1
+settings.player2	ผู้เล่น 2
+training.practice_dummy	ซ้อมกับหุ่นซ้อม
+settings.precheck	ตรวจสอบกล้องก่อนแข่ง
+loading.prepare	เตรียมตัว
+settings.listening_hint	กดปุ่มหรือคลิกช่อง  ·  ESC / ปุ่ม B เพื่อยกเลิก  ·  ตั้งปุ่มจอยไม่ได้
+training.slouch_note	กด P เพื่อสลับท่านั่งหลังค่อม แล้วดูคะแนนท่านั่งลดลง
+settings.profile_reset	รีเซ็ตโปรไฟล์แล้ว (เก็บชื่อและการลงชื่อเข้าใช้ไว้)
+collection.pull_to_unlock	สุ่มเพื่อปลดล็อก
+quests.title	ภารกิจ
+online.quick_match	จับคู่เร็ว
+play.online_desc	จับคู่เร็วกับผู้เล่นใกล้คุณ หรือตอบรับคำเชิญจากเพื่อน
+online.solo_desc	จับคู่เร็ว: สู้กับผู้เล่นที่กำลังค้นหาอยู่ คนที่ใกล้ที่สุดก่อน
+settings.reset_keys	รีเซ็ตปุ่ม
+settings.reset_profile	รีเซ็ตโปรไฟล์
+arcade.rival_unknown	คู่แข่ง  ???
+play.rooms_tag	ห้อง · 2-4 ผู้เล่น
+online.rollback_body	Rollback netcode: ทั้งสองเครื่องจำลองการต่อสู้เดียวกันจากอินพุตเดียวกัน จึงเร็วและยุติธรรม
+settings.screen_shake	หน้าจอสั่น
+profile.set_name	ตั้งชื่อ
+settings.sfx_volume	เสียงเอฟเฟกต์
+training.simulate_pose	จำลองท่า
+collection.kicker	สกิน · อาวุธ · ตู้สุ่มของตกแต่ง
+training.slouch	หลังค่อม
+online.solo_card	เดี่ยว\n1V1
+home.start	เริ่ม
+arcade.start	เริ่มอาร์เคด
+exit.stay	อยู่ต่อ
+settings.sure	แน่ใจไหม?
+settings.sure_reset_profile	แน่ใจไหม? ความคืบหน้าจะหายหมด
+collection.banner_note	มีแค่สกินและฉากอัลติเมตเท่านั้น ค่าสถานะเท่ากันทุกสกิน - ไม่มีอะไรต้องจ่ายเงินเพื่อชนะ
+hint.tabs	แท็บ
+loading.tip	เคล็ดลับ
+training.hint	ฝึกซ้อม  /  ตั้งค่า CV
+arcade.rule_stages	ด่านจะเปลี่ยนทุกรอบ ตั้งแต่ภูเขาแห่งการเริ่มต้นจนถึงอนุสรณ์สถานใต้มหาสมุทร
+online.team_desc	สองทีม ทีมละสองคน ไม่มีการตีโดนพวกเดียวกัน: การโจมตีของคุณไม่ทำร้ายเพื่อนร่วมทีม
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  รูปแบบการเล่น
+play.online_card	VS\nONLINE
+arcade.rule_rewards	ชนะแล้วได้เหรียญและความคืบหน้าภารกิจ เหมือนกับ VS CPU
+exit.saved_note	โปรไฟล์ เหรียญ และคอลเลกชันของคุณถูกบันทึกไว้ในเครื่องนี้
+settings.key_listening	กดปุ่มหรือคลิกที่นี่
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	เลือกนักสู้และระดับ ง่าย ปานกลาง หรือ ยาก CPU จะได้นักสู้แบบสุ่ม
+account.keep_name_body	ลงชื่อเข้าใช้ด้วยบัญชี Google แล้วชื่อและข้อมูลของคุณจะอยู่กับคุณ: ทุกครั้งที่เปิดเกม และบนคอมพิวเตอร์เครื่องไหนก็ได้ บัญชี Google อื่นจะได้ชื่อใหม่ของตัวเอง
+name.you_are	คุณคือ {0}!
+name.you_are_unchecked	คุณคือ {0}! เราจะตรวจสอบชื่อเมื่อคุณเล่นออนไลน์
+online.could_not_start	ไม่สามารถเริ่มแมตช์ได้ ({0})
+rooms.your_rooms	ห้องของคุณ
+rooms.count_click	{0}  ·  คลิกห้องเพื่อเปิด
+rooms.code_value	รหัส  {0}
+rooms.players_count	{0} / {1} ผู้เล่น
+rooms.more	+ อีก {0} ห้อง
+rooms.created	สร้างห้อง "{0}" แล้ว คลิกเพื่อแชร์รหัสหรือเชิญเพื่อน
+quick.searching	กำลังค้นหา
+quick.looking_in	กำลังหาใน:  {0}
+room.kicker	ห้อง  ·  2-4 ผู้เล่น  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	พร้อมสู้
+room.full_suffix	 · ห้องเต็ม

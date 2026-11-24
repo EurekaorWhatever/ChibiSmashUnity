@@ -1,0 +1,264 @@
+name.you_are	Ты — {0}!
+name.you_are_unchecked	Ты — {0}! Мы проверим имя, когда ты будешь играть онлайн.
+online.could_not_start	Матч не удалось начать ({0}).
+rooms.your_rooms	ТВОИ КОМНАТЫ
+rooms.count_click	{0}  ·  нажми на комнату, чтобы открыть её
+rooms.code_value	КОД  {0}
+rooms.players_count	ИГРОКИ: {0} / {1}
+rooms.more	+ ещё комнат: {0}
+rooms.created	Комната «{0}» создана. Нажми на неё, чтобы поделиться кодом или пригласить друзей.
+quick.searching	ПОИСК
+quick.looking_in	ИЩЕМ:  {0}
+room.kicker	КОМНАТА  ·  2-4 ИГРОКА  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	К БОЮ ГОТОВЫ
+room.full_suffix	 · КОМНАТА ПОЛНА
+room.waiting	ЖДЁМ ИГРОКОВ
+room.joined	{0}  ·  ВОШЛИ {1} / {2}
+room.host	ХОСТ
+room.player_n	ИГРОК {0}
+room.you_suffix	 · ТЫ
+room.hazards_host_pick	{0} · ВЫБОР ХОСТА
+room.hazards_on	ЛОВУШКИ ВКЛ
+room.hazards_off	ЛОВУШКИ ВЫКЛ
+room.code_copied	Код комнаты {0} скопирован. Вставь его для друга.
+invite.body	{0} зовёт тебя в {1}   ({2} с)
+select.ult_name	ULT  {0}
+age.title	СКОЛЬКО ТЕБЕ ЛЕТ?
+age.body	В любом возрасте можно играть во все режимы. Твой возраст сохраняется вместе с именем игрока для игровой статистики.
+common.next	ДАЛЕЕ
+age.error	Введи свой возраст или задай его крестовиной.
+age.pad_hint	Геймпад: крестовина вверх/вниз меняет на 1, влево/вправо на 10 · A = далее
+rooms.enter_name	ВВЕДИ НАЗВАНИЕ КОМНАТЫ
+rooms.name_rules	3-24 буквы, цифры или пробелы. Друзья видят его при входе. В комнате от 2 до 4 игроков.
+rooms.create	СОЗДАТЬ
+common.one_moment	СЕКУНДУ...
+account.keep_name	СОХРАНИ ИМЯ БОЙЦА
+account.finish_in_browser	ЗАВЕРШИ В БРАУЗЕРЕ...
+account.sign_in_google	ВОЙТИ ЧЕРЕЗ GOOGLE
+account.play_without	ИГРАТЬ БЕЗ АККАУНТА
+name.choose_first	Сначала выбери имя игрока.
+common.cancelled	Отменено.
+name.welcome	ПРИВЕТ, БОЕЦ! КАК ТЕБЯ ЗОВУТ?
+name.change_title	СМЕНИ ИМЯ
+name.rules	3-16 букв, цифр или _. Выбери забавное имя бойца, а не настоящее. По нему друзья находят и приглашают тебя, и его видят все.
+name.suggest	ПРЕДЛОЖИТЬ
+name.checking	ПРОВЕРКА...
+name.lets_fight	В БОЙ!
+common.save	СОХРАНИТЬ
+name.pad_hint_first	Геймпад: A = в бой · Y = предложить имя
+name.pad_hint	Геймпад: A = сохранить · Y = предложить имя
+online.connected_agreeing	Подключено. Согласуем матч...
+online.host_settings_changed	Хост изменил настройки — зайди в комнату заново.
+online.version_mismatch	У соперника другая версия игры. Обоим игрокам нужна одна и та же версия.
+rooms.title	ПОИСК МАТЧА
+rooms.kicker	КОМНАТЫ  ·  2-4 ИГРОКА  ·  СОЗДАТЬ · ВОЙТИ · ПРИГЛАСИТЬ ПО ИМЕНИ
+rooms.create_rooms	СОЗДАТЬ КОМНАТЫ
+rooms.join_room	ВОЙТИ В КОМНАТУ
+rooms.creating	СОЗДАЁМ КОМНАТУ...
+rooms.loading	ЗАГРУЖАЕМ КОМНАТЫ...
+rooms.none_yet	Комнат пока нет!
+rooms.one_moment	Секунду.
+rooms.empty_help	Нажми СОЗДАТЬ КОМНАТЫ, чтобы создать комнату, или ВОЙТИ В КОМНАТУ с кодом друга.
+rooms.capacity_note	В комнате от 2 до 4 игроков. Приглашай друзей по имени игрока.
+rooms.invites_paused	Приглашения в комнаты приостановлены на несколько минут
+rooms.refresh	ОБНОВИТЬ
+rooms.hint	ПОИСК МАТЧА  ·  КОМНАТЫ
+rooms.new	НОВАЯ
+rooms.you_host	ТЫ ХОСТ
+rooms.open	ОТКРЫТЬ
+join.enter_code	ВВЕДИ КОД КОМНАТЫ
+join.body	Введи или вставь код комнаты, который прислал друг (Discord, чат...).
+join.paste	ВСТАВИТЬ
+join.join	ВОЙТИ
+join.bad_code	Это не код комнаты. Проверь и попробуй снова (только буквы и цифры).
+rooms.fight_starting	В комнате начинается бой. Дождись его или сначала выйди из комнаты.
+quick.kicker	VS ОНЛАЙН  ·  СОЛО 1V1  ·  ИГРОК РЯДОМ С ТОБОЙ
+quick.player_found	ИГРОК НАЙДЕН!
+quick.search_failed	ПОИСК НЕ УДАЛСЯ
+quick.not_searching	ПОИСК НЕ ИДЁТ
+quick.connecting	Подключение к сопернику...
+quick.searching_near	Ищем игрока рядом с тобой
+quick.stopped	Поиск остановлен. Попробуй снова.
+quick.press_search_again	Нажми ИСКАТЬ СНОВА, чтобы найти игрока.
+quick.privacy	Быстрый матч сообщает твою страну (из настроек устройства), но никогда не местоположение.
+quick.search_again	ИСКАТЬ СНОВА
+quick.hint	VS ОНЛАЙН  ·  БЫСТРЫЙ МАТЧ
+room.kicker_opening	КОМНАТА  ·  ОТКРЫВАЕМ КОМНАТУ...
+room.opening	Открываем комнату...
+room.your_fighter	ТВОЙ БОЕЦ
+room.locked_in	ВЫБРАНО
+room.everyone_ok	Все нажимают OK: бой начнётся сам.
+room.share_code	Поделись кодом или пригласи друзей по имени.
+room.empty_seat	Свободное место
+room.stage_you	АРЕНА (выбираешь ты)
+room.stage_host	АРЕНА (выбирает хост)
+common.ok	OK
+room.loading	ЗАГРУЗКА...
+room.change	СМЕНИТЬ
+room.starting	ЗАПУСК...
+room.start_fight	НАЧАТЬ БОЙ
+room.close	ЗАКРЫТЬ КОМНАТУ
+room.leave	ПОКИНУТЬ КОМНАТУ
+room.hint	ПОИСК МАТЧА  ·  КОМНАТА
+room.code	КОД
+room.copy	КОПИРОВАТЬ
+room.host_can_invite	Хост может пригласить друга по имени.
+room.invite_by_name	ПРИГЛАСИТЬ ДРУГА ПО ИМЕНИ
+room.invite	ПРИГЛАСИТЬ
+room.full	Комната заполнена.
+invite.title	ПРИГЛАШЕНИЕ В КОМНАТУ
+invite.warning	Имена не проверяются: принимай приглашения только от знакомых.
+invite.accept	ПРИНЯТЬ
+invite.decline	ОТКЛОНИТЬ
+room.hazards_on_btn	ЛОВУШКИ  ВКЛ
+room.hazards_off_btn	ЛОВУШКИ  ВЫКЛ
+select.passive	ПАССИВКА
+select.look	ОБЛИК
+select.cosmetic	КОСМЕТИКА
+select.arcade_round	АРКАДА  ·  РАУНД {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   ГЕЙМПАД 1 = 1P, ГЕЙМПАД 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	МАНЕКЕН
+select.round_rival	СОПЕРНИК РАУНДА {0}
+select.picks_at_start	ВЫБИРАЕТ В НАЧАЛЕ БОЯ
+select.signature_weapon	ФИРМЕННОЕ ОРУЖИЕ  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  ПОВЕРЖЕН
+select.arcade_route	МАРШРУТ АРКАДЫ  ·  АРЕНА {0} / {1}
+select.select_stage	ВЫБОР АРЕНЫ
+select.local_versus	ЛОКАЛЬНЫЙ ПОЕДИНОК
+select.arcade_rival	СОПЕРНИК АРКАДЫ
+select.training_dummy	ТРЕНИРОВОЧНЫЙ МАНЕКЕН
+select.stage	АРЕНА
+select.hazards	ЛОВУШКИ
+select.fight	В БОЙ
+select.change	СМЕНИТЬ
+select.confirm	ПОДТВЕРДИТЬ
+select.random	СЛУЧАЙНО
+select.fate	ДОВЕРИТЬСЯ СУДЬБЕ
+select.ready_bang	ГОТОВ!
+select.loadout	СНАРЯЖЕНИЕ
+select.waiting_1p	ЖДЁМ 1P
+select.1p_picks_dummy	1P ВЫБИРАЕТ МАНЕКЕН
+select.selecting	ВЫБИРАЕТ
+select.identity_hidden	ЛИЧНОСТЬ СКРЫТА
+select.revealed_at_start	ОТКРОЕТСЯ В НАЧАЛЕ РАУНДА
+select.ai_picks	ИИ ВЫБИРАЕТ БОЙЦА
+select.random_every_fight	СЛУЧАЙНЫЙ ПЕРСОНАЖ В КАЖДОМ БОЮ
+select.any_character	ЛЮБОЙ ПЕРСОНАЖ · СЛУЧАЙНЫЕ ПАССИВКА И ОРУЖИЕ
+select.lock_in_hint	ПОДТВЕРДИТЬ  ·  ИЛИ НАЖМИ НА ПЕРСОНАЖА
+select.to_ready	ЧТОБЫ БЫТЬ ГОТОВЫМ
+select.cpu_difficulty_pick	СЛОЖНОСТЬ CPU  ·  ВЫБЕРИ ДО БОЯ
+select.ai_note	Интернет не нужен. ИИ выбирает нового персонажа, пассивку и оружие для каждого боя, включая реванши.
+select.pad_difficulty	КРЕСТОВИНА ВВЕРХ / ВНИЗ  ·  СЛОЖНОСТЬ
+select.key_difficulty	W / S  ·  СЛОЖНОСТЬ
+select.start_training	НАЧАТЬ ТРЕНИРОВКУ
+select.fight_bang	В БОЙ!
+select.click_to_start	ИЛИ НАЖМИ, ЧТОБЫ НАЧАТЬ С ТЕКУЩИМ ВЫБОРОМ
+hud.ready	ГОТОВЬСЯ...
+hud.rival	СОПЕРНИК
+hud.you	ТЫ
+hud.ultimate_ready	{0} · УЛЬТИМЕЙТ ГОТОВ
+hud.move_detected	{0} · ДВИЖЕНИЕ РАСПОЗНАНО
+hud.failed	{0} · НЕ ВЫШЛО
+hud.training_title	ТРЕНИРОВКА · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  ТРЕНИРОВКА
+hud.intro_online	  ·  ОНЛАЙН  ·  ESC / START: ВЫЙТИ
+hud.ult_ready_press	ULT ГОТОВ - нажми {0}
+hud.ult_ready	ULT ГОТОВ
+hud.sim_key	клавиша имитации: {0}
+hud.poses_live	 · позы: скрестить руки = блок / рука в сторону = огненный шар / руки вверх = прыжок
+hud.poses_keys	 · позы 1 скрестить / 2 удар / 3 поднять · P сутулость
+hud.poses_p2	 · позы 8/9/0
+hud.training_help	ТРЕНИРОВКА: T заполняет ультимейт · бойцы после KO возрождаются с 0% · Esc пауза
+hud.ult_pct	ULT {0}%
+hud.last_hit	ПОСЛЕДНИЙ УДАР  {0}
+hud.combo_hits	КОМБО  УДАРОВ: {0}  +{1}%
+hud.combo	КОМБО  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	КАМЕРА P1 · ИМИТАЦИЯ
+hud.cv_p1_live	КАМЕРА P1 · ВЖИВУЮ
+hud.cv_p2_sim	КАМЕРА P2 · ИМИТАЦИЯ
+hud.cv_p2_live	КАМЕРА P2 · ВЖИВУЮ
+hud.hits_prefix	УДАРОВ: {0}  
+results.no_contest	БЕЗ РЕЗУЛЬТАТА
+results.draw	НИЧЬЯ!
+results.cpu_wins	ПОБЕДА CPU
+results.you_win	ТЫ ПОБЕДИЛ!
+results.rival_wins	ПОБЕДА СОПЕРНИКА
+results.wins	ПОБЕДА: {0}!
+results.takes_round	Раунд за {0}
+results.stats	Попаданий  {0}\nПолных комбо  {1}   ·   Лучшее комбо  {2}
+results.stats2	\nУльтимейтов жестами  {0}\nПарирований  {1}
+results.posture	\nХорошая осанка  {0}%
+results.rewards_named	НАГРАДЫ (профиль {0})
+results.rewards_your	НАГРАДЫ (твой профиль)
+results.rewards_p1	НАГРАДЫ (профиль P1)
+results.coins	+{0} монет  (всего {1})
+hud.do_pose	прими позу перед камерой
+results.place_1	1-Е
+results.place_2	2-Е
+results.place_3	3-Е
+results.place_4	4-Е
+results.out	ВЫБЫЛ
+results.out_1	ВЫБЫЛ · 1-Е
+results.out_2	ВЫБЫЛ · 2-Е
+results.out_3	ВЫБЫЛ · 3-Е
+results.out_4	ВЫБЫЛ · 4-Е
+results.red_team	КРАСНАЯ КОМАНДА
+results.blue_team	СИНЯЯ КОМАНДА
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · ИГРОКОВ: {0}
+hud.keys_line1	P{0}: {1} ходьба · {2} прыжок · 
+hud.keys_line2	{0} лёгкая · {1} тяжёлая · {2} особая · 
+hud.keys_line3	{0} блок · {1} рывок · 
+hud.keys_line4	{0} умения · {1} ульт
+results.characters	ПЕРСОНАЖИ
+results.stock_one	1 ЖИЗНЬ
+results.stocks	ЖИЗНИ: {0}
+hud.respawn	ВОЗРОЖДЕНИЕ
+hud.drop_in	В БОЙ!
+results.main_menu	ГЛАВНОЕ МЕНЮ
+pause.title	ПАУЗА
+pause.resume	ПРОДОЛЖИТЬ
+pause.quit	ВЫЙТИ В МЕНЮ
+pause.hint	B / Backspace — продолжить
+leave.title	ПОКИНУТЬ МАТЧ?
+leave.body	Матч продолжится. Уход засчитывается как поражение.
+leave.leave	ПОКИНУТЬ
+leave.hint	B / Backspace / Esc / Start — остаться
+results.winner	ПОБЕДИТЕЛЬ
+results.training_no_rewards	Тренировка: без наград
+cv.posture	Осанка {0}%
+cv.posture_low	Осанка {0}% - сядь прямо!
+cv.telemetry_ok	Телеметрия OK
+net.rooms_load_failed	Не удалось загрузить комнаты: {0}
+net.host_limit	У тебя уже открыто комнат: {0}. Сначала закрой одну.
+net.creating_named	Создаём «{0}»...
+net.room_ready_code	Комната «{0}» готова. Поделись кодом {1} или пригласи друга.
+net.create_failed	Не удалось создать комнату: {0}
+net.joining_room	Входим в комнату {0}...
+net.you_joined	Ты в комнате «{0}». Выбери бойца и нажми OK.
+net.no_room_code	Нет комнаты с кодом {0}. Проверь код и попробуй снова.
+net.room_full_n	Комната заполнена (игроков: {0}).
+net.join_failed	Не удалось войти: {0}
+net.update_failed	Не удалось обновить комнату: {0}
+net.could_not_what	Не удалось {0}: {1}
+net.what_stage	сменить арену
+net.what_hazards	изменить ловушки
+net.press_ok_again	{0} Оба снова нажмите OK и НАЧАТЬ БОЙ.
+net.udp_port	Не удалось открыть UDP-порт {0} (уже занят?).
+net.lan_ready	LAN-хост готов. Друг подключается: {0}  (порт {1})
+net.bad_ip	«{0}» — неверный IP-адрес.
+net.connecting_to	Подключение к {0}...
+net.sign_in_failed	Не удалось войти: {0}
+net.room_ready	Комната «{0}» готова. Поделись кодом с другом.
+net.searching_in	Ищем игроков: {0}...
+net.start_failed	Не удалось начать бой: {0}
+net.host_unreachable	Хост недоступен: {0}
+net.area_world	весь мир
+net.area_country_and	твоя страна и {0}

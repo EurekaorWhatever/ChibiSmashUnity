@@ -1,0 +1,262 @@
+net.area_country_and	bansa mo at {0}
+region.africa	Africa
+region.americas	Americas
+region.asia	Asya
+region.europe	Europa
+region.oceania	Oceania
+region.northern_africa	Hilagang Africa
+region.eastern_africa	Silangang Africa
+region.middle_africa	Gitnang Africa
+region.southern_africa	Timog Africa
+region.western_africa	Kanlurang Africa
+region.caribbean	Caribbean
+region.central_america	Gitnang Amerika
+region.south_america	Timog Amerika
+region.northern_america	Hilagang Amerika
+region.central_asia	Gitnang Asya
+region.eastern_asia	Silangang Asya
+region.south_eastern_asia	Timog-silangang Asya
+region.southern_asia	Timog Asya
+region.western_asia	Kanlurang Asya
+region.eastern_europe	Silangang Europa
+region.northern_europe	Hilagang Europa
+region.southern_europe	Timog Europa
+region.western_europe	Kanlurang Europa
+region.australia_and_new_zealand	Australia at New Zealand
+region.melanesia	Melanesia
+region.micronesia	Micronesia
+region.polynesia	Polynesia
+net.joined_connecting	Sumali sa "{0}". Kumokonekta sa host...
+net.opponent_unreachable	Hindi maabot ang kalaban mo: {0}
+net.quick_filling	{0} sa {1} manlalaro. Magsisimula sa {2} s...
+invite.inviting	Iniimbitahan si {0}...
+invite.sent_lasts	Naipadala ang invite kay {0}. Tatagal ito nang {1} segundo.
+invite.send_failed	Hindi maipadala ang invite: {0}
+invite.joining_room_of	Sumasali sa room ni {0}...
+invite.paused	Naka-pause ang mga invite nang {0} minuto.
+invite.invited_you	Inimbitahan ka ni {0} sa "{1}".
+invite.ran_out	Nag-expire ang invite mo kay {0}.
+friends.choose_name	Pumili ng pangalan para mahanap ka ng mga kaibigan.
+friends.unavailable	Hindi available ang friends: {0}
+friends.your_name_is	{0} ang pangalan mo. Ibigay ito sa kaibigan para ma-add ka nila.
+friends.set_name_failed	Hindi maitakda ang pangalan: {0}
+friends.request_sent	Naipadala ang friend request kay {0}.
+friends.add_failed	Hindi ma-add si {0}: {1}
+friends.offline	Offline si {0} ngayon.
+friends.request_then_invite	Naipadala ang friend request kay {0}. Ipapadala ang invite pagtanggap nila.
+friends.unreachable	Hindi maabot si {0}: {1}
+friends.creating_room_for	Gumagawa ng room para kay {0}...
+friends.joining	Sumasali kay {0}...
+friends.declined	Tinanggihan ni {0} ang invite.
+friends.version_mismatch	Inimbitahan ka ni {0}, pero ibang bersiyon ng laro ang gamit niya.
+friends.invite_sent_waiting	Naipadala ang invite kay {0}. Hinihintay siyang sumali...
+name.too_short	Masyadong maikli ang pangalan (hindi bababa sa {0} character).
+name.too_long	Masyadong mahaba ang pangalan (hanggang {0} character).
+rooms.name_too_short	Masyadong maikli ang pangalan ng room (hindi bababa sa {0} character).
+rooms.name_too_long	Masyadong mahaba ang pangalan ng room (hanggang {0} character).
+net.bad_code	Hindi valid na room code iyan (letra at numero lang).
+net.version_mismatch	Ginawa ang room na iyan sa ibang bersiyon ng Chibi Clash. Kailangang pareho ang bersiyon ng dalawang manlalaro.
+net.loading_room	Nilo-load ang room...
+net.room_closed	Sarado na ang room.
+net.you_left	Umalis ka sa room.
+net.waiting_host_game	Nagsisimula... hinihintay ang laro ng host.
+net.choose_next_fight	Pumili ng fighter at pindutin ang OK para sa susunod na laban.
+net.host_changed_stage	Binago ng host ang settings ng stage. Pindutin ulit ang OK.
+net.room_closed_host_left	Isinara ang room (umalis ang host).
+net.starting_fight	Sinisimulan ang laban...
+net.player_left_joined	May umalis o sumaling manlalaro.
+net.no_connection	Walang koneksiyon.
+net.fight_could_not_start	Hindi masimulan ang laban.
+net.fight_starting_wait	Magsisimula na ang laban! Hinihintay kumonekta ang kaibigan mo...
+net.choose_press_ok	Pumili ng fighter at pindutin ang OK.
+net.too_many_starts	Masyadong maraming pagsimula. Maghintay ng isang minuto, saka pindutin ang SIMULAN ANG LABAN.
+net.fight_starting_connecting	Magsisimula na ang laban! Kumokonekta...
+net.could_not_connect	Hindi makakonekta.
+net.friend_no_answer	Hindi sumagot ang kaibigan mo.
+net.start_cancelled	Kinansela ang pagsimula.
+net.friend_no_connect	Hindi nakakonekta ang kaibigan mo.
+net.enter_code	Ilagay ang room code na ipinakita ng kaibigan mo.
+net.lan_browser	Walang LAN play sa browser. Gamitin ang ROOMS o MATCHMAKING, o ang PC version para sa LAN.
+net.enter_ip	Ilagay ang IP address ng host.
+net.this_pc_ip	IP ng PC na ito
+net.signing_in	Nagsa-sign in...
+net.creating_private	Gumagawa ng private room...
+net.hosting_one	Walang bukas na laban, gagawa ng isa...
+net.needs_2_to_4	Kailangan ng 2 hanggang 4 na manlalaro para sa laban.
+net.waiting_friend	Hinihintay kumonekta ang kaibigan mo...
+net.waiting_friends	Hinihintay kumonekta ang mga kaibigan mo...
+net.connection_running	May isa pang koneksiyong tumatakbo.
+net.no_valid_info	Walang valid na connection info ang room (umalis ang host?).
+net.connecting_host	Kumokonekta sa host...
+net.already_full	Puno na ang room na iyan.
+net.no_info	Walang connection info ang room (umalis ang host?).
+net.player_left_searching	Umalis ang manlalarong iyon. Naghahanap ulit...
+net.connected	Nakakonekta!
+net.relay_failed	Nabigo ang koneksiyon sa Relay server.
+net.opponent_timeout	Hindi maabot ang kalaban mo (nag-time out).
+net.no_internet	Walang koneksiyon sa internet. Kumonekta sa Wi-Fi o mobile data para makipaglaro sa kaibigan kahit saan. (Gumagana ang LAN play sa parehong network.)
+invite.wait	Maghintay sandali bago magpadala ng panibagong invite.
+invite.type_name	I-type ang in-game na pangalan ng kaibigan mo (3-16 na letra, numero o _).
+invite.own_name	Pangalan mo iyan.
+invite.open_room_first	Buksan muna ang room mo, saka mag-imbita.
+invite.room_full	Puno na ang room mo.
+invite.could_not_send	Hindi maipadala ang invite.
+invite.too_many	Masyadong maraming invite ngayon. Subukan ulit pagkalipas ng ilang segundo.
+invite.cancelled	Kinansela ang invite.
+invite.expired	Nag-expire na ang invite na iyan.
+invite.closed_full	Puno na ang room mo. Isinara ang invite.
+invite.closed_joined	May sumaling manlalaro sa room mo. Isinara ang invite.
+invite.closed_room	Kinansela ang invite: nagsara ang room.
+name.taken	May gumagamit na ng pangalang ito
+name.check_unavailable	Hindi masuri online ang pangalan mo. Tingnan ang internet mo at subukan ulit.
+name.too_soon	Kapapalit mo lang ng pangalan. Subukan ulit pagkalipas ng isang minuto.
+name.choose_different	Pumili ng ibang pangalan.
+friends.type_tag	I-type ang pangalan ng kaibigan mo gaya ng Kira#4821.
+friends.added	Na-add ang kaibigan.
+friends.declined_request	Tinanggihan ang request.
+friends.removed	Tinanggal ang kaibigan.
+friends.blocked	Na-block ang manlalaro.
+friends.a_friend	Isang kaibigan
+friends.type_player_tag	I-type ang pangalan ng manlalaro gaya ng Kira#4821.
+friends.wait_invite	Maghintay sandali bago mag-imbita ulit.
+name.enter	Maglagay ng pangalan.
+name.bad_chars	Letra, numero at _ lang ang gamitin (walang espasyo o simbolo).
+rooms.name_bad_chars	Letra, numero, espasyo at _ - ' ! lang ang puwede sa pangalan ng room.
+rooms.name_double_space	Bawal ang dobleng espasyo sa pangalan ng room.
+rooms.name_choose_different	Pumili ng ibang pangalan ng room.
+gesture.cross_arms	I-CROSS ANG BRASO
+gesture.punch_forward	SUMUNTOK PAHARAP
+gesture.raise_hands	ITAAS ANG DALAWANG KAMAY
+class.kaia.passive1_desc	+15% bilis ng atake
+class.kaia.passive2_desc	5% life steal
+class.kaia.skill1_desc	Sumugod paharap at tusukin ang kalaban
+class.kaia.skill2_desc	Ibinabalik ang damage kapag perpekto ang timing
+class.kaia.skill3_desc	Mabilis na tumusok nang maraming beses
+class.kaia.ult_desc	10s: naglalabas ng pahalang na alon ang normal na atake
+class.bruna.passive1_desc	+20% damage, -15% bilis ng atake
+class.bruna.passive2_desc	+20% damage, -15% bilis ng galaw
+class.bruna.skill1_desc	Hawakan ang kalaban at ibagsak sa lupa
+class.bruna.skill2_desc	Umikot na parang buhawi, paulit-ulit na tumatama
+class.bruna.ult_desc	Hampasin ang sahig para gumawa ng shockwave
+class.ren.passive1_desc	+20% crit rate
+class.ren.passive2_desc	+10% bilis ng galaw nang 10s (30s cooldown)
+class.ren.skill1_desc	Umatras nang pahalang at pumana
+class.ren.skill2_desc	Sakalin ang malapit na kalaban at itulak palayo
+class.ren.skill3_desc	Magpaulan ng mga palaso nang pahalang
+class.ren.ult_desc	Ang isang palaso ay dumarami at nagiging bagyo ng palaso
+class.lyra.passive1_desc	10% tsansa pag tumama: -15% galaw, -10% dmg, -15% bilis ng atake
+class.lyra.passive2_desc	20% tsansang ma-block ang damage
+class.lyra.skill1_desc	Magpaputok ng humahabol na bolang apoy
+class.lyra.skill2_desc	Magpatawag ng 3 minion
+class.lyra.skill3_desc	Sumusunod ang ulap sa kalaban at tinatamaan ito ng kidlat
+class.lyra.ult_desc	10s na singsing ng apoy: sinusunog ang kalaban, hinaharang ang projectile
+class.taro.passive1_desc	10% tsansa pag tumama: -15% depensa ng kalaban
+class.taro.passive2_desc	Pagkatapos ng 3s na walang atake, +50% ang susunod na tama
+class.taro.skill1_desc	Humaba, tumalon at humataw pababa
+class.taro.skill2_desc	Paikutin ang polearm para harangin ang projectile
+class.taro.skill3_desc	Ibato ang sibat at tawagin itong pabalik
+class.taro.ult_desc	Saksakin ang kalaban, saka sipain ang hawakan para lumalim
+char.kaia.role	Maliksing Striker
+char.kaia.style	Mabilis at maliksing labanan nang malapitan gamit ang tumpak at magkakadugtong na taga.
+char.bruna.role	Bruiser
+char.bruna.style	Brawler na malakas tumama at matibay, kontrolado ang espasyo gamit ang mabibigat na atake.
+char.ren.role	Maliksing Marksman
+char.ren.style	Mabilis na zoning at tumpak na pressure gamit ang sari-saring teknik sa palaso.
+char.lyra.role	Zoning / Setup
+char.lyra.style	Maliksing spellcaster na kontrolado ang espasyo sa mabilis na cast, tusong galaw at tumpak na mahika.
+char.taro.role	Espesyalista sa Abot
+char.taro.style	Disiplinado at maliksing kontrol na may malayong abot na pressure at tumpak na tama.
+stage.0.name	Dojo sa Langit
+stage.0.short	Dojo sa Langit
+stage.0.tagline	Dambana sa bundok sa ibabaw ng ulap
+stage.1.name	Neon City
+stage.1.short	Neon City
+stage.1.tagline	Arena sa bubong sa ilalim ng ulang neon
+stage.2.name	Pandayan ng Lava
+stage.2.short	Pandayan
+stage.2.tagline	Tunawang pandayan sa ibabaw ng dagat ng lava
+stage.3.name	Bundok ng Simula
+stage.3.short	Bundok
+stage.3.tagline	Patayong KO · gumagalaw na plataporma ng jade sa ibabaw ng maulap na bangin
+stage.4.name	Kapatagan ng Pagkakaisa
+stage.4.short	Kapatagan
+stage.4.tagline	Pahalang na KO · isang mahabang parang, walang mapagtataguan
+stage.5.name	Kailaliman ng Bulkan
+stage.5.short	Bulkan
+stage.5.tagline	KO sa bawat gilid · bumubulwak ang apoy mula sa lawa ng magma
+stage.6.name	Pugad ng Higanteng Ibon
+stage.6.short	Pugad ng Ibon
+stage.6.tagline	Pahalang na KO · winawalis ng higanteng ibon ang arena
+stage.7.name	Ang Abandonadong Monumento ng Karagatan
+stage.7.short	Karagatan
+stage.7.tagline	KO sa bawat gilid · bumababa ang balyena, bumaba sa mga palapag
+end.opponent_left	Umalis sa laban ang kalaban mo.
+end.opponent_timeout	Hindi na sumasagot ang kalaban mo.
+end.connection_lost	Naputol ang koneksiyon sa kalaban mo.
+end.you_left	Umalis ka sa laban.
+end.desync	Hindi nagkatugma ang dalawang laro (desync): walang resulta.
+end.unconfirmed	Hindi makumpirma ang pagtatapos ng laban: walang resulta.
+end.handshake_failed	Hindi masimulan ang laban.
+end.peer_never_started	Hindi sumali sa laban ang kalaban mo: walang resulta.
+end.too_slow	Masyadong mabagal ang koneksiyon para maglaro: walang resulta.
+end.host_left	Umalis sa laban ang host: walang resulta.
+end.dropped	Naputol ang koneksiyon mo sa laban.
+status.aura	AURA {0}
+status.fire_ring	SINGSING NG APOY {0}
+status.tailwind	HANGING PANULAK
+status.guard_broken	SIRA ANG GUARD {0}s
+status.guard	GUARD {0}%
+status.reloading	NAGRE-RELOAD {0}s
+status.recharging	NAGRE-RECHARGE {0}s
+status.hexed	SINUMPA
+status.armor_break	ARMOR -15%
+hud.perform	Gawin: {0}
+hud.times_up	Ubos na ang oras!
+rewards.no_contest	Walang resulta: walang reward
+rewards.pve_victory	Panalo sa PvE  +{0}
+rewards.pve_match	Laban sa PvE  +{0}
+rewards.victory	Panalo  +{0}
+rewards.match_played	Nakapaglaro  +{0}
+rewards.posture	Magandang postura {0}%  +{1}
+hud.revived	NABUHAY ULIT
+quest.win	Manalo ng 3 laban
+quest.pve	Talunin ang CPU nang dalawang beses (PvE)
+quest.combo	Gumawa ng 10 buong combo
+quest.ult	Mag-trigger ng 3 gesture ultimate
+quest.parry	Mag-parry ng 5 atake
+quest.posture	Tapusin ang laban na may 80%+ magandang postura
+rewards.quest	Quest: {0}  +{1}
+bind.move_left	Pakaliwa
+bind.move_right	Pakanan
+bind.drop	Bumaba / mabilis na bagsak
+bind.jump	Tumalon
+bind.jump_alt	Tumalon (alt)
+bind.light	Light attack
+bind.heavy	Heavy attack
+bind.block	Block
+bind.dash	Dash
+bind.skill1	Skill 1
+bind.skill2	Skill 2
+bind.skill3	Skill 3
+bind.ultimate	Ultimate
+bind.aim_up	Tumutok pataas
+bind.special	Special
+hud.rejected	Tinanggihan: {0}
+cv.low_confidence	Mababa ang kumpiyansa ng tracking
+cv.frozen	Nakatigil ang feed (peke?)
+cv.snap	Biglaang palit ng pose (macro?)
+cv.ok	OK
+cam.none	Walang nakitang camera
+cam.off	Patay ang camera
+cam.starting	Binubuksan ang camera...
+cam.waiting_frames	Hinihintay ang frames ng camera - payagan ang Unity na gamitin ang camera sa System Settings > Privacy > Camera
+cam.live	Live ang camera ({0}x{1})
+pose.simulated	Simulated (mga pose sa keyboard)
+pose.camera_off	Patay ang camera tracking - gamit ang mga pose na ginagaya ng keyboard
+pose.model_failed	Nabigo ang pose model: {0}
+pose.loading	Nilo-load ang pose model...
+pose.live	Live na body tracking (MoveNet, {0} Hz)
+pose.step_back	Bukas ang camera - umatras para kita ang balikat mo
+account.finish_browser	Tapusin ang pag-sign in sa browser mo (piliin ang Continue with Google)...
+account.signed_out_again	Naka-sign out. Mag-sign in ulit para magamit ang account mo.
+account.signed_in_kept	Naka-sign in. Mananatili sa account na ito ang pangalan at progreso mo.

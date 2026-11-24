@@ -30,6 +30,12 @@ namespace ChibiClash
         public Color Primary, Accent, Fx;
         /// <summary>Reference stat bars from the sheet, 1..5 (display only; real numbers live in ChibiCombatStats).</summary>
         public int Power, Speed, Range, Endurance, Recovery;
+
+        string roleKey, styleKey;
+        /// <summary>Role ("Agile Striker") in the current language (key char.kaia.role).</summary>
+        public string RoleText => Loc.T(roleKey ?? (roleKey = "char." + Id.ToLowerInvariant() + ".role"));
+        /// <summary>Play-style line in the current language (key char.kaia.style).</summary>
+        public string StyleText => Loc.T(styleKey ?? (styleKey = "char." + Id.ToLowerInvariant() + ".style"));
     }
 
     /// <summary>Lookup for the five characters. Index order = <see cref="FighterClass"/> order.</summary>

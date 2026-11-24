@@ -1,0 +1,251 @@
+lang.backdrop	BAHASA
+lang.title	PILIH BAHASAMU
+lang.subtitle	Semua teks di game akan memakai bahasa ini. Kamu bisa menggantinya kapan saja di PENGATURAN.
+lang.search_hint	Cari bahasa...
+lang.no_match	Tidak ada bahasa yang cocok.
+lang.english_text	Teks bahasa Inggris untuk sementara
+lang.confirm	KONFIRMASI  ·  {0}
+lang.confirm_none	KONFIRMASI
+lang.pad_hint	Ketik untuk mencari · Atas / Bawah untuk memilih · Enter atau tombol A = konfirmasi
+common.cancel	BATAL
+settings.language	BAHASA  ·  {0}
+difficulty.dummy	Boneka
+difficulty.easy	Mudah
+difficulty.medium	Sedang
+difficulty.hard	Sulit
+difficulty.dummy_upper	BONEKA
+difficulty.easy_upper	MUDAH
+difficulty.medium_upper	SEDANG
+difficulty.hard_upper	SULIT
+nav.home	BERANDA
+nav.play	MAIN
+nav.training	LATIHAN
+nav.arcade	ARCADE
+nav.collection	KOLEKSI
+nav.settings	PENGATURAN
+account.signed_in_as	Masuk sebagai {0}.
+account.signed_in	Sudah masuk.
+account.signed_out	Sudah keluar.
+keys.who	P{0} {1}
+keys.reserved	{0} adalah tombol pose / postur (1 2 3, 8 9 0, numpad 7 8 9, P, -). Pilih tombol lain.
+keys.swapped	{0};  {1} sekarang {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Main online untuk pemain usia 13 tahun ke atas.
+arcade.clear_toast	ARCADE TAMAT! Semua {0} rival dikalahkan
+precheck.too_dark	Terlalu gelap ({0}%) - tambah cahaya
+precheck.too_bright	Terlalu terang ({0}%) - kurangi silau
+precheck.good	Bagus ({0}%)
+loading.weapon_art	Gambar senjata: {0}
+loading.fighter	Petarung: {0}
+precheck.checking	MEMERIKSA... {0}
+wipe.character_select	PILIH KARAKTER
+wipe.arcade	ARCADE
+results.rematch	TANDING ULANG
+results.continue	LANJUT
+results.finish	SELESAI
+results.next_battle	PERTARUNGAN BERIKUTNYA
+wipe.arcade_clear	ARCADE TAMAT
+precheck.title	CEK KAMERA
+precheck.camera_unavailable	Kamera tidak tersedia
+precheck.simulated_feed	Gambar simulasi (webcam mati)
+precheck.upper_body_ok	Tubuh bagian atas terlihat
+precheck.step_back	Mundur sedikit - bahu dan pinggul harus terlihat
+loading.interface	Grafis antarmuka
+loading.typefaces	Huruf
+loading.pose_model	Model pelacak pose
+loading.ready	Siap
+onboarding.welcome	SELAMAT DATANG!
+onboarding.your_account	AKUNMU
+onboarding.your_name	NAMA PEMAINMU
+rooms.backdrop_create	MATCHMAKING  ·  BUAT ROOM
+rooms.backdrop_join	MATCHMAKING  ·  GABUNG ROOM
+precheck.all_passed	SEMUA CEK LULUS
+precheck.failed	CEK GAGAL
+precheck.lighting	PENCAHAYAAN
+precheck.framing	POSISI DI LAYAR
+precheck.posture	POSTUR
+precheck.upright	Tegak, bagus
+precheck.sit_up	Duduk tegak untuk bonus koin
+common.retry	COBA LAGI
+precheck.play_anyway	TETAP MAIN
+common.back	KEMBALI
+precheck.ranked_note	Antrean ranked wajib lulus cek ini. Pertandingan santai boleh melewatinya.
+precheck.hint	CEK KAMERA SEBELUM BERTANDING
+hint.select	PILIH
+home.play	MAIN
+home.training	LATIHAN
+home.arcade	ARCADE
+home.collection	KOLEKSI KARAKTER
+home.settings	PENGATURAN
+home.exit	KELUAR GAME
+home.play_desc	Quick match Vs Online, room Matchmaking bersama teman, atau Vs CPU
+home.training_desc	Atur kamera, latihan gerakan, dan boneka latihan
+home.arcade_desc	Lawan kelima rival berturut-turut di semua arena
+home.collection_desc	Skin, senjata, dan banner kosmetik
+home.settings_desc	Tingkat kesulitan, opsi kamera, dan tombol kontrol
+home.exit_desc	Tutup game
+tips.1	Isi meter ULT lalu tekan Ultimate - kemudian peragakan pose petarungmu di depan kamera sebelum hitungan habis.
+tips.2	DEF yang lebih tinggi mengurangi damage tiap serangan dan membuat tangkisanmu lebih kuat.
+tips.3	Postur yang baik terlacak kamera memberi bonus koin setelah tiap pertandingan.
+tips.4	Skin dan senjata hanya kosmetik - stat tidak pernah berubah karena pakaian petarung.
+tips.5	Di Latihan, tekan T untuk mengisi ultimate. Bonekanya selalu bangkit lagi.
+tips.6	Tiap petarung punya satu dari dua pasif - pilih di panel loadout setelah mengunci pilihan.
+tips.7	Pertarungan online memakai netcode rollback: kedua game menjalankan pertarungan yang sama dari input yang sama.
+stats.power	KEKUATAN
+stats.speed	KECEPATAN
+stats.range	JANGKAUAN
+stats.endurance	DAYA TAHAN
+stats.recovery	PEMULIHAN
+training.use_block	Tangkis · ultimate Melee & Sihir
+training.use_fireball	Bola api · ultimate Jarak Jauh & Tombak
+training.use_superjump	Lompatan super · ultimate Heavy
+menu.online_locked	Mode online untuk pemain usia 13 tahun ke atas.
+menu.no_internet	Tidak ada internet: sambungkan Wi-Fi atau data seluler. VS AI bisa dimainkan offline.
+menu.four_player_soon	2v2 dan Battle Royale butuh dukungan 4 pemain, hadir di pembaruan berikutnya.
+profile.edit_name	UBAH NAMA
+profile.win_loss	M {0}  ·  K {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	SIAP
+loading.loading	MEMUAT
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   selesai x{2}
+arcade.rule_fight_all	Lawan semua {0} karakter berturut-turut, dengan urutan acak.
+arcade.rule_difficulty	Kesulitan CPU: {0} (ubah di Pengaturan).
+arcade.final	FINAL
+arcade.round	RONDE {0}
+training.cv_setup_source	ATUR CV · {0}
+training.status	Kamera: {0}\nPelacakan: {1}\nTerdeteksi: {2}
+training.off	mati
+training.none	tidak ada
+training.status_posture	   ·   Postur {0}%   ·   Telemetri {1}
+collection.gold_cinematic_suffix	 · SINEMATIK EMAS
+collection.only	HANYA {0}
+collection.pull1	TARIK x1  ·  {0}
+collection.pull10	TARIK x10  ·  {0}
+collection.dup_suffix	  (duplikat +20)
+collection.new_suffix	  BARU!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} detik  <size=12><color=#9AA6BC>(sama untuk setiap pertandingan)</color></size>
+settings.change_name_as	GANTI NAMA  ·  {0}
+settings.change_name	GANTI NAMA
+settings.keys_help	Klik sebuah kontrol, lalu tekan tombol atau klik kotak itu dengan tombol mouse (Esc / pad B / klik di tempat lain membatalkan; batas 5 detik). Jika salah satu pemain sudah memakainya, keduanya bertukar.\nPose kamera: silangkan lengan = tangkis · rentangkan lengan ke samping = bola api · kedua tangan ke atas = lompatan super (pose keyboard: 1/2/3 dan 8/9/0).
+rarity.common	BIASA
+rarity.rare	LANGKA
+rarity.epic	EPIK
+rarity.legendary	LEGENDARIS
+skin.default	Klasik
+skin.mint	Mint Pop
+skin.shadow	Bayangan
+skin.sakura	Sakura
+skin.inferno	Inferno
+skin.celestial	Surgawi
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	KHUSUS 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	TIM\n2V2
+play.four_player_later	2v2 dan Battle Royale hadir bersama dukungan 4 pemain di pembaruan berikutnya.
+play.team_tag	4P · 2 TIM
+play.royale_tag	4P · BEBAS SEMUA
+collection.all_fighters	SEMUA PETARUNG
+arcade.mode	MODE ARCADE
+home.tagline	GAME ARENA  ·  ULTIMATE GERAKAN TUBUH
+play.royale_card	BATTLE\nROYALE
+training.kicker	ATUR KAMERA & LATIHAN
+settings.camera_tracking	PELACAKAN KAMERA (WEBCAM)
+training.camera_off	PELACAKAN KAMERA: MATI
+training.camera_on	PELACAKAN KAMERA: NYALA
+collection.hint	KOLEKSI KARAKTER
+play.choose_style	PILIH GAYA BERMAIN
+online.kicker	PILIH GAYA BERMAIN  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	PILIH PERTARUNGANMU  ·  VS ONLINE · MATCHMAKING · VS CPU
+play.coming_soon	SEGERA HADIR
+training.cv	COMPUTER VISION
+online.connection	KONEKSI
+collection.banner	BANNER KOSMETIK
+settings.cpu_difficulty	KESULITAN CPU
+play.create_join	BUAT · GABUNG ROOM
+settings.cv_overlay	OVERLAY CV SAAT BERTANDING
+quests.coins_note	Koin hanya didapat dari bermain: menang, PvE, misi, dan postur baik yang terlacak kamera.
+collection.odds	Biasa 60% · Langka 28% · Epik 10% · Legendaris 2%
+collection.equip	PAKAI
+collection.equipped	DIPAKAI
+hint.exit	KELUAR
+home.exit_upper	KELUAR GAME
+exit.title	KELUAR GAME?
+online.royale_desc	Semua lawan semua. Petarung terakhir yang bertahan menang.
+arcade.kicker	LIMA RIVAL · SATU PERJALANAN
+loading.for_battle	UNTUK BERTARUNG
+online.invites_note	Undangan room dari teman muncul di sini. Room bersama teman ada di MAIN > MATCHMAKING.
+settings.kicker	GAME · KAMERA · KONTROL
+training.gestures_live	GERAKAN  (peragakan pose di depan kamera - pukul = satu lengan lurus ke samping)
+training.gestures_sim	GERAKAN  (tahan tombol untuk menyimulasikan pose)
+settings.key_bindings	TOMBOL KONTROL
+settings.keys_reset	Tombol dikembalikan ke bawaan
+play.locked	TERKUNCI
+arcade.rule_retry	Kalah satu ronde? Lanjutkan dan coba lagi.
+home.hint	MENU UTAMA
+settings.master_volume	VOLUME UTAMA
+settings.match_time	WAKTU PERTANDINGAN
+play.matchmaking_card	MATCH\nMAKING
+hint.move	GERAK
+play.matchmaking_desc	Buat room, bagikan kodenya, atau undang teman lewat nama.
+play.no_internet_tag	TIDAK ADA INTERNET
+online.no_internet_body	Sedang tidak ada internet. Sambungkan Wi-Fi atau data seluler, atau main Vs CPU.
+common.off	MATI
+online.offline	OFFLINE
+common.on	NYALA
+settings.player1	PEMAIN 1
+settings.player2	PEMAIN 2
+training.practice_dummy	LATIHAN VS BONEKA
+settings.precheck	CEK KAMERA SEBELUM BERTANDING
+loading.prepare	BERSIAP
+settings.listening_hint	TEKAN TOMBOL ATAU KLIK KOTAKNYA  ·  ESC / PAD B MEMBATALKAN  ·  TOMBOL PAD TIDAK BISA DIATUR
+training.slouch_note	Tekan P untuk beralih ke postur membungkuk dan lihat skor postur turun.
+settings.profile_reset	Profil direset (nama dan akun tetap)
+collection.pull_to_unlock	Tarik untuk membuka
+quests.title	MISI
+online.quick_match	QUICK MATCH
+play.online_desc	Quick match dengan pemain di dekatmu, atau terima undangan teman.
+online.solo_desc	Quick match: lawan pemain yang sedang mencari, yang terdekat dulu.
+settings.reset_keys	RESET TOMBOL
+settings.reset_profile	RESET PROFIL
+arcade.rival_unknown	RIVAL  ???
+play.rooms_tag	ROOM · 2-4 PEMAIN
+online.rollback_body	Netcode rollback: kedua game menjalankan pertarungan yang sama dari input yang sama, jadi tetap cepat dan adil.
+settings.screen_shake	GETARAN LAYAR
+profile.set_name	ATUR NAMA
+settings.sfx_volume	VOLUME SFX
+training.simulate_pose	SIMULASI POSE
+collection.kicker	SKIN · SENJATA · BANNER KOSMETIK
+training.slouch	MEMBUNGKUK
+online.solo_card	SOLO\n1V1
+home.start	MULAI
+arcade.start	MULAI ARCADE
+exit.stay	TETAP DI SINI
+settings.sure	YAKIN?
+settings.sure_reset_profile	YAKIN? SEMUA PROGRES HILANG
+collection.banner_note	Hanya skin & sinematik ultimate. Stat sama di setiap skin - tidak ada yang berbayar.
+hint.tabs	TAB
+loading.tip	TIPS
+training.hint	LATIHAN  /  ATUR CV
+arcade.rule_stages	Arena berganti tiap ronde, dari Gunung Permulaan sampai Monumen Samudra.
+online.team_desc	Dua tim berisi dua orang. Tanpa friendly fire: seranganmu tidak melukai rekan setim.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  GAYA BERMAIN
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Kemenangan memberi koin dan progres misi, sama seperti VS CPU.
+exit.saved_note	Profil, koin, dan koleksimu tersimpan di perangkat ini.
+settings.key_listening	tombol atau klik di sini
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Kamu memilih petarung dan MUDAH, SEDANG, atau SULIT. CPU mendapat petarung acak.
+account.keep_name_body	Masuk dengan akun Google dan nama serta datamu tetap bersamamu: setiap kali membuka game, dan di komputer mana pun. Akun Google lain mendapat nama baru sendiri.
+name.you_are	Kamu adalah {0}!
+name.you_are_unchecked	Kamu adalah {0}! Nama akan kami cek saat kamu main online.
+online.could_not_start	Pertandingan tidak bisa dimulai ({0}).
+rooms.your_rooms	ROOM-MU
+rooms.count_click	{0}  ·  klik room untuk membukanya
+rooms.code_value	KODE  {0}
+rooms.players_count	{0} / {1} PEMAIN

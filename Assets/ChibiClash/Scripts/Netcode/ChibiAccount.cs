@@ -48,7 +48,7 @@ namespace ChibiClash.Netcode
             if (Application.internetReachability == NetworkReachability.NotReachable) { SetStatus(NetworkRoomManager.NoInternetMessage, true); return; }
             if (string.IsNullOrEmpty(Application.cloudProjectId)) { SetStatus(NetworkRoomManager.NotLinkedMessage, true); return; }
             Working = true;
-            SetStatus("Finish signing in in your browser (choose Continue with Google)...", false);
+            SetStatus(Loc.T("account.finish_browser"), false);
             try
             {
                 if (UnityServices.State != ServicesInitializationState.Initialized) await UnityServices.InitializeAsync();
@@ -59,7 +59,7 @@ namespace ChibiClash.Netcode
             catch (Exception e)
             {
                 Working = false;
-                SetStatus("Sign-in failed: " + NetworkRoomManager.Explain(e), true);
+                SetStatus(Loc.T("net.sign_in_failed", NetworkRoomManager.Explain(e)), true);
             }
         }
 
@@ -112,7 +112,7 @@ namespace ChibiClash.Netcode
             }
             catch (Exception e) { Debug.LogWarning("ChibiClash sign-out: " + NetworkRoomManager.Explain(e)); }
             SignedIn = false;
-            SetStatus("Signed out. Sign in again to use your account.", false);
+            SetStatus(Loc.T("account.signed_out_again"), false);
             AccountChanged?.Invoke("", "");
         }
 
@@ -140,7 +140,7 @@ namespace ChibiClash.Netcode
         void OnPlayerAccountFailed(RequestFailedException e)
         {
             Working = false;
-            SetStatus("Sign-in failed: " + NetworkRoomManager.Explain(e), true);
+            SetStatus(Loc.T("net.sign_in_failed", NetworkRoomManager.Explain(e)), true);
         }
 
         /// <summary>Bind the game's player to the signed-in account (a guest session is replaced, never merged).</summary>
@@ -155,10 +155,10 @@ namespace ChibiClash.Netcode
                 await auth.SignInWithUnityAsync(token);
                 SignedIn = true;
                 string name = await auth.GetPlayerNameAsync(autoGenerate: false);
-                SetStatus("Signed in. Your name and progress stay with this account.", false);
+                SetStatus(Loc.T("account.signed_in_kept"), false);
                 AccountChanged?.Invoke(auth.PlayerId, name ?? "");
             }
-            catch (Exception e) { SetStatus("Sign-in failed: " + NetworkRoomManager.Explain(e), true); }
+            catch (Exception e) { SetStatus(Loc.T("net.sign_in_failed", NetworkRoomManager.Explain(e)), true); }
             finally { Working = false; }
         }
 

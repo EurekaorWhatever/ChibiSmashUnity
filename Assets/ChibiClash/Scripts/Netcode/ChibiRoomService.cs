@@ -205,7 +205,7 @@ namespace ChibiClash.Netcode
                 ListLoaded = true;
                 SetStatus("", false);
             }
-            catch (Exception e) { SetStatus("Could not load your rooms: " + NetworkRoomManager.Explain(e), true); }
+            catch (Exception e) { SetStatus(Loc.T("net.rooms_load_failed", NetworkRoomManager.Explain(e)), true); }
             finally { Working = false; }
         }
 
@@ -233,9 +233,9 @@ namespace ChibiClash.Netcode
             if (bad != null) { SetStatus(bad, true); return; }
             int hosted = 0;
             foreach (var r in MyRooms) if (r.HostId == MyId && MyId.Length > 0) hosted++;
-            if (hosted >= MaxHostedRooms) { SetStatus("You already host " + MaxHostedRooms + " rooms. Close one first.", true); return; }
+            if (hosted >= MaxHostedRooms) { SetStatus(Loc.T("net.host_limit", MaxHostedRooms), true); return; }
             Working = true;
-            SetStatus("Creating \"" + name + "\"...", false);
+            SetStatus(Loc.T("net.creating_named", name), false);
             try
             {
                 string err = await NetworkRoomManager.EnsureSignedInAsync() ?? await NameGate();
@@ -256,9 +256,9 @@ namespace ChibiClash.Netcode
                 };
                 var lobby = await LobbyService.Instance.CreateLobbyAsync(ChibiSocialRules.SafeRoomName(name), ChibiRoomRules.MaxSeats, options);
                 Open(lobby, synced: true);   // we just created it: nothing stale
-                SetStatus("Room \"" + Current.Name + "\" is ready. Share the code " + Current.Code + " or invite a friend.", false);
+                SetStatus(Loc.T("net.room_ready_code", Current.Name, Current.Code), false);
             }
-            catch (Exception e) { SetStatus("Could not create the room: " + NetworkRoomManager.Explain(e), true); }
+            catch (Exception e) { SetStatus(Loc.T("net.create_failed", NetworkRoomManager.Explain(e)), true); }
             finally { Working = false; }
         }
 
@@ -267,10 +267,10 @@ namespace ChibiClash.Netcode
         {
             if (Working || !Allowed()) return;
             string c = ChibiSocialRules.NormalizeCode(code);
-            if (c == null) { SetStatus("That is not a valid room code (letters and numbers only).", true); return; }
+            if (c == null) { SetStatus(Loc.T("net.bad_code"), true); return; }
             foreach (var r in MyRooms) if (r.Code == c) { Enter(r.Id); return; }   // already a member
             Working = true;
-            SetStatus("Joining room " + c + "...", false);
+            SetStatus(Loc.T("net.joining_room", c), false);
             try
             {
                 string err = await NetworkRoomManager.EnsureSignedInAsync() ?? await NameGate();
@@ -282,17 +282,17 @@ namespace ChibiClash.Netcode
                 if (!ChibiRoomRules.SameBuild(roomTag, NetworkRoomManager.ProtocolTag))
                 {
                     try { await LobbyService.Instance.RemovePlayerAsync(lobby.Id, MyId); } catch (Exception) { /* best effort */ }
-                    SetStatus("That room was made with a different version of Chibi Clash. Both players need the same version.", true);
+                    SetStatus(Loc.T("net.version_mismatch"), true);
                     return;
                 }
                 Open(lobby, synced: false);   // an older launch may be in the lobby: baseline from the first poll
-                SetStatus("You joined \"" + Current.Name + "\". Choose your fighter and press OK.", false);
+                SetStatus(Loc.T("net.you_joined", Current.Name), false);
             }
             catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound || e.Reason == LobbyExceptionReason.InvalidJoinCode)
-            { SetStatus("No room with code " + c + ". Check the code and try again.", true); }
+            { SetStatus(Loc.T("net.no_room_code", c), true); }
             catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyFull)
-            { SetStatus("That room is full (" + ChibiRoomRules.MaxSeats + " players).", true); }
-            catch (Exception e) { SetStatus("Could not join: " + NetworkRoomManager.Explain(e), true); }
+            { SetStatus(Loc.T("net.room_full_n", ChibiRoomRules.MaxSeats), true); }
+            catch (Exception e) { SetStatus(Loc.T("net.join_failed", NetworkRoomManager.Explain(e)), true); }
             finally { Working = false; }
         }
 
@@ -307,7 +307,7 @@ namespace ChibiClash.Netcode
             CurrentId = r.Id;
             ResetSeat(synced: false);
             _pollAt = 0f;   // read it now
-            SetStatus("Loading the room...", false);
+            SetStatus(Loc.T("net.loading_room"), false);
         }
 
         /// <summary>Back to the room list (we stay a member; the room stays open; our OK is withdrawn).</summary>
@@ -329,7 +329,7 @@ namespace ChibiClash.Netcode
             {
                 if (host) await LobbyService.Instance.DeleteLobbyAsync(roomId);
                 else await LobbyService.Instance.RemovePlayerAsync(roomId, MyId);
-                SetStatus(host ? "Room closed." : "You left the room.", false);
+                SetStatus(host ? Loc.T("net.room_closed") : Loc.T("net.you_left"), false);
             }
             catch (Exception) { /* already gone */ }
             finally
@@ -368,7 +368,7 @@ namespace ChibiClash.Netcode
             stage = ChibiRoomRules.ParseStage(stage.ToString());
             if (stage == Current.Stage) return;
             // SEC-001b: no optimistic local write; Current changes only from the lobby the service returns (Apply on success).
-            await UpdateLobbyData(new Dictionary<string, DataObject> { [KeyStage] = Member(stage.ToString()) }, "change the stage");
+            await UpdateLobbyData(new Dictionary<string, DataObject> { [KeyStage] = Member(stage.ToString()) }, "net.what_stage");
         }
 
         /// <summary>Host: turn the stage hazards of the next fight on or off (ST-5).</summary>
@@ -378,7 +378,7 @@ namespace ChibiClash.Netcode
             if (on == !Current.HazardsOff) return;
             // SEC-001b: no optimistic local write; Current changes only from the lobby the service returns (Apply on success).
             await UpdateLobbyData(new Dictionary<string, DataObject> { [KeyHazards] = Member(ChibiRoomRules.HazardsValue(on)) },
-                                  "change the hazards");
+                                  "net.what_hazards");
         }
 
         /// <summary>START FIGHT: only when both players are ready (else the reason is shown). Either player may press it.</summary>
@@ -388,7 +388,7 @@ namespace ChibiClash.Netcode
             if (!ChibiRoomRules.CanStart(Current)) { SetStatus(ChibiRoomRules.WaitingFor(Current, MyId), true); return; }
             if (IsHost) { await Launch(); return; }
             _myStartNonce = ChibiRoomRules.NewNonce();
-            SetStatus("Starting... waiting for the host's game.", false);
+            SetStatus(Loc.T("net.waiting_host_game"), false);
             await PushPlayer();
             _pollAt = Time.unscaledTime + 0.5f;
         }
@@ -402,7 +402,7 @@ namespace ChibiClash.Netcode
             _ = PushPlayer();
             // SEC-001: the room was locked for the fight; open it again for new players.
             if (wasHost) _ = UpdateLobbyData(new Dictionary<string, DataObject> { [KeyGo] = Member(""), [KeyRelay] = Member("") }, null, locked: false);
-            SetStatus("Choose your fighter and press OK for the next fight.", false);
+            SetStatus(Loc.T("net.choose_next_fight"), false);
         }
 
         // ================================================================== internals
@@ -472,7 +472,7 @@ namespace ChibiClash.Netcode
                 Apply(lobby);
             }
             catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound) { if (id == CurrentId) RoomGone(); }
-            catch (Exception e) { SetStatus("Could not update the room: " + NetworkRoomManager.Explain(e), true); }
+            catch (Exception e) { SetStatus(Loc.T("net.update_failed", NetworkRoomManager.Explain(e)), true); }
         }
 
         /// <param name="locked">Also lock (true) or unlock (false) the Lobby; null leaves it as it is (SEC-001).</param>
@@ -487,7 +487,7 @@ namespace ChibiClash.Netcode
             }
             catch (Exception e)
             {
-                if (what != null) SetStatus("Could not " + what + ": " + NetworkRoomManager.Explain(e), true);
+                if (what != null) SetStatus(Loc.T("net.could_not_what", Loc.T(what), NetworkRoomManager.Explain(e)), true);
                 return false;
             }
         }
@@ -521,7 +521,7 @@ namespace ChibiClash.Netcode
                 LocalReady = false;
                 _myStartNonce = "";
                 _ = PushPlayer();
-                SetStatus("The host changed the stage settings. Press OK again.", false);
+                SetStatus(Loc.T("net.host_changed_stage"), false);
             }
         }
 
@@ -532,7 +532,7 @@ namespace ChibiClash.Netcode
             CurrentId = "";
             if (Launching) _link?.Cancel();
             ResetSeat(true);
-            SetStatus("The room was closed (the host left).", true);
+            SetStatus(Loc.T("net.room_closed_host_left"), true);
         }
 
         static string Val(Dictionary<string, DataObject> d, string k) => d != null && d.TryGetValue(k, out var v) && v != null ? v.Value : "";
@@ -578,24 +578,24 @@ namespace ChibiClash.Netcode
             _launchGuestId = ChibiRoomRules.GuestIds(Current);   // SEC-001: every seated guest, by PlayerId in seat order
             int guests = Current.Slots.Count - 1;
             LocalReady = false;
-            SetStatus("Starting the fight...", false);
+            SetStatus(Loc.T("net.starting_fight"), false);
             await PushPlayer();
             bool locked = Launching && await UpdateLobbyData(new Dictionary<string, DataObject>(), "start", locked: true);
             if (!Launching) return;   // cancelled while we waited (AbortLaunch already cleaned up)
             if (!locked) { AbortLaunch(Status); return; }
-            if (!ChibiRoomRules.LaunchStillValid(Current, MyId, _launchGuestId)) { AbortLaunch("A player left or joined."); return; }
+            if (!ChibiRoomRules.LaunchStillValid(Current, MyId, _launchGuestId)) { AbortLaunch(Loc.T("net.player_left_joined")); return; }
 
             string relay = Launching && _link != null ? await _link.HostLinkAsync(guests) : null;
             if (!Launching) { _link?.Cancel(); return; }   // cancelled (timeout / room gone) while we waited
-            if (relay == null) { AbortLaunch(_link != null ? _link.Status : "No connection."); return; }
+            if (relay == null) { AbortLaunch(_link != null ? _link.Status : Loc.T("net.no_connection")); return; }
             // SEC-001: nobody may have left, joined or moved seats while the link was opening.
-            if (!ChibiRoomRules.LaunchStillValid(Current, MyId, _launchGuestId)) { AbortLaunch("A player left or joined."); return; }
+            if (!ChibiRoomRules.LaunchStillValid(Current, MyId, _launchGuestId)) { AbortLaunch(Loc.T("net.player_left_joined")); return; }
             _publishedGo = ChibiRoomRules.NewNonce();
             bool ok = await UpdateLobbyData(new Dictionary<string, DataObject> { [KeyRelay] = Member(relay), [KeyGo] = Member(_publishedGo) }, "start");
-            if (!Launching || _link == null || _link.State != ChibiRoomState.WaitingForOpponent) { if (Launching) AbortLaunch("The fight could not start."); return; }
+            if (!Launching || _link == null || _link.State != ChibiRoomState.WaitingForOpponent) { if (Launching) AbortLaunch(Loc.T("net.fight_could_not_start")); return; }
             if (!ok) { AbortLaunch(Status); return; }
             _goPublishedAt = Time.unscaledTime;
-            SetStatus("Fight starting! Waiting for your friend to connect...", false);
+            SetStatus(Loc.T("net.fight_starting_wait"), false);
         }
 
         void AbortLaunch(string why)
@@ -605,7 +605,7 @@ namespace ChibiClash.Netcode
             ResetSeat(Synced);
             if (host) _ = UpdateLobbyData(new Dictionary<string, DataObject> { [KeyGo] = Member(""), [KeyRelay] = Member("") }, null, locked: false);
             _ = PushPlayer();
-            SetStatus(why + " Both press OK and START FIGHT again.", true);
+            SetStatus(Loc.T("net.press_ok_again", why), true);
         }
 
         bool GuestLaunchAllowed()
@@ -632,7 +632,7 @@ namespace ChibiClash.Netcode
                     _baselineGo = Current.Go;
                     RememberGuestPress(Current);
                     Synced = true;
-                    SetStatus("Choose your fighter and press OK.", false);
+                    SetStatus(Loc.T("net.choose_press_ok"), false);
                     return;
                 }
                 if (!(ScreenOpen?.Invoke() ?? true)) return;   // act only while the player is looking at the room
@@ -640,13 +640,13 @@ namespace ChibiClash.Netcode
                 // SEC-001: a launch is for exactly the two players it began with; any seat change cancels it at once.
                 if (IsHost && Launching && _launchGuestId.Length > 0 && !ChibiRoomRules.SameFightSeats(Current, MyId, _launchGuestId))
                 {
-                    AbortLaunch("A player left or joined.");
+                    AbortLaunch(Loc.T("net.player_left_joined"));
                 }
                 else if (IsHost && !Launching && ChibiRoomRules.HostShouldLaunch(Current, _lastGuestId, _lastGuestNonce))
                 {
                     RememberGuestPress(Current);
                     if (GuestLaunchAllowed()) await Launch();
-                    else SetStatus("Too many starts. Wait a minute, then press START FIGHT.", true);
+                    else SetStatus(Loc.T("net.too_many_starts"), true);
                 }
                 else if (IsHost && Launching && ChibiRoomRules.GuestAcked(Current, _launchGuestId, _publishedGo))
                 {
@@ -672,8 +672,8 @@ namespace ChibiClash.Netcode
                         OwnsLink = true;
                         _guestJoining = true;
                         _launchStarted = Time.unscaledTime;
-                        SetStatus("Fight starting! Connecting...", false);
-                        if (!_link.JoinLink(Current?.RelayCode)) AbortLaunch(_link.Status.Length > 0 ? _link.Status : "Could not connect.");
+                        SetStatus(Loc.T("net.fight_starting_connecting"), false);
+                        if (!_link.JoinLink(Current?.RelayCode)) AbortLaunch(_link.Status.Length > 0 ? _link.Status : Loc.T("net.could_not_connect"));
                     }
                 }
             }
@@ -705,9 +705,9 @@ namespace ChibiClash.Netcode
                 var st = _link != null ? _link.State : ChibiRoomState.Failed;
                 if (st == ChibiRoomState.Connected) Launching = false;   // the match took over
                 else if (_guestJoining && st == ChibiRoomState.Failed) AbortLaunch(_link.Status);
-                else if (IsHost && now - _goPublishedAt > AckTimeoutSeconds) AbortLaunch("Your friend did not answer.");
-                else if (IsHost && Current != null && !screen) AbortLaunch("Start cancelled.");
-                else if (now - _launchStarted > LaunchTimeoutSeconds) AbortLaunch("Your friend did not connect.");
+                else if (IsHost && now - _goPublishedAt > AckTimeoutSeconds) AbortLaunch(Loc.T("net.friend_no_answer"));
+                else if (IsHost && Current != null && !screen) AbortLaunch(Loc.T("net.start_cancelled"));
+                else if (now - _launchStarted > LaunchTimeoutSeconds) AbortLaunch(Loc.T("net.friend_no_connect"));
             }
 
             // Left the room screen while ready: withdraw OK so nothing starts behind the player's back.

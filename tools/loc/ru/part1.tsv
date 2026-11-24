@@ -1,0 +1,244 @@
+lang.backdrop	ЯЗЫК
+lang.title	ВЫБЕРИ ЯЗЫК
+lang.subtitle	Вся игра будет на этом языке. Его можно сменить в любой момент в НАСТРОЙКАХ.
+lang.search_hint	Поиск языка...
+lang.no_match	Нет языков по твоему запросу.
+lang.english_text	Пока текст на английском
+lang.confirm	ПОДТВЕРДИТЬ  ·  {0}
+lang.confirm_none	ПОДТВЕРДИТЬ
+lang.pad_hint	Печатай для поиска · Вверх / Вниз для выбора · Enter или кнопка A = подтвердить
+common.cancel	ОТМЕНА
+settings.language	ЯЗЫК  ·  {0}
+difficulty.dummy	Манекен
+difficulty.easy	Легко
+difficulty.medium	Средне
+difficulty.hard	Сложно
+difficulty.dummy_upper	МАНЕКЕН
+difficulty.easy_upper	ЛЕГКО
+difficulty.medium_upper	СРЕДНЕ
+difficulty.hard_upper	СЛОЖНО
+nav.home	ГЛАВНАЯ
+nav.play	ИГРАТЬ
+nav.training	ТРЕНИРОВКА
+nav.arcade	АРКАДА
+nav.collection	КОЛЛЕКЦИЯ
+nav.settings	НАСТРОЙКИ
+account.signed_in_as	Вход выполнен: {0}.
+account.signed_in	Вход выполнен.
+account.signed_out	Выход выполнен.
+keys.who	P{0} {1}
+keys.reserved	{0} — клавиша поз / осанки (1 2 3, 8 9 0, цифровой блок 7 8 9, P, -). Выбери другую.
+keys.swapped	{0};  {1} теперь {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Онлайн-игра доступна игрокам от 13 лет.
+arcade.clear_toast	АРКАДА ПРОЙДЕНА! Все соперники побеждены: {0}
+precheck.too_dark	Слишком темно ({0}%) - добавь света
+precheck.too_bright	Слишком ярко ({0}%) - убери блики
+precheck.good	Хорошо ({0}%)
+loading.weapon_art	Графика оружия: {0}
+loading.fighter	Боец: {0}
+precheck.checking	ПРОВЕРКА... {0}
+wipe.character_select	ВЫБОР ПЕРСОНАЖА
+wipe.arcade	АРКАДА
+results.rematch	РЕВАНШ
+results.continue	ПРОДОЛЖИТЬ
+results.finish	ЗАВЕРШИТЬ
+results.next_battle	СЛЕДУЮЩИЙ БОЙ
+wipe.arcade_clear	АРКАДА ПРОЙДЕНА
+precheck.title	ПРОВЕРКА КАМЕРЫ
+precheck.camera_unavailable	Камера недоступна
+precheck.simulated_feed	Имитация видео (веб-камера выкл.)
+precheck.upper_body_ok	Верх тела в кадре
+precheck.step_back	Отойди назад - плечи и бёдра должны быть видны
+loading.interface	Графика интерфейса
+loading.typefaces	Шрифты
+loading.pose_model	Модель отслеживания поз
+loading.ready	Готово
+onboarding.welcome	ДОБРО ПОЖАЛОВАТЬ!
+onboarding.your_account	ТВОЙ АККАУНТ
+onboarding.your_name	ТВОЁ ИМЯ ИГРОКА
+rooms.backdrop_create	ПОИСК МАТЧА  ·  СОЗДАТЬ КОМНАТЫ
+rooms.backdrop_join	ПОИСК МАТЧА  ·  ВОЙТИ В КОМНАТУ
+precheck.all_passed	ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ
+precheck.failed	ПРОВЕРКА НЕ ПРОЙДЕНА
+precheck.lighting	СВЕТ
+precheck.framing	КАДР
+precheck.posture	ОСАНКА
+precheck.upright	Отлично, ровно
+precheck.sit_up	Сядь прямо, чтобы получить бонусные монеты
+common.retry	ЕЩЁ РАЗ
+precheck.play_anyway	ВСЁ РАВНО ИГРАТЬ
+common.back	НАЗАД
+precheck.ranked_note	Для рейтинговых матчей эта проверка обязательна. В обычных матчах её можно пропустить.
+precheck.hint	ПРОВЕРКА КАМЕРЫ ПЕРЕД МАТЧЕМ
+hint.select	ВЫБОР
+home.play	ИГРАТЬ
+home.training	ТРЕНИРОВКА
+home.arcade	АРКАДА
+home.collection	КОЛЛЕКЦИЯ ПЕРСОНАЖЕЙ
+home.settings	НАСТРОЙКИ
+home.exit	ВЫЙТИ ИЗ ИГРЫ
+home.play_desc	Быстрый онлайн-матч, комнаты с друзьями или бой против CPU
+home.training_desc	Настройка камеры, отработка жестов и тренировочный манекен
+home.arcade_desc	Все пять соперников подряд на всех аренах
+home.collection_desc	Скины, оружие и косметический баннер
+home.settings_desc	Сложность, настройки камеры и управление
+home.exit_desc	Закрыть игру
+tips.1	Заполни шкалу ULT и нажми Ультимейт - затем прими позу своего бойца перед камерой, пока не кончился отсчёт.
+tips.2	Чем выше DEF, тем меньше урон от каждого удара и тем крепче блок.
+tips.3	Хорошая осанка перед камерой приносит бонусные монеты после каждого матча.
+tips.4	Скины и оружие только для красоты - характеристики не зависят от внешнего вида.
+tips.5	В тренировке нажми T, чтобы заполнить ультимейт. Манекен всегда встаёт.
+tips.6	У каждого бойца два пассивных умения на выбор - выбери в снаряжении после подтверждения.
+tips.7	Онлайн-бои используют rollback-неткод: обе игры считают один и тот же бой по одним и тем же вводам.
+stats.power	СИЛА
+stats.speed	СКОРОСТЬ
+stats.range	ДАЛЬНОСТЬ
+stats.endurance	СТОЙКОСТЬ
+stats.recovery	ВОССТАНОВЛЕНИЕ
+training.use_block	Блок · ультимейт Melee и Magic
+training.use_fireball	Огненный шар · ультимейт Ranged и Polearm
+training.use_superjump	Суперпрыжок · ультимейт Heavy
+menu.online_locked	Онлайн-режимы доступны игрокам от 13 лет.
+menu.no_internet	Нет интернета: подключи Wi-Fi или мобильные данные. VS ИИ работает офлайн.
+menu.four_player_soon	Для 2v2 и Battle Royale нужен режим на 4 игроков, он появится в одном из обновлений.
+profile.edit_name	ИЗМЕНИТЬ ИМЯ
+profile.win_loss	В {0}  ·  П {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	ГОТОВО
+loading.loading	ЗАГРУЗКА
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   выполнено x{2}
+arcade.rule_fight_all	Сразись со всеми персонажами подряд в случайном порядке (всего: {0}).
+arcade.rule_difficulty	Сложность CPU: {0} (меняется в Настройках).
+arcade.final	ФИНАЛ
+arcade.round	РАУНД {0}
+training.cv_setup_source	НАСТРОЙКА CV · {0}
+training.status	Камера: {0}\nОтслеживание: {1}\nОбнаружено: {2}
+training.off	выкл.
+training.none	нет
+training.status_posture	   ·   Осанка {0}%   ·   Телеметрия {1}
+collection.gold_cinematic_suffix	 · ЗОЛОТАЯ ЗАСТАВКА
+collection.only	ТОЛЬКО {0}
+collection.pull1	КРУТКА x1  ·  {0}
+collection.pull10	КРУТКА x10  ·  {0}
+collection.dup_suffix	  (повтор +20)
+collection.new_suffix	  НОВОЕ!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} сек.  <size=12><color=#9AA6BC>(одинаково для всех матчей)</color></size>
+settings.change_name_as	СМЕНИТЬ ИМЯ  ·  {0}
+settings.change_name	СМЕНИТЬ ИМЯ
+settings.keys_help	Нажми на привязку, затем нажми клавишу или щёлкни по полю кнопкой мыши (Esc / кнопка B / щелчок мимо отменяет; ожидание 5 с). Если клавиша уже занята любым игроком, они поменяются местами.\nПозы камеры: скрестить руки = блок · рука в сторону = огненный шар · обе руки вверх = суперпрыжок (позы с клавиатуры: 1/2/3 и 8/9/0).
+rarity.common	ОБЫЧНЫЙ
+rarity.rare	РЕДКИЙ
+rarity.epic	ЭПИЧЕСКИЙ
+rarity.legendary	ЛЕГЕНДАРНЫЙ
+skin.default	Классика
+skin.mint	Мятный поп
+skin.shadow	Тень
+skin.sakura	Сакура
+skin.inferno	Инферно
+skin.celestial	Небесный
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	ТОЛЬКО 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nКОМАНДЫ
+play.four_player_later	2v2 и Battle Royale появятся вместе с режимом на 4 игроков в одном из обновлений.
+play.team_tag	4P · 2 КОМАНДЫ
+play.royale_tag	4P · КАЖДЫЙ САМ ЗА СЕБЯ
+collection.all_fighters	ВСЕ БОЙЦЫ
+arcade.mode	РЕЖИМ АРКАДЫ
+home.tagline	АРЕННЫЙ ФАЙТИНГ  ·  УЛЬТИМЕЙТЫ ЖЕСТАМИ
+play.royale_card	BATTLE\nROYALE
+training.kicker	НАСТРОЙКА КАМЕРЫ И ПРАКТИКА
+settings.camera_tracking	ОТСЛЕЖИВАНИЕ КАМЕРОЙ (ВЕБ-КАМЕРА)
+training.camera_off	ОТСЛЕЖИВАНИЕ КАМЕРОЙ: ВЫКЛ
+training.camera_on	ОТСЛЕЖИВАНИЕ КАМЕРОЙ: ВКЛ
+collection.hint	КОЛЛЕКЦИЯ ПЕРСОНАЖЕЙ
+play.choose_style	ВЫБЕРИ СТИЛЬ ИГРЫ
+online.kicker	ВЫБЕРИ СТИЛЬ ИГРЫ  ·  СОЛО · 2V2 · BATTLE ROYALE
+play.kicker	ВЫБЕРИ БОЙ  ·  VS ОНЛАЙН · ПОИСК МАТЧА · VS CPU
+play.coming_soon	СКОРО
+training.cv	КОМПЬЮТЕРНОЕ ЗРЕНИЕ
+online.connection	СОЕДИНЕНИЕ
+collection.banner	КОСМЕТИЧЕСКИЙ БАННЕР
+settings.cpu_difficulty	СЛОЖНОСТЬ CPU
+play.create_join	СОЗДАТЬ · ВОЙТИ В КОМНАТУ
+settings.cv_overlay	CV-ОВЕРЛЕЙ В МАТЧЕ
+quests.coins_note	Монеты даются только за игру: победы, PvE, задания и хорошую осанку перед камерой.
+collection.odds	Обычный 60% · Редкий 28% · Эпический 10% · Легендарный 2%
+collection.equip	НАДЕТЬ
+collection.equipped	НАДЕТО
+hint.exit	ВЫХОД
+home.exit_upper	ВЫЙТИ ИЗ ИГРЫ
+exit.title	ВЫЙТИ ИЗ ИГРЫ?
+online.royale_desc	Каждый сам за себя. Побеждает последний устоявший боец.
+arcade.kicker	ПЯТЬ СОПЕРНИКОВ · ОДИН ЗАБЕГ
+loading.for_battle	К БОЮ
+online.invites_note	Здесь появляются приглашения друзей в комнаты. Комнаты с друзьями — в ИГРАТЬ > ПОИСК МАТЧА.
+settings.kicker	ИГРА · КАМЕРА · УПРАВЛЕНИЕ
+training.gestures_live	ЖЕСТЫ  (прими позу перед камерой - удар = одна рука прямо в сторону)
+training.gestures_sim	ЖЕСТЫ  (удерживай клавишу, чтобы имитировать позу)
+settings.key_bindings	УПРАВЛЕНИЕ
+settings.keys_reset	Клавиши сброшены
+play.locked	ЗАКРЫТО
+arcade.rule_retry	Проиграл раунд? Продолжи и попробуй снова.
+home.hint	ГЛАВНОЕ МЕНЮ
+settings.master_volume	ОБЩАЯ ГРОМКОСТЬ
+settings.match_time	ВРЕМЯ МАТЧА
+play.matchmaking_card	ПОИСК\nМАТЧА
+hint.move	ДВИЖЕНИЕ
+play.matchmaking_desc	Создай комнату, поделись кодом или пригласи друзей по имени.
+play.no_internet_tag	НЕТ ИНТЕРНЕТА
+online.no_internet_body	Сейчас нет интернета. Подключи Wi-Fi или мобильные данные, или играй против CPU.
+common.off	ВЫКЛ
+online.offline	ОФЛАЙН
+common.on	ВКЛ
+settings.player1	ИГРОК 1
+settings.player2	ИГРОК 2
+training.practice_dummy	ПРАКТИКА С МАНЕКЕНОМ
+settings.precheck	ПРОВЕРКА КАМЕРЫ ПЕРЕД МАТЧЕМ
+loading.prepare	ГОТОВЬСЯ
+settings.listening_hint	НАЖМИ КЛАВИШУ ИЛИ ЩЁЛКНИ ПО ПОЛЮ  ·  ESC / КНОПКА B — ОТМЕНА  ·  КНОПКИ ГЕЙМПАДА НЕ НАЗНАЧАЮТСЯ
+training.slouch_note	Нажми P, чтобы включить сутулую осанку, и посмотри, как падает оценка осанки.
+settings.profile_reset	Профиль сброшен (имя и вход сохранены)
+collection.pull_to_unlock	Крути, чтобы открыть
+quests.title	ЗАДАНИЯ
+online.quick_match	БЫСТРЫЙ МАТЧ
+play.online_desc	Быстрый матч с игроком рядом с тобой или ответ на приглашение друга.
+online.solo_desc	Быстрый матч: бой с игроком, который ищет прямо сейчас, сначала ближайшие.
+settings.reset_keys	СБРОС КЛАВИШ
+settings.reset_profile	СБРОС ПРОФИЛЯ
+arcade.rival_unknown	СОПЕРНИК  ???
+play.rooms_tag	КОМНАТЫ · 2-4 ИГРОКА
+online.rollback_body	Rollback-неткод: обе игры считают один и тот же бой по одним и тем же вводам, поэтому всё быстро и честно.
+settings.screen_shake	ТРЯСКА ЭКРАНА
+profile.set_name	ЗАДАТЬ ИМЯ
+settings.sfx_volume	ГРОМКОСТЬ ЭФФЕКТОВ
+training.simulate_pose	ИМИТАЦИЯ ПОЗЫ
+collection.kicker	СКИНЫ · ОРУЖИЕ · КОСМЕТИЧЕСКИЙ БАННЕР
+training.slouch	СУТУЛОСТЬ
+online.solo_card	СОЛО\n1V1
+home.start	СТАРТ
+arcade.start	НАЧАТЬ АРКАДУ
+exit.stay	ОСТАТЬСЯ
+settings.sure	ТОЧНО?
+settings.sure_reset_profile	ТОЧНО? ВЕСЬ ПРОГРЕСС ПРОПАДЁТ
+collection.banner_note	Только скины и заставки ультимейтов. Характеристики одинаковы на любом скине - за деньги ничего не даётся.
+hint.tabs	ВКЛАДКИ
+loading.tip	СОВЕТ
+training.hint	ТРЕНИРОВКА  /  НАСТРОЙКА CV
+arcade.rule_stages	Арена меняется каждый раунд, от Горы Начала до Океанского Монумента.
+online.team_desc	Две команды по двое. Без огня по своим: твои удары не ранят союзника.
+online.title	VS ONLINE
+online.hint	VS ОНЛАЙН  ·  СТИЛЬ ИГРЫ
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Победы дают монеты и прогресс заданий, как и в VS CPU.
+exit.saved_note	Твой профиль, монеты и коллекция сохранены на этом устройстве.
+settings.key_listening	клавиша или щелчок здесь
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Ты выбираешь бойца и ЛЕГКО, СРЕДНЕ или СЛОЖНО. CPU получает случайного бойца.
+account.keep_name_body	Войди через аккаунт Google, и твоё имя и данные останутся с тобой: при каждом запуске игры и на любом компьютере. Другой аккаунт Google получит своё новое имя.

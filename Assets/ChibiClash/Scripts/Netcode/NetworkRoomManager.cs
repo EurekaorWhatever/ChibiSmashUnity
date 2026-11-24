@@ -136,7 +136,7 @@ namespace ChibiClash.Netcode
         /// </summary>
         public Func<Task<string>> NameGate = () => Task.FromResult<string>(null);
         /// <summary>Shown when <see cref="OnlineAllowed"/> refuses.</summary>
-        public const string NotAllowedMessage = "Online play is for players 13 and older.";
+        public static string NotAllowedMessage => Loc.T("online.locked_age");
 
         bool Gate()
         {
@@ -171,9 +171,9 @@ namespace ChibiClash.Netcode
         public void JoinPrivateRoom(string lobbyCode)
         {
             if (Busy || !Gate()) return;
-            if (string.IsNullOrWhiteSpace(lobbyCode)) { Fail("Enter the room code your friend shows."); return; }
+            if (string.IsNullOrWhiteSpace(lobbyCode)) { Fail(Loc.T("net.enter_code")); return; }
             lobbyCode = ChibiSocialRules.NormalizeCode(lobbyCode);
-            if (lobbyCode == null) { Fail("That is not a valid room code (letters and numbers only)."); return; }
+            if (lobbyCode == null) { Fail(Loc.T("net.bad_code")); return; }
             _ = RunJoinByCode(lobbyCode, ++_flow);
         }
 
@@ -196,11 +196,11 @@ namespace ChibiClash.Netcode
             _quickMode = false;
             _isHost = true;
             _transport = ChibiUtpTransport.HostDirect(port);
-            if (_transport.LinkState == ChibiLinkState.Lost) { Fail("Could not open UDP port " + port + " (already in use?)."); return; }
+            if (_transport.LinkState == ChibiLinkState.Lost) { Fail(Loc.T("net.udp_port", port)); return; }
             RoomCode = "";
             RoomName = "";
             State = ChibiRoomState.WaitingForOpponent;
-            Status = "LAN host ready. Your friend joins: " + LocalIpv4() + "  (port " + port + ")";
+            Status = Loc.T("net.lan_ready", LocalIpv4(), port);
             _connectDeadline = float.MaxValue;
         }
 
@@ -211,7 +211,7 @@ namespace ChibiClash.Netcode
         bool LanUnavailable()
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
-            Fail("LAN play is not available in the browser. Use ROOMS or MATCHMAKING, or the PC version for LAN.");
+            Fail(Loc.T("net.lan_browser"));
             return true;
 #else
             return false;
@@ -225,13 +225,13 @@ namespace ChibiClash.Netcode
             if (LanUnavailable()) return;
             ++_flow;
             address = (address ?? "").Trim();
-            if (address.Length == 0) { Fail("Enter the host's IP address."); return; }
+            if (address.Length == 0) { Fail(Loc.T("net.enter_ip")); return; }
             _quickMode = false;
             _isHost = false;
             _transport = ChibiUtpTransport.JoinDirect(address, port);
-            if (_transport.LinkState == ChibiLinkState.Lost) { Fail("\"" + address + "\" is not a valid IP address."); return; }
+            if (_transport.LinkState == ChibiLinkState.Lost) { Fail(Loc.T("net.bad_ip", address)); return; }
             State = ChibiRoomState.Connecting;
-            Status = "Connecting to " + address + "...";
+            Status = Loc.T("net.connecting_to", address);
             _connectDeadline = Time.unscaledTime + ConnectTimeoutSeconds;
         }
 
@@ -245,7 +245,7 @@ namespace ChibiClash.Netcode
                         return a.ToString();
             }
             catch (Exception) { /* no network info: fall through */ }
-            return "this PC's IP";
+            return Loc.T("net.this_pc_ip");
         }
 
         /// <summary>Stop whatever is in progress, leave / delete the lobby and close the link.</summary>
@@ -267,7 +267,7 @@ namespace ChibiClash.Netcode
         async Task<bool> SignIn(int flow)
         {
             State = ChibiRoomState.SigningIn;
-            Status = "Signing in...";
+            Status = Loc.T("net.signing_in");
             string error = await EnsureSignedInAsync() ?? await NameGate();
             if (flow != _flow) return false;
             if (error != null) { Fail(error); return false; }
@@ -350,7 +350,7 @@ namespace ChibiClash.Netcode
             }
             catch (Exception e)
             {
-                return "Sign-in failed: " + Explain(e);
+                return Loc.T("net.sign_in_failed", Explain(e));
             }
         }
 
@@ -362,7 +362,7 @@ namespace ChibiClash.Netcode
             if (isPrivate) _myCountry = "";
             if (!await SignIn(flow)) return;
             State = ChibiRoomState.CreatingRoom;
-            Status = isPrivate ? "Creating a private room..." : "No open match found, hosting one...";
+            Status = isPrivate ? Loc.T("net.creating_private") : Loc.T("net.hosting_one");
             try
             {
                 // Quick match is a star of up to 4 (one allocation, the same join code for every guest); a private room
@@ -402,14 +402,14 @@ namespace ChibiClash.Netcode
                 RoomCode = isPrivate ? lobby.LobbyCode : "";
                 RoomName = isPrivate ? lobbyName : "";
                 State = ChibiRoomState.WaitingForOpponent;
-                Status = isPrivate ? "Room \"" + RoomName + "\" is ready. Share the code with your friend."
-                                   : "Searching for players in " + SearchArea + "...";
+                Status = isPrivate ? Loc.T("net.room_ready", RoomName)
+                                  : Loc.T("net.searching_in", SearchArea);
                 _heartbeatAt = Time.unscaledTime + HeartbeatSeconds;
                 _retryAt = Mathf.Max(_retryAt, Time.unscaledTime + RetryQuickJoinSeconds);   // keep a rate-limit back-off
             }
             catch (Exception e)
             {
-                if (flow == _flow) Fail("Could not create the room: " + Explain(e));
+                if (flow == _flow) Fail(Loc.T("net.create_failed", Explain(e)));
             }
         }
 
@@ -425,13 +425,13 @@ namespace ChibiClash.Netcode
         public async Task<string> HostLinkAsync(int guests = 1)
         {
             if (Busy || !Gate()) return null;
-            if (guests < 1 || guests > ChibiUtpTransport.MaxGuests) { Fail("A fight needs 2 to 4 players."); return null; }
+            if (guests < 1 || guests > ChibiUtpTransport.MaxGuests) { Fail(Loc.T("net.needs_2_to_4")); return null; }
             int flow = ++_flow;
             _quickMode = false;
             RoomCode = "";
             if (!await SignIn(flow)) return null;
             State = ChibiRoomState.CreatingRoom;
-            Status = "Starting the fight...";
+            Status = Loc.T("net.starting_fight");
             try
             {
                 Allocation alloc = await RelayService.Instance.CreateAllocationAsync(guests);
@@ -442,12 +442,12 @@ namespace ChibiClash.Netcode
                 _expectGuests = guests;
                 _lobby = null;
                 State = ChibiRoomState.WaitingForOpponent;
-                Status = guests == 1 ? "Waiting for your friend to connect..." : "Waiting for your friends to connect...";
+                Status = guests == 1 ? Loc.T("net.waiting_friend") : Loc.T("net.waiting_friends");
                 return relayCode;
             }
             catch (Exception e)
             {
-                if (flow == _flow) Fail("Could not start the fight: " + Explain(e));
+                if (flow == _flow) Fail(Loc.T("net.start_failed", Explain(e)));
                 return null;
             }
         }
@@ -458,9 +458,9 @@ namespace ChibiClash.Netcode
         /// </summary>
         public bool JoinLink(string relayCode)
         {
-            if (Busy) { Status = "Another connection is still running."; return false; }
+            if (Busy) { Status = Loc.T("net.connection_running"); return false; }
             if (!Gate()) return false;
-            if (!ChibiRoomRules.ValidRelayCode(relayCode)) { Fail("The room has no valid connection info (host left?)."); return false; }
+            if (!ChibiRoomRules.ValidRelayCode(relayCode)) { Fail(Loc.T("net.no_valid_info")); return false; }
             _quickMode = false;
             _ = RunJoinLink(relayCode, ++_flow);
             return true;
@@ -470,7 +470,7 @@ namespace ChibiClash.Netcode
         {
             if (!await SignIn(flow)) return;
             State = ChibiRoomState.Connecting;
-            Status = "Connecting to the host...";
+            Status = Loc.T("net.connecting_host");
             try
             {
                 JoinAllocation join = await RelayService.Instance.JoinAllocationAsync(relayCode);
@@ -482,7 +482,7 @@ namespace ChibiClash.Netcode
             }
             catch (Exception e)
             {
-                if (flow == _flow) Fail("Could not reach the host: " + Explain(e));
+                if (flow == _flow) Fail(Loc.T("net.host_unreachable", Explain(e)));
             }
         }
 
@@ -493,7 +493,7 @@ namespace ChibiClash.Netcode
             _quickMode = false;
             if (!await SignIn(flow)) return;
             State = ChibiRoomState.Joining;
-            Status = "Joining room " + code + "...";
+            Status = Loc.T("net.joining_room", code);
             try
             {
                 var lobby = await LobbyService.Instance.JoinLobbyByCodeAsync(code);
@@ -503,7 +503,7 @@ namespace ChibiClash.Netcode
                 if (!ChibiRoomRules.SameBuild(roomTag, ProtocolTag))
                 {
                     _ = LeaveLobby(lobby, false);
-                    Fail("That room was made with a different version of Chibi Clash. Both players need the same version.");
+                    Fail(Loc.T("net.version_mismatch"));
                     return;
                 }
                 RoomName = ChibiSocialRules.SafeRoomName(lobby?.Name);   // the host's text: sanitised
@@ -511,15 +511,15 @@ namespace ChibiClash.Netcode
             }
             catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyNotFound || e.Reason == LobbyExceptionReason.InvalidJoinCode)
             {
-                if (flow == _flow) Fail("No room with code " + code + ". Check the code and try again.");
+                if (flow == _flow) Fail(Loc.T("net.no_room_code", code));
             }
             catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.LobbyFull)
             {
-                if (flow == _flow) Fail("That room is already full.");
+                if (flow == _flow) Fail(Loc.T("net.already_full"));
             }
             catch (Exception e)
             {
-                if (flow == _flow) Fail("Could not join: " + Explain(e));
+                if (flow == _flow) Fail(Loc.T("net.join_failed", Explain(e)));
             }
         }
 
@@ -536,7 +536,7 @@ namespace ChibiClash.Netcode
             }
             if (!await SignIn(flow)) return;
             State = ChibiRoomState.Searching;
-            Status = "Searching for players in " + SearchArea + "...";
+            Status = Loc.T("net.searching_in", SearchArea);
             var found = await Search(flow, null);
             if (flow != _flow) { if (found.Lobby != null) _ = LeaveLobby(found.Lobby, false); return; }
             if (found.Lobby != null) { await ConnectAsJoiner(found.Lobby, flow); return; }
@@ -545,11 +545,15 @@ namespace ChibiClash.Netcode
 
         int CurrentMaxTier() => ChibiRegions.MaxTierAfter(Time.unscaledTime - _searchStart, _myCountry.Length > 0);
 
+        /// <summary>A ChibiRegions continent / subregion name ("Eastern Asia") in the current language (key region.eastern_asia).</summary>
+        static string RegionText(string english) =>
+            string.IsNullOrEmpty(english) ? "" : Loc.T("region." + english.ToLowerInvariant().Replace(' ', '_').Replace('-', '_'));
+
         string AreaLabel(int maxTier)
         {
-            if (_myCountry.Length == 0 || maxTier >= ChibiRegions.TierWorld) return "the whole world";
-            if (maxTier <= ChibiRegions.TierSubregion) return "your country and " + ChibiRegions.SubregionName(_myCountry);
-            return ChibiRegions.Continent(_myCountry);
+            if (_myCountry.Length == 0 || maxTier >= ChibiRegions.TierWorld) return Loc.T("net.area_world");
+            if (maxTier <= ChibiRegions.TierSubregion) return Loc.T("net.area_country_and", RegionText(ChibiRegions.SubregionName(_myCountry)));
+            return RegionText(ChibiRegions.Continent(_myCountry));
         }
 
         struct SearchResult
@@ -670,18 +674,18 @@ namespace ChibiClash.Netcode
             if (lobby?.Data == null || !lobby.Data.TryGetValue(KeyRelay, out relay) || string.IsNullOrEmpty(relay?.Value))
             {
                 _ = LeaveLobby(lobby, false);
-                RetryOrFail("The room has no connection info (host left?).");
+                RetryOrFail(Loc.T("net.no_info"));
                 return;
             }
             State = ChibiRoomState.Connecting;
-            Status = RoomName.Length > 0 ? "Joined \"" + RoomName + "\". Connecting to the host..." : "Connecting to your opponent...";
+            Status = RoomName.Length > 0 ? Loc.T("net.joined_connecting", RoomName) : Loc.T("quick.connecting");
             JoinAllocation join;
             try { join = await RelayService.Instance.JoinAllocationAsync(relay.Value); }
             catch (Exception e)
             {
                 if (flow != _flow) return;
                 _ = LeaveLobby(lobby, false);
-                RetryOrFail("Could not reach your opponent: " + Explain(e));
+                RetryOrFail(Loc.T("net.opponent_unreachable", Explain(e)));
                 return;
             }
             if (flow != _flow) { _ = LeaveLobby(lobby, false); return; }
@@ -704,7 +708,7 @@ namespace ChibiClash.Netcode
             _ = LeaveLobby(_lobby, _isHost);
             _lobby = null;
             State = ChibiRoomState.Searching;
-            Status = "That player left. Searching again...";
+            Status = Loc.T("net.player_left_searching");
             _ = RunQuickMatch(++_flow, fresh: false);
         }
 
@@ -731,11 +735,11 @@ namespace ChibiClash.Netcode
                 _ = LeaveLobby(_lobby, host);
                 _lobby = null;
                 State = ChibiRoomState.Connected;
-                Status = "Connected!";
+                Status = Loc.T("net.connected");
                 OnConnected?.Invoke(t, host);
                 return;
             }
-            if (_transport.LinkState == ChibiLinkState.Lost) { RetryOrFail("The connection to the Relay server failed."); return; }
+            if (_transport.LinkState == ChibiLinkState.Lost) { RetryOrFail(Loc.T("net.relay_failed")); return; }
 
             if (_isHost && _lobby != null)
             {
@@ -744,14 +748,14 @@ namespace ChibiClash.Netcode
                     _heartbeatAt = Time.unscaledTime + HeartbeatSeconds;
                     _ = Heartbeat(_lobby.Id);
                 }
-                if (_quickMode) Status = "Searching for players in " + SearchArea + "...";
+                if (_quickMode) Status = Loc.T("net.searching_in", SearchArea);
                 if (_quickMode && !_searching && Time.unscaledTime >= _retryAt)
                 {
                     _retryAt = Time.unscaledTime + RetryQuickJoinSeconds + UnityEngine.Random.Range(0f, 2f);
                     _ = SwitchToJoinerIfSomeoneIsWaiting(_flow);
                 }
             }
-            else if (!_isHost && Time.unscaledTime > _connectDeadline) RetryOrFail("Could not reach your opponent (timed out).");
+            else if (!_isHost && Time.unscaledTime > _connectDeadline) RetryOrFail(Loc.T("net.opponent_timeout"));
         }
 
         /// <summary>
@@ -761,7 +765,7 @@ namespace ChibiClash.Netcode
         /// </summary>
         void UpdateStarHost()
         {
-            if (_transport.LinkState == ChibiLinkState.Lost) { Fail("The connection to the Relay server failed."); return; }
+            if (_transport.LinkState == ChibiLinkState.Lost) { Fail(Loc.T("net.relay_failed")); return; }
             int n = _transport.ConnectedPeers;
             float now = Time.unscaledTime;
             bool start;
@@ -771,9 +775,8 @@ namespace ChibiClash.Netcode
                 if (n == 0) _firstGuestAt = -1f;
                 else if (_firstGuestAt < 0f) _firstGuestAt = now;
                 start = n >= _transport.MaxPeers || (n >= 1 && now - _firstGuestAt >= QuickFillSeconds);
-                Status = n == 0 ? "Searching for players in " + SearchArea + "..."
-                                : (n + 1) + " of " + QuickSeats + " players. Starting in " +
-                                  Mathf.CeilToInt(QuickFillSeconds - (now - _firstGuestAt)) + " s...";
+                Status = n == 0 ? Loc.T("net.searching_in", SearchArea)
+                                : Loc.T("net.quick_filling", n + 1, QuickSeats, Mathf.CeilToInt(QuickFillSeconds - (now - _firstGuestAt)));
             }
             if (start) { HandOffStar(); return; }
 
@@ -809,7 +812,7 @@ namespace ChibiClash.Netcode
             _ = LeaveLobby(_lobby, true);
             _lobby = null;
             State = ChibiRoomState.Connected;
-            Status = "Connected!";
+            Status = Loc.T("net.connected");
             OnGroupConnected?.Invoke(t, guests, players);
         }
 
@@ -880,8 +883,8 @@ namespace ChibiClash.Netcode
         /// Shown when the device has no internet. Rooms, invites and quick match work from ANY place over the internet
         /// (Wi-Fi or mobile data, different cities or the same room): Unity Relay connects the two players.
         /// </summary>
-        public const string NoInternetMessage =
-            "No internet connection. Connect to Wi-Fi or mobile data to play friends anywhere. (LAN play works on the same network.)";
+        public static string NoInternetMessage =>
+            Loc.T("net.no_internet");
 
         /// <summary>Shown when the build has no Unity Cloud project id (Relay / Lobby cannot work without one).</summary>
         public const string NotLinkedMessage =

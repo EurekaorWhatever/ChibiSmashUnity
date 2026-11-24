@@ -326,7 +326,7 @@ namespace ChibiClash.Netcode
                 // Hud.cs:186, :192-194; built once here, not per cinematic.
                 var def = _def[i];
                 _cinTitle[i] = _skin[i].goldCinematic ? "★ " + def.ultName + " ★" : def.ultName;
-                _cinSub[i] = def.heroName.ToUpper() + " · " + def.ultDesc;
+                _cinSub[i] = def.heroName.ToUpper() + " · " + def.UltDesc;
             }
 
             _cam = Camera.main;

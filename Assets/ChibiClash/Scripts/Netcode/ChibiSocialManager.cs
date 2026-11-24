@@ -151,9 +151,9 @@ namespace ChibiClash.Netcode
                     }
                     catch (Exception e) { Debug.LogWarning("ChibiClash name sync: " + NetworkRoomManager.Explain(e)); }
                 }
-                SetStatus(NeedsName ? "Choose a player name so friends can find you." : "Signed in as " + MyName + ".", false);
+                SetStatus(NeedsName ? Loc.T("friends.choose_name") : Loc.T("account.signed_in_as", MyName), false);
             }
-            catch (Exception e) { SetStatus("Friends unavailable: " + NetworkRoomManager.Explain(e), true); }
+            catch (Exception e) { SetStatus(Loc.T("friends.unavailable", NetworkRoomManager.Explain(e)), true); }
             finally { Working = false; }
         }
 
@@ -175,9 +175,9 @@ namespace ChibiClash.Netcode
                 string full = await AuthenticationService.Instance.UpdatePlayerNameAsync(name);
                 MyName = ChibiSocialRules.SafeDisplayName(full);
                 NeedsName = false;
-                SetStatus("Your name is " + MyName + ". Give it to friends so they can add you.", false);
+                SetStatus(Loc.T("friends.your_name_is", MyName), false);
             }
-            catch (Exception e) { SetStatus("Could not set the name: " + NetworkRoomManager.Explain(e), true); }
+            catch (Exception e) { SetStatus(Loc.T("friends.set_name_failed", NetworkRoomManager.Explain(e)), true); }
             finally { Working = false; }
         }
 
@@ -188,30 +188,30 @@ namespace ChibiClash.Netcode
         {
             if (Working || !Ready) return;
             string n = ChibiSocialRules.NormalizeFriendName(name);
-            if (n == null) { SetStatus("Type your friend's name like Kira#4821.", true); return; }
+            if (n == null) { SetStatus(Loc.T("friends.type_tag"), true); return; }
             Working = true;
             try
             {
                 await FriendsService.Instance.AddFriendByNameAsync(n);
                 RebuildLists();
-                SetStatus("Friend request sent to " + ChibiSocialRules.SafeDisplayName(n) + ".", false);
+                SetStatus(Loc.T("friends.request_sent", ChibiSocialRules.SafeDisplayName(n)), false);
             }
-            catch (Exception e) { SetStatus("Could not add " + ChibiSocialRules.SafeDisplayName(n) + ": " + NetworkRoomManager.Explain(e), true); }
+            catch (Exception e) { SetStatus(Loc.T("friends.add_failed", ChibiSocialRules.SafeDisplayName(n), NetworkRoomManager.Explain(e)), true); }
             finally { Working = false; }
         }
 
         /// <summary>Accept a friend request (adding back makes it mutual).</summary>
-        public async void AcceptRequest(string memberId) => await Run(() => FriendsService.Instance.AddFriendAsync(memberId), "Friend added.");
+        public async void AcceptRequest(string memberId) => await Run(() => FriendsService.Instance.AddFriendAsync(memberId), Loc.T("friends.added"));
 
         /// <summary>Decline a friend request.</summary>
         public async void DeclineRequest(string memberId) =>
-            await Run(() => FriendsService.Instance.DeleteIncomingFriendRequestAsync(memberId), "Request declined.");
+            await Run(() => FriendsService.Instance.DeleteIncomingFriendRequestAsync(memberId), Loc.T("friends.declined_request"));
 
         /// <summary>Remove a friend.</summary>
-        public async void RemoveFriend(string memberId) => await Run(() => FriendsService.Instance.DeleteFriendAsync(memberId), "Friend removed.");
+        public async void RemoveFriend(string memberId) => await Run(() => FriendsService.Instance.DeleteFriendAsync(memberId), Loc.T("friends.removed"));
 
         /// <summary>Block a player: no requests, messages or invites from them any more.</summary>
-        public async void Block(string memberId) => await Run(() => FriendsService.Instance.AddBlockAsync(memberId), "Player blocked.");
+        public async void Block(string memberId) => await Run(() => FriendsService.Instance.AddBlockAsync(memberId), Loc.T("friends.blocked"));
 
         async Task Run(Func<Task> call, string done)
         {
@@ -293,7 +293,7 @@ namespace ChibiClash.Netcode
         string FriendName(string memberId)
         {
             foreach (var f in Friends) if (f.Id == memberId) return f.Name;
-            return "A friend";
+            return Loc.T("friends.a_friend");
         }
 
         // ================================================================== invites
@@ -308,13 +308,13 @@ namespace ChibiClash.Netcode
         {
             if (Working || !Ready) return;
             string n = ChibiSocialRules.NormalizeFriendName(name);
-            if (n == null) { SetStatus("Type the player's name like Kira#4821.", true); return; }
-            if (string.Equals(n, MyName, StringComparison.OrdinalIgnoreCase)) { SetStatus("That is your own name.", true); return; }
+            if (n == null) { SetStatus(Loc.T("friends.type_player_tag"), true); return; }
+            if (string.Equals(n, MyName, StringComparison.OrdinalIgnoreCase)) { SetStatus(Loc.T("invite.own_name"), true); return; }
 
             string id = FriendIdByName(n);
             if (id != null)
             {
-                if (!IsOnline(id)) { SetStatus(FriendName(id) + " is offline right now.", true); return; }
+                if (!IsOnline(id)) { SetStatus(Loc.T("friends.offline", FriendName(id)), true); return; }
                 SendInvite(id);
                 return;
             }
@@ -325,12 +325,12 @@ namespace ChibiClash.Netcode
                 RebuildLists();
                 // Wait on the exact player id the service resolved, so a different "Kira" befriended later never gets the code.
                 _waitingToInviteId = rel?.Member?.Id;
-                if (string.IsNullOrEmpty(_waitingToInviteId)) { SetStatus("Friend request sent to " + ChibiSocialRules.SafeDisplayName(n) + ".", false); return; }
+                if (string.IsNullOrEmpty(_waitingToInviteId)) { SetStatus(Loc.T("friends.request_sent", ChibiSocialRules.SafeDisplayName(n)), false); return; }
                 WaitingToInviteName = ChibiSocialRules.SafeDisplayName(n);
                 _waitingToInviteUntil = Time.unscaledTime + ChibiSocialRules.InviteByNameWaitSeconds;
-                SetStatus("Friend request sent to " + WaitingToInviteName + ". The invite goes out as soon as they accept.", false);
+                SetStatus(Loc.T("friends.request_then_invite", WaitingToInviteName), false);
             }
-            catch (Exception e) { SetStatus("Could not reach " + ChibiSocialRules.SafeDisplayName(n) + ": " + NetworkRoomManager.Explain(e), true); }
+            catch (Exception e) { SetStatus(Loc.T("friends.unreachable", ChibiSocialRules.SafeDisplayName(n), NetworkRoomManager.Explain(e)), true); }
             finally { Working = false; }
         }
 
@@ -379,13 +379,13 @@ namespace ChibiClash.Netcode
             if (!Ready || _rooms == null || !IsFriend(friendId)) return;
             float now = Time.unscaledTime;
             if (_lastInviteTo.TryGetValue(friendId, out float t) && now - t < ChibiSocialRules.InviteCooldown)
-            { SetStatus("Wait a moment before inviting again.", true); return; }
+            { SetStatus(Loc.T("friends.wait_invite"), true); return; }
             _lastInviteTo[friendId] = now;
             _inviteTargetId = friendId;
             MatchFriendName = FriendName(friendId);
             _inviteTargetSince = now;
             if (string.IsNullOrEmpty(_rooms.RoomCode)) _rooms.CreateRoomForInvite(ChibiSocialRules.DefaultRoomName(MyName));
-            SetStatus("Creating a room for " + FriendName(friendId) + "...", false);
+            SetStatus(Loc.T("friends.creating_room_for", FriendName(friendId)), false);
         }
 
         /// <summary>Accept an invite: join its room by code (the room flow and the handshake do the rest).</summary>
@@ -396,7 +396,7 @@ namespace ChibiClash.Netcode
             Invites.Clear();   // one match at a time: other invites are dropped
             MatchFriendName = inv.FromName;   // from OUR friends list, not from the message
             _rooms.JoinRoomForInvite(inv.Code);
-            SetStatus("Joining " + inv.FromName + "...", false);
+            SetStatus(Loc.T("friends.joining", inv.FromName), false);
         }
 
         /// <summary>Decline an invite and tell the sender.</summary>
@@ -429,7 +429,7 @@ namespace ChibiClash.Netcode
             // SOC-01: _inviteTargetId is cleared the moment the invite is sent; _invitedId is who holds it now.
             if (ChibiSocialRules.IsDeclineOfOurInvite(m, friend, e.UserId, _invitedId))
             {
-                SetStatus(FriendName(e.UserId) + " declined the invite.", true);
+                SetStatus(Loc.T("friends.declined", FriendName(e.UserId)), true);
                 _inviteTargetId = null;
                 MatchFriendName = "";
                 _invitedId = null;
@@ -448,7 +448,7 @@ namespace ChibiClash.Netcode
             var verdict = ChibiSocialRules.ValidateInvite(m, friend, NetworkRoomManager.ProtocolTag, now, last, Invites.Count, IsBusy());
             if (verdict == ChibiInviteVerdict.OtherBuild && friend)
             {
-                SetStatus(FriendName(e.UserId) + " invited you, but runs a different version of the game.", true);
+                SetStatus(Loc.T("friends.version_mismatch", FriendName(e.UserId)), true);
                 return;
             }
             if (verdict != ChibiInviteVerdict.Ok) return;   // never echo untrusted content
@@ -507,9 +507,9 @@ namespace ChibiClash.Netcode
                     V = ChibiSocialRules.InviteVersion,
                 });
                 _invitedId = friendId;
-                SetStatus("Invite sent to " + FriendName(friendId) + ". Waiting for them to join...", false);
+                SetStatus(Loc.T("friends.invite_sent_waiting", FriendName(friendId)), false);
             }
-            catch (Exception e) { SetStatus("Could not send the invite: " + NetworkRoomManager.Explain(e), true); }
+            catch (Exception e) { SetStatus(Loc.T("invite.send_failed", NetworkRoomManager.Explain(e)), true); }
         }
 
         /// <summary>Tell a friend we withdrew our invite (when we cancel the room).</summary>

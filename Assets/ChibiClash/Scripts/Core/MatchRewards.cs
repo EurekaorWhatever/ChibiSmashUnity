@@ -32,11 +32,11 @@ namespace ChibiClash
             int before = save.coins;
 
             int matchCoins = m.Pve ? (m.Won ? 50 : 15) : (m.Won ? 40 : 15);
-            log.Add((m.Pve ? (m.Won ? "PvE victory" : "PvE match") : m.Won ? "Victory" : "Match played") + "  +" + matchCoins);
+            log.Add(Loc.T(m.Pve ? (m.Won ? "rewards.pve_victory" : "rewards.pve_match") : m.Won ? "rewards.victory" : "rewards.match_played", matchCoins));
             save.coins += matchCoins;
 
             int postureCoins = Mathf.RoundToInt(m.PostureAverage * 30f);
-            log.Add("Good posture " + Mathf.RoundToInt(m.PostureAverage * 100f) + "%  +" + postureCoins);
+            log.Add(Loc.T("rewards.posture", Mathf.RoundToInt(m.PostureAverage * 100f), postureCoins));
             save.coins += postureCoins;
 
             if (m.Won) save.Progress("win", 1, log);

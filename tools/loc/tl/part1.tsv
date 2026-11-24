@@ -1,0 +1,251 @@
+lang.backdrop	WIKA
+lang.title	PUMILI NG IYONG WIKA
+lang.subtitle	Gagamitin ng buong laro ang wikang ito. Puwede mo itong palitan kahit kailan sa SETTINGS.
+lang.search_hint	Maghanap ng wika...
+lang.no_match	Walang wikang tugma sa hinanap mo.
+lang.english_text	Ingles muna ang teksto
+lang.confirm	KUMPIRMAHIN  ·  {0}
+lang.confirm_none	KUMPIRMAHIN
+lang.pad_hint	Mag-type para maghanap · Taas / Baba para pumili · Enter o pad A = kumpirmahin
+common.cancel	KANSELAHIN
+settings.language	WIKA  ·  {0}
+difficulty.dummy	Dummy
+difficulty.easy	Madali
+difficulty.medium	Katamtaman
+difficulty.hard	Mahirap
+difficulty.dummy_upper	DUMMY
+difficulty.easy_upper	MADALI
+difficulty.medium_upper	KATAMTAMAN
+difficulty.hard_upper	MAHIRAP
+nav.home	HOME
+nav.play	MAGLARO
+nav.training	PAGSASANAY
+nav.arcade	ARCADE
+nav.collection	KOLEKSIYON
+nav.settings	SETTINGS
+account.signed_in_as	Naka-sign in bilang {0}.
+account.signed_in	Naka-sign in.
+account.signed_out	Naka-sign out.
+keys.who	P{0} {1}
+keys.reserved	Ang {0} ay key para sa pose / postura (1 2 3, 8 9 0, numpad 7 8 9, P, -). Pumili ng iba.
+keys.swapped	{0};  ang {1} ay {2} na ngayon
+match.versus	{0}  VS  {1}
+online.locked_age	Ang online play ay para sa mga manlalarong 13 taong gulang pataas.
+arcade.clear_toast	TAPOS ANG ARCADE! Natalo ang lahat ng {0} karibal
+precheck.too_dark	Masyadong madilim ({0}%) - dagdagan ang ilaw
+precheck.too_bright	Masyadong maliwanag ({0}%) - bawasan ang silaw
+precheck.good	Ayos ({0}%)
+loading.weapon_art	Larawan ng sandata: {0}
+loading.fighter	Fighter: {0}
+precheck.checking	SINUSURI... {0}
+wipe.character_select	PUMILI NG KARAKTER
+wipe.arcade	ARCADE
+results.rematch	REMATCH
+results.continue	MAGPATULOY
+results.finish	TAPUSIN
+results.next_battle	SUSUNOD NA LABAN
+wipe.arcade_clear	TAPOS ANG ARCADE
+precheck.title	PAGSURI NG CAMERA
+precheck.camera_unavailable	Walang camera
+precheck.simulated_feed	Simulated na feed (patay ang webcam)
+precheck.upper_body_ok	Kita ang itaas na katawan
+precheck.step_back	Umatras nang kaunti - dapat kita ang balikat at balakang
+loading.interface	Graphics ng interface
+loading.typefaces	Mga font
+loading.pose_model	Model sa pag-track ng pose
+loading.ready	Handa na
+onboarding.welcome	MALIGAYANG PAGDATING!
+onboarding.your_account	IYONG ACCOUNT
+onboarding.your_name	IYONG PANGALAN SA LARO
+rooms.backdrop_create	MATCHMAKING  ·  GUMAWA NG ROOM
+rooms.backdrop_join	MATCHMAKING  ·  SUMALI SA ROOM
+precheck.all_passed	PASADO LAHAT
+precheck.failed	HINDI PUMASA
+precheck.lighting	ILAW
+precheck.framing	PUWESTO SA FRAME
+precheck.posture	POSTURA
+precheck.upright	Tuwid, ang galing
+precheck.sit_up	Umupo nang tuwid para sa bonus na coins
+common.retry	SUBUKAN ULIT
+precheck.play_anyway	MAGLARO PA RIN
+common.back	BUMALIK
+precheck.ranked_note	Kailangang pumasa rito para sa ranked queue. Puwedeng laktawan ito sa casual na laban.
+precheck.hint	PAGSURI NG CAMERA BAGO ANG LABAN
+hint.select	PUMILI
+home.play	MAGLARO
+home.training	PAGSASANAY
+home.arcade	ARCADE
+home.collection	KOLEKSIYON NG KARAKTER
+home.settings	SETTINGS
+home.exit	UMALIS SA LARO
+home.play_desc	Quick match sa Vs Online, mga Matchmaking room kasama ang kaibigan, o Vs CPU
+home.training_desc	Setup ng camera, pagsasanay ng galaw at training dummy
+home.arcade_desc	Lahat ng limang karibal nang sunud-sunod sa bawat stage
+home.collection_desc	Mga skin, sandata at cosmetic banner
+home.settings_desc	Hirap, opsyon ng camera at mga key binding
+home.exit_desc	Isara ang laro
+tips.1	Punuin ang ULT meter at pindutin ang Ultimate - saka gawin ang pose ng fighter mo sa camera bago matapos ang countdown.
+tips.2	Mas mataas na DEF, mas mababa ang damage sa bawat tama at mas matibay ang block mo.
+tips.3	Ang magandang postura na nakikita ng camera ay may bonus na coins pagkatapos ng bawat laban.
+tips.4	Pang-cosmetic lang ang mga skin at sandata - hindi nagbabago ang stats dahil sa suot ng fighter.
+tips.5	Sa Pagsasanay, pindutin ang T para mapuno ang ultimate. Laging bumabangon ang dummy.
+tips.6	Bawat fighter ay may isa sa dalawang passive - piliin ito sa loadout panel pagka-lock in.
+tips.7	Rollback netcode ang gamit sa online: iisang laban ang tumatakbo sa dalawang laro mula sa parehong input.
+stats.power	LAKAS
+stats.speed	BILIS
+stats.range	ABOT
+stats.endurance	TIBAY
+stats.recovery	PAGBAWI
+training.use_block	Block · ultimate ng Melee at Magic
+training.use_fireball	Fireball · ultimate ng Ranged at Polearm
+training.use_superjump	Super jump · ultimate ng Heavy
+menu.online_locked	Ang mga online mode ay para sa mga manlalarong 13 pataas.
+menu.no_internet	Walang internet: kumonekta sa Wi-Fi o mobile data. Gumagana ang VS AI kahit offline.
+menu.four_player_soon	Kailangan ng 2v2 at Battle Royale ang suporta sa 4 na manlalaro, darating sa susunod na update.
+profile.edit_name	I-EDIT ANG PANGALAN
+profile.win_loss	P {0}  ·  T {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	HANDA
+loading.loading	NAGLO-LOAD
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   natapos x{2}
+arcade.rule_fight_all	Labanan ang lahat ng {0} karakter nang sunud-sunod, sa random na ayos.
+arcade.rule_difficulty	Hirap ng CPU: {0} (palitan sa Settings).
+arcade.final	HULING LABAN
+arcade.round	ROUND {0}
+training.cv_setup_source	CV SETUP · {0}
+training.status	Camera: {0}\nTracking: {1}\nNakita: {2}
+training.off	patay
+training.none	wala
+training.status_posture	   ·   Postura {0}%   ·   Telemetry {1}
+collection.gold_cinematic_suffix	 · GOLD CINEMATIC
+collection.only	{0} LANG
+collection.pull1	PULL x1  ·  {0}
+collection.pull10	PULL x10  ·  {0}
+collection.dup_suffix	  (doble +20)
+collection.new_suffix	  BAGO!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} segundo  <size=12><color=#9AA6BC>(pareho sa bawat laban)</color></size>
+settings.change_name_as	PALITAN ANG PANGALAN  ·  {0}
+settings.change_name	PALITAN ANG PANGALAN
+settings.keys_help	I-click ang isang binding, saka pumindot ng key o i-click ang kahon gamit ang mouse button (Esc / pad B / pag-click sa iba ay kakanselahin; 5 s na timeout). Kung gamit na ito ng isang manlalaro, magpapalitan ang dalawa.\nMga pose sa camera: i-cross ang braso = block · iunat ang braso sa gilid = fireball · itaas ang dalawang kamay = super jump (mga pose sa keyboard: 1/2/3 at 8/9/0).
+rarity.common	COMMON
+rarity.rare	RARE
+rarity.epic	EPIC
+rarity.legendary	LEGENDARY
+skin.default	Klasiko
+skin.mint	Mint Pop
+skin.shadow	Anino
+skin.sakura	Sakura
+skin.inferno	Inferno
+skin.celestial	Makalangit
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	13+ LANG
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nTEAM
+play.four_player_later	Darating ang 2v2 at Battle Royale kasama ang suporta sa 4 na manlalaro sa susunod na update.
+play.team_tag	4P · 2 TEAM
+play.royale_tag	4P · KANYA-KANYA
+collection.all_fighters	LAHAT NG FIGHTER
+arcade.mode	ARCADE MODE
+home.tagline	ARENA FIGHTER  ·  ULTIMATE GAMIT ANG KATAWAN
+play.royale_card	BATTLE\nROYALE
+training.kicker	SETUP NG CAMERA AT PAGSASANAY
+settings.camera_tracking	CAMERA TRACKING (WEBCAM)
+training.camera_off	CAMERA TRACKING: PATAY
+training.camera_on	CAMERA TRACKING: BUKAS
+collection.hint	KOLEKSIYON NG KARAKTER
+play.choose_style	PUMILI NG ISTILO NG LARO
+online.kicker	PUMILI NG ISTILO NG LARO  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	PILIIN ANG LABAN MO  ·  VS ONLINE · MATCHMAKING · VS CPU
+play.coming_soon	MALAPIT NA
+training.cv	COMPUTER VISION
+online.connection	KONEKSIYON
+collection.banner	COSMETIC BANNER
+settings.cpu_difficulty	HIRAP NG CPU
+play.create_join	GUMAWA · SUMALI SA ROOM
+settings.cv_overlay	CV OVERLAY SA LABAN
+quests.coins_note	Sa paglalaro lang nakukuha ang coins: panalo, PvE, quest at magandang postura na nakikita ng camera.
+collection.odds	Common 60% · Rare 28% · Epic 10% · Legendary 2%
+collection.equip	GAMITIN
+collection.equipped	GAMIT NA
+hint.exit	UMALIS
+home.exit_upper	UMALIS SA LARO
+exit.title	UMALIS SA LARO?
+online.royale_desc	Kanya-kanyang laban. Ang huling fighter na nakatayo ang panalo.
+arcade.kicker	LIMANG KARIBAL · ISANG TAKBO
+loading.for_battle	PARA SA LABAN
+online.invites_note	Dito lumalabas ang mga room invite ng kaibigan. Nasa MAGLARO > MATCHMAKING ang mga room kasama ang kaibigan.
+settings.kicker	LARO · CAMERA · KONTROL
+training.gestures_live	MGA GALAW  (gawin ang pose sa harap ng camera - suntok = isang brasong diretso sa gilid)
+training.gestures_sim	MGA GALAW  (pindutin nang matagal ang key para gayahin ang pose)
+settings.key_bindings	MGA KEY BINDING
+settings.keys_reset	Ibinalik sa default ang mga key
+play.locked	NAKA-LOCK
+arcade.rule_retry	Natalo sa isang round? Magpatuloy at ulitin ito.
+home.hint	MAIN MENU
+settings.master_volume	MASTER VOLUME
+settings.match_time	ORAS NG LABAN
+play.matchmaking_card	MATCH\nMAKING
+hint.move	GUMALAW
+play.matchmaking_desc	Gumawa ng room, ibahagi ang code nito o imbitahin ang kaibigan gamit ang pangalan.
+play.no_internet_tag	WALANG INTERNET
+online.no_internet_body	Walang internet ngayon. Kumonekta sa Wi-Fi o mobile data, o maglaro ng Vs CPU.
+common.off	PATAY
+online.offline	OFFLINE
+common.on	BUKAS
+settings.player1	PLAYER 1
+settings.player2	PLAYER 2
+training.practice_dummy	PRACTICE VS DUMMY
+settings.precheck	PAGSURI NG CAMERA BAGO ANG LABAN
+loading.prepare	MAGHANDA
+settings.listening_hint	PUMINDOT NG KEY O I-CLICK ANG KAHON  ·  ESC / PAD B PARA KANSELAHIN  ·  HINDI MA-BIND ANG MGA PAD BUTTON
+training.slouch_note	Pindutin ang P para lumipat sa nakayukong postura at makitang bumababa ang posture score.
+settings.profile_reset	Na-reset ang profile (nanatili ang pangalan at sign-in)
+collection.pull_to_unlock	Mag-pull para ma-unlock
+quests.title	MGA QUEST
+online.quick_match	QUICK MATCH
+play.online_desc	Quick match sa manlalarong malapit sa iyo, o sagutin ang invite ng kaibigan.
+online.solo_desc	Quick match: labanan ang naghahanap ngayon, ang pinakamalapit muna.
+settings.reset_keys	I-RESET ANG MGA KEY
+settings.reset_profile	I-RESET ANG PROFILE
+arcade.rival_unknown	KARIBAL  ???
+play.rooms_tag	ROOM · 2-4 MANLALARO
+online.rollback_body	Rollback netcode: iisang laban ang tumatakbo sa dalawang laro mula sa parehong input, kaya mabilis at patas pa rin.
+settings.screen_shake	PAGYANIG NG SCREEN
+profile.set_name	ITAKDA ANG PANGALAN
+settings.sfx_volume	SFX VOLUME
+training.simulate_pose	GAYAHIN ANG POSE
+collection.kicker	MGA SKIN · SANDATA · COSMETIC BANNER
+training.slouch	NAKAYUKO
+online.solo_card	SOLO\n1V1
+home.start	SIMULAN
+arcade.start	SIMULAN ANG ARCADE
+exit.stay	MANATILI
+settings.sure	SIGURADO?
+settings.sure_reset_profile	SIGURADO? MAWAWALA LAHAT NG PROGRESO
+collection.banner_note	Mga skin at ultimate cinematic lang. Pareho ang stats sa bawat skin - walang bayad para lumakas.
+hint.tabs	MGA TAB
+loading.tip	TIP
+training.hint	PAGSASANAY  /  CV SETUP
+arcade.rule_stages	Nagbabago ang stage bawat round, mula sa Bundok ng Simula hanggang sa Monumento ng Karagatan.
+online.team_desc	Dalawang team na tig-dalawa. Walang friendly fire: hindi tatamaan ng atake mo ang kakampi.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  ISTILO NG LARO
+play.online_card	VS\nONLINE
+arcade.rule_rewards	May coins at quest progress ang panalo, gaya ng sa VS CPU.
+exit.saved_note	Naka-save sa device na ito ang profile, coins at koleksiyon mo.
+settings.key_listening	key o i-click dito
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Ikaw ang pipili ng fighter at ng MADALI, KATAMTAMAN o MAHIRAP. Random na fighter ang sa CPU.
+account.keep_name_body	Mag-sign in gamit ang Google account mo para manatili sa iyo ang pangalan at info mo: tuwing bubuksan mo ang laro, at sa kahit anong computer. Ibang Google account, ibang bagong pangalan.
+name.you_are	Ikaw si {0}!
+name.you_are_unchecked	Ikaw si {0}! Susuriin namin ang pangalan pag naglaro ka online.
+online.could_not_start	Hindi masimulan ang laban ({0}).
+rooms.your_rooms	MGA ROOM MO
+rooms.count_click	{0}  ·  i-click ang room para buksan
+rooms.code_value	CODE  {0}
+rooms.players_count	{0} / {1} MANLALARO

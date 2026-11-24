@@ -1,0 +1,259 @@
+lang.backdrop	언어
+lang.title	언어를 선택하세요
+lang.subtitle	게임의 모든 텍스트가 이 언어로 표시됩니다. 설정에서 언제든지 바꿀 수 있습니다.
+lang.search_hint	언어 검색...
+lang.no_match	검색과 일치하는 언어가 없습니다.
+lang.english_text	지금은 영어로 표시
+lang.confirm	확인  ·  {0}
+lang.confirm_none	확인
+lang.pad_hint	입력해서 검색 · 위 / 아래로 선택 · Enter 또는 패드 A = 확인
+common.cancel	취소
+settings.language	언어  ·  {0}
+difficulty.dummy	허수아비
+difficulty.easy	쉬움
+difficulty.medium	보통
+difficulty.hard	어려움
+difficulty.dummy_upper	허수아비
+difficulty.easy_upper	쉬움
+difficulty.medium_upper	보통
+difficulty.hard_upper	어려움
+nav.home	홈
+nav.play	플레이
+nav.training	훈련
+nav.arcade	아케이드
+nav.collection	컬렉션
+nav.settings	설정
+account.signed_in_as	{0}(으)로 로그인했습니다.
+account.signed_in	로그인했습니다.
+account.signed_out	로그아웃했습니다.
+keys.who	P{0} {1}
+keys.reserved	{0}은(는) 포즈 / 자세 키입니다(1 2 3, 8 9 0, 숫자패드 7 8 9, P, -). 다른 키를 고르세요.
+keys.swapped	{0};  {1}은(는) 이제 {2}입니다
+match.versus	{0}  VS  {1}
+online.locked_age	온라인 플레이는 13세 이상 플레이어만 이용할 수 있습니다.
+arcade.clear_toast	아케이드 클리어! 라이벌 {0}명 모두 격파
+precheck.too_dark	너무 어두움({0}%) - 조명을 밝게 하세요
+precheck.too_bright	너무 밝음({0}%) - 눈부심을 줄이세요
+precheck.good	좋음({0}%)
+loading.weapon_art	무기 그래픽: {0}
+loading.fighter	파이터: {0}
+precheck.checking	확인 중... {0}
+wipe.character_select	캐릭터 선택
+wipe.arcade	아케이드
+results.rematch	재대결
+results.continue	계속하기
+results.finish	종료
+results.next_battle	다음 대결
+wipe.arcade_clear	아케이드 클리어
+precheck.title	카메라 확인
+precheck.camera_unavailable	카메라를 사용할 수 없음
+precheck.simulated_feed	시뮬레이션 화면(웹캠 꺼짐)
+precheck.upper_body_ok	상체가 화면 안에 있음
+precheck.step_back	뒤로 물러나세요 - 어깨와 엉덩이가 보여야 합니다
+loading.interface	인터페이스 그래픽
+loading.typefaces	글꼴
+loading.pose_model	포즈 인식 모델
+loading.ready	준비 완료
+onboarding.welcome	환영합니다!
+onboarding.your_account	내 계정
+onboarding.your_name	내 플레이어 이름
+rooms.backdrop_create	매치메이킹  ·  방 만들기
+rooms.backdrop_join	매치메이킹  ·  방 참가
+precheck.all_passed	모든 확인 통과
+precheck.failed	확인 실패
+precheck.lighting	조명
+precheck.framing	화면 구도
+precheck.posture	자세
+precheck.upright	바른 자세입니다
+precheck.sit_up	바르게 앉으면 보너스 코인 획득
+common.retry	다시 시도
+precheck.play_anyway	그냥 플레이
+common.back	뒤로
+precheck.ranked_note	랭크 대전은 이 확인을 통과해야 합니다. 일반 대전은 건너뛸 수 있습니다.
+precheck.hint	경기 전 카메라 확인
+hint.select	선택
+home.play	플레이
+home.training	훈련
+home.arcade	아케이드
+home.collection	캐릭터 컬렉션
+home.settings	설정
+home.exit	게임 종료
+home.play_desc	온라인 빠른 대전, 친구와 매치메이킹 방, 또는 Vs CPU
+home.training_desc	카메라 설정, 동작 연습, 훈련용 허수아비
+home.arcade_desc	모든 스테이지에서 다섯 라이벌과 연속 대결
+home.collection_desc	스킨, 무기, 꾸미기 뽑기
+home.settings_desc	난이도, 카메라 옵션, 키 설정
+home.exit_desc	게임 닫기
+tips.1	ULT 게이지를 채우고 궁극기를 누르세요 - 카운트다운이 끝나기 전에 카메라 앞에서 파이터의 포즈를 취하세요.
+tips.2	DEF가 높을수록 받는 피해가 줄고 방어가 더 강해집니다.
+tips.3	카메라가 인식한 바른 자세는 매 경기 후 보너스 코인을 줍니다.
+tips.4	스킨과 무기는 외형일 뿐 - 무엇을 착용해도 능력치는 변하지 않습니다.
+tips.5	훈련에서 T를 누르면 궁극기가 가득 찹니다. 허수아비는 언제나 다시 일어납니다.
+tips.6	모든 파이터는 두 가지 패시브 중 하나를 고릅니다 - 캐릭터 확정 후 장비 패널에서 선택하세요.
+tips.7	온라인 대전은 롤백 넷코드를 사용합니다: 두 게임이 같은 입력으로 같은 대결을 진행합니다.
+stats.power	파워
+stats.speed	스피드
+stats.range	사거리
+stats.endurance	내구력
+stats.recovery	회복력
+training.use_block	방어 · 근접과 마법의 궁극기
+training.use_fireball	파이어볼 · 원거리와 장병기의 궁극기
+training.use_superjump	슈퍼 점프 · 헤비의 궁극기
+menu.online_locked	온라인 모드는 13세 이상 플레이어만 이용할 수 있습니다.
+menu.no_internet	인터넷 없음: Wi-Fi나 모바일 데이터에 연결하세요. VS AI는 오프라인으로 플레이할 수 있습니다.
+menu.four_player_soon	2v2와 Battle Royale은 4인 지원이 필요하며, 이후 업데이트에서 추가됩니다.
+profile.edit_name	이름 편집
+profile.win_loss	승 {0}  ·  패 {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	준비 완료
+loading.loading	로딩 중
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   완료 x{2}
+arcade.rule_fight_all	{0}명의 캐릭터 모두와 무작위 순서로 연속 대결합니다.
+arcade.rule_difficulty	CPU 난이도: {0}(설정에서 변경 가능).
+arcade.final	결승
+arcade.round	라운드 {0}
+training.cv_setup_source	CV 설정 · {0}
+training.status	카메라: {0}\n추적: {1}\n감지: {2}
+training.off	꺼짐
+training.none	없음
+training.status_posture	   ·   자세 {0}%   ·   원격 측정 {1}
+collection.gold_cinematic_suffix	 · 골드 시네마틱
+collection.only	{0} 전용
+collection.pull1	1회 뽑기  ·  {0}
+collection.pull10	10회 뽑기  ·  {0}
+collection.dup_suffix	  (중복 +20)
+collection.new_suffix	  NEW!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0}초  <size=12><color=#9AA6BC>(모든 경기 고정)</color></size>
+settings.change_name_as	이름 변경  ·  {0}
+settings.change_name	이름 변경
+settings.keys_help	키 설정을 클릭한 다음, 키를 누르거나 마우스 버튼으로 그 칸을 클릭하세요(Esc / 패드 B / 다른 곳 클릭 시 취소, 5초 후 시간 초과). 다른 플레이어가 이미 쓰고 있으면 두 키가 서로 바뀝니다.\n카메라 포즈: 팔 교차 = 방어 · 팔을 옆으로 뻗기 = 파이어볼 · 두 손 들기 = 슈퍼 점프(키보드 포즈: 1/2/3 및 8/9/0).
+rarity.common	일반
+rarity.rare	레어
+rarity.epic	에픽
+rarity.legendary	전설
+skin.default	클래식
+skin.mint	민트 팝
+skin.shadow	섀도우
+skin.sakura	벚꽃
+skin.inferno	인페르노
+skin.celestial	천상
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	13세 이상 전용
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\n팀전
+play.four_player_later	2v2와 Battle Royale은 이후 업데이트에서 4인 지원과 함께 추가됩니다.
+play.team_tag	4P · 2팀
+play.royale_tag	4P · 개인전
+collection.all_fighters	모든 파이터
+arcade.mode	아케이드 모드
+home.tagline	아레나 격투  ·  몸동작 궁극기
+play.royale_card	BATTLE\nROYALE
+training.kicker	카메라 설정 및 연습
+settings.camera_tracking	카메라 추적(웹캠)
+training.camera_off	카메라 추적: 꺼짐
+training.camera_on	카메라 추적: 켜짐
+collection.hint	캐릭터 컬렉션
+play.choose_style	플레이 방식 선택
+online.kicker	플레이 방식 선택  ·  솔로 · 2V2 · BATTLE ROYALE
+play.kicker	대결을 선택하세요  ·  VS ONLINE · 매치메이킹 · VS CPU
+play.coming_soon	출시 예정
+training.cv	컴퓨터 비전
+online.connection	연결
+collection.banner	꾸미기 뽑기
+settings.cpu_difficulty	CPU 난이도
+play.create_join	방 만들기 · 참가
+settings.cv_overlay	경기 중 CV 화면 표시
+quests.coins_note	코인은 플레이로만 얻을 수 있습니다: 승리, PvE, 퀘스트, 카메라가 인식한 바른 자세.
+collection.odds	일반 60% · 레어 28% · 에픽 10% · 전설 2%
+collection.equip	장착
+collection.equipped	장착 중
+hint.exit	나가기
+home.exit_upper	게임 종료
+exit.title	게임을 종료할까요?
+online.royale_desc	모두가 적입니다. 마지막까지 살아남은 파이터가 승리합니다.
+arcade.kicker	라이벌 다섯 명 · 한 번에 돌파
+loading.for_battle	전투 준비
+online.invites_note	친구의 방 초대는 여기에 표시됩니다. 친구와의 방은 플레이 > 매치메이킹에 있습니다.
+settings.kicker	게임 · 카메라 · 조작
+training.gestures_live	동작  (카메라 앞에서 포즈 - 펀치 = 한쪽 팔을 옆으로 곧게 뻗기)
+training.gestures_sim	동작  (키를 누르고 있으면 포즈를 시뮬레이션)
+settings.key_bindings	키 설정
+settings.keys_reset	키가 기본값으로 초기화되었습니다
+play.locked	잠김
+arcade.rule_retry	라운드에서 졌나요? 계속하기로 다시 도전하세요.
+home.hint	메인 메뉴
+settings.master_volume	전체 음량
+settings.match_time	경기 시간
+play.matchmaking_card	매치\n메이킹
+hint.move	이동
+play.matchmaking_desc	방을 만들고 코드를 공유하거나 이름으로 친구를 초대하세요.
+play.no_internet_tag	인터넷 없음
+online.no_internet_body	지금은 인터넷에 연결되어 있지 않습니다. Wi-Fi나 모바일 데이터에 연결하거나 Vs CPU를 플레이하세요.
+common.off	꺼짐
+online.offline	오프라인
+common.on	켜짐
+settings.player1	플레이어 1
+settings.player2	플레이어 2
+training.practice_dummy	허수아비와 연습
+settings.precheck	경기 전 카메라 확인
+loading.prepare	준비
+settings.listening_hint	키를 누르거나 칸을 클릭  ·  ESC / 패드 B로 취소  ·  패드 버튼은 설정 불가
+training.slouch_note	P를 눌러 구부정한 자세로 바꾸고 자세 점수가 떨어지는 것을 확인하세요.
+settings.profile_reset	프로필 초기화됨(이름과 로그인은 유지)
+collection.pull_to_unlock	뽑기로 잠금 해제
+quests.title	퀘스트
+online.quick_match	빠른 대전
+play.online_desc	가까운 플레이어와 빠른 대전을 하거나 친구의 초대에 응답하세요.
+online.solo_desc	빠른 대전: 지금 검색 중인 플레이어와 대결, 가까운 순서대로.
+settings.reset_keys	키 초기화
+settings.reset_profile	프로필 초기화
+arcade.rival_unknown	라이벌  ???
+play.rooms_tag	방 · 2-4명
+online.rollback_body	롤백 넷코드: 두 게임이 같은 입력으로 같은 대결을 진행하므로 빠르고 공정합니다.
+settings.screen_shake	화면 흔들림
+profile.set_name	이름 설정
+settings.sfx_volume	효과음 음량
+training.simulate_pose	포즈 시뮬레이션
+collection.kicker	스킨 · 무기 · 꾸미기 뽑기
+training.slouch	구부정한 자세
+online.solo_card	솔로\n1V1
+home.start	시작
+arcade.start	아케이드 시작
+exit.stay	계속하기
+settings.sure	정말인가요?
+settings.sure_reset_profile	정말인가요? 모든 진행 상황이 사라집니다
+collection.banner_note	스킨과 궁극기 연출만 있습니다. 모든 스킨의 능력치는 같습니다 - 돈을 내야 얻는 이점은 없습니다.
+hint.tabs	탭
+loading.tip	팁
+training.hint	훈련  /  CV 설정
+arcade.rule_stages	스테이지는 라운드마다 바뀝니다. 시작의 산부터 해저 유적까지.
+online.team_desc	2인 2팀. 아군 공격 없음: 내 공격은 팀원에게 피해를 주지 않습니다.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  플레이 방식
+play.online_card	VS\nONLINE
+arcade.rule_rewards	승리하면 VS CPU처럼 코인과 퀘스트 진행도를 얻습니다.
+exit.saved_note	프로필, 코인, 컬렉션은 이 기기에 저장되어 있습니다.
+settings.key_listening	키를 누르거나 여기를 클릭
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	파이터와 쉬움, 보통, 어려움 중 난이도를 고르세요. CPU는 무작위 파이터를 받습니다.
+account.keep_name_body	Google 계정으로 로그인하면 이름과 정보가 항상 유지됩니다: 게임을 열 때마다, 어떤 컴퓨터에서든. 다른 Google 계정은 새 이름을 받습니다.
+name.you_are	당신은 {0}!
+name.you_are_unchecked	당신은 {0}! 온라인으로 플레이할 때 이름을 확인합니다.
+online.could_not_start	경기를 시작할 수 없습니다({0}).
+rooms.your_rooms	내 방
+rooms.count_click	{0}  ·  방을 클릭해서 열기
+rooms.code_value	코드  {0}
+rooms.players_count	{0} / {1}명
+rooms.more	+ 방 {0}개 더
+rooms.created	"{0}" 방을 만들었습니다. 클릭해서 코드를 공유하거나 친구를 초대하세요.
+quick.searching	검색 중
+quick.looking_in	검색 범위:  {0}
+room.kicker	방  ·  2-4명  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	대결 준비 완료
+room.full_suffix	 · 방 가득 참

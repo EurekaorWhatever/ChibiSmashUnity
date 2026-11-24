@@ -185,22 +185,120 @@ namespace ChibiClash
             return display ? displayStyle : style;
         }
 
+        // ---------------------------------------------------------------- scripts (localization stage 3)
+
+        static readonly bool WebFonts = Application.platform == RuntimePlatform.WebGLPlayer;   // no OS fonts in the browser
+        static readonly Dictionary<RtlKey, string> rtlCache = new Dictionary<RtlKey, string>();
+        static int rtlVersion = -1;
+
+        struct RtlKey : System.IEquatable<RtlKey>
+        {
+            public string s; public int size, width; public bool bold, display; public Font font;
+            public bool Equals(RtlKey o) => size == o.size && width == o.width && bold == o.bold && display == o.display && font == o.font && s == o.s;
+            public override bool Equals(object o) => o is RtlKey k && Equals(k);
+            public override int GetHashCode() => unchecked(((s.GetHashCode() * 31 + size) * 31 + width) * 31 + (bold ? 1 : 0) + (display ? 2 : 0));
+        }
+
+        /// <summary>
+        /// Picks the font for s: the condensed display / body OS fonts for Latin, Greek and Cyrillic (the arcade look and
+        /// the fight words keep them), else the bundled Noto font of the string's script (FontBank). Returns the script.
+        /// </summary>
+        static string PickFont(GUIStyle st, string s, bool display)
+        {
+            string script = TextScript.Detect(s, FontBank.LanguageScript, WebFonts);
+            Font f = script != null ? FontBank.Get(script) : null;
+            st.font = f != null ? f : display ? displayFont : bodyFont;
+            return f != null ? script : null;
+        }
+
+        static string PlainTags(string s)
+        {
+            if (s.IndexOf('<') < 0) return s;
+            return System.Text.RegularExpressions.Regex.Replace(s, "</?(color|size|b|i)(=[^>]*)?>", "");
+        }
+
+        /// <summary>
+        /// Right-to-left text in visual order: shaped (Arabic joining, lam-alef), wrapped in logical order at width
+        /// (0 = no wrap) with the current style, each line reordered (RtlText). Rich-text tags are dropped. Cached.
+        /// </summary>
+        static string RtlVisual(GUIStyle st, string s, int size, bool bold, bool display, float width)
+        {
+            if (rtlVersion != Loc.Version || rtlCache.Count > 2048) { rtlCache.Clear(); rtlVersion = Loc.Version; }
+            var key = new RtlKey { s = s, size = size, width = Mathf.RoundToInt(width), bold = bold, display = display, font = st.font };
+            if (rtlCache.TryGetValue(key, out var v)) return v;
+            string plain = PlainTags(s);
+            var sb = new System.Text.StringBuilder(plain.Length + 8);
+            bool rtlBase = Loc.Rtl || RtlText.HasRtl(plain);
+            bool wrap = st.wordWrap;
+            st.wordWrap = false;
+            foreach (var para in plain.Split('\n'))
+            {
+                string shaped = RtlText.Shape(para);
+                if (width <= 0f) { Append(sb, RtlText.Reorder(shaped, rtlBase)); continue; }
+                // Greedy wrap on spaces in logical order (measured shaped), then reorder each line.
+                var words = shaped.Split(' ');
+                string line = "";
+                foreach (var w in words)
+                {
+                    string next = line.Length == 0 ? w : line + " " + w;
+                    measureContent.text = next;
+                    if (line.Length > 0 && st.CalcSize(measureContent).x > width) { Append(sb, RtlText.Reorder(line, rtlBase)); line = w; }
+                    else line = next;
+                }
+                Append(sb, RtlText.Reorder(line, rtlBase));
+            }
+            st.wordWrap = wrap;
+            v = sb.ToString();
+            rtlCache[key] = v;
+            return v;
+        }
+
+        static void Append(System.Text.StringBuilder sb, string line)
+        {
+            if (sb.Length > 0) sb.Append('\n');
+            sb.Append(line);
+        }
+
+        /// <summary>Right-to-left strings read from the right: left anchors become right anchors.</summary>
+        static TextAnchor Mirror(TextAnchor a) =>
+            a == TextAnchor.UpperLeft ? TextAnchor.UpperRight : a == TextAnchor.MiddleLeft ? TextAnchor.MiddleRight :
+            a == TextAnchor.LowerLeft ? TextAnchor.LowerRight : a;
+
         public static float Measure(string s, int size, bool display = false, bool bold = true)
         {
             var st = Style(display);
             st.fontSize = size;
             st.fontStyle = display ? (displayFont == null ? FontStyle.Bold : FontStyle.Normal) : (bold ? FontStyle.Bold : FontStyle.Normal);
+            string script = PickFont(st, s, display);
+            if (script != null && st.font != displayFont && st.font != bodyFont && display) st.fontStyle = FontStyle.Bold;
+            if (script != null && TextScript.NeedsShaper(script) && ShapedText.TryMeasure(s, st.font, size, st.fontStyle == FontStyle.Bold, out var m))
+                return m.x;
+            if (RtlText.HasRtl(s)) s = RtlVisual(st, s, size, bold, display, 0f);
             measureContent.text = s;
             return st.CalcSize(measureContent).x;
         }
 
+        /// <summary>Body text in r (word-wrapped), with a soft drop shadow unless it carries rich-text colours.</summary>
         public static void Text(Rect r, string s, int size, Color c, TextAnchor anchor = TextAnchor.MiddleCenter, bool bold = true, bool shadow = true)
         {
+            if (string.IsNullOrEmpty(s)) return;
             var st = Style(false);
             st.fontSize = size;
             st.fontStyle = bold ? FontStyle.Bold : FontStyle.Normal;
-            st.alignment = anchor;
+            string script = PickFont(st, s, false);
             c = A(c);
+            if (script != null && TextScript.NeedsShaper(script))
+            {
+                bool sh = shadow && !s.Contains("<color");
+                if (sh) ShapedText.TryDraw(new Rect(r.x + 1.5f, r.y + 1.5f, r.width, r.height), s, st.font, size, bold, new Color(0f, 0f, 0f, c.a * 0.6f), anchor, true);
+                if (ShapedText.TryDraw(r, s, st.font, size, bold, c, anchor, true)) return;
+            }
+            if (RtlText.HasRtl(s))
+            {
+                s = RtlVisual(st, s, size, bold, false, r.width - st.padding.horizontal);
+                anchor = Mirror(anchor);
+            }
+            st.alignment = anchor;
             if (shadow && !s.Contains("<color"))
             {
                 SetTextColor(st, new Color(0f, 0f, 0f, c.a * 0.6f));
@@ -210,18 +308,44 @@ namespace ChibiClash
             GUI.Label(r, s, st);
         }
 
-        /// <summary>Heavy condensed headline type, slanted like an italic, with a hard offset shadow (pass Color.clear for none).</summary>
+        /// <summary>
+        /// Heavy condensed headline type, slanted like an italic, with a hard offset shadow (pass Color.clear for none).
+        /// Headlines never wrap: a line wider than r shrinks to fit (down to half size), so a long single word (a Thai
+        /// or German title) stays whole.
+        /// </summary>
         public static void Display(Rect r, string s, int size, Color c, TextAnchor anchor = TextAnchor.MiddleLeft, float slant = 0.2f, Color? shadow = null, float shadowOffset = -1f)
         {
+            if (string.IsNullOrEmpty(s)) return;
             var st = Style(true);
             st.fontSize = size;
             st.fontStyle = displayFont == null ? FontStyle.Bold : FontStyle.Normal;
-            st.alignment = anchor;
+            string script = PickFont(st, s, true);
+            if (script != null) st.fontStyle = FontStyle.Bold;   // bundled fonts ship Regular only: synthetic bold for headlines
+            bool shaped = script != null && TextScript.NeedsShaper(script);
+            if (!shaped && RtlText.HasRtl(s)) { s = RtlVisual(st, s, size, true, true, 0f); anchor = Mirror(anchor); }
+
+            // Shrink to fit (no wrapping for headlines).
+            float wide = 0f;
+            if (shaped && ShapedText.TryMeasure(s, st.font, size, true, out var m)) wide = m.x;
+            else if (!shaped) { measureContent.text = s; wide = st.CalcSize(measureContent).x; }
+            if (wide > r.width && r.width > 0f)
+            {
+                size = Mathf.Max(Mathf.CeilToInt(size * 0.5f), Mathf.FloorToInt(size * r.width / wide));
+                st.fontSize = size;
+            }
+
             if (slant != 0f) PushSkew(slant, r.center.y);
             var sc = shadow ?? Ink;
+            float o = shadowOffset >= 0f ? shadowOffset : Mathf.Max(2f, size * 0.06f);
+            st.alignment = anchor;
+            if (shaped)
+            {
+                bool ok = true;
+                if (sc.a > 0f) ok = ShapedText.TryDraw(new Rect(r.x + o, r.y + o, r.width, r.height), s, st.font, size, true, A(new Color(sc.r, sc.g, sc.b, sc.a * c.a)), anchor, false);
+                if (ok && ShapedText.TryDraw(r, s, st.font, size, true, A(c), anchor, false)) { if (slant != 0f) Pop(); return; }
+            }
             if (sc.a > 0f)
             {
-                float o = shadowOffset >= 0f ? shadowOffset : Mathf.Max(2f, size * 0.06f);
                 SetTextColor(st, A(new Color(sc.r, sc.g, sc.b, sc.a * c.a)));
                 GUI.Label(new Rect(r.x + o, r.y + o, r.width, r.height), s, st);
             }
@@ -656,6 +780,7 @@ namespace ChibiClash
 
         /// <summary>Camera feed panel with tracked skeleton, posture and telemetry readouts (GDD 5).</summary>
         static readonly string[] PostureText = new string[202];
+        static int postureVersion = -1;   // Loc.Version the cache was built for
 
         public static void CvPanel(Rect r, GestureTracker tracker, Color stateColor, bool showFeed, string title)
         {
@@ -681,9 +806,10 @@ namespace ChibiClash
             var pc = posture >= 0.6f ? Green : Yellow;
             int pp = Mathf.Clamp(Mathf.RoundToInt(posture * 100f), 0, 100);
             int pk = pp * 2 + (posture < 0.6f ? 1 : 0);
-            string pt = PostureText[pk] ?? (PostureText[pk] = "Posture " + pp + "%" + (posture < 0.6f ? " - sit up!" : ""));   // cached (perf audit P4)
+            if (postureVersion != Loc.Version) { System.Array.Clear(PostureText, 0, PostureText.Length); postureVersion = Loc.Version; }
+            string pt = PostureText[pk] ?? (PostureText[pk] = posture < 0.6f ? Loc.T("cv.posture_low", pp) : Loc.T("cv.posture", pp));   // cached (perf audit P4)
             Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), pt, 11, pc, TextAnchor.MiddleLeft);
-            Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), tracker.TelemetryValid ? "Telemetry OK" : tracker.Validator.Reason, 11, tracker.TelemetryValid ? Muted : Red, TextAnchor.MiddleRight);
+            Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), tracker.TelemetryValid ? Loc.T("cv.telemetry_ok") : tracker.Validator.Reason, 11, tracker.TelemetryValid ? Muted : Red, TextAnchor.MiddleRight);
         }
 
         public static void Skeleton(Rect area, PoseFrame f, Color c, float width)
