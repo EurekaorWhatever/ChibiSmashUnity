@@ -1,0 +1,264 @@
+name.you_are	Du bist {0}!
+name.you_are_unchecked	Du bist {0}! Wir prüfen den Namen, wenn du online spielst.
+online.could_not_start	Das Match konnte nicht starten ({0}).
+rooms.your_rooms	DEINE RÄUME
+rooms.count_click	{0}  ·  klick einen Raum an, um ihn zu öffnen
+rooms.code_value	CODE  {0}
+rooms.players_count	{0} / {1} SPIELER
+rooms.more	+ {0} weitere Räume
+rooms.created	Raum „{0}“ erstellt. Klick ihn an, um den Code zu teilen oder Freunde einzuladen.
+quick.searching	SUCHE LÄUFT
+quick.looking_in	SUCHE IN:  {0}
+room.kicker	RAUM  ·  2-4 SPIELER  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	KAMPFBEREIT
+room.full_suffix	 · RAUM VOLL
+room.waiting	WARTE AUF SPIELER
+room.joined	{0}  ·  {1} / {2} BEIGETRETEN
+room.host	HOST
+room.player_n	SPIELER {0}
+room.you_suffix	 · DU
+room.hazards_host_pick	{0} · WAHL DES HOSTS
+room.hazards_on	FALLEN AN
+room.hazards_off	FALLEN AUS
+room.code_copied	Raumcode {0} kopiert. Füg ihn für deinen Freund ein.
+invite.body	{0} lädt dich zu {1} ein   ({2}s)
+select.ult_name	ULT  {0}
+age.title	WIE ALT BIST DU?
+age.body	Jedes Alter kann jeden Modus spielen. Dein Alter wird mit deinem Spielernamen für Spielstatistiken gespeichert.
+common.next	WEITER
+age.error	Gib dein Alter ein oder stell es mit dem Steuerkreuz ein.
+age.pad_hint	Gamepad: Steuerkreuz hoch/runter ändert um 1, links/rechts um 10 · A = weiter
+rooms.enter_name	GIB DEN RAUMNAMEN EIN
+rooms.name_rules	3-24 Buchstaben, Ziffern oder Leerzeichen. Freunde sehen ihn beim Beitreten. Räume fassen 2 bis 4 Spieler.
+rooms.create	ERSTELLEN
+common.one_moment	EINEN MOMENT...
+account.keep_name	BEHALTE DEINEN KÄMPFERNAMEN
+account.finish_in_browser	IM BROWSER ABSCHLIESSEN...
+account.sign_in_google	MIT GOOGLE ANMELDEN
+account.play_without	OHNE KONTO SPIELEN
+name.choose_first	Wähle zuerst deinen Spielernamen.
+common.cancelled	Abgebrochen.
+name.welcome	WILLKOMMEN, KÄMPFER! WIE HEISST DU?
+name.change_title	NAMEN ÄNDERN
+name.rules	3-16 Buchstaben, Ziffern oder _. Wähl einen lustigen Kämpfernamen, nicht deinen echten Namen. Damit finden und laden dich Freunde ein, und alle sehen ihn.
+name.suggest	VORSCHLAG
+name.checking	PRÜFE...
+name.lets_fight	AUF IN DEN KAMPF!
+common.save	SPEICHERN
+name.pad_hint_first	Gamepad: A = auf in den Kampf · Y = Namen vorschlagen
+name.pad_hint	Gamepad: A = speichern · Y = Namen vorschlagen
+online.connected_agreeing	Verbunden. Match wird abgestimmt...
+online.host_settings_changed	Die Einstellungen des Hosts haben sich geändert — tritt dem Raum neu bei.
+online.version_mismatch	Dein Gegner nutzt eine andere Spielversion. Beide Spieler brauchen dieselbe Version.
+rooms.title	MATCHMAKING
+rooms.kicker	RÄUME  ·  2-4 SPIELER  ·  ERSTELLEN · BEITRETEN · PER NAME EINLADEN
+rooms.create_rooms	RÄUME ERSTELLEN
+rooms.join_room	RAUM BEITRETEN
+rooms.creating	DEIN RAUM WIRD ERSTELLT...
+rooms.loading	DEINE RÄUME WERDEN GELADEN...
+rooms.none_yet	Noch kein Raum erstellt!
+rooms.one_moment	Einen Moment.
+rooms.empty_help	Drück RÄUME ERSTELLEN, um einen zu machen, oder RAUM BEITRETEN mit dem Raumcode eines Freundes.
+rooms.capacity_note	Räume fassen 2 bis 4 Spieler. Lade Freunde über ihren Spielernamen ein.
+rooms.invites_paused	Raum-Einladungen für ein paar Minuten pausiert
+rooms.refresh	AKTUALISIEREN
+rooms.hint	MATCHMAKING  ·  RÄUME
+rooms.new	NEU
+rooms.you_host	DU BIST HOST
+rooms.open	ÖFFNEN
+join.enter_code	GIB DEN RAUMCODE EIN
+join.body	Tipp oder füg den Raumcode ein, den dein Freund dir geschickt hat (Discord, Chat...).
+join.paste	EINFÜGEN
+join.join	BEITRETEN
+join.bad_code	Das ist kein Raumcode. Prüf ihn und versuch es nochmal (nur Buchstaben und Ziffern).
+rooms.fight_starting	Ein Raumkampf startet. Warte darauf oder verlass zuerst den Raum.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  EIN SPIELER IN DEINER NÄHE
+quick.player_found	SPIELER GEFUNDEN!
+quick.search_failed	SUCHE FEHLGESCHLAGEN
+quick.not_searching	KEINE SUCHE
+quick.connecting	Verbinde mit deinem Gegner...
+quick.searching_near	Suche einen Spieler in deiner Nähe
+quick.stopped	Die Suche wurde beendet. Versuch es nochmal.
+quick.press_search_again	Drück ERNEUT SUCHEN, um einen Spieler zu finden.
+quick.privacy	Das Schnellspiel teilt dein Land (aus den Geräteeinstellungen), nie deinen Standort.
+quick.search_again	ERNEUT SUCHEN
+quick.hint	VS ONLINE  ·  SCHNELLSPIEL
+room.kicker_opening	RAUM  ·  RAUM WIRD GEÖFFNET...
+room.opening	Raum wird geöffnet...
+room.your_fighter	DEIN KÄMPFER
+room.locked_in	BESTÄTIGT
+room.everyone_ok	Alle drücken OK: Der Kampf startet von selbst.
+room.share_code	Teile den Code oder lade Freunde per Name ein.
+room.empty_seat	Freier Platz
+room.stage_you	ARENA (du wählst)
+room.stage_host	ARENA (Host wählt)
+common.ok	OK
+room.loading	LÄDT...
+room.change	ÄNDERN
+room.starting	STARTET...
+room.start_fight	KAMPF STARTEN
+room.close	RAUM SCHLIESSEN
+room.leave	RAUM VERLASSEN
+room.hint	MATCHMAKING  ·  RAUM
+room.code	CODE
+room.copy	KOPIEREN
+room.host_can_invite	Der Host kann einen Freund per Name einladen.
+room.invite_by_name	FREUND PER NAME EINLADEN
+room.invite	EINLADEN
+room.full	Der Raum ist voll.
+invite.title	RAUM-EINLADUNG
+invite.warning	Namen werden nicht geprüft: Nimm nur Einladungen von Leuten an, die du kennst.
+invite.accept	ANNEHMEN
+invite.decline	ABLEHNEN
+room.hazards_on_btn	FALLEN  AN
+room.hazards_off_btn	FALLEN  AUS
+select.passive	PASSIV
+select.look	AUSSEHEN
+select.cosmetic	KOSMETIK
+select.arcade_round	ARCADE  ·  RUNDE {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   GAMEPAD 1 = 1P, GAMEPAD 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	DUMMY
+select.round_rival	RIVALE RUNDE {0}
+select.picks_at_start	WÄHLT BEIM KAMPFSTART
+select.signature_weapon	MARKENWAFFE  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  BESIEGT
+select.arcade_route	ARCADE-ROUTE  ·  ARENA {0} / {1}
+select.select_stage	ARENA WÄHLEN
+select.local_versus	LOKALES VERSUS
+select.arcade_rival	ARCADE-RIVALE
+select.training_dummy	TRAININGSDUMMY
+select.stage	ARENA
+select.hazards	FALLEN
+select.fight	KÄMPFEN
+select.change	ÄNDERN
+select.confirm	BESTÄTIGEN
+select.random	ZUFALL
+select.fate	DEM SCHICKSAL ÜBERLASSEN
+select.ready_bang	BEREIT!
+select.loadout	AUSRÜSTUNG
+select.waiting_1p	WARTE AUF 1P
+select.1p_picks_dummy	1P WÄHLT DEN DUMMY
+select.selecting	WÄHLT
+select.identity_hidden	IDENTITÄT VERBORGEN
+select.revealed_at_start	ENTHÜLLT BEI RUNDENSTART
+select.ai_picks	DIE KI WÄHLT IHREN KÄMPFER
+select.random_every_fight	JEDEN KAMPF EIN ZUFÄLLIGER CHARAKTER
+select.any_character	BELIEBIGER CHARAKTER · ZUFÄLLIGE PASSIVE UND WAFFE
+select.lock_in_hint	BESTÄTIGEN  ·  ODER CHARAKTER ANKLICKEN
+select.to_ready	UM BEREIT ZU SEIN
+select.cpu_difficulty_pick	CPU-SCHWIERIGKEIT  ·  VOR DEM KAMPF WÄHLEN
+select.ai_note	Kein Internet nötig. Die KI wählt für jeden Kampf einen neuen Charakter, Passive und Waffe, auch bei Revanchen.
+select.pad_difficulty	STEUERKREUZ HOCH / RUNTER  ·  SCHWIERIGKEIT
+select.key_difficulty	W / S  ·  SCHWIERIGKEIT
+select.start_training	TRAINING STARTEN
+select.fight_bang	KÄMPFT!
+select.click_to_start	ODER KLICKEN, UM MIT DER AKTUELLEN WAHL ZU STARTEN
+hud.ready	BEREIT...
+hud.rival	RIVALE
+hud.you	DU
+hud.ultimate_ready	{0} · ULTIMATE BEREIT
+hud.move_detected	{0} · BEWEGUNG ERKANNT
+hud.failed	{0} · FEHLGESCHLAGEN
+hud.training_title	TRAINING · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  TRAINING
+hud.intro_online	  ·  ONLINE  ·  ESC / START: VERLASSEN
+hud.ult_ready_press	ULT BEREIT - drück {0}
+hud.ult_ready	ULT BEREIT
+hud.sim_key	Sim-Taste: {0}
+hud.poses_live	 · Posen: Arme kreuzen = Block / Arm zur Seite = Feuerball / Hände hoch = Sprung
+hud.poses_keys	 · Posen 1 kreuzen / 2 Schlag / 3 heben · P krumm
+hud.poses_p2	 · Posen 8/9/0
+hud.training_help	TRAINING: T füllt dein Ultimate · K.o. gegangene Kämpfer kehren mit 0% zurück · Esc Pause
+hud.ult_pct	ULT {0}%
+hud.last_hit	LETZTER TREFFER  {0}
+hud.combo_hits	COMBO  {0} TREFFER  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KOs  {0}
+hud.cv_p1_sim	P1-KAMERA · SIM
+hud.cv_p1_live	P1-KAMERA · LIVE
+hud.cv_p2_sim	P2-KAMERA · SIM
+hud.cv_p2_live	P2-KAMERA · LIVE
+hud.hits_prefix	{0} TREFFER  
+results.no_contest	KEINE WERTUNG
+results.draw	UNENTSCHIEDEN!
+results.cpu_wins	CPU GEWINNT
+results.you_win	DU GEWINNST!
+results.rival_wins	RIVALE GEWINNT
+results.wins	{0} GEWINNT!
+results.takes_round	{0} holt die Runde
+results.stats	Treffer gelandet  {0}\nVolle Combos  {1}   ·   Beste Combo  {2}
+results.stats2	\nGesten-Ultimates  {0}\nParaden  {1}
+results.posture	\nGute Haltung  {0}%
+results.rewards_named	BELOHNUNGEN (Profil von {0})
+results.rewards_your	BELOHNUNGEN (dein Profil)
+results.rewards_p1	BELOHNUNGEN (P1-Profil)
+results.coins	+{0} Münzen  (gesamt {1})
+hud.do_pose	mach die Pose vor der Kamera
+results.place_1	1.
+results.place_2	2.
+results.place_3	3.
+results.place_4	4.
+results.out	RAUS
+results.out_1	RAUS · 1.
+results.out_2	RAUS · 2.
+results.out_3	RAUS · 3.
+results.out_4	RAUS · 4.
+results.red_team	TEAM ROT
+results.blue_team	TEAM BLAU
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} SPIELER
+hud.keys_line1	P{0}: {1} bewegen · {2} springen · 
+hud.keys_line2	{0} leicht · {1} schwer · {2} Spezial · 
+hud.keys_line3	{0} Block · {1} Sprint · 
+hud.keys_line4	{0} Skills · {1} Ult
+results.characters	CHARAKTERE
+results.stock_one	1 LEBEN
+results.stocks	{0} LEBEN
+hud.respawn	RESPAWN
+hud.drop_in	REIN INS GETÜMMEL!
+results.main_menu	HAUPTMENÜ
+pause.title	PAUSE
+pause.resume	FORTSETZEN
+pause.quit	ZUM MENÜ
+pause.hint	B / Rücktaste zum Fortsetzen
+leave.title	MATCH VERLASSEN?
+leave.body	Das Match läuft weiter. Verlassen zählt als Niederlage.
+leave.leave	VERLASSEN
+leave.hint	B / Rücktaste / Esc / Start zum Bleiben
+results.winner	SIEGER
+results.training_no_rewards	Training: keine Belohnungen
+cv.posture	Haltung {0}%
+cv.posture_low	Haltung {0}% - setz dich gerade hin!
+cv.telemetry_ok	Telemetrie OK
+net.rooms_load_failed	Deine Räume konnten nicht geladen werden: {0}
+net.host_limit	Du hostest schon {0} Räume. Schließ zuerst einen.
+net.creating_named	„{0}“ wird erstellt...
+net.room_ready_code	Raum „{0}“ ist bereit. Teile den Code {1} oder lade einen Freund ein.
+net.create_failed	Raum konnte nicht erstellt werden: {0}
+net.joining_room	Trete Raum {0} bei...
+net.you_joined	Du bist „{0}“ beigetreten. Wähle deinen Kämpfer und drück OK.
+net.no_room_code	Kein Raum mit Code {0}. Prüf den Code und versuch es nochmal.
+net.room_full_n	Dieser Raum ist voll ({0} Spieler).
+net.join_failed	Beitritt fehlgeschlagen: {0}
+net.update_failed	Raum konnte nicht aktualisiert werden: {0}
+net.could_not_what	Es war nicht möglich, {0}: {1}
+net.what_stage	die Arena zu ändern
+net.what_hazards	die Fallen zu ändern
+net.press_ok_again	{0} Beide drücken nochmal OK und KAMPF STARTEN.
+net.udp_port	UDP-Port {0} konnte nicht geöffnet werden (schon belegt?).
+net.lan_ready	LAN-Host bereit. Dein Freund tritt bei: {0}  (Port {1})
+net.bad_ip	„{0}“ ist keine gültige IP-Adresse.
+net.connecting_to	Verbinde mit {0}...
+net.sign_in_failed	Anmeldung fehlgeschlagen: {0}
+net.room_ready	Raum „{0}“ ist bereit. Teile den Code mit deinem Freund.
+net.searching_in	Suche Spieler in {0}...
+net.start_failed	Kampf konnte nicht starten: {0}
+net.host_unreachable	Host nicht erreichbar: {0}
+net.area_world	der ganzen Welt
+net.area_country_and	deinem Land und {0}

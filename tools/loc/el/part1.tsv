@@ -1,0 +1,244 @@
+lang.backdrop	ΓΛΩΣΣΑ
+lang.title	ΔΙΑΛΕΞΕ ΓΛΩΣΣΑ
+lang.subtitle	Όλο το παιχνίδι θα χρησιμοποιεί αυτή τη γλώσσα. Μπορείς να την αλλάξεις όποτε θες στις ΡΥΘΜΙΣΕΙΣ.
+lang.search_hint	Αναζήτηση γλωσσών...
+lang.no_match	Καμία γλώσσα δεν ταιριάζει με την αναζήτηση.
+lang.english_text	Αγγλικό κείμενο προς το παρόν
+lang.confirm	ΕΠΙΒΕΒΑΙΩΣΗ  ·  {0}
+lang.confirm_none	ΕΠΙΒΕΒΑΙΩΣΗ
+lang.pad_hint	Πληκτρολόγησε για αναζήτηση · Πάνω / Κάτω για επιλογή · Enter ή κουμπί A = επιβεβαίωση
+common.cancel	ΑΚΥΡΟ
+settings.language	ΓΛΩΣΣΑ  ·  {0}
+difficulty.dummy	Ομοίωμα
+difficulty.easy	Εύκολο
+difficulty.medium	Μέτριο
+difficulty.hard	Δύσκολο
+difficulty.dummy_upper	ΟΜΟΙΩΜΑ
+difficulty.easy_upper	ΕΥΚΟΛΟ
+difficulty.medium_upper	ΜΕΤΡΙΟ
+difficulty.hard_upper	ΔΥΣΚΟΛΟ
+nav.home	ΑΡΧΙΚΗ
+nav.play	ΠΑΙΞΕ
+nav.training	ΠΡΟΠΟΝΗΣΗ
+nav.arcade	ARCADE
+nav.collection	ΣΥΛΛΟΓΗ
+nav.settings	ΡΥΘΜΙΣΕΙΣ
+account.signed_in_as	Συνδέθηκες ως {0}.
+account.signed_in	Συνδέθηκες.
+account.signed_out	Αποσυνδέθηκες.
+keys.who	P{0} {1}
+keys.reserved	Το {0} είναι πλήκτρο πόζας / στάσης (1 2 3, 8 9 0, αριθμητικό 7 8 9, P, -). Διάλεξε άλλο.
+keys.swapped	{0};  το {1} είναι τώρα {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Το online παιχνίδι είναι για παίκτες 13 ετών και άνω.
+arcade.clear_toast	ARCADE ΟΛΟΚΛΗΡΩΘΗΚΕ! Νικήθηκαν και οι {0} αντίπαλοι
+precheck.too_dark	Πολύ σκοτεινά ({0}%) - βάλε φως
+precheck.too_bright	Πολύ φωτεινά ({0}%) - μείωσε τη λάμψη
+precheck.good	Καλά ({0}%)
+loading.weapon_art	Γραφικά όπλων: {0}
+loading.fighter	Μαχητής: {0}
+precheck.checking	ΕΛΕΓΧΟΣ... {0}
+wipe.character_select	ΕΠΙΛΟΓΗ ΧΑΡΑΚΤΗΡΑ
+wipe.arcade	ARCADE
+results.rematch	ΡΕΒΑΝΣ
+results.continue	ΣΥΝΕΧΕΙΑ
+results.finish	ΤΕΛΟΣ
+results.next_battle	ΕΠΟΜΕΝΗ ΜΑΧΗ
+wipe.arcade_clear	ARCADE ΟΛΟΚΛΗΡΩΘΗΚΕ
+precheck.title	ΕΛΕΓΧΟΣ ΚΑΜΕΡΑΣ
+precheck.camera_unavailable	Η κάμερα δεν είναι διαθέσιμη
+precheck.simulated_feed	Προσομοιωμένη εικόνα (κάμερα κλειστή)
+precheck.upper_body_ok	Ο κορμός είναι στο κάδρο
+precheck.step_back	Πήγαινε πίσω - ώμοι και γοφοί πρέπει να φαίνονται
+loading.interface	Γραφικά διεπαφής
+loading.typefaces	Γραμματοσειρές
+loading.pose_model	Μοντέλο ανίχνευσης πόζας
+loading.ready	Έτοιμο
+onboarding.welcome	ΚΑΛΩΣ ΗΡΘΕΣ!
+onboarding.your_account	Ο ΛΟΓΑΡΙΑΣΜΟΣ ΣΟΥ
+onboarding.your_name	ΤΟ ΟΝΟΜΑ ΠΑΙΚΤΗ ΣΟΥ
+rooms.backdrop_create	MATCHMAKING  ·  ΔΗΜΙΟΥΡΓΙΑ ΔΩΜΑΤΙΩΝ
+rooms.backdrop_join	MATCHMAKING  ·  ΕΙΣΟΔΟΣ ΣΕ ΔΩΜΑΤΙΟ
+precheck.all_passed	ΟΛΟΙ ΟΙ ΕΛΕΓΧΟΙ ΠΕΡΑΣΑΝ
+precheck.failed	Ο ΕΛΕΓΧΟΣ ΑΠΕΤΥΧΕ
+precheck.lighting	ΦΩΤΙΣΜΟΣ
+precheck.framing	ΚΑΔΡΑΡΙΣΜΑ
+precheck.posture	ΣΤΑΣΗ
+precheck.upright	Ωραία και ίσια
+precheck.sit_up	Κάτσε ίσια για νομίσματα μπόνους
+common.retry	ΞΑΝΑ
+precheck.play_anyway	ΠΑΙΞΕ ΟΠΩΣ ΚΑΙ ΝΑ ΕΧΕΙ
+common.back	ΠΙΣΩ
+precheck.ranked_note	Οι κατατακτήριοι αγώνες απαιτούν αυτόν τον έλεγχο. Οι απλοί αγώνες μπορούν να τον παραλείψουν.
+precheck.hint	ΕΛΕΓΧΟΣ ΚΑΜΕΡΑΣ ΠΡΙΝ ΤΟΝ ΑΓΩΝΑ
+hint.select	ΕΠΙΛΟΓΗ
+home.play	ΠΑΙΞΕ
+home.training	ΠΡΟΠΟΝΗΣΗ
+home.arcade	ARCADE
+home.collection	ΣΥΛΛΟΓΗ ΧΑΡΑΚΤΗΡΩΝ
+home.settings	ΡΥΘΜΙΣΕΙΣ
+home.exit	ΕΞΟΔΟΣ
+home.play_desc	Γρήγορος online αγώνας, δωμάτια με φίλους ή εναντίον CPU
+home.training_desc	Ρύθμιση κάμερας, εξάσκηση κινήσεων και ομοίωμα προπόνησης
+home.arcade_desc	Και οι πέντε αντίπαλοι στη σειρά, σε κάθε αρένα
+home.collection_desc	Εμφανίσεις, όπλα και το διακοσμητικό banner
+home.settings_desc	Δυσκολία, επιλογές κάμερας και πλήκτρα
+home.exit_desc	Κλείσιμο του παιχνιδιού
+tips.1	Γέμισε τη μπάρα ULT και πάτα Ultimate - μετά κάνε την πόζα του μαχητή σου στην κάμερα πριν τελειώσει η αντίστροφη μέτρηση.
+tips.2	Περισσότερη DEF μειώνει τη ζημιά κάθε χτυπήματος και δυναμώνει την άμυνά σου.
+tips.3	Η καλή στάση που βλέπει η κάμερα δίνει νομίσματα μπόνους μετά από κάθε αγώνα.
+tips.4	Οι εμφανίσεις και τα όπλα είναι μόνο διακοσμητικά - τα στατιστικά δεν αλλάζουν ποτέ.
+tips.5	Στην Προπόνηση, πάτα T για να γεμίσεις το ultimate. Το ομοίωμα σηκώνεται πάντα.
+tips.6	Κάθε μαχητής έχει δύο παθητικές ικανότητες - διάλεξε μία στον εξοπλισμό μετά την επιβεβαίωση.
+tips.7	Οι online μάχες χρησιμοποιούν rollback netcode: και τα δύο παιχνίδια τρέχουν την ίδια μάχη από τις ίδιες εντολές.
+stats.power	ΔΥΝΑΜΗ
+stats.speed	ΤΑΧΥΤΗΤΑ
+stats.range	ΕΜΒΕΛΕΙΑ
+stats.endurance	ΑΝΤΟΧΗ
+stats.recovery	ΑΝΑΚΑΜΨΗ
+training.use_block	Άμυνα · ultimate για Melee & Magic
+training.use_fireball	Πύρινη σφαίρα · ultimate για Ranged & Polearm
+training.use_superjump	Σούπερ άλμα · ultimate για Heavy
+menu.online_locked	Τα online modes είναι για παίκτες 13 ετών και άνω.
+menu.no_internet	Χωρίς internet: σύνδεσε Wi-Fi ή δεδομένα κινητής. Το VS AI παίζει offline.
+menu.four_player_soon	Τα 2v2 και Battle Royale χρειάζονται υποστήριξη 4 παικτών, που έρχεται σε επόμενη ενημέρωση.
+profile.edit_name	ΑΛΛΑΓΗ ΟΝΟΜΑΤΟΣ
+profile.win_loss	Ν {0}  ·  Η {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	ΕΤΟΙΜΟ
+loading.loading	ΦΟΡΤΩΣΗ
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   ολοκληρώθηκε x{2}
+arcade.rule_fight_all	Πάλεψε με όλους τους {0} χαρακτήρες στη σειρά, με τυχαία σειρά.
+arcade.rule_difficulty	Δυσκολία CPU: {0} (αλλάζει στις Ρυθμίσεις).
+arcade.final	ΤΕΛΙΚΟΣ
+arcade.round	ΓΥΡΟΣ {0}
+training.cv_setup_source	ΡΥΘΜΙΣΗ CV · {0}
+training.status	Κάμερα: {0}\nΑνίχνευση: {1}\nΕντοπίστηκε: {2}
+training.off	κλειστό
+training.none	κανένα
+training.status_posture	   ·   Στάση {0}%   ·   Τηλεμετρία {1}
+collection.gold_cinematic_suffix	 · ΧΡΥΣΟ ΒΙΝΤΕΟ
+collection.only	ΜΟΝΟ {0}
+collection.pull1	ΤΡΑΒΗΓΜΑ x1  ·  {0}
+collection.pull10	ΤΡΑΒΗΓΜΑ x10  ·  {0}
+collection.dup_suffix	  (διπλό +20)
+collection.new_suffix	  ΝΕΟ!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} δευτερόλεπτα  <size=12><color=#9AA6BC>(ίδιο σε κάθε αγώνα)</color></size>
+settings.change_name_as	ΑΛΛΑΓΗ ΟΝΟΜΑΤΟΣ  ·  {0}
+settings.change_name	ΑΛΛΑΓΗ ΟΝΟΜΑΤΟΣ
+settings.keys_help	Κάνε κλικ σε μια αντιστοίχιση, μετά πάτα ένα πλήκτρο ή κάνε κλικ στο κουτί με κουμπί ποντικιού (Esc / κουμπί B / κλικ αλλού ακυρώνει· όριο 5 δ). Αν το χρησιμοποιεί ήδη κάποιος παίκτης, τα δύο ανταλλάσσονται.\nΠόζες κάμερας: σταυρωμένα χέρια = άμυνα · χέρι στο πλάι = πύρινη σφαίρα · δύο χέρια πάνω = σούπερ άλμα (πόζες πληκτρολογίου: 1/2/3 και 8/9/0).
+rarity.common	ΚΟΙΝΟ
+rarity.rare	ΣΠΑΝΙΟ
+rarity.epic	ΕΠΙΚΟ
+rarity.legendary	ΘΡΥΛΙΚΟ
+skin.default	Κλασικό
+skin.mint	Μέντα Ποπ
+skin.shadow	Σκιά
+skin.sakura	Σακούρα
+skin.inferno	Κόλαση
+skin.celestial	Ουράνιο
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	ΜΟΝΟ 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nΟΜΑΔΕΣ
+play.four_player_later	Τα 2v2 και Battle Royale έρχονται με την υποστήριξη 4 παικτών σε επόμενη ενημέρωση.
+play.team_tag	4P · 2 ΟΜΑΔΕΣ
+play.royale_tag	4P · ΟΛΟΙ ΕΝΑΝΤΙΟΝ ΟΛΩΝ
+collection.all_fighters	ΟΛΟΙ ΟΙ ΜΑΧΗΤΕΣ
+arcade.mode	ARCADE MODE
+home.tagline	ΜΑΧΕΣ ΣΕ ΑΡΕΝΑ  ·  ULTIMATE ΜΕ ΚΙΝΗΣΕΙΣ ΣΩΜΑΤΟΣ
+play.royale_card	BATTLE\nROYALE
+training.kicker	ΡΥΘΜΙΣΗ ΚΑΜΕΡΑΣ & ΕΞΑΣΚΗΣΗ
+settings.camera_tracking	ΑΝΙΧΝΕΥΣΗ ΚΑΜΕΡΑΣ (WEBCAM)
+training.camera_off	ΑΝΙΧΝΕΥΣΗ ΚΑΜΕΡΑΣ: ΚΛΕΙΣΤΗ
+training.camera_on	ΑΝΙΧΝΕΥΣΗ ΚΑΜΕΡΑΣ: ΑΝΟΙΧΤΗ
+collection.hint	ΣΥΛΛΟΓΗ ΧΑΡΑΚΤΗΡΩΝ
+play.choose_style	ΔΙΑΛΕΞΕ ΣΤΥΛ ΠΑΙΧΝΙΔΙΟΥ
+online.kicker	ΔΙΑΛΕΞΕ ΣΤΥΛ ΠΑΙΧΝΙΔΙΟΥ  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	ΔΙΑΛΕΞΕ ΜΑΧΗ  ·  VS ONLINE · MATCHMAKING · VS CPU
+play.coming_soon	ΣΥΝΤΟΜΑ
+training.cv	ΥΠΟΛΟΓΙΣΤΙΚΗ ΟΡΑΣΗ
+online.connection	ΣΥΝΔΕΣΗ
+collection.banner	ΔΙΑΚΟΣΜΗΤΙΚΟ BANNER
+settings.cpu_difficulty	ΔΥΣΚΟΛΙΑ CPU
+play.create_join	ΔΗΜΙΟΥΡΓΙΑ · ΕΙΣΟΔΟΣ ΣΕ ΔΩΜΑΤΙΑ
+settings.cv_overlay	CV OVERLAY ΣΤΟΝ ΑΓΩΝΑ
+quests.coins_note	Τα νομίσματα έρχονται μόνο παίζοντας: νίκες, PvE, αποστολές και καλή στάση μπροστά στην κάμερα.
+collection.odds	Κοινό 60% · Σπάνιο 28% · Επικό 10% · Θρυλικό 2%
+collection.equip	ΕΞΟΠΛΙΣΜΟΣ
+collection.equipped	ΕΞΟΠΛΙΣΜΕΝΟ
+hint.exit	ΕΞΟΔΟΣ
+home.exit_upper	ΕΞΟΔΟΣ
+exit.title	ΕΞΟΔΟΣ ΑΠΟ ΤΟ ΠΑΙΧΝΙΔΙ;
+online.royale_desc	Ο καθένας για τον εαυτό του. Κερδίζει ο τελευταίος που μένει όρθιος.
+arcade.kicker	ΠΕΝΤΕ ΑΝΤΙΠΑΛΟΙ · ΜΙΑ ΔΙΑΔΡΟΜΗ
+loading.for_battle	ΓΙΑ ΜΑΧΗ
+online.invites_note	Οι προσκλήσεις φίλων σε δωμάτια εμφανίζονται εδώ. Τα δωμάτια με φίλους είναι στο ΠΑΙΞΕ > MATCHMAKING.
+settings.kicker	ΠΑΙΧΝΙΔΙ · ΚΑΜΕΡΑ · ΧΕΙΡΙΣΜΟΣ
+training.gestures_live	ΚΙΝΗΣΕΙΣ  (κάνε την πόζα μπροστά στην κάμερα - γροθιά = ένα χέρι τεντωμένο στο πλάι)
+training.gestures_sim	ΚΙΝΗΣΕΙΣ  (κράτα το πλήκτρο για προσομοίωση της πόζας)
+settings.key_bindings	ΠΛΗΚΤΡΑ
+settings.keys_reset	Τα πλήκτρα επανήλθαν
+play.locked	ΚΛΕΙΔΩΜΕΝΟ
+arcade.rule_retry	Έχασες γύρο; Συνέχισε και ξαναδοκίμασε.
+home.hint	ΚΥΡΙΟ ΜΕΝΟΥ
+settings.master_volume	ΣΥΝΟΛΙΚΗ ΕΝΤΑΣΗ
+settings.match_time	ΔΙΑΡΚΕΙΑ ΑΓΩΝΑ
+play.matchmaking_card	MATCH\nMAKING
+hint.move	ΚΙΝΗΣΗ
+play.matchmaking_desc	Φτιάξε δωμάτιο, μοιράσου τον κωδικό ή κάλεσε φίλους με το όνομά τους.
+play.no_internet_tag	ΧΩΡΙΣ INTERNET
+online.no_internet_body	Δεν υπάρχει internet τώρα. Σύνδεσε Wi-Fi ή δεδομένα κινητής, ή παίξε εναντίον CPU.
+common.off	ΚΛΕΙΣΤΟ
+online.offline	OFFLINE
+common.on	ΑΝΟΙΧΤΟ
+settings.player1	ΠΑΙΚΤΗΣ 1
+settings.player2	ΠΑΙΚΤΗΣ 2
+training.practice_dummy	ΕΞΑΣΚΗΣΗ ΜΕ ΟΜΟΙΩΜΑ
+settings.precheck	ΕΛΕΓΧΟΣ ΚΑΜΕΡΑΣ ΠΡΙΝ ΤΟΝ ΑΓΩΝΑ
+loading.prepare	ΕΤΟΙΜΑΣΟΥ
+settings.listening_hint	ΠΑΤΑ ΠΛΗΚΤΡΟ Η ΚΑΝΕ ΚΛΙΚ ΣΤΟ ΚΟΥΤΙ  ·  ESC / ΚΟΥΜΠΙ B ΑΚΥΡΩΝΕΙ  ·  ΤΑ ΚΟΥΜΠΙΑ ΧΕΙΡΙΣΤΗΡΙΟΥ ΔΕΝ ΑΝΤΙΣΤΟΙΧΙΖΟΝΤΑΙ
+training.slouch_note	Πάτα P για καμπουριαστή στάση και δες το σκορ στάσης να πέφτει.
+settings.profile_reset	Το προφίλ μηδενίστηκε (το όνομα και η σύνδεση μένουν)
+collection.pull_to_unlock	Τράβηξε για ξεκλείδωμα
+quests.title	ΑΠΟΣΤΟΛΕΣ
+online.quick_match	ΓΡΗΓΟΡΟΣ ΑΓΩΝΑΣ
+play.online_desc	Γρήγορος αγώνας με παίκτη κοντά σου, ή απάντησε σε πρόσκληση φίλου.
+online.solo_desc	Γρήγορος αγώνας: πάλεψε με παίκτη που ψάχνει τώρα, πρώτα τους πιο κοντινούς.
+settings.reset_keys	ΕΠΑΝΑΦΟΡΑ ΠΛΗΚΤΡΩΝ
+settings.reset_profile	ΕΠΑΝΑΦΟΡΑ ΠΡΟΦΙΛ
+arcade.rival_unknown	ΑΝΤΙΠΑΛΟΣ  ???
+play.rooms_tag	ΔΩΜΑΤΙΑ · 2-4 ΠΑΙΚΤΕΣ
+online.rollback_body	Rollback netcode: και τα δύο παιχνίδια τρέχουν την ίδια μάχη από τις ίδιες εντολές, έτσι μένει γρήγορη και δίκαιη.
+settings.screen_shake	ΚΟΥΝΗΜΑ ΟΘΟΝΗΣ
+profile.set_name	ΟΡΙΣΕ ΟΝΟΜΑ
+settings.sfx_volume	ΕΝΤΑΣΗ ΕΦΕ
+training.simulate_pose	ΠΡΟΣΟΜΟΙΩΣΗ ΠΟΖΑΣ
+collection.kicker	ΕΜΦΑΝΙΣΕΙΣ · ΟΠΛΑ · ΔΙΑΚΟΣΜΗΤΙΚΟ BANNER
+training.slouch	ΚΑΜΠΟΥΡΑ
+online.solo_card	SOLO\n1V1
+home.start	ΕΝΑΡΞΗ
+arcade.start	ΕΝΑΡΞΗ ARCADE
+exit.stay	ΜΕΝΩ
+settings.sure	ΣΙΓΟΥΡΑ;
+settings.sure_reset_profile	ΣΙΓΟΥΡΑ; ΧΑΝΕΤΑΙ ΟΛΗ Η ΠΡΟΟΔΟΣ
+collection.banner_note	Μόνο εμφανίσεις & βίντεο ultimate. Τα στατιστικά είναι ίδια σε κάθε εμφάνιση - τίποτα δεν κλειδώνεται πίσω από πληρωμή.
+hint.tabs	ΚΑΡΤΕΛΕΣ
+loading.tip	ΣΥΜΒΟΥΛΗ
+training.hint	ΠΡΟΠΟΝΗΣΗ  /  ΡΥΘΜΙΣΗ CV
+arcade.rule_stages	Η αρένα αλλάζει κάθε γύρο, από το Βουνό της Αρχής ως το Ωκεάνιο Μνημείο.
+online.team_desc	Δύο ομάδες των δύο. Χωρίς φίλια πυρά: τα χτυπήματά σου δεν πληγώνουν ποτέ τον συμπαίκτη σου.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  ΣΤΥΛ ΠΑΙΧΝΙΔΙΟΥ
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Οι νίκες δίνουν νομίσματα και πρόοδο αποστολών, όπως στο VS CPU.
+exit.saved_note	Το προφίλ, τα νομίσματα και η συλλογή σου είναι αποθηκευμένα σε αυτή τη συσκευή.
+settings.key_listening	πλήκτρο ή κλικ εδώ
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Διαλέγεις μαχητή και ΕΥΚΟΛΟ, ΜΕΤΡΙΟ ή ΔΥΣΚΟΛΟ. Η CPU παίρνει τυχαίο μαχητή.
+account.keep_name_body	Συνδέσου με τον λογαριασμό Google σου και το όνομα και τα στοιχεία σου μένουν μαζί σου: κάθε φορά που ανοίγεις το παιχνίδι και σε κάθε υπολογιστή. Άλλος λογαριασμός Google παίρνει δικό του νέο όνομα.

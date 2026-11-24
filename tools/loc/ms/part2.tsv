@@ -1,0 +1,256 @@
+rooms.more	+ {0} bilik lagi
+rooms.created	Bilik "{0}" dicipta. Klik untuk berkongsi kod atau menjemput rakan.
+quick.searching	MENCARI
+quick.looking_in	MENCARI DI:  {0}
+room.kicker	BILIK  ·  2-4 PEMAIN  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	SEDIA BERTARUNG
+room.full_suffix	 · BILIK PENUH
+room.waiting	MENUNGGU PEMAIN
+room.joined	{0}  ·  {1} / {2} MENYERTAI
+room.host	HOS
+room.player_n	PEMAIN {0}
+room.you_suffix	 · ANDA
+room.hazards_host_pick	{0} · PILIHAN HOS
+room.hazards_on	HALANGAN HIDUP
+room.hazards_off	HALANGAN MATI
+room.code_copied	Kod bilik {0} disalin. Tampalkan untuk rakan anda.
+invite.body	{0} menjemput anda ke {1}   ({2}s)
+select.ult_name	ULT  {0}
+age.title	BERAPA UMUR ANDA?
+age.body	Semua peringkat umur boleh bermain semua mod. Umur anda direkodkan bersama nama pemain untuk statistik permainan.
+common.next	SETERUSNYA
+age.error	Taip umur anda, atau tetapkan dengan D-pad.
+age.pad_hint	Gamepad: D-pad atas/bawah ubah 1, kiri/kanan ubah 10 · A = seterusnya
+rooms.enter_name	MASUKKAN NAMA BILIK
+rooms.name_rules	3-24 huruf, nombor atau ruang. Rakan melihatnya apabila menyertai. Bilik memuatkan 2 hingga 4 pemain.
+rooms.create	CIPTA
+common.one_moment	SEBENTAR...
+account.keep_name	SIMPAN NAMA PEJUANG ANDA
+account.finish_in_browser	SELESAIKAN DALAM PELAYAR...
+account.sign_in_google	LOG MASUK DENGAN GOOGLE
+account.play_without	MAIN TANPA AKAUN
+name.choose_first	Pilih nama pemain anda dahulu.
+common.cancelled	Dibatalkan.
+name.welcome	SELAMAT DATANG, PEJUANG! SIAPA NAMA ANDA?
+name.change_title	TUKAR NAMA ANDA
+name.rules	3-16 huruf, nombor atau _. Pilih nama pejuang yang seronok, bukan nama sebenar anda. Rakan menggunakannya untuk mencari dan menjemput anda, dan semua orang melihatnya.
+name.suggest	CADANG
+name.checking	MENYEMAK...
+name.lets_fight	JOM BERTARUNG!
+common.save	SIMPAN
+name.pad_hint_first	Gamepad: A = jom bertarung · Y = cadangkan nama
+name.pad_hint	Gamepad: A = simpan · Y = cadangkan nama
+online.connected_agreeing	Bersambung. Menyelaraskan perlawanan...
+online.host_settings_changed	Tetapan hos berubah — sertai semula bilik.
+online.version_mismatch	Lawan anda menggunakan versi permainan yang berbeza. Kedua-dua pemain perlukan binaan yang sama.
+rooms.title	PADANAN
+rooms.kicker	BILIK  ·  2-4 PEMAIN  ·  CIPTA · SERTAI · JEMPUT DENGAN NAMA
+rooms.create_rooms	CIPTA BILIK
+rooms.join_room	SERTAI BILIK
+rooms.creating	MENCIPTA BILIK ANDA...
+rooms.loading	MEMUATKAN BILIK ANDA...
+rooms.none_yet	Belum ada bilik!
+rooms.one_moment	Sebentar.
+rooms.empty_help	Tekan CIPTA BILIK untuk membuatnya, atau SERTAI BILIK dengan kod bilik rakan.
+rooms.capacity_note	Bilik memuatkan 2 hingga 4 pemain. Jemput rakan dengan nama pemain mereka.
+rooms.invites_paused	Jemputan bilik dijeda selama beberapa minit
+rooms.refresh	MUAT SEMULA
+rooms.hint	PADANAN  ·  BILIK
+rooms.new	BAHARU
+rooms.you_host	ANDA HOS
+rooms.open	BUKA
+join.enter_code	MASUKKAN KOD BILIK
+join.body	Taip atau tampal kod bilik yang rakan anda hantar (Discord, sembang...).
+join.paste	TAMPAL
+join.join	SERTAI
+join.bad_code	Itu bukan kod bilik. Semak dan cuba lagi (huruf dan nombor sahaja).
+rooms.fight_starting	Pertarungan bilik sedang bermula. Tunggu, atau tinggalkan bilik dahulu.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  PEMAIN BERHAMPIRAN
+quick.player_found	PEMAIN DITEMUI!
+quick.search_failed	CARIAN GAGAL
+quick.not_searching	TIDAK MENCARI
+quick.connecting	Menyambung kepada lawan anda...
+quick.searching_near	Mencari pemain berhampiran anda
+quick.stopped	Carian terhenti. Cuba lagi.
+quick.press_search_again	Tekan CARI LAGI untuk mencari pemain.
+quick.privacy	Perlawanan pantas berkongsi negara anda (dari tetapan peranti), bukan lokasi anda.
+quick.search_again	CARI LAGI
+quick.hint	VS ONLINE  ·  PERLAWANAN PANTAS
+room.kicker_opening	BILIK  ·  MEMBUKA BILIK...
+room.opening	Membuka bilik...
+room.your_fighter	PEJUANG ANDA
+room.locked_in	DIKUNCI
+room.everyone_ok	Semua tekan OK: pertarungan bermula dengan sendirinya.
+room.share_code	Kongsi kod, atau jemput rakan dengan nama.
+room.empty_seat	Tempat kosong
+room.stage_you	PENTAS (anda pilih)
+room.stage_host	PENTAS (hos pilih)
+common.ok	OK
+room.loading	MEMUATKAN...
+room.change	TUKAR
+room.starting	MEMULAKAN...
+room.start_fight	MULA BERTARUNG
+room.close	TUTUP BILIK
+room.leave	TINGGALKAN BILIK
+room.hint	PADANAN  ·  BILIK
+room.code	KOD
+room.copy	SALIN
+room.host_can_invite	Hos boleh menjemput rakan dengan nama.
+room.invite_by_name	JEMPUT RAKAN DENGAN NAMA
+room.invite	JEMPUT
+room.full	Bilik sudah penuh.
+invite.title	JEMPUTAN BILIK
+invite.warning	Nama tidak disahkan: terima jemputan hanya daripada orang yang anda kenali.
+invite.accept	TERIMA
+invite.decline	TOLAK
+room.hazards_on_btn	HALANGAN  HIDUP
+room.hazards_off_btn	HALANGAN  MATI
+select.passive	PASIF
+select.look	RUPA
+select.cosmetic	KOSMETIK
+select.arcade_round	ARKED  ·  PUSINGAN {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   GAMEPAD 1 = 1P, GAMEPAD 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ANAK PANAH  ENTER  BACKSPACE  DEL
+select.dummy	PATUNG
+select.round_rival	SAINGAN PUSINGAN {0}
+select.picks_at_start	MEMILIH SEMASA PERTARUNGAN BERMULA
+select.signature_weapon	SENJATA KHAS  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  DITEWASKAN
+select.arcade_route	LALUAN ARKED  ·  PENTAS {0} / {1}
+select.select_stage	PILIH PENTAS
+select.local_versus	LAWAN TEMPATAN
+select.arcade_rival	SAINGAN ARKED
+select.training_dummy	PATUNG LATIHAN
+select.stage	PENTAS
+select.hazards	HALANGAN
+select.fight	BERTARUNG
+select.change	TUKAR
+select.confirm	SAHKAN
+select.random	RAWAK
+select.fate	SERAHKAN PADA NASIB
+select.ready_bang	SEDIA!
+select.loadout	LOADOUT
+select.waiting_1p	MENUNGGU 1P
+select.1p_picks_dummy	1P MEMILIH PATUNG
+select.selecting	MEMILIH
+select.identity_hidden	IDENTITI TERSEMBUNYI
+select.revealed_at_start	DIDEDAHKAN APABILA PUSINGAN BERMULA
+select.ai_picks	AI MEMILIH PEJUANGNYA
+select.random_every_fight	WATAK RAWAK SETIAP PERTARUNGAN
+select.any_character	SEBARANG WATAK · PASIF DAN SENJATA RAWAK
+select.lock_in_hint	KUNCI  ·  ATAU KLIK WATAK
+select.to_ready	UNTUK BERSEDIA
+select.cpu_difficulty_pick	KESUKARAN CPU  ·  PILIH SEBELUM BERTARUNG
+select.ai_note	Tidak perlu internet. AI memilih watak, pasif dan senjata baharu untuk setiap pertarungan, termasuk lawan semula.
+select.pad_difficulty	D-PAD ATAS / BAWAH  ·  KESUKARAN
+select.key_difficulty	W / S  ·  KESUKARAN
+select.start_training	MULA LATIHAN
+select.fight_bang	BERTARUNG!
+select.click_to_start	ATAU KLIK UNTUK MULA DENGAN PILIHAN SEMASA
+hud.ready	SEDIA...
+hud.rival	SAINGAN
+hud.you	ANDA
+hud.ultimate_ready	{0} · ULTIMATE SEDIA
+hud.move_detected	{0} · GERAKAN DIKESAN
+hud.failed	{0} · GAGAL
+hud.training_title	LATIHAN · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  LATIHAN
+hud.intro_online	  ·  DALAM TALIAN  ·  ESC / START: KELUAR
+hud.ult_ready_press	ULT SEDIA - tekan {0}
+hud.ult_ready	ULT SEDIA
+hud.sim_key	kekunci simulasi: {0}
+hud.poses_live	 · pose: silang tangan = tangkis / tangan ke sisi = bebola api / tangan ke atas = lompat
+hud.poses_keys	 · pose 1 silang / 2 tumbuk / 3 angkat · P bongkok
+hud.poses_p2	 · pose 8/9/0
+hud.training_help	LATIHAN: T memenuhkan ultimate · pejuang yang KO muncul semula pada 0% · Esc jeda
+hud.ult_pct	ULT {0}%
+hud.last_hit	PUKULAN TERAKHIR  {0}
+hud.combo_hits	KOMBO  {0} PUKULAN  +{1}%
+hud.combo	KOMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	KAMERA P1 · SIMULASI
+hud.cv_p1_live	KAMERA P1 · LANGSUNG
+hud.cv_p2_sim	KAMERA P2 · SIMULASI
+hud.cv_p2_live	KAMERA P2 · LANGSUNG
+hud.hits_prefix	{0} PUKULAN
+results.no_contest	TIADA KEPUTUSAN
+results.draw	SERI!
+results.cpu_wins	CPU MENANG
+results.you_win	ANDA MENANG!
+results.rival_wins	SAINGAN MENANG
+results.wins	{0} MENANG!
+results.takes_round	{0} memenangi pusingan
+results.stats	Pukulan kena  {0}\nKombo penuh  {1}   ·   Kombo terbaik  {2}
+results.stats2	\nUltimate gerak isyarat  {0}\nParry  {1}
+results.posture	\nPostur baik  {0}%
+results.rewards_named	GANJARAN (profil {0})
+results.rewards_your	GANJARAN (profil anda)
+results.rewards_p1	GANJARAN (profil P1)
+results.coins	+{0} syiling  (jumlah {1})
+hud.do_pose	buat pose di depan kamera
+results.place_1	KE-1
+results.place_2	KE-2
+results.place_3	KE-3
+results.place_4	KE-4
+results.out	TERKELUAR
+results.out_1	TERKELUAR · KE-1
+results.out_2	TERKELUAR · KE-2
+results.out_3	TERKELUAR · KE-3
+results.out_4	TERKELUAR · KE-4
+results.red_team	PASUKAN MERAH
+results.blue_team	PASUKAN BIRU
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} PEMAIN
+hud.keys_line1	P{0}: {1} gerak · {2} lompat ·
+hud.keys_line2	{0} ringan · {1} berat · {2} khas ·
+hud.keys_line3	{0} tangkis · {1} pecut ·
+hud.keys_line4	{0} skil · {1} ult
+results.characters	WATAK
+results.stock_one	1 NYAWA
+results.stocks	{0} NYAWA
+hud.respawn	MUNCUL SEMULA
+hud.drop_in	MASUK!
+results.main_menu	MENU UTAMA
+pause.title	DIJEDA
+pause.resume	SAMBUNG
+pause.quit	KELUAR KE MENU
+pause.hint	B / Backspace untuk menyambung
+leave.title	TINGGALKAN PERLAWANAN?
+leave.body	Perlawanan terus berjalan. Keluar dikira sebagai kekalahan.
+leave.leave	KELUAR
+leave.hint	B / Backspace / Esc / Start untuk kekal
+results.winner	PEMENANG
+results.training_no_rewards	Latihan: tiada ganjaran
+cv.posture	Postur {0}%
+cv.posture_low	Postur {0}% - duduk tegak!
+cv.telemetry_ok	Telemetri OK
+net.rooms_load_failed	Tidak dapat memuatkan bilik anda: {0}
+net.host_limit	Anda sudah menjadi hos {0} bilik. Tutup satu dahulu.
+net.creating_named	Mencipta "{0}"...
+net.room_ready_code	Bilik "{0}" sedia. Kongsi kod {1} atau jemput rakan.
+net.create_failed	Tidak dapat mencipta bilik: {0}
+net.joining_room	Menyertai bilik {0}...
+net.you_joined	Anda menyertai "{0}". Pilih pejuang anda dan tekan OK.
+net.no_room_code	Tiada bilik dengan kod {0}. Semak kod dan cuba lagi.
+net.room_full_n	Bilik itu penuh ({0} pemain).
+net.join_failed	Tidak dapat menyertai: {0}
+net.update_failed	Tidak dapat mengemas kini bilik: {0}
+net.could_not_what	Tidak dapat {0}: {1}
+net.what_stage	menukar pentas
+net.what_hazards	menukar halangan
+net.press_ok_again	{0} Kedua-dua pemain tekan OK dan MULA BERTARUNG semula.
+net.udp_port	Tidak dapat membuka port UDP {0} (sudah digunakan?).
+net.lan_ready	Hos LAN sedia. Rakan anda menyertai: {0}  (port {1})
+net.bad_ip	"{0}" bukan alamat IP yang sah.
+net.connecting_to	Menyambung ke {0}...
+net.sign_in_failed	Log masuk gagal: {0}
+net.room_ready	Bilik "{0}" sedia. Kongsi kod dengan rakan anda.
+net.searching_in	Mencari pemain di {0}...
+net.start_failed	Tidak dapat memulakan pertarungan: {0}
+net.host_unreachable	Tidak dapat mencapai hos: {0}
+net.area_world	seluruh dunia

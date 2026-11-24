@@ -87,7 +87,8 @@ namespace ChibiClash
         {
             RefreshLanguageList();
             bool first = NeedsLanguage;
-            var r = DialogRect(720f, 470f);
+            // Height from the content: title, search, list, buttons, then the hint line under the buttons (no overlap).
+            var r = DialogRect(720f, 134f + LangRows * LangRowH + 14f + 50f + 36f);
             r.y = Mathf.Max(118f, H * 0.5f - r.height * 0.5f);
             Gui.Box(r, Gui.P2);
             Gui.Display(new Rect(r.x, r.y + 12f, r.width, 44f), Loc.T("lang.title"), 34, Gui.Paper, TextAnchor.MiddleCenter);
@@ -176,7 +177,7 @@ namespace ChibiClash
                 UiSound.Back();
             }
             if (enter && e.type == EventType.KeyDown) e.Use();
-            Gui.Text(new Rect(r.x, r.yMax - 26f, r.width, 20f), Loc.T("lang.pad_hint"), 12, Gui.Muted);
+            Gui.Text(new Rect(r.x + 20f, by + 58f, r.width - 40f, 20f), Loc.T("lang.pad_hint"), 12, Gui.Muted);
             if (confirm != null) ChooseLanguage(confirm);
         }
 

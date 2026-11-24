@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 44d2632b5b81539608a09cd8bb0e1ce1
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Noto Sans Canadian Aboriginal
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 2c293f8297bd30160e4eed3eacf115b9, type: 3}
+  customCharacters:
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData:
+  assetBundleName:
+  assetBundleVariant:

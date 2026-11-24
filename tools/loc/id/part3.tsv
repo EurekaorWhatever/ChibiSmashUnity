@@ -1,0 +1,262 @@
+net.area_country_and	negaramu dan {0}
+region.africa	Afrika
+region.americas	Amerika
+region.asia	Asia
+region.europe	Eropa
+region.oceania	Oseania
+region.northern_africa	Afrika Utara
+region.eastern_africa	Afrika Timur
+region.middle_africa	Afrika Tengah
+region.southern_africa	Afrika Selatan
+region.western_africa	Afrika Barat
+region.caribbean	Karibia
+region.central_america	Amerika Tengah
+region.south_america	Amerika Selatan
+region.northern_america	Amerika Utara
+region.central_asia	Asia Tengah
+region.eastern_asia	Asia Timur
+region.south_eastern_asia	Asia Tenggara
+region.southern_asia	Asia Selatan
+region.western_asia	Asia Barat
+region.eastern_europe	Eropa Timur
+region.northern_europe	Eropa Utara
+region.southern_europe	Eropa Selatan
+region.western_europe	Eropa Barat
+region.australia_and_new_zealand	Australia dan Selandia Baru
+region.melanesia	Melanesia
+region.micronesia	Mikronesia
+region.polynesia	Polinesia
+net.joined_connecting	Bergabung ke "{0}". Menghubungkan ke host...
+net.opponent_unreachable	Tidak bisa menjangkau lawanmu: {0}
+net.quick_filling	{0} dari {1} pemain. Mulai dalam {2} dtk...
+invite.inviting	Mengundang {0}...
+invite.sent_lasts	Undangan terkirim ke {0}. Berlaku {1} detik.
+invite.send_failed	Tidak bisa mengirim undangan: {0}
+invite.joining_room_of	Bergabung ke room {0}...
+invite.paused	Undangan dijeda selama {0} menit.
+invite.invited_you	{0} mengundangmu ke "{1}".
+invite.ran_out	Undanganmu ke {0} sudah habis waktunya.
+friends.choose_name	Pilih nama pemain agar teman bisa menemukanmu.
+friends.unavailable	Fitur teman tidak tersedia: {0}
+friends.your_name_is	Namamu {0}. Berikan ke teman agar mereka bisa menambahkanmu.
+friends.set_name_failed	Tidak bisa mengatur nama: {0}
+friends.request_sent	Permintaan pertemanan terkirim ke {0}.
+friends.add_failed	Tidak bisa menambahkan {0}: {1}
+friends.offline	{0} sedang offline.
+friends.request_then_invite	Permintaan pertemanan terkirim ke {0}. Undangan dikirim begitu mereka menerima.
+friends.unreachable	Tidak bisa menjangkau {0}: {1}
+friends.creating_room_for	Membuat room untuk {0}...
+friends.joining	Bergabung dengan {0}...
+friends.declined	{0} menolak undangan.
+friends.version_mismatch	{0} mengundangmu, tetapi memakai versi game yang berbeda.
+friends.invite_sent_waiting	Undangan terkirim ke {0}. Menunggu mereka bergabung...
+name.too_short	Nama terlalu pendek (minimal {0} karakter).
+name.too_long	Nama terlalu panjang (maksimal {0} karakter).
+rooms.name_too_short	Nama room terlalu pendek (minimal {0} karakter).
+rooms.name_too_long	Nama room terlalu panjang (maksimal {0} karakter).
+net.bad_code	Itu bukan kode room yang valid (hanya huruf dan angka).
+net.version_mismatch	Room itu dibuat dengan versi Chibi Clash yang berbeda. Kedua pemain butuh versi yang sama.
+net.loading_room	Memuat room...
+net.room_closed	Room ditutup.
+net.you_left	Kamu keluar dari room.
+net.waiting_host_game	Memulai... menunggu game milik host.
+net.choose_next_fight	Pilih petarungmu dan tekan OK untuk pertarungan berikutnya.
+net.host_changed_stage	Host mengubah pengaturan arena. Tekan OK lagi.
+net.room_closed_host_left	Room ditutup (host keluar).
+net.starting_fight	Memulai pertarungan...
+net.player_left_joined	Ada pemain yang keluar atau bergabung.
+net.no_connection	Tidak ada koneksi.
+net.fight_could_not_start	Pertarungan tidak bisa dimulai.
+net.fight_starting_wait	Pertarungan dimulai! Menunggu temanmu terhubung...
+net.choose_press_ok	Pilih petarungmu dan tekan OK.
+net.too_many_starts	Terlalu sering memulai. Tunggu sebentar, lalu tekan MULAI BERTARUNG.
+net.fight_starting_connecting	Pertarungan dimulai! Menghubungkan...
+net.could_not_connect	Tidak bisa terhubung.
+net.friend_no_answer	Temanmu tidak menjawab.
+net.start_cancelled	Mulai dibatalkan.
+net.friend_no_connect	Temanmu tidak terhubung.
+net.enter_code	Masukkan kode room yang ditunjukkan temanmu.
+net.lan_browser	Main LAN tidak tersedia di browser. Pakai ROOM atau MATCHMAKING, atau versi PC untuk LAN.
+net.enter_ip	Masukkan alamat IP host.
+net.this_pc_ip	IP PC ini
+net.signing_in	Sedang masuk...
+net.creating_private	Membuat room privat...
+net.hosting_one	Tidak ada pertandingan terbuka, membuat satu...
+net.needs_2_to_4	Pertarungan butuh 2 sampai 4 pemain.
+net.waiting_friend	Menunggu temanmu terhubung...
+net.waiting_friends	Menunggu teman-temanmu terhubung...
+net.connection_running	Koneksi lain masih berjalan.
+net.no_valid_info	Room tidak punya info koneksi yang valid (host keluar?).
+net.connecting_host	Menghubungkan ke host...
+net.already_full	Room itu sudah penuh.
+net.no_info	Room tidak punya info koneksi (host keluar?).
+net.player_left_searching	Pemain itu keluar. Mencari lagi...
+net.connected	Terhubung!
+net.relay_failed	Koneksi ke server Relay gagal.
+net.opponent_timeout	Tidak bisa menjangkau lawanmu (waktu habis).
+net.no_internet	Tidak ada koneksi internet. Sambungkan Wi-Fi atau data seluler untuk bermain dengan teman di mana saja. (Main LAN tetap bisa di jaringan yang sama.)
+invite.wait	Tunggu sebentar sebelum mengirim undangan lagi.
+invite.type_name	Ketik nama dalam game temanmu (3-16 huruf, angka, atau _).
+invite.own_name	Itu namamu sendiri.
+invite.open_room_first	Buka room-mu dulu, lalu undang.
+invite.room_full	Room-mu sudah penuh.
+invite.could_not_send	Tidak bisa mengirim undangan.
+invite.too_many	Terlalu banyak undangan saat ini. Coba lagi beberapa detik lagi.
+invite.cancelled	Undangan dibatalkan.
+invite.expired	Undangan itu sudah kedaluwarsa.
+invite.closed_full	Room-mu penuh. Undangan ditutup.
+invite.closed_joined	Seorang pemain bergabung ke room-mu. Undangan ditutup.
+invite.closed_room	Undangan dibatalkan: room ditutup.
+name.taken	Nama ini sudah dipakai
+name.check_unavailable	Tidak bisa mengecek namamu secara online. Periksa internetmu dan coba lagi.
+name.too_soon	Kamu baru saja mengganti nama. Coba lagi semenit lagi.
+name.choose_different	Silakan pilih nama lain.
+friends.type_tag	Ketik nama temanmu seperti Kira#4821.
+friends.added	Teman ditambahkan.
+friends.declined_request	Permintaan ditolak.
+friends.removed	Teman dihapus.
+friends.blocked	Pemain diblokir.
+friends.a_friend	Seorang teman
+friends.type_player_tag	Ketik nama pemain seperti Kira#4821.
+friends.wait_invite	Tunggu sebentar sebelum mengundang lagi.
+name.enter	Masukkan nama.
+name.bad_chars	Gunakan hanya huruf, angka, dan _ (tanpa spasi atau simbol).
+rooms.name_bad_chars	Nama room hanya boleh huruf, angka, spasi, dan _ - ' !.
+rooms.name_double_space	Nama room tidak boleh memakai spasi ganda.
+rooms.name_choose_different	Silakan pilih nama room lain.
+gesture.cross_arms	SILANGKAN LENGAN
+gesture.punch_forward	PUKUL KE DEPAN
+gesture.raise_hands	ANGKAT KEDUA TANGAN
+class.kaia.passive1_desc	+15% kecepatan serangan
+class.kaia.passive2_desc	5% curi nyawa
+class.kaia.skill1_desc	Dash ke depan dan tusuk lawan
+class.kaia.skill2_desc	Timing sempurna memantulkan damage
+class.kaia.skill3_desc	Menusuk berkali-kali dengan cepat
+class.kaia.ult_desc	10 dtk: serangan biasa melepaskan gelombang horizontal
+class.bruna.passive1_desc	+20% damage, -15% kecepatan serangan
+class.bruna.passive2_desc	+20% damage, -15% kecepatan gerak
+class.bruna.skill1_desc	Cengkeram lawan dan banting ke tanah
+class.bruna.skill2_desc	Berputar seperti tornado, menghantam berulang kali
+class.bruna.ult_desc	Hantam lantai untuk menciptakan gelombang kejut
+class.ren.passive1_desc	+20% peluang kritis
+class.ren.passive2_desc	+10% kecepatan gerak selama 10 dtk (cooldown 30 dtk)
+class.ren.skill1_desc	Dash mundur secara horizontal lalu menembak
+class.ren.skill2_desc	Cekik lawan yang dekat lalu dorong menjauh
+class.ren.skill3_desc	Tembakkan rentetan panah secara horizontal
+class.ren.ult_desc	Satu panah berlipat ganda menjadi badai panah
+class.lyra.passive1_desc	10% peluang saat kena: -15% gerak, -10% dmg, -15% kecepatan serangan
+class.lyra.passive2_desc	20% peluang menahan damage
+class.lyra.skill1_desc	Tembakkan proyektil api pengejar
+class.lyra.skill2_desc	Panggil 3 minion
+class.lyra.skill3_desc	Awan mengikuti lawan dan menyambar dengan petir
+class.lyra.ult_desc	Cincin api 10 dtk: membakar lawan, menahan proyektil
+class.taro.passive1_desc	10% peluang saat kena: -15% pertahanan musuh
+class.taro.passive2_desc	Setelah 3 dtk tanpa menyerang, serangan berikutnya +50%
+class.taro.skill1_desc	Memanjang, melompat, dan mengayun ke bawah
+class.taro.skill2_desc	Putar tombak untuk menahan proyektil
+class.taro.skill3_desc	Lempar tombak lalu panggil kembali
+class.taro.ult_desc	Tusuk lawan, lalu tendang gagangnya lebih dalam
+char.kaia.role	Penyerang Lincah
+char.kaia.style	Pertarungan jarak dekat yang cepat dan lincah dengan tebasan tepat yang bisa dirangkai.
+char.bruna.role	Petarung Tangguh
+char.bruna.style	Petarung damage tinggi dan sangat tahan banting yang menguasai ruang dengan serangan berat.
+char.ren.role	Penembak Jitu Lincah
+char.ren.style	Zoning sangat lincah dan tekanan presisi dengan teknik panah serbaguna.
+char.lyra.role	Zoning / Jebakan
+char.lyra.style	Penyihir lincah yang menguasai ruang dengan rapalan cepat, gerakan licik, dan sihir yang tepat.
+char.taro.role	Spesialis Jangkauan
+char.taro.style	Kontrol disiplin dan lincah dengan tekanan jangkauan panjang dan serangan tepat.
+stage.0.name	Dojo Langit
+stage.0.short	Dojo Langit
+stage.0.tagline	Kuil gunung di atas awan
+stage.1.name	Kota Neon
+stage.1.short	Kota Neon
+stage.1.tagline	Arena atap gedung di bawah hujan neon
+stage.2.name	Tempa Lava
+stage.2.short	Tempa Lava
+stage.2.tagline	Pengecoran cair di atas lautan lava
+stage.3.name	Gunung Permulaan
+stage.3.short	Gunung
+stage.3.tagline	KO vertikal · platform giok bergerak di atas jurang berkabut
+stage.4.name	Dataran Persatuan
+stage.4.short	Dataran
+stage.4.tagline	KO horizontal · satu padang panjang, tak ada tempat sembunyi
+stage.5.name	Jurang Gunung Api
+stage.5.short	Gunung Api
+stage.5.tagline	Semua tepi KO · semburan api dari danau magma
+stage.6.name	Sarang Burung Raksasa
+stage.6.short	Sarang Burung
+stage.6.tagline	KO horizontal · burung raksasa menyapu arena
+stage.7.name	Monumen Samudra Terbengkalai
+stage.7.short	Samudra
+stage.7.tagline	Semua tepi KO · paus turun, loncat ke tingkat bawah
+end.opponent_left	Lawanmu meninggalkan pertandingan.
+end.opponent_timeout	Lawanmu berhenti merespons.
+end.connection_lost	Koneksi ke lawanmu terputus.
+end.you_left	Kamu meninggalkan pertandingan.
+end.desync	Kedua game tidak sinkron (desync): tanpa hasil.
+end.unconfirmed	Akhir pertandingan tidak bisa dikonfirmasi: tanpa hasil.
+end.handshake_failed	Pertandingan tidak bisa dimulai.
+end.peer_never_started	Lawanmu tidak pernah bergabung ke pertandingan: tanpa hasil.
+end.too_slow	Koneksi terlalu lambat untuk bermain: tanpa hasil.
+end.host_left	Host meninggalkan pertandingan: tanpa hasil.
+end.dropped	Koneksimu terputus dari pertandingan.
+status.aura	AURA {0}
+status.fire_ring	CINCIN API {0}
+status.tailwind	ANGIN PENDORONG
+status.guard_broken	PERTAHANAN JEBOL {0} dtk
+status.guard	PERTAHANAN {0}%
+status.reloading	MENGISI ULANG {0} dtk
+status.recharging	MENGISI DAYA {0} dtk
+status.hexed	TERKUTUK
+status.armor_break	ARMOR -15%
+hud.perform	Peragakan: {0}
+hud.times_up	Waktu habis!
+rewards.no_contest	Tanpa hasil: tanpa hadiah
+rewards.pve_victory	Menang PvE  +{0}
+rewards.pve_match	Pertandingan PvE  +{0}
+rewards.victory	Menang  +{0}
+rewards.match_played	Pertandingan dimainkan  +{0}
+rewards.posture	Postur baik {0}%  +{1}
+hud.revived	BANGKIT LAGI
+quest.win	Menangkan 3 pertandingan
+quest.pve	Kalahkan CPU dua kali (PvE)
+quest.combo	Lakukan 10 kombo penuh
+quest.ult	Picu 3 ultimate gerakan
+quest.parry	Parry 5 serangan
+quest.posture	Selesaikan pertandingan dengan postur baik 80%+
+rewards.quest	Misi: {0}  +{1}
+bind.move_left	Gerak kiri
+bind.move_right	Gerak kanan
+bind.drop	Turun / jatuh cepat
+bind.jump	Lompat
+bind.jump_alt	Lompat (alt)
+bind.light	Serangan ringan
+bind.heavy	Serangan berat
+bind.block	Tangkis
+bind.dash	Dash
+bind.skill1	Skill 1
+bind.skill2	Skill 2
+bind.skill3	Skill 3
+bind.ultimate	Ultimate
+bind.aim_up	Bidik ke atas
+bind.special	Spesial
+hud.rejected	Ditolak: {0}
+cv.low_confidence	Akurasi pelacakan rendah
+cv.frozen	Gambar membeku (palsu?)
+cv.snap	Pose berubah instan (makro?)
+cv.ok	OK
+cam.none	Kamera tidak ditemukan
+cam.off	Kamera mati
+cam.starting	Menyalakan kamera...
+cam.waiting_frames	Menunggu gambar kamera - izinkan akses kamera untuk Unity di System Settings > Privacy > Camera
+cam.live	Kamera aktif ({0}x{1})
+pose.simulated	Simulasi (pose keyboard)
+pose.camera_off	Pelacakan kamera mati - memakai pose simulasi keyboard
+pose.model_failed	Model pose gagal: {0}
+pose.loading	Memuat model pose...
+pose.live	Pelacakan tubuh langsung (MoveNet, {0} Hz)
+pose.step_back	Kamera nyala - mundur sedikit agar bahumu terlihat
+account.finish_browser	Selesaikan proses masuk di browser (pilih Continue with Google)...
+account.signed_out_again	Sudah keluar. Masuk lagi untuk memakai akunmu.
+account.signed_in_kept	Sudah masuk. Nama dan progresmu tersimpan di akun ini.

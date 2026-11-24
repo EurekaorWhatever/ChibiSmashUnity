@@ -1,0 +1,260 @@
+room.waiting	等待玩家
+room.joined	{0}  ·  已加入 {1} / {2}
+room.host	房主
+room.player_n	玩家 {0}
+room.you_suffix	 · 你
+room.hazards_host_pick	{0} · 房主选择
+room.hazards_on	机关 开
+room.hazards_off	机关 关
+room.code_copied	已复制房间码 {0}。粘贴发给你的好友吧。
+invite.body	{0} 邀请你加入 {1}   （{2} 秒）
+select.ult_name	ULT  {0}
+age.title	你多大了？
+age.body	所有年龄都可以游玩所有模式。你的年龄会和玩家名称一起记录，用于游戏统计。
+common.next	下一步
+age.error	输入你的年龄，或用十字键设置。
+age.pad_hint	手柄：十字键 上/下 每次改变 1，左/右 每次改变 10 · A = 下一步
+rooms.enter_name	输入房间名称
+rooms.name_rules	3-24 个字母、数字或空格。好友加入时会看到它。房间可容纳 2 到 4 名玩家。
+rooms.create	创建
+common.one_moment	请稍候...
+account.keep_name	保留你的斗士名称
+account.finish_in_browser	请在浏览器中完成...
+account.sign_in_google	使用 GOOGLE 登录
+account.play_without	不使用账号游玩
+name.choose_first	请先选择你的玩家名称。
+common.cancelled	已取消。
+name.welcome	欢迎你，斗士！你叫什么名字？
+name.change_title	更改你的名称
+name.rules	3-16 个字母、数字或 _。请取一个有趣的斗士名，不要用真实姓名。好友通过它找到并邀请你，所有人都能看到它。
+name.suggest	推荐
+name.checking	检查中...
+name.lets_fight	开战吧！
+common.save	保存
+name.pad_hint_first	手柄：A = 开战 · Y = 推荐名称
+name.pad_hint	手柄：A = 保存 · Y = 推荐名称
+online.connected_agreeing	已连接。正在确认对局...
+online.host_settings_changed	房主更改了设置 — 请重新加入房间。
+online.version_mismatch	你的对手使用的游戏版本不同。双方需要使用相同的版本。
+rooms.title	匹配
+rooms.kicker	房间  ·  2-4 名玩家  ·  创建 · 加入 · 按名称邀请
+rooms.create_rooms	创建房间
+rooms.join_room	加入房间
+rooms.creating	正在创建你的房间...
+rooms.loading	正在加载你的房间...
+rooms.none_yet	还没有创建房间！
+rooms.one_moment	请稍候。
+rooms.empty_help	点击 创建房间 来新建一个，或用好友的房间码 加入房间。
+rooms.capacity_note	房间可容纳 2 到 4 名玩家。按玩家名称邀请好友。
+rooms.invites_paused	房间邀请已暂停几分钟
+rooms.refresh	刷新
+rooms.hint	匹配  ·  房间
+rooms.new	新建
+rooms.you_host	你是房主
+rooms.open	打开
+join.enter_code	输入房间码
+join.body	输入或粘贴好友发给你的房间码（Discord、聊天...）。
+join.paste	粘贴
+join.join	加入
+join.bad_code	这不是房间码。请检查后重试（仅限字母和数字）。
+rooms.fight_starting	房间对战即将开始。请等待，或先离开房间。
+quick.kicker	VS ONLINE  ·  单人 1V1  ·  附近的玩家
+quick.player_found	找到玩家！
+quick.search_failed	搜索失败
+quick.not_searching	未在搜索
+quick.connecting	正在连接对手...
+quick.searching_near	正在搜索附近的玩家
+quick.stopped	搜索已停止。请重试。
+quick.press_search_again	按 重新搜索 来寻找玩家。
+quick.privacy	快速匹配会分享你的国家（来自设备设置），绝不分享你的位置。
+quick.search_again	重新搜索
+quick.hint	VS ONLINE  ·  快速匹配
+room.kicker_opening	房间  ·  正在打开房间...
+room.opening	正在打开房间...
+room.your_fighter	你的斗士
+room.locked_in	已锁定
+room.everyone_ok	所有人按下 OK 后，战斗会自动开始。
+room.share_code	分享房间码，或按名称邀请好友。
+room.empty_seat	空位
+room.stage_you	场地（由你选择）
+room.stage_host	场地（由房主选择）
+common.ok	OK
+room.loading	加载中...
+room.change	更改
+room.starting	开始中...
+room.start_fight	开始战斗
+room.close	关闭房间
+room.leave	离开房间
+room.hint	匹配  ·  房间
+room.code	房间码
+room.copy	复制
+room.host_can_invite	房主可以按名称邀请好友。
+room.invite_by_name	按名称邀请好友
+room.invite	邀请
+room.full	房间已满。
+invite.title	房间邀请
+invite.warning	名称未经验证：只接受你认识的人的邀请。
+invite.accept	接受
+invite.decline	拒绝
+room.hazards_on_btn	机关  开
+room.hazards_off_btn	机关  关
+select.passive	被动
+select.look	外观
+select.cosmetic	装扮
+select.arcade_round	街机  ·  第 {0} / {1} 回合
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   手柄 1 = 1P，手柄 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  方向键  ENTER  BACKSPACE  DEL
+select.dummy	木桩
+select.round_rival	第 {0} 回合对手
+select.picks_at_start	战斗开始时选择
+select.signature_weapon	专属武器  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  已击败
+select.arcade_route	街机路线  ·  场地 {0} / {1}
+select.select_stage	选择场地
+select.local_versus	本地对战
+select.arcade_rival	街机对手
+select.training_dummy	训练木桩
+select.stage	场地
+select.hazards	机关
+select.fight	战斗
+select.change	更改
+select.confirm	确认
+select.random	随机
+select.fate	交给命运
+select.ready_bang	准备好了！
+select.loadout	装备
+select.waiting_1p	等待 1P
+select.1p_picks_dummy	1P 选择木桩
+select.selecting	选择中
+select.identity_hidden	身份隐藏
+select.revealed_at_start	回合开始时揭晓
+select.ai_picks	AI 自行选择斗士
+select.random_every_fight	每场战斗随机角色
+select.any_character	任意角色 · 随机被动和武器
+select.lock_in_hint	锁定  ·  或点击角色
+select.to_ready	以准备就绪
+select.cpu_difficulty_pick	CPU 难度  ·  战斗前选择
+select.ai_note	无需网络。AI 每场战斗都会选择新的角色、被动和武器，再战一局也一样。
+select.pad_difficulty	十字键 上 / 下  ·  难度
+select.key_difficulty	W / S  ·  难度
+select.start_training	开始训练
+select.fight_bang	开战！
+select.click_to_start	或点击以当前选择开始
+hud.ready	准备...
+hud.rival	对手
+hud.you	你
+hud.ultimate_ready	{0} · 大招就绪
+hud.move_detected	{0} · 检测到动作
+hud.failed	{0} · 失败
+hud.training_title	训练 · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  训练
+hud.intro_online	  ·  在线  ·  ESC / START：离开
+hud.ult_ready_press	ULT 就绪 - 按 {0}
+hud.ult_ready	ULT 就绪
+hud.sim_key	模拟键：{0}
+hud.poses_live	 · 姿势：双臂交叉 = 防御 / 手臂伸出 = 火球 / 双手举起 = 跳跃
+hud.poses_keys	 · 姿势 1 交叉 / 2 出拳 / 3 举手 · P 驼背
+hud.poses_p2	 · 姿势 8/9/0
+hud.training_help	训练：T 充满大招 · 被 KO 的斗士以 0% 复活 · Esc 暂停
+hud.ult_pct	ULT {0}%
+hud.last_hit	最后一击  {0}
+hud.combo_hits	连招  {0} 连击  +{1}%
+hud.combo	连招  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	P1 摄像头 · 模拟
+hud.cv_p1_live	P1 摄像头 · 实时
+hud.cv_p2_sim	P2 摄像头 · 模拟
+hud.cv_p2_live	P2 摄像头 · 实时
+hud.hits_prefix	{0} 连击  
+results.no_contest	无效对局
+results.draw	平局！
+results.cpu_wins	CPU 获胜
+results.you_win	你赢了！
+results.rival_wins	对手获胜
+results.wins	{0} 获胜！
+results.takes_round	{0} 赢下本回合
+results.stats	命中次数  {0}\n完整连招  {1}   ·   最佳连招  {2}
+results.stats2	\n动作大招  {0}\n招架  {1}
+results.posture	\n良好坐姿  {0}%
+results.rewards_named	奖励（{0} 的资料）
+results.rewards_your	奖励（你的资料）
+results.rewards_p1	奖励（P1 的资料）
+results.coins	+{0} 金币  （共 {1}）
+hud.do_pose	对着摄像头摆出姿势
+results.place_1	第 1 名
+results.place_2	第 2 名
+results.place_3	第 3 名
+results.place_4	第 4 名
+results.out	出局
+results.out_1	出局 · 第 1 名
+results.out_2	出局 · 第 2 名
+results.out_3	出局 · 第 3 名
+results.out_4	出局 · 第 4 名
+results.red_team	红队
+results.blue_team	蓝队
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} 名玩家
+hud.keys_line1	P{0}：{1} 移动 · {2} 跳跃 · 
+hud.keys_line2	{0} 轻攻击 · {1} 重攻击 · {2} 特殊技 · 
+hud.keys_line3	{0} 防御 · {1} 冲刺 · 
+hud.keys_line4	{0} 技能 · {1} 大招
+results.characters	角色
+results.stock_one	剩 1 命
+results.stocks	剩 {0} 命
+hud.respawn	复活
+hud.drop_in	登场！
+results.main_menu	主菜单
+pause.title	已暂停
+pause.resume	继续
+pause.quit	返回菜单
+pause.hint	B / Backspace 继续
+leave.title	离开对局？
+leave.body	对局会继续进行。离开将被判为失败。
+leave.leave	离开
+leave.hint	B / Backspace / Esc / Start 留下
+results.winner	胜者
+results.training_no_rewards	训练：无奖励
+cv.posture	坐姿 {0}%
+cv.posture_low	坐姿 {0}% - 坐直！
+cv.telemetry_ok	遥测正常
+net.rooms_load_failed	无法加载你的房间：{0}
+net.host_limit	你已经是 {0} 个房间的房主。请先关闭一个。
+net.creating_named	正在创建“{0}”...
+net.room_ready_code	房间“{0}”已就绪。分享房间码 {1} 或邀请好友。
+net.create_failed	无法创建房间：{0}
+net.joining_room	正在加入房间 {0}...
+net.you_joined	你已加入“{0}”。选择你的斗士并按 OK。
+net.no_room_code	没有房间码为 {0} 的房间。请检查房间码后重试。
+net.room_full_n	该房间已满（{0} 名玩家）。
+net.join_failed	无法加入：{0}
+net.update_failed	无法更新房间：{0}
+net.could_not_what	无法{0}：{1}
+net.what_stage	更换场地
+net.what_hazards	更改机关
+net.press_ok_again	{0} 双方请再次按 OK 和 开始战斗。
+net.udp_port	无法打开 UDP 端口 {0}（已被占用？）。
+net.lan_ready	LAN 主机已就绪。好友加入地址：{0}  （端口 {1}）
+net.bad_ip	“{0}”不是有效的 IP 地址。
+net.connecting_to	正在连接 {0}...
+net.sign_in_failed	登录失败：{0}
+net.room_ready	房间“{0}”已就绪。把房间码分享给好友吧。
+net.searching_in	正在搜索{0}的玩家...
+net.start_failed	无法开始战斗：{0}
+net.host_unreachable	无法连接到房主：{0}
+net.area_world	全世界
+net.area_country_and	你的国家和{0}
+region.africa	非洲
+region.americas	美洲
+region.asia	亚洲
+region.europe	欧洲
+region.oceania	大洋洲
+region.northern_africa	北非
+region.eastern_africa	东非
+region.middle_africa	中非
+region.southern_africa	南部非洲
+region.western_africa	西非
+region.caribbean	加勒比

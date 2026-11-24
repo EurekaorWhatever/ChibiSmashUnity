@@ -1,0 +1,261 @@
+region.africa	Αφρική
+region.americas	Αμερική
+region.asia	Ασία
+region.europe	Ευρώπη
+region.oceania	Ωκεανία
+region.northern_africa	Βόρεια Αφρική
+region.eastern_africa	Ανατολική Αφρική
+region.middle_africa	Κεντρική Αφρική
+region.southern_africa	Νότια Αφρική
+region.western_africa	Δυτική Αφρική
+region.caribbean	Καραϊβική
+region.central_america	Κεντρική Αμερική
+region.south_america	Νότια Αμερική
+region.northern_america	Βόρεια Αμερική
+region.central_asia	Κεντρική Ασία
+region.eastern_asia	Ανατολική Ασία
+region.south_eastern_asia	Νοτιοανατολική Ασία
+region.southern_asia	Νότια Ασία
+region.western_asia	Δυτική Ασία
+region.eastern_europe	Ανατολική Ευρώπη
+region.northern_europe	Βόρεια Ευρώπη
+region.southern_europe	Νότια Ευρώπη
+region.western_europe	Δυτική Ευρώπη
+region.australia_and_new_zealand	Αυστραλία και Νέα Ζηλανδία
+region.melanesia	Μελανησία
+region.micronesia	Μικρονησία
+region.polynesia	Πολυνησία
+net.joined_connecting	Μπήκες στο «{0}». Σύνδεση με τον οικοδεσπότη...
+net.opponent_unreachable	Ο αντίπαλος δεν είναι προσβάσιμος: {0}
+net.quick_filling	{0} από {1} παίκτες. Έναρξη σε {2} δ...
+invite.inviting	Πρόσκληση: {0}...
+invite.sent_lasts	Η πρόσκληση στάλθηκε: {0}. Ισχύει {1} δευτερόλεπτα.
+invite.send_failed	Δεν στάλθηκε η πρόσκληση: {0}
+invite.joining_room_of	Είσοδος στο δωμάτιο: {0}...
+invite.paused	Οι προσκλήσεις σταμάτησαν για {0} λεπτά.
+invite.invited_you	Ο/Η {0} σε κάλεσε στο «{1}».
+invite.ran_out	Η πρόσκλησή σου προς {0} έληξε.
+friends.choose_name	Διάλεξε όνομα παίκτη για να σε βρίσκουν οι φίλοι.
+friends.unavailable	Οι φίλοι δεν είναι διαθέσιμοι: {0}
+friends.your_name_is	Το όνομά σου είναι {0}. Δώσ' το στους φίλους για να σε προσθέσουν.
+friends.set_name_failed	Δεν ορίστηκε το όνομα: {0}
+friends.request_sent	Αίτημα φιλίας στάλθηκε: {0}.
+friends.add_failed	Δεν προστέθηκε ο/η {0}: {1}
+friends.offline	Ο/Η {0} είναι offline τώρα.
+friends.request_then_invite	Αίτημα φιλίας στάλθηκε: {0}. Η πρόσκληση θα σταλεί μόλις το δεχτεί.
+friends.unreachable	Ο/Η {0} δεν είναι προσβάσιμος/η: {1}
+friends.creating_room_for	Δημιουργία δωματίου για: {0}...
+friends.joining	Σύνδεση με: {0}...
+friends.declined	Ο/Η {0} απέρριψε την πρόσκληση.
+friends.version_mismatch	Ο/Η {0} σε κάλεσε, αλλά έχει άλλη έκδοση του παιχνιδιού.
+friends.invite_sent_waiting	Η πρόσκληση στάλθηκε: {0}. Αναμονή εισόδου...
+name.too_short	Το όνομα είναι πολύ μικρό (τουλάχιστον {0} χαρακτήρες).
+name.too_long	Το όνομα είναι πολύ μεγάλο (έως {0} χαρακτήρες).
+rooms.name_too_short	Το όνομα δωματίου είναι πολύ μικρό (τουλάχιστον {0} χαρακτήρες).
+rooms.name_too_long	Το όνομα δωματίου είναι πολύ μεγάλο (έως {0} χαρακτήρες).
+net.bad_code	Αυτός δεν είναι έγκυρος κωδικός δωματίου (μόνο γράμματα και αριθμοί).
+net.version_mismatch	Το δωμάτιο φτιάχτηκε με άλλη έκδοση του Chibi Clash. Και οι δύο παίκτες χρειάζονται την ίδια έκδοση.
+net.loading_room	Φόρτωση δωματίου...
+net.room_closed	Το δωμάτιο έκλεισε.
+net.you_left	Βγήκες από το δωμάτιο.
+net.waiting_host_game	Έναρξη... αναμονή για το παιχνίδι του οικοδεσπότη.
+net.choose_next_fight	Διάλεξε μαχητή και πάτα OK για την επόμενη μάχη.
+net.host_changed_stage	Ο οικοδεσπότης άλλαξε τις ρυθμίσεις αρένας. Πάτα ξανά OK.
+net.room_closed_host_left	Το δωμάτιο έκλεισε (έφυγε ο οικοδεσπότης).
+net.starting_fight	Η μάχη ξεκινά...
+net.player_left_joined	Ένας παίκτης έφυγε ή μπήκε.
+net.no_connection	Καμία σύνδεση.
+net.fight_could_not_start	Η μάχη δεν μπόρεσε να ξεκινήσει.
+net.fight_starting_wait	Η μάχη ξεκινά! Αναμονή σύνδεσης του φίλου σου...
+net.choose_press_ok	Διάλεξε μαχητή και πάτα OK.
+net.too_many_starts	Πάρα πολλές εκκινήσεις. Περίμενε ένα λεπτό και πάτα ΕΝΑΡΞΗ ΜΑΧΗΣ.
+net.fight_starting_connecting	Η μάχη ξεκινά! Σύνδεση...
+net.could_not_connect	Η σύνδεση απέτυχε.
+net.friend_no_answer	Ο φίλος σου δεν απάντησε.
+net.start_cancelled	Η έναρξη ακυρώθηκε.
+net.friend_no_connect	Ο φίλος σου δεν συνδέθηκε.
+net.enter_code	Γράψε τον κωδικό δωματίου που δείχνει ο φίλος σου.
+net.lan_browser	Το LAN δεν είναι διαθέσιμο στον browser. Χρησιμοποίησε ΔΩΜΑΤΙΑ ή MATCHMAKING, ή την έκδοση PC για LAN.
+net.enter_ip	Γράψε τη διεύθυνση IP του οικοδεσπότη.
+net.this_pc_ip	η IP αυτού του PC
+net.signing_in	Σύνδεση...
+net.creating_private	Δημιουργία ιδιωτικού δωματίου...
+net.hosting_one	Δεν βρέθηκε ανοιχτός αγώνας, δημιουργείται ένας...
+net.needs_2_to_4	Μια μάχη χρειάζεται 2 έως 4 παίκτες.
+net.waiting_friend	Αναμονή σύνδεσης του φίλου σου...
+net.waiting_friends	Αναμονή σύνδεσης των φίλων σου...
+net.connection_running	Μια άλλη σύνδεση είναι ακόμα σε εξέλιξη.
+net.no_valid_info	Το δωμάτιο δεν έχει έγκυρα στοιχεία σύνδεσης (έφυγε ο οικοδεσπότης;).
+net.connecting_host	Σύνδεση με τον οικοδεσπότη...
+net.already_full	Το δωμάτιο είναι ήδη γεμάτο.
+net.no_info	Το δωμάτιο δεν έχει στοιχεία σύνδεσης (έφυγε ο οικοδεσπότης;).
+net.player_left_searching	Ο παίκτης έφυγε. Νέα αναζήτηση...
+net.connected	Συνδέθηκε!
+net.relay_failed	Η σύνδεση με τον server Relay απέτυχε.
+net.opponent_timeout	Ο αντίπαλος δεν είναι προσβάσιμος (λήξη χρόνου).
+net.no_internet	Δεν υπάρχει σύνδεση internet. Σύνδεσε Wi-Fi ή δεδομένα κινητής για να παίζεις με φίλους παντού. (Το LAN λειτουργεί στο ίδιο δίκτυο.)
+invite.wait	Περίμενε λίγο πριν στείλεις άλλη πρόσκληση.
+invite.type_name	Γράψε το όνομα παιχνιδιού του φίλου σου (3-16 γράμματα, αριθμοί ή _).
+invite.own_name	Αυτό είναι το δικό σου όνομα.
+invite.open_room_first	Άνοιξε πρώτα το δωμάτιό σου και μετά κάλεσε.
+invite.room_full	Το δωμάτιό σου είναι ήδη γεμάτο.
+invite.could_not_send	Δεν στάλθηκε η πρόσκληση.
+invite.too_many	Πάρα πολλές προσκλήσεις τώρα. Ξαναδοκίμασε σε λίγα δευτερόλεπτα.
+invite.cancelled	Η πρόσκληση ακυρώθηκε.
+invite.expired	Η πρόσκληση έληξε.
+invite.closed_full	Το δωμάτιό σου γέμισε. Η πρόσκληση έκλεισε.
+invite.closed_joined	Ένας παίκτης μπήκε στο δωμάτιό σου. Η πρόσκληση έκλεισε.
+invite.closed_room	Η πρόσκληση ακυρώθηκε: το δωμάτιο έκλεισε.
+name.taken	Αυτό το όνομα είναι ήδη πιασμένο
+name.check_unavailable	Δεν ελέγχθηκε το όνομά σου online. Έλεγξε το internet και ξαναδοκίμασε.
+name.too_soon	Μόλις άλλαξες όνομα. Ξαναδοκίμασε σε ένα λεπτό.
+name.choose_different	Διάλεξε ένα διαφορετικό όνομα.
+friends.type_tag	Γράψε το όνομα του φίλου σου σαν Kira#4821.
+friends.added	Ο φίλος προστέθηκε.
+friends.declined_request	Το αίτημα απορρίφθηκε.
+friends.removed	Ο φίλος αφαιρέθηκε.
+friends.blocked	Ο παίκτης αποκλείστηκε.
+friends.a_friend	Ένας φίλος
+friends.type_player_tag	Γράψε το όνομα του παίκτη σαν Kira#4821.
+friends.wait_invite	Περίμενε λίγο πριν ξανακαλέσεις.
+name.enter	Γράψε ένα όνομα.
+name.bad_chars	Μόνο γράμματα, αριθμοί και _ (χωρίς κενά ή σύμβολα).
+rooms.name_bad_chars	Τα ονόματα δωματίων έχουν μόνο γράμματα, αριθμούς, κενά και _ - ' !
+rooms.name_double_space	Τα ονόματα δωματίων δεν μπορούν να έχουν διπλά κενά.
+rooms.name_choose_different	Διάλεξε ένα διαφορετικό όνομα δωματίου.
+gesture.cross_arms	ΣΤΑΥΡΩΣΕ ΤΑ ΧΕΡΙΑ
+gesture.punch_forward	ΓΡΟΘΙΑ ΜΠΡΟΣΤΑ
+gesture.raise_hands	ΣΗΚΩΣΕ ΚΑΙ ΤΑ ΔΥΟ ΧΕΡΙΑ
+class.kaia.passive1_desc	+15% ταχύτητα επίθεσης
+class.kaia.passive2_desc	5% κλοπή ζωής
+class.kaia.skill1_desc	Εφορμά μπροστά και τρυπά τον αντίπαλο
+class.kaia.skill2_desc	Τέλειος συγχρονισμός αντανακλά τη ζημιά
+class.kaia.skill3_desc	Γρήγορα, πολλαπλά τρυπήματα
+class.kaia.ult_desc	10 δ: οι κανονικές επιθέσεις ρίχνουν οριζόντιο κύμα
+class.bruna.passive1_desc	+20% ζημιά, -15% ταχύτητα επίθεσης
+class.bruna.passive2_desc	+20% ζημιά, -15% ταχύτητα κίνησης
+class.bruna.skill1_desc	Αρπάζει τον αντίπαλο και τον κοπανά στο έδαφος
+class.bruna.skill2_desc	Στροβιλίζεται σαν ανεμοστρόβιλος χτυπώντας ξανά και ξανά
+class.bruna.ult_desc	Χτυπά το έδαφος και δημιουργεί ωστικό κύμα
+class.ren.passive1_desc	+20% πιθανότητα κρίσιμου
+class.ren.passive2_desc	+10% ταχύτητα κίνησης για 10 δ (επαναφόρτιση 30 δ)
+class.ren.skill1_desc	Πηδά οριζόντια πίσω και ρίχνει
+class.ren.skill2_desc	Πνίγει κοντινό αντίπαλο και τον σπρώχνει μακριά
+class.ren.skill3_desc	Ρίχνει οριζόντια βροχή από βέλη
+class.ren.ult_desc	Ένα βέλος πολλαπλασιάζεται σε καταιγίδα βελών
+class.lyra.passive1_desc	10% ανά χτύπημα: -15% κίνηση, -10% ζημιά, -15% ταχ. επίθεσης
+class.lyra.passive2_desc	20% πιθανότητα να μπλοκάρει ζημιά
+class.lyra.skill1_desc	Ρίχνει πύρινο βλήμα που καταδιώκει
+class.lyra.skill2_desc	Καλεί 3 υπηρέτες
+class.lyra.skill3_desc	Ένα σύννεφο ακολουθεί τον εχθρό και τον χτυπά με κεραυνό
+class.lyra.ult_desc	Δαχτυλίδι φωτιάς 10 δ: καίει εχθρούς, μπλοκάρει βλήματα
+class.taro.passive1_desc	10% ανά χτύπημα: -15% άμυνα εχθρού
+class.taro.passive2_desc	Μετά από 3 δ χωρίς επίθεση, επόμενο χτύπημα +50%
+class.taro.skill1_desc	Τεντώνεται, πηδά και χτυπά προς τα κάτω
+class.taro.skill2_desc	Γυρίζει το κοντάρι για να μπλοκάρει βλήματα
+class.taro.skill3_desc	Ρίχνει το δόρυ και το καλεί πίσω
+class.taro.ult_desc	Τρυπά τον εχθρό και κλωτσά τη λαβή πιο βαθιά
+char.kaia.role	Ευκίνητη επιθετική
+char.kaia.style	Γρήγορη, ευκίνητη μάχη από κοντά με ακριβή χτυπήματα που δένουν σε σειρά.
+char.bruna.role	Μπρουτάλ μαχήτρια
+char.bruna.style	Ανθεκτική μαχήτρια με μεγάλη ζημιά που ελέγχει τον χώρο με βαριές επιθέσεις.
+char.ren.role	Ευκίνητος τοξότης
+char.ren.style	Πολύ κινητικός έλεγχος χώρου και ακριβής πίεση με ποικίλες τεχνικές βελών.
+char.lyra.role	Έλεγχος χώρου / Παγίδες
+char.lyra.style	Ευκίνητη μάγισσα που ελέγχει τον χώρο με γρήγορα ξόρκια, πονηρή κίνηση και ακριβή μαγεία.
+char.taro.role	Ειδικός εμβέλειας
+char.taro.style	Πειθαρχημένος, ευκίνητος έλεγχος με πίεση από μακριά και ακριβή χτυπήματα.
+stage.0.name	Ουράνιο Ντότζο
+stage.0.short	Ουράνιο Ντότζο
+stage.0.tagline	Ναός στο βουνό πάνω από τα σύννεφα
+stage.1.name	Πόλη Νέον
+stage.1.short	Πόλη Νέον
+stage.1.tagline	Αρένα σε ταράτσα κάτω από βροχή νέον
+stage.2.name	Σιδηρουργείο Λάβας
+stage.2.short	Σιδηρουργείο
+stage.2.tagline	Χυτήριο πάνω από θάλασσα λάβας
+stage.3.name	Βουνό της Αρχής
+stage.3.short	Βουνό
+stage.3.tagline	Κάθετο KO · κινούμενες πλατφόρμες νεφρίτη πάνω από ομιχλώδη γκρεμό
+stage.4.name	Πεδιάδα της Ενότητας
+stage.4.short	Πεδιάδα
+stage.4.tagline	Οριζόντιο KO · ένα μακρύ πεδίο, πουθενά να κρυφτείς
+stage.5.name	Η Άβυσσος του Ηφαιστείου
+stage.5.short	Ηφαίστειο
+stage.5.tagline	KO σε κάθε άκρη · φωτιά ξεπηδά από τη λίμνη μάγματος
+stage.6.name	Η Φωλιά του Γιγάντιου Πουλιού
+stage.6.short	Φωλιά
+stage.6.tagline	Οριζόντιο KO · το κολοσσιαίο πουλί σαρώνει την αρένα
+stage.7.name	Το Εγκαταλελειμμένο Ωκεάνιο Μνημείο
+stage.7.short	Ωκεανός
+stage.7.tagline	KO σε κάθε άκρη · η φάλαινα κατεβαίνει, πήδα στα σκαλιά
+end.opponent_left	Ο αντίπαλός σου έφυγε από τον αγώνα.
+end.opponent_timeout	Ο αντίπαλός σου σταμάτησε να απαντά.
+end.connection_lost	Η σύνδεση με τον αντίπαλο χάθηκε.
+end.you_left	Έφυγες από τον αγώνα.
+end.desync	Τα δύο παιχνίδια διαφώνησαν (desync): χωρίς αποτέλεσμα.
+end.unconfirmed	Το τέλος του αγώνα δεν επιβεβαιώθηκε: χωρίς αποτέλεσμα.
+end.handshake_failed	Ο αγώνας δεν μπόρεσε να ξεκινήσει.
+end.peer_never_started	Ο αντίπαλος δεν μπήκε ποτέ στον αγώνα: χωρίς αποτέλεσμα.
+end.too_slow	Η σύνδεση ήταν πολύ αργή για παιχνίδι: χωρίς αποτέλεσμα.
+end.host_left	Ο οικοδεσπότης έφυγε: χωρίς αποτέλεσμα.
+end.dropped	Η σύνδεσή σου έπεσε από τον αγώνα.
+status.aura	ΑΥΡΑ {0}
+status.fire_ring	ΔΑΧΤΥΛΙΔΙ ΦΩΤΙΑΣ {0}
+status.tailwind	ΟΥΡΙΟΣ ΑΝΕΜΟΣ
+status.guard_broken	ΑΜΥΝΑ ΣΠΑΣΜΕΝΗ {0}δ
+status.guard	ΑΜΥΝΑ {0}%
+status.reloading	ΓΕΜΙΣΜΑ {0}δ
+status.recharging	ΦΟΡΤΙΣΗ {0}δ
+status.hexed	ΚΑΤΑΡΑΜΕΝΟΣ
+status.armor_break	ΠΑΝΟΠΛΙΑ -15%
+hud.perform	Κάνε: {0}
+hud.times_up	Τέλος χρόνου!
+rewards.no_contest	Χωρίς αποτέλεσμα: χωρίς ανταμοιβές
+rewards.pve_victory	Νίκη PvE  +{0}
+rewards.pve_match	Αγώνας PvE  +{0}
+rewards.victory	Νίκη  +{0}
+rewards.match_played	Αγώνας  +{0}
+rewards.posture	Καλή στάση {0}%  +{1}
+hud.revived	ΑΝΑΣΤΗΘΗΚΕ
+quest.win	Κέρδισε 3 αγώνες
+quest.pve	Νίκησε την CPU δύο φορές (PvE)
+quest.combo	Κάνε 10 πλήρη combo
+quest.ult	Ενεργοποίησε 3 ultimate με κινήσεις
+quest.parry	Απόκρουσε 5 επιθέσεις
+quest.posture	Τελείωσε αγώνα με 80%+ καλή στάση
+rewards.quest	Αποστολή: {0}  +{1}
+bind.move_left	Αριστερά
+bind.move_right	Δεξιά
+bind.drop	Κάτω / γρήγορη πτώση
+bind.jump	Άλμα
+bind.jump_alt	Άλμα (εναλλ.)
+bind.light	Ελαφριά επίθεση
+bind.heavy	Βαριά επίθεση
+bind.block	Άμυνα
+bind.dash	Εφόρμηση
+bind.skill1	Ικανότητα 1
+bind.skill2	Ικανότητα 2
+bind.skill3	Ικανότητα 3
+bind.ultimate	Ultimate
+bind.aim_up	Σημάδι πάνω
+bind.special	Ειδική
+hud.rejected	Απορρίφθηκε: {0}
+cv.low_confidence	Χαμηλή βεβαιότητα ανίχνευσης
+cv.frozen	Παγωμένη εικόνα (απάτη;)
+cv.snap	Ακαριαία πόζα (macro;)
+cv.ok	OK
+cam.none	Δεν βρέθηκε κάμερα
+cam.off	Κάμερα κλειστή
+cam.starting	Εκκίνηση κάμερας...
+cam.waiting_frames	Αναμονή καρέ κάμερας - επίτρεψε πρόσβαση κάμερας για το Unity στις Ρυθμίσεις συστήματος > Απόρρητο > Κάμερα
+cam.live	Κάμερα ενεργή ({0}x{1})
+pose.simulated	Προσομοίωση (πόζες πληκτρολογίου)
+pose.camera_off	Ανίχνευση κάμερας κλειστή - πόζες από το πληκτρολόγιο
+pose.model_failed	Το μοντέλο πόζας απέτυχε: {0}
+pose.loading	Φόρτωση μοντέλου πόζας...
+pose.live	Ζωντανή ανίχνευση σώματος (MoveNet, {0} Hz)
+pose.step_back	Κάμερα ενεργή - πήγαινε πίσω να φαίνονται οι ώμοι σου
+account.finish_browser	Ολοκλήρωσε τη σύνδεση στον browser (διάλεξε Συνέχεια με Google)...
+account.signed_out_again	Αποσυνδέθηκες. Συνδέσου ξανά για να χρησιμοποιήσεις τον λογαριασμό σου.
+account.signed_in_kept	Συνδέθηκες. Το όνομα και η πρόοδός σου μένουν σε αυτόν τον λογαριασμό.

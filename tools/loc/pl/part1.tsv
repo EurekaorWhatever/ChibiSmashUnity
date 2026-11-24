@@ -1,0 +1,259 @@
+lang.backdrop	JĘZYK
+lang.title	WYBIERZ JĘZYK
+lang.subtitle	Cała gra będzie w tym języku. Możesz go zmienić w każdej chwili w USTAWIENIACH.
+lang.search_hint	Szukaj języków...
+lang.no_match	Żaden język nie pasuje do wyszukiwania.
+lang.english_text	Na razie tekst po angielsku
+lang.confirm	POTWIERDŹ  ·  {0}
+lang.confirm_none	POTWIERDŹ
+lang.pad_hint	Pisz, aby szukać · Góra / Dół, aby wybrać · Enter lub A na padzie = potwierdź
+common.cancel	ANULUJ
+settings.language	JĘZYK  ·  {0}
+difficulty.dummy	Manekin
+difficulty.easy	Łatwy
+difficulty.medium	Średni
+difficulty.hard	Trudny
+difficulty.dummy_upper	MANEKIN
+difficulty.easy_upper	ŁATWY
+difficulty.medium_upper	ŚREDNI
+difficulty.hard_upper	TRUDNY
+nav.home	START
+nav.play	GRAJ
+nav.training	TRENING
+nav.arcade	ARCADE
+nav.collection	KOLEKCJA
+nav.settings	USTAWIENIA
+account.signed_in_as	Zalogowano jako {0}.
+account.signed_in	Zalogowano.
+account.signed_out	Wylogowano.
+keys.who	P{0} {1}
+keys.reserved	{0} to klawisz pozy / postawy (1 2 3, 8 9 0, klawiatura numeryczna 7 8 9, P, -). Wybierz inny.
+keys.swapped	{0};  {1} to teraz {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Gra online jest dla graczy w wieku 13 lat i starszych.
+arcade.clear_toast	ARCADE UKOŃCZONE! Pokonano wszystkich rywali: {0}
+precheck.too_dark	Za ciemno ({0}%) - dodaj światła
+precheck.too_bright	Za jasno ({0}%) - ogranicz odblaski
+precheck.good	Dobrze ({0}%)
+loading.weapon_art	Grafika broni: {0}
+loading.fighter	Wojownik: {0}
+precheck.checking	SPRAWDZANIE... {0}
+wipe.character_select	WYBÓR POSTACI
+wipe.arcade	ARCADE
+results.rematch	REWANŻ
+results.continue	KONTYNUUJ
+results.finish	ZAKOŃCZ
+results.next_battle	NASTĘPNA WALKA
+wipe.arcade_clear	ARCADE UKOŃCZONE
+precheck.title	TEST KAMERY
+precheck.camera_unavailable	Kamera niedostępna
+precheck.simulated_feed	Obraz symulowany (kamera wyłączona)
+precheck.upper_body_ok	Górna część ciała w kadrze
+precheck.step_back	Odsuń się - ramiona i biodra muszą być widoczne
+loading.interface	Grafika interfejsu
+loading.typefaces	Czcionki
+loading.pose_model	Model śledzenia pozy
+loading.ready	Gotowe
+onboarding.welcome	WITAJ!
+onboarding.your_account	TWOJE KONTO
+onboarding.your_name	TWOJA NAZWA GRACZA
+rooms.backdrop_create	DOBIERANIE  ·  TWORZENIE POKOJÓW
+rooms.backdrop_join	DOBIERANIE  ·  DOŁĄCZ DO POKOJU
+precheck.all_passed	WSZYSTKIE TESTY ZALICZONE
+precheck.failed	TEST NIEUDANY
+precheck.lighting	OŚWIETLENIE
+precheck.framing	KADR
+precheck.posture	POSTAWA
+precheck.upright	Ładnie wyprostowany
+precheck.sit_up	Usiądź prosto, aby zdobyć dodatkowe monety
+common.retry	PONÓW
+precheck.play_anyway	GRAJ MIMO TO
+common.back	WSTECZ
+precheck.ranked_note	Kolejki rankingowe wymagają zaliczenia tego testu. Mecze zwykłe mogą go pominąć.
+precheck.hint	TEST KAMERY PRZED MECZEM
+hint.select	WYBIERZ
+home.play	GRAJ
+home.training	TRENING
+home.arcade	ARCADE
+home.collection	KOLEKCJA POSTACI
+home.settings	USTAWIENIA
+home.exit	WYJDŹ Z GRY
+home.play_desc	Szybki mecz Vs Online, pokoje z przyjaciółmi lub Vs CPU
+home.training_desc	Ustawienia kamery, ćwiczenie gestów i manekin treningowy
+home.arcade_desc	Wszystkich pięciu rywali po kolei na każdej arenie
+home.collection_desc	Skórki, bronie i baner kosmetyczny
+home.settings_desc	Poziom trudności, opcje kamery i klawisze
+home.exit_desc	Zamknij grę
+tips.1	Napełnij pasek ULT i naciśnij Superatak - potem przybierz pozę wojownika przed kamerą, zanim skończy się odliczanie.
+tips.2	Wyższa DEF zmniejsza obrażenia z każdego trafienia i wzmacnia blok.
+tips.3	Dobra postawa wykryta przez kamerę daje dodatkowe monety po każdym meczu.
+tips.4	Skórki i bronie są tylko kosmetyczne - statystyki nigdy nie zależą od wyglądu wojownika.
+tips.5	W Treningu naciśnij T, aby napełnić superatak. Manekin zawsze wstaje.
+tips.6	Każdy wojownik ma jedną z dwóch pasywek - wybierz ją w panelu wyposażenia po zatwierdzeniu postaci.
+tips.7	Walki online używają rollback netcode: obie gry liczą tę samą walkę z tych samych wejść.
+stats.power	SIŁA
+stats.speed	SZYBKOŚĆ
+stats.range	ZASIĘG
+stats.endurance	WYTRZYMAŁOŚĆ
+stats.recovery	REGENERACJA
+training.use_block	Blok · superatak Wręcz i Magii
+training.use_fireball	Kula ognia · superatak Dystansu i Drzewcowych
+training.use_superjump	Superskok · superatak Ciężkich
+menu.online_locked	Tryby online są dla graczy w wieku 13 lat i starszych.
+menu.no_internet	Brak internetu: połącz się z Wi-Fi lub danymi komórkowymi. VS AI działa offline.
+menu.four_player_soon	2v2 i Battle Royale wymagają obsługi 4 graczy, która pojawi się w przyszłej aktualizacji.
+profile.edit_name	EDYTUJ NAZWĘ
+profile.win_loss	W {0}  ·  P {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	GOTOWE
+loading.loading	WCZYTYWANIE
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   ukończono x{2}
+arcade.rule_fight_all	Walcz ze wszystkimi postaciami ({0}) po kolei, w losowej kolejności.
+arcade.rule_difficulty	Poziom CPU: {0} (zmienisz go w Ustawieniach).
+arcade.final	FINAŁ
+arcade.round	RUNDA {0}
+training.cv_setup_source	USTAWIENIA CV · {0}
+training.status	Kamera: {0}\nŚledzenie: {1}\nWykryto: {2}
+training.off	wył.
+training.none	brak
+training.status_posture	   ·   Postawa {0}%   ·   Telemetria {1}
+collection.gold_cinematic_suffix	 · ZŁOTA SCENKA
+collection.only	TYLKO {0}
+collection.pull1	LOSUJ x1  ·  {0}
+collection.pull10	LOSUJ x10  ·  {0}
+collection.dup_suffix	  (duplikat +20)
+collection.new_suffix	  NOWOŚĆ!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} sekund  <size=12><color=#9AA6BC>(stałe w każdym meczu)</color></size>
+settings.change_name_as	ZMIEŃ NAZWĘ  ·  {0}
+settings.change_name	ZMIEŃ NAZWĘ
+settings.keys_help	Kliknij przypisanie, a potem naciśnij klawisz lub kliknij to pole przyciskiem myszy (Esc / B na padzie / kliknięcie gdzie indziej anuluje; limit 5 s). Jeśli któryś gracz już go używa, klawisze się zamienią.\nPozy przed kamerą: skrzyżowane ręce = blok · ręka wyciągnięta w bok = kula ognia · obie ręce w górę = superskok (pozy z klawiatury: 1/2/3 i 8/9/0).
+rarity.common	ZWYKŁY
+rarity.rare	RZADKI
+rarity.epic	EPICKI
+rarity.legendary	LEGENDARNY
+skin.default	Klasyczna
+skin.mint	Miętowy Pop
+skin.shadow	Cień
+skin.sakura	Sakura
+skin.inferno	Inferno
+skin.celestial	Niebiańska
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	TYLKO 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nDRUŻYNY
+play.four_player_later	2v2 i Battle Royale pojawią się wraz z obsługą 4 graczy w przyszłej aktualizacji.
+play.team_tag	4P · 2 DRUŻYNY
+play.royale_tag	4P · KAŻDY NA KAŻDEGO
+collection.all_fighters	WSZYSCY WOJOWNICY
+arcade.mode	TRYB ARCADE
+home.tagline	BIJATYKA NA ARENIE  ·  SUPERATAKI GESTAMI CIAŁA
+play.royale_card	BATTLE\nROYALE
+training.kicker	USTAWIENIA KAMERY I ĆWICZENIA
+settings.camera_tracking	ŚLEDZENIE KAMERĄ (KAMERKA)
+training.camera_off	ŚLEDZENIE KAMERĄ: WYŁ.
+training.camera_on	ŚLEDZENIE KAMERĄ: WŁ.
+collection.hint	KOLEKCJA POSTACI
+play.choose_style	WYBIERZ STYL GRY
+online.kicker	WYBIERZ STYL GRY  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	WYBIERZ WALKĘ  ·  VS ONLINE · DOBIERANIE · VS CPU
+play.coming_soon	WKRÓTCE
+training.cv	WIDZENIE KOMPUTEROWE
+online.connection	POŁĄCZENIE
+collection.banner	BANER KOSMETYCZNY
+settings.cpu_difficulty	POZIOM CPU
+play.create_join	TWÓRZ · DOŁĄCZ DO POKOI
+settings.cv_overlay	PODGLĄD CV W MECZU
+quests.coins_note	Monety zdobywasz tylko grając: wygrane, PvE, zadania i dobra postawa wykryta przez kamerę.
+collection.odds	Zwykły 60% · Rzadki 28% · Epicki 10% · Legendarny 2%
+collection.equip	ZAŁÓŻ
+collection.equipped	ZAŁOŻONE
+hint.exit	WYJDŹ
+home.exit_upper	WYJDŹ Z GRY
+exit.title	WYJŚĆ Z GRY?
+online.royale_desc	Każdy walczy sam za siebie. Wygrywa ostatni wojownik na nogach.
+arcade.kicker	PIĘCIU RYWALI · JEDNO PODEJŚCIE
+loading.for_battle	DO WALKI
+online.invites_note	Tu pojawiają się zaproszenia do pokoi od przyjaciół. Pokoje z przyjaciółmi są w GRAJ > DOBIERANIE.
+settings.kicker	GRA · KAMERA · STEROWANIE
+training.gestures_live	GESTY  (zrób pozę przed kamerą - cios = jedna ręka wyprostowana w bok)
+training.gestures_sim	GESTY  (przytrzymaj klawisz, aby zasymulować pozę)
+settings.key_bindings	PRZYPISANIE KLAWISZY
+settings.keys_reset	Przywrócono domyślne klawisze
+play.locked	ZABLOKOWANE
+arcade.rule_retry	Przegrana runda? Kontynuuj i spróbuj ponownie.
+home.hint	MENU GŁÓWNE
+settings.master_volume	GŁOŚNOŚĆ OGÓLNA
+settings.match_time	CZAS MECZU
+play.matchmaking_card	DOBIE-\nRANIE
+hint.move	RUCH
+play.matchmaking_desc	Stwórz pokój, udostępnij kod lub zaproś przyjaciół po nazwie.
+play.no_internet_tag	BRAK INTERNETU
+online.no_internet_body	Brak internetu. Połącz się z Wi-Fi lub danymi komórkowymi albo zagraj Vs CPU.
+common.off	WYŁ.
+online.offline	OFFLINE
+common.on	WŁ.
+settings.player1	GRACZ 1
+settings.player2	GRACZ 2
+training.practice_dummy	ĆWICZ Z MANEKINEM
+settings.precheck	TEST KAMERY PRZED MECZEM
+loading.prepare	PRZYGOTUJ SIĘ
+settings.listening_hint	NACIŚNIJ KLAWISZ LUB KLIKNIJ POLE  ·  ESC / B NA PADZIE ANULUJE  ·  PRZYCISKÓW PADA NIE MOŻNA PRZYPISAĆ
+training.slouch_note	Naciśnij P, aby przełączyć garbienie się i zobaczyć, jak spada wynik postawy.
+settings.profile_reset	Zresetowano profil (nazwa i logowanie zachowane)
+collection.pull_to_unlock	Wylosuj, aby odblokować
+quests.title	ZADANIA
+online.quick_match	SZYBKI MECZ
+play.online_desc	Szybki mecz z graczem w pobliżu lub odpowiedź na zaproszenie przyjaciela.
+online.solo_desc	Szybki mecz: walcz z graczem, który właśnie szuka, najbliżsi najpierw.
+settings.reset_keys	RESETUJ KLAWISZE
+settings.reset_profile	RESETUJ PROFIL
+arcade.rival_unknown	RYWAL  ???
+play.rooms_tag	POKOJE · 2-4 GRACZY
+online.rollback_body	Rollback netcode: obie gry liczą tę samą walkę z tych samych wejść, więc jest szybko i uczciwie.
+settings.screen_shake	WSTRZĄSY EKRANU
+profile.set_name	USTAW NAZWĘ
+settings.sfx_volume	GŁOŚNOŚĆ EFEKTÓW
+training.simulate_pose	SYMULUJ POZĘ
+collection.kicker	SKÓRKI · BRONIE · BANER KOSMETYCZNY
+training.slouch	GARBIENIE
+online.solo_card	SOLO\n1V1
+home.start	START
+arcade.start	ROZPOCZNIJ ARCADE
+exit.stay	ZOSTAŃ
+settings.sure	NA PEWNO?
+settings.sure_reset_profile	NA PEWNO? CAŁY POSTĘP ZNIKNIE
+collection.banner_note	Tylko skórki i scenki superataków. Statystyki są takie same na każdej skórce - nic nie jest płatne.
+hint.tabs	ZAKŁADKI
+loading.tip	WSKAZÓWKA
+training.hint	TRENING  /  USTAWIENIA CV
+arcade.rule_stages	Arena zmienia się co rundę, od Góry Początku do Pomnika Oceanu.
+online.team_desc	Dwie drużyny po dwóch. Bez ognia sojuszniczego: twoje ciosy nigdy nie ranią partnera.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  STYL GRY
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Wygrane dają monety i postęp zadań, tak jak w VS CPU.
+exit.saved_note	Twój profil, monety i kolekcja są zapisane na tym urządzeniu.
+settings.key_listening	klawisz lub kliknij tutaj
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Wybierasz wojownika i poziom ŁATWY, ŚREDNI lub TRUDNY. CPU dostaje losowego wojownika.
+account.keep_name_body	Zaloguj się kontem Google, a twoja nazwa i dane zostaną z tobą: przy każdym uruchomieniu gry i na każdym komputerze. Inne konto Google dostanie własną nową nazwę.
+name.you_are	Jesteś {0}!
+name.you_are_unchecked	Jesteś {0}! Sprawdzimy nazwę, gdy zagrasz online.
+online.could_not_start	Nie udało się rozpocząć meczu ({0}).
+rooms.your_rooms	TWOJE POKOJE
+rooms.count_click	{0}  ·  kliknij pokój, aby go otworzyć
+rooms.code_value	KOD  {0}
+rooms.players_count	GRACZE: {0} / {1}
+rooms.more	+ jeszcze {0} pokoi
+rooms.created	Utworzono pokój „{0}”. Kliknij go, aby udostępnić kod lub zaprosić przyjaciół.
+quick.searching	SZUKANIE
+quick.looking_in	SZUKAM W:  {0}
+room.kicker	POKÓJ  ·  2-4 GRACZY  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	GOTOWI DO WALKI
+room.full_suffix	 · POKÓJ PEŁNY

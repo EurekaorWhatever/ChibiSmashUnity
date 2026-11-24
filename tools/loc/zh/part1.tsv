@@ -1,0 +1,259 @@
+lang.backdrop	语言
+lang.title	选择你的语言
+lang.subtitle	游戏中的所有文字都将使用此语言。你可以随时在设置中更改。
+lang.search_hint	搜索语言...
+lang.no_match	没有符合搜索条件的语言。
+lang.english_text	暂时显示英文
+lang.confirm	确认  ·  {0}
+lang.confirm_none	确认
+lang.pad_hint	输入文字搜索 · 上 / 下 选择 · Enter 或手柄 A = 确认
+common.cancel	取消
+settings.language	语言  ·  {0}
+difficulty.dummy	木桩
+difficulty.easy	简单
+difficulty.medium	普通
+difficulty.hard	困难
+difficulty.dummy_upper	木桩
+difficulty.easy_upper	简单
+difficulty.medium_upper	普通
+difficulty.hard_upper	困难
+nav.home	主页
+nav.play	开始游戏
+nav.training	训练
+nav.arcade	街机
+nav.collection	收藏
+nav.settings	设置
+account.signed_in_as	已以 {0} 的身份登录。
+account.signed_in	已登录。
+account.signed_out	已退出登录。
+keys.who	P{0} {1}
+keys.reserved	{0} 是姿势 / 坐姿按键（1 2 3、8 9 0、小键盘 7 8 9、P、-）。请选择其他按键。
+keys.swapped	{0}；{1} 现在是 {2}
+match.versus	{0}  VS  {1}
+online.locked_age	在线游戏仅限 13 岁及以上玩家。
+arcade.clear_toast	街机通关！击败了全部 {0} 名对手
+precheck.too_dark	太暗（{0}%）- 请增加光线
+precheck.too_bright	太亮（{0}%）- 请减少眩光
+precheck.good	良好（{0}%）
+loading.weapon_art	武器图像：{0}
+loading.fighter	斗士：{0}
+precheck.checking	检查中... {0}
+wipe.character_select	选择角色
+wipe.arcade	街机
+results.rematch	再战一局
+results.continue	继续
+results.finish	结束
+results.next_battle	下一战
+wipe.arcade_clear	街机通关
+precheck.title	摄像头检查
+precheck.camera_unavailable	摄像头不可用
+precheck.simulated_feed	模拟画面（摄像头已关闭）
+precheck.upper_body_ok	上半身在画面内
+precheck.step_back	请后退 - 需要能看到肩膀和臀部
+loading.interface	界面图像
+loading.typefaces	字体
+loading.pose_model	姿势追踪模型
+loading.ready	就绪
+onboarding.welcome	欢迎！
+onboarding.your_account	你的账号
+onboarding.your_name	你的玩家名称
+rooms.backdrop_create	匹配  ·  创建房间
+rooms.backdrop_join	匹配  ·  加入房间
+precheck.all_passed	全部检查通过
+precheck.failed	检查未通过
+precheck.lighting	光线
+precheck.framing	取景
+precheck.posture	坐姿
+precheck.upright	坐姿端正
+precheck.sit_up	坐直可获得额外金币
+common.retry	重试
+precheck.play_anyway	仍然开始
+common.back	返回
+precheck.ranked_note	排位匹配需要通过此检查。休闲对局可以跳过。
+precheck.hint	赛前摄像头检查
+hint.select	选择
+home.play	开始游戏
+home.training	训练
+home.arcade	街机
+home.collection	角色收藏
+home.settings	设置
+home.exit	退出游戏
+home.play_desc	在线快速匹配、和好友的匹配房间，或 Vs CPU
+home.training_desc	摄像头设置、动作练习和训练木桩
+home.arcade_desc	在所有场地中连续挑战全部五名对手
+home.collection_desc	皮肤、武器和外观卡池
+home.settings_desc	难度、摄像头选项和按键设置
+home.exit_desc	关闭游戏
+tips.1	集满 ULT 能量槽并按下大招键 - 然后在倒计时结束前对着摄像头摆出斗士的姿势。
+tips.2	DEF 越高，每次受到的伤害越少，防御也越强。
+tips.3	摄像头追踪到的良好坐姿会在每场对局后带来额外金币。
+tips.4	皮肤和武器只是外观 - 斗士的属性不会因装扮而改变。
+tips.5	在训练中按 T 可以充满大招。木桩永远会重新站起来。
+tips.6	每名斗士都有两种被动可选一种 - 锁定角色后在装备面板中选择。
+tips.7	在线对战使用 rollback netcode：双方游戏用相同的输入运行同一场战斗。
+stats.power	力量
+stats.speed	速度
+stats.range	射程
+stats.endurance	耐力
+stats.recovery	恢复
+training.use_block	防御 · 近战和魔法的大招
+training.use_fireball	火球 · 远程和长柄武器的大招
+training.use_superjump	超级跳 · 重型的大招
+menu.online_locked	在线模式仅限 13 岁及以上玩家。
+menu.no_internet	没有网络：请连接 Wi-Fi 或移动数据。VS AI 可离线游玩。
+menu.four_player_soon	2v2 和 Battle Royale 需要 4 人支持，将在之后的更新中推出。
+profile.edit_name	修改名称
+profile.win_loss	胜 {0}  ·  负 {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	就绪
+loading.loading	加载中
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   已完成 x{2}
+arcade.rule_fight_all	按随机顺序连续挑战全部 {0} 名角色。
+arcade.rule_difficulty	CPU 难度：{0}（可在设置中更改）。
+arcade.final	决战
+arcade.round	第 {0} 回合
+training.cv_setup_source	CV 设置 · {0}
+training.status	摄像头：{0}\n追踪：{1}\n检测到：{2}
+training.off	关闭
+training.none	无
+training.status_posture	   ·   坐姿 {0}%   ·   遥测 {1}
+collection.gold_cinematic_suffix	 · 金色大招动画
+collection.only	{0} 专属
+collection.pull1	抽取 x1  ·  {0}
+collection.pull10	抽取 x10  ·  {0}
+collection.dup_suffix	  (重复 +20)
+collection.new_suffix	  新！
+collection.pull_toast	{0}！{1} · {2}
+settings.match_time_value	{0} 秒  <size=12><color=#9AA6BC>（每场对局固定）</color></size>
+settings.change_name_as	更改名称  ·  {0}
+settings.change_name	更改名称
+settings.keys_help	点击一个按键设置，然后按下按键或用鼠标按键点击该框（Esc / 手柄 B / 点击其他地方取消；5 秒超时）。如果另一名玩家已在使用该键，两者会互换。\n摄像头姿势：双臂交叉 = 防御 · 手臂向侧面伸出 = 火球 · 双手举起 = 超级跳（键盘姿势：1/2/3 和 8/9/0）。
+rarity.common	普通
+rarity.rare	稀有
+rarity.epic	史诗
+rarity.legendary	传说
+skin.default	经典
+skin.mint	薄荷波普
+skin.shadow	暗影
+skin.sakura	樱花
+skin.inferno	炼狱
+skin.celestial	天界
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	仅限 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\n团队
+play.four_player_later	2v2 和 Battle Royale 将随 4 人支持在之后的更新中推出。
+play.team_tag	4P · 2 支队伍
+play.royale_tag	4P · 混战
+collection.all_fighters	全部斗士
+arcade.mode	街机模式
+home.tagline	竞技场格斗  ·  体感动作大招
+play.royale_card	BATTLE\nROYALE
+training.kicker	摄像头设置与练习
+settings.camera_tracking	摄像头追踪（网络摄像头）
+training.camera_off	摄像头追踪：关
+training.camera_on	摄像头追踪：开
+collection.hint	角色收藏
+play.choose_style	选择游戏模式
+online.kicker	选择游戏模式  ·  单人 · 2V2 · BATTLE ROYALE
+play.kicker	选择你的战斗  ·  VS ONLINE · 匹配 · VS CPU
+play.coming_soon	即将推出
+training.cv	计算机视觉
+online.connection	连接
+collection.banner	外观卡池
+settings.cpu_difficulty	CPU 难度
+play.create_join	创建 · 加入房间
+settings.cv_overlay	对局中显示 CV 画面
+quests.coins_note	金币只能通过游玩获得：胜利、PvE、任务，以及摄像头追踪到的良好坐姿。
+collection.odds	普通 60% · 稀有 28% · 史诗 10% · 传说 2%
+collection.equip	装备
+collection.equipped	已装备
+hint.exit	退出
+home.exit_upper	退出游戏
+exit.title	退出游戏？
+online.royale_desc	各自为战。最后存活的斗士获胜。
+arcade.kicker	五名对手 · 一口气打通
+loading.for_battle	准备战斗
+online.invites_note	好友的房间邀请会在这里弹出。和好友的房间在 开始游戏 > 匹配 中。
+settings.kicker	游戏 · 摄像头 · 操作
+training.gestures_live	动作  （在摄像头前摆出姿势 - 出拳 = 一只手臂向侧面伸直）
+training.gestures_sim	动作  （按住按键来模拟姿势）
+settings.key_bindings	按键设置
+settings.keys_reset	按键已恢复默认
+play.locked	已锁定
+arcade.rule_retry	输掉一回合？选择继续即可重试。
+home.hint	主菜单
+settings.master_volume	主音量
+settings.match_time	对局时间
+play.matchmaking_card	匹配\n房间
+hint.move	移动
+play.matchmaking_desc	创建房间，分享房间码或按名称邀请好友。
+play.no_internet_tag	没有网络
+online.no_internet_body	当前没有网络。请连接 Wi-Fi 或移动数据，或者游玩 Vs CPU。
+common.off	关
+online.offline	离线
+common.on	开
+settings.player1	玩家 1
+settings.player2	玩家 2
+training.practice_dummy	对木桩练习
+settings.precheck	赛前摄像头检查
+loading.prepare	准备
+settings.listening_hint	按下按键或点击该框  ·  ESC / 手柄 B 取消  ·  无法绑定手柄按键
+training.slouch_note	按 P 切换驼背姿势，观察坐姿分数下降。
+settings.profile_reset	资料已重置（保留名称和登录）
+collection.pull_to_unlock	抽取解锁
+quests.title	任务
+online.quick_match	快速匹配
+play.online_desc	和附近的玩家快速匹配，或回应好友的邀请。
+online.solo_desc	快速匹配：与正在搜索的玩家对战，距离近的优先。
+settings.reset_keys	重置按键
+settings.reset_profile	重置资料
+arcade.rival_unknown	对手  ???
+play.rooms_tag	房间 · 2-4 名玩家
+online.rollback_body	Rollback netcode：双方游戏用相同的输入运行同一场战斗，因此既快速又公平。
+settings.screen_shake	屏幕震动
+profile.set_name	设置名称
+settings.sfx_volume	音效音量
+training.simulate_pose	模拟姿势
+collection.kicker	皮肤 · 武器 · 外观卡池
+training.slouch	驼背
+online.solo_card	单人\n1V1
+home.start	开始
+arcade.start	开始街机
+exit.stay	留下
+settings.sure	确定吗？
+settings.sure_reset_profile	确定吗？所有进度都会清除
+collection.banner_note	仅包含皮肤和大招动画。所有皮肤属性完全相同 - 没有任何付费才能获得的优势。
+hint.tabs	标签页
+loading.tip	提示
+training.hint	训练  /  CV 设置
+arcade.rule_stages	每回合更换场地，从起始之山到海洋遗迹。
+online.team_desc	两支两人队伍。没有友军伤害：你的攻击不会伤到队友。
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  游戏模式
+play.online_card	VS\nONLINE
+arcade.rule_rewards	胜利可获得金币和任务进度，与 VS CPU 相同。
+exit.saved_note	你的资料、金币和收藏都保存在本设备上。
+settings.key_listening	按下按键或点击这里
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	你选择斗士以及简单、普通或困难。CPU 会随机获得一名斗士。
+account.keep_name_body	使用 Google 账号登录，你的名称和信息就会一直跟着你：每次打开游戏，在任何电脑上都一样。其他 Google 账号会获得各自的新名称。
+name.you_are	你是 {0}！
+name.you_are_unchecked	你是 {0}！我们会在你在线游玩时检查这个名称。
+online.could_not_start	对局无法开始（{0}）。
+rooms.your_rooms	你的房间
+rooms.count_click	{0}  ·  点击房间以打开
+rooms.code_value	房间码  {0}
+rooms.players_count	{0} / {1} 名玩家
+rooms.more	+ 还有 {0} 个房间
+rooms.created	房间“{0}”已创建。点击它来分享房间码或邀请好友。
+quick.searching	搜索中
+quick.looking_in	搜索范围：  {0}
+room.kicker	房间  ·  2-4 名玩家  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	准备战斗
+room.full_suffix	 · 房间已满

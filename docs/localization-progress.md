@@ -42,3 +42,25 @@ User order (2026-11-24): first launch is **age -> language -> name**. Globe lang
 - Chinese is one row (`zh`, Simplified endonym); a Traditional Chinese variant (zh-Hant) is a producer decision.
 - Fonts (stage 3): see docs/localization.md. Thai does NOT render on WebGL today.
 - Context notes per key (screen, max length) for translators: not written yet (stage 2).
+
+## Stage 2 translations
+
+Sheets in `tools/loc/<code>/*.tsv`, built with `python -P tools/loc/build_table.py <code>`.
+
+- [x] fr French (769/769 keys)
+- [x] id Indonesian (769/769 keys)
+- [x] zh Chinese, Simplified (769/769 keys; needs a CJK font before it renders, see Fonts)
+- [x] ja Japanese (769/769 keys; needs a CJK font before it renders, see Fonts)
+- [x] de German (769/769 keys)
+- [x] vi Vietnamese (769/769 keys)
+- [x] ko Korean (769/769 keys; needs a Hangul/CJK font before it renders, see Fonts)
+- [x] ru Russian (769/769 keys)
+- [x] ms Malay (769/769 keys)
+- [x] es Spanish (769/769 keys; neutral Latin American / international, tu form)
+- [x] it Italian (769/769 keys)
+- [x] tl Filipino / Tagalog (769/769 keys)
+- [x] pt Portuguese, Brazilian (769/769 keys; voce form)
+- [x] tr Turkish (769/769 keys)
+- [x] ar Arabic (769/769 keys; RTL, needs shaping + bidi + a bundled Arabic font before it renders, see Fonts)
+- [x] pl Polish (769/769 keys)
+- [x] hi Hindi (769/769 keys; Devanagari needs shaping + a bundled font before it renders, see Fonts)

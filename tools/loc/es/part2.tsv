@@ -1,0 +1,260 @@
+room.waiting	ESPERANDO JUGADORES
+room.joined	{0}  ·  {1} / {2} UNIDOS
+room.host	ANFITRIÓN
+room.player_n	JUGADOR {0}
+room.you_suffix	 · TÚ
+room.hazards_host_pick	{0} · LO ELIGE EL ANFITRIÓN
+room.hazards_on	PELIGROS SÍ
+room.hazards_off	PELIGROS NO
+room.code_copied	Código de sala {0} copiado. Pégaselo a tu amigo.
+invite.body	{0} te invita a {1}   ({2} s)
+select.ult_name	ULT  {0}
+age.title	¿CUÁNTOS AÑOS TIENES?
+age.body	Todas las edades pueden jugar todos los modos. Tu edad se guarda con tu nombre de jugador para las estadísticas del juego.
+common.next	SIGUIENTE
+age.error	Escribe tu edad o ajústala con la cruceta.
+age.pad_hint	Mando: cruceta arriba/abajo cambia de 1 en 1, izquierda/derecha de 10 en 10 · A = siguiente
+rooms.enter_name	ESCRIBE EL NOMBRE DE LA SALA
+rooms.name_rules	De 3 a 24 letras, números o espacios. Tus amigos lo verán al unirse. Las salas admiten de 2 a 4 jugadores.
+rooms.create	CREAR
+common.one_moment	UN MOMENTO...
+account.keep_name	CONSERVA TU NOMBRE DE LUCHADOR
+account.finish_in_browser	TERMINA EN TU NAVEGADOR...
+account.sign_in_google	INICIAR SESIÓN CON GOOGLE
+account.play_without	JUGAR SIN CUENTA
+name.choose_first	Primero elige tu nombre de jugador.
+common.cancelled	Cancelado.
+name.welcome	¡BIENVENIDO, LUCHADOR! ¿CÓMO TE LLAMAS?
+name.change_title	CAMBIA TU NOMBRE
+name.rules	De 3 a 16 letras, números o _. Elige un nombre de luchador divertido, no tu nombre real. Así te encuentran e invitan tus amigos, y es lo que ven todos.
+name.suggest	SUGERIR
+name.checking	COMPROBANDO...
+name.lets_fight	¡A LUCHAR!
+common.save	GUARDAR
+name.pad_hint_first	Mando: A = a luchar · Y = sugerir un nombre
+name.pad_hint	Mando: A = guardar · Y = sugerir un nombre
+online.connected_agreeing	Conectado. Acordando la partida...
+online.host_settings_changed	El anfitrión cambió los ajustes — vuelve a unirte a la sala.
+online.version_mismatch	Tu rival usa otra versión del juego. Ambos jugadores necesitan la misma versión.
+rooms.title	MATCHMAKING
+rooms.kicker	SALAS  ·  2-4 JUGADORES  ·  CREAR · UNIRSE · INVITAR POR NOMBRE
+rooms.create_rooms	CREAR SALAS
+rooms.join_room	UNIRSE A SALA
+rooms.creating	CREANDO TU SALA...
+rooms.loading	CARGANDO TUS SALAS...
+rooms.none_yet	¡Aún no has creado ninguna sala!
+rooms.one_moment	Un momento.
+rooms.empty_help	Pulsa CREAR SALAS para crear una, o UNIRSE A SALA con el código de un amigo.
+rooms.capacity_note	Las salas admiten de 2 a 4 jugadores. Invita a amigos por su nombre de jugador.
+rooms.invites_paused	Invitaciones a salas en pausa unos minutos
+rooms.refresh	ACTUALIZAR
+rooms.hint	MATCHMAKING  ·  SALAS
+rooms.new	NUEVA
+rooms.you_host	ERES ANFITRIÓN
+rooms.open	ABRIR
+join.enter_code	ESCRIBE EL CÓDIGO DE LA SALA
+join.body	Escribe o pega el código de sala que te envió tu amigo (Discord, chat...).
+join.paste	PEGAR
+join.join	UNIRSE
+join.bad_code	Eso no es un código de sala. Revísalo e inténtalo de nuevo (solo letras y números).
+rooms.fight_starting	Está empezando un combate en la sala. Espera, o sal primero de la sala.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  UN JUGADOR CERCA DE TI
+quick.player_found	¡JUGADOR ENCONTRADO!
+quick.search_failed	BÚSQUEDA FALLIDA
+quick.not_searching	SIN BUSCAR
+quick.connecting	Conectando con tu rival...
+quick.searching_near	Buscando un jugador cerca de ti
+quick.stopped	La búsqueda se detuvo. Inténtalo de nuevo.
+quick.press_search_again	Pulsa BUSCAR DE NUEVO para encontrar un jugador.
+quick.privacy	La partida rápida comparte tu país (de los ajustes del dispositivo), nunca tu ubicación.
+quick.search_again	BUSCAR DE NUEVO
+quick.hint	VS ONLINE  ·  PARTIDA RÁPIDA
+room.kicker_opening	SALA  ·  ABRIENDO LA SALA...
+room.opening	Abriendo la sala...
+room.your_fighter	TU LUCHADOR
+room.locked_in	CONFIRMADO
+room.everyone_ok	Todos pulsan OK: el combate empieza solo.
+room.share_code	Comparte el código o invita a amigos por su nombre.
+room.empty_seat	Puesto libre
+room.stage_you	ESCENARIO (lo eliges tú)
+room.stage_host	ESCENARIO (lo elige el anfitrión)
+common.ok	OK
+room.loading	CARGANDO...
+room.change	CAMBIAR
+room.starting	EMPEZANDO...
+room.start_fight	EMPEZAR COMBATE
+room.close	CERRAR SALA
+room.leave	SALIR DE LA SALA
+room.hint	MATCHMAKING  ·  SALA
+room.code	CÓDIGO
+room.copy	COPIAR
+room.host_can_invite	El anfitrión puede invitar a un amigo por su nombre.
+room.invite_by_name	INVITA A UN AMIGO POR SU NOMBRE
+room.invite	INVITAR
+room.full	La sala está llena.
+invite.title	INVITACIÓN A SALA
+invite.warning	Los nombres no se verifican: acepta solo invitaciones de gente que conozcas.
+invite.accept	ACEPTAR
+invite.decline	RECHAZAR
+room.hazards_on_btn	PELIGROS  SÍ
+room.hazards_off_btn	PELIGROS  NO
+select.passive	PASIVA
+select.look	ASPECTO
+select.cosmetic	COSMÉTICO
+select.arcade_round	ARCADE  ·  RONDA {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   MANDO 1 = 1P, MANDO 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  FLECHAS  ENTER  BACKSPACE  DEL
+select.dummy	MUÑECO
+select.round_rival	RIVAL DE LA RONDA {0}
+select.picks_at_start	ELIGE AL EMPEZAR EL COMBATE
+select.signature_weapon	ARMA INSIGNIA  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  DERROTADO
+select.arcade_route	RUTA ARCADE  ·  ESCENARIO {0} / {1}
+select.select_stage	ELIGE ESCENARIO
+select.local_versus	VERSUS LOCAL
+select.arcade_rival	RIVAL DEL ARCADE
+select.training_dummy	MUÑECO DE ENTRENAMIENTO
+select.stage	ESCENARIO
+select.hazards	PELIGROS
+select.fight	LUCHAR
+select.change	CAMBIAR
+select.confirm	CONFIRMAR
+select.random	AL AZAR
+select.fate	QUE DECIDA EL DESTINO
+select.ready_bang	¡LISTO!
+select.loadout	EQUIPO
+select.waiting_1p	ESPERANDO A 1P
+select.1p_picks_dummy	1P ELIGE EL MUÑECO
+select.selecting	ELIGIENDO
+select.identity_hidden	IDENTIDAD OCULTA
+select.revealed_at_start	SE REVELA AL EMPEZAR LA RONDA
+select.ai_picks	LA IA ELIGE SU LUCHADOR
+select.random_every_fight	UN PERSONAJE AL AZAR EN CADA COMBATE
+select.any_character	CUALQUIER PERSONAJE · PASIVA Y ARMA AL AZAR
+select.lock_in_hint	CONFIRMAR  ·  O HAZ CLIC EN UN PERSONAJE
+select.to_ready	PARA ESTAR LISTO
+select.cpu_difficulty_pick	DIFICULTAD DE LA CPU  ·  ELIGE ANTES DEL COMBATE
+select.ai_note	No necesitas internet. La IA elige personaje, pasiva y arma nuevos en cada combate, también en las revanchas.
+select.pad_difficulty	CRUCETA ARRIBA / ABAJO  ·  DIFICULTAD
+select.key_difficulty	W / S  ·  DIFICULTAD
+select.start_training	EMPEZAR ENTRENAMIENTO
+select.fight_bang	¡A LUCHAR!
+select.click_to_start	O HAZ CLIC PARA EMPEZAR CON LO ELEGIDO
+hud.ready	PREPARADOS...
+hud.rival	RIVAL
+hud.you	TÚ
+hud.ultimate_ready	{0} · DEFINITIVA LISTA
+hud.move_detected	{0} · MOVIMIENTO DETECTADO
+hud.failed	{0} · FALLIDO
+hud.training_title	ENTRENAMIENTO · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  ENTRENAMIENTO
+hud.intro_online	  ·  EN LÍNEA  ·  ESC / START: SALIR
+hud.ult_ready_press	ULT LISTA - pulsa {0}
+hud.ult_ready	ULT LISTA
+hud.sim_key	tecla sim.: {0}
+hud.poses_live	 · poses: cruzar brazos = bloqueo / brazo fuera = bola de fuego / manos arriba = salto
+hud.poses_keys	 · poses 1 cruzar / 2 puñetazo / 3 levantar · P encorvarse
+hud.poses_p2	 · poses 8/9/0
+hud.training_help	ENTRENAMIENTO: T llena tu definitiva · los luchadores KO reaparecen al 0% · Esc pausa
+hud.ult_pct	ULT {0}%
+hud.last_hit	ÚLTIMO GOLPE  {0}
+hud.combo_hits	COMBO  {0} GOLPES  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KOs  {0}
+hud.cv_p1_sim	CÁMARA P1 · SIM
+hud.cv_p1_live	CÁMARA P1 · EN VIVO
+hud.cv_p2_sim	CÁMARA P2 · SIM
+hud.cv_p2_live	CÁMARA P2 · EN VIVO
+hud.hits_prefix	{0} GOLPES  
+results.no_contest	SIN RESULTADO
+results.draw	¡EMPATE!
+results.cpu_wins	GANA LA CPU
+results.you_win	¡GANASTE!
+results.rival_wins	GANA EL RIVAL
+results.wins	¡GANA {0}!
+results.takes_round	{0} gana la ronda
+results.stats	Golpes acertados  {0}\nCombos completos  {1}   ·   Mejor combo  {2}
+results.stats2	\nDefinitivas con gestos  {0}\nParrys  {1}
+results.posture	\nBuena postura  {0}%
+results.rewards_named	RECOMPENSAS (perfil de {0})
+results.rewards_your	RECOMPENSAS (tu perfil)
+results.rewards_p1	RECOMPENSAS (perfil de P1)
+results.coins	+{0} monedas  (total {1})
+hud.do_pose	haz la pose ante la cámara
+results.place_1	1.º
+results.place_2	2.º
+results.place_3	3.º
+results.place_4	4.º
+results.out	ELIMINADO
+results.out_1	ELIMINADO · 1.º
+results.out_2	ELIMINADO · 2.º
+results.out_3	ELIMINADO · 3.º
+results.out_4	ELIMINADO · 4.º
+results.red_team	EQUIPO ROJO
+results.blue_team	EQUIPO AZUL
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} JUGADORES
+hud.keys_line1	P{0}: {1} mover · {2} saltar · 
+hud.keys_line2	{0} ligero · {1} fuerte · {2} especial · 
+hud.keys_line3	{0} bloquear · {1} impulso · 
+hud.keys_line4	{0} habilidades · {1} definitiva
+results.characters	PERSONAJES
+results.stock_one	1 VIDA
+results.stocks	{0} VIDAS
+hud.respawn	REAPARICIÓN
+hud.drop_in	¡A LA ARENA!
+results.main_menu	MENÚ PRINCIPAL
+pause.title	PAUSA
+pause.resume	CONTINUAR
+pause.quit	SALIR AL MENÚ
+pause.hint	B / Backspace para continuar
+leave.title	¿ABANDONAR LA PARTIDA?
+leave.body	La partida sigue. Abandonar cuenta como derrota.
+leave.leave	ABANDONAR
+leave.hint	B / Backspace / Esc / Start para quedarte
+results.winner	GANADOR
+results.training_no_rewards	Entrenamiento: sin recompensas
+cv.posture	Postura {0}%
+cv.posture_low	Postura {0}% - ¡siéntate derecho!
+cv.telemetry_ok	Telemetría OK
+net.rooms_load_failed	No se pudieron cargar tus salas: {0}
+net.host_limit	Ya eres anfitrión de {0} salas. Cierra una primero.
+net.creating_named	Creando "{0}"...
+net.room_ready_code	La sala "{0}" está lista. Comparte el código {1} o invita a un amigo.
+net.create_failed	No se pudo crear la sala: {0}
+net.joining_room	Uniéndote a la sala {0}...
+net.you_joined	Te uniste a "{0}". Elige tu luchador y pulsa OK.
+net.no_room_code	No hay ninguna sala con el código {0}. Revisa el código e inténtalo de nuevo.
+net.room_full_n	Esa sala está llena ({0} jugadores).
+net.join_failed	No se pudo unir: {0}
+net.update_failed	No se pudo actualizar la sala: {0}
+net.could_not_what	No se pudo {0}: {1}
+net.what_stage	cambiar el escenario
+net.what_hazards	cambiar los peligros
+net.press_ok_again	{0} Ambos deben pulsar OK y EMPEZAR COMBATE otra vez.
+net.udp_port	No se pudo abrir el puerto UDP {0} (¿ya está en uso?).
+net.lan_ready	Anfitrión LAN listo. Tu amigo se une a: {0}  (puerto {1})
+net.bad_ip	"{0}" no es una dirección IP válida.
+net.connecting_to	Conectando a {0}...
+net.sign_in_failed	Error al iniciar sesión: {0}
+net.room_ready	La sala "{0}" está lista. Comparte el código con tu amigo.
+net.searching_in	Buscando jugadores en {0}...
+net.start_failed	No se pudo empezar el combate: {0}
+net.host_unreachable	No se pudo contactar con el anfitrión: {0}
+net.area_world	todo el mundo
+net.area_country_and	tu país y {0}
+region.africa	África
+region.americas	América
+region.asia	Asia
+region.europe	Europa
+region.oceania	Oceanía
+region.northern_africa	África del Norte
+region.eastern_africa	África Oriental
+region.middle_africa	África Central
+region.southern_africa	África Austral
+region.western_africa	África Occidental
+region.caribbean	el Caribe

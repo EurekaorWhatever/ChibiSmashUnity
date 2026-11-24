@@ -1,0 +1,264 @@
+name.you_are	Sei {0}!
+name.you_are_unchecked	Sei {0}! Controlleremo il nome quando giocherai online.
+online.could_not_start	Impossibile avviare la partita ({0}).
+rooms.your_rooms	LE TUE STANZE
+rooms.count_click	{0}  ·  clicca una stanza per aprirla
+rooms.code_value	CODICE  {0}
+rooms.players_count	{0} / {1} GIOCATORI
+rooms.more	+ altre {0} stanze
+rooms.created	Stanza "{0}" creata. Cliccala per condividere il codice o invitare amici.
+quick.searching	RICERCA
+quick.looking_in	CERCO IN:  {0}
+room.kicker	STANZA  ·  2-4 GIOCATORI  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	PRONTI A COMBATTERE
+room.full_suffix	 · STANZA PIENA
+room.waiting	IN ATTESA DI GIOCATORI
+room.joined	{0}  ·  {1} / {2} ENTRATI
+room.host	HOST
+room.player_n	GIOCATORE {0}
+room.you_suffix	 · TU
+room.hazards_host_pick	{0} · SCELTA DELL'HOST
+room.hazards_on	TRAPPOLE ON
+room.hazards_off	TRAPPOLE OFF
+room.code_copied	Codice stanza {0} copiato. Incollalo al tuo amico.
+invite.body	{0} ti invita in {1}   ({2}s)
+select.ult_name	ULT  {0}
+age.title	QUANTI ANNI HAI?
+age.body	Ogni età può giocare a ogni modalità. La tua età viene registrata con il nome giocatore per le statistiche di gioco.
+common.next	AVANTI
+age.error	Scrivi la tua età o impostala con la croce direzionale.
+age.pad_hint	Gamepad: croce su/giù cambia di 1, sinistra/destra di 10 · A = avanti
+rooms.enter_name	INSERISCI IL NOME DELLA STANZA
+rooms.name_rules	3-24 lettere, numeri o spazi. Gli amici lo vedono quando entrano. Le stanze ospitano da 2 a 4 giocatori.
+rooms.create	CREA
+common.one_moment	UN MOMENTO...
+account.keep_name	TIENI IL TUO NOME DA LOTTATORE
+account.finish_in_browser	COMPLETA NEL BROWSER...
+account.sign_in_google	ACCEDI CON GOOGLE
+account.play_without	GIOCA SENZA ACCOUNT
+name.choose_first	Prima scegli il tuo nome giocatore.
+common.cancelled	Annullato.
+name.welcome	BENVENUTO, LOTTATORE! COME TI CHIAMI?
+name.change_title	CAMBIA IL TUO NOME
+name.rules	3-16 lettere, numeri o _. Scegli un nome da lottatore divertente, non il tuo vero nome. È così che gli amici ti trovano e ti invitano, ed è ciò che vedono tutti.
+name.suggest	SUGGERISCI
+name.checking	VERIFICA...
+name.lets_fight	COMBATTIAMO!
+common.save	SALVA
+name.pad_hint_first	Gamepad: A = combattiamo · Y = suggerisci un nome
+name.pad_hint	Gamepad: A = salva · Y = suggerisci un nome
+online.connected_agreeing	Connesso. Accordo sulla partita...
+online.host_settings_changed	Le impostazioni dell'host sono cambiate — rientra nella stanza.
+online.version_mismatch	Il tuo avversario usa un'altra versione del gioco. Entrambi i giocatori devono avere la stessa versione.
+rooms.title	MATCHMAKING
+rooms.kicker	STANZE  ·  2-4 GIOCATORI  ·  CREA · ENTRA · INVITA PER NOME
+rooms.create_rooms	CREA STANZE
+rooms.join_room	ENTRA IN UNA STANZA
+rooms.creating	CREAZIONE DELLA STANZA...
+rooms.loading	CARICAMENTO DELLE STANZE...
+rooms.none_yet	Nessuna stanza creata finora!
+rooms.one_moment	Un momento.
+rooms.empty_help	Premi CREA STANZE per farne una, o ENTRA IN UNA STANZA con il codice di un amico.
+rooms.capacity_note	Le stanze ospitano da 2 a 4 giocatori. Invita gli amici con il loro nome giocatore.
+rooms.invites_paused	Inviti alle stanze in pausa per qualche minuto
+rooms.refresh	AGGIORNA
+rooms.hint	MATCHMAKING  ·  STANZE
+rooms.new	NUOVA
+rooms.you_host	SEI L'HOST
+rooms.open	APRI
+join.enter_code	INSERISCI IL CODICE DELLA STANZA
+join.body	Scrivi o incolla il codice della stanza che ti ha mandato il tuo amico (Discord, chat...).
+join.paste	INCOLLA
+join.join	ENTRA
+join.bad_code	Questo non è un codice stanza. Controllalo e riprova (solo lettere e numeri).
+rooms.fight_starting	Sta iniziando una sfida nella stanza. Aspettala o prima esci dalla stanza.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  UN GIOCATORE VICINO A TE
+quick.player_found	GIOCATORE TROVATO!
+quick.search_failed	RICERCA FALLITA
+quick.not_searching	NESSUNA RICERCA
+quick.connecting	Connessione all'avversario...
+quick.searching_near	Cerco un giocatore vicino a te
+quick.stopped	La ricerca si è fermata. Riprova.
+quick.press_search_again	Premi CERCA DI NUOVO per trovare un giocatore.
+quick.privacy	La partita rapida condivide il tuo paese (dalle impostazioni del dispositivo), mai la tua posizione.
+quick.search_again	CERCA DI NUOVO
+quick.hint	VS ONLINE  ·  PARTITA RAPIDA
+room.kicker_opening	STANZA  ·  APERTURA DELLA STANZA...
+room.opening	Apertura della stanza...
+room.your_fighter	IL TUO LOTTATORE
+room.locked_in	CONFERMATO
+room.everyone_ok	Tutti premono OK: la sfida parte da sola.
+room.share_code	Condividi il codice o invita gli amici per nome.
+room.empty_seat	Posto libero
+room.stage_you	ARENA (scegli tu)
+room.stage_host	ARENA (sceglie l'host)
+common.ok	OK
+room.loading	CARICAMENTO...
+room.change	CAMBIA
+room.starting	AVVIO...
+room.start_fight	INIZIA LA SFIDA
+room.close	CHIUDI STANZA
+room.leave	ESCI DALLA STANZA
+room.hint	MATCHMAKING  ·  STANZA
+room.code	CODICE
+room.copy	COPIA
+room.host_can_invite	L'host può invitare un amico per nome.
+room.invite_by_name	INVITA UN AMICO PER NOME
+room.invite	INVITA
+room.full	La stanza è piena.
+invite.title	INVITO ALLA STANZA
+invite.warning	I nomi non sono verificati: accetta solo inviti da persone che conosci.
+invite.accept	ACCETTA
+invite.decline	RIFIUTA
+room.hazards_on_btn	TRAPPOLE  ON
+room.hazards_off_btn	TRAPPOLE  OFF
+select.passive	PASSIVA
+select.look	ASPETTO
+select.cosmetic	ESTETICA
+select.arcade_round	ARCADE  ·  ROUND {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   GAMEPAD 1 = 1P, GAMEPAD 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	MANICHINO
+select.round_rival	RIVALE DEL ROUND {0}
+select.picks_at_start	SCEGLIE ALL'INIZIO DELLA SFIDA
+select.signature_weapon	ARMA SIMBOLO  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  SCONFITTO
+select.arcade_route	PERCORSO ARCADE  ·  ARENA {0} / {1}
+select.select_stage	SCEGLI L'ARENA
+select.local_versus	VERSUS LOCALE
+select.arcade_rival	RIVALE ARCADE
+select.training_dummy	MANICHINO D'ALLENAMENTO
+select.stage	ARENA
+select.hazards	TRAPPOLE
+select.fight	COMBATTI
+select.change	CAMBIA
+select.confirm	CONFERMA
+select.random	CASUALE
+select.fate	AFFIDATI AL DESTINO
+select.ready_bang	PRONTO!
+select.loadout	EQUIPAGGIAMENTO
+select.waiting_1p	IN ATTESA DI 1P
+select.1p_picks_dummy	1P SCEGLIE IL MANICHINO
+select.selecting	IN SCELTA
+select.identity_hidden	IDENTITÀ NASCOSTA
+select.revealed_at_start	RIVELATO ALL'INIZIO DEL ROUND
+select.ai_picks	L'IA SCEGLIE IL SUO LOTTATORE
+select.random_every_fight	UN PERSONAGGIO CASUALE A OGNI SFIDA
+select.any_character	QUALSIASI PERSONAGGIO · PASSIVA E ARMA CASUALI
+select.lock_in_hint	CONFERMA  ·  O CLICCA UN PERSONAGGIO
+select.to_ready	PER ESSERE PRONTO
+select.cpu_difficulty_pick	DIFFICOLTÀ CPU  ·  SCEGLI PRIMA DELLA SFIDA
+select.ai_note	Non serve internet. L'IA sceglie un nuovo personaggio, passiva e arma per ogni sfida, rivincite comprese.
+select.pad_difficulty	CROCE SU / GIÙ  ·  DIFFICOLTÀ
+select.key_difficulty	W / S  ·  DIFFICOLTÀ
+select.start_training	INIZIA ALLENAMENTO
+select.fight_bang	COMBATTI!
+select.click_to_start	O CLICCA PER INIZIARE CON LE SCELTE ATTUALI
+hud.ready	PRONTI...
+hud.rival	RIVALE
+hud.you	TU
+hud.ultimate_ready	{0} · ULTIMATE PRONTA
+hud.move_detected	{0} · MOSSA RILEVATA
+hud.failed	{0} · FALLITO
+hud.training_title	ALLENAMENTO · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  ALLENAMENTO
+hud.intro_online	  ·  ONLINE  ·  ESC / START: ESCI
+hud.ult_ready_press	ULT PRONTA - premi {0}
+hud.ult_ready	ULT PRONTA
+hud.sim_key	tasto sim: {0}
+hud.poses_live	 · pose: braccia incrociate = parata / braccio teso = palla di fuoco / mani in alto = salto
+hud.poses_keys	 · pose 1 incrocia / 2 pugno / 3 alza · P curvo
+hud.poses_p2	 · pose 8/9/0
+hud.training_help	ALLENAMENTO: T riempie la ultimate · i lottatori KO tornano a 0% · Esc pausa
+hud.ult_pct	ULT {0}%
+hud.last_hit	ULTIMO COLPO  {0}
+hud.combo_hits	COMBO  {0} COLPI  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	CAMERA P1 · SIM
+hud.cv_p1_live	CAMERA P1 · LIVE
+hud.cv_p2_sim	CAMERA P2 · SIM
+hud.cv_p2_live	CAMERA P2 · LIVE
+hud.hits_prefix	{0} COLPI  
+results.no_contest	NESSUN RISULTATO
+results.draw	PAREGGIO!
+results.cpu_wins	VINCE LA CPU
+results.you_win	HAI VINTO!
+results.rival_wins	VINCE IL RIVALE
+results.wins	VINCE {0}!
+results.takes_round	{0} vince il round
+results.stats	Colpi a segno  {0}\nCombo complete  {1}   ·   Combo migliore  {2}
+results.stats2	\nUltimate con i gesti  {0}\nParate perfette  {1}
+results.posture	\nBuona postura  {0}%
+results.rewards_named	RICOMPENSE (profilo di {0})
+results.rewards_your	RICOMPENSE (il tuo profilo)
+results.rewards_p1	RICOMPENSE (profilo P1)
+results.coins	+{0} monete  (totale {1})
+hud.do_pose	fai la posa davanti alla camera
+results.place_1	1°
+results.place_2	2°
+results.place_3	3°
+results.place_4	4°
+results.out	FUORI
+results.out_1	FUORI · 1°
+results.out_2	FUORI · 2°
+results.out_3	FUORI · 3°
+results.out_4	FUORI · 4°
+results.red_team	SQUADRA ROSSA
+results.blue_team	SQUADRA BLU
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} GIOCATORI
+hud.keys_line1	P{0}: {1} muovi · {2} salta · 
+hud.keys_line2	{0} leggero · {1} pesante · {2} speciale · 
+hud.keys_line3	{0} parata · {1} scatto · 
+hud.keys_line4	{0} abilità · {1} ult
+results.characters	PERSONAGGI
+results.stock_one	1 VITA
+results.stocks	{0} VITE
+hud.respawn	RIENTRO
+hud.drop_in	IN CAMPO!
+results.main_menu	MENU PRINCIPALE
+pause.title	PAUSA
+pause.resume	RIPRENDI
+pause.quit	TORNA AL MENU
+pause.hint	B / Backspace per riprendere
+leave.title	ABBANDONARE LA PARTITA?
+leave.body	La partita continua. Uscire conta come sconfitta.
+leave.leave	ESCI
+leave.hint	B / Backspace / Esc / Start per restare
+results.winner	VINCITORE
+results.training_no_rewards	Allenamento: nessuna ricompensa
+cv.posture	Postura {0}%
+cv.posture_low	Postura {0}% - siediti dritto!
+cv.telemetry_ok	Telemetria OK
+net.rooms_load_failed	Impossibile caricare le tue stanze: {0}
+net.host_limit	Ospiti già {0} stanze. Prima chiudine una.
+net.creating_named	Creazione di "{0}"...
+net.room_ready_code	La stanza "{0}" è pronta. Condividi il codice {1} o invita un amico.
+net.create_failed	Impossibile creare la stanza: {0}
+net.joining_room	Ingresso nella stanza {0}...
+net.you_joined	Sei entrato in "{0}". Scegli il tuo lottatore e premi OK.
+net.no_room_code	Nessuna stanza con il codice {0}. Controlla il codice e riprova.
+net.room_full_n	Quella stanza è piena ({0} giocatori).
+net.join_failed	Impossibile entrare: {0}
+net.update_failed	Impossibile aggiornare la stanza: {0}
+net.could_not_what	Impossibile {0}: {1}
+net.what_stage	cambiare l'arena
+net.what_hazards	cambiare le trappole
+net.press_ok_again	{0} Premete entrambi OK e di nuovo INIZIA LA SFIDA.
+net.udp_port	Impossibile aprire la porta UDP {0} (già in uso?).
+net.lan_ready	Host LAN pronto. Il tuo amico si collega a: {0}  (porta {1})
+net.bad_ip	"{0}" non è un indirizzo IP valido.
+net.connecting_to	Connessione a {0}...
+net.sign_in_failed	Accesso non riuscito: {0}
+net.room_ready	La stanza "{0}" è pronta. Condividi il codice con il tuo amico.
+net.searching_in	Cerco giocatori in: {0}...
+net.start_failed	Impossibile avviare la sfida: {0}
+net.host_unreachable	Impossibile raggiungere l'host: {0}
+net.area_world	tutto il mondo
+net.area_country_and	il tuo paese e {0}

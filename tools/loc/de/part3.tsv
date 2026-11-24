@@ -1,0 +1,261 @@
+region.africa	Afrika
+region.americas	Amerika
+region.asia	Asien
+region.europe	Europa
+region.oceania	Ozeanien
+region.northern_africa	Nordafrika
+region.eastern_africa	Ostafrika
+region.middle_africa	Zentralafrika
+region.southern_africa	Südliches Afrika
+region.western_africa	Westafrika
+region.caribbean	Karibik
+region.central_america	Mittelamerika
+region.south_america	Südamerika
+region.northern_america	Nordamerika
+region.central_asia	Zentralasien
+region.eastern_asia	Ostasien
+region.south_eastern_asia	Südostasien
+region.southern_asia	Südasien
+region.western_asia	Westasien
+region.eastern_europe	Osteuropa
+region.northern_europe	Nordeuropa
+region.southern_europe	Südeuropa
+region.western_europe	Westeuropa
+region.australia_and_new_zealand	Australien und Neuseeland
+region.melanesia	Melanesien
+region.micronesia	Mikronesien
+region.polynesia	Polynesien
+net.joined_connecting	„{0}“ beigetreten. Verbinde mit dem Host...
+net.opponent_unreachable	Gegner nicht erreichbar: {0}
+net.quick_filling	{0} von {1} Spielern. Start in {2} s...
+invite.inviting	Lade {0} ein...
+invite.sent_lasts	Einladung an {0} gesendet. Sie gilt {1} Sekunden.
+invite.send_failed	Einladung konnte nicht gesendet werden: {0}
+invite.joining_room_of	Trete dem Raum von {0} bei...
+invite.paused	Einladungen für {0} Minuten pausiert.
+invite.invited_you	{0} hat dich zu „{1}“ eingeladen.
+invite.ran_out	Deine Einladung an {0} ist abgelaufen.
+friends.choose_name	Wähle einen Spielernamen, damit Freunde dich finden.
+friends.unavailable	Freunde nicht verfügbar: {0}
+friends.your_name_is	Dein Name ist {0}. Gib ihn Freunden, damit sie dich hinzufügen.
+friends.set_name_failed	Name konnte nicht gesetzt werden: {0}
+friends.request_sent	Freundschaftsanfrage an {0} gesendet.
+friends.add_failed	{0} konnte nicht hinzugefügt werden: {1}
+friends.offline	{0} ist gerade offline.
+friends.request_then_invite	Freundschaftsanfrage an {0} gesendet. Die Einladung geht raus, sobald sie angenommen wird.
+friends.unreachable	{0} nicht erreichbar: {1}
+friends.creating_room_for	Erstelle einen Raum für {0}...
+friends.joining	Trete {0} bei...
+friends.declined	{0} hat die Einladung abgelehnt.
+friends.version_mismatch	{0} hat dich eingeladen, nutzt aber eine andere Spielversion.
+friends.invite_sent_waiting	Einladung an {0} gesendet. Warte auf den Beitritt...
+name.too_short	Name ist zu kurz (mindestens {0} Zeichen).
+name.too_long	Name ist zu lang (höchstens {0} Zeichen).
+rooms.name_too_short	Raumname ist zu kurz (mindestens {0} Zeichen).
+rooms.name_too_long	Raumname ist zu lang (höchstens {0} Zeichen).
+net.bad_code	Das ist kein gültiger Raumcode (nur Buchstaben und Ziffern).
+net.version_mismatch	Dieser Raum wurde mit einer anderen Version von Chibi Clash erstellt. Beide Spieler brauchen dieselbe Version.
+net.loading_room	Raum wird geladen...
+net.room_closed	Raum geschlossen.
+net.you_left	Du hast den Raum verlassen.
+net.waiting_host_game	Starte... warte auf das Spiel des Hosts.
+net.choose_next_fight	Wähle deinen Kämpfer und drück OK für den nächsten Kampf.
+net.host_changed_stage	Der Host hat die Arena-Einstellungen geändert. Drück nochmal OK.
+net.room_closed_host_left	Der Raum wurde geschlossen (der Host ist gegangen).
+net.starting_fight	Kampf startet...
+net.player_left_joined	Ein Spieler ist gegangen oder beigetreten.
+net.no_connection	Keine Verbindung.
+net.fight_could_not_start	Der Kampf konnte nicht starten.
+net.fight_starting_wait	Kampf startet! Warte auf die Verbindung deines Freundes...
+net.choose_press_ok	Wähle deinen Kämpfer und drück OK.
+net.too_many_starts	Zu viele Starts. Warte eine Minute, dann drück KAMPF STARTEN.
+net.fight_starting_connecting	Kampf startet! Verbinde...
+net.could_not_connect	Verbindung fehlgeschlagen.
+net.friend_no_answer	Dein Freund hat nicht geantwortet.
+net.start_cancelled	Start abgebrochen.
+net.friend_no_connect	Dein Freund hat sich nicht verbunden.
+net.enter_code	Gib den Raumcode ein, den dein Freund anzeigt.
+net.lan_browser	LAN-Spiel ist im Browser nicht verfügbar. Nutze RÄUME oder MATCHMAKING, oder die PC-Version für LAN.
+net.enter_ip	Gib die IP-Adresse des Hosts ein.
+net.this_pc_ip	IP dieses PCs
+net.signing_in	Melde an...
+net.creating_private	Erstelle einen privaten Raum...
+net.hosting_one	Kein offenes Match gefunden, eröffne eins...
+net.needs_2_to_4	Ein Kampf braucht 2 bis 4 Spieler.
+net.waiting_friend	Warte auf die Verbindung deines Freundes...
+net.waiting_friends	Warte auf die Verbindung deiner Freunde...
+net.connection_running	Eine andere Verbindung läuft noch.
+net.no_valid_info	Der Raum hat keine gültigen Verbindungsdaten (Host weg?).
+net.connecting_host	Verbinde mit dem Host...
+net.already_full	Dieser Raum ist schon voll.
+net.no_info	Der Raum hat keine Verbindungsdaten (Host weg?).
+net.player_left_searching	Der Spieler ist gegangen. Suche erneut...
+net.connected	Verbunden!
+net.relay_failed	Die Verbindung zum Relay-Server ist fehlgeschlagen.
+net.opponent_timeout	Gegner nicht erreichbar (Zeitüberschreitung).
+net.no_internet	Keine Internetverbindung. Verbinde WLAN oder mobile Daten, um überall mit Freunden zu spielen. (LAN-Spiel geht im selben Netzwerk.)
+invite.wait	Warte kurz, bevor du eine weitere Einladung sendest.
+invite.type_name	Gib den Spielnamen deines Freundes ein (3-16 Buchstaben, Ziffern oder _).
+invite.own_name	Das ist dein eigener Name.
+invite.open_room_first	Öffne zuerst deinen Raum, dann lade ein.
+invite.room_full	Dein Raum ist schon voll.
+invite.could_not_send	Einladung konnte nicht gesendet werden.
+invite.too_many	Gerade zu viele Einladungen. Versuch es in ein paar Sekunden nochmal.
+invite.cancelled	Einladung abgebrochen.
+invite.expired	Diese Einladung ist abgelaufen.
+invite.closed_full	Dein Raum ist voll. Einladung geschlossen.
+invite.closed_joined	Ein Spieler ist deinem Raum beigetreten. Einladung geschlossen.
+invite.closed_room	Einladung abgebrochen: Der Raum wurde geschlossen.
+name.taken	Dieser Name ist schon vergeben
+name.check_unavailable	Dein Name konnte nicht online geprüft werden. Prüf dein Internet und versuch es nochmal.
+name.too_soon	Du hast deinen Namen gerade erst geändert. Versuch es in einer Minute nochmal.
+name.choose_different	Bitte wähle einen anderen Namen.
+friends.type_tag	Gib den Namen deines Freundes so ein: Kira#4821.
+friends.added	Freund hinzugefügt.
+friends.declined_request	Anfrage abgelehnt.
+friends.removed	Freund entfernt.
+friends.blocked	Spieler blockiert.
+friends.a_friend	Ein Freund
+friends.type_player_tag	Gib den Namen des Spielers so ein: Kira#4821.
+friends.wait_invite	Warte kurz, bevor du erneut einlädst.
+name.enter	Gib einen Namen ein.
+name.bad_chars	Nur Buchstaben, Ziffern und _ (keine Leer- oder Sonderzeichen).
+rooms.name_bad_chars	Raumnamen nur mit Buchstaben, Ziffern, Leerzeichen und _ - ' !
+rooms.name_double_space	Raumnamen dürfen keine doppelten Leerzeichen haben.
+rooms.name_choose_different	Bitte wähle einen anderen Raumnamen.
+gesture.cross_arms	ARME KREUZEN
+gesture.punch_forward	NACH VORN SCHLAGEN
+gesture.raise_hands	BEIDE HÄNDE HOCH
+class.kaia.passive1_desc	+15% Angriffstempo
+class.kaia.passive2_desc	5% Lebensraub
+class.kaia.skill1_desc	Nach vorn sprinten und den Gegner durchbohren
+class.kaia.skill2_desc	Perfektes Timing wirft Schaden zurück
+class.kaia.skill3_desc	Viele schnelle Stiche hintereinander
+class.kaia.ult_desc	10 s: Normale Angriffe entfesseln eine waagerechte Welle
+class.bruna.passive1_desc	+20% Schaden, -15% Angriffstempo
+class.bruna.passive2_desc	+20% Schaden, -15% Lauftempo
+class.bruna.skill1_desc	Den Gegner packen und auf den Boden schmettern
+class.bruna.skill2_desc	Wie ein Tornado drehen und ständig treffen
+class.bruna.ult_desc	Auf den Boden schlagen und eine Schockwelle auslösen
+class.ren.passive1_desc	+20% Krit-Chance
+class.ren.passive2_desc	+10% Lauftempo für 10 s (30 s Abklingzeit)
+class.ren.skill1_desc	Waagerecht zurückspringen und schießen
+class.ren.skill2_desc	Nahen Gegner würgen und wegstoßen
+class.ren.skill3_desc	Waagerechtes Pfeilsperrfeuer schießen
+class.ren.ult_desc	Ein Pfeil vervielfacht sich zu einem Pfeilsturm
+class.lyra.passive1_desc	10% Chance pro Treffer: -15% Lauf, -10% Schaden, -15% Angriffstempo
+class.lyra.passive2_desc	20% Chance, Schaden zu blocken
+class.lyra.skill1_desc	Ein zielsuchendes Feuergeschoss abfeuern
+class.lyra.skill2_desc	3 Diener beschwören
+class.lyra.skill3_desc	Eine Wolke folgt dem Gegner und trifft mit Blitzen
+class.lyra.ult_desc	10 s Feuerring: verbrennt Gegner, blockt Geschosse
+class.taro.passive1_desc	10% Chance pro Treffer: -15% Gegnerverteidigung
+class.taro.passive2_desc	Nach 3 s ohne Angriff: nächster Treffer +50%
+class.taro.skill1_desc	Ausstrecken, springen und nach unten schwingen
+class.taro.skill2_desc	Die Stangenwaffe drehen, um Geschosse zu blocken
+class.taro.skill3_desc	Den Speer werfen und zurückrufen
+class.taro.ult_desc	Den Gegner aufspießen, dann den Schaft tiefer treten
+char.kaia.role	Flinke Angreiferin
+char.kaia.style	Schneller, beweglicher Nahkampf mit präzisen, verkettbaren Hieben.
+char.bruna.role	Schlägerin
+char.bruna.style	Robuste Schlägerin mit viel Schaden, die mit wuchtigen Angriffen den Raum kontrolliert.
+char.ren.role	Flinker Schütze
+char.ren.style	Sehr mobile Zonenkontrolle und präziser Druck mit vielseitiger Pfeiltechnik.
+char.lyra.role	Zonen / Fallen
+char.lyra.style	Flinke Magierin, die den Raum mit schnellen Zaubern, trickreicher Bewegung und präziser Magie kontrolliert.
+char.taro.role	Reichweiten-Experte
+char.taro.style	Disziplinierte, bewegliche Kontrolle mit Druck auf große Reichweite und präzisen Stößen.
+stage.0.name	Himmelsdojo
+stage.0.short	Himmelsdojo
+stage.0.tagline	Bergschrein über den Wolken
+stage.1.name	Neonstadt
+stage.1.short	Neonstadt
+stage.1.tagline	Dacharena im Neonregen
+stage.2.name	Lavaschmiede
+stage.2.short	Lavaschmiede
+stage.2.tagline	Glühende Gießerei über einem Lavameer
+stage.3.name	Berg des Anfangs
+stage.3.short	Berg
+stage.3.tagline	Vertikaler KO · bewegliche Jadeplattformen über einem nebligen Abgrund
+stage.4.name	Ebene der Einheit
+stage.4.short	Ebene
+stage.4.tagline	Horizontaler KO · ein langes Feld, kein Versteck
+stage.5.name	Der Vulkanschlund
+stage.5.short	Vulkan
+stage.5.tagline	Jeder Rand ist KO · Feuer schießt aus dem Magmasee
+stage.6.name	Der Riesenvogelhort
+stage.6.short	Vogelhort
+stage.6.tagline	Horizontaler KO · der riesige Vogel fegt über die Arena
+stage.7.name	Das verlassene Ozean-Monument
+stage.7.short	Ozean
+stage.7.tagline	Jeder Rand ist KO · der Wal taucht herab, spring auf die Stufen
+end.opponent_left	Dein Gegner hat das Match verlassen.
+end.opponent_timeout	Dein Gegner reagiert nicht mehr.
+end.connection_lost	Die Verbindung zu deinem Gegner ist abgebrochen.
+end.you_left	Du hast das Match verlassen.
+end.desync	Die beiden Spiele weichen voneinander ab (Desync): keine Wertung.
+end.unconfirmed	Das Matchende konnte nicht bestätigt werden: keine Wertung.
+end.handshake_failed	Das Match konnte nicht starten.
+end.peer_never_started	Dein Gegner ist dem Match nie beigetreten: keine Wertung.
+end.too_slow	Die Verbindung war zu langsam zum Spielen: keine Wertung.
+end.host_left	Der Host hat das Match verlassen: keine Wertung.
+end.dropped	Deine Verbindung ist aus dem Match gefallen.
+status.aura	AURA {0}
+status.fire_ring	FEUERRING {0}
+status.tailwind	RÜCKENWIND
+status.guard_broken	DECKUNG GEBROCHEN {0}s
+status.guard	DECKUNG {0}%
+status.reloading	LÄDT NACH {0}s
+status.recharging	LÄDT AUF {0}s
+status.hexed	VERHEXT
+status.armor_break	RÜSTUNG -15%
+hud.perform	Ausführen: {0}
+hud.times_up	Zeit um!
+rewards.no_contest	Keine Wertung: keine Belohnungen
+rewards.pve_victory	PvE-Sieg  +{0}
+rewards.pve_match	PvE-Match  +{0}
+rewards.victory	Sieg  +{0}
+rewards.match_played	Match gespielt  +{0}
+rewards.posture	Gute Haltung {0}%  +{1}
+hud.revived	WIEDERBELEBT
+quest.win	Gewinne 3 Matches
+quest.pve	Besiege zweimal die CPU (PvE)
+quest.combo	Lande 10 volle Combos
+quest.ult	Löse 3 Gesten-Ultimates aus
+quest.parry	Pariere 5 Angriffe
+quest.posture	Beende ein Match mit 80%+ guter Haltung
+rewards.quest	Quest: {0}  +{1}
+bind.move_left	Nach links
+bind.move_right	Nach rechts
+bind.drop	Runter / Schnellfall
+bind.jump	Springen
+bind.jump_alt	Springen (alt.)
+bind.light	Leichter Angriff
+bind.heavy	Schwerer Angriff
+bind.block	Blocken
+bind.dash	Sprint
+bind.skill1	Skill 1
+bind.skill2	Skill 2
+bind.skill3	Skill 3
+bind.ultimate	Ultimate
+bind.aim_up	Nach oben zielen
+bind.special	Spezial
+hud.rejected	Abgelehnt: {0}
+cv.low_confidence	Unsicheres Tracking
+cv.frozen	Eingefrorenes Bild (Betrug?)
+cv.snap	Sofortige Pose (Makro?)
+cv.ok	OK
+cam.none	Keine Kamera gefunden
+cam.off	Kamera aus
+cam.starting	Kamera startet...
+cam.waiting_frames	Warte auf Kamerabilder - erlaube Unity den Kamerazugriff unter Systemeinstellungen > Datenschutz > Kamera
+cam.live	Kamera live ({0}x{1})
+pose.simulated	Simuliert (Tastatur-Posen)
+pose.camera_off	Kamera-Tracking aus - Posen per Tastatur simuliert
+pose.model_failed	Posenmodell fehlgeschlagen: {0}
+pose.loading	Lade Posenmodell...
+pose.live	Live-Körpertracking (MoveNet, {0} Hz)
+pose.step_back	Kamera an - geh zurück, damit deine Schultern zu sehen sind
+account.finish_browser	Schließ die Anmeldung im Browser ab (wähle Weiter mit Google)...
+account.signed_out_again	Abgemeldet. Melde dich erneut an, um dein Konto zu nutzen.
+account.signed_in_kept	Angemeldet. Dein Name und Fortschritt bleiben bei diesem Konto.

@@ -1,0 +1,251 @@
+lang.backdrop	NGÔN NGỮ
+lang.title	CHỌN NGÔN NGỮ CỦA BẠN
+lang.subtitle	Mọi nội dung trong game sẽ dùng ngôn ngữ này. Bạn có thể đổi bất cứ lúc nào trong CÀI ĐẶT.
+lang.search_hint	Tìm ngôn ngữ...
+lang.no_match	Không có ngôn ngữ nào khớp.
+lang.english_text	Tạm thời là tiếng Anh
+lang.confirm	XÁC NHẬN  ·  {0}
+lang.confirm_none	XÁC NHẬN
+lang.pad_hint	Gõ để tìm · Lên / Xuống để chọn · Enter hoặc nút A = xác nhận
+common.cancel	HỦY
+settings.language	NGÔN NGỮ  ·  {0}
+difficulty.dummy	Hình nộm
+difficulty.easy	Dễ
+difficulty.medium	Vừa
+difficulty.hard	Khó
+difficulty.dummy_upper	HÌNH NỘM
+difficulty.easy_upper	DỄ
+difficulty.medium_upper	VỪA
+difficulty.hard_upper	KHÓ
+nav.home	TRANG CHỦ
+nav.play	CHƠI
+nav.training	LUYỆN TẬP
+nav.arcade	ARCADE
+nav.collection	BỘ SƯU TẬP
+nav.settings	CÀI ĐẶT
+account.signed_in_as	Đã đăng nhập với tên {0}.
+account.signed_in	Đã đăng nhập.
+account.signed_out	Đã đăng xuất.
+keys.who	P{0} {1}
+keys.reserved	{0} là phím tư thế / dáng ngồi (1 2 3, 8 9 0, numpad 7 8 9, P, -). Hãy chọn phím khác.
+keys.swapped	{0};  {1} giờ là {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Chơi trực tuyến dành cho người chơi từ 13 tuổi trở lên.
+arcade.clear_toast	HOÀN THÀNH ARCADE! Đã hạ cả {0} đối thủ
+precheck.too_dark	Quá tối ({0}%) - thêm ánh sáng
+precheck.too_bright	Quá sáng ({0}%) - giảm chói
+precheck.good	Tốt ({0}%)
+loading.weapon_art	Hình vũ khí: {0}
+loading.fighter	Đấu sĩ: {0}
+precheck.checking	ĐANG KIỂM TRA... {0}
+wipe.character_select	CHỌN NHÂN VẬT
+wipe.arcade	ARCADE
+results.rematch	ĐẤU LẠI
+results.continue	TIẾP TỤC
+results.finish	KẾT THÚC
+results.next_battle	TRẬN TIẾP THEO
+wipe.arcade_clear	HOÀN THÀNH ARCADE
+precheck.title	KIỂM TRA CAMERA
+precheck.camera_unavailable	Không có camera
+precheck.simulated_feed	Hình mô phỏng (webcam tắt)
+precheck.upper_body_ok	Thân trên đã vào khung
+precheck.step_back	Lùi lại - phải thấy vai và hông
+loading.interface	Đồ họa giao diện
+loading.typefaces	Phông chữ
+loading.pose_model	Mô hình nhận diện tư thế
+loading.ready	Sẵn sàng
+onboarding.welcome	CHÀO MỪNG!
+onboarding.your_account	TÀI KHOẢN CỦA BẠN
+onboarding.your_name	TÊN NGƯỜI CHƠI
+rooms.backdrop_create	GHÉP TRẬN  ·  TẠO PHÒNG
+rooms.backdrop_join	GHÉP TRẬN  ·  VÀO PHÒNG
+precheck.all_passed	ĐẠT TẤT CẢ
+precheck.failed	KIỂM TRA THẤT BẠI
+precheck.lighting	ÁNH SÁNG
+precheck.framing	KHUNG HÌNH
+precheck.posture	TƯ THẾ
+precheck.upright	Ngồi thẳng, tốt lắm
+precheck.sit_up	Ngồi thẳng lưng để nhận thêm xu
+common.retry	THỬ LẠI
+precheck.play_anyway	VẪN CHƠI
+common.back	QUAY LẠI
+precheck.ranked_note	Hàng chờ xếp hạng yêu cầu đạt bước kiểm tra này. Trận thường có thể bỏ qua.
+precheck.hint	KIỂM TRA CAMERA TRƯỚC TRẬN
+hint.select	CHỌN
+home.play	CHƠI
+home.training	LUYỆN TẬP
+home.arcade	ARCADE
+home.collection	BỘ SƯU TẬP NHÂN VẬT
+home.settings	CÀI ĐẶT
+home.exit	THOÁT GAME
+home.play_desc	Đấu nhanh Vs Online, phòng Ghép trận cùng bạn bè, hoặc Vs CPU
+home.training_desc	Thiết lập camera, tập động tác và hình nộm luyện tập
+home.arcade_desc	Đấu liên tiếp cả năm đối thủ qua mọi đấu trường
+home.collection_desc	Trang phục, vũ khí và banner trang trí
+home.settings_desc	Độ khó, tùy chọn camera và phím điều khiển
+home.exit_desc	Đóng game
+tips.1	Nạp đầy thanh ULT rồi nhấn Tuyệt chiêu - sau đó làm tư thế của đấu sĩ trước camera trước khi hết giờ đếm ngược.
+tips.2	DEF càng cao thì mỗi đòn nhận càng ít sát thương và đỡ đòn càng chắc.
+tips.3	Tư thế tốt được camera ghi nhận sẽ cho thêm xu sau mỗi trận.
+tips.4	Trang phục và vũ khí chỉ để trang trí - chỉ số không bao giờ thay đổi theo đồ đấu sĩ mặc.
+tips.5	Trong Luyện tập, nhấn T để nạp đầy tuyệt chiêu. Hình nộm luôn đứng dậy lại.
+tips.6	Mỗi đấu sĩ có một trong hai nội tại - chọn trong bảng trang bị sau khi chốt nhân vật.
+tips.7	Trận online dùng netcode rollback: cả hai máy chạy cùng một trận từ cùng một thao tác.
+stats.power	SỨC MẠNH
+stats.speed	TỐC ĐỘ
+stats.range	TẦM ĐÁNH
+stats.endurance	SỨC BỀN
+stats.recovery	HỒI PHỤC
+training.use_block	Đỡ đòn · tuyệt chiêu Cận chiến & Phép
+training.use_fireball	Cầu lửa · tuyệt chiêu Tầm xa & Thương
+training.use_superjump	Siêu nhảy · tuyệt chiêu Hạng nặng
+menu.online_locked	Chế độ online dành cho người chơi từ 13 tuổi trở lên.
+menu.no_internet	Không có internet: hãy kết nối Wi-Fi hoặc dữ liệu di động. VS AI chơi được ngoại tuyến.
+menu.four_player_soon	2v2 và Battle Royale cần hỗ trợ 4 người chơi, sẽ có trong bản cập nhật sau.
+profile.edit_name	SỬA TÊN
+profile.win_loss	T {0}  ·  B {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	SẴN SÀNG
+loading.loading	ĐANG TẢI
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   đã hoàn thành x{2}
+arcade.rule_fight_all	Đấu lần lượt cả {0} nhân vật theo thứ tự ngẫu nhiên.
+arcade.rule_difficulty	Độ khó CPU: {0} (đổi trong Cài đặt).
+arcade.final	CHUNG KẾT
+arcade.round	HIỆP {0}
+training.cv_setup_source	THIẾT LẬP CV · {0}
+training.status	Camera: {0}\nNhận diện: {1}\nPhát hiện: {2}
+training.off	tắt
+training.none	không có
+training.status_posture	   ·   Tư thế {0}%   ·   Đo đạc {1}
+collection.gold_cinematic_suffix	 · CẢNH QUAY VÀNG
+collection.only	CHỈ {0}
+collection.pull1	QUAY x1  ·  {0}
+collection.pull10	QUAY x10  ·  {0}
+collection.dup_suffix	  (trùng +20)
+collection.new_suffix	  MỚI!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} giây  <size=12><color=#9AA6BC>(cố định cho mọi trận)</color></size>
+settings.change_name_as	ĐỔI TÊN  ·  {0}
+settings.change_name	ĐỔI TÊN
+settings.keys_help	Bấm vào một phím gán, rồi nhấn phím hoặc bấm vào ô đó bằng nút chuột (Esc / pad B / bấm chỗ khác để hủy; hết giờ sau 5 giây). Nếu người chơi kia đã dùng phím đó, hai phím sẽ đổi chỗ.\nTư thế camera: khoanh tay = đỡ đòn · dang tay sang bên = cầu lửa · giơ hai tay = siêu nhảy (tư thế bàn phím: 1/2/3 và 8/9/0).
+rarity.common	THƯỜNG
+rarity.rare	HIẾM
+rarity.epic	SỬ THI
+rarity.legendary	HUYỀN THOẠI
+skin.default	Cổ điển
+skin.mint	Bạc hà
+skin.shadow	Bóng tối
+skin.sakura	Hoa anh đào
+skin.inferno	Hỏa ngục
+skin.celestial	Thiên giới
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	CHỈ 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	ĐỒNG ĐỘI\n2V2
+play.four_player_later	2v2 và Battle Royale sẽ có cùng hỗ trợ 4 người chơi trong bản cập nhật sau.
+play.team_tag	4P · 2 ĐỘI
+play.royale_tag	4P · HỖN CHIẾN
+collection.all_fighters	TẤT CẢ ĐẤU SĨ
+arcade.mode	CHẾ ĐỘ ARCADE
+home.tagline	GAME ĐỐI KHÁNG  ·  TUYỆT CHIÊU BẰNG CỬ ĐỘNG
+play.royale_card	BATTLE\nROYALE
+training.kicker	THIẾT LẬP CAMERA & LUYỆN TẬP
+settings.camera_tracking	NHẬN DIỆN CAMERA (WEBCAM)
+training.camera_off	NHẬN DIỆN CAMERA: TẮT
+training.camera_on	NHẬN DIỆN CAMERA: BẬT
+collection.hint	BỘ SƯU TẬP NHÂN VẬT
+play.choose_style	CHỌN LỐI CHƠI
+online.kicker	CHỌN LỐI CHƠI  ·  ĐƠN · 2V2 · BATTLE ROYALE
+play.kicker	CHỌN TRẬN ĐẤU  ·  VS ONLINE · GHÉP TRẬN · VS CPU
+play.coming_soon	SẮP RA MẮT
+training.cv	THỊ GIÁC MÁY TÍNH
+online.connection	KẾT NỐI
+collection.banner	BANNER TRANG TRÍ
+settings.cpu_difficulty	ĐỘ KHÓ CPU
+play.create_join	TẠO · VÀO PHÒNG
+settings.cv_overlay	LỚP PHỦ CV TRONG TRẬN
+quests.coins_note	Xu chỉ có được khi chơi: thắng, PvE, nhiệm vụ và tư thế tốt được camera ghi nhận.
+collection.odds	Thường 60% · Hiếm 28% · Sử thi 10% · Huyền thoại 2%
+collection.equip	TRANG BỊ
+collection.equipped	ĐANG DÙNG
+hint.exit	THOÁT
+home.exit_upper	THOÁT GAME
+exit.title	THOÁT GAME?
+online.royale_desc	Ai lo thân nấy. Đấu sĩ trụ lại cuối cùng sẽ thắng.
+arcade.kicker	NĂM ĐỐI THỦ · MỘT LƯỢT
+loading.for_battle	VÀO TRẬN
+online.invites_note	Lời mời vào phòng của bạn bè hiện ở đây. Phòng với bạn bè nằm ở CHƠI > GHÉP TRẬN.
+settings.kicker	GAME · CAMERA · ĐIỀU KHIỂN
+training.gestures_live	ĐỘNG TÁC  (làm tư thế trước camera - đấm = duỗi thẳng một tay sang bên)
+training.gestures_sim	ĐỘNG TÁC  (giữ phím để mô phỏng tư thế)
+settings.key_bindings	GÁN PHÍM
+settings.keys_reset	Đã đặt lại phím mặc định
+play.locked	ĐÃ KHÓA
+arcade.rule_retry	Thua một hiệp? Tiếp tục và đấu lại.
+home.hint	MENU CHÍNH
+settings.master_volume	ÂM LƯỢNG CHUNG
+settings.match_time	THỜI GIAN TRẬN
+play.matchmaking_card	GHÉP\nTRẬN
+hint.move	DI CHUYỂN
+play.matchmaking_desc	Tạo phòng, chia sẻ mã hoặc mời bạn bè bằng tên.
+play.no_internet_tag	KHÔNG CÓ INTERNET
+online.no_internet_body	Hiện không có internet. Hãy kết nối Wi-Fi hoặc dữ liệu di động, hoặc chơi Vs CPU.
+common.off	TẮT
+online.offline	NGOẠI TUYẾN
+common.on	BẬT
+settings.player1	NGƯỜI CHƠI 1
+settings.player2	NGƯỜI CHƠI 2
+training.practice_dummy	TẬP VỚI HÌNH NỘM
+settings.precheck	KIỂM TRA CAMERA TRƯỚC TRẬN
+loading.prepare	CHUẨN BỊ
+settings.listening_hint	NHẤN PHÍM HOẶC BẤM VÀO Ô  ·  ESC / PAD B ĐỂ HỦY  ·  KHÔNG GÁN ĐƯỢC NÚT TAY CẦM
+training.slouch_note	Nhấn P để bật/tắt tư thế gù lưng và xem điểm tư thế giảm.
+settings.profile_reset	Đã đặt lại hồ sơ (giữ tên và đăng nhập)
+collection.pull_to_unlock	Quay để mở khóa
+quests.title	NHIỆM VỤ
+online.quick_match	ĐẤU NHANH
+play.online_desc	Đấu nhanh với người chơi gần bạn, hoặc nhận lời mời của bạn bè.
+online.solo_desc	Đấu nhanh: đấu với người đang tìm trận, ưu tiên người gần nhất.
+settings.reset_keys	ĐẶT LẠI PHÍM
+settings.reset_profile	ĐẶT LẠI HỒ SƠ
+arcade.rival_unknown	ĐỐI THỦ  ???
+play.rooms_tag	PHÒNG · 2-4 NGƯỜI
+online.rollback_body	Netcode rollback: cả hai máy chạy cùng một trận từ cùng một thao tác, nên luôn nhanh và công bằng.
+settings.screen_shake	RUNG MÀN HÌNH
+profile.set_name	ĐẶT TÊN
+settings.sfx_volume	ÂM LƯỢNG HIỆU ỨNG
+training.simulate_pose	MÔ PHỎNG TƯ THẾ
+collection.kicker	TRANG PHỤC · VŨ KHÍ · BANNER TRANG TRÍ
+training.slouch	GÙ LƯNG
+online.solo_card	ĐƠN\n1V1
+home.start	BẮT ĐẦU
+arcade.start	BẮT ĐẦU ARCADE
+exit.stay	Ở LẠI
+settings.sure	CHẮC CHƯA?
+settings.sure_reset_profile	CHẮC CHƯA? MỌI TIẾN TRÌNH SẼ MẤT
+collection.banner_note	Chỉ có trang phục & cảnh quay tuyệt chiêu. Chỉ số như nhau ở mọi trang phục - không có gì phải trả tiền.
+hint.tabs	THẺ
+loading.tip	MẸO
+training.hint	LUYỆN TẬP  /  THIẾT LẬP CV
+arcade.rule_stages	Đấu trường đổi mỗi hiệp, từ Ngọn Núi Khởi Đầu đến Đài Tưởng Niệm Đại Dương.
+online.team_desc	Hai đội, mỗi đội hai người. Không sát thương đồng đội: đòn của bạn không làm đau đồng đội.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  LỐI CHƠI
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Thắng sẽ nhận xu và tiến độ nhiệm vụ, giống như VS CPU.
+exit.saved_note	Hồ sơ, xu và bộ sưu tập của bạn được lưu trên thiết bị này.
+settings.key_listening	nhấn phím hoặc bấm vào đây
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Bạn chọn đấu sĩ và DỄ, VỪA hoặc KHÓ. CPU nhận một đấu sĩ ngẫu nhiên.
+account.keep_name_body	Đăng nhập bằng tài khoản Google để giữ tên và thông tin của bạn: mỗi lần mở game, và trên mọi máy tính. Tài khoản Google khác sẽ có tên mới riêng.
+name.you_are	Bạn là {0}!
+name.you_are_unchecked	Bạn là {0}! Chúng tôi sẽ kiểm tra tên khi bạn chơi online.
+online.could_not_start	Không thể bắt đầu trận ({0}).
+rooms.your_rooms	PHÒNG CỦA BẠN
+rooms.count_click	{0}  ·  bấm vào phòng để mở
+rooms.code_value	MÃ  {0}
+rooms.players_count	{0} / {1} NGƯỜI CHƠI

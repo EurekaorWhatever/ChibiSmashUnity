@@ -1,0 +1,261 @@
+region.africa	Afrique
+region.americas	Amériques
+region.asia	Asie
+region.europe	Europe
+region.oceania	Océanie
+region.northern_africa	Afrique du Nord
+region.eastern_africa	Afrique de l'Est
+region.middle_africa	Afrique centrale
+region.southern_africa	Afrique australe
+region.western_africa	Afrique de l'Ouest
+region.caribbean	Caraïbes
+region.central_america	Amérique centrale
+region.south_america	Amérique du Sud
+region.northern_america	Amérique du Nord
+region.central_asia	Asie centrale
+region.eastern_asia	Asie de l'Est
+region.south_eastern_asia	Asie du Sud-Est
+region.southern_asia	Asie du Sud
+region.western_asia	Asie de l'Ouest
+region.eastern_europe	Europe de l'Est
+region.northern_europe	Europe du Nord
+region.southern_europe	Europe du Sud
+region.western_europe	Europe de l'Ouest
+region.australia_and_new_zealand	Australie et Nouvelle-Zélande
+region.melanesia	Mélanésie
+region.micronesia	Micronésie
+region.polynesia	Polynésie
+net.joined_connecting	« {0} » rejoint. Connexion à l'hôte...
+net.opponent_unreachable	Impossible de joindre ton adversaire : {0}
+net.quick_filling	{0} joueurs sur {1}. Début dans {2} s...
+invite.inviting	Invitation de {0}...
+invite.sent_lasts	Invitation envoyée à {0}. Elle dure {1} secondes.
+invite.send_failed	Impossible d'envoyer l'invitation : {0}
+invite.joining_room_of	Connexion au salon de {0}...
+invite.paused	Invitations en pause pour {0} minutes.
+invite.invited_you	{0} t'a invité dans « {1} ».
+invite.ran_out	Ton invitation à {0} a expiré.
+friends.choose_name	Choisis un nom de joueur pour que tes amis te trouvent.
+friends.unavailable	Amis indisponibles : {0}
+friends.your_name_is	Ton nom est {0}. Donne-le à tes amis pour qu'ils t'ajoutent.
+friends.set_name_failed	Impossible de définir le nom : {0}
+friends.request_sent	Demande d'ami envoyée à {0}.
+friends.add_failed	Impossible d'ajouter {0} : {1}
+friends.offline	{0} est hors ligne pour l'instant.
+friends.request_then_invite	Demande d'ami envoyée à {0}. L'invitation partira dès qu'il ou elle acceptera.
+friends.unreachable	Impossible de joindre {0} : {1}
+friends.creating_room_for	Création d'un salon pour {0}...
+friends.joining	Connexion à {0}...
+friends.declined	{0} a refusé l'invitation.
+friends.version_mismatch	{0} t'a invité, mais utilise une autre version du jeu.
+friends.invite_sent_waiting	Invitation envoyée à {0}. En attente de son arrivée...
+name.too_short	Nom trop court (au moins {0} caractères).
+name.too_long	Nom trop long (au plus {0} caractères).
+rooms.name_too_short	Nom de salon trop court (au moins {0} caractères).
+rooms.name_too_long	Nom de salon trop long (au plus {0} caractères).
+net.bad_code	Ce n'est pas un code de salon valide (lettres et chiffres uniquement).
+net.version_mismatch	Ce salon a été créé avec une autre version de Chibi Clash. Les deux joueurs doivent avoir la même version.
+net.loading_room	Chargement du salon...
+net.room_closed	Salon fermé.
+net.you_left	Tu as quitté le salon.
+net.waiting_host_game	Démarrage... en attente du jeu de l'hôte.
+net.choose_next_fight	Choisis ton combattant et appuie sur OK pour le prochain combat.
+net.host_changed_stage	L'hôte a changé les réglages de l'arène. Appuie à nouveau sur OK.
+net.room_closed_host_left	Le salon a été fermé (l'hôte est parti).
+net.starting_fight	Lancement du combat...
+net.player_left_joined	Un joueur est parti ou arrivé.
+net.no_connection	Pas de connexion.
+net.fight_could_not_start	Le combat n'a pas pu démarrer.
+net.fight_starting_wait	Le combat commence ! En attente de la connexion de ton ami...
+net.choose_press_ok	Choisis ton combattant et appuie sur OK.
+net.too_many_starts	Trop de lancements. Attends une minute, puis appuie sur LANCER LE COMBAT.
+net.fight_starting_connecting	Le combat commence ! Connexion...
+net.could_not_connect	Connexion impossible.
+net.friend_no_answer	Ton ami n'a pas répondu.
+net.start_cancelled	Lancement annulé.
+net.friend_no_connect	Ton ami ne s'est pas connecté.
+net.enter_code	Entre le code du salon affiché par ton ami.
+net.lan_browser	Le jeu en LAN n'est pas disponible dans le navigateur. Utilise SALONS ou MATCHMAKING, ou la version PC pour le LAN.
+net.enter_ip	Entre l'adresse IP de l'hôte.
+net.this_pc_ip	l'IP de ce PC
+net.signing_in	Connexion...
+net.creating_private	Création d'un salon privé...
+net.hosting_one	Aucun match ouvert trouvé, création d'un match...
+net.needs_2_to_4	Un combat nécessite 2 à 4 joueurs.
+net.waiting_friend	En attente de la connexion de ton ami...
+net.waiting_friends	En attente de la connexion de tes amis...
+net.connection_running	Une autre connexion est encore en cours.
+net.no_valid_info	Le salon n'a pas d'infos de connexion valides (hôte parti ?).
+net.connecting_host	Connexion à l'hôte...
+net.already_full	Ce salon est déjà plein.
+net.no_info	Le salon n'a pas d'infos de connexion (hôte parti ?).
+net.player_left_searching	Ce joueur est parti. Nouvelle recherche...
+net.connected	Connecté !
+net.relay_failed	La connexion au serveur Relay a échoué.
+net.opponent_timeout	Impossible de joindre ton adversaire (délai dépassé).
+net.no_internet	Pas de connexion internet. Connecte le Wi-Fi ou les données mobiles pour jouer avec tes amis où qu'ils soient. (Le jeu en LAN marche sur le même réseau.)
+invite.wait	Attends un instant avant d'envoyer une autre invitation.
+invite.type_name	Tape le nom en jeu de ton ami (3 à 16 lettres, chiffres ou _).
+invite.own_name	C'est ton propre nom.
+invite.open_room_first	Ouvre d'abord ton salon, puis invite.
+invite.room_full	Ton salon est déjà plein.
+invite.could_not_send	Impossible d'envoyer l'invitation.
+invite.too_many	Trop d'invitations en ce moment. Réessaie dans quelques secondes.
+invite.cancelled	Invitation annulée.
+invite.expired	Cette invitation a expiré.
+invite.closed_full	Ton salon est plein. Invitation fermée.
+invite.closed_joined	Un joueur a rejoint ton salon. Invitation fermée.
+invite.closed_room	Invitation annulée : le salon a fermé.
+name.taken	Ce nom est déjà pris
+name.check_unavailable	Impossible de vérifier ton nom en ligne. Vérifie ta connexion internet et réessaie.
+name.too_soon	Tu viens de changer de nom. Réessaie dans une minute.
+name.choose_different	Choisis un autre nom.
+friends.type_tag	Tape le nom de ton ami sous la forme Kira#4821.
+friends.added	Ami ajouté.
+friends.declined_request	Demande refusée.
+friends.removed	Ami retiré.
+friends.blocked	Joueur bloqué.
+friends.a_friend	Un ami
+friends.type_player_tag	Tape le nom du joueur sous la forme Kira#4821.
+friends.wait_invite	Attends un instant avant d'inviter à nouveau.
+name.enter	Entre un nom.
+name.bad_chars	Utilise seulement des lettres, des chiffres et _ (ni espaces ni symboles).
+rooms.name_bad_chars	Les noms de salon n'acceptent que lettres, chiffres, espaces et _ - ' !
+rooms.name_double_space	Les noms de salon ne peuvent pas contenir de doubles espaces.
+rooms.name_choose_different	Choisis un autre nom de salon.
+gesture.cross_arms	CROISER LES BRAS
+gesture.punch_forward	FRAPPER DEVANT
+gesture.raise_hands	LEVER LES DEUX MAINS
+class.kaia.passive1_desc	+15% de vitesse d'attaque
+class.kaia.passive2_desc	5% de vol de vie
+class.kaia.skill1_desc	Fonce en avant et transperce l'adversaire
+class.kaia.skill2_desc	Un timing parfait renvoie les dégâts
+class.kaia.skill3_desc	Enchaîne les coups d'estoc très vite
+class.kaia.ult_desc	10 s : les attaques normales lancent une vague horizontale
+class.bruna.passive1_desc	+20% de dégâts, -15% de vitesse d'attaque
+class.bruna.passive2_desc	+20% de dégâts, -15% de vitesse de déplacement
+class.bruna.skill1_desc	Attrape l'adversaire et écrase-le au sol
+class.bruna.skill2_desc	Tourne comme une tornade en frappant sans arrêt
+class.bruna.ult_desc	Frappe le sol pour créer une onde de choc
+class.ren.passive1_desc	+20% de chances de critique
+class.ren.passive2_desc	+10% de vitesse de déplacement pendant 10 s (recharge 30 s)
+class.ren.skill1_desc	Recule à l'horizontale et tire
+class.ren.skill2_desc	Étrangle un adversaire proche et repousse-le
+class.ren.skill3_desc	Tire un barrage de flèches à l'horizontale
+class.ren.ult_desc	Une flèche se multiplie en tempête de flèches
+class.lyra.passive1_desc	10% de chances par coup : -15% dépl., -10% dégâts, -15% vit. d'attaque
+class.lyra.passive2_desc	20% de chances de bloquer les dégâts
+class.lyra.skill1_desc	Lance un projectile de feu à tête chercheuse
+class.lyra.skill2_desc	Invoque 3 sbires
+class.lyra.skill3_desc	Un nuage suit l'ennemi et le frappe de la foudre
+class.lyra.ult_desc	Anneau de feu 10 s : brûle les ennemis, bloque les projectiles
+class.taro.passive1_desc	10% de chances par coup : -15% de défense ennemie
+class.taro.passive2_desc	Après 3 s sans attaquer, prochain coup +50%
+class.taro.skill1_desc	Allonge, saute et frappe vers le bas
+class.taro.skill2_desc	Fait tourner l'arme d'hast pour bloquer les projectiles
+class.taro.skill3_desc	Lance la lance et la rappelle
+class.taro.ult_desc	Transperce l'ennemi, puis enfonce la hampe d'un coup de pied
+char.kaia.role	Attaquante agile
+char.kaia.style	Combat rapproché rapide et mobile, avec des entailles précises qui s'enchaînent.
+char.bruna.role	Cogneuse
+char.bruna.style	Bagarreuse puissante et résistante qui contrôle l'espace avec des attaques lourdes.
+char.ren.role	Tireur agile
+char.ren.style	Contrôle de zone très mobile et pression précise avec des techniques de flèches variées.
+char.lyra.role	Contrôle / Pièges
+char.lyra.style	Magicienne agile qui contrôle l'espace avec des sorts rapides, une mobilité trompeuse et une magie précise.
+char.taro.role	Spécialiste de l'allonge
+char.taro.style	Contrôle discipliné et mobile, avec une pression à longue portée et des frappes précises.
+stage.0.name	Dojo céleste
+stage.0.short	Dojo céleste
+stage.0.tagline	Sanctuaire de montagne au-dessus des nuages
+stage.1.name	Cité Néon
+stage.1.short	Cité Néon
+stage.1.tagline	Arène sur les toits sous une pluie de néons
+stage.2.name	Forge de lave
+stage.2.short	Forge de lave
+stage.2.tagline	Fonderie en fusion au-dessus d'une mer de lave
+stage.3.name	Montagne des Origines
+stage.3.short	Montagne
+stage.3.tagline	KO vertical · plateformes de jade mobiles au-dessus d'un gouffre brumeux
+stage.4.name	Plaine de l'Unité
+stage.4.short	Plaine
+stage.4.tagline	KO horizontal · un long terrain, nulle part où se cacher
+stage.5.name	L'Abîme du Volcan
+stage.5.short	Volcan
+stage.5.tagline	KO sur tous les bords · le feu jaillit du lac de magma
+stage.6.name	Le Repaire de l'Oiseau Géant
+stage.6.short	Repaire
+stage.6.tagline	KO horizontal · l'oiseau colossal balaie l'arène
+stage.7.name	Le Monument Océanique Abandonné
+stage.7.short	Océan
+stage.7.tagline	KO sur tous les bords · la baleine descend, sautez sur les gradins
+end.opponent_left	Ton adversaire a quitté le match.
+end.opponent_timeout	Ton adversaire ne répond plus.
+end.connection_lost	La connexion avec ton adversaire a été perdue.
+end.you_left	Tu as quitté le match.
+end.desync	Les deux jeux ne sont plus d'accord (désynchro) : sans résultat.
+end.unconfirmed	La fin du match n'a pas pu être confirmée : sans résultat.
+end.handshake_failed	Le match n'a pas pu démarrer.
+end.peer_never_started	Ton adversaire n'a jamais rejoint le match : sans résultat.
+end.too_slow	La connexion était trop lente pour jouer : sans résultat.
+end.host_left	L'hôte a quitté le match : sans résultat.
+end.dropped	Ta connexion a été coupée pendant le match.
+status.aura	AURA {0}
+status.fire_ring	ANNEAU DE FEU {0}
+status.tailwind	VENT ARRIÈRE
+status.guard_broken	GARDE BRISÉE {0}s
+status.guard	GARDE {0}%
+status.reloading	RECHARGEMENT {0}s
+status.recharging	RECHARGE {0}s
+status.hexed	MAUDIT
+status.armor_break	ARMURE -15%
+hud.perform	Effectue : {0}
+hud.times_up	Temps écoulé !
+rewards.no_contest	Sans résultat : pas de récompenses
+rewards.pve_victory	Victoire PvE  +{0}
+rewards.pve_match	Match PvE  +{0}
+rewards.victory	Victoire  +{0}
+rewards.match_played	Match joué  +{0}
+rewards.posture	Bonne posture {0}%  +{1}
+hud.revived	RÉANIMÉ
+quest.win	Gagne 3 matchs
+quest.pve	Bats le CPU deux fois (PvE)
+quest.combo	Réussis 10 combos complets
+quest.ult	Déclenche 3 ultimes par geste
+quest.parry	Pare 5 attaques
+quest.posture	Termine un match avec 80%+ de bonne posture
+rewards.quest	Quête : {0}  +{1}
+bind.move_left	Gauche
+bind.move_right	Droite
+bind.drop	Descendre / chute rapide
+bind.jump	Saut
+bind.jump_alt	Saut (alt.)
+bind.light	Attaque légère
+bind.heavy	Attaque lourde
+bind.block	Garde
+bind.dash	Ruée
+bind.skill1	Compétence 1
+bind.skill2	Compétence 2
+bind.skill3	Compétence 3
+bind.ultimate	Ultime
+bind.aim_up	Viser en haut
+bind.special	Spécial
+hud.rejected	Rejeté : {0}
+cv.low_confidence	Suivi peu fiable
+cv.frozen	Flux figé (triche ?)
+cv.snap	Pose instantanée (macro ?)
+cv.ok	OK
+cam.none	Aucune caméra trouvée
+cam.off	Caméra éteinte
+cam.starting	Démarrage de la caméra...
+cam.waiting_frames	En attente d'images - autorise l'accès caméra pour Unity dans Réglages Système > Confidentialité > Caméra
+cam.live	Caméra active ({0}x{1})
+pose.simulated	Simulé (poses clavier)
+pose.camera_off	Suivi caméra désactivé - poses simulées au clavier
+pose.model_failed	Échec du modèle de pose : {0}
+pose.loading	Chargement du modèle de pose...
+pose.live	Suivi corporel en direct (MoveNet, {0} Hz)
+pose.step_back	Caméra active - recule pour que tes épaules soient visibles
+account.finish_browser	Termine la connexion dans ton navigateur (choisis Continuer avec Google)...
+account.signed_out_again	Déconnecté. Reconnecte-toi pour utiliser ton compte.
+account.signed_in_kept	Connecté. Ton nom et ta progression restent liés à ce compte.

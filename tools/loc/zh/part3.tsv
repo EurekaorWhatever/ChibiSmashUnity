@@ -1,0 +1,250 @@
+region.central_america	中美洲
+region.south_america	南美洲
+region.northern_america	北美洲
+region.central_asia	中亚
+region.eastern_asia	东亚
+region.south_eastern_asia	东南亚
+region.southern_asia	南亚
+region.western_asia	西亚
+region.eastern_europe	东欧
+region.northern_europe	北欧
+region.southern_europe	南欧
+region.western_europe	西欧
+region.australia_and_new_zealand	澳大利亚和新西兰
+region.melanesia	美拉尼西亚
+region.micronesia	密克罗尼西亚
+region.polynesia	波利尼西亚
+net.joined_connecting	已加入“{0}”。正在连接房主...
+net.opponent_unreachable	无法连接到对手：{0}
+net.quick_filling	{0} / {1} 名玩家。{2} 秒后开始...
+invite.inviting	正在邀请 {0}...
+invite.sent_lasts	已向 {0} 发送邀请。有效时间 {1} 秒。
+invite.send_failed	无法发送邀请：{0}
+invite.joining_room_of	正在加入 {0} 的房间...
+invite.paused	邀请已暂停 {0} 分钟。
+invite.invited_you	{0} 邀请你加入“{1}”。
+invite.ran_out	你发给 {0} 的邀请已过期。
+friends.choose_name	请选择一个玩家名称，好让好友找到你。
+friends.unavailable	好友功能不可用：{0}
+friends.your_name_is	你的名称是 {0}。把它告诉好友，他们就能添加你。
+friends.set_name_failed	无法设置名称：{0}
+friends.request_sent	已向 {0} 发送好友请求。
+friends.add_failed	无法添加 {0}：{1}
+friends.offline	{0} 目前离线。
+friends.request_then_invite	已向 {0} 发送好友请求。对方接受后会立即发出邀请。
+friends.unreachable	无法联系 {0}：{1}
+friends.creating_room_for	正在为 {0} 创建房间...
+friends.joining	正在加入 {0}...
+friends.declined	{0} 拒绝了邀请。
+friends.version_mismatch	{0} 邀请了你，但对方使用的游戏版本不同。
+friends.invite_sent_waiting	已向 {0} 发送邀请。等待对方加入...
+name.too_short	名称太短（至少 {0} 个字符）。
+name.too_long	名称太长（最多 {0} 个字符）。
+rooms.name_too_short	房间名称太短（至少 {0} 个字符）。
+rooms.name_too_long	房间名称太长（最多 {0} 个字符）。
+net.bad_code	这不是有效的房间码（仅限字母和数字）。
+net.version_mismatch	该房间是用不同版本的 Chibi Clash 创建的。双方需要使用相同的版本。
+net.loading_room	正在加载房间...
+net.room_closed	房间已关闭。
+net.you_left	你已离开房间。
+net.waiting_host_game	开始中... 等待房主的游戏。
+net.choose_next_fight	选择你的斗士并按 OK 进入下一场战斗。
+net.host_changed_stage	房主更改了场地设置。请再次按 OK。
+net.room_closed_host_left	房间已关闭（房主已离开）。
+net.starting_fight	正在开始战斗...
+net.player_left_joined	有玩家离开或加入。
+net.no_connection	没有连接。
+net.fight_could_not_start	战斗无法开始。
+net.fight_starting_wait	战斗即将开始！等待好友连接...
+net.choose_press_ok	选择你的斗士并按 OK。
+net.too_many_starts	开始次数过多。请等待一分钟，然后按 开始战斗。
+net.fight_starting_connecting	战斗即将开始！连接中...
+net.could_not_connect	无法连接。
+net.friend_no_answer	你的好友没有回应。
+net.start_cancelled	已取消开始。
+net.friend_no_connect	你的好友未能连接。
+net.enter_code	输入好友显示的房间码。
+net.lan_browser	浏览器中无法进行 LAN 游戏。请使用 房间 或 匹配，或使用 PC 版进行 LAN 游戏。
+net.enter_ip	输入主机的 IP 地址。
+net.this_pc_ip	本机 IP
+net.signing_in	登录中...
+net.creating_private	正在创建私人房间...
+net.hosting_one	没有找到开放的对局，正在创建一个...
+net.needs_2_to_4	战斗需要 2 到 4 名玩家。
+net.waiting_friend	等待好友连接...
+net.waiting_friends	等待好友们连接...
+net.connection_running	另一个连接仍在进行中。
+net.no_valid_info	该房间没有有效的连接信息（房主已离开？）。
+net.connecting_host	正在连接房主...
+net.already_full	该房间已满。
+net.no_info	该房间没有连接信息（房主已离开？）。
+net.player_left_searching	该玩家已离开。重新搜索中...
+net.connected	已连接！
+net.relay_failed	连接 Relay 服务器失败。
+net.opponent_timeout	无法连接到对手（超时）。
+net.no_internet	没有网络连接。连接 Wi-Fi 或移动数据，就能随时随地和好友对战。（同一网络下可进行 LAN 游戏。）
+invite.wait	请稍等片刻再发送下一个邀请。
+invite.type_name	输入好友的游戏内名称（3-16 个字母、数字或 _）。
+invite.own_name	这是你自己的名称。
+invite.open_room_first	请先打开你的房间，再发出邀请。
+invite.room_full	你的房间已满。
+invite.could_not_send	无法发送邀请。
+invite.too_many	当前邀请过多。请几秒后再试。
+invite.cancelled	邀请已取消。
+invite.expired	该邀请已过期。
+invite.closed_full	你的房间已满。邀请已关闭。
+invite.closed_joined	有玩家加入了你的房间。邀请已关闭。
+invite.closed_room	邀请已取消：房间已关闭。
+name.taken	该名称已被使用
+name.check_unavailable	无法在线检查你的名称。请检查网络后重试。
+name.too_soon	你刚刚更改过名称。请一分钟后再试。
+name.choose_different	请选择其他名称。
+friends.type_tag	请按 Kira#4821 的格式输入好友名称。
+friends.added	已添加好友。
+friends.declined_request	已拒绝请求。
+friends.removed	已删除好友。
+friends.blocked	已屏蔽玩家。
+friends.a_friend	一位好友
+friends.type_player_tag	请按 Kira#4821 的格式输入玩家名称。
+friends.wait_invite	请稍等片刻再邀请。
+name.enter	请输入名称。
+name.bad_chars	只能使用字母、数字和 _（不能有空格或符号）。
+rooms.name_bad_chars	房间名称只能使用字母、数字、空格和 _ - ' !。
+rooms.name_double_space	房间名称不能包含连续两个空格。
+rooms.name_choose_different	请选择其他房间名称。
+gesture.cross_arms	双臂交叉
+gesture.punch_forward	向前出拳
+gesture.raise_hands	举起双手
+class.kaia.passive1_desc	攻击速度 +15%
+class.kaia.passive2_desc	5% 生命偷取
+class.kaia.skill1_desc	向前冲刺并刺向对手
+class.kaia.skill2_desc	时机完美时反弹伤害
+class.kaia.skill3_desc	快速连续突刺
+class.kaia.ult_desc	10 秒：普通攻击会释放横向波动
+class.bruna.passive1_desc	伤害 +20%，攻击速度 -15%
+class.bruna.passive2_desc	伤害 +20%，移动速度 -15%
+class.bruna.skill1_desc	抓住对手并狠狠砸向地面
+class.bruna.skill2_desc	像龙卷风一样旋转，连续攻击
+class.bruna.ult_desc	猛砸地面，制造冲击波
+class.ren.passive1_desc	暴击率 +20%
+class.ren.passive2_desc	移动速度 +10%，持续 10 秒（冷却 30 秒）
+class.ren.skill1_desc	向后横向冲刺并射击
+class.ren.skill2_desc	勒住近身的对手并将其推开
+class.ren.skill3_desc	横向射出箭雨
+class.ren.ult_desc	一支箭分裂成箭矢风暴
+class.lyra.passive1_desc	命中时 10% 几率：移速 -15%，伤害 -10%，攻速 -15%
+class.lyra.passive2_desc	20% 几率格挡伤害
+class.lyra.skill1_desc	发射追踪火焰弹
+class.lyra.skill2_desc	召唤 3 个仆从
+class.lyra.skill3_desc	乌云跟随敌人并降下雷击
+class.lyra.ult_desc	10 秒火环：灼烧敌人，阻挡飞行道具
+class.taro.passive1_desc	命中时 10% 几率：敌人防御 -15%
+class.taro.passive2_desc	3 秒未攻击后，下一击 +50%
+class.taro.skill1_desc	伸长武器，跳起并向下挥击
+class.taro.skill2_desc	旋转长柄武器，阻挡飞行道具
+class.taro.skill3_desc	掷出长矛再召回
+class.taro.ult_desc	刺中敌人，再踢击枪柄刺得更深
+char.kaia.role	敏捷突击手
+char.kaia.style	快速灵活的近身战斗，斩击精准且可连招。
+char.bruna.role	重装斗士
+char.bruna.style	高伤害、高耐久的格斗家，用沉重的攻击控制空间。
+char.ren.role	敏捷射手
+char.ren.style	高机动性的牵制与精准压制，箭术技巧多样。
+char.lyra.role	区域控制 / 布局
+char.lyra.style	敏捷的施法者，凭借快速施法、灵巧走位和精准魔法控制空间。
+char.taro.role	长距离专家
+char.taro.style	沉稳灵活的控制型，以超长攻击距离施压并精准出击。
+stage.0.name	天空道场
+stage.0.short	天空道场
+stage.0.tagline	云端之上的山顶神社
+stage.1.name	霓虹都市
+stage.1.short	霓虹都市
+stage.1.tagline	霓虹雨下的屋顶竞技场
+stage.2.name	熔岩锻炉
+stage.2.short	熔岩锻炉
+stage.2.tagline	熔岩海上的熔炉工坊
+stage.3.name	起始之山
+stage.3.short	起始之山
+stage.3.tagline	纵向 KO · 雾中深渊上移动的玉石平台
+stage.4.name	团结平原
+stage.4.short	平原
+stage.4.tagline	横向 KO · 一片长长的原野，无处可藏
+stage.5.name	火山深渊
+stage.5.short	火山
+stage.5.tagline	所有边缘都能 KO · 岩浆湖喷出烈焰
+stage.6.name	巨鸟巢穴
+stage.6.short	鸟巢
+stage.6.tagline	横向 KO · 巨鸟横扫竞技场
+stage.7.name	废弃的海洋遗迹
+stage.7.short	海洋
+stage.7.tagline	所有边缘都能 KO · 巨鲸降临时，跳到下层
+end.opponent_left	你的对手离开了对局。
+end.opponent_timeout	你的对手停止了响应。
+end.connection_lost	与对手的连接已断开。
+end.you_left	你离开了对局。
+end.desync	双方游戏数据不一致（desync）：无效对局。
+end.unconfirmed	无法确认对局结果：无效对局。
+end.handshake_failed	对局无法开始。
+end.peer_never_started	你的对手没有加入对局：无效对局。
+end.too_slow	连接太慢，无法游戏：无效对局。
+end.host_left	房主离开了对局：无效对局。
+end.dropped	你的连接已从对局中断开。
+status.aura	灵气 {0}
+status.fire_ring	火环 {0}
+status.tailwind	顺风
+status.guard_broken	破防 {0} 秒
+status.guard	防御 {0}%
+status.reloading	装填中 {0} 秒
+status.recharging	充能中 {0} 秒
+status.hexed	诅咒
+status.armor_break	护甲 -15%
+hud.perform	做出动作：{0}
+hud.times_up	时间到！
+rewards.no_contest	无效对局：无奖励
+rewards.pve_victory	PvE 胜利  +{0}
+rewards.pve_match	PvE 对局  +{0}
+rewards.victory	胜利  +{0}
+rewards.match_played	完成对局  +{0}
+rewards.posture	良好坐姿 {0}%  +{1}
+hud.revived	已复活
+quest.win	赢得 3 场对局
+quest.pve	击败 CPU 两次（PvE）
+quest.combo	打出 10 次完整连招
+quest.ult	触发 3 次动作大招
+quest.parry	招架 5 次攻击
+quest.posture	以 80%+ 的良好坐姿完成一场对局
+rewards.quest	任务：{0}  +{1}
+bind.move_left	向左移动
+bind.move_right	向右移动
+bind.drop	下落 / 快速下落
+bind.jump	跳跃
+bind.jump_alt	跳跃（备用）
+bind.light	轻攻击
+bind.heavy	重攻击
+bind.block	防御
+bind.dash	冲刺
+bind.skill1	技能 1
+bind.skill2	技能 2
+bind.skill3	技能 3
+bind.ultimate	大招
+bind.aim_up	向上瞄准
+bind.special	特殊技
+hud.rejected	已拒绝：{0}
+cv.low_confidence	追踪可信度低
+cv.frozen	画面冻结（伪造？）
+cv.snap	姿势瞬间切换（宏？）
+cv.ok	正常
+cam.none	未找到摄像头
+cam.off	摄像头已关闭
+cam.starting	摄像头启动中...
+cam.waiting_frames	正在等待摄像头画面 - 请在 系统设置 > 隐私 > 相机 中允许 Unity 访问摄像头
+cam.live	摄像头已开启（{0}x{1}）
+pose.simulated	模拟（键盘姿势）
+pose.camera_off	摄像头追踪已关闭 - 使用键盘模拟姿势
+pose.model_failed	姿势模型失败：{0}
+pose.loading	正在加载姿势模型...
+pose.live	实时身体追踪（MoveNet，{0} Hz）
+pose.step_back	摄像头已开启 - 请后退，让肩膀进入画面
+account.finish_browser	请在浏览器中完成登录（选择“使用 Google 继续”）...
+account.signed_out_again	已退出登录。请重新登录以使用你的账号。
+account.signed_in_kept	已登录。你的名称和进度会保存在此账号中。

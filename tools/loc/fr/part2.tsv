@@ -1,0 +1,264 @@
+name.you_are	Tu es {0} !
+name.you_are_unchecked	Tu es {0} ! Nous vérifierons le nom quand tu joueras en ligne.
+online.could_not_start	Le match n'a pas pu démarrer ({0}).
+rooms.your_rooms	TES SALONS
+rooms.count_click	{0}  ·  clique sur un salon pour l'ouvrir
+rooms.code_value	CODE  {0}
+rooms.players_count	{0} / {1} JOUEURS
+rooms.more	+ {0} autres salons
+rooms.created	Salon « {0} » créé. Clique dessus pour partager le code ou inviter des amis.
+quick.searching	RECHERCHE
+quick.looking_in	RECHERCHE DANS :  {0}
+room.kicker	SALON  ·  2-4 JOUEURS  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	PRÊTS AU COMBAT
+room.full_suffix	 · SALON PLEIN
+room.waiting	EN ATTENTE DE JOUEURS
+room.joined	{0}  ·  {1} / {2} PRÉSENTS
+room.host	HÔTE
+room.player_n	JOUEUR {0}
+room.you_suffix	 · TOI
+room.hazards_host_pick	{0} · CHOIX DE L'HÔTE
+room.hazards_on	PIÈGES ON
+room.hazards_off	PIÈGES OFF
+room.code_copied	Code du salon {0} copié. Colle-le à ton ami.
+invite.body	{0} t'invite dans {1}   ({2}s)
+select.ult_name	ULT  {0}
+age.title	QUEL ÂGE AS-TU ?
+age.body	Tous les âges peuvent jouer à tous les modes. Ton âge est enregistré avec ton nom de joueur pour les statistiques du jeu.
+common.next	SUIVANT
+age.error	Tape ton âge, ou règle-le avec la croix directionnelle.
+age.pad_hint	Manette : croix haut/bas change de 1, gauche/droite de 10 · A = suivant
+rooms.enter_name	ENTRE LE NOM DU SALON
+rooms.name_rules	3 à 24 lettres, chiffres ou espaces. Tes amis le voient en rejoignant. Un salon accueille 2 à 4 joueurs.
+rooms.create	CRÉER
+common.one_moment	UN INSTANT...
+account.keep_name	GARDE TON NOM DE COMBATTANT
+account.finish_in_browser	TERMINE DANS TON NAVIGATEUR...
+account.sign_in_google	SE CONNECTER AVEC GOOGLE
+account.play_without	JOUER SANS COMPTE
+name.choose_first	Choisis d'abord ton nom de joueur.
+common.cancelled	Annulé.
+name.welcome	BIENVENUE, COMBATTANT ! QUEL EST TON NOM ?
+name.change_title	CHANGE TON NOM
+name.rules	3 à 16 lettres, chiffres ou _. Choisis un nom de combattant amusant, pas ton vrai nom. C'est ainsi que tes amis te trouvent et t'invitent, et ce que tout le monde voit.
+name.suggest	SUGGÉRER
+name.checking	VÉRIFICATION...
+name.lets_fight	EN AVANT !
+common.save	ENREGISTRER
+name.pad_hint_first	Manette : A = en avant · Y = suggérer un nom
+name.pad_hint	Manette : A = enregistrer · Y = suggérer un nom
+online.connected_agreeing	Connecté. Accord sur le match...
+online.host_settings_changed	Les réglages de l'hôte ont changé — rejoins le salon à nouveau.
+online.version_mismatch	Ton adversaire utilise une autre version du jeu. Les deux joueurs doivent avoir la même version.
+rooms.title	MATCHMAKING
+rooms.kicker	SALONS  ·  2-4 JOUEURS  ·  CRÉER · REJOINDRE · INVITER PAR NOM
+rooms.create_rooms	CRÉER DES SALONS
+rooms.join_room	REJOINDRE UN SALON
+rooms.creating	CRÉATION DE TON SALON...
+rooms.loading	CHARGEMENT DE TES SALONS...
+rooms.none_yet	Aucun salon créé pour l'instant !
+rooms.one_moment	Un instant.
+rooms.empty_help	Appuie sur CRÉER DES SALONS pour en faire un, ou REJOINDRE UN SALON avec le code d'un ami.
+rooms.capacity_note	Un salon accueille 2 à 4 joueurs. Invite tes amis par leur nom de joueur.
+rooms.invites_paused	Invitations de salon en pause pour quelques minutes
+rooms.refresh	ACTUALISER
+rooms.hint	MATCHMAKING  ·  SALONS
+rooms.new	NOUVEAU
+rooms.you_host	TU ES L'HÔTE
+rooms.open	OUVRIR
+join.enter_code	ENTRE LE CODE DU SALON
+join.body	Tape ou colle le code du salon envoyé par ton ami (Discord, chat...).
+join.paste	COLLER
+join.join	REJOINDRE
+join.bad_code	Ce n'est pas un code de salon. Vérifie-le et réessaie (lettres et chiffres uniquement).
+rooms.fight_starting	Un combat de salon commence. Attends-le, ou quitte d'abord le salon.
+quick.kicker	VS EN LIGNE  ·  SOLO 1V1  ·  UN JOUEUR PROCHE DE TOI
+quick.player_found	JOUEUR TROUVÉ !
+quick.search_failed	ÉCHEC DE LA RECHERCHE
+quick.not_searching	AUCUNE RECHERCHE
+quick.connecting	Connexion à ton adversaire...
+quick.searching_near	Recherche d'un joueur proche de toi
+quick.stopped	La recherche s'est arrêtée. Réessaie.
+quick.press_search_again	Appuie sur RECHERCHER À NOUVEAU pour trouver un joueur.
+quick.privacy	Le match rapide partage ton pays (réglages de l'appareil), jamais ta position.
+quick.search_again	RECHERCHER À NOUVEAU
+quick.hint	VS EN LIGNE  ·  MATCH RAPIDE
+room.kicker_opening	SALON  ·  OUVERTURE DU SALON...
+room.opening	Ouverture du salon...
+room.your_fighter	TON COMBATTANT
+room.locked_in	VALIDÉ
+room.everyone_ok	Tout le monde appuie sur OK : le combat démarre tout seul.
+room.share_code	Partage le code, ou invite des amis par leur nom.
+room.empty_seat	Place libre
+room.stage_you	ARÈNE (tu choisis)
+room.stage_host	ARÈNE (l'hôte choisit)
+common.ok	OK
+room.loading	CHARGEMENT...
+room.change	CHANGER
+room.starting	DÉMARRAGE...
+room.start_fight	LANCER LE COMBAT
+room.close	FERMER LE SALON
+room.leave	QUITTER LE SALON
+room.hint	MATCHMAKING  ·  SALON
+room.code	CODE
+room.copy	COPIER
+room.host_can_invite	L'hôte peut inviter un ami par son nom.
+room.invite_by_name	INVITER UN AMI PAR SON NOM
+room.invite	INVITER
+room.full	Le salon est plein.
+invite.title	INVITATION DE SALON
+invite.warning	Les noms ne sont pas vérifiés : n'accepte que les invitations de gens que tu connais.
+invite.accept	ACCEPTER
+invite.decline	REFUSER
+room.hazards_on_btn	PIÈGES  ON
+room.hazards_off_btn	PIÈGES  OFF
+select.passive	PASSIF
+select.look	APPARENCE
+select.cosmetic	COSMÉTIQUE
+select.arcade_round	ARCADE  ·  MANCHE {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   MANETTE 1 = 1P, MANETTE 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	MANNEQUIN
+select.round_rival	RIVAL DE LA MANCHE {0}
+select.picks_at_start	CHOISIT AU DÉBUT DU COMBAT
+select.signature_weapon	ARME DE PRÉDILECTION  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  VAINCU
+select.arcade_route	PARCOURS ARCADE  ·  ARÈNE {0} / {1}
+select.select_stage	CHOISIR L'ARÈNE
+select.local_versus	VERSUS LOCAL
+select.arcade_rival	RIVAL ARCADE
+select.training_dummy	MANNEQUIN D'ENTRAÎNEMENT
+select.stage	ARÈNE
+select.hazards	PIÈGES
+select.fight	COMBATTRE
+select.change	CHANGER
+select.confirm	CONFIRMER
+select.random	ALÉATOIRE
+select.fate	LAISSER FAIRE LE DESTIN
+select.ready_bang	PRÊT !
+select.loadout	ÉQUIPEMENT
+select.waiting_1p	EN ATTENTE DE 1P
+select.1p_picks_dummy	1P CHOISIT LE MANNEQUIN
+select.selecting	SÉLECTION
+select.identity_hidden	IDENTITÉ CACHÉE
+select.revealed_at_start	RÉVÉLÉ AU DÉBUT DE LA MANCHE
+select.ai_picks	L'IA CHOISIT SON COMBATTANT
+select.random_every_fight	UN PERSONNAGE ALÉATOIRE À CHAQUE COMBAT
+select.any_character	N'IMPORTE QUEL PERSONNAGE · PASSIF ET ARME ALÉATOIRES
+select.lock_in_hint	VALIDER  ·  OU CLIQUE SUR UN PERSONNAGE
+select.to_ready	POUR ÊTRE PRÊT
+select.cpu_difficulty_pick	DIFFICULTÉ DU CPU  ·  À CHOISIR AVANT LE COMBAT
+select.ai_note	Pas besoin d'internet. L'IA choisit un nouveau personnage, passif et arme à chaque combat, revanches comprises.
+select.pad_difficulty	CROIX HAUT / BAS  ·  DIFFICULTÉ
+select.key_difficulty	W / S  ·  DIFFICULTÉ
+select.start_training	LANCER L'ENTRAÎNEMENT
+select.fight_bang	AU COMBAT !
+select.click_to_start	OU CLIQUE POUR COMMENCER AVEC LES CHOIX ACTUELS
+hud.ready	PRÊT...
+hud.rival	RIVAL
+hud.you	TOI
+hud.ultimate_ready	{0} · ULTIME PRÊT
+hud.move_detected	{0} · MOUVEMENT DÉTECTÉ
+hud.failed	{0} · RATÉ
+hud.training_title	ENTRAÎNEMENT · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  ENTRAÎNEMENT
+hud.intro_online	  ·  EN LIGNE  ·  ESC / START : QUITTER
+hud.ult_ready_press	ULT PRÊT - appuie sur {0}
+hud.ult_ready	ULT PRÊT
+hud.sim_key	touche sim : {0}
+hud.poses_live	 · poses : bras croisés = garde / bras tendu = boule de feu / mains en l'air = saut
+hud.poses_keys	 · poses 1 croiser / 2 frapper / 3 lever · P avachi
+hud.poses_p2	 · poses 8/9/0
+hud.training_help	ENTRAÎNEMENT : T remplit ton ultime · les combattants KO réapparaissent à 0% · Esc pause
+hud.ult_pct	ULT {0}%
+hud.last_hit	DERNIER COUP  {0}
+hud.combo_hits	COMBO  {0} COUPS  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	CAMÉRA P1 · SIM
+hud.cv_p1_live	CAMÉRA P1 · DIRECT
+hud.cv_p2_sim	CAMÉRA P2 · SIM
+hud.cv_p2_live	CAMÉRA P2 · DIRECT
+hud.hits_prefix	{0} COUPS  
+results.no_contest	SANS RÉSULTAT
+results.draw	ÉGALITÉ !
+results.cpu_wins	LE CPU GAGNE
+results.you_win	VICTOIRE !
+results.rival_wins	LE RIVAL GAGNE
+results.wins	{0} GAGNE !
+results.takes_round	{0} remporte la manche
+results.stats	Coups portés  {0}\nCombos complets  {1}   ·   Meilleur combo  {2}
+results.stats2	\nUltimes par geste  {0}\nParades  {1}
+results.posture	\nBonne posture  {0}%
+results.rewards_named	RÉCOMPENSES (profil de {0})
+results.rewards_your	RÉCOMPENSES (ton profil)
+results.rewards_p1	RÉCOMPENSES (profil P1)
+results.coins	+{0} pièces  (total {1})
+hud.do_pose	fais la pose devant la caméra
+results.place_1	1ER
+results.place_2	2E
+results.place_3	3E
+results.place_4	4E
+results.out	ÉLIMINÉ
+results.out_1	ÉLIMINÉ · 1ER
+results.out_2	ÉLIMINÉ · 2E
+results.out_3	ÉLIMINÉ · 3E
+results.out_4	ÉLIMINÉ · 4E
+results.red_team	ÉQUIPE ROUGE
+results.blue_team	ÉQUIPE BLEUE
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} JOUEURS
+hud.keys_line1	P{0} : {1} déplacer · {2} sauter · 
+hud.keys_line2	{0} léger · {1} lourd · {2} spécial · 
+hud.keys_line3	{0} garde · {1} ruée · 
+hud.keys_line4	{0} compétences · {1} ult
+results.characters	PERSONNAGES
+results.stock_one	1 VIE
+results.stocks	{0} VIES
+hud.respawn	RÉAPPARITION
+hud.drop_in	EN PISTE !
+results.main_menu	MENU PRINCIPAL
+pause.title	PAUSE
+pause.resume	REPRENDRE
+pause.quit	QUITTER VERS LE MENU
+pause.hint	B / Retour arrière pour reprendre
+leave.title	QUITTER LE MATCH ?
+leave.body	Le match continue. Partir compte comme une défaite.
+leave.leave	QUITTER
+leave.hint	B / Retour arrière / Échap / Start pour rester
+results.winner	VAINQUEUR
+results.training_no_rewards	Entraînement : pas de récompenses
+cv.posture	Posture {0}%
+cv.posture_low	Posture {0}% - tiens-toi droit !
+cv.telemetry_ok	Télémétrie OK
+net.rooms_load_failed	Impossible de charger tes salons : {0}
+net.host_limit	Tu héberges déjà {0} salons. Fermes-en un d'abord.
+net.creating_named	Création de « {0} »...
+net.room_ready_code	Le salon « {0} » est prêt. Partage le code {1} ou invite un ami.
+net.create_failed	Impossible de créer le salon : {0}
+net.joining_room	Connexion au salon {0}...
+net.you_joined	Tu as rejoint « {0} ». Choisis ton combattant et appuie sur OK.
+net.no_room_code	Aucun salon avec le code {0}. Vérifie le code et réessaie.
+net.room_full_n	Ce salon est plein ({0} joueurs).
+net.join_failed	Impossible de rejoindre : {0}
+net.update_failed	Impossible de mettre à jour le salon : {0}
+net.could_not_what	Impossible de {0} : {1}
+net.what_stage	changer l'arène
+net.what_hazards	changer les pièges
+net.press_ok_again	{0} Appuyez tous les deux sur OK puis LANCER LE COMBAT à nouveau.
+net.udp_port	Impossible d'ouvrir le port UDP {0} (déjà utilisé ?).
+net.lan_ready	Hôte LAN prêt. Ton ami rejoint : {0}  (port {1})
+net.bad_ip	« {0} » n'est pas une adresse IP valide.
+net.connecting_to	Connexion à {0}...
+net.sign_in_failed	Échec de la connexion : {0}
+net.room_ready	Le salon « {0} » est prêt. Partage le code avec ton ami.
+net.searching_in	Recherche de joueurs dans {0}...
+net.start_failed	Impossible de lancer le combat : {0}
+net.host_unreachable	Impossible de joindre l'hôte : {0}
+net.area_world	le monde entier
+net.area_country_and	ton pays et {0}

@@ -1,0 +1,256 @@
+rooms.more	+ {0} pang room
+rooms.created	Nagawa ang room na "{0}". I-click ito para ibahagi ang code o mag-imbita ng kaibigan.
+quick.searching	NAGHAHANAP
+quick.looking_in	HINAHANAP SA:  {0}
+room.kicker	ROOM  ·  2-4 MANLALARO  ·  {0}
+room.battle_royale	BATTLE ROYALE
+room.ready_to_fight	HANDA NANG LUMABAN
+room.full_suffix	 · PUNO NA ANG ROOM
+room.waiting	NAGHIHINTAY NG MANLALARO
+room.joined	{0}  ·  {1} / {2} ANG SUMALI
+room.host	HOST
+room.player_n	PLAYER {0}
+room.you_suffix	 · IKAW
+room.hazards_host_pick	{0} · PILI NG HOST
+room.hazards_on	BUKAS ANG HAZARDS
+room.hazards_off	PATAY ANG HAZARDS
+room.code_copied	Nakopya ang room code {0}. I-paste ito para sa kaibigan mo.
+invite.body	Iniimbitahan ka ni {0} sa {1}   ({2}s)
+select.ult_name	ULT  {0}
+age.title	ILANG TAON KA NA?
+age.body	Lahat ng edad ay puwedeng maglaro ng lahat ng mode. Itinatala ang edad mo kasama ng pangalan mo para sa statistics ng laro.
+common.next	SUSUNOD
+age.error	I-type ang edad mo, o itakda ito gamit ang D-pad.
+age.pad_hint	Gamepad: D-pad taas/baba ay 1, kaliwa/kanan ay 10 · A = susunod
+rooms.enter_name	ILAGAY ANG PANGALAN NG ROOM
+rooms.name_rules	3-24 na letra, numero o espasyo. Makikita ito ng kaibigan pagsali nila. 2 hanggang 4 na manlalaro bawat room.
+rooms.create	GUMAWA
+common.one_moment	SANDALI LANG...
+account.keep_name	PANATILIHIN ANG PANGALAN MO
+account.finish_in_browser	TAPUSIN SA BROWSER MO...
+account.sign_in_google	MAG-SIGN IN GAMIT ANG GOOGLE
+account.play_without	MAGLARO NANG WALANG ACCOUNT
+name.choose_first	Pumili muna ng pangalan mo sa laro.
+common.cancelled	Kinansela.
+name.welcome	MALIGAYANG PAGDATING, FIGHTER! ANO ANG PANGALAN MO?
+name.change_title	PALITAN ANG PANGALAN MO
+name.rules	3-16 na letra, numero o _. Pumili ng masayang pangalan, hindi ang totoong pangalan mo. Ito ang gamit ng kaibigan para hanapin at imbitahin ka, at nakikita ito ng lahat.
+name.suggest	MAGMUNGKAHI
+name.checking	SINUSURI...
+name.lets_fight	LABAN NA!
+common.save	I-SAVE
+name.pad_hint_first	Gamepad: A = laban na · Y = magmungkahi ng pangalan
+name.pad_hint	Gamepad: A = i-save · Y = magmungkahi ng pangalan
+online.connected_agreeing	Nakakonekta. Inaayos ang laban...
+online.host_settings_changed	Nagbago ang settings ng host — sumali ulit sa room.
+online.version_mismatch	Ibang bersiyon ng laro ang gamit ng kalaban mo. Kailangang pareho ang build ng dalawang manlalaro.
+rooms.title	MATCHMAKING
+rooms.kicker	MGA ROOM  ·  2-4 MANLALARO  ·  GUMAWA · SUMALI · MAG-IMBITA GAMIT ANG PANGALAN
+rooms.create_rooms	GUMAWA NG ROOM
+rooms.join_room	SUMALI SA ROOM
+rooms.creating	GINAGAWA ANG ROOM MO...
+rooms.loading	NILO-LOAD ANG MGA ROOM MO...
+rooms.none_yet	Wala pang room!
+rooms.one_moment	Sandali lang.
+rooms.empty_help	Pindutin ang GUMAWA NG ROOM para gumawa, o SUMALI SA ROOM gamit ang room code ng kaibigan.
+rooms.capacity_note	2 hanggang 4 na manlalaro bawat room. Imbitahin ang kaibigan gamit ang pangalan nila sa laro.
+rooms.invites_paused	Naka-pause ang mga room invite nang ilang minuto
+rooms.refresh	I-REFRESH
+rooms.hint	MATCHMAKING  ·  MGA ROOM
+rooms.new	BAGO
+rooms.you_host	IKAW ANG HOST
+rooms.open	BUKSAN
+join.enter_code	ILAGAY ANG ROOM CODE
+join.body	I-type o i-paste ang room code na ipinadala ng kaibigan mo (Discord, chat...).
+join.paste	I-PASTE
+join.join	SUMALI
+join.bad_code	Hindi iyan room code. Suriin at subukan ulit (letra at numero lang).
+rooms.fight_starting	Magsisimula na ang laban sa room. Hintayin ito, o umalis muna sa room.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  MANLALARONG MALAPIT SA IYO
+quick.player_found	MAY NAHANAP NA KALABAN!
+quick.search_failed	NABIGO ANG PAGHAHANAP
+quick.not_searching	HINDI NAGHAHANAP
+quick.connecting	Kumokonekta sa kalaban mo...
+quick.searching_near	Naghahanap ng manlalarong malapit sa iyo
+quick.stopped	Huminto ang paghahanap. Subukan ulit.
+quick.press_search_again	Pindutin ang MAGHANAP ULIT para maghanap ng kalaban.
+quick.privacy	Bansa mo lang ang ibinabahagi ng quick match (mula sa settings ng device), hindi ang lokasyon mo.
+quick.search_again	MAGHANAP ULIT
+quick.hint	VS ONLINE  ·  QUICK MATCH
+room.kicker_opening	ROOM  ·  BINUBUKSAN ANG ROOM...
+room.opening	Binubuksan ang room...
+room.your_fighter	FIGHTER MO
+room.locked_in	NAKA-LOCK IN
+room.everyone_ok	Pipindot ng OK ang lahat: kusang magsisimula ang laban.
+room.share_code	Ibahagi ang code, o imbitahin ang kaibigan gamit ang pangalan.
+room.empty_seat	Bakanteng puwesto
+room.stage_you	STAGE (ikaw ang pipili)
+room.stage_host	STAGE (host ang pipili)
+common.ok	OK
+room.loading	NAGLO-LOAD...
+room.change	PALITAN
+room.starting	NAGSISIMULA...
+room.start_fight	SIMULAN ANG LABAN
+room.close	ISARA ANG ROOM
+room.leave	UMALIS SA ROOM
+room.hint	MATCHMAKING  ·  ROOM
+room.code	CODE
+room.copy	KOPYAHIN
+room.host_can_invite	Puwedeng mag-imbita ng kaibigan ang host gamit ang pangalan.
+room.invite_by_name	MAG-IMBITA NG KAIBIGAN GAMIT ANG PANGALAN
+room.invite	IMBITAHIN
+room.full	Puno na ang room.
+invite.title	ROOM INVITE
+invite.warning	Hindi sinusuri ang mga pangalan: tanggapin lang ang invite mula sa kakilala mo.
+invite.accept	TANGGAPIN
+invite.decline	TANGGIHAN
+room.hazards_on_btn	HAZARDS  BUKAS
+room.hazards_off_btn	HAZARDS  PATAY
+select.passive	PASSIVE
+select.look	ITSURA
+select.cosmetic	COSMETIC
+select.arcade_round	ARCADE  ·  ROUND {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   GAMEPAD 1 = 1P, GAMEPAD 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	DUMMY
+select.round_rival	KARIBAL SA ROUND {0}
+select.picks_at_start	PIPILI PAGSIMULA NG LABAN
+select.signature_weapon	SIGNATURE NA SANDATA  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	NATALO SI {0}
+select.arcade_route	RUTA NG ARCADE  ·  STAGE {0} / {1}
+select.select_stage	PUMILI NG STAGE
+select.local_versus	LOCAL VERSUS
+select.arcade_rival	KARIBAL SA ARCADE
+select.training_dummy	TRAINING DUMMY
+select.stage	STAGE
+select.hazards	HAZARDS
+select.fight	LUMABAN
+select.change	PALITAN
+select.confirm	KUMPIRMAHIN
+select.random	RANDOM
+select.fate	IPAUBAYA SA TADHANA
+select.ready_bang	HANDA NA!
+select.loadout	LOADOUT
+select.waiting_1p	HINIHINTAY ANG 1P
+select.1p_picks_dummy	ANG 1P ANG PIPILI NG DUMMY
+select.selecting	PUMIPILI
+select.identity_hidden	NAKATAGO ANG PAGKAKAKILANLAN
+select.revealed_at_start	IPAPAKITA PAGSIMULA NG ROUND
+select.ai_picks	ANG AI ANG PIPILI NG FIGHTER NIYA
+select.random_every_fight	RANDOM NA KARAKTER BAWAT LABAN
+select.any_character	KAHIT ANONG KARAKTER · RANDOM NA PASSIVE AT SANDATA
+select.lock_in_hint	I-LOCK IN  ·  O I-CLICK ANG KARAKTER
+select.to_ready	PARA MAGHANDA
+select.cpu_difficulty_pick	HIRAP NG CPU  ·  PUMILI BAGO ANG LABAN
+select.ai_note	Hindi kailangan ng internet. Bagong karakter, passive at sandata ang pinipili ng AI bawat laban, pati sa rematch.
+select.pad_difficulty	D-PAD TAAS / BABA  ·  HIRAP
+select.key_difficulty	W / S  ·  HIRAP
+select.start_training	SIMULAN ANG PAGSASANAY
+select.fight_bang	LABAN!
+select.click_to_start	O I-CLICK PARA MAGSIMULA SA KASALUKUYANG PILI
+hud.ready	HANDA...
+hud.rival	KARIBAL
+hud.you	IKAW
+hud.ultimate_ready	{0} · HANDA NA ANG ULTIMATE
+hud.move_detected	{0} · NAKITA ANG GALAW
+hud.failed	{0} · NABIGO
+hud.training_title	PAGSASANAY · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  PAGSASANAY
+hud.intro_online	  ·  ONLINE  ·  ESC / START: UMALIS
+hud.ult_ready_press	HANDA ANG ULT - pindutin ang {0}
+hud.ult_ready	HANDA ANG ULT
+hud.sim_key	sim key: {0}
+hud.poses_live	 · pose: i-cross ang braso = block / braso sa gilid = fireball / kamay pataas = talon
+hud.poses_keys	 · pose 1 cross / 2 suntok / 3 taas · P yuko
+hud.poses_p2	 · pose 8/9/0
+hud.training_help	PAGSASANAY: T para punuin ang ultimate · bumabalik sa 0% ang na-KO · Esc pause
+hud.ult_pct	ULT {0}%
+hud.last_hit	HULING TAMA  {0}
+hud.combo_hits	COMBO  {0} TAMA  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	P1 CAMERA · SIM
+hud.cv_p1_live	P1 CAMERA · LIVE
+hud.cv_p2_sim	P2 CAMERA · SIM
+hud.cv_p2_live	P2 CAMERA · LIVE
+hud.hits_prefix	{0} TAMA
+results.no_contest	WALANG RESULTA
+results.draw	TABLA!
+results.cpu_wins	PANALO ANG CPU
+results.you_win	PANALO KA!
+results.rival_wins	PANALO ANG KARIBAL
+results.wins	PANALO SI {0}!
+results.takes_round	Panalo si {0} sa round
+results.stats	Mga tumamang atake  {0}\nBuong combo  {1}   ·   Pinakamahusay na combo  {2}
+results.stats2	\nMga gesture ultimate  {0}\nMga parry  {1}
+results.posture	\nMagandang postura  {0}%
+results.rewards_named	REWARDS (profile ni {0})
+results.rewards_your	REWARDS (profile mo)
+results.rewards_p1	REWARDS (profile ng P1)
+results.coins	+{0} coins  (kabuuan {1})
+hud.do_pose	gawin ang pose sa camera
+results.place_1	IKA-1
+results.place_2	IKA-2
+results.place_3	IKA-3
+results.place_4	IKA-4
+results.out	LABAS
+results.out_1	LABAS · IKA-1
+results.out_2	LABAS · IKA-2
+results.out_3	LABAS · IKA-3
+results.out_4	LABAS · IKA-4
+results.red_team	RED TEAM
+results.blue_team	BLUE TEAM
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} MANLALARO
+hud.keys_line1	P{0}: {1} gumalaw · {2} tumalon ·
+hud.keys_line2	{0} light · {1} heavy · {2} special ·
+hud.keys_line3	{0} block · {1} dash ·
+hud.keys_line4	{0} skill · {1} ult
+results.characters	MGA KARAKTER
+results.stock_one	1 BUHAY
+results.stocks	{0} BUHAY
+hud.respawn	BABALIK
+hud.drop_in	PASOK!
+results.main_menu	MAIN MENU
+pause.title	NAKA-PAUSE
+pause.resume	ITULOY
+pause.quit	BUMALIK SA MENU
+pause.hint	B / Backspace para ituloy
+leave.title	UMALIS SA LABAN?
+leave.body	Tuloy ang laban. Bibilangin na talo ang pag-alis.
+leave.leave	UMALIS
+leave.hint	B / Backspace / Esc / Start para manatili
+results.winner	PANALO
+results.training_no_rewards	Pagsasanay: walang reward
+cv.posture	Postura {0}%
+cv.posture_low	Postura {0}% - umupo nang tuwid!
+cv.telemetry_ok	Telemetry OK
+net.rooms_load_failed	Hindi ma-load ang mga room mo: {0}
+net.host_limit	Host ka na ng {0} room. Magsara muna ng isa.
+net.creating_named	Ginagawa ang "{0}"...
+net.room_ready_code	Handa na ang room na "{0}". Ibahagi ang code na {1} o mag-imbita ng kaibigan.
+net.create_failed	Hindi magawa ang room: {0}
+net.joining_room	Sumasali sa room {0}...
+net.you_joined	Sumali ka sa "{0}". Pumili ng fighter at pindutin ang OK.
+net.no_room_code	Walang room na may code na {0}. Suriin ang code at subukan ulit.
+net.room_full_n	Puno na ang room na iyan ({0} manlalaro).
+net.join_failed	Hindi makasali: {0}
+net.update_failed	Hindi ma-update ang room: {0}
+net.could_not_what	Hindi magawang {0}: {1}
+net.what_stage	palitan ang stage
+net.what_hazards	palitan ang hazards
+net.press_ok_again	{0} Pindutin ulit ninyong dalawa ang OK at SIMULAN ANG LABAN.
+net.udp_port	Hindi mabuksan ang UDP port {0} (ginagamit na?).
+net.lan_ready	Handa na ang LAN host. Sasali ang kaibigan mo sa: {0}  (port {1})
+net.bad_ip	Ang "{0}" ay hindi valid na IP address.
+net.connecting_to	Kumokonekta sa {0}...
+net.sign_in_failed	Nabigo ang pag-sign in: {0}
+net.room_ready	Handa na ang room na "{0}". Ibahagi ang code sa kaibigan mo.
+net.searching_in	Naghahanap ng manlalaro sa {0}...
+net.start_failed	Hindi masimulan ang laban: {0}
+net.host_unreachable	Hindi maabot ang host: {0}
+net.area_world	buong mundo

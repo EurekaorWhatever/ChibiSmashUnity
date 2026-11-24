@@ -1,0 +1,251 @@
+lang.backdrop	اللغة
+lang.title	اختر لغتك
+lang.subtitle	ستستخدم اللعبة كلها هذه اللغة. يمكنك تغييرها في أي وقت من الإعدادات.
+lang.search_hint	ابحث عن لغة...
+lang.no_match	لا توجد لغة تطابق بحثك.
+lang.english_text	النص بالإنجليزية حاليًا
+lang.confirm	تأكيد  ·  {0}
+lang.confirm_none	تأكيد
+lang.pad_hint	اكتب للبحث · أعلى / أسفل للاختيار · Enter أو زر A = تأكيد
+common.cancel	إلغاء
+settings.language	اللغة  ·  {0}
+difficulty.dummy	دمية
+difficulty.easy	سهل
+difficulty.medium	متوسط
+difficulty.hard	صعب
+difficulty.dummy_upper	دمية
+difficulty.easy_upper	سهل
+difficulty.medium_upper	متوسط
+difficulty.hard_upper	صعب
+nav.home	الرئيسية
+nav.play	العب
+nav.training	التدريب
+nav.arcade	الأركيد
+nav.collection	المجموعة
+nav.settings	الإعدادات
+account.signed_in_as	تم تسجيل الدخول باسم {0}.
+account.signed_in	تم تسجيل الدخول.
+account.signed_out	تم تسجيل الخروج.
+keys.who	P{0} {1}
+keys.reserved	{0} مفتاح وضعية / جلسة (1 2 3, 8 9 0, numpad 7 8 9, P, -). اختر مفتاحًا آخر.
+keys.swapped	{0}؛  {1} أصبح الآن {2}
+match.versus	{0}  VS  {1}
+online.locked_age	اللعب عبر الإنترنت للاعبين بعمر 13 عامًا فأكثر.
+arcade.clear_toast	اكتمل الأركيد! هُزم جميع المنافسين الـ {0}
+precheck.too_dark	مظلم جدًا ({0}%) - أضف إضاءة
+precheck.too_bright	ساطع جدًا ({0}%) - خفف الوهج
+precheck.good	جيد ({0}%)
+loading.weapon_art	رسم السلاح: {0}
+loading.fighter	المقاتل: {0}
+precheck.checking	جارٍ الفحص... {0}
+wipe.character_select	اختيار الشخصية
+wipe.arcade	الأركيد
+results.rematch	إعادة النزال
+results.continue	متابعة
+results.finish	إنهاء
+results.next_battle	المعركة التالية
+wipe.arcade_clear	اكتمل الأركيد
+precheck.title	فحص الكاميرا
+precheck.camera_unavailable	الكاميرا غير متاحة
+precheck.simulated_feed	بث محاكى (الكاميرا متوقفة)
+precheck.upper_body_ok	الجزء العلوي من الجسم داخل الإطار
+precheck.step_back	ارجع للخلف - يجب أن تظهر الكتفان والوركان
+loading.interface	رسومات الواجهة
+loading.typefaces	الخطوط
+loading.pose_model	نموذج تتبع الوضعية
+loading.ready	جاهز
+onboarding.welcome	مرحبًا بك!
+onboarding.your_account	حسابك
+onboarding.your_name	اسمك في اللعبة
+rooms.backdrop_create	المطابقة  ·  إنشاء غرف
+rooms.backdrop_join	المطابقة  ·  الانضمام إلى غرفة
+precheck.all_passed	نجحت كل الفحوص
+precheck.failed	فشل الفحص
+precheck.lighting	الإضاءة
+precheck.framing	التموضع في الإطار
+precheck.posture	الجلسة
+precheck.upright	جلسة مستقيمة، رائع
+precheck.sit_up	اجلس مستقيمًا لتحصل على عملات إضافية
+common.retry	أعد المحاولة
+precheck.play_anyway	العب على أي حال
+common.back	رجوع
+precheck.ranked_note	طوابير التصنيف تتطلب اجتياز هذا الفحص. يمكن تخطيه في المباريات العادية.
+precheck.hint	فحص الكاميرا قبل المباراة
+hint.select	اختيار
+home.play	العب
+home.training	التدريب
+home.arcade	الأركيد
+home.collection	مجموعة الشخصيات
+home.settings	الإعدادات
+home.exit	الخروج من اللعبة
+home.play_desc	مباراة سريعة عبر الإنترنت، أو غرف مطابقة مع الأصدقاء، أو ضد الكمبيوتر
+home.training_desc	إعداد الكاميرا، والتدرب على الحركات، ودمية تدريب
+home.arcade_desc	واجه المنافسين الخمسة تباعًا في كل الساحات
+home.collection_desc	الأزياء والأسلحة والراية التجميلية
+home.settings_desc	الصعوبة وخيارات الكاميرا وتعيين المفاتيح
+home.exit_desc	إغلاق اللعبة
+tips.1	املأ عداد ULT واضغط الضربة القاضية - ثم اتخذ وضعية مقاتلك أمام الكاميرا قبل انتهاء العد التنازلي.
+tips.2	كلما ارتفع DEF قلّ الضرر من كل ضربة وأصبح صدّك أقوى.
+tips.3	الجلسة الجيدة التي ترصدها الكاميرا تمنحك عملات إضافية بعد كل مباراة.
+tips.4	الأزياء والأسلحة تجميلية فقط - لا تتغير الإحصائيات أبدًا بما يرتديه المقاتل.
+tips.5	في التدريب، اضغط T لملء الضربة القاضية. الدمية تنهض دائمًا من جديد.
+tips.6	لكل مقاتل قدرة سلبية من اثنتين - اخترها من لوحة التجهيز بعد تثبيت اختيارك.
+tips.7	تستخدم المعارك عبر الإنترنت تقنية rollback: تشغّل اللعبتان المعركة نفسها من المدخلات نفسها.
+stats.power	القوة
+stats.speed	السرعة
+stats.range	المدى
+stats.endurance	التحمل
+stats.recovery	التعافي
+training.use_block	صدّ · ضربة قاضية للقتال القريب والسحر
+training.use_fireball	كرة نار · ضربة قاضية للمدى البعيد والرماح
+training.use_superjump	قفزة خارقة · ضربة قاضية للثقيل
+menu.online_locked	أنماط اللعب عبر الإنترنت للاعبين بعمر 13 عامًا فأكثر.
+menu.no_internet	لا يوجد اتصال بالإنترنت: اتصل بشبكة Wi-Fi أو بيانات الجوال. وضع VS AI يعمل دون اتصال.
+menu.four_player_soon	يحتاج 2v2 وBattle Royale إلى دعم 4 لاعبين، وسيصل في تحديث قادم.
+profile.edit_name	تعديل الاسم
+profile.win_loss	ف {0}  ·  خ {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	جاهز
+loading.loading	جارٍ التحميل
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   أُنجزت x{2}
+arcade.rule_fight_all	قاتل كل الشخصيات الـ {0} تباعًا بترتيب عشوائي.
+arcade.rule_difficulty	صعوبة الكمبيوتر: {0} (غيّرها من الإعدادات).
+arcade.final	النهائي
+arcade.round	الجولة {0}
+training.cv_setup_source	إعداد الرؤية · {0}
+training.status	الكاميرا: {0}\nالتتبع: {1}\nالمرصود: {2}
+training.off	متوقف
+training.none	لا شيء
+training.status_posture	   ·   الجلسة {0}%   ·   القياس {1}
+collection.gold_cinematic_suffix	 · مشهد ذهبي
+collection.only	{0} فقط
+collection.pull1	سحب x1  ·  {0}
+collection.pull10	سحب x10  ·  {0}
+collection.dup_suffix	  (مكرر +20)
+collection.new_suffix	  جديد!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} ثانية  <size=12><color=#9AA6BC>(ثابت لكل مباراة)</color></size>
+settings.change_name_as	تغيير الاسم  ·  {0}
+settings.change_name	تغيير الاسم
+settings.keys_help	انقر على أمر، ثم اضغط مفتاحًا أو انقر على الخانة بزر الفأرة (Esc / pad B / النقر في مكان آخر للإلغاء؛ المهلة 5 ثوانٍ). إذا كان أحد اللاعبين يستخدمه بالفعل، يتبادل الأمران.\nوضعيات الكاميرا: ذراعان متقاطعتان = صدّ · ذراع ممدودة للجانب = كرة نار · اليدان للأعلى = قفزة خارقة (وضعيات لوحة المفاتيح: 1/2/3 و 8/9/0).
+rarity.common	عادي
+rarity.rare	نادر
+rarity.epic	ملحمي
+rarity.legendary	أسطوري
+skin.default	كلاسيكي
+skin.mint	نعناع
+skin.shadow	الظل
+skin.sakura	ساكورا
+skin.inferno	الجحيم
+skin.celestial	سماوي
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	+13 فقط
+play.1p_vs_1p	1P VS 1P
+play.team_card	فرق\n2V2
+play.four_player_later	يصل 2v2 وBattle Royale مع دعم 4 لاعبين في تحديث قادم.
+play.team_tag	4P · فريقان
+play.royale_tag	4P · الكل ضد الكل
+collection.all_fighters	كل المقاتلين
+arcade.mode	نمط الأركيد
+home.tagline	قتال في الساحة  ·  ضربات قاضية بحركات الجسم
+play.royale_card	BATTLE\nROYALE
+training.kicker	إعداد الكاميرا والتدريب
+settings.camera_tracking	التتبع بالكاميرا (WEBCAM)
+training.camera_off	التتبع بالكاميرا: متوقف
+training.camera_on	التتبع بالكاميرا: يعمل
+collection.hint	مجموعة الشخصيات
+play.choose_style	اختر أسلوب اللعب
+online.kicker	اختر أسلوب اللعب  ·  فردي · 2V2 · BATTLE ROYALE
+play.kicker	اختر معركتك  ·  VS ONLINE · المطابقة · VS CPU
+play.coming_soon	قريبًا
+training.cv	الرؤية الحاسوبية
+online.connection	الاتصال
+collection.banner	الراية التجميلية
+settings.cpu_difficulty	صعوبة الكمبيوتر
+play.create_join	إنشاء · انضمام إلى غرف
+settings.cv_overlay	طبقة الرؤية أثناء المباراة
+quests.coins_note	العملات تأتي من اللعب فقط: الانتصارات وPvE والمهام والجلسة الجيدة التي ترصدها الكاميرا.
+collection.odds	عادي 60% · نادر 28% · ملحمي 10% · أسطوري 2%
+collection.equip	تجهيز
+collection.equipped	مُجهّز
+hint.exit	خروج
+home.exit_upper	الخروج من اللعبة
+exit.title	الخروج من اللعبة؟
+online.royale_desc	كل لاعب لنفسه. آخر مقاتل صامد هو الفائز.
+arcade.kicker	خمسة منافسين · جولة واحدة
+loading.for_battle	للمعركة
+online.invites_note	تظهر هنا دعوات الغرف من أصدقائك. غرف الأصدقاء موجودة في العب > المطابقة.
+settings.kicker	اللعبة · الكاميرا · التحكم
+training.gestures_live	الحركات  (اتخذ الوضعية أمام الكاميرا - اللكمة = ذراع واحدة ممدودة للجانب)
+training.gestures_sim	الحركات  (اضغط المفتاح مطولًا لمحاكاة الوضعية)
+settings.key_bindings	تعيين المفاتيح
+settings.keys_reset	أُعيدت المفاتيح إلى الوضع الافتراضي
+play.locked	مقفل
+arcade.rule_retry	خسرت جولة؟ تابع وأعد المحاولة.
+home.hint	القائمة الرئيسية
+settings.master_volume	مستوى الصوت العام
+settings.match_time	مدة المباراة
+play.matchmaking_card	المطا\nبقة
+hint.move	تحريك
+play.matchmaking_desc	أنشئ غرفة، وشارك رمزها أو ادعُ أصدقاءك بالاسم.
+play.no_internet_tag	لا يوجد إنترنت
+online.no_internet_body	لا يوجد إنترنت الآن. اتصل بشبكة Wi-Fi أو بيانات الجوال، أو العب ضد الكمبيوتر.
+common.off	إيقاف
+online.offline	غير متصل
+common.on	تشغيل
+settings.player1	اللاعب 1
+settings.player2	اللاعب 2
+training.practice_dummy	تدرّب ضد الدمية
+settings.precheck	فحص الكاميرا قبل المباراة
+loading.prepare	استعد
+settings.listening_hint	اضغط مفتاحًا أو انقر على الخانة  ·  ESC / PAD B للإلغاء  ·  لا يمكن تعيين أزرار وحدة التحكم
+training.slouch_note	اضغط P لتبديل وضعية الانحناء وشاهد نقاط الجلسة تنخفض.
+settings.profile_reset	أُعيد ضبط الملف الشخصي (مع الاحتفاظ بالاسم وتسجيل الدخول)
+collection.pull_to_unlock	اسحب لفتحه
+quests.title	المهام
+online.quick_match	مباراة سريعة
+play.online_desc	مباراة سريعة مع لاعب قريب منك، أو لبِّ دعوة صديق.
+online.solo_desc	مباراة سريعة: واجه لاعبًا يبحث الآن، الأقرب أولًا.
+settings.reset_keys	إعادة ضبط المفاتيح
+settings.reset_profile	إعادة ضبط الملف الشخصي
+arcade.rival_unknown	المنافس  ???
+play.rooms_tag	غرف · 2-4 لاعبين
+online.rollback_body	تقنية rollback: تشغّل اللعبتان المعركة نفسها من المدخلات نفسها، فتبقى سريعة وعادلة.
+settings.screen_shake	اهتزاز الشاشة
+profile.set_name	تعيين الاسم
+settings.sfx_volume	صوت المؤثرات
+training.simulate_pose	محاكاة الوضعية
+collection.kicker	أزياء · أسلحة · راية تجميلية
+training.slouch	انحناء
+online.solo_card	فردي\n1V1
+home.start	ابدأ
+arcade.start	ابدأ الأركيد
+exit.stay	البقاء
+settings.sure	متأكد؟
+settings.sure_reset_profile	متأكد؟ سيضيع كل التقدم
+collection.banner_note	أزياء ومشاهد الضربة القاضية فقط. الإحصائيات متطابقة في كل زي - لا شيء مقابل المال.
+hint.tabs	التبويبات
+loading.tip	نصيحة
+training.hint	التدريب  /  إعداد الرؤية
+arcade.rule_stages	تتغير الساحة كل جولة، من جبل البداية إلى نصب المحيط.
+online.team_desc	فريقان من لاعبين اثنين. لا نيران صديقة: ضرباتك لا تؤذي زميلك.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  أسلوب اللعب
+play.online_card	VS\nONLINE
+arcade.rule_rewards	الانتصارات تمنح عملات وتقدمًا في المهام، تمامًا مثل VS CPU.
+exit.saved_note	ملفك الشخصي وعملاتك ومجموعتك محفوظة على هذا الجهاز.
+settings.key_listening	مفتاح أو انقر هنا
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	تختار مقاتلك ومستوى سهل أو متوسط أو صعب. يحصل الكمبيوتر على مقاتل عشوائي.
+account.keep_name_body	سجّل الدخول بحساب Google ليبقى اسمك وبياناتك معك: في كل مرة تفتح اللعبة، وعلى أي كمبيوتر. حساب Google آخر يحصل على اسم جديد خاص به.
+name.you_are	أنت {0}!
+name.you_are_unchecked	أنت {0}! سنتحقق من الاسم عندما تلعب عبر الإنترنت.
+online.could_not_start	تعذّر بدء المباراة ({0}).
+rooms.your_rooms	غرفك
+rooms.count_click	{0}  ·  انقر على غرفة لفتحها
+rooms.code_value	الرمز  {0}
+rooms.players_count	{0} / {1} لاعبين
