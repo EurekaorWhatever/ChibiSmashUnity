@@ -98,8 +98,14 @@ jobs:
             Library-EditModeTests-WebGL-
             Library-WebGL-
 
+      # Unity is sometimes SIGKILLed (exit 137) about a second into loading the project, with memory and disk free and
+      # no kernel OOM entry (2026-11-24/25: 0f0532e passed that point while 41eaf38, same assets, did not; a manual
+      # re-run of ce5b83f failed again). So the build gets up to three attempts in one job: a push still reaches the site.
+      # Identical steps on purpose; only the last attempt may fail the job.
       - name: Build WebGL
+        id: build1
         if: steps.lic.outputs.have == 'true'
+        continue-on-error: true
         uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -111,6 +117,34 @@ jobs:
           buildMethod: ChibiClash.EditorTools.WebBuild.BuildFromCommandLine
           # CI-only Crunch compression of the game textures for a smaller download (WebBuild.CrunchGameTexturesForWeb).
           # It edits importer settings in this throwaway checkout only; never pass the flag on a working copy.
+          customParameters: -chibiWebCrunch
+
+      - name: Build WebGL (retry 1)
+        id: build2
+        if: steps.lic.outputs.have == 'true' && steps.build1.outcome == 'failure'
+        continue-on-error: true
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: WebGL
+          buildsPath: build
+          buildMethod: ChibiClash.EditorTools.WebBuild.BuildFromCommandLine
+          customParameters: -chibiWebCrunch
+
+      - name: Build WebGL (retry 2)
+        if: steps.lic.outputs.have == 'true' && steps.build1.outcome == 'failure' && steps.build2.outcome == 'failure'
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: WebGL
+          buildsPath: build
+          buildMethod: ChibiClash.EditorTools.WebBuild.BuildFromCommandLine
           customParameters: -chibiWebCrunch
 
       # The Actions log needs a GitHub sign-in to read; annotations do not. On failure, publish memory and disk facts.
