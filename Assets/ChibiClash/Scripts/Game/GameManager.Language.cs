@@ -171,7 +171,11 @@ namespace ChibiClash
             float by = list.yMax + 14f;
             float bw = first ? 300f : 220f;
             float bx = first ? r.x + (r.width - bw) * 0.5f : r.x + r.width * 0.5f - bw - 10f;
-            string ok = cur != null ? Loc.T("lang.confirm", cur.native) : Loc.T("lang.confirm_none");
+            // Always the English word, then the picked language in its own name, e.g. "CONFIRM · ไทย": a player who
+            // landed in a language they cannot read still knows what the button does (user request 2026-11-25).
+            string ok = cur != null ? "CONFIRM  ·  " + cur.native : "CONFIRM";
+            float need = Gui.Measure(ok, 18) + 48f;   // long names ("Bahasa Indonesia") widen the button
+            if (need > bw) { bx -= first ? (need - bw) * 0.5f : need - bw; bw = need; }
             if (Gui.Button(new Rect(bx, by, bw, 50f), ok, Gui.P1, 18, cur != null) || (enter && cur != null)) confirm = cur;
             if (!first && Gui.Button(new Rect(r.x + r.width * 0.5f + 10f, by, 220f, 50f), Loc.T("common.cancel"), Gui.Steel, 18))
             {
