@@ -14,36 +14,16 @@ namespace ChibiClash
     /// </summary>
     public static class FontBank
     {
-        /// <summary>Script code -> Resources path (no extension). Greek and Cyrillic share Noto Sans with Latin.</summary>
+        /// <summary>
+        /// Script code -> Resources path (no extension). Greek and Cyrillic share Noto Sans with Latin. Only the scripts
+        /// of the 16 supported languages are bundled (2026-11-25); any other script draws with the normal font.
+        /// </summary>
         public static readonly Dictionary<string, string> Paths = new Dictionary<string, string>
         {
             { "Latn", "Fonts/Latn/NotoSans-Regular" },
             { "Grek", "Fonts/Latn/NotoSans-Regular" },
             { "Cyrl", "Fonts/Latn/NotoSans-Regular" },
-            { "Arab", "Fonts/Arab/NotoSansArabic-Regular" },
-            { "Armn", "Fonts/Armn/NotoSansArmenian-Regular" },
-            { "Avst", "Fonts/Avst/NotoSansAvestan-Regular" },
-            { "Beng", "Fonts/Beng/NotoSansBengali-Regular" },
-            { "Cans", "Fonts/Cans/NotoSansCanadianAboriginal-Regular" },
-            { "Deva", "Fonts/Deva/NotoSansDevanagari-Regular" },
-            { "Ethi", "Fonts/Ethi/NotoSansEthiopic-Regular" },
-            { "Geor", "Fonts/Geor/NotoSansGeorgian-Regular" },
-            { "Gujr", "Fonts/Gujr/NotoSansGujarati-Regular" },
-            { "Guru", "Fonts/Guru/NotoSansGurmukhi-Regular" },
-            { "Hebr", "Fonts/Hebr/NotoSansHebrew-Regular" },
-            { "Khmr", "Fonts/Khmr/NotoSansKhmer-Regular" },
-            { "Knda", "Fonts/Knda/NotoSansKannada-Regular" },
-            { "Laoo", "Fonts/Laoo/NotoSansLao-Regular" },
-            { "Mlym", "Fonts/Mlym/NotoSansMalayalam-Regular" },
-            { "Mymr", "Fonts/Mymr/NotoSansMyanmar-Regular" },
-            { "Orya", "Fonts/Orya/NotoSansOriya-Regular" },
-            { "Sinh", "Fonts/Sinh/NotoSansSinhala-Regular" },
-            { "Taml", "Fonts/Taml/NotoSansTamil-Regular" },
-            { "Telu", "Fonts/Telu/NotoSansTelugu-Regular" },
-            { "Thaa", "Fonts/Thaa/NotoSansThaana-Regular" },
             { "Thai", "Fonts/Thai/NotoSansThai-Regular" },
-            { "Tibt", "Fonts/Tibt/NotoSerifTibetan-Regular" },
-            { "Yiii", "Fonts/Yiii/NotoSansYi-Regular" },
             { "Hans", "Fonts/Hans/NotoSansSC-Regular" },
             { "Jpan", "Fonts/Jpan/NotoSansJP-Regular" },
             { "Kore", "Fonts/Kore/NotoSansKR-Regular" },

@@ -98,12 +98,13 @@ namespace ChibiClash
         // ---------------------------------------------------------------- language choice
 
         /// <summary>
-        /// Switch to code (a languages.json code). A language without a table keeps its code (the choice is remembered)
-        /// but every lookup falls back to English.
+        /// Switch to code (a languages.json code). A code that is not one of the supported languages (for example one
+        /// saved before the list was cut to 16 on 2026-11-25) switches to English; a listed language without a table
+        /// keeps its code but every lookup falls back to English.
         /// </summary>
         public static void Use(string code)
         {
-            if (string.IsNullOrEmpty(code)) code = Source;
+            if (string.IsNullOrEmpty(code) || Find(code) == null) code = Source;
             if (source == null) source = LoadTable(Source) ?? new Dictionary<string, string>();
             current = code == Source ? null : LoadTable(code);
             Code = code;

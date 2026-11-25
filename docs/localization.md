@@ -117,3 +117,10 @@ Cyrillic on WebGL.
 has no keys outside English; `{n}` placeholders match per key; `languages.json` has unique two-letter codes, endonyms,
 and `translated` flags that match the tables; the parser, the English fallback, the device-language mapping and the
 search. The table checks read the shipped files on purpose (content validation).
+
+## Supported languages (2026-11-25)
+
+The game supports exactly 16 languages: en, th, zh, ja, ko, es, pt, fr, de, ru, it, tr, id, vi, ms, tl
+(`SUPPORTED` in tools/loc/gen_languages.py). Only their tables and fonts (Latin/Cyrillic, Thai, CJK) are bundled.
+A saved language outside the list falls back to English. To add one later: add its code to `SUPPORTED`, add
+`Resources/Loc/<code>.json` (sheets in tools/loc/<code>/), bundle its script font in FontBank, and re-run the script.

@@ -104,7 +104,7 @@ namespace ChibiClash.Tests
         public void LanguageList_HasUniqueTwoLetterCodes_AndEveryTableIsListed()
         {
             var langs = Loc.ParseLanguages(File.ReadAllText(Path.Combine(LocDir, "languages.json")));
-            Assert.GreaterOrEqual(langs.Length, 180, "every ISO 639-1 language should be listed");
+            Assert.AreEqual(16, langs.Length, "the game supports exactly 16 languages (2026-11-25)");
             var seen = new HashSet<string>();
             foreach (var l in langs)
             {
@@ -131,8 +131,8 @@ namespace ChibiClash.Tests
         [Test]
         public void MissingTable_FallsBackToEnglish_AndUnknownKeyReturnsKey()
         {
-            Loc.Use("zu");   // listed, no table yet
-            Assert.AreEqual("zu", Loc.Code);
+            Loc.Use("zu");   // not one of the 16 supported languages: English
+            Assert.AreEqual("en", Loc.Code);
             Assert.AreEqual("BACK", Loc.T("common.back"));
             Assert.AreEqual("no.such.key", Loc.T("no.such.key"));
             Assert.AreEqual("ROUND 3", Loc.T("arcade.round", 3));

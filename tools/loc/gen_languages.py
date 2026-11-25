@@ -199,10 +199,17 @@ zu|Zulu|isiZulu|Latn
 """
 
 
+# The game supports exactly these 16 languages (user decision 2026-11-25). DATA keeps every ISO 639-1 language so
+# one can be added later: add its code here, add Resources/Loc/<code>.json and its font, and re-run this script.
+SUPPORTED = {"en", "th", "zh", "ja", "ko", "es", "pt", "fr", "de", "ru", "it", "tr", "id", "vi", "ms", "tl"}
+
+
 def main():
     rows = []
     for line in DATA.strip().splitlines():
         code, name, native, script = line.split("|")
+        if code not in SUPPORTED:
+            continue
         rows.append({"code": code, "name": name, "native": native, "script": script,
                      "rtl": script in RTL_SCRIPTS,
                      "translated": code == "en" or os.path.exists(os.path.join(LOC, code + ".json"))})

@@ -87,8 +87,8 @@ namespace ChibiClash
         {
             RefreshLanguageList();
             bool first = NeedsLanguage;
-            // Height from the content: title, search, list, buttons, then the hint line under the buttons (no overlap).
-            var r = DialogRect(720f, 134f + LangRows * LangRowH + 14f + 50f + 36f);
+            // Height from the content: title, search, list, buttons (no hint line, user request 2026-11-25).
+            var r = DialogRect(720f, 134f + LangRows * LangRowH + 14f + 50f + 20f);
             r.y = Mathf.Max(118f, H * 0.5f - r.height * 0.5f);
             Gui.Box(r, Gui.P2);
             Gui.Display(new Rect(r.x, r.y + 12f, r.width, 44f), Loc.T("lang.title"), 34, Gui.Paper, TextAnchor.MiddleCenter);
@@ -104,14 +104,17 @@ namespace ChibiClash
                 if (d != 0) { MoveLanguage(d); e.Use(); }
             }
 
-            // Search box with a magnifier drawn from shapes.
+            // Search box with a magnifier drawn from shapes. Left-aligned text that starts after the magnifier: IMGUI places
+            // the caret wrongly in a centred text field, so typed letters appeared away from the cursor (user report
+            // 2026-11-25). The placeholder sits exactly where the first typed letter goes.
             var field = new Rect(r.x + 30f, r.y + 82f, r.width - 60f, 42f);
             GUI.SetNextControlName("LangSearch");
-            string typed = GUI.TextField(field, langQuery ?? "", 40, Field(20));
+            string typed = GUI.TextField(field, langQuery ?? "", 40, SearchFieldStyle());
             if (typed != langQuery) langQuery = typed;
             if (GUI.GetNameOfFocusedControl() != "LangSearch") GUI.FocusControl("LangSearch");
             if (string.IsNullOrEmpty(langQuery))
-                Gui.Text(field, Loc.T("lang.search_hint"), 15, WithA(Gui.Muted, 0.75f), TextAnchor.MiddleCenter, false, false);
+                Gui.Text(new Rect(field.x + SearchTextLeft, field.y, field.width - SearchTextLeft - 10f, field.height),
+                         Loc.T("lang.search_hint"), 15, WithA(Gui.Muted, 0.75f), TextAnchor.MiddleLeft, false, false);
             Gui.Circle(new Rect(field.x + 12f, field.y + 11f, 16f, 16f), Gui.Muted);
             Gui.Circle(new Rect(field.x + 15f, field.y + 14f, 10f, 10f), Color.white);
             Gui.Line(new Vector2(field.x + 26f, field.y + 26f), new Vector2(field.x + 32f, field.y + 32f), Gui.Muted, 3f);
@@ -138,10 +141,9 @@ namespace ChibiClash
                 if (sel) Gui.Rect(rr, Gui.P2);
                 else if (hot) Gui.Rect(rr, Gui.Steel);
                 if (sel) Gui.Rect(new Rect(rr.x, rr.y, 5f, rr.height), Gui.Gold);
-                Gui.Text(new Rect(rr.x + 16f, rr.y, rr.width * 0.5f, rr.height), l.native, 18, Gui.Paper, TextAnchor.MiddleLeft, true, false);
-                string right = l.translated ? l.name : l.name + "  ·  " + Loc.T("lang.english_text");
-                Gui.Text(new Rect(rr.x + rr.width * 0.45f, rr.y, rr.width * 0.55f - 14f, rr.height), right, 13, sel ? Gui.Paper : Gui.Muted, TextAnchor.MiddleRight, false, false);
-                if (l.code == Loc.Code) Gui.Skew(new Rect(rr.x + rr.width * 0.45f - 4f, rr.y + 14f, 8f, 8f), Gui.Green, 0.3f);
+                // Only the language's own name (user request 2026-11-25: no English name, no "English text for now",
+                // no current-language marker).
+                Gui.Text(new Rect(rr.x + 16f, rr.y, rr.width - 32f, rr.height), l.native, 18, Gui.Paper, TextAnchor.MiddleLeft, true, false);
                 if (click)
                 {
                     if (sel) confirm = l;
@@ -177,8 +179,21 @@ namespace ChibiClash
                 UiSound.Back();
             }
             if (enter && e.type == EventType.KeyDown) e.Use();
-            Gui.Text(new Rect(r.x + 20f, by + 58f, r.width - 40f, 20f), Loc.T("lang.pad_hint"), 12, Gui.Muted);
             if (confirm != null) ChooseLanguage(confirm);
+        }
+
+        const float SearchTextLeft = 44f;   // text starts right of the magnifier
+        GUIStyle searchStyle;
+
+        /// <summary>The search box style: like the other text fields, but left-aligned with room for the magnifier.</summary>
+        GUIStyle SearchFieldStyle()
+        {
+            if (searchStyle == null)
+            {
+                searchStyle = new GUIStyle(Field(20)) { alignment = TextAnchor.MiddleLeft };
+                searchStyle.padding = new RectOffset((int)SearchTextLeft, 10, searchStyle.padding.top, searchStyle.padding.bottom);
+            }
+            return searchStyle;
         }
 
         /// <summary>

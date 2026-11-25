@@ -35,6 +35,27 @@ namespace ChibiClash.EditorTools
         /// <example><code>Unity -batchmode -projectPath . -buildTarget WebGL -executeMethod ChibiClash.EditorTools.WebBuild.BuildFromCommandLine -customBuildPath build/WebGL/WebGL</code></example>
         public static void BuildFromCommandLine() => Build(ArgValue("-customBuildPath") ?? DefaultOutput, exitOnFinish: true);
 
+        /// <summary>The game's name on the web page (browser tab and footer). User request 2026-11-25.</summary>
+        public const string WebTitleName = "Chibi Clash";
+
+        /// <summary>
+        /// Set the web page's tab title to "Unity Web Player | Chibi Clash" (and the template footer to the game name)
+        /// without renaming PlayerSettings.productName ("My project"): the product name also decides where saves are
+        /// kept, so renaming it would lose every player's name, language and sign-in on PC.
+        /// </summary>
+        static void SetPageTitle(string output)
+        {
+            string index = Path.Combine(output, "index.html");
+            if (!File.Exists(index)) return;
+            string html = File.ReadAllText(index);
+            string product = PlayerSettings.productName;
+            string fixedHtml = System.Text.RegularExpressions.Regex.Replace(html, "<title>[^<]*</title>",
+                "<title>Unity Web Player | " + WebTitleName + "</title>");
+            fixedHtml = fixedHtml.Replace("id=\"unity-build-title\">" + product + "<", "id=\"unity-build-title\">" + WebTitleName + "<");
+            if (fixedHtml != html) File.WriteAllText(index, fixedHtml);
+            Debug.Log("[WebBuild] page title: Unity Web Player | " + WebTitleName);
+        }
+
         /// <summary>Value after <paramref name="name"/> on the command line, or null when absent.</summary>
         public static string ArgValue(string name)
         {
@@ -70,6 +91,7 @@ namespace ChibiClash.EditorTools
                 Debug.Log("[WebBuild] " + report.summary.result + ": " + scenes.Length + " scene(s), " +
                           (report.summary.totalSize / (1024 * 1024)) + " MB -> " + output);
                 if (ok) File.WriteAllText(Path.Combine(output, ".nojekyll"), "");   // serve files starting with '_' as-is
+                if (ok) SetPageTitle(output);
                 // Public build diagnostics next to index.html (the Actions log needs a GitHub sign-in to read).
                 info.AppendLine("result: " + report.summary.result + ", " + (report.summary.totalSize / (1024 * 1024)) + " MB");
                 if (ok) File.WriteAllText(Path.Combine(output, "build-info.txt"), info.ToString());
