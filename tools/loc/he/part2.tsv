@@ -1,0 +1,257 @@
+room.ready_to_fight	מוכן לקרב
+room.full_suffix	 · החדר מלא
+room.waiting	ממתין לשחקנים
+room.joined	{0}  ·  {1} / {2} הצטרפו
+room.host	מארח
+room.player_n	שחקן {0}
+room.you_suffix	 · אתה
+room.hazards_host_pick	{0} · בחירת המארח
+room.hazards_on	מכשולים פועלים
+room.hazards_off	מכשולים כבויים
+room.code_copied	קוד החדר {0} הועתק. הדבק אותו לחבר שלך.
+invite.body	{0} מזמין אותך אל {1}   ({2} שנ')
+select.ult_name	ULT  {0}
+age.title	בן כמה אתה?
+age.body	כל גיל יכול לשחק בכל מצב. הגיל שלך נשמר עם שם השחקן לסטטיסטיקות המשחק.
+common.next	הבא
+age.error	הקלד את הגיל שלך, או קבע אותו עם ה-D-pad.
+age.pad_hint	שלט: D-pad למעלה/למטה משנה ב-1, שמאלה/ימינה ב-10 · A = הבא
+rooms.enter_name	הזן את שם החדר
+rooms.name_rules	3-24 אותיות, ספרות או רווחים. חברים רואים אותו כשהם מצטרפים. בחדר יש מקום ל-2 עד 4 שחקנים.
+rooms.create	צור
+common.one_moment	רגע אחד...
+account.keep_name	שמור את שם הלוחם שלך
+account.finish_in_browser	סיים בדפדפן...
+account.sign_in_google	התחבר עם GOOGLE
+account.play_without	שחק בלי חשבון
+name.choose_first	בחר קודם שם שחקן.
+common.cancelled	בוטל.
+name.welcome	ברוך הבא, לוחם! איך קוראים לך?
+name.change_title	שנה את השם שלך
+name.rules	3-16 אותיות, ספרות או _. בחר שם לוחם כיפי, לא את השם האמיתי שלך. כך חברים מוצאים ומזמינים אותך, וזה מה שכולם רואים.
+name.suggest	הצע
+name.checking	בודק...
+name.lets_fight	בוא נילחם!
+common.save	שמור
+name.pad_hint_first	שלט: A = בוא נילחם · Y = הצע שם
+name.pad_hint	שלט: A = שמור · Y = הצע שם
+online.connected_agreeing	מחובר. מסכמים את פרטי המשחק...
+online.host_settings_changed	ההגדרות של המארח השתנו — הצטרף לחדר מחדש.
+online.version_mismatch	היריב שלך מריץ גרסה אחרת של המשחק. שני השחקנים צריכים את אותה גרסה.
+rooms.title	VS LOCAL
+rooms.kicker	חדרים  ·  2-4 שחקנים  ·  יצירה · הצטרפות · הזמנה לפי שם
+rooms.create_rooms	יצירת חדרים
+rooms.join_room	הצטרפות לחדר
+rooms.creating	יוצר את החדר שלך...
+rooms.loading	טוען את החדרים שלך...
+rooms.none_yet	עדיין לא נוצר חדר!
+rooms.one_moment	רגע אחד.
+rooms.empty_help	לחץ על יצירת חדרים כדי ליצור אחד, או הצטרפות לחדר עם קוד החדר של חבר.
+rooms.capacity_note	בחדר יש מקום ל-2 עד 4 שחקנים. הזמן חברים לפי שם השחקן שלהם.
+rooms.invites_paused	הזמנות לחדרים הושהו לכמה דקות
+rooms.refresh	רענון
+rooms.hint	VS LOCAL  ·  חדרים
+rooms.new	חדש
+rooms.you_host	אתה המארח
+rooms.open	פתח
+join.enter_code	הזן את קוד החדר
+join.body	הקלד או הדבק את קוד החדר שהחבר שלך שלח (Discord, צ'אט...).
+join.paste	הדבק
+join.join	הצטרף
+join.bad_code	זה לא קוד חדר. בדוק ונסה שוב (אותיות וספרות בלבד).
+rooms.fight_starting	קרב בחדר מתחיל. חכה לו, או צא קודם מהחדר.
+quick.kicker	VS ONLINE  ·  סולו 1V1  ·  שחקן קרוב אליך
+quick.player_found	נמצא שחקן!
+quick.search_failed	החיפוש נכשל
+quick.not_searching	לא מחפש
+quick.connecting	מתחבר ליריב שלך...
+quick.searching_near	מחפש שחקן קרוב אליך
+quick.stopped	החיפוש נעצר. נסה שוב.
+quick.press_search_again	לחץ על חפש שוב כדי לחפש שחקן.
+quick.privacy	משחק מהיר משתף את המדינה שלך (מהגדרות המכשיר), אף פעם לא את המיקום שלך.
+quick.search_again	חפש שוב
+quick.hint	VS ONLINE  ·  משחק מהיר
+room.kicker_opening	חדר  ·  פותח את החדר...
+room.opening	פותח את החדר...
+room.your_fighter	הלוחם שלך
+room.locked_in	ננעל
+room.everyone_ok	כולם לוחצים OK: הקרב מתחיל מעצמו.
+room.share_code	שתף את הקוד, או הזמן חברים לפי שם.
+room.empty_seat	מקום פנוי
+room.stage_you	זירה (אתה בוחר)
+room.stage_host	זירה (המארח בוחר)
+common.ok	OK
+room.loading	טוען...
+room.change	שנה
+room.starting	מתחיל...
+room.start_fight	התחל קרב
+room.close	סגור חדר
+room.leave	צא מהחדר
+room.hint	VS LOCAL  ·  חדר
+room.code	קוד
+room.copy	העתק
+room.host_can_invite	המארח יכול להזמין חבר לפי שם.
+room.invite_by_name	הזמן חבר לפי שם
+room.invite	הזמן
+room.full	החדר מלא.
+invite.title	הזמנה לחדר
+invite.warning	השמות לא נבדקים: קבל הזמנות רק מאנשים שאתה מכיר.
+invite.accept	קבל
+invite.decline	דחה
+room.hazards_on_btn	מכשולים  פועלים
+room.hazards_off_btn	מכשולים  כבויים
+select.passive	פסיבי
+select.look	מראה
+select.cosmetic	קוסמטי
+select.arcade_round	ארקייד  ·  סיבוב {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   שלט 1 = 1P, שלט 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	בובה
+select.round_rival	היריב של סיבוב {0}
+select.picks_at_start	בוחר בתחילת הקרב
+select.signature_weapon	נשק אופייני  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  הובס
+select.arcade_route	מסלול ארקייד  ·  זירה {0} / {1}
+select.select_stage	בחר זירה
+select.local_versus	קרב מקומי
+select.arcade_rival	יריב ארקייד
+select.training_dummy	בובת אימון
+select.stage	זירה
+select.hazards	מכשולים
+select.fight	קרב
+select.change	שנה
+select.confirm	אישור
+select.random	אקראי
+select.fate	תן לגורל להחליט
+select.ready_bang	מוכן!
+select.loadout	ציוד
+select.waiting_1p	ממתין ל-1P
+select.1p_picks_dummy	1P בוחר את הבובה
+select.selecting	בוחר
+select.identity_hidden	זהות מוסתרת
+select.revealed_at_start	תיחשף בתחילת הסיבוב
+select.ai_picks	ה-AI בוחר את הלוחם שלו
+select.random_every_fight	דמות אקראית בכל קרב
+select.any_character	כל דמות · פסיבי ונשק אקראיים
+select.lock_in_hint	נעילה  ·  או לחץ על דמות
+select.to_ready	כדי להיות מוכן
+select.cpu_difficulty_pick	רמת קושי CPU  ·  בחר לפני הקרב
+select.ai_note	לא צריך אינטרנט. ה-AI בוחר דמות, פסיבי ונשק חדשים לכל קרב, גם במשחקים חוזרים.
+select.pad_difficulty	D-PAD למעלה / למטה  ·  רמת קושי
+select.key_difficulty	W / S  ·  רמת קושי
+select.start_training	התחל אימון
+select.fight_bang	להילחם!
+select.click_to_start	או לחץ כדי להתחיל עם הבחירות הנוכחיות
+hud.ready	מוכנים...
+hud.rival	יריב
+hud.you	אתה
+hud.ultimate_ready	{0} · ULTIMATE מוכן
+hud.move_detected	{0} · תנועה זוהתה
+hud.failed	{0} · נכשל
+hud.training_title	אימון · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  אימון
+hud.intro_online	  ·  אונליין  ·  ESC / START: יציאה
+hud.ult_ready_press	ULT מוכן - לחץ {0}
+hud.ult_ready	ULT מוכן
+hud.sim_key	מקש הדמיה: {0}
+hud.poses_live	 · תנוחות: ידיים משוכלות חסימה / יד מושטת = כדור אש / ידיים למעלה = קפיצה
+hud.poses_keys	 · תנוחות 1 שילוב / 2 אגרוף / 3 הרמה · P שפוף
+hud.poses_p2	 · תנוחות 8/9/0
+hud.training_help	אימון: T ממלא את ה-ultimate · לוחמים שהופלו חוזרים ב-0% · Esc השהיה
+hud.ult_pct	ULT {0}%
+hud.last_hit	מכה אחרונה  {0}
+hud.combo_hits	קומבו  {0} מכות  +{1}%
+hud.combo	קומבו  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	מצלמת P1 · הדמיה
+hud.cv_p1_live	מצלמת P1 · חי
+hud.cv_p2_sim	מצלמת P2 · הדמיה
+hud.cv_p2_live	מצלמת P2 · חי
+hud.hits_prefix	{0} מכות  
+results.no_contest	ללא תוצאה
+results.draw	תיקו!
+results.cpu_wins	ה-CPU מנצח
+results.you_win	ניצחת!
+results.rival_wins	היריב מנצח
+results.wins	{0} מנצח!
+results.takes_round	{0} לוקח את הסיבוב
+results.stats	מכות שנחתו  {0}\nקומבו מלאים  {1}   ·   הקומבו הטוב ביותר  {2}
+results.stats2	\nUltimate במחוות  {0}\nהדיפות  {1}
+results.posture	\nיציבה טובה  {0}%
+results.rewards_named	פרסים (הפרופיל של {0})
+results.rewards_your	פרסים (הפרופיל שלך)
+results.rewards_p1	פרסים (פרופיל P1)
+results.coins	+{0} מטבעות  (סה"כ {1})
+hud.do_pose	עשה את התנוחה מול המצלמה
+results.place_1	מקום 1
+results.place_2	מקום 2
+results.place_3	מקום 3
+results.place_4	מקום 4
+results.out	בחוץ
+results.out_1	בחוץ · מקום 1
+results.out_2	בחוץ · מקום 2
+results.out_3	בחוץ · מקום 3
+results.out_4	בחוץ · מקום 4
+results.red_team	הקבוצה האדומה
+results.blue_team	הקבוצה הכחולה
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} שחקנים
+hud.keys_line1	P{0}: {1} תזוזה · {2} קפיצה · 
+hud.keys_line2	{0} קלה · {1} כבדה · {2} מיוחדת · 
+hud.keys_line3	{0} חסימה · {1} דאש · 
+hud.keys_line4	{0} יכולות · {1} ult
+results.characters	דמויות
+results.stock_one	חיים 1
+results.stocks	{0} חיים
+hud.respawn	חזרה לזירה
+hud.drop_in	הצטרף!
+results.main_menu	תפריט ראשי
+pause.title	מושהה
+pause.resume	המשך
+pause.quit	יציאה לתפריט
+pause.hint	B / Backspace להמשך
+leave.title	לעזוב את המשחק?
+leave.body	המשחק ממשיך. עזיבה נחשבת להפסד.
+leave.leave	עזוב
+leave.hint	B / Backspace / Esc / Start כדי להישאר
+results.winner	המנצח
+results.training_no_rewards	אימון: ללא פרסים
+cv.posture	יציבה {0}%
+cv.posture_low	יציבה {0}% - שב זקוף!
+cv.telemetry_ok	טלמטריה OK
+net.rooms_load_failed	לא הצלחנו לטעון את החדרים שלך: {0}
+net.host_limit	אתה כבר מארח {0} חדרים. סגור אחד קודם.
+net.creating_named	יוצר את "{0}"...
+net.room_ready_code	החדר "{0}" מוכן. שתף את הקוד {1} או הזמן חבר.
+net.create_failed	לא הצלחנו ליצור את החדר: {0}
+net.joining_room	מצטרף לחדר {0}...
+net.you_joined	הצטרפת ל-"{0}". בחר לוחם ולחץ OK.
+net.no_room_code	אין חדר עם הקוד {0}. בדוק את הקוד ונסה שוב.
+net.room_full_n	החדר הזה מלא ({0} שחקנים).
+net.join_failed	לא הצלחת להצטרף: {0}
+net.update_failed	לא הצלחנו לעדכן את החדר: {0}
+net.could_not_what	לא הצלחנו {0}: {1}
+net.what_stage	לשנות את הזירה
+net.what_hazards	לשנות את המכשולים
+net.press_ok_again	{0} שניכם לחצו שוב OK והתחל קרב.
+net.udp_port	לא הצלחנו לפתוח את פורט UDP {0} (כבר בשימוש?).
+net.lan_ready	מארח LAN מוכן. החבר שלך מצטרף אל: {0}  (פורט {1})
+net.bad_ip	"{0}" אינה כתובת IP תקינה.
+net.connecting_to	מתחבר אל {0}...
+net.sign_in_failed	ההתחברות נכשלה: {0}
+net.room_ready	החדר "{0}" מוכן. שתף את הקוד עם החבר שלך.
+net.searching_in	מחפש שחקנים ב{0}...
+net.start_failed	לא הצלחנו להתחיל את הקרב: {0}
+net.host_unreachable	לא הצלחנו להגיע למארח: {0}
+net.area_world	כל העולם
+net.area_country_and	המדינה שלך ו{0}
+region.africa	אפריקה
+region.americas	אמריקה
+region.asia	אסיה
+region.europe	אירופה
+region.oceania	אוקיאניה
+region.northern_africa	צפון אפריקה

@@ -1,0 +1,257 @@
+lang.backdrop	LIMBĂ
+lang.title	ALEGE-ȚI LIMBA
+lang.subtitle	Tot jocul va folosi această limbă. O poți schimba oricând din SETĂRI.
+lang.search_hint	Caută limbi...
+lang.no_match	Nicio limbă nu se potrivește căutării.
+lang.english_text	Text în engleză deocamdată
+lang.confirm	CONFIRMĂ  ·  {0}
+lang.confirm_none	CONFIRMĂ
+lang.pad_hint	Scrie pentru a căuta · Sus / Jos pentru a alege · Enter sau A pe controller = confirmă
+common.cancel	ANULEAZĂ
+settings.language	LIMBĂ  ·  {0}
+difficulty.dummy	Manechin
+difficulty.easy	Ușor
+difficulty.medium	Mediu
+difficulty.hard	Greu
+difficulty.dummy_upper	MANECHIN
+difficulty.easy_upper	UȘOR
+difficulty.medium_upper	MEDIU
+difficulty.hard_upper	GREU
+nav.home	ACASĂ
+nav.play	JOACĂ
+nav.training	ANTRENAMENT
+nav.arcade	ARCADE
+nav.collection	COLECȚIE
+nav.settings	SETĂRI
+account.signed_in_as	Conectat ca {0}.
+account.signed_in	Conectat.
+account.signed_out	Deconectat.
+keys.who	P{0} {1}
+keys.reserved	{0} este o tastă de poză / postură (1 2 3, 8 9 0, numpad 7 8 9, P, -). Alege alta.
+keys.swapped	{0};  {1} este acum {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Jocul online este pentru jucători de 13 ani și peste.
+arcade.clear_toast	ARCADE TERMINAT! Toți cei {0} rivali învinși
+precheck.too_dark	Prea întuneric ({0}%) - adaugă lumină
+precheck.too_bright	Prea luminos ({0}%) - redu strălucirea
+precheck.good	Bine ({0}%)
+loading.weapon_art	Grafică arme: {0}
+loading.fighter	Luptător: {0}
+precheck.checking	SE VERIFICĂ... {0}
+wipe.character_select	ALEGE PERSONAJUL
+wipe.arcade	ARCADE
+results.rematch	REVANȘĂ
+results.continue	CONTINUĂ
+results.finish	TERMINĂ
+results.next_battle	URMĂTOAREA LUPTĂ
+wipe.arcade_clear	ARCADE TERMINAT
+precheck.title	VERIFICARE CAMERĂ
+precheck.camera_unavailable	Camera nu este disponibilă
+precheck.simulated_feed	Imagine simulată (cameră oprită)
+precheck.upper_body_ok	Partea de sus a corpului e în cadru
+precheck.step_back	Dă-te înapoi - umerii și șoldurile trebuie să se vadă
+loading.interface	Grafică interfață
+loading.typefaces	Fonturi
+loading.pose_model	Model de urmărire a pozei
+loading.ready	Gata
+onboarding.welcome	BUN VENIT!
+onboarding.your_account	CONTUL TĂU
+onboarding.your_name	NUMELE TĂU DE JUCĂTOR
+rooms.backdrop_create	VS LOCAL  ·  CREEAZĂ CAMERE
+rooms.backdrop_join	VS LOCAL  ·  INTRĂ ÎN CAMERĂ
+precheck.all_passed	TOATE VERIFICĂRILE AU TRECUT
+precheck.failed	VERIFICARE EȘUATĂ
+precheck.lighting	LUMINĂ
+precheck.framing	ÎNCADRARE
+precheck.posture	POSTURĂ
+precheck.upright	Drept și frumos
+precheck.sit_up	Stai drept pentru monede bonus
+common.retry	REÎNCEARCĂ
+precheck.play_anyway	JOACĂ ORICUM
+common.back	ÎNAPOI
+precheck.ranked_note	Cozile clasate cer ca această verificare să treacă. Meciurile amicale o pot sări.
+precheck.hint	VERIFICARE CAMERĂ ÎNAINTE DE MECI
+hint.select	ALEGE
+home.play	JOACĂ
+home.training	ANTRENAMENT
+home.arcade	ARCADE
+home.collection	COLECȚIE DE PERSONAJE
+home.settings	SETĂRI
+home.exit	IEȘI DIN JOC
+home.play_desc	Meci rapid Vs Online, camere VS Local cu prietenii sau Vs CPU
+home.training_desc	Configurare cameră, exersare gesturi și un manechin de antrenament
+home.arcade_desc	Toți cei cinci rivali unul după altul, pe fiecare arenă
+home.collection_desc	Skinuri, arme și bannerul cosmetic
+home.settings_desc	Dificultate, opțiuni cameră și taste
+home.exit_desc	Închide jocul
+tips.1	Umple bara ULT și apasă Ultimate - apoi fă poza luptătorului tău în fața camerei înainte să se termine numărătoarea.
+tips.2	Un DEF mai mare reduce daunele de la fiecare lovitură și îți întărește blocarea.
+tips.3	O postură bună urmărită de cameră îți aduce monede bonus după fiecare meci.
+tips.4	Skinurile și armele sunt doar cosmetice - statisticile nu se schimbă niciodată după ce poartă un luptător.
+tips.5	În Antrenament, apasă T ca să-ți umpli ultimate-ul. Manechinul se ridică mereu.
+tips.6	Fiecare luptător are unul din două pasive - alege-l în panoul de echipament după ce confirmi.
+tips.7	Luptele online folosesc netcode rollback: ambele jocuri rulează aceeași luptă din aceleași comenzi.
+stats.power	PUTERE
+stats.speed	VITEZĂ
+stats.range	RAZĂ
+stats.endurance	REZISTENȚĂ
+stats.recovery	RECUPERARE
+training.use_block	Blocare · ultimate Melee & Magie
+training.use_fireball	Minge de foc · ultimate Distanță & Lance
+training.use_superjump	Supersăritură · ultimate Greu
+menu.online_locked	Modurile online sunt pentru jucători de 13 ani și peste.
+menu.no_internet	Fără internet: conectează Wi-Fi sau date mobile. VS AI merge offline.
+menu.four_player_soon	2v2 și Battle Royale au nevoie de suport pentru 4 jucători, vine într-o actualizare viitoare.
+profile.edit_name	EDITEAZĂ NUMELE
+profile.win_loss	V {0}  ·  Î {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	GATA
+loading.loading	SE ÎNCARCĂ
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   finalizat x{2}
+arcade.rule_fight_all	Luptă cu toate cele {0} personaje la rând, în ordine aleatorie.
+arcade.rule_difficulty	Dificultate CPU: {0} (o schimbi din Setări).
+arcade.final	FINALA
+arcade.round	RUNDA {0}
+training.cv_setup_source	CONFIG. CV · {0}
+training.status	Cameră: {0}\nUrmărire: {1}\nDetectat: {2}
+training.off	oprită
+training.none	nimic
+training.status_posture	   ·   Postură {0}%   ·   Telemetrie {1}
+collection.gold_cinematic_suffix	 · CINEMATIC AURIU
+collection.only	DOAR {0}
+collection.pull1	TRAGE x1  ·  {0}
+collection.pull10	TRAGE x10  ·  {0}
+collection.dup_suffix	  (dublură +20)
+collection.new_suffix	  NOU!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} secunde  <size=12><color=#9AA6BC>(fix pentru fiecare meci)</color></size>
+settings.change_name_as	SCHIMBĂ NUMELE  ·  {0}
+settings.change_name	SCHIMBĂ NUMELE
+settings.keys_help	Dă clic pe o tastă atribuită, apoi apasă o tastă sau dă clic pe acea casetă cu un buton al mouse-ului (Esc / B pe controller / un clic în altă parte anulează; limită 5 s). Dacă un jucător o folosește deja, cele două se schimbă între ele.\nPoze cameră: brațe încrucișate = blocare · braț întins lateral = minge de foc · ambele mâini sus = supersăritură (poze tastatură: 1/2/3 și 8/9/0).
+rarity.common	COMUN
+rarity.rare	RAR
+rarity.epic	EPIC
+rarity.legendary	LEGENDAR
+skin.default	Clasic
+skin.mint	Mentă Pop
+skin.shadow	Umbră
+skin.sakura	Sakura
+skin.inferno	Infern
+skin.celestial	Celest
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	DOAR 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nECHIPE
+play.four_player_later	2v2 și Battle Royale vin cu suportul pentru 4 jucători într-o actualizare viitoare.
+play.team_tag	4P · 2 ECHIPE
+play.royale_tag	4P · TOȚI CONTRA TUTUROR
+collection.all_fighters	TOȚI LUPTĂTORII
+arcade.mode	MOD ARCADE
+home.tagline	JOC DE LUPTĂ ÎN ARENĂ  ·  ULTIMATE-URI PRIN GESTURI
+play.royale_card	BATTLE\nROYALE
+training.kicker	CONFIGURARE CAMERĂ ȘI EXERSARE
+settings.camera_tracking	URMĂRIRE CU CAMERA (WEBCAM)
+training.camera_off	URMĂRIRE CAMERĂ: OPRITĂ
+training.camera_on	URMĂRIRE CAMERĂ: PORNITĂ
+collection.hint	COLECȚIE DE PERSONAJE
+play.choose_style	ALEGE UN STIL DE JOC
+online.kicker	ALEGE UN STIL DE JOC  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	ALEGE-ȚI LUPTA  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	ÎN CURÂND
+training.cv	VEDERE COMPUTERIZATĂ
+online.connection	CONEXIUNE
+collection.banner	BANNER COSMETIC
+settings.cpu_difficulty	DIFICULTATE CPU
+play.create_join	CREEAZĂ · INTRĂ ÎN CAMERE
+settings.cv_overlay	SUPRAPUNERE CV ÎN MECI
+quests.coins_note	Monedele vin doar din joc: victorii, PvE, misiuni și postura bună urmărită de cameră.
+collection.odds	Comun 60% · Rar 28% · Epic 10% · Legendar 2%
+collection.equip	ECHIPEAZĂ
+collection.equipped	ECHIPAT
+hint.exit	IEȘIRE
+home.exit_upper	IEȘI DIN JOC
+exit.title	IEȘI DIN JOC?
+online.royale_desc	Fiecare pentru el. Ultimul luptător rămas în picioare câștigă.
+arcade.kicker	CINCI RIVALI · O SINGURĂ CURSĂ
+loading.for_battle	PENTRU LUPTĂ
+online.invites_note	Invitațiile prietenilor în camere apar aici. Camerele cu prietenii sunt în JOACĂ > VS LOCAL.
+settings.kicker	JOC · CAMERĂ · CONTROALE
+training.gestures_live	GESTURI  (fă poza în fața camerei - pumn = un braț întins drept lateral)
+training.gestures_sim	GESTURI  (ține apăsată tasta pentru a simula poza)
+settings.key_bindings	TASTE
+settings.keys_reset	Tastele au revenit la implicit
+play.locked	BLOCAT
+arcade.rule_retry	Ai pierdut o rundă? Continuă și reîncearc-o.
+home.hint	MENIU PRINCIPAL
+settings.master_volume	VOLUM GENERAL
+settings.match_time	DURATA MECIULUI
+play.matchmaking_card	VS\nLOCAL
+hint.move	MIȘCARE
+play.matchmaking_desc	Fă o cameră, împarte codul sau invită prieteni după nume.
+play.no_internet_tag	FĂRĂ INTERNET
+online.no_internet_body	Nu ai internet acum. Conectează Wi-Fi sau date mobile, ori joacă Vs CPU.
+common.off	OPRIT
+online.offline	OFFLINE
+common.on	PORNIT
+settings.player1	JUCĂTORUL 1
+settings.player2	JUCĂTORUL 2
+training.practice_dummy	EXERSEAZĂ VS MANECHIN
+settings.precheck	VERIFICARE CAMERĂ ÎNAINTE DE MECI
+loading.prepare	PREGĂTEȘTE-TE
+settings.listening_hint	APASĂ O TASTĂ SAU DĂ CLIC PE CASETĂ  ·  ESC / B PE CONTROLLER ANULEAZĂ  ·  BUTOANELE CONTROLLERULUI NU POT FI ATRIBUITE
+training.slouch_note	Apasă P ca să comuți o postură cocoșată și vezi cum scade scorul de postură.
+settings.profile_reset	Profil resetat (numele și conectarea rămân)
+collection.pull_to_unlock	Trage pentru a debloca
+quests.title	MISIUNI
+online.quick_match	MECI RAPID
+play.online_desc	Meci rapid cu un jucător de lângă tine sau răspunde la invitația unui prieten.
+online.solo_desc	Meci rapid: luptă cu un jucător care caută acum, cel mai apropiat primul.
+settings.reset_keys	RESETEAZĂ TASTELE
+settings.reset_profile	RESETEAZĂ PROFILUL
+arcade.rival_unknown	RIVAL  ???
+play.rooms_tag	CAMERE · 2-4 JUCĂTORI
+online.rollback_body	Netcode rollback: ambele jocuri rulează aceeași luptă din aceleași comenzi, așa că rămâne rapidă și corectă.
+settings.screen_shake	TREMURAT ECRAN
+profile.set_name	SETEAZĂ NUMELE
+settings.sfx_volume	VOLUM EFECTE
+training.simulate_pose	SIMULEAZĂ POZA
+collection.kicker	SKINURI · ARME · BANNER COSMETIC
+training.slouch	COCOȘAT
+online.solo_card	SOLO\n1V1
+home.start	START
+arcade.start	PORNEȘTE ARCADE
+exit.stay	RĂMÂI
+settings.sure	SIGUR?
+settings.sure_reset_profile	SIGUR? TOT PROGRESUL SE PIERDE
+collection.banner_note	Doar skinuri și cinematice ultimate. Statisticile sunt identice pe fiecare skin - nimic nu e plătit.
+hint.tabs	FILE
+loading.tip	SFAT
+training.hint	ANTRENAMENT  /  CONFIG. CV
+arcade.rule_stages	Arena se schimbă în fiecare rundă, de la Muntele Începutului la Monumentul Oceanului.
+online.team_desc	Două echipe de câte doi. Fără foc prietenesc: loviturile tale nu-ți rănesc coechipierul.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  STIL DE JOC
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Victoriile aduc monede și progres la misiuni, la fel ca VS CPU.
+exit.saved_note	Profilul, monedele și colecția ta sunt salvate pe acest dispozitiv.
+settings.key_listening	tastă sau clic aici
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Îți alegi luptătorul și UȘOR, MEDIU sau GREU. CPU-ul primește un luptător aleatoriu.
+account.keep_name_body	Conectează-te cu contul Google și numele și datele tale rămân cu tine: de fiecare dată când deschizi jocul și pe orice computer. Alt cont Google primește propriul nume nou.
+name.you_are	Tu ești {0}!
+name.you_are_unchecked	Tu ești {0}! Vom verifica numele când joci online.
+online.could_not_start	Meciul nu a putut începe ({0}).
+rooms.your_rooms	CAMERELE TALE
+rooms.count_click	{0}  ·  dă clic pe o cameră ca s-o deschizi
+rooms.code_value	COD  {0}
+rooms.players_count	{0} / {1} JUCĂTORI
+rooms.more	+ încă {0} camere
+rooms.created	Camera „{0}” a fost creată. Dă clic pe ea ca să împarți codul sau să inviți prieteni.
+quick.searching	SE CAUTĂ
+quick.looking_in	SE CAUTĂ ÎN:  {0}
+room.kicker	CAMERĂ  ·  2-4 JUCĂTORI  ·  {0}
+room.battle_royale	BATTLE ROYALE

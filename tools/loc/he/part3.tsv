@@ -1,0 +1,255 @@
+region.eastern_africa	מזרח אפריקה
+region.middle_africa	מרכז אפריקה
+region.southern_africa	דרום אפריקה
+region.western_africa	מערב אפריקה
+region.caribbean	האיים הקריביים
+region.central_america	מרכז אמריקה
+region.south_america	דרום אמריקה
+region.northern_america	צפון אמריקה
+region.central_asia	מרכז אסיה
+region.eastern_asia	מזרח אסיה
+region.south_eastern_asia	דרום-מזרח אסיה
+region.southern_asia	דרום אסיה
+region.western_asia	מערב אסיה
+region.eastern_europe	מזרח אירופה
+region.northern_europe	צפון אירופה
+region.southern_europe	דרום אירופה
+region.western_europe	מערב אירופה
+region.australia_and_new_zealand	אוסטרליה וניו זילנד
+region.melanesia	מלנזיה
+region.micronesia	מיקרונזיה
+region.polynesia	פולינזיה
+net.joined_connecting	הצטרפת ל-"{0}". מתחבר למארח...
+net.opponent_unreachable	לא הצלחנו להגיע ליריב שלך: {0}
+net.quick_filling	{0} מתוך {1} שחקנים. מתחיל בעוד {2} שנ'...
+invite.inviting	מזמין את {0}...
+invite.sent_lasts	ההזמנה נשלחה אל {0}. היא תקפה ל-{1} שניות.
+invite.send_failed	לא הצלחנו לשלוח את ההזמנה: {0}
+invite.joining_room_of	מצטרף לחדר של {0}...
+invite.paused	ההזמנות הושהו ל-{0} דקות.
+invite.invited_you	{0} הזמין אותך אל "{1}".
+invite.ran_out	ההזמנה שלך אל {0} פגה.
+friends.choose_name	בחר שם שחקן כדי שחברים יוכלו למצוא אותך.
+friends.unavailable	חברים לא זמינים: {0}
+friends.your_name_is	השם שלך הוא {0}. תן אותו לחברים כדי שיוכלו להוסיף אותך.
+friends.set_name_failed	לא הצלחנו לקבוע את השם: {0}
+friends.request_sent	בקשת חברות נשלחה אל {0}.
+friends.add_failed	לא הצלחנו להוסיף את {0}: {1}
+friends.offline	{0} לא מחובר כרגע.
+friends.request_then_invite	בקשת חברות נשלחה אל {0}. ההזמנה תישלח ברגע שיאשר.
+friends.unreachable	לא הצלחנו להגיע אל {0}: {1}
+friends.creating_room_for	יוצר חדר בשביל {0}...
+friends.joining	מצטרף אל {0}...
+friends.declined	{0} דחה את ההזמנה.
+friends.version_mismatch	{0} הזמין אותך, אבל מריץ גרסה אחרת של המשחק.
+friends.invite_sent_waiting	ההזמנה נשלחה אל {0}. ממתין שיצטרף...
+name.too_short	השם קצר מדי (לפחות {0} תווים).
+name.too_long	השם ארוך מדי (לכל היותר {0} תווים).
+rooms.name_too_short	שם החדר קצר מדי (לפחות {0} תווים).
+rooms.name_too_long	שם החדר ארוך מדי (לכל היותר {0} תווים).
+net.bad_code	זה לא קוד חדר תקין (אותיות וספרות בלבד).
+net.version_mismatch	החדר הזה נוצר בגרסה אחרת של Chibi Clash. שני השחקנים צריכים את אותה גרסה.
+net.loading_room	טוען את החדר...
+net.room_closed	החדר נסגר.
+net.you_left	יצאת מהחדר.
+net.waiting_host_game	מתחיל... ממתין למשחק של המארח.
+net.choose_next_fight	בחר לוחם ולחץ OK לקרב הבא.
+net.host_changed_stage	המארח שינה את הגדרות הזירה. לחץ שוב OK.
+net.room_closed_host_left	החדר נסגר (המארח עזב).
+net.starting_fight	הקרב מתחיל...
+net.player_left_joined	שחקן עזב או הצטרף.
+net.no_connection	אין חיבור.
+net.fight_could_not_start	הקרב לא הצליח להתחיל.
+net.fight_starting_wait	הקרב מתחיל! ממתין שהחבר שלך יתחבר...
+net.choose_press_ok	בחר לוחם ולחץ OK.
+net.too_many_starts	יותר מדי התחלות. חכה דקה, ואז לחץ התחל קרב.
+net.fight_starting_connecting	הקרב מתחיל! מתחבר...
+net.could_not_connect	לא הצלחנו להתחבר.
+net.friend_no_answer	החבר שלך לא ענה.
+net.start_cancelled	ההתחלה בוטלה.
+net.friend_no_connect	החבר שלך לא התחבר.
+net.enter_code	הזן את קוד החדר שהחבר שלך מראה.
+net.lan_browser	משחק LAN לא זמין בדפדפן. השתמש בחדרים או ב-VS LOCAL, או בגרסת ה-PC בשביל LAN.
+net.enter_ip	הזן את כתובת ה-IP של המארח.
+net.this_pc_ip	כתובת ה-IP של המחשב הזה
+net.signing_in	מתחבר...
+net.creating_private	יוצר חדר פרטי...
+net.hosting_one	לא נמצא משחק פתוח, פותח אחד...
+net.needs_2_to_4	קרב צריך 2 עד 4 שחקנים.
+net.waiting_friend	ממתין שהחבר שלך יתחבר...
+net.waiting_friends	ממתין שהחברים שלך יתחברו...
+net.connection_running	חיבור אחר עדיין פועל.
+net.no_valid_info	לחדר אין פרטי חיבור תקינים (המארח עזב?).
+net.connecting_host	מתחבר למארח...
+net.already_full	החדר הזה כבר מלא.
+net.no_info	לחדר אין פרטי חיבור (המארח עזב?).
+net.player_left_searching	השחקן עזב. מחפש שוב...
+net.connected	מחובר!
+net.relay_failed	החיבור לשרת ה-Relay נכשל.
+net.opponent_timeout	לא הצלחנו להגיע ליריב שלך (תם הזמן).
+net.no_internet	אין חיבור לאינטרנט. התחבר ל-Wi-Fi או לנתונים סלולריים כדי לשחק עם חברים מכל מקום. (משחק LAN עובד באותה רשת.)
+invite.wait	חכה רגע לפני שליחת הזמנה נוספת.
+invite.type_name	הקלד את השם של החבר שלך במשחק (3-16 אותיות, ספרות או _).
+invite.own_name	זה השם שלך.
+invite.open_room_first	פתח קודם את החדר שלך, ואז הזמן.
+invite.room_full	החדר שלך כבר מלא.
+invite.could_not_send	לא הצלחנו לשלוח את ההזמנה.
+invite.too_many	יותר מדי הזמנות כרגע. נסה שוב בעוד כמה שניות.
+invite.cancelled	ההזמנה בוטלה.
+invite.expired	ההזמנה הזו פגה.
+invite.closed_full	החדר שלך מלא. ההזמנה נסגרה.
+invite.closed_joined	שחקן הצטרף לחדר שלך. ההזמנה נסגרה.
+invite.closed_room	ההזמנה בוטלה: החדר נסגר.
+name.taken	השם הזה כבר תפוס
+name.check_unavailable	לא הצלחנו לבדוק את השם שלך אונליין. בדוק את האינטרנט ונסה שוב.
+name.too_soon	שינית את השם שלך לפני רגע. נסה שוב בעוד דקה.
+name.choose_different	בחר שם אחר, בבקשה.
+friends.type_tag	הקלד את שם החבר שלך, למשל Kira#4821.
+friends.added	החבר נוסף.
+friends.declined_request	הבקשה נדחתה.
+friends.removed	החבר הוסר.
+friends.blocked	השחקן נחסם.
+friends.a_friend	חבר
+friends.type_player_tag	הקלד את שם השחקן, למשל Kira#4821.
+friends.wait_invite	חכה רגע לפני שתזמין שוב.
+name.enter	הזן שם.
+name.bad_chars	השתמש רק באותיות, ספרות ו-_ (בלי רווחים או סמלים).
+rooms.name_bad_chars	שמות חדרים כוללים רק אותיות, ספרות, רווחים ו-_ - ' !.
+rooms.name_double_space	שמות חדרים לא יכולים לכלול רווחים כפולים.
+rooms.name_choose_different	בחר שם חדר אחר, בבקשה.
+gesture.cross_arms	שלב ידיים
+gesture.punch_forward	אגרוף קדימה
+gesture.raise_hands	הרם את שתי הידיים
+class.kaia.passive1_desc	+15% מהירות התקפה
+class.kaia.passive2_desc	5% גניבת חיים
+class.kaia.skill1_desc	זינוק קדימה ודקירה ביריב
+class.kaia.skill2_desc	תזמון מושלם מחזיר את הנזק
+class.kaia.skill3_desc	דקירות רבות ומהירות
+class.kaia.ult_desc	10 שנ': התקפות רגילות משחררות גל אופקי
+class.bruna.passive1_desc	+20% נזק, -15% מהירות התקפה
+class.bruna.passive2_desc	+20% נזק, -15% מהירות תנועה
+class.bruna.skill1_desc	תפוס את היריב והטח אותו בקרקע
+class.bruna.skill2_desc	הסתובב כמו טורנדו ופגע שוב ושוב
+class.bruna.ult_desc	הלם ברצפה ויצור גל הדף
+class.ren.passive1_desc	+20% סיכוי לפגיעה קריטית
+class.ren.passive2_desc	+10% מהירות תנועה ל-10 שנ' (המתנה 30 שנ')
+class.ren.skill1_desc	זינוק אופקי אחורה וירי
+class.ren.skill2_desc	חנוק יריב קרוב והדוף אותו
+class.ren.skill3_desc	ירה מטח חיצים אופקי
+class.ren.ult_desc	חץ אחד מתפצל לסערת חיצים
+class.lyra.passive1_desc	10% סיכוי בפגיעה: -15% תנועה, -10% נזק, -15% מהירות התקפה
+class.lyra.passive2_desc	20% סיכוי לחסום נזק
+class.lyra.skill1_desc	ירה קליע אש מונחה
+class.lyra.skill2_desc	זמן 3 משרתים
+class.lyra.skill3_desc	ענן עוקב אחרי האויב ומכה ברעם
+class.lyra.ult_desc	טבעת אש ל-10 שנ': שורפת אויבים, חוסמת קליעים
+class.taro.passive1_desc	10% סיכוי בפגיעה: -15% הגנת האויב
+class.taro.passive2_desc	אחרי 3 שנ' בלי התקפה, המכה הבאה +50%
+class.taro.skill1_desc	הושט, קפוץ והנף כלפי מטה
+class.taro.skill2_desc	סובב את הרומח כדי לחסום קליעים
+class.taro.skill3_desc	זרוק את החנית וקרא לה בחזרה
+class.taro.ult_desc	דקור את האויב, ואז בעט בידית עמוק יותר
+char.kaia.role	תוקפת זריזה
+char.kaia.style	לחימה מהירה וניידת מטווח קרוב עם חיתוכים מדויקים ומשורשרים.
+char.bruna.role	מתגוששת
+char.bruna.style	לוחמת רחוב עם נזק ועמידות גבוהים ששולטת בשטח בהתקפות כבדות.
+char.ren.role	קשת זריז
+char.ren.style	שליטה באזור עם ניידות גבוהה ולחץ מדויק בטכניקות חיצים מגוונות.
+char.lyra.role	שליטה באזור / הכנה
+char.lyra.style	מכשפה זריזה ששולטת בשטח עם כישופים מהירים, תנועה ערמומית וקסם מדויק.
+char.taro.role	מומחה טווח
+char.taro.style	שליטה ממושמעת וניידת עם לחץ מטווח ארוך ומכות מדויקות.
+stage.0.name	דוג'ו השמיים
+stage.0.short	דוג'ו השמיים
+stage.0.tagline	מקדש הררי מעל העננים
+stage.1.name	עיר הניאון
+stage.1.short	עיר הניאון
+stage.1.tagline	זירת גגות תחת גשם ניאון
+stage.2.name	כור הלבה
+stage.2.short	כור הלבה
+stage.2.tagline	בית יציקה מותך מעל ים של לבה
+stage.3.name	הר ההתחלה
+stage.3.short	ההר
+stage.3.tagline	KO אנכי · משטחי ירקן נעים מעל תהום ערפילית
+stage.4.name	מישור האחדות
+stage.4.short	המישור
+stage.4.tagline	KO אופקי · שדה ארוך אחד, אין איפה להסתתר
+stage.5.name	תהום הר הגעש
+stage.5.short	הר הגעש
+stage.5.tagline	כל קצה הוא KO · אש פורצת מאגם המאגמה
+stage.6.name	מאורת הציפור הענקית
+stage.6.short	מאורת הציפור
+stage.6.tagline	KO אופקי · הציפור הענקית סוחפת את הזירה
+stage.7.name	אנדרטת האוקיינוס הנטושה
+stage.7.short	אוקיינוס
+stage.7.tagline	כל קצה הוא KO · הלווייתן יורד, רדו למדרגות
+end.opponent_left	היריב שלך עזב את המשחק.
+end.opponent_timeout	היריב שלך הפסיק להגיב.
+end.connection_lost	החיבור ליריב שלך אבד.
+end.you_left	עזבת את המשחק.
+end.desync	שני המשחקים לא הסכימו (desync): ללא תוצאה.
+end.unconfirmed	לא הצלחנו לאשר את סוף המשחק: ללא תוצאה.
+end.handshake_failed	המשחק לא הצליח להתחיל.
+end.peer_never_started	היריב שלך לא הצטרף למשחק: ללא תוצאה.
+end.too_slow	החיבור היה איטי מדי למשחק: ללא תוצאה.
+end.host_left	המארח עזב את המשחק: ללא תוצאה.
+end.dropped	החיבור שלך נותק מהמשחק.
+status.aura	הילה {0}
+status.fire_ring	טבעת אש {0}
+status.tailwind	רוח גבית
+status.guard_broken	הגנה שבורה {0} שנ'
+status.guard	הגנה {0}%
+status.reloading	טוען מחדש {0} שנ'
+status.recharging	נטען {0} שנ'
+status.hexed	מקולל
+status.armor_break	שריון -15%
+hud.perform	בצע: {0}
+hud.times_up	נגמר הזמן!
+rewards.no_contest	ללא תוצאה: ללא פרסים
+rewards.pve_victory	ניצחון PvE  +{0}
+rewards.pve_match	משחק PvE  +{0}
+rewards.victory	ניצחון  +{0}
+rewards.match_played	משחק ששוחק  +{0}
+rewards.posture	יציבה טובה {0}%  +{1}
+hud.revived	קם לתחייה
+quest.win	נצח ב-3 משחקים
+quest.pve	נצח את ה-CPU פעמיים (PvE)
+quest.combo	בצע 10 קומבו מלאים
+quest.ult	הפעל 3 ultimate במחוות
+quest.parry	הדוף 5 התקפות
+quest.posture	סיים משחק עם 80%+ יציבה טובה
+rewards.quest	משימה: {0}  +{1}
+bind.move_left	תזוזה שמאלה
+bind.move_right	תזוזה ימינה
+bind.drop	ירידה / נפילה מהירה
+bind.jump	קפיצה
+bind.jump_alt	קפיצה (חלופי)
+bind.light	התקפה קלה
+bind.heavy	התקפה כבדה
+bind.block	חסימה
+bind.dash	דאש
+bind.skill1	יכולת 1
+bind.skill2	יכולת 2
+bind.skill3	יכולת 3
+bind.ultimate	Ultimate
+bind.aim_up	כיוון למעלה
+bind.special	מיוחדת
+hud.rejected	נדחה: {0}
+cv.low_confidence	ביטחון מעקב נמוך
+cv.frozen	תמונה קפואה (זיוף?)
+cv.snap	קפיצת תנוחה מיידית (מאקרו?)
+cv.ok	OK
+cam.none	לא נמצאה מצלמה
+cam.off	המצלמה כבויה
+cam.starting	המצלמה מופעלת...
+cam.waiting_frames	ממתין לפריימים מהמצלמה - אפשר גישה למצלמה ל-Unity בהגדרות המערכת > פרטיות > מצלמה
+cam.live	מצלמה חיה ({0}x{1})
+pose.simulated	מדומה (תנוחות מקלדת)
+pose.camera_off	מעקב המצלמה כבוי - משתמשים בתנוחות מדומות מהמקלדת
+pose.model_failed	מודל התנוחה נכשל: {0}
+pose.loading	טוען מודל תנוחה...
+pose.live	מעקב גוף חי (MoveNet, {0} Hz)
+pose.step_back	המצלמה פועלת - התרחק אחורה כדי שהכתפיים ייראו
+account.finish_browser	סיים את ההתחברות בדפדפן (בחר 'המשך עם Google')...
+account.signed_out_again	מנותק. התחבר שוב כדי להשתמש בחשבון שלך.
+account.signed_in_kept	מחובר. השם וההתקדמות שלך נשמרים בחשבון הזה.

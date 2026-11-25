@@ -1,0 +1,257 @@
+room.ready_to_fight	HARCRA KÉSZ
+room.full_suffix	 · A SZOBA MEGTELT
+room.waiting	JÁTÉKOSOKRA VÁRUNK
+room.joined	{0}  ·  {1} / {2} CSATLAKOZOTT
+room.host	HÁZIGAZDA
+room.player_n	{0}. JÁTÉKOS
+room.you_suffix	 · TE
+room.hazards_host_pick	{0} · A HÁZIGAZDA VÁLASZTÁSA
+room.hazards_on	VESZÉLYEK BE
+room.hazards_off	VESZÉLYEK KI
+room.code_copied	A(z) {0} szobakód kimásolva. Illeszd be a barátodnak.
+invite.body	{0} meghív ide: {1}   ({2} mp)
+select.ult_name	ULT  {0}
+age.title	HÁNY ÉVES VAGY?
+age.body	Minden korosztály minden módot játszhat. A korod a játékosneveddel együtt kerül rögzítésre a játékstatisztikákhoz.
+common.next	TOVÁBB
+age.error	Írd be a korod, vagy állítsd be a D-paddel.
+age.pad_hint	Kontroller: D-pad fel/le 1-gyel, balra/jobbra 10-zel változtat · A = tovább
+rooms.enter_name	ADD MEG A SZOBA NEVÉT
+rooms.name_rules	3-24 betű, szám vagy szóköz. A barátok látják, amikor csatlakoznak. A szobákban 2-4 játékos fér el.
+rooms.create	LÉTREHOZÁS
+common.one_moment	EGY PILLANAT...
+account.keep_name	TARTSD MEG A HARCOSNEVED
+account.finish_in_browser	FEJEZD BE A BÖNGÉSZŐBEN...
+account.sign_in_google	BEJELENTKEZÉS GOOGLE-LAL
+account.play_without	JÁTÉK FIÓK NÉLKÜL
+name.choose_first	Előbb válassz játékosnevet.
+common.cancelled	Megszakítva.
+name.welcome	ÜDV, HARCOS! MI A NEVED?
+name.change_title	NÉVVÁLTOZTATÁS
+name.rules	3-16 betű, szám vagy _. Válassz egy vicces harcosnevet, ne a valódi neved. Erről találnak meg és hívnak meg a barátaid, és ezt látja mindenki.
+name.suggest	JAVASLAT
+name.checking	ELLENŐRZÉS...
+name.lets_fight	HARCRA FEL!
+common.save	MENTÉS
+name.pad_hint_first	Kontroller: A = harcra fel · Y = névjavaslat
+name.pad_hint	Kontroller: A = mentés · Y = névjavaslat
+online.connected_agreeing	Csatlakozva. A meccs egyeztetése...
+online.host_settings_changed	A házigazda beállításai megváltoztak — csatlakozz újra a szobához.
+online.version_mismatch	Az ellenfeled a játék egy másik verzióját futtatja. Mindkét játékosnak ugyanaz a verzió kell.
+rooms.title	VS LOCAL
+rooms.kicker	SZOBÁK  ·  2-4 JÁTÉKOS  ·  LÉTREHOZÁS · CSATLAKOZÁS · MEGHÍVÁS NÉV SZERINT
+rooms.create_rooms	SZOBÁK LÉTREHOZÁSA
+rooms.join_room	CSATLAKOZÁS SZOBÁHOZ
+rooms.creating	A SZOBÁD LÉTREHOZÁSA...
+rooms.loading	A SZOBÁID BETÖLTÉSE...
+rooms.none_yet	Még nincs létrehozott szoba!
+rooms.one_moment	Egy pillanat.
+rooms.empty_help	Nyomd meg a SZOBÁK LÉTREHOZÁSA gombot, vagy CSATLAKOZZ SZOBÁHOZ egy barát szobakódjával.
+rooms.capacity_note	A szobákban 2-4 játékos fér el. Hívj meg barátokat a játékosnevük alapján.
+rooms.invites_paused	A szobameghívók néhány percre szüneteltetve
+rooms.refresh	FRISSÍTÉS
+rooms.hint	VS LOCAL  ·  SZOBÁK
+rooms.new	ÚJ
+rooms.you_host	TE VAGY A HÁZIGAZDA
+rooms.open	MEGNYITÁS
+join.enter_code	ADD MEG A SZOBAKÓDOT
+join.body	Írd be vagy illeszd be a szobakódot, amit a barátod küldött (Discord, chat...).
+join.paste	BEILLESZTÉS
+join.join	CSATLAKOZÁS
+join.bad_code	Ez nem szobakód. Ellenőrizd és próbáld újra (csak betűk és számok).
+rooms.fight_starting	Egy szobaharc kezdődik. Várd meg, vagy előbb lépj ki a szobából.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  EGY KÖZELI JÁTÉKOS
+quick.player_found	JÁTÉKOS MEGVAN!
+quick.search_failed	SIKERTELEN KERESÉS
+quick.not_searching	NINCS KERESÉS
+quick.connecting	Csatlakozás az ellenfeledhez...
+quick.searching_near	Közeli játékos keresése
+quick.stopped	A keresés leállt. Próbáld újra.
+quick.press_search_again	Nyomd meg az ÚJ KERESÉS gombot egy játékos kereséséhez.
+quick.privacy	A gyors meccs az országodat osztja meg (az eszköz beállításaiból), a helyzetedet soha.
+quick.search_again	ÚJ KERESÉS
+quick.hint	VS ONLINE  ·  GYORS MECCS
+room.kicker_opening	SZOBA  ·  A SZOBA MEGNYITÁSA...
+room.opening	A szoba megnyitása...
+room.your_fighter	A HARCOSOD
+room.locked_in	RÖGZÍTVE
+room.everyone_ok	Mindenki megnyomja az OK-t: a harc magától indul.
+room.share_code	Oszd meg a kódot, vagy hívj meg barátokat név szerint.
+room.empty_seat	Üres hely
+room.stage_you	PÁLYA (te választasz)
+room.stage_host	PÁLYA (a házigazda választ)
+common.ok	OK
+room.loading	BETÖLTÉS...
+room.change	MÓDOSÍTÁS
+room.starting	INDUL...
+room.start_fight	HARC INDÍTÁSA
+room.close	SZOBA BEZÁRÁSA
+room.leave	KILÉPÉS A SZOBÁBÓL
+room.hint	VS LOCAL  ·  SZOBA
+room.code	KÓD
+room.copy	MÁSOLÁS
+room.host_can_invite	A házigazda név szerint meghívhat egy barátot.
+room.invite_by_name	BARÁT MEGHÍVÁSA NÉV SZERINT
+room.invite	MEGHÍVÁS
+room.full	A szoba megtelt.
+invite.title	SZOBAMEGHÍVÓ
+invite.warning	A nevek nincsenek ellenőrizve: csak ismerőseid meghívóit fogadd el.
+invite.accept	ELFOGADÁS
+invite.decline	ELUTASÍTÁS
+room.hazards_on_btn	VESZÉLYEK  BE
+room.hazards_off_btn	VESZÉLYEK  KI
+select.passive	PASSZÍV
+select.look	KINÉZET
+select.cosmetic	KOZMETIKAI
+select.arcade_round	ARCADE  ·  {0}. KÖR / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   1. KONTROLLER = 1P, 2. KONTROLLER = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	BÁBU
+select.round_rival	{0}. KÖR RIVÁLISA
+select.picks_at_start	A HARC KEZDETÉN VÁLASZT
+select.signature_weapon	JELLEGZETES FEGYVER  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  LEGYŐZVE
+select.arcade_route	ARCADE ÚTVONAL  ·  {0}. PÁLYA / {1}
+select.select_stage	PÁLYAVÁLASZTÁS
+select.local_versus	HELYI VERSUS
+select.arcade_rival	ARCADE RIVÁLIS
+select.training_dummy	EDZŐBÁBU
+select.stage	PÁLYA
+select.hazards	VESZÉLYEK
+select.fight	HARC
+select.change	MÓDOSÍTÁS
+select.confirm	MEGERŐSÍTÉS
+select.random	VÉLETLEN
+select.fate	BÍZD A SORSRA
+select.ready_bang	KÉSZ!
+select.loadout	FELSZERELÉS
+select.waiting_1p	VÁRAKOZÁS 1P-RE
+select.1p_picks_dummy	1P VÁLASZTJA A BÁBUT
+select.selecting	VÁLASZT
+select.identity_hidden	REJTETT KILÉTŰ
+select.revealed_at_start	A KÖR KEZDETÉN DERÜL KI
+select.ai_picks	AZ AI VÁLASZTJA A HARCOSÁT
+select.random_every_fight	MINDEN HARCBAN VÉLETLEN KARAKTER
+select.any_character	BÁRMELY KARAKTER · VÉLETLEN PASSZÍV ÉS FEGYVER
+select.lock_in_hint	RÖGZÍTÉS  ·  VAGY KATTINTS EGY KARAKTERRE
+select.to_ready	A KÉSZENLÉTHEZ
+select.cpu_difficulty_pick	CPU NEHÉZSÉG  ·  VÁLASSZ A HARC ELŐTT
+select.ai_note	Nem kell internet. Az AI minden harcra új karaktert, passzívot és fegyvert választ, a visszavágókra is.
+select.pad_difficulty	D-PAD FEL / LE  ·  NEHÉZSÉG
+select.key_difficulty	W / S  ·  NEHÉZSÉG
+select.start_training	EDZÉS INDÍTÁSA
+select.fight_bang	HARCRA!
+select.click_to_start	VAGY KATTINTS AZ INDÍTÁSHOZ A JELENLEGI VÁLASZTÁSOKKAL
+hud.ready	KÉSZ...
+hud.rival	RIVÁLIS
+hud.you	TE
+hud.ultimate_ready	{0} · ULTIMATE KÉSZ
+hud.move_detected	{0} · MOZDULAT ÉSZLELVE
+hud.failed	{0} · SIKERTELEN
+hud.training_title	EDZÉS · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  EDZÉS
+hud.intro_online	  ·  ONLINE  ·  ESC / START: KILÉPÉS
+hud.ult_ready_press	ULT KÉSZ - nyomd: {0}
+hud.ult_ready	ULT KÉSZ
+hud.sim_key	szim. billentyű: {0}
+hud.poses_live	 · pózok: keresztbe tett karok blokk / kinyújtott kar = tűzgolyó / kezek fel = ugrás
+hud.poses_keys	 · pózok 1 kereszt / 2 ütés / 3 emelés · P görnyedés
+hud.poses_p2	 · pózok 8/9/0
+hud.training_help	EDZÉS: a T feltölti az ultimate-et · a KO-zott harcosok 0%-on éledenek újra · Esc szünet
+hud.ult_pct	ULT {0}%
+hud.last_hit	UTOLSÓ TALÁLAT  {0}
+hud.combo_hits	KOMBÓ  {0} TALÁLAT  +{1}%
+hud.combo	KOMBÓ  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	P1 KAMERA · SZIM
+hud.cv_p1_live	P1 KAMERA · ÉLŐ
+hud.cv_p2_sim	P2 KAMERA · SZIM
+hud.cv_p2_live	P2 KAMERA · ÉLŐ
+hud.hits_prefix	{0} TALÁLAT  
+results.no_contest	ÉRVÉNYTELEN
+results.draw	DÖNTETLEN!
+results.cpu_wins	A CPU NYER
+results.you_win	NYERTÉL!
+results.rival_wins	A RIVÁLIS NYER
+results.wins	{0} NYER!
+results.takes_round	{0} nyeri a kört
+results.stats	Bevitt találatok  {0}\nTeljes kombók  {1}   ·   Legjobb kombó  {2}
+results.stats2	\nGesztus-ultimate-ek  {0}\nHárítások  {1}
+results.posture	\nJó testtartás  {0}%
+results.rewards_named	JUTALMAK ({0} profilja)
+results.rewards_your	JUTALMAK (a profilod)
+results.rewards_p1	JUTALMAK (P1 profil)
+results.coins	+{0} érme  (összesen {1})
+hud.do_pose	vedd fel a pózt a kamera előtt
+results.place_1	1.
+results.place_2	2.
+results.place_3	3.
+results.place_4	4.
+results.out	KIESETT
+results.out_1	KIESETT · 1.
+results.out_2	KIESETT · 2.
+results.out_3	KIESETT · 3.
+results.out_4	KIESETT · 4.
+results.red_team	PIROS CSAPAT
+results.blue_team	KÉK CSAPAT
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} JÁTÉKOS
+hud.keys_line1	P{0}: {1} mozgás · {2} ugrás · 
+hud.keys_line2	{0} könnyű · {1} nehéz · {2} speciális · 
+hud.keys_line3	{0} blokk · {1} dash · 
+hud.keys_line4	{0} képességek · {1} ult
+results.characters	KARAKTEREK
+results.stock_one	1 ÉLET
+results.stocks	{0} ÉLET
+hud.respawn	ÚJRAÉLEDÉS
+hud.drop_in	BESZÁLLÁS!
+results.main_menu	FŐMENÜ
+pause.title	SZÜNET
+pause.resume	FOLYTATÁS
+pause.quit	KILÉPÉS A MENÜBE
+pause.hint	B / Backspace a folytatáshoz
+leave.title	ELHAGYOD A MECCSET?
+leave.body	A meccs folytatódik. A kilépés vereségnek számít.
+leave.leave	KILÉPÉS
+leave.hint	B / Backspace / Esc / Start a maradáshoz
+results.winner	GYŐZTES
+results.training_no_rewards	Edzés: nincs jutalom
+cv.posture	Testtartás {0}%
+cv.posture_low	Testtartás {0}% - ülj egyenesen!
+cv.telemetry_ok	Telemetria OK
+net.rooms_load_failed	Nem sikerült betölteni a szobáidat: {0}
+net.host_limit	Már {0} szobában vagy házigazda. Előbb zárj be egyet.
+net.creating_named	„{0}” létrehozása...
+net.room_ready_code	A(z) „{0}” szoba kész. Oszd meg a(z) {1} kódot, vagy hívj meg egy barátot.
+net.create_failed	Nem sikerült létrehozni a szobát: {0}
+net.joining_room	Csatlakozás a(z) {0} szobához...
+net.you_joined	Csatlakoztál ide: „{0}”. Válaszd ki a harcosod, és nyomd meg az OK-t.
+net.no_room_code	Nincs szoba a(z) {0} kóddal. Ellenőrizd a kódot és próbáld újra.
+net.room_full_n	Az a szoba megtelt ({0} játékos).
+net.join_failed	Nem sikerült csatlakozni: {0}
+net.update_failed	Nem sikerült frissíteni a szobát: {0}
+net.could_not_what	Nem sikerült {0}: {1}
+net.what_stage	a pályát módosítani
+net.what_hazards	a veszélyeket módosítani
+net.press_ok_again	{0} Mindketten nyomjátok meg újra az OK-t és a HARC INDÍTÁSA gombot.
+net.udp_port	Nem sikerült megnyitni a(z) {0} UDP-portot (már használatban van?).
+net.lan_ready	A LAN házigazda kész. A barátod ide csatlakozik: {0}  ({1} port)
+net.bad_ip	„{0}” nem érvényes IP-cím.
+net.connecting_to	Csatlakozás ide: {0}...
+net.sign_in_failed	Sikertelen bejelentkezés: {0}
+net.room_ready	A(z) „{0}” szoba kész. Oszd meg a kódot a barátoddal.
+net.searching_in	Játékosok keresése itt: {0}...
+net.start_failed	Nem sikerült elindítani a harcot: {0}
+net.host_unreachable	A házigazda nem érhető el: {0}
+net.area_world	az egész világ
+net.area_country_and	az országod és {0}
+region.africa	Afrika
+region.americas	Amerika
+region.asia	Ázsia
+region.europe	Európa
+region.oceania	Óceánia
+region.northern_africa	Észak-Afrika

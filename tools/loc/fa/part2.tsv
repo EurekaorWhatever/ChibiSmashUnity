@@ -1,0 +1,257 @@
+room.ready_to_fight	آماده نبرد
+room.full_suffix	 · اتاق پر است
+room.waiting	در انتظار بازیکنان
+room.joined	{0}  ·  {1} / {2} پیوستند
+room.host	میزبان
+room.player_n	بازیکن {0}
+room.you_suffix	 · تو
+room.hazards_host_pick	{0} · انتخاب میزبان
+room.hazards_on	خطرها روشن
+room.hazards_off	خطرها خاموش
+room.code_copied	کد اتاق {0} کپی شد. آن را برای دوستت بفرست.
+invite.body	{0} تو را به {1} دعوت می‌کند   ({2} ثانیه)
+select.ult_name	ULT  {0}
+age.title	چند سالته؟
+age.body	هر سنی می‌تواند هر حالتی را بازی کند. سنت همراه نام بازیکن برای آمار بازی ثبت می‌شود.
+common.next	بعدی
+age.error	سنت را تایپ کن، یا با D-pad تنظیمش کن.
+age.pad_hint	دسته: D-pad بالا/پایین ۱ تا، چپ/راست ۱۰ تا تغییر می‌دهد · A = بعدی
+rooms.enter_name	نام اتاق را وارد کن
+rooms.name_rules	۳ تا ۲۴ حرف، عدد یا فاصله. دوستان وقتی می‌پیوندند آن را می‌بینند. هر اتاق ۲ تا ۴ بازیکن جا دارد.
+rooms.create	ساختن
+common.one_moment	یک لحظه...
+account.keep_name	نام مبارزت را نگه دار
+account.finish_in_browser	در مرورگر تمامش کن...
+account.sign_in_google	ورود با GOOGLE
+account.play_without	بازی بدون حساب
+name.choose_first	اول نام بازیکنت را انتخاب کن.
+common.cancelled	لغو شد.
+name.welcome	خوش آمدی، مبارز! اسمت چیه؟
+name.change_title	نامت را عوض کن
+name.rules	۳ تا ۱۶ حرف، عدد یا _. یک نام مبارز بامزه انتخاب کن، نه نام واقعی‌ات. دوستان با همین نام پیدایت می‌کنند و دعوتت می‌کنند و همه همین را می‌بینند.
+name.suggest	پیشنهاد
+name.checking	در حال بررسی...
+name.lets_fight	بزن بریم!
+common.save	ذخیره
+name.pad_hint_first	دسته: A = بزن بریم · Y = پیشنهاد نام
+name.pad_hint	دسته: A = ذخیره · Y = پیشنهاد نام
+online.connected_agreeing	وصل شد. در حال هماهنگی مسابقه...
+online.host_settings_changed	تنظیمات میزبان عوض شد — دوباره به اتاق بپیوند.
+online.version_mismatch	حریفت نسخه دیگری از بازی را اجرا می‌کند. هر دو بازیکن به یک نسخه نیاز دارند.
+rooms.title	VS LOCAL
+rooms.kicker	اتاق‌ها  ·  ۲ تا ۴ بازیکن  ·  ساختن · پیوستن · دعوت با نام
+rooms.create_rooms	ساختن اتاق
+rooms.join_room	پیوستن به اتاق
+rooms.creating	در حال ساختن اتاقت...
+rooms.loading	در حال بارگذاری اتاق‌هایت...
+rooms.none_yet	هنوز هیچ اتاقی ساخته نشده!
+rooms.one_moment	یک لحظه.
+rooms.empty_help	ساختن اتاق را بزن تا یکی بسازی، یا با کد اتاق یک دوست به اتاق بپیوند.
+rooms.capacity_note	هر اتاق ۲ تا ۴ بازیکن جا دارد. دوستانت را با نام بازیکنشان دعوت کن.
+rooms.invites_paused	دعوت به اتاق برای چند دقیقه متوقف شد
+rooms.refresh	تازه‌سازی
+rooms.hint	VS LOCAL  ·  اتاق‌ها
+rooms.new	جدید
+rooms.you_host	تو میزبانی
+rooms.open	باز کردن
+join.enter_code	کد اتاق را وارد کن
+join.body	کد اتاقی که دوستت فرستاده را تایپ یا جای‌گذاری کن (Discord، چت...).
+join.paste	جای‌گذاری
+join.join	پیوستن
+join.bad_code	این کد اتاق نیست. بررسی‌اش کن و دوباره امتحان کن (فقط حرف و عدد).
+rooms.fight_starting	یک نبرد اتاقی در حال شروع است. صبر کن، یا اول از اتاق خارج شو.
+quick.kicker	VS ONLINE  ·  انفرادی 1V1  ·  بازیکنی نزدیک تو
+quick.player_found	بازیکن پیدا شد!
+quick.search_failed	جستجو ناموفق بود
+quick.not_searching	جستجو نمی‌شود
+quick.connecting	در حال اتصال به حریف...
+quick.searching_near	در جستجوی بازیکنی نزدیک تو
+quick.stopped	جستجو متوقف شد. دوباره امتحان کن.
+quick.press_search_again	برای پیدا کردن بازیکن، جستجوی دوباره را بزن.
+quick.privacy	مسابقه سریع کشورت را (از تنظیمات دستگاه) به اشتراک می‌گذارد، هرگز موقعیتت را.
+quick.search_again	جستجوی دوباره
+quick.hint	VS ONLINE  ·  مسابقه سریع
+room.kicker_opening	اتاق  ·  در حال باز کردن اتاق...
+room.opening	در حال باز کردن اتاق...
+room.your_fighter	مبارز تو
+room.locked_in	قفل شد
+room.everyone_ok	همه OK را بزنند: نبرد خودش شروع می‌شود.
+room.share_code	کد را به اشتراک بگذار، یا دوستانت را با نام دعوت کن.
+room.empty_seat	جای خالی
+room.stage_you	میدان (تو انتخاب می‌کنی)
+room.stage_host	میدان (میزبان انتخاب می‌کند)
+common.ok	OK
+room.loading	در حال بارگذاری...
+room.change	تغییر
+room.starting	در حال شروع...
+room.start_fight	شروع نبرد
+room.close	بستن اتاق
+room.leave	ترک اتاق
+room.hint	VS LOCAL  ·  اتاق
+room.code	کد
+room.copy	کپی
+room.host_can_invite	میزبان می‌تواند یک دوست را با نام دعوت کند.
+room.invite_by_name	دعوت دوست با نام
+room.invite	دعوت
+room.full	اتاق پر است.
+invite.title	دعوت به اتاق
+invite.warning	نام‌ها بررسی نمی‌شوند: فقط دعوت کسانی را بپذیر که می‌شناسی.
+invite.accept	پذیرفتن
+invite.decline	رد کردن
+room.hazards_on_btn	خطرها  روشن
+room.hazards_off_btn	خطرها  خاموش
+select.passive	غیرفعال
+select.look	ظاهر
+select.cosmetic	تزئینی
+select.arcade_round	آرکید  ·  راند {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   دسته ۱ = 1P، دسته ۲ = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	آدمک
+select.round_rival	رقیب راند {0}
+select.picks_at_start	در شروع نبرد انتخاب می‌کند
+select.signature_weapon	سلاح ویژه  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  شکست خورد
+select.arcade_route	مسیر آرکید  ·  میدان {0} / {1}
+select.select_stage	انتخاب میدان
+select.local_versus	رودررو محلی
+select.arcade_rival	رقیب آرکید
+select.training_dummy	آدمک تمرینی
+select.stage	میدان
+select.hazards	خطرها
+select.fight	نبرد
+select.change	تغییر
+select.confirm	تأیید
+select.random	تصادفی
+select.fate	به دست سرنوشت بسپار
+select.ready_bang	آماده!
+select.loadout	تجهیزات
+select.waiting_1p	در انتظار 1P
+select.1p_picks_dummy	1P آدمک را انتخاب می‌کند
+select.selecting	در حال انتخاب
+select.identity_hidden	هویت پنهان
+select.revealed_at_start	در شروع راند فاش می‌شود
+select.ai_picks	هوش مصنوعی مبارزش را انتخاب می‌کند
+select.random_every_fight	یک شخصیت تصادفی در هر نبرد
+select.any_character	هر شخصیتی · توانایی غیرفعال و سلاح تصادفی
+select.lock_in_hint	قفل کن  ·  یا روی یک شخصیت کلیک کن
+select.to_ready	برای آماده شدن
+select.cpu_difficulty_pick	سختی CPU  ·  پیش از نبرد انتخاب کن
+select.ai_note	به اینترنت نیازی نیست. هوش مصنوعی برای هر نبرد، حتی مسابقه دوباره، شخصیت، توانایی و سلاح تازه انتخاب می‌کند.
+select.pad_difficulty	D-PAD بالا / پایین  ·  سختی
+select.key_difficulty	W / S  ·  سختی
+select.start_training	شروع تمرین
+select.fight_bang	نبرد!
+select.click_to_start	یا کلیک کن تا با انتخاب‌های فعلی شروع شود
+hud.ready	آماده...
+hud.rival	رقیب
+hud.you	تو
+hud.ultimate_ready	{0} · ULTIMATE آماده است
+hud.move_detected	{0} · حرکت شناسایی شد
+hud.failed	{0} · ناموفق
+hud.training_title	تمرین · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  تمرین
+hud.intro_online	  ·  آنلاین  ·  ESC / START: خروج
+hud.ult_ready_press	ULT آماده - {0} را بزن
+hud.ult_ready	ULT آماده
+hud.sim_key	کلید شبیه‌سازی: {0}
+hud.poses_live	 · ژست‌ها: دست ضربدری دفاع / دست به پهلو = گلوله آتشین / دست‌ها بالا = پرش
+hud.poses_keys	 · ژست‌ها 1 ضربدر / 2 مشت / 3 بالا · P قوز
+hud.poses_p2	 · ژست‌ها 8/9/0
+hud.training_help	تمرین: T Ultimate را پر می‌کند · مبارزان ناک‌اوت با 0% برمی‌گردند · Esc توقف
+hud.ult_pct	ULT {0}%
+hud.last_hit	آخرین ضربه  {0}
+hud.combo_hits	کمبو  {0} ضربه  +{1}%
+hud.combo	کمبو  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	دوربین P1 · شبیه‌سازی
+hud.cv_p1_live	دوربین P1 · زنده
+hud.cv_p2_sim	دوربین P2 · شبیه‌سازی
+hud.cv_p2_live	دوربین P2 · زنده
+hud.hits_prefix	{0} ضربه  
+results.no_contest	بدون نتیجه
+results.draw	مساوی!
+results.cpu_wins	CPU برد
+results.you_win	بردی!
+results.rival_wins	رقیب برد
+results.wins	{0} برد!
+results.takes_round	{0} راند را برد
+results.stats	ضربه‌های موفق  {0}\nکمبوهای کامل  {1}   ·   بهترین کمبو  {2}
+results.stats2	\nUltimate با حرکات  {0}\nدفع‌ها  {1}
+results.posture	\nحالت بدن خوب  {0}%
+results.rewards_named	جایزه‌ها (نمایه {0})
+results.rewards_your	جایزه‌ها (نمایه تو)
+results.rewards_p1	جایزه‌ها (نمایه P1)
+results.coins	+{0} سکه  (مجموع {1})
+hud.do_pose	ژست را جلوی دوربین بگیر
+results.place_1	اول
+results.place_2	دوم
+results.place_3	سوم
+results.place_4	چهارم
+results.out	حذف
+results.out_1	حذف · اول
+results.out_2	حذف · دوم
+results.out_3	حذف · سوم
+results.out_4	حذف · چهارم
+results.red_team	تیم قرمز
+results.blue_team	تیم آبی
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} بازیکن
+hud.keys_line1	P{0}: {1} حرکت · {2} پرش · 
+hud.keys_line2	{0} سبک · {1} سنگین · {2} ویژه · 
+hud.keys_line3	{0} دفاع · {1} یورش · 
+hud.keys_line4	{0} مهارت‌ها · {1} ult
+results.characters	شخصیت‌ها
+results.stock_one	۱ جان
+results.stocks	{0} جان
+hud.respawn	بازگشت
+hud.drop_in	بپر وسط!
+results.main_menu	منوی اصلی
+pause.title	توقف
+pause.resume	ادامه
+pause.quit	خروج به منو
+pause.hint	B / Backspace برای ادامه
+leave.title	مسابقه را ترک می‌کنی؟
+leave.body	مسابقه ادامه دارد. ترک کردن باخت حساب می‌شود.
+leave.leave	ترک
+leave.hint	B / Backspace / Esc / Start برای ماندن
+results.winner	برنده
+results.training_no_rewards	تمرین: بدون جایزه
+cv.posture	حالت بدن {0}%
+cv.posture_low	حالت بدن {0}% - صاف بنشین!
+cv.telemetry_ok	تله‌متری OK
+net.rooms_load_failed	اتاق‌هایت بارگذاری نشدند: {0}
+net.host_limit	تو الان میزبان {0} اتاق هستی. اول یکی را ببند.
+net.creating_named	در حال ساختن «{0}»...
+net.room_ready_code	اتاق «{0}» آماده است. کد {1} را به اشتراک بگذار یا دوستی را دعوت کن.
+net.create_failed	اتاق ساخته نشد: {0}
+net.joining_room	در حال پیوستن به اتاق {0}...
+net.you_joined	به «{0}» پیوستی. مبارزت را انتخاب کن و OK را بزن.
+net.no_room_code	اتاقی با کد {0} نیست. کد را بررسی کن و دوباره امتحان کن.
+net.room_full_n	آن اتاق پر است ({0} بازیکن).
+net.join_failed	نتوانستی بپیوندی: {0}
+net.update_failed	اتاق به‌روز نشد: {0}
+net.could_not_what	نشد {0}: {1}
+net.what_stage	میدان را عوض کرد
+net.what_hazards	خطرها را عوض کرد
+net.press_ok_again	{0} هر دو دوباره OK و شروع نبرد را بزنید.
+net.udp_port	درگاه UDP {0} باز نشد (قبلاً در حال استفاده است؟).
+net.lan_ready	میزبان LAN آماده است. دوستت به این نشانی می‌پیوندد: {0}  (درگاه {1})
+net.bad_ip	«{0}» نشانی IP معتبری نیست.
+net.connecting_to	در حال اتصال به {0}...
+net.sign_in_failed	ورود ناموفق بود: {0}
+net.room_ready	اتاق «{0}» آماده است. کد را با دوستت به اشتراک بگذار.
+net.searching_in	در جستجوی بازیکن در {0}...
+net.start_failed	نبرد شروع نشد: {0}
+net.host_unreachable	به میزبان دسترسی نشد: {0}
+net.area_world	کل جهان
+net.area_country_and	کشورت و {0}
+region.africa	آفریقا
+region.americas	قاره آمریکا
+region.asia	آسیا
+region.europe	اروپا
+region.oceania	اقیانوسیه
+region.northern_africa	شمال آفریقا

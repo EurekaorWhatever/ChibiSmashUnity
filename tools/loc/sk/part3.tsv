@@ -1,0 +1,255 @@
+region.eastern_africa	Východná Afrika
+region.middle_africa	Stredná Afrika
+region.southern_africa	Južná Afrika
+region.western_africa	Západná Afrika
+region.caribbean	Karibik
+region.central_america	Stredná Amerika
+region.south_america	Južná Amerika
+region.northern_america	Severná Amerika
+region.central_asia	Stredná Ázia
+region.eastern_asia	Východná Ázia
+region.south_eastern_asia	Juhovýchodná Ázia
+region.southern_asia	Južná Ázia
+region.western_asia	Západná Ázia
+region.eastern_europe	Východná Európa
+region.northern_europe	Severná Európa
+region.southern_europe	Južná Európa
+region.western_europe	Západná Európa
+region.australia_and_new_zealand	Austrália a Nový Zéland
+region.melanesia	Melanézia
+region.micronesia	Mikronézia
+region.polynesia	Polynézia
+net.joined_connecting	Pripojil si sa do „{0}“. Pripája sa k hostiteľovi...
+net.opponent_unreachable	Súper je nedostupný: {0}
+net.quick_filling	{0} z {1} hráčov. Začiatok o {2} s...
+invite.inviting	Pozýva sa {0}...
+invite.sent_lasts	Pozvánka odoslaná hráčovi {0}. Platí {1} sekúnd.
+invite.send_failed	Pozvánku sa nepodarilo odoslať: {0}
+invite.joining_room_of	Pripája sa do miestnosti hráča {0}...
+invite.paused	Pozvánky pozastavené na {0} minút.
+invite.invited_you	{0} ťa pozval do „{1}“.
+invite.ran_out	Tvoja pozvánka pre {0} vypršala.
+friends.choose_name	Vyber si hráčske meno, aby ťa priatelia našli.
+friends.unavailable	Priatelia nie sú dostupní: {0}
+friends.your_name_is	Tvoje meno je {0}. Daj ho priateľom, aby si ťa mohli pridať.
+friends.set_name_failed	Meno sa nepodarilo nastaviť: {0}
+friends.request_sent	Žiadosť o priateľstvo odoslaná hráčovi {0}.
+friends.add_failed	Nepodarilo sa pridať {0}: {1}
+friends.offline	{0} je práve offline.
+friends.request_then_invite	Žiadosť o priateľstvo odoslaná hráčovi {0}. Pozvánka odíde hneď, ako ju prijme.
+friends.unreachable	{0} je nedostupný: {1}
+friends.creating_room_for	Vytvára sa miestnosť pre {0}...
+friends.joining	Pripája sa k {0}...
+friends.declined	{0} odmietol pozvánku.
+friends.version_mismatch	{0} ťa pozval, ale má inú verziu hry.
+friends.invite_sent_waiting	Pozvánka odoslaná hráčovi {0}. Čaká sa na pripojenie...
+name.too_short	Meno je príliš krátke (aspoň {0} znakov).
+name.too_long	Meno je príliš dlhé (najviac {0} znakov).
+rooms.name_too_short	Názov miestnosti je príliš krátky (aspoň {0} znakov).
+rooms.name_too_long	Názov miestnosti je príliš dlhý (najviac {0} znakov).
+net.bad_code	To nie je platný kód miestnosti (len písmená a číslice).
+net.version_mismatch	Tá miestnosť bola vytvorená v inej verzii Chibi Clash. Obaja hráči potrebujú rovnakú verziu.
+net.loading_room	Načítava sa miestnosť...
+net.room_closed	Miestnosť zatvorená.
+net.you_left	Opustil si miestnosť.
+net.waiting_host_game	Spúšťa sa... čaká sa na hru hostiteľa.
+net.choose_next_fight	Vyber si bojovníka a stlač OK pre ďalší boj.
+net.host_changed_stage	Hostiteľ zmenil nastavenia arény. Stlač znova OK.
+net.room_closed_host_left	Miestnosť bola zatvorená (hostiteľ odišiel).
+net.starting_fight	Boj sa začína...
+net.player_left_joined	Hráč odišiel alebo sa pripojil.
+net.no_connection	Žiadne pripojenie.
+net.fight_could_not_start	Boj sa nepodarilo spustiť.
+net.fight_starting_wait	Boj sa začína! Čaká sa na pripojenie priateľa...
+net.choose_press_ok	Vyber si bojovníka a stlač OK.
+net.too_many_starts	Príliš veľa spustení. Počkaj minútu a potom stlač ZAČAŤ BOJ.
+net.fight_starting_connecting	Boj sa začína! Pripája sa...
+net.could_not_connect	Nepodarilo sa pripojiť.
+net.friend_no_answer	Tvoj priateľ neodpovedal.
+net.start_cancelled	Spustenie zrušené.
+net.friend_no_connect	Tvoj priateľ sa nepripojil.
+net.enter_code	Zadaj kód miestnosti, ktorý ukazuje tvoj priateľ.
+net.lan_browser	Hra cez LAN nie je v prehliadači dostupná. Použi MIESTNOSTI alebo VS LOCAL, alebo PC verziu pre LAN.
+net.enter_ip	Zadaj IP adresu hostiteľa.
+net.this_pc_ip	IP tohto PC
+net.signing_in	Prihlasuje sa...
+net.creating_private	Vytvára sa súkromná miestnosť...
+net.hosting_one	Nenašiel sa otvorený zápas, vytvára sa nový...
+net.needs_2_to_4	Boj potrebuje 2 až 4 hráčov.
+net.waiting_friend	Čaká sa na pripojenie priateľa...
+net.waiting_friends	Čaká sa na pripojenie priateľov...
+net.connection_running	Iné pripojenie ešte beží.
+net.no_valid_info	Miestnosť nemá platné údaje o pripojení (odišiel hostiteľ?).
+net.connecting_host	Pripája sa k hostiteľovi...
+net.already_full	Tá miestnosť je už plná.
+net.no_info	Miestnosť nemá údaje o pripojení (odišiel hostiteľ?).
+net.player_left_searching	Ten hráč odišiel. Hľadá sa znova...
+net.connected	Pripojené!
+net.relay_failed	Pripojenie k serveru Relay zlyhalo.
+net.opponent_timeout	Súper je nedostupný (časový limit).
+net.no_internet	Žiadne pripojenie k internetu. Pripoj Wi-Fi alebo mobilné dáta a hraj s priateľmi odkiaľkoľvek. (Hra cez LAN funguje v rovnakej sieti.)
+invite.wait	Počkaj chvíľu, kým pošleš ďalšiu pozvánku.
+invite.type_name	Napíš herné meno priateľa (3-16 písmen, číslic alebo _).
+invite.own_name	To je tvoje vlastné meno.
+invite.open_room_first	Najprv otvor svoju miestnosť, potom pozývaj.
+invite.room_full	Tvoja miestnosť je už plná.
+invite.could_not_send	Pozvánku sa nepodarilo odoslať.
+invite.too_many	Práve je priveľa pozvánok. Skús znova o pár sekúnd.
+invite.cancelled	Pozvánka zrušená.
+invite.expired	Táto pozvánka vypršala.
+invite.closed_full	Tvoja miestnosť je plná. Pozvánka uzavretá.
+invite.closed_joined	Do tvojej miestnosti sa pripojil hráč. Pozvánka uzavretá.
+invite.closed_room	Pozvánka zrušená: miestnosť sa zatvorila.
+name.taken	Toto meno je už obsadené
+name.check_unavailable	Tvoje meno sa nepodarilo overiť online. Skontroluj internet a skús znova.
+name.too_soon	Práve si zmenil meno. Skús znova o minútu.
+name.choose_different	Vyber si prosím iné meno.
+friends.type_tag	Napíš meno priateľa v tvare Kira#4821.
+friends.added	Priateľ pridaný.
+friends.declined_request	Žiadosť odmietnutá.
+friends.removed	Priateľ odstránený.
+friends.blocked	Hráč zablokovaný.
+friends.a_friend	Priateľ
+friends.type_player_tag	Napíš meno hráča v tvare Kira#4821.
+friends.wait_invite	Počkaj chvíľu, kým znova pozveš.
+name.enter	Zadaj meno.
+name.bad_chars	Používaj len písmená, číslice a _ (bez medzier a symbolov).
+rooms.name_bad_chars	Názvy miestností môžu obsahovať len písmená, číslice, medzery a _ - ' !.
+rooms.name_double_space	Názvy miestností nemôžu mať dvojité medzery.
+rooms.name_choose_different	Vyber si prosím iný názov miestnosti.
+gesture.cross_arms	PREKRÍŽ RUKY
+gesture.punch_forward	ÚDER DOPREDU
+gesture.raise_hands	ZDVIHNI OBE RUKY
+class.kaia.passive1_desc	+15% rýchlosť útoku
+class.kaia.passive2_desc	5% vysávanie života
+class.kaia.skill1_desc	Vyraz dopredu a bodni súpera
+class.kaia.skill2_desc	Dokonalé načasovanie odrazí poškodenie
+class.kaia.skill3_desc	Rýchlo bodni mnohokrát
+class.kaia.ult_desc	10 s: bežné útoky vypúšťajú vodorovnú vlnu
+class.bruna.passive1_desc	+20% poškodenie, -15% rýchlosť útoku
+class.bruna.passive2_desc	+20% poškodenie, -15% rýchlosť pohybu
+class.bruna.skill1_desc	Chyť súpera a zraz ho o zem
+class.bruna.skill2_desc	Toč sa ako tornádo a zasahuj opakovane
+class.bruna.ult_desc	Udri do zeme a vytvor rázovú vlnu
+class.ren.passive1_desc	+20% šanca na kritický zásah
+class.ren.passive2_desc	+10% rýchlosť pohybu na 10 s (obnovenie 30 s)
+class.ren.skill1_desc	Vodorovne uskoč dozadu a vystreľ
+class.ren.skill2_desc	Priškrť blízkeho súpera a odstrč ho
+class.ren.skill3_desc	Vystreľ vodorovnú salvu šípov
+class.ren.ult_desc	Jeden šíp sa znásobí na búrku šípov
+class.lyra.passive1_desc	10% šanca pri zásahu: -15% pohyb, -10% poškodenie, -15% rýchl. útoku
+class.lyra.passive2_desc	20% šanca zablokovať poškodenie
+class.lyra.skill1_desc	Vystreľ samonavádzací ohnivý projektil
+class.lyra.skill2_desc	Privolaj 3 prisluhovačov
+class.lyra.skill3_desc	Oblak sleduje nepriateľa a udiera hromom
+class.lyra.ult_desc	10 s ohnivý kruh: páli nepriateľov, blokuje projektily
+class.taro.passive1_desc	10% šanca pri zásahu: -15% obrana nepriateľa
+class.taro.passive2_desc	Po 3 s bez útoku je ďalší zásah +50%
+class.taro.skill1_desc	Natiahni sa, vyskoč a švihni nadol
+class.taro.skill2_desc	Roztoč kopiju a blokuj projektily
+class.taro.skill3_desc	Hoď oštep a privolaj ho späť
+class.taro.ult_desc	Bodni nepriateľa a potom kopni do rukoväte hlbšie
+char.kaia.role	Obratná útočníčka
+char.kaia.style	Rýchly, pohyblivý boj zblízka s presnými, reťaziteľnými sekmi.
+char.bruna.role	Bitkárka
+char.bruna.style	Bitkárka s vysokým poškodením a odolnosťou, ktorá ovláda priestor ťažkými útokmi.
+char.ren.role	Obratný strelec
+char.ren.style	Ovládanie zón s vysokou pohyblivosťou a presným tlakom vďaka všestranným technikám so šípmi.
+char.lyra.role	Ovládanie zón / príprava
+char.lyra.style	Obratná čarodejnica, ktorá ovláda priestor rýchlymi kúzlami, ľstivým pohybom a presnou mágiou.
+char.taro.role	Špecialista na dosah
+char.taro.style	Disciplinované, pohyblivé ovládanie s tlakom na veľký dosah a presnými údermi.
+stage.0.name	Nebeské dódžo
+stage.0.short	Nebeské dódžo
+stage.0.tagline	Horská svätyňa nad oblakmi
+stage.1.name	Neónové mesto
+stage.1.short	Neónové mesto
+stage.1.tagline	Aréna na streche v neónovom daždi
+stage.2.name	Lávová vyhňa
+stage.2.short	Lávová vyhňa
+stage.2.tagline	Roztavená zlievareň nad morom lávy
+stage.3.name	Hora počiatku
+stage.3.short	Hora
+stage.3.tagline	Vertikálne KO · pohyblivé nefritové plošiny nad hmlistou priepasťou
+stage.4.name	Planina jednoty
+stage.4.short	Planina
+stage.4.tagline	Horizontálne KO · jedno dlhé pole, niet sa kde skryť
+stage.5.name	Sopečná priepasť
+stage.5.short	Sopka
+stage.5.tagline	Každý okraj je KO · z magmového jazera šľahá oheň
+stage.6.name	Brloh obrieho vtáka
+stage.6.short	Vtáčí brloh
+stage.6.tagline	Horizontálne KO · obrovský vták zametá arénu
+stage.7.name	Opustený pamätník oceánu
+stage.7.short	Oceán
+stage.7.tagline	Každý okraj je KO · veľryba klesá, zoskoč na terasy
+end.opponent_left	Tvoj súper opustil zápas.
+end.opponent_timeout	Tvoj súper prestal odpovedať.
+end.connection_lost	Spojenie so súperom sa stratilo.
+end.you_left	Opustil si zápas.
+end.desync	Obe hry sa nezhodli (desync): bez výsledku.
+end.unconfirmed	Koniec zápasu sa nepodarilo potvrdiť: bez výsledku.
+end.handshake_failed	Zápas sa nepodarilo spustiť.
+end.peer_never_started	Tvoj súper sa do zápasu nikdy nepripojil: bez výsledku.
+end.too_slow	Pripojenie bolo na hranie príliš pomalé: bez výsledku.
+end.host_left	Hostiteľ opustil zápas: bez výsledku.
+end.dropped	Tvoje pripojenie vypadlo zo zápasu.
+status.aura	AURA {0}
+status.fire_ring	OHNIVÝ KRUH {0}
+status.tailwind	VIETOR DO CHRBTA
+status.guard_broken	KRYT PRELOMENÝ {0} s
+status.guard	KRYT {0}%
+status.reloading	NABÍJA {0} s
+status.recharging	DOBÍJA {0} s
+status.hexed	ZAKLIATY
+status.armor_break	BRNENIE -15%
+hud.perform	Vykonaj: {0}
+hud.times_up	Čas vypršal!
+rewards.no_contest	Bez výsledku: bez odmien
+rewards.pve_victory	Výhra PvE  +{0}
+rewards.pve_match	Zápas PvE  +{0}
+rewards.victory	Výhra  +{0}
+rewards.match_played	Odohraný zápas  +{0}
+rewards.posture	Dobré držanie tela {0}%  +{1}
+hud.revived	OŽIVENÝ
+quest.win	Vyhraj 3 zápasy
+quest.pve	Poraz CPU dvakrát (PvE)
+quest.combo	Urob 10 celých komb
+quest.ult	Spusti 3 ultimate gestami
+quest.parry	Odraz 5 útokov
+quest.posture	Dokonči zápas s 80%+ dobrým držaním tela
+rewards.quest	Úloha: {0}  +{1}
+bind.move_left	Pohyb vľavo
+bind.move_right	Pohyb vpravo
+bind.drop	Zoskok / rýchly pád
+bind.jump	Skok
+bind.jump_alt	Skok (alt.)
+bind.light	Ľahký útok
+bind.heavy	Ťažký útok
+bind.block	Blok
+bind.dash	Úskok
+bind.skill1	Schopnosť 1
+bind.skill2	Schopnosť 2
+bind.skill3	Schopnosť 3
+bind.ultimate	Ultimate
+bind.aim_up	Mieriť hore
+bind.special	Špeciál
+hud.rejected	Zamietnuté: {0}
+cv.low_confidence	Nízka istota sledovania
+cv.frozen	Zamrznutý obraz (podvod?)
+cv.snap	Okamžitá zmena pózy (makro?)
+cv.ok	OK
+cam.none	Kamera sa nenašla
+cam.off	Kamera vypnutá
+cam.starting	Kamera sa spúšťa...
+cam.waiting_frames	Čaká sa na snímky z kamery - povoľ Unity prístup ku kamere v Nastaveniach systému > Súkromie > Kamera
+cam.live	Kamera naživo ({0}x{1})
+pose.simulated	Simulované (pózy z klávesnice)
+pose.camera_off	Sledovanie kamerou vypnuté - používajú sa pózy simulované klávesnicou
+pose.model_failed	Model pózy zlyhal: {0}
+pose.loading	Načítava sa model pózy...
+pose.live	Sledovanie tela naživo (MoveNet, {0} Hz)
+pose.step_back	Kamera zapnutá - ustúp, aby ti bolo vidieť ramená
+account.finish_browser	Dokonči prihlásenie v prehliadači (vyber Pokračovať cez Google)...
+account.signed_out_again	Odhlásený. Prihlás sa znova a používaj svoj účet.
+account.signed_in_kept	Prihlásený. Tvoje meno a postup zostávajú s týmto účtom.

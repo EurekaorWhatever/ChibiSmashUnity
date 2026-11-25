@@ -1,0 +1,257 @@
+lang.backdrop	زبان
+lang.title	اپنی زبان چنیں
+lang.subtitle	گیم کی ہر چیز اسی زبان میں ہوگی۔ آپ اسے کسی بھی وقت سیٹنگز میں بدل سکتے ہیں۔
+lang.search_hint	زبانیں تلاش کریں...
+lang.no_match	آپ کی تلاش سے کوئی زبان نہیں ملی۔
+lang.english_text	فی الحال انگریزی متن
+lang.confirm	تصدیق  ·  {0}
+lang.confirm_none	تصدیق
+lang.pad_hint	تلاش کے لیے ٹائپ کریں · چننے کے لیے اوپر / نیچے · Enter یا پیڈ کا A = تصدیق
+common.cancel	منسوخ
+settings.language	زبان  ·  {0}
+difficulty.dummy	ڈمی
+difficulty.easy	آسان
+difficulty.medium	درمیانہ
+difficulty.hard	مشکل
+difficulty.dummy_upper	ڈمی
+difficulty.easy_upper	آسان
+difficulty.medium_upper	درمیانہ
+difficulty.hard_upper	مشکل
+nav.home	ہوم
+nav.play	کھیلیں
+nav.training	تربیت
+nav.arcade	آرکیڈ
+nav.collection	کلیکشن
+nav.settings	سیٹنگز
+account.signed_in_as	{0} کے طور پر سائن ان ہیں۔
+account.signed_in	سائن ان ہو گئے۔
+account.signed_out	سائن آؤٹ ہو گئے۔
+keys.who	P{0} {1}
+keys.reserved	{0} پوز / انداز کی کلید ہے (1 2 3، 8 9 0، نمبر پیڈ 7 8 9، P، -)۔ کوئی اور چنیں۔
+keys.swapped	{0}؛  {1} اب {2} ہے
+match.versus	{0}  VS  {1}
+online.locked_age	آن لائن کھیل 13 سال اور اس سے زیادہ عمر کے کھلاڑیوں کے لیے ہے۔
+arcade.clear_toast	آرکیڈ مکمل! تمام {0} حریف ہار گئے
+precheck.too_dark	بہت اندھیرا ({0}%) - روشنی بڑھائیں
+precheck.too_bright	بہت روشن ({0}%) - چمک کم کریں
+precheck.good	اچھا ({0}%)
+loading.weapon_art	ہتھیاروں کی تصاویر: {0}
+loading.fighter	فائٹر: {0}
+precheck.checking	جانچ ہو رہی ہے... {0}
+wipe.character_select	کردار کا انتخاب
+wipe.arcade	آرکیڈ
+results.rematch	دوبارہ مقابلہ
+results.continue	جاری رکھیں
+results.finish	ختم کریں
+results.next_battle	اگلی لڑائی
+wipe.arcade_clear	آرکیڈ مکمل
+precheck.title	کیمرا جانچ
+precheck.camera_unavailable	کیمرا دستیاب نہیں
+precheck.simulated_feed	فرضی تصویر (ویب کیم بند)
+precheck.upper_body_ok	جسم کا اوپری حصہ فریم میں ہے
+precheck.step_back	تھوڑا پیچھے ہٹیں - کندھے اور کولہے نظر آنے چاہییں
+loading.interface	انٹرفیس گرافکس
+loading.typefaces	فونٹس
+loading.pose_model	پوز ٹریکنگ ماڈل
+loading.ready	تیار
+onboarding.welcome	خوش آمدید!
+onboarding.your_account	آپ کا اکاؤنٹ
+onboarding.your_name	آپ کا کھلاڑی نام
+rooms.backdrop_create	VS LOCAL  ·  روم بنائیں
+rooms.backdrop_join	VS LOCAL  ·  روم میں شامل ہوں
+precheck.all_passed	تمام جانچ کامیاب
+precheck.failed	جانچ ناکام
+precheck.lighting	روشنی
+precheck.framing	فریمنگ
+precheck.posture	بیٹھنے کا انداز
+precheck.upright	بالکل سیدھے
+precheck.sit_up	بونس سکوں کے لیے سیدھے بیٹھیں
+common.retry	دوبارہ کوشش
+precheck.play_anyway	پھر بھی کھیلیں
+common.back	واپس
+precheck.ranked_note	رینکڈ قطاروں کے لیے یہ جانچ پاس ہونا ضروری ہے۔ عام میچ اسے چھوڑ سکتے ہیں۔
+precheck.hint	میچ سے پہلے کیمرا جانچ
+hint.select	چنیں
+home.play	کھیلیں
+home.training	تربیت
+home.arcade	آرکیڈ
+home.collection	کرداروں کا کلیکشن
+home.settings	سیٹنگز
+home.exit	گیم سے باہر نکلیں
+home.play_desc	Vs Online فوری میچ، دوستوں کے ساتھ VS Local روم، یا Vs CPU
+home.training_desc	کیمرا سیٹ اپ، اشاروں کی مشق اور ایک تربیتی ڈمی
+home.arcade_desc	ہر اسٹیج پر پانچوں حریف ایک کے بعد ایک
+home.collection_desc	اسکنز، ہتھیار اور کاسمیٹک بینر
+home.settings_desc	مشکل، کیمرا آپشنز اور کلیدیں
+home.exit_desc	گیم بند کریں
+tips.1	ULT میٹر بھریں اور Ultimate دبائیں - پھر الٹی گنتی ختم ہونے سے پہلے کیمرے کے سامنے اپنے فائٹر کا پوز بنائیں۔
+tips.2	زیادہ DEF ہر وار کا نقصان کم کرتا ہے اور آپ کا بلاک مضبوط بناتا ہے۔
+tips.3	کیمرا جو اچھا انداز ٹریک کرتا ہے اس سے ہر میچ کے بعد بونس سکے ملتے ہیں۔
+tips.4	اسکنز اور ہتھیار صرف سجاوٹ کے لیے ہیں - فائٹر جو بھی پہنے، اعداد و شمار کبھی نہیں بدلتے۔
+tips.5	تربیت میں اپنا Ultimate بھرنے کے لیے T دبائیں۔ ڈمی ہمیشہ دوبارہ کھڑا ہو جاتا ہے۔
+tips.6	ہر فائٹر دو پیسیو میں سے ایک رکھتا ہے - لاک کرنے کے بعد لوڈ آؤٹ پینل میں اسے چنیں۔
+tips.7	آن لائن لڑائیاں rollback نیٹ کوڈ استعمال کرتی ہیں: دونوں گیمز ایک ہی ان پٹ سے ایک ہی لڑائی چلاتی ہیں۔
+stats.power	طاقت
+stats.speed	رفتار
+stats.range	رینج
+stats.endurance	برداشت
+stats.recovery	بحالی
+training.use_block	بلاک · قریبی اور جادو Ultimate
+training.use_fireball	آگ کا گولا · فاصلاتی اور نیزہ Ultimate
+training.use_superjump	سپر چھلانگ · بھاری Ultimate
+menu.online_locked	آن لائن موڈز 13 سال اور اس سے زیادہ عمر کے کھلاڑیوں کے لیے ہیں۔
+menu.no_internet	انٹرنیٹ نہیں: Wi-Fi یا موبائل ڈیٹا جوڑیں۔ VS AI آف لائن چلتا ہے۔
+menu.four_player_soon	2v2 اور Battle Royale کو 4 کھلاڑیوں کی سپورٹ چاہیے، جو اگلی کسی اپ ڈیٹ میں آئے گی۔
+profile.edit_name	نام بدلیں
+profile.win_loss	جیت {0}  ·  ہار {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	تیار
+loading.loading	لوڈ ہو رہا ہے
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   مکمل x{2}
+arcade.rule_fight_all	تمام {0} کرداروں سے ایک کے بعد ایک، بے ترتیب ترتیب میں لڑیں۔
+arcade.rule_difficulty	CPU کی مشکل: {0} (سیٹنگز میں بدلیں)۔
+arcade.final	فائنل
+arcade.round	راؤنڈ {0}
+training.cv_setup_source	CV سیٹ اپ · {0}
+training.status	کیمرا: {0}\nٹریکنگ: {1}\nشناخت: {2}
+training.off	بند
+training.none	کچھ نہیں
+training.status_posture	   ·   انداز {0}%   ·   ٹیلی میٹری {1}
+collection.gold_cinematic_suffix	 · سنہری سنیمیٹک
+collection.only	صرف {0}
+collection.pull1	کھینچیں x1  ·  {0}
+collection.pull10	کھینچیں x10  ·  {0}
+collection.dup_suffix	  (دوہرا +20)
+collection.new_suffix	  نیا!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} سیکنڈ  <size=12><color=#9AA6BC>(ہر میچ کے لیے مقرر)</color></size>
+settings.change_name_as	نام بدلیں  ·  {0}
+settings.change_name	نام بدلیں
+settings.keys_help	کسی بائنڈنگ پر کلک کریں، پھر کوئی کلید دبائیں یا ماؤس کے بٹن سے اس خانے پر کلک کریں (Esc / پیڈ کا B / کہیں اور کلک منسوخ کرتا ہے؛ 5 سیکنڈ کی حد)۔ اگر کوئی کھلاڑی اسے پہلے سے استعمال کر رہا ہو تو دونوں آپس میں بدل جاتی ہیں۔\nکیمرا پوز: بازو کراس = بلاک · بازو سائیڈ پر = آگ کا گولا · دونوں ہاتھ اوپر = سپر چھلانگ (کی بورڈ پوز: 1/2/3 اور 8/9/0)۔
+rarity.common	عام
+rarity.rare	نایاب
+rarity.epic	شاندار
+rarity.legendary	افسانوی
+skin.default	کلاسک
+skin.mint	منٹ پاپ
+skin.shadow	سایہ
+skin.sakura	ساکورا
+skin.inferno	جہنم
+skin.celestial	آسمانی
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	صرف 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nٹیم
+play.four_player_later	2v2 اور Battle Royale اگلی کسی اپ ڈیٹ میں 4 کھلاڑیوں کی سپورٹ کے ساتھ آئیں گے۔
+play.team_tag	4P · 2 ٹیمیں
+play.royale_tag	4P · سب کے خلاف سب
+collection.all_fighters	تمام فائٹرز
+arcade.mode	آرکیڈ موڈ
+home.tagline	ایرینا فائٹر  ·  جسمانی اشاروں سے Ultimate
+play.royale_card	BATTLE\nROYALE
+training.kicker	کیمرا سیٹ اپ اور مشق
+settings.camera_tracking	کیمرا ٹریکنگ (ویب کیم)
+training.camera_off	کیمرا ٹریکنگ: بند
+training.camera_on	کیمرا ٹریکنگ: آن
+collection.hint	کرداروں کا کلیکشن
+play.choose_style	کھیل کا انداز چنیں
+online.kicker	کھیل کا انداز چنیں  ·  سولو · 2V2 · BATTLE ROYALE
+play.kicker	اپنی لڑائی چنیں  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	جلد آ رہا ہے
+training.cv	کمپیوٹر وژن
+online.connection	کنکشن
+collection.banner	کاسمیٹک بینر
+settings.cpu_difficulty	CPU کی مشکل
+play.create_join	روم بنائیں · شامل ہوں
+settings.cv_overlay	میچ میں CV اوورلے
+quests.coins_note	سکے صرف کھیلنے سے ملتے ہیں: جیت، PvE، مشنز اور کیمرے سے ٹریک کیا گیا اچھا انداز۔
+collection.odds	عام 60% · نایاب 28% · شاندار 10% · افسانوی 2%
+collection.equip	لیس کریں
+collection.equipped	لیس
+hint.exit	باہر نکلیں
+home.exit_upper	گیم سے باہر نکلیں
+exit.title	گیم سے باہر نکلیں؟
+online.royale_desc	ہر کوئی اپنے لیے۔ آخر تک کھڑا رہنے والا فائٹر جیتتا ہے۔
+arcade.kicker	پانچ حریف · ایک دوڑ
+loading.for_battle	لڑائی کے لیے
+online.invites_note	دوستوں کی روم دعوتیں یہاں آتی ہیں۔ دوستوں کے ساتھ روم کھیلیں > VS LOCAL میں ہیں۔
+settings.kicker	گیم · کیمرا · کنٹرول
+training.gestures_live	اشارے  (کیمرے کے سامنے پوز بنائیں - مکا = ایک بازو سیدھا سائیڈ پر)
+training.gestures_sim	اشارے  (پوز کی نقل کے لیے کلید دبائے رکھیں)
+settings.key_bindings	کلیدیں
+settings.keys_reset	کلیدیں ڈیفالٹ پر واپس آ گئیں
+play.locked	مقفل
+arcade.rule_retry	راؤنڈ ہار گئے؟ جاری رکھیں اور دوبارہ کوشش کریں۔
+home.hint	مرکزی مینو
+settings.master_volume	مرکزی آواز
+settings.match_time	میچ کا وقت
+play.matchmaking_card	VS\nLOCAL
+hint.move	حرکت
+play.matchmaking_desc	روم بنائیں، اس کا کوڈ شیئر کریں یا دوستوں کو نام سے مدعو کریں۔
+play.no_internet_tag	انٹرنیٹ نہیں
+online.no_internet_body	ابھی انٹرنیٹ نہیں۔ Wi-Fi یا موبائل ڈیٹا جوڑیں، یا Vs CPU کھیلیں۔
+common.off	بند
+online.offline	آف لائن
+common.on	آن
+settings.player1	کھلاڑی 1
+settings.player2	کھلاڑی 2
+training.practice_dummy	ڈمی کے خلاف مشق
+settings.precheck	میچ سے پہلے کیمرا جانچ
+loading.prepare	تیار ہو جائیں
+settings.listening_hint	کوئی کلید دبائیں یا خانے پر کلک کریں  ·  ESC / پیڈ کا B منسوخ کرتا ہے  ·  پیڈ کے بٹن بائنڈ نہیں ہوتے
+training.slouch_note	جھکا ہوا انداز آن/آف کرنے کے لیے P دبائیں اور انداز کا اسکور گرتا دیکھیں۔
+settings.profile_reset	پروفائل ری سیٹ ہو گیا (نام اور سائن ان برقرار)
+collection.pull_to_unlock	کھولنے کے لیے کھینچیں
+quests.title	مشنز
+online.quick_match	فوری میچ
+play.online_desc	قریبی کھلاڑی کے ساتھ فوری میچ، یا کسی دوست کی دعوت کا جواب دیں۔
+online.solo_desc	فوری میچ: ابھی تلاش کرنے والے کھلاڑی سے لڑیں، سب سے قریبی پہلے۔
+settings.reset_keys	کلیدیں ری سیٹ کریں
+settings.reset_profile	پروفائل ری سیٹ کریں
+arcade.rival_unknown	حریف  ???
+play.rooms_tag	روم · 2-4 کھلاڑی
+online.rollback_body	Rollback نیٹ کوڈ: دونوں گیمز ایک ہی ان پٹ سے ایک ہی لڑائی چلاتی ہیں، اس لیے یہ تیز اور منصفانہ رہتی ہے۔
+settings.screen_shake	اسکرین کی لرزش
+profile.set_name	نام رکھیں
+settings.sfx_volume	ایفیکٹس کی آواز
+training.simulate_pose	پوز کی نقل
+collection.kicker	اسکنز · ہتھیار · کاسمیٹک بینر
+training.slouch	جھکاؤ
+online.solo_card	سولو\n1V1
+home.start	شروع
+arcade.start	آرکیڈ شروع کریں
+exit.stay	رکیں
+settings.sure	یقین ہے؟
+settings.sure_reset_profile	یقین ہے؟ ساری پیش رفت ختم ہو جائے گی
+collection.banner_note	صرف اسکنز اور Ultimate سنیمیٹکس۔ ہر اسکن پر اعداد و شمار ایک جیسے ہیں - کچھ بھی پیسوں کے پیچھے بند نہیں۔
+hint.tabs	ٹیبز
+loading.tip	ٹپ
+training.hint	تربیت  /  CV سیٹ اپ
+arcade.rule_stages	ہر راؤنڈ میں اسٹیج بدلتا ہے، آغاز کے پہاڑ سے سمندری یادگار تک۔
+online.team_desc	دو دو کی دو ٹیمیں۔ اپنوں پر وار نہیں: آپ کے وار کبھی ساتھی کو نہیں لگتے۔
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  کھیل کا انداز
+play.online_card	VS\nONLINE
+arcade.rule_rewards	جیت پر سکے اور مشن کی پیش رفت ملتی ہے، بالکل VS CPU کی طرح۔
+exit.saved_note	آپ کا پروفائل، سکے اور کلیکشن اسی ڈیوائس پر محفوظ ہیں۔
+settings.key_listening	کلید یا یہاں کلک کریں
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	آپ اپنا فائٹر اور آسان، درمیانہ یا مشکل چنتے ہیں۔ CPU کو بے ترتیب فائٹر ملتا ہے۔
+account.keep_name_body	اپنے Google اکاؤنٹ سے سائن ان کریں تو آپ کا نام اور معلومات آپ کے ساتھ رہیں گی: ہر بار گیم کھولنے پر، اور کسی بھی کمپیوٹر پر۔ کسی دوسرے Google اکاؤنٹ کو اپنا نیا نام ملتا ہے۔
+name.you_are	آپ {0} ہیں!
+name.you_are_unchecked	آپ {0} ہیں! آن لائن کھیلنے پر ہم نام کی جانچ کریں گے۔
+online.could_not_start	میچ شروع نہیں ہو سکا ({0})۔
+rooms.your_rooms	آپ کے روم
+rooms.count_click	{0}  ·  کھولنے کے لیے کسی روم پر کلک کریں
+rooms.code_value	کوڈ  {0}
+rooms.players_count	{0} / {1} کھلاڑی
+rooms.more	+ مزید {0} روم
+rooms.created	روم "{0}" بن گیا۔ کوڈ شیئر کرنے یا دوستوں کو مدعو کرنے کے لیے اس پر کلک کریں۔
+quick.searching	تلاش جاری
+quick.looking_in	یہاں تلاش:  {0}
+room.kicker	روم  ·  2-4 کھلاڑی  ·  {0}
+room.battle_royale	BATTLE ROYALE

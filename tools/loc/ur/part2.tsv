@@ -1,0 +1,257 @@
+room.ready_to_fight	لڑائی کے لیے تیار
+room.full_suffix	 · روم بھر گیا
+room.waiting	کھلاڑیوں کا انتظار
+room.joined	{0}  ·  {1} / {2} شامل
+room.host	میزبان
+room.player_n	کھلاڑی {0}
+room.you_suffix	 · آپ
+room.hazards_host_pick	{0} · میزبان کا انتخاب
+room.hazards_on	خطرات آن
+room.hazards_off	خطرات بند
+room.code_copied	روم کوڈ {0} کاپی ہو گیا۔ اسے اپنے دوست کو پیسٹ کر دیں۔
+invite.body	{0} آپ کو {1} میں مدعو کر رہا ہے   ({2} سیکنڈ)
+select.ult_name	ULT  {0}
+age.title	آپ کی عمر کیا ہے؟
+age.body	ہر عمر کے لوگ ہر موڈ کھیل سکتے ہیں۔ گیم کے اعداد و شمار کے لیے آپ کی عمر کھلاڑی نام کے ساتھ محفوظ ہوتی ہے۔
+common.next	اگلا
+age.error	اپنی عمر لکھیں، یا D-pad سے سیٹ کریں۔
+age.pad_hint	گیم پیڈ: D-pad اوپر/نیچے 1 سے، بائیں/دائیں 10 سے بدلتا ہے · A = اگلا
+rooms.enter_name	روم کا نام لکھیں
+rooms.name_rules	3-24 حروف، اعداد یا خالی جگہیں۔ دوست شامل ہوتے وقت اسے دیکھتے ہیں۔ روم میں 2 سے 4 کھلاڑی ہوتے ہیں۔
+rooms.create	بنائیں
+common.one_moment	ایک لمحہ...
+account.keep_name	اپنا فائٹر نام برقرار رکھیں
+account.finish_in_browser	براؤزر میں مکمل کریں...
+account.sign_in_google	GOOGLE سے سائن ان کریں
+account.play_without	اکاؤنٹ کے بغیر کھیلیں
+name.choose_first	پہلے اپنا کھلاڑی نام چنیں۔
+common.cancelled	منسوخ ہو گیا۔
+name.welcome	خوش آمدید، فائٹر! آپ کا نام کیا ہے؟
+name.change_title	اپنا نام بدلیں
+name.rules	3-16 حروف، اعداد یا _۔ کوئی مزے دار فائٹر نام چنیں، اپنا اصل نام نہیں۔ اسی سے دوست آپ کو ڈھونڈتے اور مدعو کرتے ہیں، اور یہی سب کو نظر آتا ہے۔
+name.suggest	تجویز
+name.checking	جانچ ہو رہی ہے...
+name.lets_fight	چلو لڑیں!
+common.save	محفوظ کریں
+name.pad_hint_first	گیم پیڈ: A = چلو لڑیں · Y = نام کی تجویز
+name.pad_hint	گیم پیڈ: A = محفوظ کریں · Y = نام کی تجویز
+online.connected_agreeing	جڑ گئے۔ میچ طے ہو رہا ہے...
+online.host_settings_changed	میزبان کی سیٹنگز بدل گئیں — روم میں دوبارہ شامل ہوں۔
+online.version_mismatch	آپ کا مخالف گیم کا دوسرا ورژن چلا رہا ہے۔ دونوں کھلاڑیوں کو ایک ہی ورژن چاہیے۔
+rooms.title	VS LOCAL
+rooms.kicker	روم  ·  2-4 کھلاڑی  ·  بنائیں · شامل ہوں · نام سے مدعو کریں
+rooms.create_rooms	روم بنائیں
+rooms.join_room	روم میں شامل ہوں
+rooms.creating	آپ کا روم بن رہا ہے...
+rooms.loading	آپ کے روم لوڈ ہو رہے ہیں...
+rooms.none_yet	ابھی تک کوئی روم نہیں بنا!
+rooms.one_moment	ایک لمحہ۔
+rooms.empty_help	ایک روم بنانے کے لیے روم بنائیں دبائیں، یا کسی دوست کے روم کوڈ سے روم میں شامل ہوں۔
+rooms.capacity_note	روم میں 2 سے 4 کھلاڑی ہوتے ہیں۔ دوستوں کو ان کے کھلاڑی نام سے مدعو کریں۔
+rooms.invites_paused	روم کی دعوتیں چند منٹ کے لیے رکی ہوئی ہیں
+rooms.refresh	ریفریش
+rooms.hint	VS LOCAL  ·  روم
+rooms.new	نیا
+rooms.you_host	آپ میزبان ہیں
+rooms.open	کھولیں
+join.enter_code	روم کوڈ لکھیں
+join.body	آپ کے دوست نے جو روم کوڈ بھیجا ہے وہ لکھیں یا پیسٹ کریں (Discord، چیٹ...)۔
+join.paste	پیسٹ
+join.join	شامل ہوں
+join.bad_code	یہ روم کوڈ نہیں ہے۔ اسے جانچ کر دوبارہ کوشش کریں (صرف حروف اور اعداد)۔
+rooms.fight_starting	ایک روم لڑائی شروع ہو رہی ہے۔ انتظار کریں، یا پہلے روم چھوڑیں۔
+quick.kicker	VS ONLINE  ·  سولو 1V1  ·  آپ کے قریب ایک کھلاڑی
+quick.player_found	کھلاڑی مل گیا!
+quick.search_failed	تلاش ناکام
+quick.not_searching	تلاش نہیں ہو رہی
+quick.connecting	آپ کے مخالف سے رابطہ ہو رہا ہے...
+quick.searching_near	آپ کے قریب کھلاڑی کی تلاش
+quick.stopped	تلاش رک گئی۔ دوبارہ کوشش کریں۔
+quick.press_search_again	کھلاڑی ڈھونڈنے کے لیے دوبارہ تلاش دبائیں۔
+quick.privacy	فوری میچ آپ کا ملک (ڈیوائس کی سیٹنگز سے) شیئر کرتا ہے، کبھی آپ کا مقام نہیں۔
+quick.search_again	دوبارہ تلاش
+quick.hint	VS ONLINE  ·  فوری میچ
+room.kicker_opening	روم  ·  روم کھل رہا ہے...
+room.opening	روم کھل رہا ہے...
+room.your_fighter	آپ کا فائٹر
+room.locked_in	لاک ہو گیا
+room.everyone_ok	سب OK دبائیں: لڑائی خود شروع ہو جائے گی۔
+room.share_code	کوڈ شیئر کریں، یا دوستوں کو نام سے مدعو کریں۔
+room.empty_seat	خالی نشست
+room.stage_you	اسٹیج (آپ چنیں)
+room.stage_host	اسٹیج (میزبان چنے)
+common.ok	OK
+room.loading	لوڈ ہو رہا ہے...
+room.change	بدلیں
+room.starting	شروع ہو رہا ہے...
+room.start_fight	لڑائی شروع کریں
+room.close	روم بند کریں
+room.leave	روم چھوڑیں
+room.hint	VS LOCAL  ·  روم
+room.code	کوڈ
+room.copy	کاپی
+room.host_can_invite	میزبان کسی دوست کو نام سے مدعو کر سکتا ہے۔
+room.invite_by_name	دوست کو نام سے مدعو کریں
+room.invite	مدعو کریں
+room.full	روم بھر گیا ہے۔
+invite.title	روم کی دعوت
+invite.warning	ناموں کی جانچ نہیں ہوتی: صرف جاننے والوں کی دعوت قبول کریں۔
+invite.accept	قبول
+invite.decline	مسترد
+room.hazards_on_btn	خطرات  آن
+room.hazards_off_btn	خطرات  بند
+select.passive	پیسیو
+select.look	شکل
+select.cosmetic	کاسمیٹک
+select.arcade_round	آرکیڈ  ·  راؤنڈ {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   گیم پیڈ 1 = 1P، گیم پیڈ 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	ڈمی
+select.round_rival	راؤنڈ {0} کا حریف
+select.picks_at_start	لڑائی کے آغاز پر چنے گا
+select.signature_weapon	خاص ہتھیار  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  ہار گیا
+select.arcade_route	آرکیڈ راستہ  ·  اسٹیج {0} / {1}
+select.select_stage	اسٹیج چنیں
+select.local_versus	لوکل مقابلہ
+select.arcade_rival	آرکیڈ حریف
+select.training_dummy	تربیتی ڈمی
+select.stage	اسٹیج
+select.hazards	خطرات
+select.fight	لڑائی
+select.change	بدلیں
+select.confirm	تصدیق
+select.random	بے ترتیب
+select.fate	قسمت پر چھوڑ دیں
+select.ready_bang	تیار!
+select.loadout	لوڈ آؤٹ
+select.waiting_1p	1P کا انتظار
+select.1p_picks_dummy	1P ڈمی چن رہا ہے
+select.selecting	چن رہا ہے
+select.identity_hidden	شناخت پوشیدہ
+select.revealed_at_start	راؤنڈ شروع ہونے پر ظاہر ہوگا
+select.ai_picks	AI اپنا فائٹر چن رہا ہے
+select.random_every_fight	ہر لڑائی میں بے ترتیب کردار
+select.any_character	کوئی بھی کردار · بے ترتیب پیسیو اور ہتھیار
+select.lock_in_hint	لاک کریں  ·  یا کسی کردار پر کلک کریں
+select.to_ready	تیار ہونے کے لیے
+select.cpu_difficulty_pick	CPU کی مشکل  ·  لڑائی سے پہلے چنیں
+select.ai_note	انٹرنیٹ کی ضرورت نہیں۔ AI ہر لڑائی کے لیے، دوبارہ مقابلوں میں بھی، نیا کردار، پیسیو اور ہتھیار چنتا ہے۔
+select.pad_difficulty	D-PAD اوپر / نیچے  ·  مشکل
+select.key_difficulty	W / S  ·  مشکل
+select.start_training	تربیت شروع کریں
+select.fight_bang	لڑو!
+select.click_to_start	یا موجودہ انتخاب کے ساتھ شروع کرنے کے لیے کلک کریں
+hud.ready	تیار...
+hud.rival	حریف
+hud.you	آپ
+hud.ultimate_ready	{0} · ULTIMATE تیار
+hud.move_detected	{0} · حرکت پہچانی گئی
+hud.failed	{0} · ناکام
+hud.training_title	تربیت · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  تربیت
+hud.intro_online	  ·  آن لائن  ·  ESC / START: چھوڑیں
+hud.ult_ready_press	ULT تیار - {0} دبائیں
+hud.ult_ready	ULT تیار
+hud.sim_key	نقلی کلید: {0}
+hud.poses_live	 · پوز: بازو کراس بلاک / بازو باہر = آگ کا گولا / ہاتھ اوپر = چھلانگ
+hud.poses_keys	 · پوز 1 کراس / 2 مکا / 3 اوپر · P جھکاؤ
+hud.poses_p2	 · پوز 8/9/0
+hud.training_help	تربیت: T آپ کا Ultimate بھرتا ہے · KO فائٹرز 0% پر واپس آتے ہیں · Esc وقفہ
+hud.ult_pct	ULT {0}%
+hud.last_hit	آخری وار  {0}
+hud.combo_hits	کامبو  {0} وار  +{1}%
+hud.combo	کامبو  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	P1 کیمرا · نقلی
+hud.cv_p1_live	P1 کیمرا · لائیو
+hud.cv_p2_sim	P2 کیمرا · نقلی
+hud.cv_p2_live	P2 کیمرا · لائیو
+hud.hits_prefix	{0} وار  
+results.no_contest	کوئی نتیجہ نہیں
+results.draw	برابر!
+results.cpu_wins	CPU جیت گیا
+results.you_win	آپ جیت گئے!
+results.rival_wins	حریف جیت گیا
+results.wins	{0} جیت گیا!
+results.takes_round	{0} نے راؤنڈ جیتا
+results.stats	کامیاب وار  {0}\nمکمل کامبو  {1}   ·   بہترین کامبو  {2}
+results.stats2	\nاشاروں سے Ultimate  {0}\nپیری  {1}
+results.posture	\nاچھا انداز  {0}%
+results.rewards_named	انعامات ({0} کا پروفائل)
+results.rewards_your	انعامات (آپ کا پروفائل)
+results.rewards_p1	انعامات (P1 پروفائل)
+results.coins	+{0} سکے  (کل {1})
+hud.do_pose	کیمرے کے سامنے پوز بنائیں
+results.place_1	پہلا
+results.place_2	دوسرا
+results.place_3	تیسرا
+results.place_4	چوتھا
+results.out	باہر
+results.out_1	باہر · پہلا
+results.out_2	باہر · دوسرا
+results.out_3	باہر · تیسرا
+results.out_4	باہر · چوتھا
+results.red_team	سرخ ٹیم
+results.blue_team	نیلی ٹیم
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} کھلاڑی
+hud.keys_line1	P{0}: {1} حرکت · {2} چھلانگ · 
+hud.keys_line2	{0} ہلکا · {1} بھاری · {2} خاص · 
+hud.keys_line3	{0} بلاک · {1} ڈیش · 
+hud.keys_line4	{0} مہارتیں · {1} ult
+results.characters	کردار
+results.stock_one	1 زندگی
+results.stocks	{0} زندگیاں
+hud.respawn	واپسی
+hud.drop_in	شامل ہو جائیں!
+results.main_menu	مرکزی مینو
+pause.title	وقفہ
+pause.resume	جاری رکھیں
+pause.quit	مینو پر جائیں
+pause.hint	جاری رکھنے کے لیے B / Backspace
+leave.title	میچ چھوڑیں؟
+leave.body	میچ جاری رہے گا۔ چھوڑنا ہار شمار ہوگا۔
+leave.leave	چھوڑیں
+leave.hint	رکنے کے لیے B / Backspace / Esc / Start
+results.winner	فاتح
+results.training_no_rewards	تربیت: کوئی انعام نہیں
+cv.posture	انداز {0}%
+cv.posture_low	انداز {0}% - سیدھے بیٹھیں!
+cv.telemetry_ok	ٹیلی میٹری OK
+net.rooms_load_failed	آپ کے روم لوڈ نہیں ہو سکے: {0}
+net.host_limit	آپ پہلے ہی {0} روم کے میزبان ہیں۔ پہلے ایک بند کریں۔
+net.creating_named	"{0}" بن رہا ہے...
+net.room_ready_code	روم "{0}" تیار ہے۔ کوڈ {1} شیئر کریں یا کسی دوست کو مدعو کریں۔
+net.create_failed	روم نہیں بن سکا: {0}
+net.joining_room	روم {0} میں شامل ہو رہے ہیں...
+net.you_joined	آپ "{0}" میں شامل ہو گئے۔ اپنا فائٹر چنیں اور OK دبائیں۔
+net.no_room_code	{0} کوڈ والا کوئی روم نہیں۔ کوڈ جانچ کر دوبارہ کوشش کریں۔
+net.room_full_n	وہ روم بھرا ہوا ہے ({0} کھلاڑی)۔
+net.join_failed	شامل نہیں ہو سکے: {0}
+net.update_failed	روم اپ ڈیٹ نہیں ہو سکا: {0}
+net.could_not_what	{0} نہیں ہو سکا: {1}
+net.what_stage	اسٹیج تبدیل
+net.what_hazards	خطرات تبدیل
+net.press_ok_again	{0} دونوں دوبارہ OK اور لڑائی شروع کریں دبائیں۔
+net.udp_port	UDP پورٹ {0} نہیں کھل سکا (پہلے سے استعمال میں؟)۔
+net.lan_ready	LAN میزبان تیار ہے۔ آپ کا دوست یہاں شامل ہوگا: {0}  (پورٹ {1})
+net.bad_ip	"{0}" درست IP پتہ نہیں ہے۔
+net.connecting_to	{0} سے رابطہ ہو رہا ہے...
+net.sign_in_failed	سائن ان ناکام: {0}
+net.room_ready	روم "{0}" تیار ہے۔ اپنے دوست کے ساتھ کوڈ شیئر کریں۔
+net.searching_in	{0} میں کھلاڑیوں کی تلاش...
+net.start_failed	لڑائی شروع نہیں ہو سکی: {0}
+net.host_unreachable	میزبان تک رسائی نہیں ہو سکی: {0}
+net.area_world	پوری دنیا
+net.area_country_and	آپ کا ملک اور {0}
+region.africa	افریقہ
+region.americas	امریکہ (براعظم)
+region.asia	ایشیا
+region.europe	یورپ
+region.oceania	اوشیانا
+region.northern_africa	شمالی افریقہ

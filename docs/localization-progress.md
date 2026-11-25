@@ -65,6 +65,23 @@ Sheets in `tools/loc/<code>/*.tsv`, built with `python -P tools/loc/build_table.
 - [x] pl Polish (769/769 keys)
 - [x] hi Hindi (769/769 keys; Devanagari needs shaping + a bundled font before it renders, see Fonts)
 - [x] el Greek (769/769 keys)
+- [x] ro Romanian (769/769 keys)
+- [x] hu Hungarian (769/769 keys)
+- [x] he Hebrew (769/769 keys; RTL, needs bidi + the bundled Hebrew font, see Fonts)
+- [x] da Danish (769/769 keys)
+- [x] fi Finnish (769/769 keys)
+- [x] no Norwegian, Bokmal (769/769 keys; `no` is the code Unity reports for Norwegian devices)
+- [x] sk Slovak (769/769 keys)
+- [x] nl Dutch (769/769 keys)
+- [x] uk Ukrainian (769/769 keys)
+- [x] fa Persian (769/769 keys; RTL, Arabic script, needs shaping + bidi, see Fonts)
+- [x] bn Bengali (769/769 keys; needs shaping + the bundled Bengali font, see Fonts)
+- [x] ur Urdu (769/769 keys; RTL, Arabic script, needs shaping + bidi, see Fonts)
+- [x] sv Swedish (769/769 keys)
+- [x] cs Czech (769/769 keys)
+
+2026-11-25: trailing spaces restored on `hud.hits_prefix` and `hud.keys_line1..3` in every sheet (the HUD joins these
+pieces, so the space after the last `·` matters). 33 tables + English = 34 translated languages.
 
 2026-11-25: the MATCHMAKING mode is renamed **VS LOCAL** (user decision). Like VS ONLINE and VS CPU, the mode name stays
 English in every language; keys keep their `matchmaking` ids (`play.matchmaking_card`, `rooms.title` ...).

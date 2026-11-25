@@ -1,0 +1,255 @@
+region.eastern_africa	مشرقی افریقہ
+region.middle_africa	وسطی افریقہ
+region.southern_africa	جنوبی افریقہ (خطہ)
+region.western_africa	مغربی افریقہ
+region.caribbean	کیریبین
+region.central_america	وسطی امریکہ
+region.south_america	جنوبی امریکہ
+region.northern_america	شمالی امریکہ
+region.central_asia	وسطی ایشیا
+region.eastern_asia	مشرقی ایشیا
+region.south_eastern_asia	جنوب مشرقی ایشیا
+region.southern_asia	جنوبی ایشیا
+region.western_asia	مغربی ایشیا
+region.eastern_europe	مشرقی یورپ
+region.northern_europe	شمالی یورپ
+region.southern_europe	جنوبی یورپ
+region.western_europe	مغربی یورپ
+region.australia_and_new_zealand	آسٹریلیا اور نیوزی لینڈ
+region.melanesia	میلانیشیا
+region.micronesia	مائکرونیشیا
+region.polynesia	پولینیشیا
+net.joined_connecting	"{0}" میں شامل ہو گئے۔ میزبان سے رابطہ ہو رہا ہے...
+net.opponent_unreachable	آپ کے مخالف تک رسائی نہیں ہو سکی: {0}
+net.quick_filling	{1} میں سے {0} کھلاڑی۔ {2} سیکنڈ میں آغاز...
+invite.inviting	{0} کو مدعو کیا جا رہا ہے...
+invite.sent_lasts	{0} کو دعوت بھیج دی گئی۔ یہ {1} سیکنڈ تک رہے گی۔
+invite.send_failed	دعوت نہیں بھیجی جا سکی: {0}
+invite.joining_room_of	{0} کے روم میں شامل ہو رہے ہیں...
+invite.paused	دعوتیں {0} منٹ کے لیے رکی ہوئی ہیں۔
+invite.invited_you	{0} نے آپ کو "{1}" میں مدعو کیا۔
+invite.ran_out	{0} کو آپ کی دعوت کی میعاد ختم ہو گئی۔
+friends.choose_name	کھلاڑی نام چنیں تاکہ دوست آپ کو ڈھونڈ سکیں۔
+friends.unavailable	دوست دستیاب نہیں: {0}
+friends.your_name_is	آپ کا نام {0} ہے۔ اسے دوستوں کو دیں تاکہ وہ آپ کو شامل کر سکیں۔
+friends.set_name_failed	نام سیٹ نہیں ہو سکا: {0}
+friends.request_sent	{0} کو دوستی کی درخواست بھیج دی گئی۔
+friends.add_failed	{0} کو شامل نہیں کیا جا سکا: {1}
+friends.offline	{0} ابھی آف لائن ہے۔
+friends.request_then_invite	{0} کو دوستی کی درخواست بھیج دی گئی۔ قبول ہوتے ہی دعوت چلی جائے گی۔
+friends.unreachable	{0} تک رسائی نہیں ہو سکی: {1}
+friends.creating_room_for	{0} کے لیے روم بن رہا ہے...
+friends.joining	{0} کے ساتھ شامل ہو رہے ہیں...
+friends.declined	{0} نے دعوت مسترد کر دی۔
+friends.version_mismatch	{0} نے آپ کو مدعو کیا، لیکن وہ گیم کا دوسرا ورژن چلا رہا ہے۔
+friends.invite_sent_waiting	{0} کو دعوت بھیج دی گئی۔ شامل ہونے کا انتظار...
+name.too_short	نام بہت چھوٹا ہے (کم از کم {0} حروف)۔
+name.too_long	نام بہت لمبا ہے (زیادہ سے زیادہ {0} حروف)۔
+rooms.name_too_short	روم کا نام بہت چھوٹا ہے (کم از کم {0} حروف)۔
+rooms.name_too_long	روم کا نام بہت لمبا ہے (زیادہ سے زیادہ {0} حروف)۔
+net.bad_code	یہ درست روم کوڈ نہیں ہے (صرف حروف اور اعداد)۔
+net.version_mismatch	وہ روم Chibi Clash کے دوسرے ورژن سے بنا تھا۔ دونوں کھلاڑیوں کو ایک ہی ورژن چاہیے۔
+net.loading_room	روم لوڈ ہو رہا ہے...
+net.room_closed	روم بند ہو گیا۔
+net.you_left	آپ نے روم چھوڑ دیا۔
+net.waiting_host_game	شروع ہو رہا ہے... میزبان کی گیم کا انتظار۔
+net.choose_next_fight	اگلی لڑائی کے لیے اپنا فائٹر چنیں اور OK دبائیں۔
+net.host_changed_stage	میزبان نے اسٹیج کی سیٹنگز بدل دیں۔ دوبارہ OK دبائیں۔
+net.room_closed_host_left	روم بند ہو گیا (میزبان چلا گیا)۔
+net.starting_fight	لڑائی شروع ہو رہی ہے...
+net.player_left_joined	ایک کھلاڑی گیا یا شامل ہوا۔
+net.no_connection	کوئی کنکشن نہیں۔
+net.fight_could_not_start	لڑائی شروع نہیں ہو سکی۔
+net.fight_starting_wait	لڑائی شروع ہو رہی ہے! آپ کے دوست کے جڑنے کا انتظار...
+net.choose_press_ok	اپنا فائٹر چنیں اور OK دبائیں۔
+net.too_many_starts	بہت زیادہ بار شروع کیا گیا۔ ایک منٹ انتظار کریں، پھر لڑائی شروع کریں دبائیں۔
+net.fight_starting_connecting	لڑائی شروع ہو رہی ہے! رابطہ ہو رہا ہے...
+net.could_not_connect	رابطہ نہیں ہو سکا۔
+net.friend_no_answer	آپ کے دوست نے جواب نہیں دیا۔
+net.start_cancelled	آغاز منسوخ۔
+net.friend_no_connect	آپ کا دوست نہیں جڑا۔
+net.enter_code	آپ کا دوست جو روم کوڈ دکھا رہا ہے وہ لکھیں۔
+net.lan_browser	براؤزر میں LAN کھیل دستیاب نہیں۔ روم یا VS LOCAL استعمال کریں، یا LAN کے لیے PC ورژن۔
+net.enter_ip	میزبان کا IP پتہ لکھیں۔
+net.this_pc_ip	اس PC کا IP
+net.signing_in	سائن ان ہو رہا ہے...
+net.creating_private	نجی روم بن رہا ہے...
+net.hosting_one	کوئی کھلا میچ نہیں ملا، ایک کی میزبانی ہو رہی ہے...
+net.needs_2_to_4	لڑائی کے لیے 2 سے 4 کھلاڑی چاہییں۔
+net.waiting_friend	آپ کے دوست کے جڑنے کا انتظار...
+net.waiting_friends	آپ کے دوستوں کے جڑنے کا انتظار...
+net.connection_running	ایک اور کنکشن ابھی چل رہا ہے۔
+net.no_valid_info	روم میں درست کنکشن معلومات نہیں (میزبان چلا گیا؟)۔
+net.connecting_host	میزبان سے رابطہ ہو رہا ہے...
+net.already_full	وہ روم پہلے ہی بھرا ہوا ہے۔
+net.no_info	روم میں کنکشن معلومات نہیں (میزبان چلا گیا؟)۔
+net.player_left_searching	وہ کھلاڑی چلا گیا۔ دوبارہ تلاش...
+net.connected	جڑ گئے!
+net.relay_failed	Relay سرور سے کنکشن ناکام رہا۔
+net.opponent_timeout	آپ کے مخالف تک رسائی نہیں ہو سکی (وقت ختم)۔
+net.no_internet	انٹرنیٹ کنکشن نہیں۔ کہیں سے بھی دوستوں کے ساتھ کھیلنے کے لیے Wi-Fi یا موبائل ڈیٹا جوڑیں۔ (LAN کھیل ایک ہی نیٹ ورک پر چلتا ہے۔)
+invite.wait	دوسری دعوت بھیجنے سے پہلے تھوڑا انتظار کریں۔
+invite.type_name	اپنے دوست کا گیم والا نام لکھیں (3-16 حروف، اعداد یا _)۔
+invite.own_name	یہ آپ کا اپنا نام ہے۔
+invite.open_room_first	پہلے اپنا روم کھولیں، پھر مدعو کریں۔
+invite.room_full	آپ کا روم پہلے ہی بھرا ہوا ہے۔
+invite.could_not_send	دعوت نہیں بھیجی جا سکی۔
+invite.too_many	ابھی بہت زیادہ دعوتیں ہیں۔ چند سیکنڈ بعد دوبارہ کوشش کریں۔
+invite.cancelled	دعوت منسوخ۔
+invite.expired	اس دعوت کی میعاد ختم ہو گئی۔
+invite.closed_full	آپ کا روم بھر گیا۔ دعوت بند۔
+invite.closed_joined	ایک کھلاڑی آپ کے روم میں شامل ہو گیا۔ دعوت بند۔
+invite.closed_room	دعوت منسوخ: روم بند ہو گیا۔
+name.taken	یہ نام پہلے سے لیا جا چکا ہے
+name.check_unavailable	آپ کا نام آن لائن جانچا نہیں جا سکا۔ انٹرنیٹ چیک کر کے دوبارہ کوشش کریں۔
+name.too_soon	آپ نے ابھی نام بدلا ہے۔ ایک منٹ بعد دوبارہ کوشش کریں۔
+name.choose_different	براہ کرم کوئی اور نام چنیں۔
+friends.type_tag	اپنے دوست کا نام Kira#4821 کی طرح لکھیں۔
+friends.added	دوست شامل ہو گیا۔
+friends.declined_request	درخواست مسترد۔
+friends.removed	دوست ہٹا دیا گیا۔
+friends.blocked	کھلاڑی بلاک ہو گیا۔
+friends.a_friend	ایک دوست
+friends.type_player_tag	کھلاڑی کا نام Kira#4821 کی طرح لکھیں۔
+friends.wait_invite	دوبارہ مدعو کرنے سے پہلے تھوڑا انتظار کریں۔
+name.enter	ایک نام لکھیں۔
+name.bad_chars	صرف حروف، اعداد اور _ استعمال کریں (خالی جگہ یا علامات نہیں)۔
+rooms.name_bad_chars	روم کے نام میں صرف حروف، اعداد، خالی جگہیں اور _ - ' ! ہو سکتے ہیں۔
+rooms.name_double_space	روم کے نام میں دوہری خالی جگہ نہیں ہو سکتی۔
+rooms.name_choose_different	براہ کرم روم کا کوئی اور نام چنیں۔
+gesture.cross_arms	بازو کراس کریں
+gesture.punch_forward	آگے مکا
+gesture.raise_hands	دونوں ہاتھ اوپر کریں
+class.kaia.passive1_desc	+15% حملے کی رفتار
+class.kaia.passive2_desc	5% زندگی چوسنا
+class.kaia.skill1_desc	آگے لپک کر مخالف میں وار گھونپیں
+class.kaia.skill2_desc	بہترین ٹائمنگ نقصان واپس پلٹ دیتی ہے
+class.kaia.skill3_desc	تیزی سے کئی بار وار گھونپیں
+class.kaia.ult_desc	10 سیکنڈ: عام حملے ایک افقی لہر چھوڑتے ہیں
+class.bruna.passive1_desc	+20% نقصان، -15% حملے کی رفتار
+class.bruna.passive2_desc	+20% نقصان، -15% چلنے کی رفتار
+class.bruna.skill1_desc	مخالف کو پکڑ کر زمین پر پٹخ دیں
+class.bruna.skill2_desc	بگولے کی طرح گھومیں اور بار بار ماریں
+class.bruna.ult_desc	زمین پر وار کر کے جھٹکے کی لہر پیدا کریں
+class.ren.passive1_desc	+20% کریٹیکل امکان
+class.ren.passive2_desc	10 سیکنڈ کے لیے +10% چلنے کی رفتار (30 سیکنڈ کول ڈاؤن)
+class.ren.skill1_desc	افقی طور پر پیچھے لپکیں اور تیر چلائیں
+class.ren.skill2_desc	قریبی مخالف کا گلا دبا کر اسے دور دھکیلیں
+class.ren.skill3_desc	افقی طور پر تیروں کی بوچھاڑ کریں
+class.ren.ult_desc	ایک تیر بڑھ کر تیروں کا طوفان بن جاتا ہے
+class.lyra.passive1_desc	وار پر 10% امکان: -15% حرکت، -10% نقصان، -15% حملے کی رفتار
+class.lyra.passive2_desc	20% امکان کہ نقصان روک لے
+class.lyra.skill1_desc	نشانہ ڈھونڈنے والا آگ کا گولا چلائیں
+class.lyra.skill2_desc	3 حواری بلائیں
+class.lyra.skill3_desc	ایک بادل دشمن کا پیچھا کر کے بجلی گراتا ہے
+class.lyra.ult_desc	10 سیکنڈ آگ کا دائرہ: دشمنوں کو جلاتا ہے، گولے روکتا ہے
+class.taro.passive1_desc	وار پر 10% امکان: دشمن کا دفاع -15%
+class.taro.passive2_desc	3 سیکنڈ بغیر حملے کے بعد اگلا وار +50%
+class.taro.skill1_desc	لمبا ہو کر چھلانگ لگائیں اور نیچے گھمائیں
+class.taro.skill2_desc	گولے روکنے کے لیے نیزہ گھمائیں
+class.taro.skill3_desc	برچھی پھینکیں اور واپس بلائیں
+class.taro.ult_desc	دشمن کو چھیدیں، پھر لات مار کر دستہ اور گہرا کریں
+char.kaia.role	پھرتیلی حملہ آور
+char.kaia.style	درست، جڑنے والے واروں کے ساتھ تیز اور متحرک قریبی لڑائی۔
+char.bruna.role	زورآور
+char.bruna.style	زیادہ نقصان اور زیادہ برداشت والی لڑاکا جو بھاری حملوں سے جگہ پر قابو رکھتی ہے۔
+char.ren.role	پھرتیلا تیرانداز
+char.ren.style	تیروں کی متنوع تکنیکوں کے ساتھ تیز رفتار زون کنٹرول اور درست دباؤ۔
+char.lyra.role	زون کنٹرول / تیاری
+char.lyra.style	پھرتیلی جادوگرنی جو تیز منتروں، چالاک حرکت اور درست جادو سے جگہ پر قابو رکھتی ہے۔
+char.taro.role	رینج کا ماہر
+char.taro.style	لمبی رینج کے دباؤ اور درست واروں کے ساتھ منظم، متحرک کنٹرول۔
+stage.0.name	آسمانی ڈوجو
+stage.0.short	آسمانی ڈوجو
+stage.0.tagline	بادلوں کے اوپر پہاڑی مندر
+stage.1.name	نیون شہر
+stage.1.short	نیون شہر
+stage.1.tagline	نیون بارش میں چھت کا اکھاڑا
+stage.2.name	لاوا بھٹی
+stage.2.short	لاوا بھٹی
+stage.2.tagline	لاوے کے سمندر کے اوپر پگھلی ڈھلائی گاہ
+stage.3.name	آغاز کا پہاڑ
+stage.3.short	پہاڑ
+stage.3.tagline	عمودی KO · دھندلی کھائی کے اوپر حرکت کرتے یشب کے پلیٹ فارم
+stage.4.name	اتحاد کا میدان
+stage.4.short	میدان
+stage.4.tagline	افقی KO · ایک لمبا میدان، چھپنے کی کوئی جگہ نہیں
+stage.5.name	آتش فشاں کی گہرائی
+stage.5.short	آتش فشاں
+stage.5.tagline	ہر کنارا KO · میگما جھیل سے آگ پھوٹتی ہے
+stage.6.name	دیوقامت پرندے کا گھونسلا
+stage.6.short	پرندے کا گھونسلا
+stage.6.tagline	افقی KO · عظیم پرندہ اکھاڑے کو جھاڑ دیتا ہے
+stage.7.name	ویران سمندری یادگار
+stage.7.short	سمندر
+stage.7.tagline	ہر کنارا KO · وہیل نیچے آتی ہے، سیڑھیوں پر اتریں
+end.opponent_left	آپ کا مخالف میچ چھوڑ گیا۔
+end.opponent_timeout	آپ کے مخالف نے جواب دینا بند کر دیا۔
+end.connection_lost	آپ کے مخالف سے کنکشن ٹوٹ گیا۔
+end.you_left	آپ نے میچ چھوڑ دیا۔
+end.desync	دونوں گیمز میں فرق آ گیا (desync): کوئی نتیجہ نہیں۔
+end.unconfirmed	میچ کے اختتام کی تصدیق نہیں ہو سکی: کوئی نتیجہ نہیں۔
+end.handshake_failed	میچ شروع نہیں ہو سکا۔
+end.peer_never_started	آپ کا مخالف کبھی میچ میں شامل نہیں ہوا: کوئی نتیجہ نہیں۔
+end.too_slow	کنکشن کھیلنے کے لیے بہت سست تھا: کوئی نتیجہ نہیں۔
+end.host_left	میزبان میچ چھوڑ گیا: کوئی نتیجہ نہیں۔
+end.dropped	آپ کا کنکشن میچ سے کٹ گیا۔
+status.aura	ہالہ {0}
+status.fire_ring	آگ کا دائرہ {0}
+status.tailwind	موافق ہوا
+status.guard_broken	دفاع ٹوٹ گیا {0} سیکنڈ
+status.guard	دفاع {0}%
+status.reloading	دوبارہ بھرنا {0} سیکنڈ
+status.recharging	چارج {0} سیکنڈ
+status.hexed	جادو زدہ
+status.armor_break	زرہ -15%
+hud.perform	کریں: {0}
+hud.times_up	وقت ختم!
+rewards.no_contest	کوئی نتیجہ نہیں: کوئی انعام نہیں
+rewards.pve_victory	PvE جیت  +{0}
+rewards.pve_match	PvE میچ  +{0}
+rewards.victory	جیت  +{0}
+rewards.match_played	کھیلا گیا میچ  +{0}
+rewards.posture	اچھا انداز {0}%  +{1}
+hud.revived	دوبارہ زندہ
+quest.win	3 میچ جیتیں
+quest.pve	CPU کو دو بار ہرائیں (PvE)
+quest.combo	10 مکمل کامبو لگائیں
+quest.ult	اشاروں سے 3 Ultimate چلائیں
+quest.parry	5 حملے پیری کریں
+quest.posture	80%+ اچھے انداز کے ساتھ ایک میچ مکمل کریں
+rewards.quest	مشن: {0}  +{1}
+bind.move_left	بائیں حرکت
+bind.move_right	دائیں حرکت
+bind.drop	نیچے اتریں / تیز گرنا
+bind.jump	چھلانگ
+bind.jump_alt	چھلانگ (متبادل)
+bind.light	ہلکا حملہ
+bind.heavy	بھاری حملہ
+bind.block	بلاک
+bind.dash	ڈیش
+bind.skill1	مہارت 1
+bind.skill2	مہارت 2
+bind.skill3	مہارت 3
+bind.ultimate	Ultimate
+bind.aim_up	اوپر نشانہ
+bind.special	خاص
+hud.rejected	مسترد: {0}
+cv.low_confidence	ٹریکنگ پر کم اعتماد
+cv.frozen	جمی ہوئی تصویر (دھوکہ؟)
+cv.snap	فوری پوز تبدیلی (میکرو؟)
+cv.ok	OK
+cam.none	کوئی کیمرا نہیں ملا
+cam.off	کیمرا بند
+cam.starting	کیمرا شروع ہو رہا ہے...
+cam.waiting_frames	کیمرے کے فریمز کا انتظار - سسٹم سیٹنگز > پرائیویسی > کیمرا میں Unity کو کیمرے تک رسائی دیں
+cam.live	کیمرا لائیو ({0}x{1})
+pose.simulated	نقلی (کی بورڈ پوز)
+pose.camera_off	کیمرا ٹریکنگ بند - کی بورڈ سے نقلی پوز استعمال ہو رہے ہیں
+pose.model_failed	پوز ماڈل ناکام: {0}
+pose.loading	پوز ماڈل لوڈ ہو رہا ہے...
+pose.live	لائیو جسم ٹریکنگ (MoveNet، {0} Hz)
+pose.step_back	کیمرا آن - پیچھے ہٹیں تاکہ آپ کے کندھے نظر آئیں
+account.finish_browser	براؤزر میں سائن ان مکمل کریں (Google کے ساتھ جاری رکھیں چنیں)...
+account.signed_out_again	سائن آؤٹ ہو گئے۔ اپنا اکاؤنٹ استعمال کرنے کے لیے دوبارہ سائن ان کریں۔
+account.signed_in_kept	سائن ان ہو گئے۔ آپ کا نام اور پیش رفت اسی اکاؤنٹ کے ساتھ رہے گی۔

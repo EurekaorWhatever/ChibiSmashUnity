@@ -1,0 +1,257 @@
+lang.backdrop	SPRÅK
+lang.title	VÄLJ DITT SPRÅK
+lang.subtitle	Hela spelet använder det här språket. Du kan ändra det när som helst under INSTÄLLNINGAR.
+lang.search_hint	Sök språk...
+lang.no_match	Inget språk matchar din sökning.
+lang.english_text	Engelsk text tills vidare
+lang.confirm	BEKRÄFTA  ·  {0}
+lang.confirm_none	BEKRÄFTA
+lang.pad_hint	Skriv för att söka · Upp / Ner för att välja · Enter eller A på handkontroll = bekräfta
+common.cancel	AVBRYT
+settings.language	SPRÅK  ·  {0}
+difficulty.dummy	Docka
+difficulty.easy	Lätt
+difficulty.medium	Medel
+difficulty.hard	Svår
+difficulty.dummy_upper	DOCKA
+difficulty.easy_upper	LÄTT
+difficulty.medium_upper	MEDEL
+difficulty.hard_upper	SVÅR
+nav.home	HEM
+nav.play	SPELA
+nav.training	TRÄNING
+nav.arcade	ARCADE
+nav.collection	SAMLING
+nav.settings	INSTÄLLNINGAR
+account.signed_in_as	Inloggad som {0}.
+account.signed_in	Inloggad.
+account.signed_out	Utloggad.
+keys.who	P{0} {1}
+keys.reserved	{0} är en pose- / hållningstangent (1 2 3, 8 9 0, numpad 7 8 9, P, -). Välj en annan.
+keys.swapped	{0};  {1} är nu {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Onlinespel är för spelare som är 13 år eller äldre.
+arcade.clear_toast	ARCADE KLARAD! Alla {0} rivaler besegrade
+precheck.too_dark	För mörkt ({0}%) - lägg till ljus
+precheck.too_bright	För ljust ({0}%) - minska bländningen
+precheck.good	Bra ({0}%)
+loading.weapon_art	Vapengrafik: {0}
+loading.fighter	Kämpe: {0}
+precheck.checking	KONTROLLERAR... {0}
+wipe.character_select	VÄLJ FIGUR
+wipe.arcade	ARCADE
+results.rematch	RETURMATCH
+results.continue	FORTSÄTT
+results.finish	AVSLUTA
+results.next_battle	NÄSTA STRID
+wipe.arcade_clear	ARCADE KLARAD
+precheck.title	KAMERAKONTROLL
+precheck.camera_unavailable	Kameran är inte tillgänglig
+precheck.simulated_feed	Simulerad bild (webbkamera av)
+precheck.upper_body_ok	Överkroppen är i bild
+precheck.step_back	Backa - axlar och höfter måste synas
+loading.interface	Gränssnittsgrafik
+loading.typefaces	Typsnitt
+loading.pose_model	Modell för posespårning
+loading.ready	Klar
+onboarding.welcome	VÄLKOMMEN!
+onboarding.your_account	DITT KONTO
+onboarding.your_name	DITT SPELARNAMN
+rooms.backdrop_create	VS LOCAL  ·  SKAPA RUM
+rooms.backdrop_join	VS LOCAL  ·  GÅ MED I RUM
+precheck.all_passed	ALLA KONTROLLER GODKÄNDA
+precheck.failed	KONTROLLEN MISSLYCKADES
+precheck.lighting	BELYSNING
+precheck.framing	BILDUTSNITT
+precheck.posture	HÅLLNING
+precheck.upright	Fint och rakt
+precheck.sit_up	Sitt rakt för bonusmynt
+common.retry	FÖRSÖK IGEN
+precheck.play_anyway	SPELA ÄNDÅ
+common.back	TILLBAKA
+precheck.ranked_note	Rankade köer kräver att den här kontrollen godkänns. Vanliga matcher kan hoppa över den.
+precheck.hint	KAMERAKONTROLL FÖRE MATCHEN
+hint.select	VÄLJ
+home.play	SPELA
+home.training	TRÄNING
+home.arcade	ARCADE
+home.collection	FIGURSAMLING
+home.settings	INSTÄLLNINGAR
+home.exit	AVSLUTA SPELET
+home.play_desc	Vs Online snabbmatch, VS Local-rum med vänner eller Vs CPU
+home.training_desc	Kamerainställning, gestträning och en träningsdocka
+home.arcade_desc	Alla fem rivaler i rad på varje bana
+home.collection_desc	Skins, vapen och den kosmetiska bannern
+home.settings_desc	Svårighetsgrad, kamerainställningar och tangenter
+home.exit_desc	Stäng spelet
+tips.1	Fyll ULT-mätaren och tryck Ultimate - gör sedan din kämpes pose framför kameran innan nedräkningen är slut.
+tips.2	Högre DEF minskar skadan från varje träff och gör ditt block starkare.
+tips.3	Bra hållning som kameran spårar ger bonusmynt efter varje match.
+tips.4	Skins och vapen är bara kosmetiska - statistiken ändras aldrig av vad en kämpe har på sig.
+tips.5	I Träning trycker du T för att fylla din ultimate. Dockan reser sig alltid igen.
+tips.6	Varje kämpe har en av två passiva förmågor - välj den i utrustningspanelen efter att du har låst.
+tips.7	Onlinestrider använder rollback-netcode: båda spelen kör samma strid utifrån samma inmatningar.
+stats.power	STYRKA
+stats.speed	FART
+stats.range	RÄCKVIDD
+stats.endurance	UTHÅLLIGHET
+stats.recovery	ÅTERHÄMTNING
+training.use_block	Block · Närstrid- & Magi-ultimate
+training.use_fireball	Eldklot · Distans- & Stångvapen-ultimate
+training.use_superjump	Superhopp · Tung ultimate
+menu.online_locked	Onlinelägen är för spelare som är 13 år eller äldre.
+menu.no_internet	Inget internet: anslut till Wi-Fi eller mobildata. VS AI fungerar offline.
+menu.four_player_soon	2v2 och Battle Royale kräver stöd för 4 spelare, som kommer i en senare uppdatering.
+profile.edit_name	ÄNDRA NAMN
+profile.win_loss	V {0}  ·  F {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	KLAR
+loading.loading	LADDAR
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   klarat x{2}
+arcade.rule_fight_all	Slåss mot alla {0} figurer i rad, i slumpmässig ordning.
+arcade.rule_difficulty	CPU-svårighetsgrad: {0} (ändra den under Inställningar).
+arcade.final	FINAL
+arcade.round	RUNDA {0}
+training.cv_setup_source	CV-INSTÄLLNING · {0}
+training.status	Kamera: {0}\nSpårning: {1}\nUpptäckt: {2}
+training.off	av
+training.none	inget
+training.status_posture	   ·   Hållning {0}%   ·   Telemetri {1}
+collection.gold_cinematic_suffix	 · GULDSEKVENS
+collection.only	BARA {0}
+collection.pull1	DRA x1  ·  {0}
+collection.pull10	DRA x10  ·  {0}
+collection.dup_suffix	  (dubblett +20)
+collection.new_suffix	  NY!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} sekunder  <size=12><color=#9AA6BC>(fast för varje match)</color></size>
+settings.change_name_as	BYT NAMN  ·  {0}
+settings.change_name	BYT NAMN
+settings.keys_help	Klicka på en tilldelning och tryck sedan på en tangent eller klicka på rutan med en musknapp (Esc / B på handkontroll / klick någon annanstans avbryter; 5 s tidsgräns). Om någon spelare redan använder den byter de två plats.\nKameraposer: korsade armar = block · arm ut åt sidan = eldklot · båda händerna upp = superhopp (tangentbordsposer: 1/2/3 och 8/9/0).
+rarity.common	VANLIG
+rarity.rare	SÄLLSYNT
+rarity.epic	EPISK
+rarity.legendary	LEGENDARISK
+skin.default	Klassisk
+skin.mint	Mintpop
+skin.shadow	Skugga
+skin.sakura	Sakura
+skin.inferno	Inferno
+skin.celestial	Himmelsk
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	BARA 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nLAG
+play.four_player_later	2v2 och Battle Royale kommer med stöd för 4 spelare i en senare uppdatering.
+play.team_tag	4P · 2 LAG
+play.royale_tag	4P · ALLA MOT ALLA
+collection.all_fighters	ALLA KÄMPAR
+arcade.mode	ARCADELÄGE
+home.tagline	ARENAFIGHTINGSPEL  ·  ULTIMATES MED KROPPSGESTER
+play.royale_card	BATTLE\nROYALE
+training.kicker	KAMERAINSTÄLLNING & TRÄNING
+settings.camera_tracking	KAMERASPÅRNING (WEBBKAMERA)
+training.camera_off	KAMERASPÅRNING: AV
+training.camera_on	KAMERASPÅRNING: PÅ
+collection.hint	FIGURSAMLING
+play.choose_style	VÄLJ EN SPELSTIL
+online.kicker	VÄLJ EN SPELSTIL  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	VÄLJ DIN STRID  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	KOMMER SNART
+training.cv	DATORSEENDE
+online.connection	ANSLUTNING
+collection.banner	KOSMETISK BANNER
+settings.cpu_difficulty	CPU-SVÅRIGHETSGRAD
+play.create_join	SKAPA · GÅ MED I RUM
+settings.cv_overlay	CV-ÖVERLÄGG I MATCH
+quests.coins_note	Mynt får du bara genom att spela: vinster, PvE, uppdrag och bra hållning som kameran spårar.
+collection.odds	Vanlig 60% · Sällsynt 28% · Episk 10% · Legendarisk 2%
+collection.equip	UTRUSTA
+collection.equipped	UTRUSTAD
+hint.exit	AVSLUTA
+home.exit_upper	AVSLUTA SPELET
+exit.title	AVSLUTA SPELET?
+online.royale_desc	Alla mot alla. Den sista kämpen som står kvar vinner.
+arcade.kicker	FEM RIVALER · ETT FÖRSÖK
+loading.for_battle	TILL STRID
+online.invites_note	Rumsinbjudningar från vänner dyker upp här. Rum med vänner finns under SPELA > VS LOCAL.
+settings.kicker	SPEL · KAMERA · KONTROLLER
+training.gestures_live	GESTER  (gör posen framför kameran - slag = en arm rakt ut åt sidan)
+training.gestures_sim	GESTER  (håll tangenten för att simulera posen)
+settings.key_bindings	TANGENTER
+settings.keys_reset	Tangenterna återställda till standard
+play.locked	LÅST
+arcade.rule_retry	Förlorat en runda? Fortsätt och försök igen.
+home.hint	HUVUDMENY
+settings.master_volume	HUVUDVOLYM
+settings.match_time	MATCHTID
+play.matchmaking_card	VS\nLOCAL
+hint.move	FLYTTA
+play.matchmaking_desc	Skapa ett rum, dela koden eller bjud in vänner med namn.
+play.no_internet_tag	INGET INTERNET
+online.no_internet_body	Inget internet just nu. Anslut till Wi-Fi eller mobildata, eller spela Vs CPU.
+common.off	AV
+online.offline	OFFLINE
+common.on	PÅ
+settings.player1	SPELARE 1
+settings.player2	SPELARE 2
+training.practice_dummy	TRÄNA MOT DOCKA
+settings.precheck	KAMERAKONTROLL FÖRE MATCHEN
+loading.prepare	GÖR DIG REDO
+settings.listening_hint	TRYCK PÅ EN TANGENT ELLER KLICKA PÅ RUTAN  ·  ESC / B PÅ HANDKONTROLL AVBRYTER  ·  HANDKONTROLLENS KNAPPAR KAN INTE TILLDELAS
+training.slouch_note	Tryck P för att slå på/av en hopsjunken hållning och se hållningspoängen sjunka.
+settings.profile_reset	Profilen återställd (namn och inloggning behålls)
+collection.pull_to_unlock	Dra för att låsa upp
+quests.title	UPPDRAG
+online.quick_match	SNABBMATCH
+play.online_desc	Snabbmatch mot en spelare nära dig, eller svara på en väns inbjudan.
+online.solo_desc	Snabbmatch: slåss mot en spelare som söker nu, närmast först.
+settings.reset_keys	ÅTERSTÄLL TANGENTER
+settings.reset_profile	ÅTERSTÄLL PROFIL
+arcade.rival_unknown	RIVAL  ???
+play.rooms_tag	RUM · 2-4 SPELARE
+online.rollback_body	Rollback-netcode: båda spelen kör samma strid utifrån samma inmatningar, så den förblir snabb och rättvis.
+settings.screen_shake	SKÄRMSKAKNING
+profile.set_name	VÄLJ NAMN
+settings.sfx_volume	EFFEKTVOLYM
+training.simulate_pose	SIMULERA POSE
+collection.kicker	SKINS · VAPEN · KOSMETISK BANNER
+training.slouch	HOPSJUNKEN
+online.solo_card	SOLO\n1V1
+home.start	START
+arcade.start	STARTA ARCADE
+exit.stay	STANNA
+settings.sure	SÄKER?
+settings.sure_reset_profile	SÄKER? ALLA FRAMSTEG FÖRSVINNER
+collection.banner_note	Bara skins och ultimate-sekvenser. Statistiken är densamma på alla skins - inget ligger bakom betalvägg.
+hint.tabs	FLIKAR
+loading.tip	TIPS
+training.hint	TRÄNING  /  CV-INSTÄLLNING
+arcade.rule_stages	Banan byts varje runda, från Begynnelsens berg till Havsmonumentet.
+online.team_desc	Två lag med två. Ingen eld mot egna: dina träffar skadar aldrig din lagkamrat.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  SPELSTIL
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Vinster ger mynt och uppdragsframsteg, precis som VS CPU.
+exit.saved_note	Din profil, dina mynt och din samling sparas på den här enheten.
+settings.key_listening	tangent eller klicka här
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Du väljer din kämpe och LÄTT, MEDEL eller SVÅR. CPU:n får en slumpmässig kämpe.
+account.keep_name_body	Logga in med ditt Google-konto så följer ditt namn och din info med dig: varje gång du öppnar spelet, och på vilken dator som helst. Ett annat Google-konto får ett eget nytt namn.
+name.you_are	Du är {0}!
+name.you_are_unchecked	Du är {0}! Vi kontrollerar namnet när du spelar online.
+online.could_not_start	Matchen kunde inte starta ({0}).
+rooms.your_rooms	DINA RUM
+rooms.count_click	{0}  ·  klicka på ett rum för att öppna det
+rooms.code_value	KOD  {0}
+rooms.players_count	{0} / {1} SPELARE
+rooms.more	+ {0} rum till
+rooms.created	Rummet "{0}" har skapats. Klicka på det för att dela koden eller bjuda in vänner.
+quick.searching	SÖKER
+quick.looking_in	SÖKER I:  {0}
+room.kicker	RUM  ·  2-4 SPELARE  ·  {0}
+room.battle_royale	BATTLE ROYALE

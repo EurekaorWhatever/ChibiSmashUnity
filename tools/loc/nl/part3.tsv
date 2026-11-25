@@ -1,0 +1,255 @@
+region.eastern_africa	Oost-Afrika
+region.middle_africa	Centraal-Afrika
+region.southern_africa	Zuidelijk Afrika
+region.western_africa	West-Afrika
+region.caribbean	Caraïben
+region.central_america	Midden-Amerika
+region.south_america	Zuid-Amerika
+region.northern_america	Noord-Amerika
+region.central_asia	Centraal-Azië
+region.eastern_asia	Oost-Azië
+region.south_eastern_asia	Zuidoost-Azië
+region.southern_asia	Zuid-Azië
+region.western_asia	West-Azië
+region.eastern_europe	Oost-Europa
+region.northern_europe	Noord-Europa
+region.southern_europe	Zuid-Europa
+region.western_europe	West-Europa
+region.australia_and_new_zealand	Australië en Nieuw-Zeeland
+region.melanesia	Melanesië
+region.micronesia	Micronesië
+region.polynesia	Polynesië
+net.joined_connecting	Binnen in "{0}". Verbinden met de host...
+net.opponent_unreachable	Kon je tegenstander niet bereiken: {0}
+net.quick_filling	{0} van {1} spelers. Start over {2} s...
+invite.inviting	{0} uitnodigen...
+invite.sent_lasts	Uitnodiging verstuurd naar {0}. Hij is {1} seconden geldig.
+invite.send_failed	Kon de uitnodiging niet versturen: {0}
+invite.joining_room_of	Kamer van {0} betreden...
+invite.paused	Uitnodigingen {0} minuten gepauzeerd.
+invite.invited_you	{0} heeft je uitgenodigd voor "{1}".
+invite.ran_out	Je uitnodiging aan {0} is verlopen.
+friends.choose_name	Kies een spelersnaam zodat vrienden je kunnen vinden.
+friends.unavailable	Vrienden niet beschikbaar: {0}
+friends.your_name_is	Je naam is {0}. Geef hem aan vrienden zodat ze je kunnen toevoegen.
+friends.set_name_failed	Kon de naam niet instellen: {0}
+friends.request_sent	Vriendschapsverzoek verstuurd naar {0}.
+friends.add_failed	Kon {0} niet toevoegen: {1}
+friends.offline	{0} is nu offline.
+friends.request_then_invite	Vriendschapsverzoek verstuurd naar {0}. De uitnodiging gaat eruit zodra het verzoek is geaccepteerd.
+friends.unreachable	Kon {0} niet bereiken: {1}
+friends.creating_room_for	Kamer maken voor {0}...
+friends.joining	Meedoen met {0}...
+friends.declined	{0} heeft de uitnodiging geweigerd.
+friends.version_mismatch	{0} heeft je uitgenodigd, maar gebruikt een andere versie van het spel.
+friends.invite_sent_waiting	Uitnodiging verstuurd naar {0}. Wachten tot diegene binnenkomt...
+name.too_short	Naam is te kort (minstens {0} tekens).
+name.too_long	Naam is te lang (hoogstens {0} tekens).
+rooms.name_too_short	Kamernaam is te kort (minstens {0} tekens).
+rooms.name_too_long	Kamernaam is te lang (hoogstens {0} tekens).
+net.bad_code	Dat is geen geldige kamercode (alleen letters en cijfers).
+net.version_mismatch	Die kamer is gemaakt met een andere versie van Chibi Clash. Beide spelers hebben dezelfde versie nodig.
+net.loading_room	Kamer laden...
+net.room_closed	Kamer gesloten.
+net.you_left	Je hebt de kamer verlaten.
+net.waiting_host_game	Starten... wachten op het spel van de host.
+net.choose_next_fight	Kies je vechter en druk op OK voor het volgende gevecht.
+net.host_changed_stage	De host heeft de speelveldinstellingen gewijzigd. Druk opnieuw op OK.
+net.room_closed_host_left	De kamer is gesloten (de host is vertrokken).
+net.starting_fight	Het gevecht start...
+net.player_left_joined	Een speler is vertrokken of binnengekomen.
+net.no_connection	Geen verbinding.
+net.fight_could_not_start	Het gevecht kon niet starten.
+net.fight_starting_wait	Het gevecht start! Wachten tot je vriend verbinding maakt...
+net.choose_press_ok	Kies je vechter en druk op OK.
+net.too_many_starts	Te vaak gestart. Wacht een minuut en druk dan op GEVECHT STARTEN.
+net.fight_starting_connecting	Het gevecht start! Verbinden...
+net.could_not_connect	Kon geen verbinding maken.
+net.friend_no_answer	Je vriend reageerde niet.
+net.start_cancelled	Start geannuleerd.
+net.friend_no_connect	Je vriend heeft geen verbinding gemaakt.
+net.enter_code	Voer de kamercode in die je vriend laat zien.
+net.lan_browser	LAN-spelen is niet beschikbaar in de browser. Gebruik KAMERS of VS LOCAL, of de pc-versie voor LAN.
+net.enter_ip	Voer het IP-adres van de host in.
+net.this_pc_ip	het IP van deze pc
+net.signing_in	Inloggen...
+net.creating_private	Een privékamer maken...
+net.hosting_one	Geen open wedstrijd gevonden, er wordt er een gehost...
+net.needs_2_to_4	Een gevecht heeft 2 tot 4 spelers nodig.
+net.waiting_friend	Wachten tot je vriend verbinding maakt...
+net.waiting_friends	Wachten tot je vrienden verbinding maken...
+net.connection_running	Er loopt nog een andere verbinding.
+net.no_valid_info	De kamer heeft geen geldige verbindingsgegevens (is de host weg?).
+net.connecting_host	Verbinden met de host...
+net.already_full	Die kamer is al vol.
+net.no_info	De kamer heeft geen verbindingsgegevens (is de host weg?).
+net.player_left_searching	Die speler is vertrokken. Opnieuw zoeken...
+net.connected	Verbonden!
+net.relay_failed	De verbinding met de Relay-server is mislukt.
+net.opponent_timeout	Kon je tegenstander niet bereiken (time-out).
+net.no_internet	Geen internetverbinding. Maak verbinding met wifi of mobiele data om overal met vrienden te spelen. (LAN-spelen werkt op hetzelfde netwerk.)
+invite.wait	Wacht even voordat je nog een uitnodiging stuurt.
+invite.type_name	Typ de spelnaam van je vriend (3-16 letters, cijfers of _).
+invite.own_name	Dat is je eigen naam.
+invite.open_room_first	Open eerst je kamer en nodig dan uit.
+invite.room_full	Je kamer is al vol.
+invite.could_not_send	Kon de uitnodiging niet versturen.
+invite.too_many	Te veel uitnodigingen op dit moment. Probeer het over een paar seconden opnieuw.
+invite.cancelled	Uitnodiging geannuleerd.
+invite.expired	Die uitnodiging is verlopen.
+invite.closed_full	Je kamer is vol. Uitnodiging gesloten.
+invite.closed_joined	Er is een speler in je kamer gekomen. Uitnodiging gesloten.
+invite.closed_room	Uitnodiging geannuleerd: de kamer is gesloten.
+name.taken	Deze naam is al bezet
+name.check_unavailable	Kon je naam niet online controleren. Controleer je internet en probeer opnieuw.
+name.too_soon	Je hebt je naam net gewijzigd. Probeer het over een minuut opnieuw.
+name.choose_different	Kies een andere naam.
+friends.type_tag	Typ de naam van je vriend zoals Kira#4821.
+friends.added	Vriend toegevoegd.
+friends.declined_request	Verzoek geweigerd.
+friends.removed	Vriend verwijderd.
+friends.blocked	Speler geblokkeerd.
+friends.a_friend	Een vriend
+friends.type_player_tag	Typ de naam van de speler zoals Kira#4821.
+friends.wait_invite	Wacht even voordat je opnieuw uitnodigt.
+name.enter	Voer een naam in.
+name.bad_chars	Gebruik alleen letters, cijfers en _ (geen spaties of symbolen).
+rooms.name_bad_chars	Kamernamen gebruiken alleen letters, cijfers, spaties en _ - ' !.
+rooms.name_double_space	Kamernamen mogen geen dubbele spaties hebben.
+rooms.name_choose_different	Kies een andere kamernaam.
+gesture.cross_arms	ARMEN KRUISEN
+gesture.punch_forward	STOOT NAAR VOREN
+gesture.raise_hands	BEIDE HANDEN OMHOOG
+class.kaia.passive1_desc	+15% aanvalssnelheid
+class.kaia.passive2_desc	5% levensroof
+class.kaia.skill1_desc	Schiet naar voren en steek in de tegenstander
+class.kaia.skill2_desc	Perfecte timing kaatst schade terug
+class.kaia.skill3_desc	Steek vele keren snel
+class.kaia.ult_desc	10 s: normale aanvallen ontketenen een horizontale golf
+class.bruna.passive1_desc	+20% schade, -15% aanvalssnelheid
+class.bruna.passive2_desc	+20% schade, -15% bewegingssnelheid
+class.bruna.skill1_desc	Grijp de tegenstander en smijt hem tegen de grond
+class.bruna.skill2_desc	Draai als een tornado en raak herhaaldelijk
+class.bruna.ult_desc	Sla op de vloer en veroorzaak een schokgolf
+class.ren.passive1_desc	+20% kans op kritieke treffer
+class.ren.passive2_desc	+10% bewegingssnelheid gedurende 10 s (30 s afkoeling)
+class.ren.skill1_desc	Schiet horizontaal achteruit en vuur
+class.ren.skill2_desc	Wurg een nabije tegenstander en duw hem weg
+class.ren.skill3_desc	Vuur horizontaal een pijlenregen af
+class.ren.ult_desc	Eén pijl vermenigvuldigt zich tot een pijlenstorm
+class.lyra.passive1_desc	10% kans bij treffer: -15% beweging, -10% schade, -15% aanvalssnelh.
+class.lyra.passive2_desc	20% kans om schade te blokkeren
+class.lyra.skill1_desc	Vuur een zoekend vuurprojectiel af
+class.lyra.skill2_desc	Roep 3 handlangers op
+class.lyra.skill3_desc	Een wolk volgt de vijand en slaat toe met donder
+class.lyra.ult_desc	10 s vuurring: verbrandt vijanden, blokkeert projectielen
+class.taro.passive1_desc	10% kans bij treffer: -15% vijandelijke verdediging
+class.taro.passive2_desc	Na 3 s zonder aanvallen: volgende treffer +50%
+class.taro.skill1_desc	Strek uit, spring en zwaai omlaag
+class.taro.skill2_desc	Laat het stokwapen draaien om projectielen te blokkeren
+class.taro.skill3_desc	Gooi de speer en roep hem terug
+class.taro.ult_desc	Steek de vijand en trap de steel er dieper in
+char.kaia.role	Wendbare aanvaller
+char.kaia.style	Snel, mobiel gevecht van dichtbij met precieze, aaneen te rijgen halen.
+char.bruna.role	Vechtersbaas
+char.bruna.style	Vechter met hoge schade en hoge taaiheid die de ruimte beheerst met zware aanvallen.
+char.ren.role	Wendbare scherpschutter
+char.ren.style	Zonebeheersing met hoge mobiliteit en precieze druk dankzij veelzijdige pijltechnieken.
+char.lyra.role	Zonebeheersing / opbouw
+char.lyra.style	Wendbare spreukenwever die de ruimte beheerst met snelle spreuken, listige mobiliteit en precieze magie.
+char.taro.role	Bereikspecialist
+char.taro.style	Gedisciplineerde, mobiele controle met druk op grote afstand en precieze slagen.
+stage.0.name	Hemeldojo
+stage.0.short	Hemeldojo
+stage.0.tagline	Bergheiligdom boven de wolken
+stage.1.name	Neonstad
+stage.1.short	Neonstad
+stage.1.tagline	Dakarena in neonregen
+stage.2.name	Lavasmidse
+stage.2.short	Lavasmidse
+stage.2.tagline	Gesmolten gieterij boven een lavazee
+stage.3.name	Berg van het Begin
+stage.3.short	Berg
+stage.3.tagline	Verticale KO · bewegende jadeplatforms boven een mistige afgrond
+stage.4.name	Vlakte van Eenheid
+stage.4.short	Vlakte
+stage.4.tagline	Horizontale KO · één lang veld, nergens om je te verstoppen
+stage.5.name	De Vulkaanafgrond
+stage.5.short	Vulkaan
+stage.5.tagline	Elke rand is KO · vuur barst uit het magmameer
+stage.6.name	Het Hol van de Reuzenvogel
+stage.6.short	Vogelhol
+stage.6.tagline	Horizontale KO · de kolossale vogel veegt over de arena
+stage.7.name	Het Verlaten Oceaanmonument
+stage.7.short	Oceaan
+stage.7.tagline	Elke rand is KO · de walvis daalt af, spring naar de terrassen
+end.opponent_left	Je tegenstander heeft de wedstrijd verlaten.
+end.opponent_timeout	Je tegenstander reageert niet meer.
+end.connection_lost	De verbinding met je tegenstander is verbroken.
+end.you_left	Je hebt de wedstrijd verlaten.
+end.desync	De twee spellen kwamen niet overeen (desync): geen uitslag.
+end.unconfirmed	Het einde van de wedstrijd kon niet worden bevestigd: geen uitslag.
+end.handshake_failed	De wedstrijd kon niet starten.
+end.peer_never_started	Je tegenstander is nooit in de wedstrijd gekomen: geen uitslag.
+end.too_slow	De verbinding was te traag om te spelen: geen uitslag.
+end.host_left	De host heeft de wedstrijd verlaten: geen uitslag.
+end.dropped	Je verbinding viel weg uit de wedstrijd.
+status.aura	AURA {0}
+status.fire_ring	VUURRING {0}
+status.tailwind	RUGWIND
+status.guard_broken	DEKKING GEBROKEN {0} s
+status.guard	DEKKING {0}%
+status.reloading	HERLADEN {0} s
+status.recharging	OPLADEN {0} s
+status.hexed	BEHEKST
+status.armor_break	PANTSER -15%
+hud.perform	Voer uit: {0}
+hud.times_up	De tijd is om!
+rewards.no_contest	Geen uitslag: geen beloningen
+rewards.pve_victory	PvE-overwinning  +{0}
+rewards.pve_match	PvE-wedstrijd  +{0}
+rewards.victory	Overwinning  +{0}
+rewards.match_played	Wedstrijd gespeeld  +{0}
+rewards.posture	Goede houding {0}%  +{1}
+hud.revived	TERUG TOT LEVEN
+quest.win	Win 3 wedstrijden
+quest.pve	Versla de CPU twee keer (PvE)
+quest.combo	Maak 10 volledige combo's
+quest.ult	Activeer 3 gebaren-ultimates
+quest.parry	Pareer 5 aanvallen
+quest.posture	Rond een wedstrijd af met 80%+ goede houding
+rewards.quest	Missie: {0}  +{1}
+bind.move_left	Naar links
+bind.move_right	Naar rechts
+bind.drop	Zakken / snel vallen
+bind.jump	Springen
+bind.jump_alt	Springen (alt.)
+bind.light	Lichte aanval
+bind.heavy	Zware aanval
+bind.block	Blokkeren
+bind.dash	Dash
+bind.skill1	Vaardigheid 1
+bind.skill2	Vaardigheid 2
+bind.skill3	Vaardigheid 3
+bind.ultimate	Ultimate
+bind.aim_up	Omhoog richten
+bind.special	Speciaal
+hud.rejected	Geweigerd: {0}
+cv.low_confidence	Lage trackingzekerheid
+cv.frozen	Bevroren beeld (vervalsing?)
+cv.snap	Directe posewissel (macro?)
+cv.ok	OK
+cam.none	Geen camera gevonden
+cam.off	Camera uit
+cam.starting	Camera start...
+cam.waiting_frames	Wachten op camerabeelden - geef Unity toegang tot de camera via Systeeminstellingen > Privacy > Camera
+cam.live	Camera live ({0}x{1})
+pose.simulated	Gesimuleerd (toetsenbordposes)
+pose.camera_off	Cameratracking uit - toetsenbordgesimuleerde poses worden gebruikt
+pose.model_failed	Posemodel mislukt: {0}
+pose.loading	Posemodel laden...
+pose.live	Live lichaamstracking (MoveNet, {0} Hz)
+pose.step_back	Camera aan - stap achteruit zodat je schouders in beeld zijn
+account.finish_browser	Rond het inloggen af in je browser (kies Doorgaan met Google)...
+account.signed_out_again	Uitgelogd. Log opnieuw in om je account te gebruiken.
+account.signed_in_kept	Ingelogd. Je naam en voortgang blijven bij dit account.

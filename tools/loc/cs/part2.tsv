@@ -1,0 +1,257 @@
+room.ready_to_fight	PŘIPRAVENI K BOJI
+room.full_suffix	 · MÍSTNOST PLNÁ
+room.waiting	ČEKÁ SE NA HRÁČE
+room.joined	{0}  ·  {1} / {2} PŘIPOJENO
+room.host	HOSTITEL
+room.player_n	HRÁČ {0}
+room.you_suffix	 · TY
+room.hazards_host_pick	{0} · VOLBA HOSTITELE
+room.hazards_on	NEBEZPEČÍ ZAP
+room.hazards_off	NEBEZPEČÍ VYP
+room.code_copied	Kód místnosti {0} zkopírován. Vlož ho kamarádovi.
+invite.body	{0} tě zve do {1}   ({2} s)
+select.ult_name	ULT  {0}
+age.title	KOLIK TI JE LET?
+age.body	Každý věk může hrát každý režim. Tvůj věk se ukládá s hráčským jménem pro herní statistiky.
+common.next	DALŠÍ
+age.error	Napiš svůj věk nebo ho nastav D-padem.
+age.pad_hint	Ovladač: D-pad nahoru/dolů mění o 1, vlevo/vpravo o 10 · A = další
+rooms.enter_name	ZADEJ NÁZEV MÍSTNOSTI
+rooms.name_rules	3-24 písmen, číslic nebo mezer. Přátelé ho uvidí při připojení. Místnosti mají 2 až 4 hráče.
+rooms.create	VYTVOŘIT
+common.one_moment	MOMENT...
+account.keep_name	ZACHOVEJ SI JMÉNO BOJOVNÍKA
+account.finish_in_browser	DOKONČI V PROHLÍŽEČI...
+account.sign_in_google	PŘIHLÁSIT SE PŘES GOOGLE
+account.play_without	HRÁT BEZ ÚČTU
+name.choose_first	Nejdřív si vyber hráčské jméno.
+common.cancelled	Zrušeno.
+name.welcome	VÍTEJ, BOJOVNÍKU! JAK SE JMENUJEŠ?
+name.change_title	ZMĚŇ SI JMÉNO
+name.rules	3-16 písmen, číslic nebo _. Vyber si zábavné jméno bojovníka, ne své skutečné jméno. Podle něj tě přátelé najdou a pozvou a tohle uvidí všichni.
+name.suggest	NAVRHNOUT
+name.checking	KONTROLA...
+name.lets_fight	JDEME BOJOVAT!
+common.save	ULOŽIT
+name.pad_hint_first	Ovladač: A = jdeme bojovat · Y = navrhnout jméno
+name.pad_hint	Ovladač: A = uložit · Y = navrhnout jméno
+online.connected_agreeing	Připojeno. Domlouvá se zápas...
+online.host_settings_changed	Nastavení hostitele se změnilo — připoj se k místnosti znovu.
+online.version_mismatch	Tvůj soupeř má jinou verzi hry. Oba hráči potřebují stejnou verzi.
+rooms.title	VS LOCAL
+rooms.kicker	MÍSTNOSTI  ·  2-4 HRÁČI  ·  VYTVOŘIT · PŘIPOJIT · POZVAT PODLE JMÉNA
+rooms.create_rooms	VYTVOŘIT MÍSTNOSTI
+rooms.join_room	PŘIPOJIT SE K MÍSTNOSTI
+rooms.creating	VYTVÁŘÍ SE TVOJE MÍSTNOST...
+rooms.loading	NAČÍTAJÍ SE TVOJE MÍSTNOSTI...
+rooms.none_yet	Zatím žádná místnost!
+rooms.one_moment	Moment.
+rooms.empty_help	Stiskni VYTVOŘIT MÍSTNOSTI a vytvoř si jednu, nebo PŘIPOJIT SE K MÍSTNOSTI s kódem od přítele.
+rooms.capacity_note	Místnosti mají 2 až 4 hráče. Pozvi přátele podle jejich hráčského jména.
+rooms.invites_paused	Pozvánky do místností jsou na pár minut pozastavené
+rooms.refresh	OBNOVIT
+rooms.hint	VS LOCAL  ·  MÍSTNOSTI
+rooms.new	NOVÁ
+rooms.you_host	JSI HOSTITEL
+rooms.open	OTEVŘÍT
+join.enter_code	ZADEJ KÓD MÍSTNOSTI
+join.body	Napiš nebo vlož kód místnosti, který ti poslal přítel (Discord, chat...).
+join.paste	VLOŽIT
+join.join	PŘIPOJIT
+join.bad_code	To není kód místnosti. Zkontroluj ho a zkus to znovu (jen písmena a číslice).
+rooms.fight_starting	Začíná boj v místnosti. Počkej na něj, nebo nejdřív opusť místnost.
+quick.kicker	VS ONLINE  ·  SÓLO 1V1  ·  HRÁČ VE TVÉ BLÍZKOSTI
+quick.player_found	HRÁČ NALEZEN!
+quick.search_failed	HLEDÁNÍ SELHALO
+quick.not_searching	NEHLEDÁ SE
+quick.connecting	Připojování k soupeři...
+quick.searching_near	Hledá se hráč ve tvé blízkosti
+quick.stopped	Hledání se zastavilo. Zkus to znovu.
+quick.press_search_again	Stiskni HLEDAT ZNOVU a najdi hráče.
+quick.privacy	Rychlý zápas sdílí tvou zemi (z nastavení zařízení), nikdy ne tvou polohu.
+quick.search_again	HLEDAT ZNOVU
+quick.hint	VS ONLINE  ·  RYCHLÝ ZÁPAS
+room.kicker_opening	MÍSTNOST  ·  OTEVÍRÁ SE MÍSTNOST...
+room.opening	Otevírá se místnost...
+room.your_fighter	TVŮJ BOJOVNÍK
+room.locked_in	POTVRZENO
+room.everyone_ok	Všichni stisknou OK: boj začne sám.
+room.share_code	Sdílej kód, nebo pozvi přátele podle jména.
+room.empty_seat	Volné místo
+room.stage_you	ARÉNA (vybíráš ty)
+room.stage_host	ARÉNA (vybírá hostitel)
+common.ok	OK
+room.loading	NAČÍTÁNÍ...
+room.change	ZMĚNIT
+room.starting	SPOUŠTÍ SE...
+room.start_fight	ZAČÍT BOJ
+room.close	ZAVŘÍT MÍSTNOST
+room.leave	OPUSTIT MÍSTNOST
+room.hint	VS LOCAL  ·  MÍSTNOST
+room.code	KÓD
+room.copy	KOPÍROVAT
+room.host_can_invite	Hostitel může pozvat přítele podle jména.
+room.invite_by_name	POZVAT PŘÍTELE PODLE JMÉNA
+room.invite	POZVAT
+room.full	Místnost je plná.
+invite.title	POZVÁNKA DO MÍSTNOSTI
+invite.warning	Jména se nekontrolují: přijímej pozvánky jen od lidí, které znáš.
+invite.accept	PŘIJMOUT
+invite.decline	ODMÍTNOUT
+room.hazards_on_btn	NEBEZPEČÍ  ZAP
+room.hazards_off_btn	NEBEZPEČÍ  VYP
+select.passive	PASIVNÍ
+select.look	VZHLED
+select.cosmetic	KOSMETIKA
+select.arcade_round	ARCADE  ·  KOLO {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   OVLADAČ 1 = 1P, OVLADAČ 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	FIGURÍNA
+select.round_rival	SOUPEŘ V KOLE {0}
+select.picks_at_start	VYBÍRÁ NA ZAČÁTKU BOJE
+select.signature_weapon	TYPICKÁ ZBRAŇ  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  PORAŽEN
+select.arcade_route	TRASA ARCADE  ·  ARÉNA {0} / {1}
+select.select_stage	VYBRAT ARÉNU
+select.local_versus	LOKÁLNÍ SOUBOJ
+select.arcade_rival	SOUPEŘ ARCADE
+select.training_dummy	TRÉNINKOVÁ FIGURÍNA
+select.stage	ARÉNA
+select.hazards	NEBEZPEČÍ
+select.fight	BOJ
+select.change	ZMĚNIT
+select.confirm	POTVRDIT
+select.random	NÁHODNĚ
+select.fate	NECH TO NA OSUDU
+select.ready_bang	PŘIPRAVEN!
+select.loadout	VYBAVENÍ
+select.waiting_1p	ČEKÁ SE NA 1P
+select.1p_picks_dummy	1P VYBÍRÁ FIGURÍNU
+select.selecting	VYBÍRÁ
+select.identity_hidden	TOTOŽNOST SKRYTÁ
+select.revealed_at_start	ODHALÍ SE NA ZAČÁTKU KOLA
+select.ai_picks	AI SI VYBÍRÁ BOJOVNÍKA
+select.random_every_fight	NÁHODNÁ POSTAVA V KAŽDÉM BOJI
+select.any_character	JAKÁKOLI POSTAVA · NÁHODNÁ PASIVNÍ SCHOPNOST A ZBRAŇ
+select.lock_in_hint	POTVRDIT  ·  NEBO KLIKNI NA POSTAVU
+select.to_ready	PRO PŘIPRAVENOST
+select.cpu_difficulty_pick	OBTÍŽNOST CPU  ·  VYBER PŘED BOJEM
+select.ai_note	Internet není potřeba. AI vybírá novou postavu, pasivní schopnost a zbraň pro každý boj, i pro odvety.
+select.pad_difficulty	D-PAD NAHORU / DOLŮ  ·  OBTÍŽNOST
+select.key_difficulty	W / S  ·  OBTÍŽNOST
+select.start_training	ZAČÍT TRÉNINK
+select.fight_bang	DO BOJE!
+select.click_to_start	NEBO KLIKNI A ZAČNI S AKTUÁLNÍM VÝBĚREM
+hud.ready	PŘIPRAVTE SE...
+hud.rival	SOUPEŘ
+hud.you	TY
+hud.ultimate_ready	{0} · ULTIMATE PŘIPRAVEN
+hud.move_detected	{0} · POHYB ROZPOZNÁN
+hud.failed	{0} · NEÚSPĚCH
+hud.training_title	TRÉNINK · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  TRÉNINK
+hud.intro_online	  ·  ONLINE  ·  ESC / START: ODEJÍT
+hud.ult_ready_press	ULT PŘIPRAVEN - stiskni {0}
+hud.ult_ready	ULT PŘIPRAVEN
+hud.sim_key	sim. klávesa: {0}
+hud.poses_live	 · pózy: zkřížené ruce blok / ruka ven = ohnivá koule / ruce nahoru = skok
+hud.poses_keys	 · pózy 1 kříž / 2 úder / 3 zvednutí · P shrbení
+hud.poses_p2	 · pózy 8/9/0
+hud.training_help	TRÉNINK: T naplní ultimate · bojovníci po KO se vrátí na 0% · Esc pauza
+hud.ult_pct	ULT {0}%
+hud.last_hit	POSLEDNÍ ZÁSAH  {0}
+hud.combo_hits	KOMBO  {0} ZÁSAHŮ  +{1}%
+hud.combo	KOMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	KAMERA P1 · SIM
+hud.cv_p1_live	KAMERA P1 · ŽIVĚ
+hud.cv_p2_sim	KAMERA P2 · SIM
+hud.cv_p2_live	KAMERA P2 · ŽIVĚ
+hud.hits_prefix	{0} ZÁSAHŮ  
+results.no_contest	BEZ VÝSLEDKU
+results.draw	REMÍZA!
+results.cpu_wins	CPU VYHRÁVÁ
+results.you_win	VYHRÁL JSI!
+results.rival_wins	SOUPEŘ VYHRÁVÁ
+results.wins	{0} VYHRÁVÁ!
+results.takes_round	{0} vyhrává kolo
+results.stats	Zásahy  {0}\nCelá komba  {1}   ·   Nejlepší kombo  {2}
+results.stats2	\nUltimate gesty  {0}\nOdražení  {1}
+results.posture	\nDobré držení těla  {0}%
+results.rewards_named	ODMĚNY (profil {0})
+results.rewards_your	ODMĚNY (tvůj profil)
+results.rewards_p1	ODMĚNY (profil P1)
+results.coins	+{0} mincí  (celkem {1})
+hud.do_pose	udělej pózu před kamerou
+results.place_1	1.
+results.place_2	2.
+results.place_3	3.
+results.place_4	4.
+results.out	VYŘAZEN
+results.out_1	VYŘAZEN · 1.
+results.out_2	VYŘAZEN · 2.
+results.out_3	VYŘAZEN · 3.
+results.out_4	VYŘAZEN · 4.
+results.red_team	ČERVENÝ TÝM
+results.blue_team	MODRÝ TÝM
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} HRÁČŮ
+hud.keys_line1	P{0}: {1} pohyb · {2} skok · 
+hud.keys_line2	{0} lehký · {1} těžký · {2} speciál · 
+hud.keys_line3	{0} blok · {1} úskok · 
+hud.keys_line4	{0} schopnosti · {1} ult
+results.characters	POSTAVY
+results.stock_one	1 ŽIVOT
+results.stocks	ŽIVOTY: {0}
+hud.respawn	NÁVRAT
+hud.drop_in	PŘIDEJ SE!
+results.main_menu	HLAVNÍ MENU
+pause.title	PAUZA
+pause.resume	POKRAČOVAT
+pause.quit	DO MENU
+pause.hint	B / Backspace pro pokračování
+leave.title	OPUSTIT ZÁPAS?
+leave.body	Zápas pokračuje. Odchod se počítá jako prohra.
+leave.leave	ODEJÍT
+leave.hint	B / Backspace / Esc / Start pro setrvání
+results.winner	VÍTĚZ
+results.training_no_rewards	Trénink: bez odměn
+cv.posture	Držení těla {0}%
+cv.posture_low	Držení těla {0}% - seď rovně!
+cv.telemetry_ok	Telemetrie OK
+net.rooms_load_failed	Nepodařilo se načíst tvoje místnosti: {0}
+net.host_limit	Už hostíš {0} místností. Nejdřív jednu zavři.
+net.creating_named	Vytváří se „{0}“...
+net.room_ready_code	Místnost „{0}“ je připravená. Sdílej kód {1} nebo pozvi přítele.
+net.create_failed	Místnost se nepodařilo vytvořit: {0}
+net.joining_room	Připojování k místnosti {0}...
+net.you_joined	Připojil ses do „{0}“. Vyber si bojovníka a stiskni OK.
+net.no_room_code	Neexistuje místnost s kódem {0}. Zkontroluj kód a zkus to znovu.
+net.room_full_n	Ta místnost je plná ({0} hráčů).
+net.join_failed	Nepodařilo se připojit: {0}
+net.update_failed	Místnost se nepodařilo aktualizovat: {0}
+net.could_not_what	Nepodařilo se {0}: {1}
+net.what_stage	změnit arénu
+net.what_hazards	změnit nebezpečí
+net.press_ok_again	{0} Oba znovu stiskněte OK a ZAČÍT BOJ.
+net.udp_port	Nepodařilo se otevřít UDP port {0} (už se používá?).
+net.lan_ready	LAN hostitel připraven. Přítel se připojí na: {0}  (port {1})
+net.bad_ip	„{0}“ není platná IP adresa.
+net.connecting_to	Připojování k {0}...
+net.sign_in_failed	Přihlášení selhalo: {0}
+net.room_ready	Místnost „{0}“ je připravená. Sdílej kód s přítelem.
+net.searching_in	Hledají se hráči v oblasti {0}...
+net.start_failed	Boj se nepodařilo spustit: {0}
+net.host_unreachable	Hostitel je nedostupný: {0}
+net.area_world	celý svět
+net.area_country_and	tvoje země a {0}
+region.africa	Afrika
+region.americas	Amerika
+region.asia	Asie
+region.europe	Evropa
+region.oceania	Oceánie
+region.northern_africa	Severní Afrika

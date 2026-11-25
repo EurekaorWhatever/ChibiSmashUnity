@@ -1,0 +1,257 @@
+room.ready_to_fight	KLAR TIL KAMP
+room.full_suffix	 · ROMMET ER FULLT
+room.waiting	VENTER PÅ SPILLERE
+room.joined	{0}  ·  {1} / {2} MED
+room.host	VERT
+room.player_n	SPILLER {0}
+room.you_suffix	 · DEG
+room.hazards_host_pick	{0} · VERTENS VALG
+room.hazards_on	FARER PÅ
+room.hazards_off	FARER AV
+room.code_copied	Romkoden {0} er kopiert. Lim den inn til vennen din.
+invite.body	{0} inviterer deg til {1}   ({2} sek.)
+select.ult_name	ULT  {0}
+age.title	HVOR GAMMEL ER DU?
+age.body	Alle aldre kan spille alle moduser. Alderen din lagres sammen med spillernavnet til spillstatistikk.
+common.next	NESTE
+age.error	Skriv inn alderen din, eller still den inn med D-paden.
+age.pad_hint	Kontroller: D-pad opp/ned endrer med 1, venstre/høyre med 10 · A = neste
+rooms.enter_name	SKRIV INN ROMNAVNET
+rooms.name_rules	3-24 bokstaver, tall eller mellomrom. Venner ser det når de blir med. Rom har plass til 2 til 4 spillere.
+rooms.create	OPPRETT
+common.one_moment	ET ØYEBLIKK...
+account.keep_name	BEHOLD KJEMPERNAVNET DITT
+account.finish_in_browser	FULLFØR I NETTLESEREN...
+account.sign_in_google	LOGG INN MED GOOGLE
+account.play_without	SPILL UTEN KONTO
+name.choose_first	Velg spillernavnet ditt først.
+common.cancelled	Avbrutt.
+name.welcome	VELKOMMEN, KJEMPER! HVA HETER DU?
+name.change_title	ENDRE NAVNET DITT
+name.rules	3-16 bokstaver, tall eller _. Velg et morsomt kjempernavn, ikke ditt ekte navn. Det er slik venner finner og inviterer deg, og det er det alle ser.
+name.suggest	FORESLÅ
+name.checking	SJEKKER...
+name.lets_fight	LA OSS KJEMPE!
+common.save	LAGRE
+name.pad_hint_first	Kontroller: A = la oss kjempe · Y = foreslå et navn
+name.pad_hint	Kontroller: A = lagre · Y = foreslå et navn
+online.connected_agreeing	Tilkoblet. Avtaler kampen...
+online.host_settings_changed	Vertens innstillinger er endret — bli med i rommet på nytt.
+online.version_mismatch	Motstanderen din kjører en annen versjon av spillet. Begge spillerne trenger samme versjon.
+rooms.title	VS LOCAL
+rooms.kicker	ROM  ·  2-4 SPILLERE  ·  OPPRETT · BLI MED · INVITER MED NAVN
+rooms.create_rooms	OPPRETT ROM
+rooms.join_room	BLI MED I ROM
+rooms.creating	OPPRETTER ROMMET DITT...
+rooms.loading	LASTER ROMMENE DINE...
+rooms.none_yet	Ingen rom opprettet ennå!
+rooms.one_moment	Et øyeblikk.
+rooms.empty_help	Trykk OPPRETT ROM for å lage et, eller BLI MED I ROM med en venns romkode.
+rooms.capacity_note	Rom har plass til 2 til 4 spillere. Inviter venner med spillernavnet deres.
+rooms.invites_paused	Rominvitasjoner er satt på pause i noen minutter
+rooms.refresh	OPPDATER
+rooms.hint	VS LOCAL  ·  ROM
+rooms.new	NY
+rooms.you_host	DU ER VERT
+rooms.open	ÅPNE
+join.enter_code	SKRIV INN ROMKODEN
+join.body	Skriv eller lim inn romkoden vennen din sendte deg (Discord, chat...).
+join.paste	LIM INN
+join.join	BLI MED
+join.bad_code	Det er ikke en romkode. Sjekk den og prøv igjen (bare bokstaver og tall).
+rooms.fight_starting	En romkamp starter. Vent på den, eller forlat rommet først.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  EN SPILLER I NÆRHETEN
+quick.player_found	SPILLER FUNNET!
+quick.search_failed	SØKET MISLYKTES
+quick.not_searching	SØKER IKKE
+quick.connecting	Kobler til motstanderen din...
+quick.searching_near	Søker etter en spiller i nærheten
+quick.stopped	Søket stoppet. Prøv igjen.
+quick.press_search_again	Trykk SØK IGJEN for å lete etter en spiller.
+quick.privacy	Hurtigkamp deler landet ditt (fra enhetsinnstillingene), aldri posisjonen din.
+quick.search_again	SØK IGJEN
+quick.hint	VS ONLINE  ·  HURTIGKAMP
+room.kicker_opening	ROM  ·  ÅPNER ROMMET...
+room.opening	Åpner rommet...
+room.your_fighter	KJEMPEREN DIN
+room.locked_in	LÅST
+room.everyone_ok	Alle trykker OK: kampen starter av seg selv.
+room.share_code	Del koden, eller inviter venner med navn.
+room.empty_seat	Ledig plass
+room.stage_you	BANE (du velger)
+room.stage_host	BANE (verten velger)
+common.ok	OK
+room.loading	LASTER...
+room.change	ENDRE
+room.starting	STARTER...
+room.start_fight	START KAMP
+room.close	LUKK ROM
+room.leave	FORLAT ROM
+room.hint	VS LOCAL  ·  ROM
+room.code	KODE
+room.copy	KOPIER
+room.host_can_invite	Verten kan invitere en venn med navn.
+room.invite_by_name	INVITER EN VENN MED NAVN
+room.invite	INVITER
+room.full	Rommet er fullt.
+invite.title	ROMINVITASJON
+invite.warning	Navn blir ikke sjekket: godta bare invitasjoner fra folk du kjenner.
+invite.accept	GODTA
+invite.decline	AVSLÅ
+room.hazards_on_btn	FARER  PÅ
+room.hazards_off_btn	FARER  AV
+select.passive	PASSIV
+select.look	UTSEENDE
+select.cosmetic	KOSMETISK
+select.arcade_round	ARCADE  ·  RUNDE {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   KONTROLLER 1 = 1P, KONTROLLER 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	DUKKE
+select.round_rival	RIVAL I RUNDE {0}
+select.picks_at_start	VELGER VED KAMPSTART
+select.signature_weapon	SIGNATURVÅPEN  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  BESEIRET
+select.arcade_route	ARCADE-RUTE  ·  BANE {0} / {1}
+select.select_stage	VELG BANE
+select.local_versus	LOKAL VERSUS
+select.arcade_rival	ARCADE-RIVAL
+select.training_dummy	TRENINGSDUKKE
+select.stage	BANE
+select.hazards	FARER
+select.fight	KJEMP
+select.change	ENDRE
+select.confirm	BEKREFT
+select.random	TILFELDIG
+select.fate	LA SKJEBNEN AVGJØRE
+select.ready_bang	KLAR!
+select.loadout	UTSTYR
+select.waiting_1p	VENTER PÅ 1P
+select.1p_picks_dummy	1P VELGER DUKKEN
+select.selecting	VELGER
+select.identity_hidden	IDENTITET SKJULT
+select.revealed_at_start	AVSLØRES NÅR RUNDEN STARTER
+select.ai_picks	AI-EN VELGER KJEMPEREN SIN
+select.random_every_fight	EN TILFELDIG FIGUR I HVER KAMP
+select.any_character	HVILKEN SOM HELST FIGUR · TILFELDIG PASSIV OG VÅPEN
+select.lock_in_hint	LÅS  ·  ELLER KLIKK PÅ EN FIGUR
+select.to_ready	FOR Å BLI KLAR
+select.cpu_difficulty_pick	CPU-VANSKELIGHETSGRAD  ·  VELG FØR KAMPEN
+select.ai_note	Ikke behov for internett. AI-en velger ny figur, passiv og nytt våpen til hver kamp, også ved omkamper.
+select.pad_difficulty	D-PAD OPP / NED  ·  VANSKELIGHETSGRAD
+select.key_difficulty	W / S  ·  VANSKELIGHETSGRAD
+select.start_training	START TRENING
+select.fight_bang	KJEMP!
+select.click_to_start	ELLER KLIKK FOR Å STARTE MED NÅVÆRENDE VALG
+hud.ready	KLAR...
+hud.rival	RIVAL
+hud.you	DEG
+hud.ultimate_ready	{0} · ULTIMATE KLAR
+hud.move_detected	{0} · BEVEGELSE REGISTRERT
+hud.failed	{0} · MISLYKTES
+hud.training_title	TRENING · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  TRENING
+hud.intro_online	  ·  ONLINE  ·  ESC / START: FORLAT
+hud.ult_ready_press	ULT KLAR - trykk {0}
+hud.ult_ready	ULT KLAR
+hud.sim_key	sim-tast: {0}
+hud.poses_live	 · positurer: armer i kryss blokkering / arm ut = ildkule / hender opp = hopp
+hud.poses_keys	 · positurer 1 kryss / 2 slag / 3 løft · P sammensunket
+hud.poses_p2	 · positurer 8/9/0
+hud.training_help	TRENING: T fyller ultimaten din · KO-ede kjempere gjenoppstår på 0% · Esc pause
+hud.ult_pct	ULT {0}%
+hud.last_hit	SISTE SLAG  {0}
+hud.combo_hits	KOMBO  {0} SLAG  +{1}%
+hud.combo	KOMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	P1 KAMERA · SIM
+hud.cv_p1_live	P1 KAMERA · LIVE
+hud.cv_p2_sim	P2 KAMERA · SIM
+hud.cv_p2_live	P2 KAMERA · LIVE
+hud.hits_prefix	{0} SLAG  
+results.no_contest	INGEN AVGJØRELSE
+results.draw	UAVGJORT!
+results.cpu_wins	CPU VINNER
+results.you_win	DU VANT!
+results.rival_wins	RIVALEN VINNER
+results.wins	{0} VINNER!
+results.takes_round	{0} vinner runden
+results.stats	Treff  {0}\nFulle komboer  {1}   ·   Beste kombo  {2}
+results.stats2	\nGest-ultimater  {0}\nPareringer  {1}
+results.posture	\nGod holdning  {0}%
+results.rewards_named	BELØNNINGER ({0}s profil)
+results.rewards_your	BELØNNINGER (profilen din)
+results.rewards_p1	BELØNNINGER (P1-profil)
+results.coins	+{0} mynter  (totalt {1})
+hud.do_pose	gjør posituren foran kameraet
+results.place_1	1.
+results.place_2	2.
+results.place_3	3.
+results.place_4	4.
+results.out	UTE
+results.out_1	UTE · 1.
+results.out_2	UTE · 2.
+results.out_3	UTE · 3.
+results.out_4	UTE · 4.
+results.red_team	RØDT LAG
+results.blue_team	BLÅTT LAG
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} SPILLERE
+hud.keys_line1	P{0}: {1} beveg · {2} hopp · 
+hud.keys_line2	{0} lett · {1} tung · {2} spesial · 
+hud.keys_line3	{0} blokkering · {1} dash · 
+hud.keys_line4	{0} evner · {1} ult
+results.characters	FIGURER
+results.stock_one	1 LIV
+results.stocks	{0} LIV
+hud.respawn	GJENOPPSTÅ
+hud.drop_in	HOPP INN!
+results.main_menu	HOVEDMENY
+pause.title	PAUSE
+pause.resume	FORTSETT
+pause.quit	TIL MENYEN
+pause.hint	B / Backspace for å fortsette
+leave.title	FORLATE KAMPEN?
+leave.body	Kampen fortsetter. Å forlate den teller som tap.
+leave.leave	FORLAT
+leave.hint	B / Backspace / Esc / Start for å bli
+results.winner	VINNER
+results.training_no_rewards	Trening: ingen belønninger
+cv.posture	Holdning {0}%
+cv.posture_low	Holdning {0}% - sitt rett!
+cv.telemetry_ok	Telemetri OK
+net.rooms_load_failed	Kunne ikke laste rommene dine: {0}
+net.host_limit	Du er allerede vert for {0} rom. Lukk ett først.
+net.creating_named	Oppretter «{0}»...
+net.room_ready_code	Rommet «{0}» er klart. Del koden {1} eller inviter en venn.
+net.create_failed	Kunne ikke opprette rommet: {0}
+net.joining_room	Blir med i rom {0}...
+net.you_joined	Du ble med i «{0}». Velg kjemper og trykk OK.
+net.no_room_code	Ingen rom med koden {0}. Sjekk koden og prøv igjen.
+net.room_full_n	Det rommet er fullt ({0} spillere).
+net.join_failed	Kunne ikke bli med: {0}
+net.update_failed	Kunne ikke oppdatere rommet: {0}
+net.could_not_what	Kunne ikke {0}: {1}
+net.what_stage	endre banen
+net.what_hazards	endre farene
+net.press_ok_again	{0} Trykk begge OK og START KAMP igjen.
+net.udp_port	Kunne ikke åpne UDP-port {0} (allerede i bruk?).
+net.lan_ready	LAN-vert klar. Vennen din blir med på: {0}  (port {1})
+net.bad_ip	«{0}» er ikke en gyldig IP-adresse.
+net.connecting_to	Kobler til {0}...
+net.sign_in_failed	Innlogging mislyktes: {0}
+net.room_ready	Rommet «{0}» er klart. Del koden med vennen din.
+net.searching_in	Søker etter spillere i {0}...
+net.start_failed	Kunne ikke starte kampen: {0}
+net.host_unreachable	Fikk ikke kontakt med verten: {0}
+net.area_world	hele verden
+net.area_country_and	landet ditt og {0}
+region.africa	Afrika
+region.americas	Amerika
+region.asia	Asia
+region.europe	Europa
+region.oceania	Oseania
+region.northern_africa	Nord-Afrika

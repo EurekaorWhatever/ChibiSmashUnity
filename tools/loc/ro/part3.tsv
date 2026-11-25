@@ -1,0 +1,255 @@
+region.eastern_africa	Africa de Est
+region.middle_africa	Africa Centrală
+region.southern_africa	Africa de Sud
+region.western_africa	Africa de Vest
+region.caribbean	Caraibe
+region.central_america	America Centrală
+region.south_america	America de Sud
+region.northern_america	America de Nord
+region.central_asia	Asia Centrală
+region.eastern_asia	Asia de Est
+region.south_eastern_asia	Asia de Sud-Est
+region.southern_asia	Asia de Sud
+region.western_asia	Asia de Vest
+region.eastern_europe	Europa de Est
+region.northern_europe	Europa de Nord
+region.southern_europe	Europa de Sud
+region.western_europe	Europa de Vest
+region.australia_and_new_zealand	Australia și Noua Zeelandă
+region.melanesia	Melanezia
+region.micronesia	Micronezia
+region.polynesia	Polinezia
+net.joined_connecting	Ai intrat în „{0}”. Conectare la gazdă...
+net.opponent_unreachable	Adversarul nu a putut fi contactat: {0}
+net.quick_filling	{0} din {1} jucători. Începe în {2} s...
+invite.inviting	Se invită {0}...
+invite.sent_lasts	Invitație trimisă lui {0}. Durează {1} secunde.
+invite.send_failed	Invitația nu a putut fi trimisă: {0}
+invite.joining_room_of	Se intră în camera lui {0}...
+invite.paused	Invitațiile sunt oprite {0} minute.
+invite.invited_you	{0} te-a invitat în „{1}”.
+invite.ran_out	Invitația ta către {0} a expirat.
+friends.choose_name	Alege un nume de jucător ca să te găsească prietenii.
+friends.unavailable	Prietenii nu sunt disponibili: {0}
+friends.your_name_is	Numele tău este {0}. Dă-l prietenilor ca să te poată adăuga.
+friends.set_name_failed	Numele nu a putut fi setat: {0}
+friends.request_sent	Cerere de prietenie trimisă lui {0}.
+friends.add_failed	{0} nu a putut fi adăugat: {1}
+friends.offline	{0} este offline acum.
+friends.request_then_invite	Cerere de prietenie trimisă lui {0}. Invitația pleacă imediat ce acceptă.
+friends.unreachable	{0} nu a putut fi contactat: {1}
+friends.creating_room_for	Se creează o cameră pentru {0}...
+friends.joining	Se intră la {0}...
+friends.declined	{0} a refuzat invitația.
+friends.version_mismatch	{0} te-a invitat, dar rulează altă versiune a jocului.
+friends.invite_sent_waiting	Invitație trimisă lui {0}. Se așteaptă să intre...
+name.too_short	Numele e prea scurt (cel puțin {0} caractere).
+name.too_long	Numele e prea lung (cel mult {0} caractere).
+rooms.name_too_short	Numele camerei e prea scurt (cel puțin {0} caractere).
+rooms.name_too_long	Numele camerei e prea lung (cel mult {0} caractere).
+net.bad_code	Acesta nu e un cod de cameră valid (doar litere și cifre).
+net.version_mismatch	Camera aceea a fost făcută cu altă versiune de Chibi Clash. Ambii jucători au nevoie de aceeași versiune.
+net.loading_room	Se încarcă camera...
+net.room_closed	Camera s-a închis.
+net.you_left	Ai ieșit din cameră.
+net.waiting_host_game	Începe... se așteaptă jocul gazdei.
+net.choose_next_fight	Alege-ți luptătorul și apasă OK pentru următoarea luptă.
+net.host_changed_stage	Gazda a schimbat setările arenei. Apasă din nou OK.
+net.room_closed_host_left	Camera a fost închisă (gazda a plecat).
+net.starting_fight	Începe lupta...
+net.player_left_joined	Un jucător a plecat sau a intrat.
+net.no_connection	Nicio conexiune.
+net.fight_could_not_start	Lupta nu a putut începe.
+net.fight_starting_wait	Lupta începe! Se așteaptă conectarea prietenului tău...
+net.choose_press_ok	Alege-ți luptătorul și apasă OK.
+net.too_many_starts	Prea multe porniri. Așteaptă un minut, apoi apasă ÎNCEPE LUPTA.
+net.fight_starting_connecting	Lupta începe! Conectare...
+net.could_not_connect	Conectarea nu a reușit.
+net.friend_no_answer	Prietenul tău nu a răspuns.
+net.start_cancelled	Pornire anulată.
+net.friend_no_connect	Prietenul tău nu s-a conectat.
+net.enter_code	Introdu codul camerei pe care ți-l arată prietenul.
+net.lan_browser	Jocul LAN nu e disponibil în browser. Folosește CAMERE sau VS LOCAL ori versiunea PC pentru LAN.
+net.enter_ip	Introdu adresa IP a gazdei.
+net.this_pc_ip	IP-ul acestui PC
+net.signing_in	Se face conectarea...
+net.creating_private	Se creează o cameră privată...
+net.hosting_one	Nu s-a găsit niciun meci deschis, se găzduiește unul...
+net.needs_2_to_4	O luptă are nevoie de 2 până la 4 jucători.
+net.waiting_friend	Se așteaptă conectarea prietenului tău...
+net.waiting_friends	Se așteaptă conectarea prietenilor tăi...
+net.connection_running	O altă conexiune încă rulează.
+net.no_valid_info	Camera nu are informații de conectare valide (a plecat gazda?).
+net.connecting_host	Conectare la gazdă...
+net.already_full	Camera aceea e deja plină.
+net.no_info	Camera nu are informații de conectare (a plecat gazda?).
+net.player_left_searching	Jucătorul a plecat. Se caută din nou...
+net.connected	Conectat!
+net.relay_failed	Conexiunea la serverul Relay a eșuat.
+net.opponent_timeout	Adversarul nu a putut fi contactat (timp expirat).
+net.no_internet	Fără conexiune la internet. Conectează-te la Wi-Fi sau date mobile ca să joci cu prieteni de oriunde. (Jocul LAN merge în aceeași rețea.)
+invite.wait	Așteaptă puțin înainte să trimiți altă invitație.
+invite.type_name	Scrie numele din joc al prietenului tău (3-16 litere, cifre sau _).
+invite.own_name	Acesta e numele tău.
+invite.open_room_first	Deschide-ți întâi camera, apoi invită.
+invite.room_full	Camera ta e deja plină.
+invite.could_not_send	Invitația nu a putut fi trimisă.
+invite.too_many	Prea multe invitații acum. Încearcă din nou în câteva secunde.
+invite.cancelled	Invitație anulată.
+invite.expired	Invitația a expirat.
+invite.closed_full	Camera ta e plină. Invitație închisă.
+invite.closed_joined	Un jucător a intrat în camera ta. Invitație închisă.
+invite.closed_room	Invitație anulată: camera s-a închis.
+name.taken	Acest nume este deja folosit
+name.check_unavailable	Numele nu a putut fi verificat online. Verifică internetul și încearcă din nou.
+name.too_soon	Ți-ai schimbat numele adineauri. Încearcă din nou peste un minut.
+name.choose_different	Te rugăm să alegi alt nume.
+friends.type_tag	Scrie numele prietenului tău, de exemplu Kira#4821.
+friends.added	Prieten adăugat.
+friends.declined_request	Cerere refuzată.
+friends.removed	Prieten eliminat.
+friends.blocked	Jucător blocat.
+friends.a_friend	Un prieten
+friends.type_player_tag	Scrie numele jucătorului, de exemplu Kira#4821.
+friends.wait_invite	Așteaptă puțin înainte să inviți din nou.
+name.enter	Introdu un nume.
+name.bad_chars	Folosește doar litere, cifre și _ (fără spații sau simboluri).
+rooms.name_bad_chars	Numele camerelor folosesc doar litere, cifre, spații și _ - ' !.
+rooms.name_double_space	Numele camerelor nu pot avea spații duble.
+rooms.name_choose_different	Te rugăm să alegi alt nume de cameră.
+gesture.cross_arms	ÎNCRUCIȘEAZĂ BRAȚELE
+gesture.punch_forward	PUMN ÎN FAȚĂ
+gesture.raise_hands	RIDICĂ AMBELE MÂINI
+class.kaia.passive1_desc	+15% viteză de atac
+class.kaia.passive2_desc	5% furt de viață
+class.kaia.skill1_desc	Țâșnește înainte și străpunge adversarul
+class.kaia.skill2_desc	Sincronizarea perfectă reflectă daunele
+class.kaia.skill3_desc	Străpunge de multe ori, rapid
+class.kaia.ult_desc	10s: atacurile normale lansează un val orizontal
+class.bruna.passive1_desc	+20% daune, -15% viteză de atac
+class.bruna.passive2_desc	+20% daune, -15% viteză de mișcare
+class.bruna.skill1_desc	Prinde adversarul și trântește-l de pământ
+class.bruna.skill2_desc	Rotește-te ca o tornadă, lovind repetat
+class.bruna.ult_desc	Lovește podeaua ca să creezi o undă de șoc
+class.ren.passive1_desc	+20% șansă de lovitură critică
+class.ren.passive2_desc	+10% viteză de mișcare timp de 10s (reîncărcare 30s)
+class.ren.skill1_desc	Țâșnește înapoi orizontal și trage
+class.ren.skill2_desc	Sugrumă un adversar apropiat și împinge-l departe
+class.ren.skill3_desc	Trage o rafală de săgeți pe orizontală
+class.ren.ult_desc	O săgeată se multiplică într-o furtună de săgeți
+class.lyra.passive1_desc	10% șansă la lovire: -15% mișcare, -10% daune, -15% viteză atac
+class.lyra.passive2_desc	20% șansă de a bloca daunele
+class.lyra.skill1_desc	Lansează un proiectil de foc care urmărește ținta
+class.lyra.skill2_desc	Invocă 3 slujitori
+class.lyra.skill3_desc	Un nor urmărește inamicul și lovește cu tunete
+class.lyra.ult_desc	10s inel de foc: arde inamicii, blochează proiectilele
+class.taro.passive1_desc	10% șansă la lovire: -15% apărarea inamicului
+class.taro.passive2_desc	După 3s fără atac, următoarea lovitură +50%
+class.taro.skill1_desc	Întinde-te, sari și lovește în jos
+class.taro.skill2_desc	Rotește lancea ca să blochezi proiectilele
+class.taro.skill3_desc	Aruncă sulița și cheam-o înapoi
+class.taro.ult_desc	Străpunge inamicul, apoi lovește mânerul cu piciorul mai adânc
+char.kaia.role	Atacantă agilă
+char.kaia.style	Luptă rapidă și mobilă de aproape, cu tăieturi precise înlănțuite.
+char.bruna.role	Bătăușă
+char.bruna.style	Luptătoare cu daune mari și rezistență mare care controlează spațiul cu atacuri grele.
+char.ren.role	Trăgător agil
+char.ren.style	Control al zonei cu mobilitate mare și presiune precisă cu tehnici variate de săgeți.
+char.lyra.role	Control zonă / Pregătire
+char.lyra.style	Vrăjitoare agilă care controlează spațiul cu vrăji rapide, mobilitate vicleană și magie precisă.
+char.taro.role	Specialist în rază lungă
+char.taro.style	Control disciplinat și mobil, cu presiune de la distanță și lovituri precise.
+stage.0.name	Dojo-ul Cerului
+stage.0.short	Dojo-ul Cerului
+stage.0.tagline	Altar de munte deasupra norilor
+stage.1.name	Orașul Neon
+stage.1.short	Orașul Neon
+stage.1.tagline	Arenă pe acoperiș sub ploaie de neon
+stage.2.name	Forja de Lavă
+stage.2.short	Forja de Lavă
+stage.2.tagline	Turnătorie topită deasupra unei mări de lavă
+stage.3.name	Muntele Începutului
+stage.3.short	Muntele
+stage.3.tagline	KO vertical · platforme de jad mobile deasupra unui hău cețos
+stage.4.name	Câmpia Unității
+stage.4.short	Câmpia
+stage.4.tagline	KO orizontal · un câmp lung, nicăieri unde să te ascunzi
+stage.5.name	Abisul Vulcanului
+stage.5.short	Vulcanul
+stage.5.tagline	Fiecare margine dă KO · foc țâșnește din lacul de magmă
+stage.6.name	Bârlogul Pasării Uriașe
+stage.6.short	Bârlogul
+stage.6.tagline	KO orizontal · pasărea colosală mătură arena
+stage.7.name	Monumentul Abandonat al Oceanului
+stage.7.short	Oceanul
+stage.7.tagline	Fiecare margine dă KO · balena coboară, sari pe trepte
+end.opponent_left	Adversarul tău a părăsit meciul.
+end.opponent_timeout	Adversarul tău nu mai răspunde.
+end.connection_lost	Conexiunea cu adversarul s-a pierdut.
+end.you_left	Ai părăsit meciul.
+end.desync	Cele două jocuri nu s-au potrivit (desync): fără rezultat.
+end.unconfirmed	Sfârșitul meciului nu a putut fi confirmat: fără rezultat.
+end.handshake_failed	Meciul nu a putut începe.
+end.peer_never_started	Adversarul tău nu a intrat niciodată în meci: fără rezultat.
+end.too_slow	Conexiunea a fost prea lentă pentru joc: fără rezultat.
+end.host_left	Gazda a părăsit meciul: fără rezultat.
+end.dropped	Conexiunea ta a căzut din meci.
+status.aura	AURĂ {0}
+status.fire_ring	INEL DE FOC {0}
+status.tailwind	VÂNT DIN SPATE
+status.guard_broken	GARDĂ SPARTĂ {0}s
+status.guard	GARDĂ {0}%
+status.reloading	REÎNCARCĂ {0}s
+status.recharging	SE REÎNCARCĂ {0}s
+status.hexed	BLESTEMAT
+status.armor_break	ARMURĂ -15%
+hud.perform	Execută: {0}
+hud.times_up	Timpul a expirat!
+rewards.no_contest	Fără rezultat: fără recompense
+rewards.pve_victory	Victorie PvE  +{0}
+rewards.pve_match	Meci PvE  +{0}
+rewards.victory	Victorie  +{0}
+rewards.match_played	Meci jucat  +{0}
+rewards.posture	Postură bună {0}%  +{1}
+hud.revived	REÎNVIAT
+quest.win	Câștigă 3 meciuri
+quest.pve	Învinge CPU-ul de două ori (PvE)
+quest.combo	Reușește 10 combo-uri complete
+quest.ult	Declanșează 3 ultimate-uri prin gesturi
+quest.parry	Parează 5 atacuri
+quest.posture	Termină un meci cu peste 80% postură bună
+rewards.quest	Misiune: {0}  +{1}
+bind.move_left	Mișcare stânga
+bind.move_right	Mișcare dreapta
+bind.drop	Coborâre / cădere rapidă
+bind.jump	Săritură
+bind.jump_alt	Săritură (alt.)
+bind.light	Atac ușor
+bind.heavy	Atac greu
+bind.block	Blocare
+bind.dash	Dash
+bind.skill1	Abilitatea 1
+bind.skill2	Abilitatea 2
+bind.skill3	Abilitatea 3
+bind.ultimate	Ultimate
+bind.aim_up	Țintește în sus
+bind.special	Special
+hud.rejected	Respins: {0}
+cv.low_confidence	Încredere scăzută la urmărire
+cv.frozen	Imagine înghețată (falsificare?)
+cv.snap	Poză instantanee (macro?)
+cv.ok	OK
+cam.none	Nicio cameră găsită
+cam.off	Cameră oprită
+cam.starting	Camera pornește...
+cam.waiting_frames	Se așteaptă cadre de la cameră - permite accesul la cameră pentru Unity în Setări sistem > Confidențialitate > Cameră
+cam.live	Cameră live ({0}x{1})
+pose.simulated	Simulat (poze din tastatură)
+pose.camera_off	Urmărirea cu camera e oprită - se folosesc poze simulate din tastatură
+pose.model_failed	Modelul de poză a eșuat: {0}
+pose.loading	Se încarcă modelul de poză...
+pose.live	Urmărire corporală live (MoveNet, {0} Hz)
+pose.step_back	Camera e pornită - dă-te înapoi ca să ți se vadă umerii
+account.finish_browser	Termină conectarea în browser (alege Continuă cu Google)...
+account.signed_out_again	Deconectat. Conectează-te din nou ca să-ți folosești contul.
+account.signed_in_kept	Conectat. Numele și progresul tău rămân cu acest cont.

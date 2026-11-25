@@ -1,0 +1,255 @@
+region.eastern_africa	Східна Африка
+region.middle_africa	Центральна Африка
+region.southern_africa	Південна Африка
+region.western_africa	Західна Африка
+region.caribbean	Карибський басейн
+region.central_america	Центральна Америка
+region.south_america	Південна Америка
+region.northern_america	Північна Америка
+region.central_asia	Центральна Азія
+region.eastern_asia	Східна Азія
+region.south_eastern_asia	Південно-Східна Азія
+region.southern_asia	Південна Азія
+region.western_asia	Західна Азія
+region.eastern_europe	Східна Європа
+region.northern_europe	Північна Європа
+region.southern_europe	Південна Європа
+region.western_europe	Західна Європа
+region.australia_and_new_zealand	Австралія і Нова Зеландія
+region.melanesia	Меланезія
+region.micronesia	Мікронезія
+region.polynesia	Полінезія
+net.joined_connecting	Ти увійшов у «{0}». Підключення до хоста...
+net.opponent_unreachable	Не вдалося зв'язатися із суперником: {0}
+net.quick_filling	{0} з {1} гравців. Старт через {2} с...
+invite.inviting	Запрошуємо {0}...
+invite.sent_lasts	Запрошення надіслано гравцю {0}. Воно діє {1} с.
+invite.send_failed	Не вдалося надіслати запрошення: {0}
+invite.joining_room_of	Входимо в кімнату гравця {0}...
+invite.paused	Запрошення призупинено на {0} хв.
+invite.invited_you	{0} запросив тебе в «{1}».
+invite.ran_out	Термін дії твого запрошення для {0} минув.
+friends.choose_name	Обери ім'я гравця, щоб друзі могли тебе знайти.
+friends.unavailable	Друзі недоступні: {0}
+friends.your_name_is	Твоє ім'я — {0}. Дай його друзям, щоб вони могли тебе додати.
+friends.set_name_failed	Не вдалося задати ім'я: {0}
+friends.request_sent	Запит у друзі надіслано гравцю {0}.
+friends.add_failed	Не вдалося додати {0}: {1}
+friends.offline	{0} зараз офлайн.
+friends.request_then_invite	Запит у друзі надіслано гравцю {0}. Запрошення надійде, щойно він прийме запит.
+friends.unreachable	Не вдалося зв'язатися з {0}: {1}
+friends.creating_room_for	Створюємо кімнату для {0}...
+friends.joining	Долучаємося до {0}...
+friends.declined	{0} відхилив запрошення.
+friends.version_mismatch	{0} запросив тебе, але в нього інша версія гри.
+friends.invite_sent_waiting	Запрошення надіслано гравцю {0}. Чекаємо, поки він увійде...
+name.too_short	Ім'я надто коротке (щонайменше {0} символів).
+name.too_long	Ім'я надто довге (щонайбільше {0} символів).
+rooms.name_too_short	Назва кімнати надто коротка (щонайменше {0} символів).
+rooms.name_too_long	Назва кімнати надто довга (щонайбільше {0} символів).
+net.bad_code	Це недійсний код кімнати (лише літери та цифри).
+net.version_mismatch	Цю кімнату створено в іншій версії Chibi Clash. Обом гравцям потрібна однакова версія.
+net.loading_room	Завантажуємо кімнату...
+net.room_closed	Кімнату закрито.
+net.you_left	Ти вийшов з кімнати.
+net.waiting_host_game	Запуск... чекаємо на гру хоста.
+net.choose_next_fight	Обери бійця й натисни OK для наступного бою.
+net.host_changed_stage	Хост змінив налаштування арени. Натисни OK ще раз.
+net.room_closed_host_left	Кімнату закрито (хост вийшов).
+net.starting_fight	Бій починається...
+net.player_left_joined	Гравець вийшов або увійшов.
+net.no_connection	Немає з'єднання.
+net.fight_could_not_start	Не вдалося почати бій.
+net.fight_starting_wait	Бій починається! Чекаємо, поки друг підключиться...
+net.choose_press_ok	Обери бійця й натисни OK.
+net.too_many_starts	Забагато запусків. Зачекай хвилину, потім натисни ПОЧАТИ БІЙ.
+net.fight_starting_connecting	Бій починається! Підключення...
+net.could_not_connect	Не вдалося підключитися.
+net.friend_no_answer	Друг не відповів.
+net.start_cancelled	Запуск скасовано.
+net.friend_no_connect	Друг не підключився.
+net.enter_code	Введи код кімнати, який показує твій друг.
+net.lan_browser	Гра по LAN недоступна в браузері. Використовуй КІМНАТИ або VS LOCAL чи версію для ПК для LAN.
+net.enter_ip	Введи IP-адресу хоста.
+net.this_pc_ip	IP цього ПК
+net.signing_in	Вхід...
+net.creating_private	Створюємо приватну кімнату...
+net.hosting_one	Відкритих матчів не знайдено, створюємо свій...
+net.needs_2_to_4	Для бою потрібно від 2 до 4 гравців.
+net.waiting_friend	Чекаємо, поки друг підключиться...
+net.waiting_friends	Чекаємо, поки друзі підключаться...
+net.connection_running	Інше з'єднання ще активне.
+net.no_valid_info	У кімнати немає дійсних даних для підключення (хост вийшов?).
+net.connecting_host	Підключення до хоста...
+net.already_full	Ця кімната вже заповнена.
+net.no_info	У кімнати немає даних для підключення (хост вийшов?).
+net.player_left_searching	Цей гравець вийшов. Шукаємо знову...
+net.connected	З'єднано!
+net.relay_failed	Не вдалося з'єднатися із сервером Relay.
+net.opponent_timeout	Не вдалося зв'язатися із суперником (час вичерпано).
+net.no_internet	Немає підключення до інтернету. Підключи Wi-Fi або мобільні дані, щоб грати з друзями будь-де. (Гра по LAN працює в одній мережі.)
+invite.wait	Зачекай трохи, перш ніж надсилати ще одне запрошення.
+invite.type_name	Введи ігрове ім'я друга (3-16 літер, цифр або _).
+invite.own_name	Це твоє власне ім'я.
+invite.open_room_first	Спершу відкрий свою кімнату, а потім запрошуй.
+invite.room_full	Твоя кімната вже заповнена.
+invite.could_not_send	Не вдалося надіслати запрошення.
+invite.too_many	Зараз забагато запрошень. Спробуй за кілька секунд.
+invite.cancelled	Запрошення скасовано.
+invite.expired	Термін дії запрошення минув.
+invite.closed_full	Твоя кімната заповнена. Запрошення закрито.
+invite.closed_joined	У твою кімнату ввійшов гравець. Запрошення закрито.
+invite.closed_room	Запрошення скасовано: кімнату закрито.
+name.taken	Це ім'я вже зайняте
+name.check_unavailable	Не вдалося перевірити ім'я онлайн. Перевір інтернет і спробуй ще раз.
+name.too_soon	Ти щойно змінив ім'я. Спробуй за хвилину.
+name.choose_different	Будь ласка, обери інше ім'я.
+friends.type_tag	Введи ім'я друга у форматі Kira#4821.
+friends.added	Друга додано.
+friends.declined_request	Запит відхилено.
+friends.removed	Друга видалено.
+friends.blocked	Гравця заблоковано.
+friends.a_friend	Друг
+friends.type_player_tag	Введи ім'я гравця у форматі Kira#4821.
+friends.wait_invite	Зачекай трохи, перш ніж запрошувати знову.
+name.enter	Введи ім'я.
+name.bad_chars	Використовуй лише літери, цифри та _ (без пробілів і символів).
+rooms.name_bad_chars	У назвах кімнат можна використовувати лише літери, цифри, пробіли та _ - ' !.
+rooms.name_double_space	У назвах кімнат не може бути подвійних пробілів.
+rooms.name_choose_different	Будь ласка, обери іншу назву кімнати.
+gesture.cross_arms	СХРЕСТИ РУКИ
+gesture.punch_forward	УДАР ВПЕРЕД
+gesture.raise_hands	ПІДНІМИ ОБИДВІ РУКИ
+class.kaia.passive1_desc	+15% швидкості атаки
+class.kaia.passive2_desc	5% вампіризму
+class.kaia.skill1_desc	Ривок уперед і укол у суперника
+class.kaia.skill2_desc	Ідеальний таймінг відбиває шкоду
+class.kaia.skill3_desc	Багато швидких уколів
+class.kaia.ult_desc	10 с: звичайні атаки випускають горизонтальну хвилю
+class.bruna.passive1_desc	+20% шкоди, -15% швидкості атаки
+class.bruna.passive2_desc	+20% шкоди, -15% швидкості руху
+class.bruna.skill1_desc	Схопи суперника й гепни його об землю
+class.bruna.skill2_desc	Крутися, як торнадо, б'ючи раз за разом
+class.bruna.ult_desc	Вдар об підлогу й створи ударну хвилю
+class.ren.passive1_desc	+20% шансу критичного удару
+class.ren.passive2_desc	+10% швидкості руху на 10 с (перезарядка 30 с)
+class.ren.skill1_desc	Горизонтальний відскок назад і постріл
+class.ren.skill2_desc	Задуши близького суперника й відштовхни його
+class.ren.skill3_desc	Горизонтальний залп стріл
+class.ren.ult_desc	Одна стріла множиться в бурю стріл
+class.lyra.passive1_desc	10% шансу при влучанні: -15% руху, -10% шкоди, -15% швидк. атаки
+class.lyra.passive2_desc	20% шансу заблокувати шкоду
+class.lyra.skill1_desc	Випусти самонавідний вогняний снаряд
+class.lyra.skill2_desc	Виклич 3 прислужників
+class.lyra.skill3_desc	Хмара переслідує ворога й б'є громом
+class.lyra.ult_desc	10 с вогняне кільце: палить ворогів, блокує снаряди
+class.taro.passive1_desc	10% шансу при влучанні: -15% захисту ворога
+class.taro.passive2_desc	Після 3 с без атак наступний удар +50%
+class.taro.skill1_desc	Витягнися, стрибни й удар униз
+class.taro.skill2_desc	Розкрути держакову зброю, щоб блокувати снаряди
+class.taro.skill3_desc	Кинь спис і поверни його назад
+class.taro.ult_desc	Встроми зброю у ворога, а потім ударом ноги вжени держак глибше
+char.kaia.role	Спритна штурмовичка
+char.kaia.style	Швидкий мобільний ближній бій з точними ударами, що з'єднуються в ланцюжки.
+char.bruna.role	Забіяка
+char.bruna.style	Бійчиня з високою шкодою та витривалістю, що контролює простір важкими атаками.
+char.ren.role	Спритний стрілець
+char.ren.style	Контроль зон із високою мобільністю й точним тиском завдяки різноманітним прийомам зі стрілами.
+char.lyra.role	Контроль зон / підготовка
+char.lyra.style	Спритна чаклунка, що контролює простір швидкими закляттями, хитрими переміщеннями й точною магією.
+char.taro.role	Майстер дальності
+char.taro.style	Дисциплінований мобільний контроль із тиском на великій дистанції й точними ударами.
+stage.0.name	Небесне додзьо
+stage.0.short	Небесне додзьо
+stage.0.tagline	Гірський храм над хмарами
+stage.1.name	Неонове місто
+stage.1.short	Неонове місто
+stage.1.tagline	Арена на даху під неоновим дощем
+stage.2.name	Лавова кузня
+stage.2.short	Лавова кузня
+stage.2.tagline	Розплавлена ливарня над морем лави
+stage.3.name	Гора Початку
+stage.3.short	Гора
+stage.3.tagline	Вертикальний KO · рухомі нефритові платформи над туманною прірвою
+stage.4.name	Рівнина Єдності
+stage.4.short	Рівнина
+stage.4.tagline	Горизонтальний KO · одне довге поле, ніде сховатися
+stage.5.name	Безодня вулкана
+stage.5.short	Вулкан
+stage.5.tagline	Кожен край — KO · з магмового озера б'є вогонь
+stage.6.name	Лігво велетенського птаха
+stage.6.short	Лігво птаха
+stage.6.tagline	Горизонтальний KO · колосальний птах змітає арену
+stage.7.name	Покинутий Пам'ятник Океану
+stage.7.short	Океан
+stage.7.tagline	Кожен край — KO · кит спускається, стрибай на яруси
+end.opponent_left	Суперник покинув матч.
+end.opponent_timeout	Суперник перестав відповідати.
+end.connection_lost	З'єднання із суперником втрачено.
+end.you_left	Ти покинув матч.
+end.desync	Дві гри розійшлися (десинхронізація): без результату.
+end.unconfirmed	Не вдалося підтвердити кінець матчу: без результату.
+end.handshake_failed	Не вдалося почати матч.
+end.peer_never_started	Суперник так і не ввійшов у матч: без результату.
+end.too_slow	З'єднання було надто повільним для гри: без результату.
+end.host_left	Хост покинув матч: без результату.
+end.dropped	Твоє з'єднання випало з матчу.
+status.aura	АУРА {0}
+status.fire_ring	ВОГНЯНЕ КІЛЬЦЕ {0}
+status.tailwind	ПОПУТНИЙ ВІТЕР
+status.guard_broken	ЗАХИСТ ПРОБИТО {0} с
+status.guard	ЗАХИСТ {0}%
+status.reloading	ПЕРЕЗАРЯДЖАННЯ {0} с
+status.recharging	ЗАРЯДЖАННЯ {0} с
+status.hexed	ПРОКЛЯТО
+status.armor_break	БРОНЯ -15%
+hud.perform	Виконай: {0}
+hud.times_up	Час вийшов!
+rewards.no_contest	Без результату: без нагород
+rewards.pve_victory	Перемога PvE  +{0}
+rewards.pve_match	Матч PvE  +{0}
+rewards.victory	Перемога  +{0}
+rewards.match_played	Зіграний матч  +{0}
+rewards.posture	Гарна постава {0}%  +{1}
+hud.revived	ВОСКРЕСІННЯ
+quest.win	Виграй 3 матчі
+quest.pve	Двічі переможи CPU (PvE)
+quest.combo	Виконай 10 повних комбо
+quest.ult	Активуй 3 ультимейти жестами
+quest.parry	Парируй 5 атак
+quest.posture	Заверши матч із гарною поставою понад 80%
+rewards.quest	Завдання: {0}  +{1}
+bind.move_left	Рух ліворуч
+bind.move_right	Рух праворуч
+bind.drop	Спуск / швидке падіння
+bind.jump	Стрибок
+bind.jump_alt	Стрибок (альт.)
+bind.light	Легка атака
+bind.heavy	Важка атака
+bind.block	Блок
+bind.dash	Ривок
+bind.skill1	Уміння 1
+bind.skill2	Уміння 2
+bind.skill3	Уміння 3
+bind.ultimate	Ультимейт
+bind.aim_up	Цілитися вгору
+bind.special	Спецудар
+hud.rejected	Відхилено: {0}
+cv.low_confidence	Низька впевненість відстеження
+cv.frozen	Застигле зображення (підробка?)
+cv.snap	Миттєва зміна пози (макрос?)
+cv.ok	OK
+cam.none	Камеру не знайдено
+cam.off	Камеру вимкнено
+cam.starting	Камера вмикається...
+cam.waiting_frames	Чекаємо на кадри з камери - дозволь Unity доступ до камери в Системних параметрах > Конфіденційність > Камера
+cam.live	Камера наживо ({0}x{1})
+pose.simulated	Імітація (пози з клавіатури)
+pose.camera_off	Відстеження камерою вимкнено - використовуються пози, імітовані клавіатурою
+pose.model_failed	Модель пози дала збій: {0}
+pose.loading	Завантажуємо модель пози...
+pose.live	Відстеження тіла наживо (MoveNet, {0} Гц)
+pose.step_back	Камера ввімкнена - відступи, щоб плечі було видно
+account.finish_browser	Заверши вхід у браузері (вибери «Продовжити з Google»)...
+account.signed_out_again	Вихід виконано. Увійди знову, щоб користуватися акаунтом.
+account.signed_in_kept	Вхід виконано. Твоє ім'я та прогрес зберігаються в цьому акаунті.

@@ -1,0 +1,255 @@
+region.eastern_africa	Östafrika
+region.middle_africa	Centralafrika
+region.southern_africa	Södra Afrika
+region.western_africa	Västafrika
+region.caribbean	Karibien
+region.central_america	Centralamerika
+region.south_america	Sydamerika
+region.northern_america	Nordamerika
+region.central_asia	Centralasien
+region.eastern_asia	Östasien
+region.south_eastern_asia	Sydostasien
+region.southern_asia	Sydasien
+region.western_asia	Västasien
+region.eastern_europe	Östeuropa
+region.northern_europe	Nordeuropa
+region.southern_europe	Sydeuropa
+region.western_europe	Västeuropa
+region.australia_and_new_zealand	Australien och Nya Zeeland
+region.melanesia	Melanesien
+region.micronesia	Mikronesien
+region.polynesia	Polynesien
+net.joined_connecting	Gick med i "{0}". Ansluter till värden...
+net.opponent_unreachable	Kunde inte nå din motståndare: {0}
+net.quick_filling	{0} av {1} spelare. Startar om {2} s...
+invite.inviting	Bjuder in {0}...
+invite.sent_lasts	Inbjudan skickad till {0}. Den gäller i {1} sekunder.
+invite.send_failed	Kunde inte skicka inbjudan: {0}
+invite.joining_room_of	Går med i {0}s rum...
+invite.paused	Inbjudningar pausade i {0} minuter.
+invite.invited_you	{0} bjöd in dig till "{1}".
+invite.ran_out	Din inbjudan till {0} har gått ut.
+friends.choose_name	Välj ett spelarnamn så att vänner kan hitta dig.
+friends.unavailable	Vänner är inte tillgängliga: {0}
+friends.your_name_is	Ditt namn är {0}. Ge det till vänner så att de kan lägga till dig.
+friends.set_name_failed	Kunde inte välja namnet: {0}
+friends.request_sent	Vänförfrågan skickad till {0}.
+friends.add_failed	Kunde inte lägga till {0}: {1}
+friends.offline	{0} är offline just nu.
+friends.request_then_invite	Vänförfrågan skickad till {0}. Inbjudan skickas så snart den accepteras.
+friends.unreachable	Kunde inte nå {0}: {1}
+friends.creating_room_for	Skapar ett rum åt {0}...
+friends.joining	Går med {0}...
+friends.declined	{0} avböjde inbjudan.
+friends.version_mismatch	{0} bjöd in dig, men kör en annan version av spelet.
+friends.invite_sent_waiting	Inbjudan skickad till {0}. Väntar på att de går med...
+name.too_short	Namnet är för kort (minst {0} tecken).
+name.too_long	Namnet är för långt (högst {0} tecken).
+rooms.name_too_short	Rumsnamnet är för kort (minst {0} tecken).
+rooms.name_too_long	Rumsnamnet är för långt (högst {0} tecken).
+net.bad_code	Det är ingen giltig rumskod (bara bokstäver och siffror).
+net.version_mismatch	Det rummet skapades med en annan version av Chibi Clash. Båda spelarna behöver samma version.
+net.loading_room	Laddar rummet...
+net.room_closed	Rummet har stängts.
+net.you_left	Du lämnade rummet.
+net.waiting_host_game	Startar... väntar på värdens spel.
+net.choose_next_fight	Välj din kämpe och tryck OK för nästa strid.
+net.host_changed_stage	Värden ändrade baninställningarna. Tryck OK igen.
+net.room_closed_host_left	Rummet stängdes (värden lämnade).
+net.starting_fight	Striden startar...
+net.player_left_joined	En spelare lämnade eller gick med.
+net.no_connection	Ingen anslutning.
+net.fight_could_not_start	Striden kunde inte starta.
+net.fight_starting_wait	Striden startar! Väntar på att din vän ansluter...
+net.choose_press_ok	Välj din kämpe och tryck OK.
+net.too_many_starts	För många starter. Vänta en minut och tryck sedan STARTA STRID.
+net.fight_starting_connecting	Striden startar! Ansluter...
+net.could_not_connect	Kunde inte ansluta.
+net.friend_no_answer	Din vän svarade inte.
+net.start_cancelled	Starten avbröts.
+net.friend_no_connect	Din vän anslöt inte.
+net.enter_code	Ange rumskoden som din vän visar.
+net.lan_browser	LAN-spel är inte tillgängligt i webbläsaren. Använd RUM eller VS LOCAL, eller PC-versionen för LAN.
+net.enter_ip	Ange värdens IP-adress.
+net.this_pc_ip	den här datorns IP
+net.signing_in	Loggar in...
+net.creating_private	Skapar ett privat rum...
+net.hosting_one	Ingen öppen match hittades, skapar en...
+net.needs_2_to_4	En strid behöver 2 till 4 spelare.
+net.waiting_friend	Väntar på att din vän ansluter...
+net.waiting_friends	Väntar på att dina vänner ansluter...
+net.connection_running	En annan anslutning pågår fortfarande.
+net.no_valid_info	Rummet har ingen giltig anslutningsinformation (har värden lämnat?).
+net.connecting_host	Ansluter till värden...
+net.already_full	Det rummet är redan fullt.
+net.no_info	Rummet har ingen anslutningsinformation (har värden lämnat?).
+net.player_left_searching	Den spelaren lämnade. Söker igen...
+net.connected	Ansluten!
+net.relay_failed	Anslutningen till Relay-servern misslyckades.
+net.opponent_timeout	Kunde inte nå din motståndare (tidsgränsen nådd).
+net.no_internet	Ingen internetanslutning. Anslut till Wi-Fi eller mobildata för att spela med vänner var som helst. (LAN-spel fungerar på samma nätverk.)
+invite.wait	Vänta en stund innan du skickar en ny inbjudan.
+invite.type_name	Skriv din väns namn i spelet (3-16 bokstäver, siffror eller _).
+invite.own_name	Det är ditt eget namn.
+invite.open_room_first	Öppna ditt rum först och bjud sedan in.
+invite.room_full	Ditt rum är redan fullt.
+invite.could_not_send	Kunde inte skicka inbjudan.
+invite.too_many	För många inbjudningar just nu. Försök igen om några sekunder.
+invite.cancelled	Inbjudan avbruten.
+invite.expired	Den inbjudan har gått ut.
+invite.closed_full	Ditt rum är fullt. Inbjudan stängd.
+invite.closed_joined	En spelare gick med i ditt rum. Inbjudan stängd.
+invite.closed_room	Inbjudan avbruten: rummet stängdes.
+name.taken	Det här namnet är redan upptaget
+name.check_unavailable	Kunde inte kontrollera ditt namn online. Kontrollera internet och försök igen.
+name.too_soon	Du bytte namn alldeles nyss. Försök igen om en minut.
+name.choose_different	Välj ett annat namn.
+friends.type_tag	Skriv din väns namn som Kira#4821.
+friends.added	Vän tillagd.
+friends.declined_request	Förfrågan avböjd.
+friends.removed	Vän borttagen.
+friends.blocked	Spelare blockerad.
+friends.a_friend	En vän
+friends.type_player_tag	Skriv spelarens namn som Kira#4821.
+friends.wait_invite	Vänta en stund innan du bjuder in igen.
+name.enter	Ange ett namn.
+name.bad_chars	Använd bara bokstäver, siffror och _ (inga mellanslag eller symboler).
+rooms.name_bad_chars	Rumsnamn får bara innehålla bokstäver, siffror, mellanslag och _ - ' !.
+rooms.name_double_space	Rumsnamn får inte ha dubbla mellanslag.
+rooms.name_choose_different	Välj ett annat rumsnamn.
+gesture.cross_arms	KORSA ARMARNA
+gesture.punch_forward	SLAG FRAMÅT
+gesture.raise_hands	LYFT BÅDA HÄNDERNA
+class.kaia.passive1_desc	+15% attackhastighet
+class.kaia.passive2_desc	5% livsstöld
+class.kaia.skill1_desc	Rusa framåt och stöt in i motståndaren
+class.kaia.skill2_desc	Perfekt timing reflekterar skadan
+class.kaia.skill3_desc	Stöt många gånger snabbt
+class.kaia.ult_desc	10 s: vanliga attacker släpper loss en vågrät våg
+class.bruna.passive1_desc	+20% skada, -15% attackhastighet
+class.bruna.passive2_desc	+20% skada, -15% rörelsehastighet
+class.bruna.skill1_desc	Grip motståndaren och dunka hen i marken
+class.bruna.skill2_desc	Snurra som en tornado och träffa om och om igen
+class.bruna.ult_desc	Slå i golvet och skapa en chockvåg
+class.ren.passive1_desc	+20% chans till kritisk träff
+class.ren.passive2_desc	+10% rörelsehastighet i 10 s (30 s nedkylning)
+class.ren.skill1_desc	Rusa vågrätt bakåt och skjut
+class.ren.skill2_desc	Strypgrip en nära motståndare och knuffa bort hen
+class.ren.skill3_desc	Skjut en vågrät pilskur
+class.ren.ult_desc	En pil mångfaldigas till en storm av pilar
+class.lyra.passive1_desc	10% chans vid träff: -15% rörelse, -10% skada, -15% attackhast.
+class.lyra.passive2_desc	20% chans att blockera skada
+class.lyra.skill1_desc	Avfyra en målsökande eldprojektil
+class.lyra.skill2_desc	Frammana 3 hantlangare
+class.lyra.skill3_desc	Ett moln följer fienden och slår till med åska
+class.lyra.ult_desc	10 s eldring: bränner fiender, blockerar projektiler
+class.taro.passive1_desc	10% chans vid träff: -15% fiendens försvar
+class.taro.passive2_desc	Efter 3 s utan attack: nästa träff +50%
+class.taro.skill1_desc	Sträck ut, hoppa och svinga nedåt
+class.taro.skill2_desc	Snurra stångvapnet för att blockera projektiler
+class.taro.skill3_desc	Kasta spjutet och kalla tillbaka det
+class.taro.ult_desc	Stick fienden och sparka sedan in skaftet djupare
+char.kaia.role	Smidig anfallare
+char.kaia.style	Snabb, rörlig närstrid med precisa hugg som går att kedja.
+char.bruna.role	Slagskämpe
+char.bruna.style	Slagskämpe med hög skada och hög tålighet som kontrollerar ytan med tunga attacker.
+char.ren.role	Smidig skytt
+char.ren.style	Zonkontroll med hög rörlighet och precist tryck med mångsidig pilteknik.
+char.lyra.role	Zonkontroll / uppbyggnad
+char.lyra.style	Smidig trollkvinna som kontrollerar ytan med snabba besvärjelser, listig rörlighet och precis magi.
+char.taro.role	Räckviddsspecialist
+char.taro.style	Disciplinerad, rörlig kontroll med tryck på långt avstånd och precisa slag.
+stage.0.name	Himmelsdojon
+stage.0.short	Himmelsdojon
+stage.0.tagline	Bergshelgedom ovanför molnen
+stage.1.name	Neonstaden
+stage.1.short	Neonstaden
+stage.1.tagline	Takarena i neonregn
+stage.2.name	Lavasmedjan
+stage.2.short	Lavasmedjan
+stage.2.tagline	Smält gjuteri över ett lavahav
+stage.3.name	Begynnelsens berg
+stage.3.short	Berget
+stage.3.tagline	Lodrät KO · rörliga jadeplattformar över ett dimmigt stup
+stage.4.name	Enighetens slätt
+stage.4.short	Slätten
+stage.4.tagline	Vågrät KO · ett långt fält, ingenstans att gömma sig
+stage.5.name	Vulkanens avgrund
+stage.5.short	Vulkanen
+stage.5.tagline	Alla kanter ger KO · eld bryter ut ur magmasjön
+stage.6.name	Jättefågelns näste
+stage.6.short	Fågelnästet
+stage.6.tagline	Vågrät KO · den kolossala fågeln sveper över arenan
+stage.7.name	Det övergivna havsmonumentet
+stage.7.short	Havet
+stage.7.tagline	Alla kanter ger KO · valen sjunker ner, hoppa ner på terrasserna
+end.opponent_left	Din motståndare lämnade matchen.
+end.opponent_timeout	Din motståndare slutade svara.
+end.connection_lost	Anslutningen till din motståndare bröts.
+end.you_left	Du lämnade matchen.
+end.desync	De två spelen var oense (desync): inget resultat.
+end.unconfirmed	Matchens slut kunde inte bekräftas: inget resultat.
+end.handshake_failed	Matchen kunde inte starta.
+end.peer_never_started	Din motståndare gick aldrig med i matchen: inget resultat.
+end.too_slow	Anslutningen var för långsam för att spela: inget resultat.
+end.host_left	Värden lämnade matchen: inget resultat.
+end.dropped	Din anslutning föll ur matchen.
+status.aura	AURA {0}
+status.fire_ring	ELDRING {0}
+status.tailwind	MEDVIND
+status.guard_broken	GARDET BRUTET {0} s
+status.guard	GARDE {0}%
+status.reloading	LADDAR OM {0} s
+status.recharging	LADDAR UPP {0} s
+status.hexed	FÖRHÄXAD
+status.armor_break	RUSTNING -15%
+hud.perform	Utför: {0}
+hud.times_up	Tiden är slut!
+rewards.no_contest	Inget resultat: inga belöningar
+rewards.pve_victory	PvE-vinst  +{0}
+rewards.pve_match	PvE-match  +{0}
+rewards.victory	Vinst  +{0}
+rewards.match_played	Spelad match  +{0}
+rewards.posture	Bra hållning {0}%  +{1}
+hud.revived	ÅTERUPPLIVAD
+quest.win	Vinn 3 matcher
+quest.pve	Besegra CPU:n två gånger (PvE)
+quest.combo	Gör 10 fulla kombos
+quest.ult	Utlös 3 gest-ultimates
+quest.parry	Parera 5 attacker
+quest.posture	Avsluta en match med över 80% bra hållning
+rewards.quest	Uppdrag: {0}  +{1}
+bind.move_left	Gå vänster
+bind.move_right	Gå höger
+bind.drop	Släpp ner / snabbfall
+bind.jump	Hoppa
+bind.jump_alt	Hoppa (alt.)
+bind.light	Lätt attack
+bind.heavy	Tung attack
+bind.block	Blockera
+bind.dash	Dash
+bind.skill1	Förmåga 1
+bind.skill2	Förmåga 2
+bind.skill3	Förmåga 3
+bind.ultimate	Ultimate
+bind.aim_up	Sikta uppåt
+bind.special	Special
+hud.rejected	Avvisad: {0}
+cv.low_confidence	Låg spårningssäkerhet
+cv.frozen	Fryst bild (fusk?)
+cv.snap	Omedelbart posebyte (makro?)
+cv.ok	OK
+cam.none	Ingen kamera hittades
+cam.off	Kamera av
+cam.starting	Kameran startar...
+cam.waiting_frames	Väntar på bilder från kameran - ge Unity åtkomst till kameran under Systeminställningar > Integritet > Kamera
+cam.live	Kamera live ({0}x{1})
+pose.simulated	Simulerad (tangentbordsposer)
+pose.camera_off	Kameraspårning av - tangentbordssimulerade poser används
+pose.model_failed	Posemodellen misslyckades: {0}
+pose.loading	Laddar posemodell...
+pose.live	Live kroppsspårning (MoveNet, {0} Hz)
+pose.step_back	Kamera på - backa så att dina axlar syns
+account.finish_browser	Slutför inloggningen i din webbläsare (välj Fortsätt med Google)...
+account.signed_out_again	Utloggad. Logga in igen för att använda ditt konto.
+account.signed_in_kept	Inloggad. Ditt namn och dina framsteg följer det här kontot.

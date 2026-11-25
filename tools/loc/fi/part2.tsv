@@ -1,0 +1,257 @@
+room.ready_to_fight	VALMIINA TAISTELUUN
+room.full_suffix	 · HUONE TÄYNNÄ
+room.waiting	ODOTETAAN PELAAJIA
+room.joined	{0}  ·  {1} / {2} LIITTYNYT
+room.host	ISÄNTÄ
+room.player_n	PELAAJA {0}
+room.you_suffix	 · SINÄ
+room.hazards_host_pick	{0} · ISÄNNÄN VALINTA
+room.hazards_on	VAARAT PÄÄLLÄ
+room.hazards_off	VAARAT POIS
+room.code_copied	Huonekoodi {0} kopioitu. Liitä se kaverillesi.
+invite.body	{0} kutsuu sinut huoneeseen {1}   ({2} s)
+select.ult_name	ULT  {0}
+age.title	KUINKA VANHA OLET?
+age.body	Kaikenikäiset voivat pelata kaikkia tiloja. Ikäsi tallennetaan pelaajanimesi kanssa pelitilastoja varten.
+common.next	SEURAAVA
+age.error	Kirjoita ikäsi tai aseta se ristiohjaimella.
+age.pad_hint	Ohjain: ristiohjain ylös/alas muuttaa 1:llä, vasen/oikea 10:llä · A = seuraava
+rooms.enter_name	SYÖTÄ HUONEEN NIMI
+rooms.name_rules	3-24 kirjainta, numeroa tai välilyöntiä. Kaverit näkevät sen liittyessään. Huoneisiin mahtuu 2-4 pelaajaa.
+rooms.create	LUO
+common.one_moment	HETKI...
+account.keep_name	SÄILYTÄ TAISTELIJANIMESI
+account.finish_in_browser	VIIMEISTELE SELAIMESSA...
+account.sign_in_google	KIRJAUDU GOOGLELLA
+account.play_without	PELAA ILMAN TILIÄ
+name.choose_first	Valitse ensin pelaajanimesi.
+common.cancelled	Peruutettu.
+name.welcome	TERVETULOA, TAISTELIJA! MIKÄ ON NIMESI?
+name.change_title	VAIHDA NIMESI
+name.rules	3-16 kirjainta, numeroa tai _. Valitse hauska taistelijanimi, älä oikeaa nimeäsi. Sillä kaverit löytävät ja kutsuvat sinut, ja sen kaikki näkevät.
+name.suggest	EHDOTA
+name.checking	TARKISTETAAN...
+name.lets_fight	TAISTELLAAN!
+common.save	TALLENNA
+name.pad_hint_first	Ohjain: A = taistellaan · Y = ehdota nimeä
+name.pad_hint	Ohjain: A = tallenna · Y = ehdota nimeä
+online.connected_agreeing	Yhdistetty. Sovitaan ottelusta...
+online.host_settings_changed	Isännän asetukset muuttuivat — liity huoneeseen uudelleen.
+online.version_mismatch	Vastustajallasi on eri versio pelistä. Molemmilla pelaajilla pitää olla sama versio.
+rooms.title	VS LOCAL
+rooms.kicker	HUONEET  ·  2-4 PELAAJAA  ·  LUO · LIITY · KUTSU NIMELLÄ
+rooms.create_rooms	LUO HUONEITA
+rooms.join_room	LIITY HUONEESEEN
+rooms.creating	LUODAAN HUONETTASI...
+rooms.loading	LADATAAN HUONEITASI...
+rooms.none_yet	Huoneita ei ole vielä luotu!
+rooms.one_moment	Hetki.
+rooms.empty_help	Paina LUO HUONEITA tehdäksesi sellaisen, tai LIITY HUONEESEEN kaverin huonekoodilla.
+rooms.capacity_note	Huoneisiin mahtuu 2-4 pelaajaa. Kutsu kavereita heidän pelaajanimellään.
+rooms.invites_paused	Huonekutsut tauolla muutaman minuutin
+rooms.refresh	PÄIVITÄ
+rooms.hint	VS LOCAL  ·  HUONEET
+rooms.new	UUSI
+rooms.you_host	OLET ISÄNTÄ
+rooms.open	AVAA
+join.enter_code	SYÖTÄ HUONEKOODI
+join.body	Kirjoita tai liitä huonekoodi, jonka kaverisi lähetti (Discord, chat...).
+join.paste	LIITÄ
+join.join	LIITY
+join.bad_code	Tämä ei ole huonekoodi. Tarkista se ja yritä uudelleen (vain kirjaimia ja numeroita).
+rooms.fight_starting	Huonetaistelu on alkamassa. Odota sitä tai poistu ensin huoneesta.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  PELAAJA LÄHELLÄSI
+quick.player_found	PELAAJA LÖYTYI!
+quick.search_failed	HAKU EPÄONNISTUI
+quick.not_searching	EI HAETA
+quick.connecting	Yhdistetään vastustajaasi...
+quick.searching_near	Haetaan pelaajaa läheltäsi
+quick.stopped	Haku pysähtyi. Yritä uudelleen.
+quick.press_search_again	Paina HAE UUDELLEEN etsiäksesi pelaajaa.
+quick.privacy	Pikaottelu jakaa maasi (laitteen asetuksista), ei koskaan sijaintiasi.
+quick.search_again	HAE UUDELLEEN
+quick.hint	VS ONLINE  ·  PIKAOTTELU
+room.kicker_opening	HUONE  ·  AVATAAN HUONETTA...
+room.opening	Avataan huonetta...
+room.your_fighter	TAISTELIJASI
+room.locked_in	LUKITTU
+room.everyone_ok	Kaikki painavat OK: taistelu alkaa itsestään.
+room.share_code	Jaa koodi tai kutsu kavereita nimellä.
+room.empty_seat	Vapaa paikka
+room.stage_you	AREENA (sinä valitset)
+room.stage_host	AREENA (isäntä valitsee)
+common.ok	OK
+room.loading	LADATAAN...
+room.change	VAIHDA
+room.starting	ALOITETAAN...
+room.start_fight	ALOITA TAISTELU
+room.close	SULJE HUONE
+room.leave	POISTU HUONEESTA
+room.hint	VS LOCAL  ·  HUONE
+room.code	KOODI
+room.copy	KOPIOI
+room.host_can_invite	Isäntä voi kutsua kaverin nimellä.
+room.invite_by_name	KUTSU KAVERI NIMELLÄ
+room.invite	KUTSU
+room.full	Huone on täynnä.
+invite.title	HUONEKUTSU
+invite.warning	Nimiä ei tarkisteta: hyväksy kutsuja vain tuntemiltasi ihmisiltä.
+invite.accept	HYVÄKSY
+invite.decline	HYLKÄÄ
+room.hazards_on_btn	VAARAT  PÄÄLLÄ
+room.hazards_off_btn	VAARAT  POIS
+select.passive	PASSIIVI
+select.look	ULKONÄKÖ
+select.cosmetic	KOSMEETTINEN
+select.arcade_round	ARCADE  ·  ERÄ {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   OHJAIN 1 = 1P, OHJAIN 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	NUKKE
+select.round_rival	ERÄN {0} KILPAILIJA
+select.picks_at_start	VALITSEE TAISTELUN ALUSSA
+select.signature_weapon	TUNNUSASE  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  VOITETTU
+select.arcade_route	ARCADE-REITTI  ·  AREENA {0} / {1}
+select.select_stage	VALITSE AREENA
+select.local_versus	PAIKALLINEN VERSUS
+select.arcade_rival	ARCADE-KILPAILIJA
+select.training_dummy	HARJOITUSNUKKE
+select.stage	AREENA
+select.hazards	VAARAT
+select.fight	TAISTELE
+select.change	VAIHDA
+select.confirm	VAHVISTA
+select.random	SATUNNAINEN
+select.fate	ANNA KOHTALON PÄÄTTÄÄ
+select.ready_bang	VALMIS!
+select.loadout	VARUSTEET
+select.waiting_1p	ODOTETAAN 1P:TÄ
+select.1p_picks_dummy	1P VALITSEE NUKEN
+select.selecting	VALITSEE
+select.identity_hidden	HENKILÖLLISYYS PIILOSSA
+select.revealed_at_start	PALJASTUU ERÄN ALKAESSA
+select.ai_picks	AI VALITSEE TAISTELIJANSA
+select.random_every_fight	SATUNNAINEN HAHMO JOKA TAISTELUSSA
+select.any_character	MIKÄ TAHANSA HAHMO · SATUNNAINEN PASSIIVI JA ASE
+select.lock_in_hint	LUKITSE  ·  TAI NAPSAUTA HAHMOA
+select.to_ready	OLLAKSESI VALMIS
+select.cpu_difficulty_pick	CPU:N VAIKEUSTASO  ·  VALITSE ENNEN TAISTELUA
+select.ai_note	Internetiä ei tarvita. AI valitsee uuden hahmon, passiivin ja aseen jokaiseen taisteluun, myös uusintaotteluihin.
+select.pad_difficulty	RISTIOHJAIN YLÖS / ALAS  ·  VAIKEUSTASO
+select.key_difficulty	W / S  ·  VAIKEUSTASO
+select.start_training	ALOITA HARJOITTELU
+select.fight_bang	TAISTELKAA!
+select.click_to_start	TAI NAPSAUTA ALOITTAAKSESI NYKYISILLÄ VALINNOILLA
+hud.ready	VALMIINA...
+hud.rival	KILPAILIJA
+hud.you	SINÄ
+hud.ultimate_ready	{0} · ULTIMATE VALMIS
+hud.move_detected	{0} · LIIKE TUNNISTETTU
+hud.failed	{0} · EPÄONNISTUI
+hud.training_title	HARJOITTELU · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  HARJOITTELU
+hud.intro_online	  ·  ONLINE  ·  ESC / START: POISTU
+hud.ult_ready_press	ULT VALMIS - paina {0}
+hud.ult_ready	ULT VALMIS
+hud.sim_key	sim-näppäin: {0}
+hud.poses_live	 · asennot: kädet ristissä torjunta / käsi ulos = tulipallo / kädet ylös = hyppy
+hud.poses_keys	 · asennot 1 risti / 2 lyönti / 3 nosto · P kumara
+hud.poses_p2	 · asennot 8/9/0
+hud.training_help	HARJOITTELU: T täyttää ultimatesi · KO:tut taistelijat palaavat 0 %:ssa · Esc tauko
+hud.ult_pct	ULT {0}%
+hud.last_hit	VIIMEINEN OSUMA  {0}
+hud.combo_hits	KOMBO  {0} OSUMAA  +{1}%
+hud.combo	KOMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	P1 KAMERA · SIM
+hud.cv_p1_live	P1 KAMERA · LIVE
+hud.cv_p2_sim	P2 KAMERA · SIM
+hud.cv_p2_live	P2 KAMERA · LIVE
+hud.hits_prefix	{0} OSUMAA  
+results.no_contest	EI TULOSTA
+results.draw	TASAPELI!
+results.cpu_wins	CPU VOITTAA
+results.you_win	VOITIT!
+results.rival_wins	KILPAILIJA VOITTAA
+results.wins	{0} VOITTAA!
+results.takes_round	{0} voittaa erän
+results.stats	Osumat  {0}\nTäydet kombot  {1}   ·   Paras kombo  {2}
+results.stats2	\nEle-ultimatet  {0}\nTorjunnat  {1}
+results.posture	\nHyvä ryhti  {0}%
+results.rewards_named	PALKINNOT ({0}:n profiili)
+results.rewards_your	PALKINNOT (profiilisi)
+results.rewards_p1	PALKINNOT (P1-profiili)
+results.coins	+{0} kolikkoa  (yhteensä {1})
+hud.do_pose	tee asento kameralle
+results.place_1	1.
+results.place_2	2.
+results.place_3	3.
+results.place_4	4.
+results.out	ULKONA
+results.out_1	ULKONA · 1.
+results.out_2	ULKONA · 2.
+results.out_3	ULKONA · 3.
+results.out_4	ULKONA · 4.
+results.red_team	PUNAINEN JOUKKUE
+results.blue_team	SININEN JOUKKUE
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} PELAAJAA
+hud.keys_line1	P{0}: {1} liiku · {2} hyppy · 
+hud.keys_line2	{0} kevyt · {1} raskas · {2} erikois · 
+hud.keys_line3	{0} torjunta · {1} syöksy · 
+hud.keys_line4	{0} taidot · {1} ult
+results.characters	HAHMOT
+results.stock_one	1 ELÄMÄ
+results.stocks	{0} ELÄMÄÄ
+hud.respawn	PALAA
+hud.drop_in	HYPPÄÄ MUKAAN!
+results.main_menu	PÄÄVALIKKO
+pause.title	TAUKO
+pause.resume	JATKA
+pause.quit	POISTU VALIKKOON
+pause.hint	B / Backspace jatkaaksesi
+leave.title	POISTUTAANKO OTTELUSTA?
+leave.body	Ottelu jatkuu. Poistuminen lasketaan häviöksi.
+leave.leave	POISTU
+leave.hint	B / Backspace / Esc / Start jäädäksesi
+results.winner	VOITTAJA
+results.training_no_rewards	Harjoittelu: ei palkintoja
+cv.posture	Ryhti {0}%
+cv.posture_low	Ryhti {0}% - istu suorassa!
+cv.telemetry_ok	Telemetria OK
+net.rooms_load_failed	Huoneitasi ei voitu ladata: {0}
+net.host_limit	Olet jo isäntänä {0} huoneessa. Sulje ensin yksi.
+net.creating_named	Luodaan "{0}"...
+net.room_ready_code	Huone "{0}" on valmis. Jaa koodi {1} tai kutsu kaveri.
+net.create_failed	Huonetta ei voitu luoda: {0}
+net.joining_room	Liitytään huoneeseen {0}...
+net.you_joined	Liityit huoneeseen "{0}". Valitse taistelijasi ja paina OK.
+net.no_room_code	Koodilla {0} ei ole huonetta. Tarkista koodi ja yritä uudelleen.
+net.room_full_n	Se huone on täynnä ({0} pelaajaa).
+net.join_failed	Liittyminen epäonnistui: {0}
+net.update_failed	Huonetta ei voitu päivittää: {0}
+net.could_not_what	Ei voitu {0}: {1}
+net.what_stage	vaihtaa areenaa
+net.what_hazards	vaihtaa vaaroja
+net.press_ok_again	{0} Paina molemmat OK ja ALOITA TAISTELU uudelleen.
+net.udp_port	UDP-porttia {0} ei voitu avata (jo käytössä?).
+net.lan_ready	LAN-isäntä valmis. Kaverisi liittyy osoitteeseen: {0}  (portti {1})
+net.bad_ip	"{0}" ei ole kelvollinen IP-osoite.
+net.connecting_to	Yhdistetään kohteeseen {0}...
+net.sign_in_failed	Kirjautuminen epäonnistui: {0}
+net.room_ready	Huone "{0}" on valmis. Jaa koodi kaverisi kanssa.
+net.searching_in	Haetaan pelaajia alueelta {0}...
+net.start_failed	Taistelua ei voitu aloittaa: {0}
+net.host_unreachable	Isäntää ei tavoitettu: {0}
+net.area_world	koko maailma
+net.area_country_and	maasi ja {0}
+region.africa	Afrikka
+region.americas	Amerikka
+region.asia	Aasia
+region.europe	Eurooppa
+region.oceania	Oseania
+region.northern_africa	Pohjois-Afrikka

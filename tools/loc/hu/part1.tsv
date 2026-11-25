@@ -1,0 +1,257 @@
+lang.backdrop	NYELV
+lang.title	VÁLASZD KI A NYELVET
+lang.subtitle	A játékban minden ezen a nyelven jelenik meg. Bármikor megváltoztathatod a BEÁLLÍTÁSOK menüben.
+lang.search_hint	Nyelvek keresése...
+lang.no_match	Egyik nyelv sem felel meg a keresésnek.
+lang.english_text	Egyelőre angol szöveg
+lang.confirm	MEGERŐSÍTÉS  ·  {0}
+lang.confirm_none	MEGERŐSÍTÉS
+lang.pad_hint	Gépelj a kereséshez · Fel / Le a választáshoz · Enter vagy kontroller A = megerősítés
+common.cancel	MÉGSE
+settings.language	NYELV  ·  {0}
+difficulty.dummy	Bábu
+difficulty.easy	Könnyű
+difficulty.medium	Közepes
+difficulty.hard	Nehéz
+difficulty.dummy_upper	BÁBU
+difficulty.easy_upper	KÖNNYŰ
+difficulty.medium_upper	KÖZEPES
+difficulty.hard_upper	NEHÉZ
+nav.home	KEZDŐLAP
+nav.play	JÁTÉK
+nav.training	EDZÉS
+nav.arcade	ARCADE
+nav.collection	GYŰJTEMÉNY
+nav.settings	BEÁLLÍTÁSOK
+account.signed_in_as	Bejelentkezve mint {0}.
+account.signed_in	Bejelentkezve.
+account.signed_out	Kijelentkezve.
+keys.who	P{0} {1}
+keys.reserved	A(z) {0} póz- / testtartás-billentyű (1 2 3, 8 9 0, numerikus 7 8 9, P, -). Válassz másikat.
+keys.swapped	{0};  a(z) {1} most {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Az online játék 13 éves és idősebb játékosoknak szól.
+arcade.clear_toast	ARCADE TELJESÍTVE! Mind a(z) {0} rivális legyőzve
+precheck.too_dark	Túl sötét ({0}%) - adj hozzá fényt
+precheck.too_bright	Túl világos ({0}%) - csökkentsd a vakítást
+precheck.good	Jó ({0}%)
+loading.weapon_art	Fegyvergrafika: {0}
+loading.fighter	Harcos: {0}
+precheck.checking	ELLENŐRZÉS... {0}
+wipe.character_select	KARAKTERVÁLASZTÁS
+wipe.arcade	ARCADE
+results.rematch	VISSZAVÁGÓ
+results.continue	TOVÁBB
+results.finish	BEFEJEZÉS
+results.next_battle	KÖVETKEZŐ CSATA
+wipe.arcade_clear	ARCADE TELJESÍTVE
+precheck.title	KAMERAELLENŐRZÉS
+precheck.camera_unavailable	A kamera nem érhető el
+precheck.simulated_feed	Szimulált kép (webkamera ki)
+precheck.upper_body_ok	A felsőtest a képben van
+precheck.step_back	Lépj hátrébb - a vállaknak és a csípőnek látszania kell
+loading.interface	Felület grafikái
+loading.typefaces	Betűtípusok
+loading.pose_model	Pózkövető modell
+loading.ready	Kész
+onboarding.welcome	ÜDVÖZLÜNK!
+onboarding.your_account	A FIÓKOD
+onboarding.your_name	A JÁTÉKOSNEVED
+rooms.backdrop_create	VS LOCAL  ·  SZOBÁK LÉTREHOZÁSA
+rooms.backdrop_join	VS LOCAL  ·  CSATLAKOZÁS SZOBÁHOZ
+precheck.all_passed	MINDEN ELLENŐRZÉS SIKERES
+precheck.failed	SIKERTELEN ELLENŐRZÉS
+precheck.lighting	MEGVILÁGÍTÁS
+precheck.framing	KÉPKIVÁGÁS
+precheck.posture	TESTTARTÁS
+precheck.upright	Szép egyenes
+precheck.sit_up	Ülj egyenesen a bónuszérmékért
+common.retry	ÚJRA
+precheck.play_anyway	JÁTÉK ÍGY IS
+common.back	VISSZA
+precheck.ranked_note	A rangsorolt sorokhoz ennek az ellenőrzésnek sikeresnek kell lennie. A laza meccsek kihagyhatják.
+precheck.hint	KAMERAELLENŐRZÉS MECCS ELŐTT
+hint.select	KIVÁLASZTÁS
+home.play	JÁTÉK
+home.training	EDZÉS
+home.arcade	ARCADE
+home.collection	KARAKTERGYŰJTEMÉNY
+home.settings	BEÁLLÍTÁSOK
+home.exit	KILÉPÉS A JÁTÉKBÓL
+home.play_desc	Vs Online gyors meccs, VS Local szobák barátokkal vagy Vs CPU
+home.training_desc	Kamerabeállítás, gesztusgyakorlás és egy edzőbábu
+home.arcade_desc	Mind az öt rivális egymás után, minden pályán
+home.collection_desc	Skinek, fegyverek és a kozmetikai banner
+home.settings_desc	Nehézség, kamerabeállítások és billentyűk
+home.exit_desc	A játék bezárása
+tips.1	Töltsd fel az ULT csíkot és nyomd meg az Ultimate gombot - aztán vedd fel a harcosod pózát a kamera előtt, mielőtt lejár a visszaszámlálás.
+tips.2	A magasabb DEF minden találat sebzéséből lefarag, és erősebbé teszi a blokkolásodat.
+tips.3	A kamera által követett jó testtartás minden meccs után bónuszérméket hoz.
+tips.4	A skinek és a fegyverek csak kozmetikaiak - a statisztikák sosem változnak attól, mit visel egy harcos.
+tips.5	Edzésben nyomd meg a T-t, hogy feltöltsd az ultimate-et. A bábu mindig feláll.
+tips.6	Minden harcos két passzív közül egyet hoz - válaszd ki a felszerelés panelen a megerősítés után.
+tips.7	Az online harcok rollback netcode-ot használnak: mindkét játék ugyanazt a harcot futtatja ugyanazokból a bemenetekből.
+stats.power	ERŐ
+stats.speed	SEBESSÉG
+stats.range	HATÓTÁV
+stats.endurance	KITARTÁS
+stats.recovery	REGENERÁLÓDÁS
+training.use_block	Blokk · Közelharci és Mágia ultimate
+training.use_fireball	Tűzgolyó · Távolsági és Szálfegyver ultimate
+training.use_superjump	Szuperugrás · Nehéz ultimate
+menu.online_locked	Az online módok 13 éves és idősebb játékosoknak szólnak.
+menu.no_internet	Nincs internet: csatlakozz Wi-Fi-hez vagy mobiladathoz. A VS AI offline is működik.
+menu.four_player_soon	A 2v2-höz és a Battle Royale-hoz 4 játékos támogatása kell, ez egy későbbi frissítésben jön.
+profile.edit_name	NÉV SZERKESZTÉSE
+profile.win_loss	GY {0}  ·  V {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	KÉSZ
+loading.loading	BETÖLTÉS
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   teljesítve x{2}
+arcade.rule_fight_all	Harcolj mind a(z) {0} karakterrel egymás után, véletlen sorrendben.
+arcade.rule_difficulty	CPU nehézség: {0} (a Beállításokban módosíthatod).
+arcade.final	DÖNTŐ
+arcade.round	{0}. KÖR
+training.cv_setup_source	CV BEÁLLÍTÁS · {0}
+training.status	Kamera: {0}\nKövetés: {1}\nÉszlelve: {2}
+training.off	ki
+training.none	semmi
+training.status_posture	   ·   Testtartás {0}%   ·   Telemetria {1}
+collection.gold_cinematic_suffix	 · ARANY ÁTVEZETŐ
+collection.only	CSAK {0}
+collection.pull1	HÚZÁS x1  ·  {0}
+collection.pull10	HÚZÁS x10  ·  {0}
+collection.dup_suffix	  (dupla +20)
+collection.new_suffix	  ÚJ!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} másodperc  <size=12><color=#9AA6BC>(minden meccsre rögzített)</color></size>
+settings.change_name_as	NÉVVÁLTOZTATÁS  ·  {0}
+settings.change_name	NÉVVÁLTOZTATÁS
+settings.keys_help	Kattints egy hozzárendelésre, majd nyomj meg egy billentyűt, vagy kattints a mezőre egy egérgombbal (Esc / kontroller B / máshová kattintás megszakít; 5 mp időkorlát). Ha valamelyik játékos már használja, a kettő helyet cserél.\nKamerás pózok: keresztbe tett karok = blokk · oldalra nyújtott kar = tűzgolyó · mindkét kéz fent = szuperugrás (billentyűs pózok: 1/2/3 és 8/9/0).
+rarity.common	GYAKORI
+rarity.rare	RITKA
+rarity.epic	EPIKUS
+rarity.legendary	LEGENDÁS
+skin.default	Klasszikus
+skin.mint	Menta Pop
+skin.shadow	Árnyék
+skin.sakura	Sakura
+skin.inferno	Pokol
+skin.celestial	Égi
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	CSAK 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nCSAPAT
+play.four_player_later	A 2v2 és a Battle Royale a 4 játékos támogatásával érkezik egy későbbi frissítésben.
+play.team_tag	4P · 2 CSAPAT
+play.royale_tag	4P · MINDENKI MINDENKI ELLEN
+collection.all_fighters	ÖSSZES HARCOS
+arcade.mode	ARCADE MÓD
+home.tagline	ARÉNA HARCJÁTÉK  ·  TESTGESZTUS ULTIMATE-EK
+play.royale_card	BATTLE\nROYALE
+training.kicker	KAMERABEÁLLÍTÁS ÉS GYAKORLÁS
+settings.camera_tracking	KAMERÁS KÖVETÉS (WEBKAMERA)
+training.camera_off	KAMERÁS KÖVETÉS: KI
+training.camera_on	KAMERÁS KÖVETÉS: BE
+collection.hint	KARAKTERGYŰJTEMÉNY
+play.choose_style	VÁLASSZ JÁTÉKSTÍLUST
+online.kicker	VÁLASSZ JÁTÉKSTÍLUST  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	VÁLASZD KI A CSATÁD  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	HAMAROSAN
+training.cv	GÉPI LÁTÁS
+online.connection	KAPCSOLAT
+collection.banner	KOZMETIKAI BANNER
+settings.cpu_difficulty	CPU NEHÉZSÉG
+play.create_join	SZOBA LÉTREHOZÁSA · CSATLAKOZÁS
+settings.cv_overlay	CV RÉTEG A MECCSBEN
+quests.coins_note	Érmék csak játékból jönnek: győzelmek, PvE, küldetések és a kamera által követett jó testtartás.
+collection.odds	Gyakori 60% · Ritka 28% · Epikus 10% · Legendás 2%
+collection.equip	FELSZERELÉS
+collection.equipped	FELSZERELVE
+hint.exit	KILÉPÉS
+home.exit_upper	KILÉPÉS A JÁTÉKBÓL
+exit.title	KILÉPSZ A JÁTÉKBÓL?
+online.royale_desc	Mindenki magáért. Az utolsó talpon maradt harcos nyer.
+arcade.kicker	ÖT RIVÁLIS · EGY FUTAM
+loading.for_battle	A CSATÁRA
+online.invites_note	A barátaid szobameghívói itt jelennek meg. A barátokkal közös szobák a JÁTÉK > VS LOCAL alatt vannak.
+settings.kicker	JÁTÉK · KAMERA · IRÁNYÍTÁS
+training.gestures_live	GESZTUSOK  (vedd fel a pózt a kamera előtt - ütés = egy kar egyenesen oldalra nyújtva)
+training.gestures_sim	GESZTUSOK  (tartsd lenyomva a billentyűt a póz szimulálásához)
+settings.key_bindings	BILLENTYŰK
+settings.keys_reset	A billentyűk visszaálltak alapértelmezettre
+play.locked	ZÁROLVA
+arcade.rule_retry	Elvesztettél egy kört? Folytasd és próbáld újra.
+home.hint	FŐMENÜ
+settings.master_volume	FŐ HANGERŐ
+settings.match_time	MECCSIDŐ
+play.matchmaking_card	VS\nLOCAL
+hint.move	MOZGÁS
+play.matchmaking_desc	Hozz létre szobát, oszd meg a kódját, vagy hívj meg barátokat név szerint.
+play.no_internet_tag	NINCS INTERNET
+online.no_internet_body	Most nincs internet. Csatlakozz Wi-Fi-hez vagy mobiladathoz, vagy játssz Vs CPU módban.
+common.off	KI
+online.offline	OFFLINE
+common.on	BE
+settings.player1	1. JÁTÉKOS
+settings.player2	2. JÁTÉKOS
+training.practice_dummy	GYAKORLÁS BÁBU ELLEN
+settings.precheck	KAMERAELLENŐRZÉS MECCS ELŐTT
+loading.prepare	KÉSZÜLJ
+settings.listening_hint	NYOMJ MEG EGY BILLENTYŰT VAGY KATTINTS A MEZŐRE  ·  ESC / KONTROLLER B MEGSZAKÍT  ·  KONTROLLERGOMBOK NEM RENDELHETŐK HOZZÁ
+training.slouch_note	Nyomd meg a P-t a görnyedt testtartás be-/kikapcsolásához, és nézd, ahogy esik a testtartás pontszáma.
+settings.profile_reset	Profil visszaállítva (a név és a bejelentkezés megmarad)
+collection.pull_to_unlock	Húzz a feloldáshoz
+quests.title	KÜLDETÉSEK
+online.quick_match	GYORS MECCS
+play.online_desc	Gyors meccs egy közeli játékossal, vagy válaszolj egy barát meghívójára.
+online.solo_desc	Gyors meccs: harcolj egy épp kereső játékossal, a legközelebbivel először.
+settings.reset_keys	BILLENTYŰK VISSZAÁLLÍTÁSA
+settings.reset_profile	PROFIL VISSZAÁLLÍTÁSA
+arcade.rival_unknown	RIVÁLIS  ???
+play.rooms_tag	SZOBÁK · 2-4 JÁTÉKOS
+online.rollback_body	Rollback netcode: mindkét játék ugyanazt a harcot futtatja ugyanazokból a bemenetekből, így gyors és igazságos marad.
+settings.screen_shake	KÉPERNYŐRÁZKÓDÁS
+profile.set_name	NÉV MEGADÁSA
+settings.sfx_volume	EFFEKTEK HANGEREJE
+training.simulate_pose	PÓZ SZIMULÁLÁSA
+collection.kicker	SKINEK · FEGYVEREK · KOZMETIKAI BANNER
+training.slouch	GÖRNYEDÉS
+online.solo_card	SOLO\n1V1
+home.start	START
+arcade.start	ARCADE INDÍTÁSA
+exit.stay	MARADOK
+settings.sure	BIZTOS?
+settings.sure_reset_profile	BIZTOS? MINDEN HALADÁS ELVÉSZ
+collection.banner_note	Csak skinek és ultimate átvezetők. A statisztikák minden skinen azonosak - semmi sincs fizetőfal mögött.
+hint.tabs	FÜLEK
+loading.tip	TIPP
+training.hint	EDZÉS  /  CV BEÁLLÍTÁS
+arcade.rule_stages	A pálya minden körben változik, a Kezdet Hegyétől az Óceán Emlékművéig.
+online.team_desc	Két kétfős csapat. Nincs baráti tűz: a találataid sosem sebzik a csapattársad.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  JÁTÉKSTÍLUS
+play.online_card	VS\nONLINE
+arcade.rule_rewards	A győzelmek érméket és küldetéshaladást hoznak, ugyanúgy, mint a VS CPU.
+exit.saved_note	A profilod, az érméid és a gyűjteményed ezen az eszközön van mentve.
+settings.key_listening	billentyű vagy kattints ide
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Kiválasztod a harcosod és a KÖNNYŰ, KÖZEPES vagy NEHÉZ szintet. A CPU véletlen harcost kap.
+account.keep_name_body	Jelentkezz be a Google-fiókoddal, és a neved és adataid veled maradnak: minden alkalommal, amikor megnyitod a játékot, és bármelyik számítógépen. Egy másik Google-fiók saját új nevet kap.
+name.you_are	Te vagy {0}!
+name.you_are_unchecked	Te vagy {0}! A nevet ellenőrizzük, amikor online játszol.
+online.could_not_start	A meccs nem tudott elindulni ({0}).
+rooms.your_rooms	A SZOBÁID
+rooms.count_click	{0}  ·  kattints egy szobára a megnyitáshoz
+rooms.code_value	KÓD  {0}
+rooms.players_count	{0} / {1} JÁTÉKOS
+rooms.more	+ még {0} szoba
+rooms.created	A(z) „{0}” szoba létrejött. Kattints rá a kód megosztásához vagy barátok meghívásához.
+quick.searching	KERESÉS
+quick.looking_in	KERESÉS ITT:  {0}
+room.kicker	SZOBA  ·  2-4 JÁTÉKOS  ·  {0}
+room.battle_royale	BATTLE ROYALE

@@ -1,0 +1,257 @@
+room.ready_to_fight	GATA DE LUPTĂ
+room.full_suffix	 · CAMERĂ PLINĂ
+room.waiting	SE AȘTEAPTĂ JUCĂTORI
+room.joined	{0}  ·  {1} / {2} INTRAȚI
+room.host	GAZDĂ
+room.player_n	JUCĂTORUL {0}
+room.you_suffix	 · TU
+room.hazards_host_pick	{0} · ALEGEREA GAZDEI
+room.hazards_on	PERICOLE PORNITE
+room.hazards_off	PERICOLE OPRITE
+room.code_copied	Codul camerei {0} a fost copiat. Lipește-l prietenului tău.
+invite.body	{0} te invită în {1}   ({2}s)
+select.ult_name	ULT  {0}
+age.title	CÂȚI ANI AI?
+age.body	Orice vârstă poate juca orice mod. Vârsta ta e înregistrată cu numele de jucător pentru statisticile jocului.
+common.next	ÎNAINTE
+age.error	Scrie-ți vârsta sau seteaz-o cu D-pad-ul.
+age.pad_hint	Controller: D-pad sus/jos o schimbă cu 1, stânga/dreapta cu 10 · A = înainte
+rooms.enter_name	INTRODU NUMELE CAMEREI
+rooms.name_rules	3-24 litere, cifre sau spații. Prietenii îl văd când intră. Camerele au 2 până la 4 jucători.
+rooms.create	CREEAZĂ
+common.one_moment	O CLIPĂ...
+account.keep_name	PĂSTREAZĂ-ȚI NUMELE DE LUPTĂTOR
+account.finish_in_browser	TERMINĂ ÎN BROWSER...
+account.sign_in_google	CONECTEAZĂ-TE CU GOOGLE
+account.play_without	JOACĂ FĂRĂ CONT
+name.choose_first	Alege-ți întâi numele de jucător.
+common.cancelled	Anulat.
+name.welcome	BUN VENIT, LUPTĂTORULE! CUM TE CHEAMĂ?
+name.change_title	SCHIMBĂ-ȚI NUMELE
+name.rules	3-16 litere, cifre sau _. Alege un nume de luptător amuzant, nu numele tău real. Așa te găsesc și te invită prietenii și asta vede toată lumea.
+name.suggest	SUGEREAZĂ
+name.checking	SE VERIFICĂ...
+name.lets_fight	HAI SĂ LUPTĂM!
+common.save	SALVEAZĂ
+name.pad_hint_first	Controller: A = hai să luptăm · Y = sugerează un nume
+name.pad_hint	Controller: A = salvează · Y = sugerează un nume
+online.connected_agreeing	Conectat. Se stabilește meciul...
+online.host_settings_changed	Setările gazdei s-au schimbat — reintră în cameră.
+online.version_mismatch	Adversarul tău rulează altă versiune a jocului. Ambii jucători au nevoie de aceeași versiune.
+rooms.title	VS LOCAL
+rooms.kicker	CAMERE  ·  2-4 JUCĂTORI  ·  CREEAZĂ · INTRĂ · INVITĂ DUPĂ NUME
+rooms.create_rooms	CREEAZĂ CAMERE
+rooms.join_room	INTRĂ ÎN CAMERĂ
+rooms.creating	SE CREEAZĂ CAMERA TA...
+rooms.loading	SE ÎNCARCĂ CAMERELE TALE...
+rooms.none_yet	Nicio cameră creată încă!
+rooms.one_moment	O clipă.
+rooms.empty_help	Apasă CREEAZĂ CAMERE ca să faci una sau INTRĂ ÎN CAMERĂ cu codul de cameră al unui prieten.
+rooms.capacity_note	Camerele au 2 până la 4 jucători. Invită prieteni după numele lor de jucător.
+rooms.invites_paused	Invitațiile în camere sunt oprite câteva minute
+rooms.refresh	REÎMPROSPĂTEAZĂ
+rooms.hint	VS LOCAL  ·  CAMERE
+rooms.new	NOU
+rooms.you_host	TU EȘTI GAZDA
+rooms.open	DESCHIDE
+join.enter_code	INTRODU CODUL CAMEREI
+join.body	Scrie sau lipește codul camerei pe care ți l-a trimis prietenul (Discord, chat...).
+join.paste	LIPEȘTE
+join.join	INTRĂ
+join.bad_code	Acesta nu e un cod de cameră. Verifică-l și încearcă din nou (doar litere și cifre).
+rooms.fight_starting	O luptă în cameră începe. Așteapt-o sau ieși mai întâi din cameră.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  UN JUCĂTOR DE LÂNGĂ TINE
+quick.player_found	JUCĂTOR GĂSIT!
+quick.search_failed	CĂUTARE EȘUATĂ
+quick.not_searching	NU SE CAUTĂ
+quick.connecting	Conectare la adversar...
+quick.searching_near	Se caută un jucător de lângă tine
+quick.stopped	Căutarea s-a oprit. Încearcă din nou.
+quick.press_search_again	Apasă CAUTĂ DIN NOU ca să cauți un jucător.
+quick.privacy	Meciul rapid îți împarte țara (din setările dispozitivului), niciodată locația.
+quick.search_again	CAUTĂ DIN NOU
+quick.hint	VS ONLINE  ·  MECI RAPID
+room.kicker_opening	CAMERĂ  ·  SE DESCHIDE CAMERA...
+room.opening	Se deschide camera...
+room.your_fighter	LUPTĂTORUL TĂU
+room.locked_in	CONFIRMAT
+room.everyone_ok	Toți apasă OK: lupta începe singură.
+room.share_code	Împarte codul sau invită prieteni după nume.
+room.empty_seat	Loc liber
+room.stage_you	ARENĂ (alegi tu)
+room.stage_host	ARENĂ (alege gazda)
+common.ok	OK
+room.loading	SE ÎNCARCĂ...
+room.change	SCHIMBĂ
+room.starting	ÎNCEPE...
+room.start_fight	ÎNCEPE LUPTA
+room.close	ÎNCHIDE CAMERA
+room.leave	IEȘI DIN CAMERĂ
+room.hint	VS LOCAL  ·  CAMERĂ
+room.code	COD
+room.copy	COPIAZĂ
+room.host_can_invite	Gazda poate invita un prieten după nume.
+room.invite_by_name	INVITĂ UN PRIETEN DUPĂ NUME
+room.invite	INVITĂ
+room.full	Camera e plină.
+invite.title	INVITAȚIE ÎN CAMERĂ
+invite.warning	Numele nu sunt verificate: acceptă invitații doar de la oameni pe care îi cunoști.
+invite.accept	ACCEPTĂ
+invite.decline	REFUZĂ
+room.hazards_on_btn	PERICOLE  PORNITE
+room.hazards_off_btn	PERICOLE  OPRITE
+select.passive	PASIV
+select.look	ASPECT
+select.cosmetic	COSMETIC
+select.arcade_round	ARCADE  ·  RUNDA {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   CONTROLLER 1 = 1P, CONTROLLER 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	MANECHIN
+select.round_rival	RIVALUL RUNDEI {0}
+select.picks_at_start	ALEGE LA ÎNCEPUTUL LUPTEI
+select.signature_weapon	ARMA SEMNĂTURĂ  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  ÎNVINS
+select.arcade_route	TRASEU ARCADE  ·  ARENA {0} / {1}
+select.select_stage	ALEGE ARENA
+select.local_versus	VERSUS LOCAL
+select.arcade_rival	RIVAL ARCADE
+select.training_dummy	MANECHIN DE ANTRENAMENT
+select.stage	ARENĂ
+select.hazards	PERICOLE
+select.fight	LUPTĂ
+select.change	SCHIMBĂ
+select.confirm	CONFIRMĂ
+select.random	ALEATORIU
+select.fate	LASĂ SOARTA SĂ ALEAGĂ
+select.ready_bang	GATA!
+select.loadout	ECHIPAMENT
+select.waiting_1p	SE AȘTEAPTĂ 1P
+select.1p_picks_dummy	1P ALEGE MANECHINUL
+select.selecting	ALEGE
+select.identity_hidden	IDENTITATE ASCUNSĂ
+select.revealed_at_start	DEZVĂLUIT LA ÎNCEPUTUL RUNDEI
+select.ai_picks	AI-UL ÎȘI ALEGE LUPTĂTORUL
+select.random_every_fight	UN PERSONAJ ALEATORIU LA FIECARE LUPTĂ
+select.any_character	ORICE PERSONAJ · PASIV ȘI ARMĂ ALEATORII
+select.lock_in_hint	CONFIRMĂ  ·  SAU DĂ CLIC PE UN PERSONAJ
+select.to_ready	CA SĂ FII GATA
+select.cpu_difficulty_pick	DIFICULTATE CPU  ·  ALEGE ÎNAINTE DE LUPTĂ
+select.ai_note	Nu ai nevoie de internet. AI-ul alege un personaj, un pasiv și o armă noi la fiecare luptă, inclusiv la revanșe.
+select.pad_difficulty	D-PAD SUS / JOS  ·  DIFICULTATE
+select.key_difficulty	W / S  ·  DIFICULTATE
+select.start_training	ÎNCEPE ANTRENAMENTUL
+select.fight_bang	LUPTAȚI!
+select.click_to_start	SAU DĂ CLIC CA SĂ ÎNCEPI CU ALEGERILE ACTUALE
+hud.ready	GATA...
+hud.rival	RIVAL
+hud.you	TU
+hud.ultimate_ready	{0} · ULTIMATE GATA
+hud.move_detected	{0} · MIȘCARE DETECTATĂ
+hud.failed	{0} · EȘUAT
+hud.training_title	ANTRENAMENT · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  ANTRENAMENT
+hud.intro_online	  ·  ONLINE  ·  ESC / START: IEȘI
+hud.ult_ready_press	ULT GATA - apasă {0}
+hud.ult_ready	ULT GATA
+hud.sim_key	tastă sim: {0}
+hud.poses_live	 · poze: brațe încrucișate blocare / braț întins = minge de foc / mâinile sus = săritură
+hud.poses_keys	 · poze 1 încrucișat / 2 pumn / 3 ridicat · P cocoșat
+hud.poses_p2	 · poze 8/9/0
+hud.training_help	ANTRENAMENT: T îți umple ultimate-ul · luptătorii KO reapar la 0% · Esc pauză
+hud.ult_pct	ULT {0}%
+hud.last_hit	ULTIMA LOVITURĂ  {0}
+hud.combo_hits	COMBO  {0} LOVITURI  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	CAMERĂ P1 · SIM
+hud.cv_p1_live	CAMERĂ P1 · LIVE
+hud.cv_p2_sim	CAMERĂ P2 · SIM
+hud.cv_p2_live	CAMERĂ P2 · LIVE
+hud.hits_prefix	{0} LOVITURI  
+results.no_contest	FĂRĂ REZULTAT
+results.draw	EGAL!
+results.cpu_wins	CPU CÂȘTIGĂ
+results.you_win	AI CÂȘTIGAT!
+results.rival_wins	RIVALUL CÂȘTIGĂ
+results.wins	{0} CÂȘTIGĂ!
+results.takes_round	{0} câștigă runda
+results.stats	Lovituri reușite  {0}\nCombo-uri complete  {1}   ·   Cel mai bun combo  {2}
+results.stats2	\nUltimate-uri prin gesturi  {0}\nParări  {1}
+results.posture	\nPostură bună  {0}%
+results.rewards_named	RECOMPENSE (profilul lui {0})
+results.rewards_your	RECOMPENSE (profilul tău)
+results.rewards_p1	RECOMPENSE (profilul P1)
+results.coins	+{0} monede  (total {1})
+hud.do_pose	fă poza în fața camerei
+results.place_1	LOCUL 1
+results.place_2	LOCUL 2
+results.place_3	LOCUL 3
+results.place_4	LOCUL 4
+results.out	ELIMINAT
+results.out_1	ELIMINAT · LOCUL 1
+results.out_2	ELIMINAT · LOCUL 2
+results.out_3	ELIMINAT · LOCUL 3
+results.out_4	ELIMINAT · LOCUL 4
+results.red_team	ECHIPA ROȘIE
+results.blue_team	ECHIPA ALBASTRĂ
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} JUCĂTORI
+hud.keys_line1	P{0}: {1} mișcare · {2} săritură · 
+hud.keys_line2	{0} ușor · {1} greu · {2} special · 
+hud.keys_line3	{0} blocare · {1} dash · 
+hud.keys_line4	{0} abilități · {1} ult
+results.characters	PERSONAJE
+results.stock_one	1 VIAȚĂ
+results.stocks	{0} VIEȚI
+hud.respawn	REAPARIȚIE
+hud.drop_in	INTRĂ ÎN JOC!
+results.main_menu	MENIU PRINCIPAL
+pause.title	PAUZĂ
+pause.resume	CONTINUĂ
+pause.quit	IEȘI ÎN MENIU
+pause.hint	B / Backspace pentru a continua
+leave.title	PĂRĂSEȘTI MECIUL?
+leave.body	Meciul continuă. Dacă pleci, se consideră înfrângere.
+leave.leave	PLEACĂ
+leave.hint	B / Backspace / Esc / Start ca să rămâi
+results.winner	CÂȘTIGĂTOR
+results.training_no_rewards	Antrenament: fără recompense
+cv.posture	Postură {0}%
+cv.posture_low	Postură {0}% - stai drept!
+cv.telemetry_ok	Telemetrie OK
+net.rooms_load_failed	Nu ți-am putut încărca camerele: {0}
+net.host_limit	Ești deja gazda a {0} camere. Închide una mai întâi.
+net.creating_named	Se creează „{0}”...
+net.room_ready_code	Camera „{0}” e gata. Împarte codul {1} sau invită un prieten.
+net.create_failed	Camera nu a putut fi creată: {0}
+net.joining_room	Se intră în camera {0}...
+net.you_joined	Ai intrat în „{0}”. Alege-ți luptătorul și apasă OK.
+net.no_room_code	Nu există nicio cameră cu codul {0}. Verifică codul și încearcă din nou.
+net.room_full_n	Camera aceea e plină ({0} jucători).
+net.join_failed	Nu ai putut intra: {0}
+net.update_failed	Camera nu a putut fi actualizată: {0}
+net.could_not_what	Nu s-a putut {0}: {1}
+net.what_stage	schimba arena
+net.what_hazards	schimba pericolele
+net.press_ok_again	{0} Apăsați amândoi din nou OK și ÎNCEPE LUPTA.
+net.udp_port	Portul UDP {0} nu a putut fi deschis (e deja folosit?).
+net.lan_ready	Gazda LAN e gata. Prietenul tău intră la: {0}  (port {1})
+net.bad_ip	„{0}” nu este o adresă IP validă.
+net.connecting_to	Conectare la {0}...
+net.sign_in_failed	Conectarea a eșuat: {0}
+net.room_ready	Camera „{0}” e gata. Împarte codul cu prietenul tău.
+net.searching_in	Se caută jucători în {0}...
+net.start_failed	Lupta nu a putut începe: {0}
+net.host_unreachable	Gazda nu a putut fi contactată: {0}
+net.area_world	toată lumea
+net.area_country_and	țara ta și {0}
+region.africa	Africa
+region.americas	Americi
+region.asia	Asia
+region.europe	Europa
+region.oceania	Oceania
+region.northern_africa	Africa de Nord

@@ -1,0 +1,255 @@
+region.eastern_africa	Kelet-Afrika
+region.middle_africa	Közép-Afrika
+region.southern_africa	Dél-Afrika
+region.western_africa	Nyugat-Afrika
+region.caribbean	Karib-térség
+region.central_america	Közép-Amerika
+region.south_america	Dél-Amerika
+region.northern_america	Észak-Amerika
+region.central_asia	Közép-Ázsia
+region.eastern_asia	Kelet-Ázsia
+region.south_eastern_asia	Délkelet-Ázsia
+region.southern_asia	Dél-Ázsia
+region.western_asia	Nyugat-Ázsia
+region.eastern_europe	Kelet-Európa
+region.northern_europe	Észak-Európa
+region.southern_europe	Dél-Európa
+region.western_europe	Nyugat-Európa
+region.australia_and_new_zealand	Ausztrália és Új-Zéland
+region.melanesia	Melanézia
+region.micronesia	Mikronézia
+region.polynesia	Polinézia
+net.joined_connecting	Csatlakoztál ide: „{0}”. Csatlakozás a házigazdához...
+net.opponent_unreachable	Az ellenfeled nem érhető el: {0}
+net.quick_filling	{0} / {1} játékos. Indulás {2} mp múlva...
+invite.inviting	{0} meghívása...
+invite.sent_lasts	Meghívó elküldve neki: {0}. {1} másodpercig érvényes.
+invite.send_failed	Nem sikerült elküldeni a meghívót: {0}
+invite.joining_room_of	Csatlakozás {0} szobájához...
+invite.paused	A meghívók {0} percre szüneteltetve.
+invite.invited_you	{0} meghívott ide: „{1}”.
+invite.ran_out	A(z) {0} részére küldött meghívód lejárt.
+friends.choose_name	Válassz játékosnevet, hogy a barátaid megtaláljanak.
+friends.unavailable	A barátok nem érhetők el: {0}
+friends.your_name_is	A neved: {0}. Add meg a barátaidnak, hogy felvehessenek.
+friends.set_name_failed	Nem sikerült beállítani a nevet: {0}
+friends.request_sent	Barátkérés elküldve neki: {0}.
+friends.add_failed	Nem sikerült felvenni: {0}: {1}
+friends.offline	{0} most offline.
+friends.request_then_invite	Barátkérés elküldve neki: {0}. A meghívó azonnal megy, amint elfogadja.
+friends.unreachable	{0} nem érhető el: {1}
+friends.creating_room_for	Szoba létrehozása neki: {0}...
+friends.joining	Csatlakozás hozzá: {0}...
+friends.declined	{0} elutasította a meghívót.
+friends.version_mismatch	{0} meghívott, de a játék egy másik verzióját futtatja.
+friends.invite_sent_waiting	Meghívó elküldve neki: {0}. Várakozás a csatlakozására...
+name.too_short	A név túl rövid (legalább {0} karakter).
+name.too_long	A név túl hosszú (legfeljebb {0} karakter).
+rooms.name_too_short	A szoba neve túl rövid (legalább {0} karakter).
+rooms.name_too_long	A szoba neve túl hosszú (legfeljebb {0} karakter).
+net.bad_code	Ez nem érvényes szobakód (csak betűk és számok).
+net.version_mismatch	Az a szoba a Chibi Clash egy másik verziójával készült. Mindkét játékosnak ugyanaz a verzió kell.
+net.loading_room	A szoba betöltése...
+net.room_closed	A szoba bezárult.
+net.you_left	Kiléptél a szobából.
+net.waiting_host_game	Indul... várakozás a házigazda játékára.
+net.choose_next_fight	Válaszd ki a harcosod, és nyomd meg az OK-t a következő harchoz.
+net.host_changed_stage	A házigazda módosította a pálya beállításait. Nyomd meg újra az OK-t.
+net.room_closed_host_left	A szoba bezárult (a házigazda kilépett).
+net.starting_fight	A harc indul...
+net.player_left_joined	Egy játékos kilépett vagy csatlakozott.
+net.no_connection	Nincs kapcsolat.
+net.fight_could_not_start	A harc nem tudott elindulni.
+net.fight_starting_wait	Indul a harc! Várakozás a barátod csatlakozására...
+net.choose_press_ok	Válaszd ki a harcosod, és nyomd meg az OK-t.
+net.too_many_starts	Túl sok indítás. Várj egy percet, aztán nyomd meg a HARC INDÍTÁSA gombot.
+net.fight_starting_connecting	Indul a harc! Csatlakozás...
+net.could_not_connect	Nem sikerült csatlakozni.
+net.friend_no_answer	A barátod nem válaszolt.
+net.start_cancelled	Indítás megszakítva.
+net.friend_no_connect	A barátod nem csatlakozott.
+net.enter_code	Add meg a szobakódot, amit a barátod mutat.
+net.lan_browser	A LAN játék nem érhető el a böngészőben. Használd a SZOBÁK vagy a VS LOCAL módot, vagy LAN-hoz a PC-s verziót.
+net.enter_ip	Add meg a házigazda IP-címét.
+net.this_pc_ip	ennek a PC-nek az IP-címe
+net.signing_in	Bejelentkezés...
+net.creating_private	Privát szoba létrehozása...
+net.hosting_one	Nincs nyitott meccs, létrehozunk egyet...
+net.needs_2_to_4	Egy harchoz 2-4 játékos kell.
+net.waiting_friend	Várakozás a barátod csatlakozására...
+net.waiting_friends	Várakozás a barátaid csatlakozására...
+net.connection_running	Egy másik kapcsolat még fut.
+net.no_valid_info	A szobának nincs érvényes kapcsolódási adata (kilépett a házigazda?).
+net.connecting_host	Csatlakozás a házigazdához...
+net.already_full	Az a szoba már megtelt.
+net.no_info	A szobának nincs kapcsolódási adata (kilépett a házigazda?).
+net.player_left_searching	Az a játékos kilépett. Újabb keresés...
+net.connected	Csatlakozva!
+net.relay_failed	A kapcsolat a Relay szerverrel sikertelen.
+net.opponent_timeout	Az ellenfeled nem érhető el (időtúllépés).
+net.no_internet	Nincs internetkapcsolat. Csatlakozz Wi-Fi-hez vagy mobiladathoz, hogy bárhol játszhass a barátaiddal. (A LAN játék ugyanazon a hálózaton működik.)
+invite.wait	Várj egy kicsit, mielőtt újabb meghívót küldesz.
+invite.type_name	Írd be a barátod játékbeli nevét (3-16 betű, szám vagy _).
+invite.own_name	Ez a saját neved.
+invite.open_room_first	Előbb nyisd meg a szobád, aztán hívj meg.
+invite.room_full	A szobád már megtelt.
+invite.could_not_send	Nem sikerült elküldeni a meghívót.
+invite.too_many	Most túl sok a meghívó. Próbáld újra néhány másodperc múlva.
+invite.cancelled	Meghívó visszavonva.
+invite.expired	Az a meghívó lejárt.
+invite.closed_full	A szobád megtelt. Meghívó lezárva.
+invite.closed_joined	Egy játékos csatlakozott a szobádhoz. Meghívó lezárva.
+invite.closed_room	Meghívó visszavonva: a szoba bezárult.
+name.taken	Ez a név már foglalt
+name.check_unavailable	Nem sikerült online ellenőrizni a neved. Ellenőrizd az internetet és próbáld újra.
+name.too_soon	Az imént változtattad meg a neved. Próbáld újra egy perc múlva.
+name.choose_different	Kérlek, válassz másik nevet.
+friends.type_tag	Írd be a barátod nevét így: Kira#4821.
+friends.added	Barát hozzáadva.
+friends.declined_request	Kérés elutasítva.
+friends.removed	Barát eltávolítva.
+friends.blocked	Játékos letiltva.
+friends.a_friend	Egy barát
+friends.type_player_tag	Írd be a játékos nevét így: Kira#4821.
+friends.wait_invite	Várj egy kicsit, mielőtt újra meghívsz.
+name.enter	Adj meg egy nevet.
+name.bad_chars	Csak betűket, számokat és _ jelet használj (szóközök és szimbólumok nélkül).
+rooms.name_bad_chars	A szobanevekben csak betűk, számok, szóközök és _ - ' ! lehetnek.
+rooms.name_double_space	A szobanevekben nem lehet dupla szóköz.
+rooms.name_choose_different	Kérlek, válassz másik szobanevet.
+gesture.cross_arms	KARKERESZTEZÉS
+gesture.punch_forward	ÜTÉS ELŐRE
+gesture.raise_hands	MINDKÉT KÉZ FEL
+class.kaia.passive1_desc	+15% támadási sebesség
+class.kaia.passive2_desc	5% életlopás
+class.kaia.skill1_desc	Előrevetődés és döfés az ellenfélbe
+class.kaia.skill2_desc	A tökéletes időzítés visszaveri a sebzést
+class.kaia.skill3_desc	Sok gyors döfés egymás után
+class.kaia.ult_desc	10 mp: a normál támadások vízszintes hullámot indítanak
+class.bruna.passive1_desc	+20% sebzés, -15% támadási sebesség
+class.bruna.passive2_desc	+20% sebzés, -15% mozgási sebesség
+class.bruna.skill1_desc	Megragadja az ellenfelet és a földhöz csapja
+class.bruna.skill2_desc	Pörög, mint egy tornádó, és ismételten talál
+class.bruna.ult_desc	A padlóra csap, és lökéshullámot kelt
+class.ren.passive1_desc	+20% kritikus esély
+class.ren.passive2_desc	+10% mozgási sebesség 10 mp-ig (30 mp töltés)
+class.ren.skill1_desc	Vízszintesen hátravetődik és lő
+class.ren.skill2_desc	Megfojt egy közeli ellenfelet és ellöki
+class.ren.skill3_desc	Vízszintes nyílzáport lő
+class.ren.ult_desc	Egy nyíl nyílviharrá sokszorozódik
+class.lyra.passive1_desc	10% esély találatkor: -15% mozgás, -10% sebzés, -15% támadási seb.
+class.lyra.passive2_desc	20% esély a sebzés blokkolására
+class.lyra.skill1_desc	Célkövető tűzlövedéket lő
+class.lyra.skill2_desc	3 szolgát idéz
+class.lyra.skill3_desc	Egy felhő követi az ellenfelet és villámmal sújt le
+class.lyra.ult_desc	10 mp tűzgyűrű: égeti az ellenfeleket, blokkolja a lövedékeket
+class.taro.passive1_desc	10% esély találatkor: -15% ellenséges védelem
+class.taro.passive2_desc	3 mp támadás nélkül után a következő találat +50%
+class.taro.skill1_desc	Kinyúlik, ugrik és lefelé suhint
+class.taro.skill2_desc	Megpörgeti a szálfegyvert a lövedékek blokkolásához
+class.taro.skill3_desc	Elhajítja a lándzsát és visszahívja
+class.taro.ult_desc	Átszúrja az ellenfelet, majd mélyebbre rúgja a nyelet
+char.kaia.role	Fürge támadó
+char.kaia.style	Gyors, mozgékony közelharc pontos, láncolható vágásokkal.
+char.bruna.role	Verekedő
+char.bruna.style	Nagy sebzésű, szívós bunyós, aki súlyos támadásokkal uralja a teret.
+char.ren.role	Fürge mesterlövész
+char.ren.style	Nagy mozgékonyságú zónázás és pontos nyomás sokoldalú íjásztechnikákkal.
+char.lyra.role	Zónázás / Előkészítés
+char.lyra.style	Fürge varázsló, aki gyors varázslatokkal, trükkös mozgással és pontos mágiával uralja a teret.
+char.taro.role	Hatótáv-specialista
+char.taro.style	Fegyelmezett, mozgékony kontroll nagy hatótávú nyomással és pontos csapásokkal.
+stage.0.name	Égi Dodzsó
+stage.0.short	Égi Dodzsó
+stage.0.tagline	Hegyi szentély a felhők felett
+stage.1.name	Neonváros
+stage.1.short	Neonváros
+stage.1.tagline	Tetőaréna neoneső alatt
+stage.2.name	Lávakovácsműhely
+stage.2.short	Lávakovács
+stage.2.tagline	Olvadt öntöde egy lávatenger felett
+stage.3.name	A Kezdet Hegye
+stage.3.short	Hegy
+stage.3.tagline	Függőleges KO · mozgó jádeplatformok egy ködös szakadék felett
+stage.4.name	Az Egység Síksága
+stage.4.short	Síkság
+stage.4.tagline	Vízszintes KO · egyetlen hosszú mező, sehol egy búvóhely
+stage.5.name	A Vulkán Mélye
+stage.5.short	Vulkán
+stage.5.tagline	Minden szélén KO · tűz tör fel a magmatóból
+stage.6.name	Az Óriásmadár Fészke
+stage.6.short	Madárfészek
+stage.6.tagline	Vízszintes KO · a hatalmas madár végigsöpör az arénán
+stage.7.name	Az Elhagyott Óceáni Emlékmű
+stage.7.short	Óceán
+stage.7.tagline	Minden szélén KO · leereszkedik a bálna, ugorj a teraszokra
+end.opponent_left	Az ellenfeled elhagyta a meccset.
+end.opponent_timeout	Az ellenfeled nem válaszol.
+end.connection_lost	Megszakadt a kapcsolat az ellenfeleddel.
+end.you_left	Elhagytad a meccset.
+end.desync	A két játék eltért egymástól (desync): érvénytelen.
+end.unconfirmed	A meccs végét nem sikerült megerősíteni: érvénytelen.
+end.handshake_failed	A meccs nem tudott elindulni.
+end.peer_never_started	Az ellenfeled nem csatlakozott a meccshez: érvénytelen.
+end.too_slow	A kapcsolat túl lassú volt a játékhoz: érvénytelen.
+end.host_left	A házigazda elhagyta a meccset: érvénytelen.
+end.dropped	A kapcsolatod kiesett a meccsből.
+status.aura	AURA {0}
+status.fire_ring	TŰZGYŰRŰ {0}
+status.tailwind	HÁTSZÉL
+status.guard_broken	TÖRT VÉDEKEZÉS {0} mp
+status.guard	VÉDEKEZÉS {0}%
+status.reloading	ÚJRATÖLTÉS {0} mp
+status.recharging	FELTÖLTÉS {0} mp
+status.hexed	MEGÁTKOZVA
+status.armor_break	PÁNCÉL -15%
+hud.perform	Hajtsd végre: {0}
+hud.times_up	Lejárt az idő!
+rewards.no_contest	Érvénytelen: nincs jutalom
+rewards.pve_victory	PvE győzelem  +{0}
+rewards.pve_match	PvE meccs  +{0}
+rewards.victory	Győzelem  +{0}
+rewards.match_played	Lejátszott meccs  +{0}
+rewards.posture	Jó testtartás {0}%  +{1}
+hud.revived	FELÉLESZTVE
+quest.win	Nyerj 3 meccset
+quest.pve	Győzd le kétszer a CPU-t (PvE)
+quest.combo	Vigyél be 10 teljes kombót
+quest.ult	Indíts 3 gesztus-ultimate-et
+quest.parry	Háríts 5 támadást
+quest.posture	Fejezz be egy meccset 80%+ jó testtartással
+rewards.quest	Küldetés: {0}  +{1}
+bind.move_left	Mozgás balra
+bind.move_right	Mozgás jobbra
+bind.drop	Leereszkedés / gyors esés
+bind.jump	Ugrás
+bind.jump_alt	Ugrás (alt.)
+bind.light	Könnyű támadás
+bind.heavy	Nehéz támadás
+bind.block	Blokk
+bind.dash	Dash
+bind.skill1	1. képesség
+bind.skill2	2. képesség
+bind.skill3	3. képesség
+bind.ultimate	Ultimate
+bind.aim_up	Célzás fel
+bind.special	Speciális
+hud.rejected	Elutasítva: {0}
+cv.low_confidence	Alacsony követési megbízhatóság
+cv.frozen	Befagyott kép (hamisítás?)
+cv.snap	Azonnali pózváltás (makró?)
+cv.ok	OK
+cam.none	Nem található kamera
+cam.off	Kamera ki
+cam.starting	A kamera indul...
+cam.waiting_frames	Várakozás a kamera képkockáira - engedélyezd a kamera-hozzáférést a Unity számára: Rendszerbeállítások > Adatvédelem > Kamera
+cam.live	Kamera élő ({0}x{1})
+pose.simulated	Szimulált (billentyűs pózok)
+pose.camera_off	Kamerás követés kikapcsolva - billentyűvel szimulált pózok használata
+pose.model_failed	A pózmodell hibát jelzett: {0}
+pose.loading	Pózmodell betöltése...
+pose.live	Élő testkövetés (MoveNet, {0} Hz)
+pose.step_back	Kamera bekapcsolva - lépj hátrébb, hogy a vállaid látszódjanak
+account.finish_browser	Fejezd be a bejelentkezést a böngészőben (válaszd a Folytatás Google-lal lehetőséget)...
+account.signed_out_again	Kijelentkezve. Jelentkezz be újra a fiókod használatához.
+account.signed_in_kept	Bejelentkezve. A neved és a haladásod ehhez a fiókhoz kötődik.

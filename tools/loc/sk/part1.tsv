@@ -1,0 +1,257 @@
+lang.backdrop	JAZYK
+lang.title	VYBER SI JAZYK
+lang.subtitle	Celá hra bude v tomto jazyku. Môžeš ho kedykoľvek zmeniť v NASTAVENIACH.
+lang.search_hint	Hľadať jazyky...
+lang.no_match	Hľadaniu nezodpovedá žiadny jazyk.
+lang.english_text	Zatiaľ anglický text
+lang.confirm	POTVRDIŤ  ·  {0}
+lang.confirm_none	POTVRDIŤ
+lang.pad_hint	Píš pre hľadanie · Hore / Dole pre výber · Enter alebo A na ovládači = potvrdiť
+common.cancel	ZRUŠIŤ
+settings.language	JAZYK  ·  {0}
+difficulty.dummy	Figurína
+difficulty.easy	Ľahká
+difficulty.medium	Stredná
+difficulty.hard	Ťažká
+difficulty.dummy_upper	FIGURÍNA
+difficulty.easy_upper	ĽAHKÁ
+difficulty.medium_upper	STREDNÁ
+difficulty.hard_upper	ŤAŽKÁ
+nav.home	DOMOV
+nav.play	HRAŤ
+nav.training	TRÉNING
+nav.arcade	ARCADE
+nav.collection	ZBIERKA
+nav.settings	NASTAVENIA
+account.signed_in_as	Prihlásený ako {0}.
+account.signed_in	Prihlásený.
+account.signed_out	Odhlásený.
+keys.who	P{0} {1}
+keys.reserved	{0} je kláves pózy / držania tela (1 2 3, 8 9 0, numerické 7 8 9, P, -). Vyber iný.
+keys.swapped	{0};  {1} je teraz {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Online hra je pre hráčov od 13 rokov.
+arcade.clear_toast	ARCADE DOKONČENÉ! Všetkých {0} súperov porazených
+precheck.too_dark	Príliš tma ({0}%) - pridaj svetlo
+precheck.too_bright	Príliš svetlo ({0}%) - zníž oslnenie
+precheck.good	Dobré ({0}%)
+loading.weapon_art	Grafika zbraní: {0}
+loading.fighter	Bojovník: {0}
+precheck.checking	KONTROLA... {0}
+wipe.character_select	VÝBER POSTAVY
+wipe.arcade	ARCADE
+results.rematch	ODVETA
+results.continue	POKRAČOVAŤ
+results.finish	DOKONČIŤ
+results.next_battle	ĎALŠÍ BOJ
+wipe.arcade_clear	ARCADE DOKONČENÉ
+precheck.title	KONTROLA KAMERY
+precheck.camera_unavailable	Kamera nie je dostupná
+precheck.simulated_feed	Simulovaný obraz (webkamera vypnutá)
+precheck.upper_body_ok	Horná časť tela je v zábere
+precheck.step_back	Ustúp dozadu - ramená a boky musia byť vidieť
+loading.interface	Grafika rozhrania
+loading.typefaces	Písma
+loading.pose_model	Model sledovania pózy
+loading.ready	Pripravené
+onboarding.welcome	VITAJ!
+onboarding.your_account	TVOJ ÚČET
+onboarding.your_name	TVOJE HRÁČSKE MENO
+rooms.backdrop_create	VS LOCAL  ·  VYTVORIŤ MIESTNOSTI
+rooms.backdrop_join	VS LOCAL  ·  PRIPOJIŤ SA K MIESTNOSTI
+precheck.all_passed	VŠETKY KONTROLY PREŠLI
+precheck.failed	KONTROLA ZLYHALA
+precheck.lighting	OSVETLENIE
+precheck.framing	ZÁBER
+precheck.posture	DRŽANIE TELA
+precheck.upright	Pekne vzpriamene
+precheck.sit_up	Seď rovno a získaš bonusové mince
+common.retry	SKÚSIŤ ZNOVA
+precheck.play_anyway	HRAŤ AJ TAK
+common.back	SPÄŤ
+precheck.ranked_note	Hodnotené fronty vyžadujú, aby táto kontrola prešla. Nezáväzné zápasy ju môžu preskočiť.
+precheck.hint	KONTROLA KAMERY PRED ZÁPASOM
+hint.select	VYBRAŤ
+home.play	HRAŤ
+home.training	TRÉNING
+home.arcade	ARCADE
+home.collection	ZBIERKA POSTÁV
+home.settings	NASTAVENIA
+home.exit	UKONČIŤ HRU
+home.play_desc	Rýchly zápas Vs Online, miestnosti VS Local s priateľmi alebo Vs CPU
+home.training_desc	Nastavenie kamery, nácvik gest a tréningová figurína
+home.arcade_desc	Všetkých päť súperov za sebou na každej aréne
+home.collection_desc	Skiny, zbrane a kozmetický banner
+home.settings_desc	Obťažnosť, možnosti kamery a klávesy
+home.exit_desc	Zavrieť hru
+tips.1	Naplň ukazovateľ ULT a stlač Ultimate - potom urob pózu svojho bojovníka pred kamerou, kým neskončí odpočítavanie.
+tips.2	Vyššia DEF uberá poškodenie z každého zásahu a posilňuje tvoje blokovanie.
+tips.3	Dobré držanie tela, ktoré sleduje kamera, prináša po každom zápase bonusové mince.
+tips.4	Skiny a zbrane sú len kozmetické - štatistiky sa nikdy nemenia podľa toho, čo bojovník nosí.
+tips.5	V Tréningu stlač T a naplníš si ultimate. Figurína vždy znova vstane.
+tips.6	Každý bojovník má jednu z dvoch pasívnych schopností - vyber ju v paneli výbavy po potvrdení.
+tips.7	Online boje používajú rollback netcode: obe hry počítajú ten istý boj z tých istých vstupov.
+stats.power	SILA
+stats.speed	RÝCHLOSŤ
+stats.range	DOSAH
+stats.endurance	VÝDRŽ
+stats.recovery	ZOTAVENIE
+training.use_block	Blok · ultimate Zblízka a Mágia
+training.use_fireball	Ohnivá guľa · ultimate Na diaľku a Kopija
+training.use_superjump	Superskok · ultimate Ťažký
+menu.online_locked	Online režimy sú pre hráčov od 13 rokov.
+menu.no_internet	Žiadny internet: pripoj Wi-Fi alebo mobilné dáta. VS AI funguje offline.
+menu.four_player_soon	2v2 a Battle Royale potrebujú podporu 4 hráčov, ktorá príde v neskoršej aktualizácii.
+profile.edit_name	UPRAVIŤ MENO
+profile.win_loss	V {0}  ·  P {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	PRIPRAVENÉ
+loading.loading	NAČÍTAVA SA
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   splnené x{2}
+arcade.rule_fight_all	Bojuj so všetkými {0} postavami za sebou, v náhodnom poradí.
+arcade.rule_difficulty	Obťažnosť CPU: {0} (zmeníš ju v Nastaveniach).
+arcade.final	FINÁLE
+arcade.round	KOLO {0}
+training.cv_setup_source	NASTAVENIE CV · {0}
+training.status	Kamera: {0}\nSledovanie: {1}\nZistené: {2}
+training.off	vypnuté
+training.none	nič
+training.status_posture	   ·   Držanie tela {0}%   ·   Telemetria {1}
+collection.gold_cinematic_suffix	 · ZLATÁ ANIMÁCIA
+collection.only	LEN {0}
+collection.pull1	ŤAH x1  ·  {0}
+collection.pull10	ŤAH x10  ·  {0}
+collection.dup_suffix	  (duplikát +20)
+collection.new_suffix	  NOVÉ!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} sekúnd  <size=12><color=#9AA6BC>(pevné pre každý zápas)</color></size>
+settings.change_name_as	ZMENIŤ MENO  ·  {0}
+settings.change_name	ZMENIŤ MENO
+settings.keys_help	Klikni na priradenie a potom stlač kláves alebo klikni na pole tlačidlom myši (Esc / B na ovládači / klik inde zruší; limit 5 s). Ak ho už niektorý hráč používa, oba sa vymenia.\nPózy kamery: prekrížené ruky = blok · ruka natiahnutá do strany = ohnivá guľa · obe ruky hore = superskok (pózy klávesnice: 1/2/3 a 8/9/0).
+rarity.common	BEŽNÉ
+rarity.rare	VZÁCNE
+rarity.epic	EPICKÉ
+rarity.legendary	LEGENDÁRNE
+skin.default	Klasika
+skin.mint	Mätový pop
+skin.shadow	Tieň
+skin.sakura	Sakura
+skin.inferno	Peklo
+skin.celestial	Nebeský
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	LEN 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nTÍMY
+play.four_player_later	2v2 a Battle Royale prídu s podporou 4 hráčov v neskoršej aktualizácii.
+play.team_tag	4P · 2 TÍMY
+play.royale_tag	4P · KAŽDÝ PROTI KAŽDÉMU
+collection.all_fighters	VŠETCI BOJOVNÍCI
+arcade.mode	REŽIM ARCADE
+home.tagline	ARÉNOVÁ BOJOVKA  ·  ULTIMATE GESTAMI TELA
+play.royale_card	BATTLE\nROYALE
+training.kicker	NASTAVENIE KAMERY A NÁCVIK
+settings.camera_tracking	SLEDOVANIE KAMEROU (WEBKAMERA)
+training.camera_off	SLEDOVANIE KAMEROU: VYP
+training.camera_on	SLEDOVANIE KAMEROU: ZAP
+collection.hint	ZBIERKA POSTÁV
+play.choose_style	VYBER SI ŠTÝL HRY
+online.kicker	VYBER SI ŠTÝL HRY  ·  SÓLO · 2V2 · BATTLE ROYALE
+play.kicker	VYBER SI SVOJ BOJ  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	UŽ ČOSKORO
+training.cv	POČÍTAČOVÉ VIDENIE
+online.connection	PRIPOJENIE
+collection.banner	KOZMETICKÝ BANNER
+settings.cpu_difficulty	OBŤAŽNOSŤ CPU
+play.create_join	VYTVORIŤ · PRIPOJIŤ MIESTNOSTI
+settings.cv_overlay	VRSTVA CV V ZÁPASE
+quests.coins_note	Mince sú len z hrania: výhry, PvE, úlohy a dobré držanie tela sledované kamerou.
+collection.odds	Bežné 60% · Vzácne 28% · Epické 10% · Legendárne 2%
+collection.equip	VYBAVIŤ
+collection.equipped	VYBAVENÉ
+hint.exit	KONIEC
+home.exit_upper	UKONČIŤ HRU
+exit.title	UKONČIŤ HRU?
+online.royale_desc	Každý sám za seba. Vyhráva posledný bojovník, ktorý zostane stáť.
+arcade.kicker	PÄŤ SÚPEROV · JEDEN BEH
+loading.for_battle	DO BOJA
+online.invites_note	Tu sa zobrazujú pozvánky priateľov do miestností. Miestnosti s priateľmi sú v HRAŤ > VS LOCAL.
+settings.kicker	HRA · KAMERA · OVLÁDANIE
+training.gestures_live	GESTÁ  (urob pózu pred kamerou - úder = jedna ruka natiahnutá rovno do strany)
+training.gestures_sim	GESTÁ  (podrž kláves na simuláciu pózy)
+settings.key_bindings	KLÁVESY
+settings.keys_reset	Klávesy obnovené na predvolené
+play.locked	ZAMKNUTÉ
+arcade.rule_retry	Prehral si kolo? Pokračuj a skús ho znova.
+home.hint	HLAVNÉ MENU
+settings.master_volume	CELKOVÁ HLASITOSŤ
+settings.match_time	ČAS ZÁPASU
+play.matchmaking_card	VS\nLOCAL
+hint.move	POHYB
+play.matchmaking_desc	Vytvor miestnosť, zdieľaj jej kód alebo pozvi priateľov podľa mena.
+play.no_internet_tag	BEZ INTERNETU
+online.no_internet_body	Práve nemáš internet. Pripoj Wi-Fi alebo mobilné dáta, alebo hraj Vs CPU.
+common.off	VYP
+online.offline	OFFLINE
+common.on	ZAP
+settings.player1	HRÁČ 1
+settings.player2	HRÁČ 2
+training.practice_dummy	NÁCVIK PROTI FIGURÍNE
+settings.precheck	KONTROLA KAMERY PRED ZÁPASOM
+loading.prepare	PRIPRAV SA
+settings.listening_hint	STLAČ KLÁVES ALEBO KLIKNI NA POLE  ·  ESC / B NA OVLÁDAČI ZRUŠÍ  ·  TLAČIDLÁ OVLÁDAČA NEMOŽNO PRIRADIŤ
+training.slouch_note	Stlač P na prepnutie zhrbeného držania tela a sleduj, ako klesá skóre držania.
+settings.profile_reset	Profil obnovený (meno a prihlásenie zostali)
+collection.pull_to_unlock	Ťahaj na odomknutie
+quests.title	ÚLOHY
+online.quick_match	RÝCHLY ZÁPAS
+play.online_desc	Rýchly zápas s hráčom vo tvojej blízkosti alebo odpovedz na pozvánku priateľa.
+online.solo_desc	Rýchly zápas: bojuj s hráčom, ktorý práve hľadá, najbližší prvý.
+settings.reset_keys	OBNOVIŤ KLÁVESY
+settings.reset_profile	OBNOVIŤ PROFIL
+arcade.rival_unknown	SÚPER  ???
+play.rooms_tag	MIESTNOSTI · 2-4 HRÁČI
+online.rollback_body	Rollback netcode: obe hry počítajú ten istý boj z tých istých vstupov, takže zostáva rýchly a férový.
+settings.screen_shake	TRASENIE OBRAZOVKY
+profile.set_name	NASTAVIŤ MENO
+settings.sfx_volume	HLASITOSŤ EFEKTOV
+training.simulate_pose	SIMULOVAŤ PÓZU
+collection.kicker	SKINY · ZBRANE · KOZMETICKÝ BANNER
+training.slouch	ZHRBENIE
+online.solo_card	SÓLO\n1V1
+home.start	ŠTART
+arcade.start	SPUSTIŤ ARCADE
+exit.stay	ZOSTAŤ
+settings.sure	NAOZAJ?
+settings.sure_reset_profile	NAOZAJ? VŠETOK POSTUP ZMIZNE
+collection.banner_note	Len skiny a ultimate animácie. Štatistiky sú na každom skine rovnaké - nič nie je za platenou bránou.
+hint.tabs	KARTY
+loading.tip	TIP
+training.hint	TRÉNING  /  NASTAVENIE CV
+arcade.rule_stages	Aréna sa mení každé kolo, od Hory počiatku po Pamätník oceánu.
+online.team_desc	Dva tímy po dvoch. Bez priateľskej paľby: tvoje zásahy nikdy nezrania spoluhráča.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  ŠTÝL HRY
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Výhry prinášajú mince a postup v úlohách, rovnako ako VS CPU.
+exit.saved_note	Tvoj profil, mince a zbierka sú uložené na tomto zariadení.
+settings.key_listening	kláves alebo klikni sem
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Vyberieš si bojovníka a ĽAHKÚ, STREDNÚ alebo ŤAŽKÚ obťažnosť. CPU dostane náhodného bojovníka.
+account.keep_name_body	Prihlás sa účtom Google a tvoje meno aj údaje zostanú s tebou: pri každom otvorení hry a na akomkoľvek počítači. Iný účet Google dostane vlastné nové meno.
+name.you_are	Si {0}!
+name.you_are_unchecked	Si {0}! Meno skontrolujeme, keď budeš hrať online.
+online.could_not_start	Zápas sa nepodarilo spustiť ({0}).
+rooms.your_rooms	TVOJE MIESTNOSTI
+rooms.count_click	{0}  ·  klikni na miestnosť a otvoríš ju
+rooms.code_value	KÓD  {0}
+rooms.players_count	{0} / {1} HRÁČOV
+rooms.more	+ ďalšie miestnosti: {0}
+rooms.created	Miestnosť „{0}“ bola vytvorená. Klikni na ňu a zdieľaj kód alebo pozvi priateľov.
+quick.searching	HĽADÁ SA
+quick.looking_in	HĽADÁ SA V:  {0}
+room.kicker	MIESTNOSŤ  ·  2-4 HRÁČI  ·  {0}
+room.battle_royale	BATTLE ROYALE

@@ -1,0 +1,255 @@
+region.eastern_africa	Øst-Afrika
+region.middle_africa	Sentral-Afrika
+region.southern_africa	Det sørlige Afrika
+region.western_africa	Vest-Afrika
+region.caribbean	Karibia
+region.central_america	Mellom-Amerika
+region.south_america	Sør-Amerika
+region.northern_america	Nord-Amerika
+region.central_asia	Sentral-Asia
+region.eastern_asia	Øst-Asia
+region.south_eastern_asia	Sørøst-Asia
+region.southern_asia	Sør-Asia
+region.western_asia	Vest-Asia
+region.eastern_europe	Øst-Europa
+region.northern_europe	Nord-Europa
+region.southern_europe	Sør-Europa
+region.western_europe	Vest-Europa
+region.australia_and_new_zealand	Australia og New Zealand
+region.melanesia	Melanesia
+region.micronesia	Mikronesia
+region.polynesia	Polynesia
+net.joined_connecting	Ble med i «{0}». Kobler til verten...
+net.opponent_unreachable	Fikk ikke kontakt med motstanderen din: {0}
+net.quick_filling	{0} av {1} spillere. Starter om {2} sek...
+invite.inviting	Inviterer {0}...
+invite.sent_lasts	Invitasjon sendt til {0}. Den varer i {1} sekunder.
+invite.send_failed	Kunne ikke sende invitasjonen: {0}
+invite.joining_room_of	Blir med i rommet til {0}...
+invite.paused	Invitasjoner er satt på pause i {0} minutter.
+invite.invited_you	{0} inviterte deg til «{1}».
+invite.ran_out	Invitasjonen din til {0} har gått ut.
+friends.choose_name	Velg et spillernavn så venner kan finne deg.
+friends.unavailable	Venner er ikke tilgjengelig: {0}
+friends.your_name_is	Navnet ditt er {0}. Gi det til venner så de kan legge deg til.
+friends.set_name_failed	Kunne ikke velge navnet: {0}
+friends.request_sent	Venneforespørsel sendt til {0}.
+friends.add_failed	Kunne ikke legge til {0}: {1}
+friends.offline	{0} er frakoblet akkurat nå.
+friends.request_then_invite	Venneforespørsel sendt til {0}. Invitasjonen sendes så snart forespørselen godtas.
+friends.unreachable	Fikk ikke kontakt med {0}: {1}
+friends.creating_room_for	Oppretter et rom for {0}...
+friends.joining	Blir med {0}...
+friends.declined	{0} avslo invitasjonen.
+friends.version_mismatch	{0} inviterte deg, men kjører en annen versjon av spillet.
+friends.invite_sent_waiting	Invitasjon sendt til {0}. Venter på at de blir med...
+name.too_short	Navnet er for kort (minst {0} tegn).
+name.too_long	Navnet er for langt (maks {0} tegn).
+rooms.name_too_short	Romnavnet er for kort (minst {0} tegn).
+rooms.name_too_long	Romnavnet er for langt (maks {0} tegn).
+net.bad_code	Det er ikke en gyldig romkode (bare bokstaver og tall).
+net.version_mismatch	Det rommet ble laget med en annen versjon av Chibi Clash. Begge spillerne trenger samme versjon.
+net.loading_room	Laster rommet...
+net.room_closed	Rommet er lukket.
+net.you_left	Du forlot rommet.
+net.waiting_host_game	Starter... venter på vertens spill.
+net.choose_next_fight	Velg kjemper og trykk OK for neste kamp.
+net.host_changed_stage	Verten endret baneinnstillingene. Trykk OK igjen.
+net.room_closed_host_left	Rommet ble lukket (verten gikk).
+net.starting_fight	Starter kampen...
+net.player_left_joined	En spiller gikk eller ble med.
+net.no_connection	Ingen tilkobling.
+net.fight_could_not_start	Kampen kunne ikke starte.
+net.fight_starting_wait	Kampen starter! Venter på at vennen din kobler til...
+net.choose_press_ok	Velg kjemper og trykk OK.
+net.too_many_starts	For mange starter. Vent et minutt, og trykk så START KAMP.
+net.fight_starting_connecting	Kampen starter! Kobler til...
+net.could_not_connect	Kunne ikke koble til.
+net.friend_no_answer	Vennen din svarte ikke.
+net.start_cancelled	Start avbrutt.
+net.friend_no_connect	Vennen din koblet ikke til.
+net.enter_code	Skriv inn romkoden vennen din viser.
+net.lan_browser	LAN-spill er ikke tilgjengelig i nettleseren. Bruk ROM eller VS LOCAL, eller PC-versjonen for LAN.
+net.enter_ip	Skriv inn vertens IP-adresse.
+net.this_pc_ip	denne PC-ens IP
+net.signing_in	Logger inn...
+net.creating_private	Oppretter et privat rom...
+net.hosting_one	Fant ingen åpen kamp, oppretter en...
+net.needs_2_to_4	En kamp trenger 2 til 4 spillere.
+net.waiting_friend	Venter på at vennen din kobler til...
+net.waiting_friends	Venter på at vennene dine kobler til...
+net.connection_running	En annen tilkobling kjører fortsatt.
+net.no_valid_info	Rommet har ingen gyldig tilkoblingsinformasjon (har verten gått?).
+net.connecting_host	Kobler til verten...
+net.already_full	Det rommet er allerede fullt.
+net.no_info	Rommet har ingen tilkoblingsinformasjon (har verten gått?).
+net.player_left_searching	Den spilleren gikk. Søker igjen...
+net.connected	Tilkoblet!
+net.relay_failed	Tilkoblingen til Relay-serveren mislyktes.
+net.opponent_timeout	Fikk ikke kontakt med motstanderen din (tidsavbrudd).
+net.no_internet	Ingen internettilkobling. Koble til Wi-Fi eller mobildata for å spille med venner hvor som helst. (LAN-spill fungerer på samme nettverk.)
+invite.wait	Vent litt før du sender en ny invitasjon.
+invite.type_name	Skriv inn vennens navn i spillet (3-16 bokstaver, tall eller _).
+invite.own_name	Det er ditt eget navn.
+invite.open_room_first	Åpne rommet ditt først, og inviter så.
+invite.room_full	Rommet ditt er allerede fullt.
+invite.could_not_send	Kunne ikke sende invitasjonen.
+invite.too_many	For mange invitasjoner akkurat nå. Prøv igjen om noen sekunder.
+invite.cancelled	Invitasjon avbrutt.
+invite.expired	Den invitasjonen har gått ut.
+invite.closed_full	Rommet ditt er fullt. Invitasjonen er lukket.
+invite.closed_joined	En spiller ble med i rommet ditt. Invitasjonen er lukket.
+invite.closed_room	Invitasjon avbrutt: rommet ble lukket.
+name.taken	Dette navnet er allerede tatt
+name.check_unavailable	Kunne ikke sjekke navnet ditt på nett. Sjekk internett og prøv igjen.
+name.too_soon	Du endret navnet ditt nettopp. Prøv igjen om et minutt.
+name.choose_different	Velg et annet navn.
+friends.type_tag	Skriv vennens navn som Kira#4821.
+friends.added	Venn lagt til.
+friends.declined_request	Forespørsel avslått.
+friends.removed	Venn fjernet.
+friends.blocked	Spiller blokkert.
+friends.a_friend	En venn
+friends.type_player_tag	Skriv spillerens navn som Kira#4821.
+friends.wait_invite	Vent litt før du inviterer igjen.
+name.enter	Skriv inn et navn.
+name.bad_chars	Bruk bare bokstaver, tall og _ (ingen mellomrom eller symboler).
+rooms.name_bad_chars	Romnavn kan bare ha bokstaver, tall, mellomrom og _ - ' !.
+rooms.name_double_space	Romnavn kan ikke ha doble mellomrom.
+rooms.name_choose_different	Velg et annet romnavn.
+gesture.cross_arms	KRYSS ARMENE
+gesture.punch_forward	SLAG FREMOVER
+gesture.raise_hands	LØFT BEGGE HENDENE
+class.kaia.passive1_desc	+15% angrepshastighet
+class.kaia.passive2_desc	5% livstyveri
+class.kaia.skill1_desc	Rush frem og stikk inn i motstanderen
+class.kaia.skill2_desc	Perfekt timing reflekterer skaden
+class.kaia.skill3_desc	Stikk mange ganger raskt
+class.kaia.ult_desc	10 sek.: vanlige angrep utløser en vannrett bølge
+class.bruna.passive1_desc	+20% skade, -15% angrepshastighet
+class.bruna.passive2_desc	+20% skade, -15% bevegelseshastighet
+class.bruna.skill1_desc	Grip motstanderen og knus dem i bakken
+class.bruna.skill2_desc	Snurr som en tornado og treff gang på gang
+class.bruna.ult_desc	Knus gulvet og lag en sjokkbølge
+class.ren.passive1_desc	+20% kritisk sjanse
+class.ren.passive2_desc	+10% bevegelseshastighet i 10 sek. (30 sek. nedkjøling)
+class.ren.skill1_desc	Rush vannrett bakover og skyt
+class.ren.skill2_desc	Kvel en nær motstander og skyv dem unna
+class.ren.skill3_desc	Skyt en vannrett pilbyge
+class.ren.ult_desc	Én pil mangedobles til en storm av piler
+class.lyra.passive1_desc	10% sjanse ved treff: -15% bevegelse, -10% skade, -15% angrepshast.
+class.lyra.passive2_desc	20% sjanse til å blokkere skade
+class.lyra.skill1_desc	Skyt et målsøkende ildprosjektil
+class.lyra.skill2_desc	Tilkall 3 håndlangere
+class.lyra.skill3_desc	En sky følger fienden og slår til med torden
+class.lyra.ult_desc	10 sek. ildring: brenner fiender, blokkerer prosjektiler
+class.taro.passive1_desc	10% sjanse ved treff: -15% fiendens forsvar
+class.taro.passive2_desc	Etter 3 sek. uten angrep: neste treff +50%
+class.taro.skill1_desc	Strekk ut, hopp og sving nedover
+class.taro.skill2_desc	Snurr stangvåpenet for å blokkere prosjektiler
+class.taro.skill3_desc	Kast spydet og kall det tilbake
+class.taro.ult_desc	Stikk fienden, og spark så skaftet lenger inn
+char.kaia.role	Smidig angriper
+char.kaia.style	Rask, mobil nærkamp med presise hogg som kan kjedes sammen.
+char.bruna.role	Slåsskjempe
+char.bruna.style	Slåsskjempe med høy skade og høy holdbarhet som kontrollerer plassen med tunge angrep.
+char.ren.role	Smidig skytter
+char.ren.style	Sonekontroll med høy mobilitet og presist press med allsidig pilteknikk.
+char.lyra.role	Sonekontroll / oppsett
+char.lyra.style	Smidig trollkvinne som kontrollerer plassen med raske trylleformler, lur mobilitet og presis magi.
+char.taro.role	Rekkeviddespesialist
+char.taro.style	Disiplinert, mobil kontroll med press på lang avstand og presise slag.
+stage.0.name	Himmeldojoen
+stage.0.short	Himmeldojoen
+stage.0.tagline	Fjelltempel over skyene
+stage.1.name	Neonbyen
+stage.1.short	Neonbyen
+stage.1.tagline	Takarena i neonregn
+stage.2.name	Lavasmia
+stage.2.short	Lavasmia
+stage.2.tagline	Smeltet støperi over et lavahav
+stage.3.name	Begynnelsens fjell
+stage.3.short	Fjellet
+stage.3.tagline	Loddrett KO · bevegelige jadeplattformer over et tåkete stup
+stage.4.name	Enhetens slette
+stage.4.short	Sletta
+stage.4.tagline	Vannrett KO · ett langt jorde, ingen steder å gjemme seg
+stage.5.name	Vulkanens avgrunn
+stage.5.short	Vulkanen
+stage.5.tagline	Alle kanter gir KO · ild bryter ut fra magmasjøen
+stage.6.name	Kjempefuglens rede
+stage.6.short	Fuglereiret
+stage.6.tagline	Vannrett KO · den enorme fuglen feier over arenaen
+stage.7.name	Det forlatte havmonumentet
+stage.7.short	Havet
+stage.7.tagline	Alle kanter gir KO · hvalen synker ned, hopp ned på terrassene
+end.opponent_left	Motstanderen din forlot kampen.
+end.opponent_timeout	Motstanderen din sluttet å svare.
+end.connection_lost	Tilkoblingen til motstanderen din ble brutt.
+end.you_left	Du forlot kampen.
+end.desync	De to spillene var uenige (desync): ingen avgjørelse.
+end.unconfirmed	Slutten på kampen kunne ikke bekreftes: ingen avgjørelse.
+end.handshake_failed	Kampen kunne ikke starte.
+end.peer_never_started	Motstanderen din ble aldri med i kampen: ingen avgjørelse.
+end.too_slow	Tilkoblingen var for treg til å spille: ingen avgjørelse.
+end.host_left	Verten forlot kampen: ingen avgjørelse.
+end.dropped	Tilkoblingen din falt ut av kampen.
+status.aura	AURA {0}
+status.fire_ring	ILDRING {0}
+status.tailwind	MEDVIND
+status.guard_broken	GARDE BRUTT {0} sek.
+status.guard	GARDE {0}%
+status.reloading	LADER OM {0} sek.
+status.recharging	LADER OPP {0} sek.
+status.hexed	FORHEKSET
+status.armor_break	RUSTNING -15%
+hud.perform	Utfør: {0}
+hud.times_up	Tiden er ute!
+rewards.no_contest	Ingen avgjørelse: ingen belønninger
+rewards.pve_victory	PvE-seier  +{0}
+rewards.pve_match	PvE-kamp  +{0}
+rewards.victory	Seier  +{0}
+rewards.match_played	Spilt kamp  +{0}
+rewards.posture	God holdning {0}%  +{1}
+hud.revived	GJENOPPLIVET
+quest.win	Vinn 3 kamper
+quest.pve	Slå CPU-en to ganger (PvE)
+quest.combo	Få til 10 fulle komboer
+quest.ult	Utløs 3 gest-ultimater
+quest.parry	Parer 5 angrep
+quest.posture	Fullfør en kamp med over 80% god holdning
+rewards.quest	Oppdrag: {0}  +{1}
+bind.move_left	Beveg til venstre
+bind.move_right	Beveg til høyre
+bind.drop	Fall ned / raskt fall
+bind.jump	Hopp
+bind.jump_alt	Hopp (alt.)
+bind.light	Lett angrep
+bind.heavy	Tungt angrep
+bind.block	Blokkering
+bind.dash	Dash
+bind.skill1	Evne 1
+bind.skill2	Evne 2
+bind.skill3	Evne 3
+bind.ultimate	Ultimate
+bind.aim_up	Sikt opp
+bind.special	Spesial
+hud.rejected	Avvist: {0}
+cv.low_confidence	Lav sporingssikkerhet
+cv.frozen	Frosset bilde (juks?)
+cv.snap	Øyeblikkelig positurbytte (makro?)
+cv.ok	OK
+cam.none	Fant ikke noe kamera
+cam.off	Kamera av
+cam.starting	Kameraet starter...
+cam.waiting_frames	Venter på bilder fra kameraet - gi Unity tilgang til kameraet under Systeminnstillinger > Personvern > Kamera
+cam.live	Kamera live ({0}x{1})
+pose.simulated	Simulert (tastaturpositurer)
+pose.camera_off	Kamerasporing av - bruker tastatursimulerte positurer
+pose.model_failed	Positurmodellen feilet: {0}
+pose.loading	Laster positurmodell...
+pose.live	Live kroppssporing (MoveNet, {0} Hz)
+pose.step_back	Kamera på - gå bakover så skuldrene dine synes
+account.finish_browser	Fullfør innloggingen i nettleseren (velg Fortsett med Google)...
+account.signed_out_again	Logget ut. Logg inn igjen for å bruke kontoen din.
+account.signed_in_kept	Logget inn. Navnet og fremgangen din følger denne kontoen.

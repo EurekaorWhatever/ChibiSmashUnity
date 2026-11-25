@@ -1,0 +1,257 @@
+lang.backdrop	TAAL
+lang.title	KIES JE TAAL
+lang.subtitle	Alles in het spel gebruikt deze taal. Je kunt hem altijd wijzigen in INSTELLINGEN.
+lang.search_hint	Talen zoeken...
+lang.no_match	Geen enkele taal past bij je zoekopdracht.
+lang.english_text	Voorlopig Engelse tekst
+lang.confirm	BEVESTIGEN  ·  {0}
+lang.confirm_none	BEVESTIGEN
+lang.pad_hint	Typ om te zoeken · Omhoog / Omlaag om te kiezen · Enter of A op controller = bevestigen
+common.cancel	ANNULEREN
+settings.language	TAAL  ·  {0}
+difficulty.dummy	Pop
+difficulty.easy	Makkelijk
+difficulty.medium	Gemiddeld
+difficulty.hard	Moeilijk
+difficulty.dummy_upper	POP
+difficulty.easy_upper	MAKKELIJK
+difficulty.medium_upper	GEMIDDELD
+difficulty.hard_upper	MOEILIJK
+nav.home	START
+nav.play	SPELEN
+nav.training	TRAINING
+nav.arcade	ARCADE
+nav.collection	COLLECTIE
+nav.settings	INSTELLINGEN
+account.signed_in_as	Ingelogd als {0}.
+account.signed_in	Ingelogd.
+account.signed_out	Uitgelogd.
+keys.who	P{0} {1}
+keys.reserved	{0} is een pose- / houdingstoets (1 2 3, 8 9 0, numpad 7 8 9, P, -). Kies een andere.
+keys.swapped	{0};  {1} is nu {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Online spelen is voor spelers van 13 jaar en ouder.
+arcade.clear_toast	ARCADE UITGESPEELD! Alle {0} rivalen verslagen
+precheck.too_dark	Te donker ({0}%) - voeg licht toe
+precheck.too_bright	Te fel ({0}%) - verminder schittering
+precheck.good	Goed ({0}%)
+loading.weapon_art	Wapenafbeeldingen: {0}
+loading.fighter	Vechter: {0}
+precheck.checking	CONTROLEREN... {0}
+wipe.character_select	PERSONAGE KIEZEN
+wipe.arcade	ARCADE
+results.rematch	REVANCHE
+results.continue	DOORGAAN
+results.finish	AFRONDEN
+results.next_battle	VOLGENDE GEVECHT
+wipe.arcade_clear	ARCADE UITGESPEELD
+precheck.title	CAMERACONTROLE
+precheck.camera_unavailable	Camera niet beschikbaar
+precheck.simulated_feed	Gesimuleerd beeld (webcam uit)
+precheck.upper_body_ok	Bovenlichaam in beeld
+precheck.step_back	Stap achteruit - schouders en heupen moeten zichtbaar zijn
+loading.interface	Interfacegrafiek
+loading.typefaces	Lettertypen
+loading.pose_model	Model voor pose-tracking
+loading.ready	Klaar
+onboarding.welcome	WELKOM!
+onboarding.your_account	JOUW ACCOUNT
+onboarding.your_name	JOUW SPELERSNAAM
+rooms.backdrop_create	VS LOCAL  ·  KAMERS MAKEN
+rooms.backdrop_join	VS LOCAL  ·  KAMER BETREDEN
+precheck.all_passed	ALLE CONTROLES GESLAAGD
+precheck.failed	CONTROLE MISLUKT
+precheck.lighting	VERLICHTING
+precheck.framing	KADRERING
+precheck.posture	HOUDING
+precheck.upright	Mooi rechtop
+precheck.sit_up	Zit rechtop voor bonusmunten
+common.retry	OPNIEUW
+precheck.play_anyway	TOCH SPELEN
+common.back	TERUG
+precheck.ranked_note	Voor ranked wachtrijen moet deze controle slagen. Casual potjes kunnen hem overslaan.
+precheck.hint	CAMERACONTROLE VOOR DE WEDSTRIJD
+hint.select	KIEZEN
+home.play	SPELEN
+home.training	TRAINING
+home.arcade	ARCADE
+home.collection	PERSONAGECOLLECTIE
+home.settings	INSTELLINGEN
+home.exit	SPEL AFSLUITEN
+home.play_desc	Vs Online snelle wedstrijd, VS Local-kamers met vrienden of Vs CPU
+home.training_desc	Camera-instelling, gebaren oefenen en een trainingspop
+home.arcade_desc	Alle vijf rivalen achter elkaar op elk speelveld
+home.collection_desc	Skins, wapens en de cosmetische banner
+home.settings_desc	Moeilijkheid, camera-opties en toetsen
+home.exit_desc	Sluit het spel
+tips.1	Vul de ULT-meter en druk op Ultimate - neem dan de pose van je vechter aan voor de camera voordat het aftellen voorbij is.
+tips.2	Hogere DEF haalt schade van elke treffer af en maakt je blok sterker.
+tips.3	Een goede houding die de camera volgt, levert na elke wedstrijd bonusmunten op.
+tips.4	Skins en wapens zijn puur cosmetisch - de stats veranderen nooit door wat een vechter draagt.
+tips.5	Druk in Training op T om je ultimate te vullen. De pop staat altijd weer op.
+tips.6	Elke vechter heeft een van twee passieven - kies die in het uitrustingspaneel na het vastzetten.
+tips.7	Online gevechten gebruiken rollback-netcode: beide spellen draaien hetzelfde gevecht met dezelfde invoer.
+stats.power	KRACHT
+stats.speed	SNELHEID
+stats.range	BEREIK
+stats.endurance	UITHOUDING
+stats.recovery	HERSTEL
+training.use_block	Blok · Melee- & Magie-ultimate
+training.use_fireball	Vuurbal · Afstands- & Stokwapen-ultimate
+training.use_superjump	Supersprong · Zware ultimate
+menu.online_locked	Online modi zijn voor spelers van 13 jaar en ouder.
+menu.no_internet	Geen internet: maak verbinding met wifi of mobiele data. VS AI werkt offline.
+menu.four_player_soon	2v2 en Battle Royale hebben ondersteuning voor 4 spelers nodig, die in een latere update komt.
+profile.edit_name	NAAM BEWERKEN
+profile.win_loss	W {0}  ·  V {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	KLAAR
+loading.loading	LADEN
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   voltooid x{2}
+arcade.rule_fight_all	Vecht tegen alle {0} personages achter elkaar, in willekeurige volgorde.
+arcade.rule_difficulty	CPU-moeilijkheid: {0} (wijzig het in Instellingen).
+arcade.final	FINALE
+arcade.round	RONDE {0}
+training.cv_setup_source	CV-INSTELLING · {0}
+training.status	Camera: {0}\nTracking: {1}\nGedetecteerd: {2}
+training.off	uit
+training.none	niets
+training.status_posture	   ·   Houding {0}%   ·   Telemetrie {1}
+collection.gold_cinematic_suffix	 · GOUDEN TUSSENFILMPJE
+collection.only	ALLEEN {0}
+collection.pull1	TREK x1  ·  {0}
+collection.pull10	TREK x10  ·  {0}
+collection.dup_suffix	  (dubbel +20)
+collection.new_suffix	  NIEUW!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} seconden  <size=12><color=#9AA6BC>(vast voor elke wedstrijd)</color></size>
+settings.change_name_as	NAAM WIJZIGEN  ·  {0}
+settings.change_name	NAAM WIJZIGEN
+settings.keys_help	Klik op een toewijzing en druk dan op een toets of klik met een muisknop op dat vak (Esc / B op controller / ergens anders klikken annuleert; 5 s limiet). Als een van de spelers hem al gebruikt, wisselen de twee om.\nCameraposes: armen gekruist = blok · arm opzij gestrekt = vuurbal · beide handen omhoog = supersprong (toetsenbordposes: 1/2/3 en 8/9/0).
+rarity.common	GEWOON
+rarity.rare	ZELDZAAM
+rarity.epic	EPISCH
+rarity.legendary	LEGENDARISCH
+skin.default	Klassiek
+skin.mint	Mintpop
+skin.shadow	Schaduw
+skin.sakura	Sakura
+skin.inferno	Inferno
+skin.celestial	Hemels
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	ALLEEN 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nTEAMS
+play.four_player_later	2v2 en Battle Royale komen met ondersteuning voor 4 spelers in een latere update.
+play.team_tag	4P · 2 TEAMS
+play.royale_tag	4P · IEDER VOOR ZICH
+collection.all_fighters	ALLE VECHTERS
+arcade.mode	ARCADEMODUS
+home.tagline	ARENAVECHTSPEL  ·  ULTIMATES MET LICHAAMSGEBAREN
+play.royale_card	BATTLE\nROYALE
+training.kicker	CAMERA-INSTELLING & OEFENEN
+settings.camera_tracking	CAMERATRACKING (WEBCAM)
+training.camera_off	CAMERATRACKING: UIT
+training.camera_on	CAMERATRACKING: AAN
+collection.hint	PERSONAGECOLLECTIE
+play.choose_style	KIES EEN SPEELSTIJL
+online.kicker	KIES EEN SPEELSTIJL  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	KIES JE GEVECHT  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	BINNENKORT
+training.cv	COMPUTERVISIE
+online.connection	VERBINDING
+collection.banner	COSMETISCHE BANNER
+settings.cpu_difficulty	CPU-MOEILIJKHEID
+play.create_join	KAMERS MAKEN · BETREDEN
+settings.cv_overlay	CV-OVERLAY IN WEDSTRIJD
+quests.coins_note	Munten krijg je alleen door te spelen: winst, PvE, missies en een goede houding die de camera volgt.
+collection.odds	Gewoon 60% · Zeldzaam 28% · Episch 10% · Legendarisch 2%
+collection.equip	UITRUSTEN
+collection.equipped	UITGERUST
+hint.exit	AFSLUITEN
+home.exit_upper	SPEL AFSLUITEN
+exit.title	SPEL AFSLUITEN?
+online.royale_desc	Ieder voor zich. De laatste vechter die overeind staat, wint.
+arcade.kicker	VIJF RIVALEN · ÉÉN RUN
+loading.for_battle	VOOR HET GEVECHT
+online.invites_note	Kameruitnodigingen van vrienden verschijnen hier. Kamers met vrienden staan onder SPELEN > VS LOCAL.
+settings.kicker	SPEL · CAMERA · BESTURING
+training.gestures_live	GEBAREN  (neem de pose aan voor de camera - stoot = één arm recht opzij gestrekt)
+training.gestures_sim	GEBAREN  (houd de toets ingedrukt om de pose te simuleren)
+settings.key_bindings	TOETSEN
+settings.keys_reset	Toetsen teruggezet naar standaard
+play.locked	VERGRENDELD
+arcade.rule_retry	Een ronde verloren? Ga door en probeer het opnieuw.
+home.hint	HOOFDMENU
+settings.master_volume	HOOFDVOLUME
+settings.match_time	WEDSTRIJDDUUR
+play.matchmaking_card	VS\nLOCAL
+hint.move	BEWEGEN
+play.matchmaking_desc	Maak een kamer, deel de code of nodig vrienden uit op naam.
+play.no_internet_tag	GEEN INTERNET
+online.no_internet_body	Nu geen internet. Maak verbinding met wifi of mobiele data, of speel Vs CPU.
+common.off	UIT
+online.offline	OFFLINE
+common.on	AAN
+settings.player1	SPELER 1
+settings.player2	SPELER 2
+training.practice_dummy	OEFENEN TEGEN POP
+settings.precheck	CAMERACONTROLE VOOR DE WEDSTRIJD
+loading.prepare	MAAK JE KLAAR
+settings.listening_hint	DRUK OP EEN TOETS OF KLIK OP HET VAK  ·  ESC / B OP CONTROLLER ANNULEERT  ·  CONTROLLERKNOPPEN KUNNEN NIET WORDEN TOEGEWEZEN
+training.slouch_note	Druk op P om een onderuitgezakte houding aan/uit te zetten en zie de houdingsscore dalen.
+settings.profile_reset	Profiel gereset (naam en inlog blijven)
+collection.pull_to_unlock	Trek om te ontgrendelen
+quests.title	MISSIES
+online.quick_match	SNELLE WEDSTRIJD
+play.online_desc	Snelle wedstrijd met een speler bij jou in de buurt, of reageer op de uitnodiging van een vriend.
+online.solo_desc	Snelle wedstrijd: vecht tegen een speler die nu zoekt, dichtstbijzijnde eerst.
+settings.reset_keys	TOETSEN RESETTEN
+settings.reset_profile	PROFIEL RESETTEN
+arcade.rival_unknown	RIVAAL  ???
+play.rooms_tag	KAMERS · 2-4 SPELERS
+online.rollback_body	Rollback-netcode: beide spellen draaien hetzelfde gevecht met dezelfde invoer, dus het blijft snel en eerlijk.
+settings.screen_shake	SCHERMSCHUDDEN
+profile.set_name	NAAM INSTELLEN
+settings.sfx_volume	EFFECTVOLUME
+training.simulate_pose	POSE SIMULEREN
+collection.kicker	SKINS · WAPENS · COSMETISCHE BANNER
+training.slouch	ONDERUITGEZAKT
+online.solo_card	SOLO\n1V1
+home.start	START
+arcade.start	ARCADE STARTEN
+exit.stay	BLIJVEN
+settings.sure	ZEKER?
+settings.sure_reset_profile	ZEKER? ALLE VOORTGANG VERDWIJNT
+collection.banner_note	Alleen skins en ultimate-tussenfilmpjes. Stats zijn op elke skin gelijk - niets zit achter een betaalmuur.
+hint.tabs	TABBLADEN
+loading.tip	TIP
+training.hint	TRAINING  /  CV-INSTELLING
+arcade.rule_stages	Het speelveld verandert elke ronde, van de Berg van het Begin tot het Oceaanmonument.
+online.team_desc	Twee teams van twee. Geen eigen vuur: je treffers raken je teamgenoot nooit.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  SPEELSTIJL
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Winst levert munten en missievoortgang op, net als VS CPU.
+exit.saved_note	Je profiel, munten en collectie zijn op dit apparaat opgeslagen.
+settings.key_listening	toets of klik hier
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Jij kiest je vechter en MAKKELIJK, GEMIDDELD of MOEILIJK. De CPU krijgt een willekeurige vechter.
+account.keep_name_body	Log in met je Google-account en je naam en gegevens blijven bij je: elke keer dat je het spel opent, en op elke computer. Een ander Google-account krijgt een eigen nieuwe naam.
+name.you_are	Jij bent {0}!
+name.you_are_unchecked	Jij bent {0}! We controleren de naam als je online speelt.
+online.could_not_start	De wedstrijd kon niet starten ({0}).
+rooms.your_rooms	JOUW KAMERS
+rooms.count_click	{0}  ·  klik op een kamer om hem te openen
+rooms.code_value	CODE  {0}
+rooms.players_count	{0} / {1} SPELERS
+rooms.more	+ nog {0} kamers
+rooms.created	Kamer "{0}" gemaakt. Klik erop om de code te delen of vrienden uit te nodigen.
+quick.searching	ZOEKEN
+quick.looking_in	ZOEKEN IN:  {0}
+room.kicker	KAMER  ·  2-4 SPELERS  ·  {0}
+room.battle_royale	BATTLE ROYALE

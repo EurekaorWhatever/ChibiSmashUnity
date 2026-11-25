@@ -1,0 +1,257 @@
+lang.backdrop	زبان
+lang.title	زبانت را انتخاب کن
+lang.subtitle	همه‌چیز در بازی به این زبان خواهد بود. هر وقت خواستی می‌توانی آن را در تنظیمات عوض کنی.
+lang.search_hint	جستجوی زبان‌ها...
+lang.no_match	هیچ زبانی با جستجوی تو جور نیست.
+lang.english_text	فعلاً متن انگلیسی
+lang.confirm	تأیید  ·  {0}
+lang.confirm_none	تأیید
+lang.pad_hint	برای جستجو تایپ کن · بالا / پایین برای انتخاب · Enter یا A دسته = تأیید
+common.cancel	لغو
+settings.language	زبان  ·  {0}
+difficulty.dummy	آدمک
+difficulty.easy	آسان
+difficulty.medium	متوسط
+difficulty.hard	سخت
+difficulty.dummy_upper	آدمک
+difficulty.easy_upper	آسان
+difficulty.medium_upper	متوسط
+difficulty.hard_upper	سخت
+nav.home	خانه
+nav.play	بازی
+nav.training	تمرین
+nav.arcade	آرکید
+nav.collection	مجموعه
+nav.settings	تنظیمات
+account.signed_in_as	وارد شدی با نام {0}.
+account.signed_in	وارد شدی.
+account.signed_out	خارج شدی.
+keys.who	P{0} {1}
+keys.reserved	{0} کلید ژست / حالت بدن است (1 2 3، 8 9 0، اعداد 7 8 9، P، -). یکی دیگر انتخاب کن.
+keys.swapped	{0}؛  {1} حالا {2} است
+match.versus	{0}  VS  {1}
+online.locked_age	بازی آنلاین برای بازیکنان ۱۳ سال به بالاست.
+arcade.clear_toast	آرکید تمام شد! همه {0} رقیب شکست خوردند
+precheck.too_dark	خیلی تاریک ({0}%) - نور بیشتر کن
+precheck.too_bright	خیلی روشن ({0}%) - خیرگی را کم کن
+precheck.good	خوب ({0}%)
+loading.weapon_art	گرافیک سلاح: {0}
+loading.fighter	مبارز: {0}
+precheck.checking	در حال بررسی... {0}
+wipe.character_select	انتخاب شخصیت
+wipe.arcade	آرکید
+results.rematch	مسابقه دوباره
+results.continue	ادامه
+results.finish	پایان
+results.next_battle	نبرد بعدی
+wipe.arcade_clear	آرکید تمام شد
+precheck.title	بررسی دوربین
+precheck.camera_unavailable	دوربین در دسترس نیست
+precheck.simulated_feed	تصویر شبیه‌سازی‌شده (وب‌کم خاموش)
+precheck.upper_body_ok	بالاتنه در کادر است
+precheck.step_back	کمی عقب برو - شانه‌ها و لگن باید دیده شوند
+loading.interface	گرافیک رابط کاربری
+loading.typefaces	قلم‌ها
+loading.pose_model	مدل ردیابی ژست
+loading.ready	آماده
+onboarding.welcome	خوش آمدی!
+onboarding.your_account	حساب تو
+onboarding.your_name	نام بازیکن تو
+rooms.backdrop_create	VS LOCAL  ·  ساختن اتاق
+rooms.backdrop_join	VS LOCAL  ·  پیوستن به اتاق
+precheck.all_passed	همه بررسی‌ها قبول شد
+precheck.failed	بررسی ناموفق بود
+precheck.lighting	نور
+precheck.framing	کادربندی
+precheck.posture	حالت بدن
+precheck.upright	صاف و عالی
+precheck.sit_up	صاف بنشین تا سکه جایزه بگیری
+common.retry	دوباره
+precheck.play_anyway	در هر حال بازی کن
+common.back	بازگشت
+precheck.ranked_note	صف‌های رتبه‌ای نیاز دارند این بررسی قبول شود. مسابقه‌های دوستانه می‌توانند از آن بگذرند.
+precheck.hint	بررسی دوربین پیش از مسابقه
+hint.select	انتخاب
+home.play	بازی
+home.training	تمرین
+home.arcade	آرکید
+home.collection	مجموعه شخصیت‌ها
+home.settings	تنظیمات
+home.exit	خروج از بازی
+home.play_desc	مسابقه سریع Vs Online، اتاق‌های VS Local با دوستان، یا Vs CPU
+home.training_desc	تنظیم دوربین، تمرین حرکات و یک آدمک تمرینی
+home.arcade_desc	هر پنج رقیب پشت سر هم در همه میدان‌ها
+home.collection_desc	اسکین‌ها، سلاح‌ها و بنر تزئینی
+home.settings_desc	سختی، گزینه‌های دوربین و کلیدها
+home.exit_desc	بستن بازی
+tips.1	نوار ULT را پر کن و Ultimate را بزن - بعد پیش از تمام شدن شمارش معکوس، ژست مبارزت را جلوی دوربین بگیر.
+tips.2	DEF بالاتر از آسیب هر ضربه کم می‌کند و دفاعت را قوی‌تر می‌کند.
+tips.3	حالت بدن خوب که دوربین دنبال می‌کند، بعد از هر مسابقه سکه جایزه می‌دهد.
+tips.4	اسکین‌ها و سلاح‌ها فقط ظاهری‌اند - آمار هیچ‌وقت با پوشش مبارز تغییر نمی‌کند.
+tips.5	در تمرین، T را بزن تا Ultimate پر شود. آدمک همیشه دوباره بلند می‌شود.
+tips.6	هر مبارز یکی از دو توانایی غیرفعال را دارد - بعد از قفل کردن، آن را در پنل تجهیزات انتخاب کن.
+tips.7	نبردهای آنلاین از نت‌کد rollback استفاده می‌کنند: هر دو بازی همان نبرد را با همان ورودی‌ها اجرا می‌کنند.
+stats.power	قدرت
+stats.speed	سرعت
+stats.range	برد
+stats.endurance	استقامت
+stats.recovery	بازیابی
+training.use_block	دفاع · Ultimate نزدیک و جادو
+training.use_fireball	گلوله آتشین · Ultimate دوربرد و نیزه‌ای
+training.use_superjump	ابرپرش · Ultimate سنگین
+menu.online_locked	حالت‌های آنلاین برای بازیکنان ۱۳ سال به بالاست.
+menu.no_internet	اینترنت نیست: به Wi-Fi یا اینترنت همراه وصل شو. VS AI آفلاین کار می‌کند.
+menu.four_player_soon	2v2 و Battle Royale به پشتیبانی ۴ بازیکن نیاز دارند که در به‌روزرسانی بعدی می‌آید.
+profile.edit_name	ویرایش نام
+profile.win_loss	برد {0}  ·  باخت {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	آماده
+loading.loading	در حال بارگذاری
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   انجام‌شده x{2}
+arcade.rule_fight_all	با همه {0} شخصیت پشت سر هم و به ترتیب تصادفی بجنگ.
+arcade.rule_difficulty	سختی CPU: {0} (در تنظیمات عوضش کن).
+arcade.final	فینال
+arcade.round	راند {0}
+training.cv_setup_source	تنظیم CV · {0}
+training.status	دوربین: {0}\nردیابی: {1}\nشناسایی‌شده: {2}
+training.off	خاموش
+training.none	هیچ
+training.status_posture	   ·   حالت بدن {0}%   ·   تله‌متری {1}
+collection.gold_cinematic_suffix	 · سینمایی طلایی
+collection.only	فقط {0}
+collection.pull1	کشیدن x1  ·  {0}
+collection.pull10	کشیدن x10  ·  {0}
+collection.dup_suffix	  (تکراری +20)
+collection.new_suffix	  جدید!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} ثانیه  <size=12><color=#9AA6BC>(برای همه مسابقه‌ها ثابت)</color></size>
+settings.change_name_as	تغییر نام  ·  {0}
+settings.change_name	تغییر نام
+settings.keys_help	روی یک کلید تخصیص‌یافته کلیک کن، بعد کلیدی را بزن یا با دکمه ماوس روی آن خانه کلیک کن (Esc / B دسته / کلیک در جای دیگر لغو می‌کند؛ مهلت ۵ ثانیه). اگر یکی از بازیکنان از آن استفاده کند، جای آن دو عوض می‌شود.\nژست‌های دوربین: دست‌ها ضربدری = دفاع · دست به پهلو = گلوله آتشین · هر دو دست بالا = ابرپرش (ژست‌های کیبورد: 1/2/3 و 8/9/0).
+rarity.common	معمولی
+rarity.rare	کمیاب
+rarity.epic	حماسی
+rarity.legendary	افسانه‌ای
+skin.default	کلاسیک
+skin.mint	نعنایی پاپ
+skin.shadow	سایه
+skin.sakura	ساکورا
+skin.inferno	دوزخ
+skin.celestial	آسمانی
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	فقط ۱۳+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nتیمی
+play.four_player_later	2v2 و Battle Royale با پشتیبانی ۴ بازیکن در به‌روزرسانی بعدی می‌آیند.
+play.team_tag	4P · ۲ تیم
+play.royale_tag	4P · همه علیه همه
+collection.all_fighters	همه مبارزان
+arcade.mode	حالت آرکید
+home.tagline	بازی مبارزه‌ای میدانی  ·  Ultimate با حرکات بدن
+play.royale_card	BATTLE\nROYALE
+training.kicker	تنظیم دوربین و تمرین
+settings.camera_tracking	ردیابی با دوربین (وب‌کم)
+training.camera_off	ردیابی دوربین: خاموش
+training.camera_on	ردیابی دوربین: روشن
+collection.hint	مجموعه شخصیت‌ها
+play.choose_style	یک سبک بازی انتخاب کن
+online.kicker	یک سبک بازی انتخاب کن  ·  انفرادی · 2V2 · BATTLE ROYALE
+play.kicker	نبردت را انتخاب کن  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	به‌زودی
+training.cv	بینایی ماشین
+online.connection	اتصال
+collection.banner	بنر تزئینی
+settings.cpu_difficulty	سختی CPU
+play.create_join	ساختن · پیوستن به اتاق
+settings.cv_overlay	لایه CV در مسابقه
+quests.coins_note	سکه فقط از بازی کردن می‌آید: پیروزی، PvE، مأموریت‌ها و حالت بدن خوب که دوربین دنبال می‌کند.
+collection.odds	معمولی 60% · کمیاب 28% · حماسی 10% · افسانه‌ای 2%
+collection.equip	تجهیز
+collection.equipped	تجهیز شد
+hint.exit	خروج
+home.exit_upper	خروج از بازی
+exit.title	از بازی خارج می‌شوی؟
+online.royale_desc	هر کس برای خودش. آخرین مبارزی که سرپا بماند برنده است.
+arcade.kicker	پنج رقیب · یک دور
+loading.for_battle	برای نبرد
+online.invites_note	دعوت‌های دوستان به اتاق اینجا ظاهر می‌شوند. اتاق‌های دوستان در بازی > VS LOCAL هستند.
+settings.kicker	بازی · دوربین · کنترل
+training.gestures_live	حرکات  (ژست را جلوی دوربین بگیر - مشت = یک دست صاف به پهلو)
+training.gestures_sim	حرکات  (کلید را نگه دار تا ژست شبیه‌سازی شود)
+settings.key_bindings	کلیدها
+settings.keys_reset	کلیدها به حالت پیش‌فرض برگشتند
+play.locked	قفل
+arcade.rule_retry	یک راند را باختی؟ ادامه بده و دوباره امتحانش کن.
+home.hint	منوی اصلی
+settings.master_volume	صدای کلی
+settings.match_time	زمان مسابقه
+play.matchmaking_card	VS\nLOCAL
+hint.move	حرکت
+play.matchmaking_desc	یک اتاق بساز، کدش را به اشتراک بگذار یا دوستانت را با نام دعوت کن.
+play.no_internet_tag	بدون اینترنت
+online.no_internet_body	الان اینترنت نیست. به Wi-Fi یا اینترنت همراه وصل شو، یا Vs CPU بازی کن.
+common.off	خاموش
+online.offline	آفلاین
+common.on	روشن
+settings.player1	بازیکن ۱
+settings.player2	بازیکن ۲
+training.practice_dummy	تمرین با آدمک
+settings.precheck	بررسی دوربین پیش از مسابقه
+loading.prepare	آماده شو
+settings.listening_hint	یک کلید بزن یا روی خانه کلیک کن  ·  ESC / B دسته لغو می‌کند  ·  دکمه‌های دسته قابل تخصیص نیستند
+training.slouch_note	P را بزن تا حالت قوزکرده روشن/خاموش شود و ببین امتیاز حالت بدن پایین می‌آید.
+settings.profile_reset	نمایه بازنشانی شد (نام و ورود حفظ شد)
+collection.pull_to_unlock	برای باز کردن بکش
+quests.title	مأموریت‌ها
+online.quick_match	مسابقه سریع
+play.online_desc	مسابقه سریع با بازیکنی نزدیک تو، یا پاسخ به دعوت یک دوست.
+online.solo_desc	مسابقه سریع: با بازیکنی که همین حالا در جستجوست بجنگ، نزدیک‌ترین اول.
+settings.reset_keys	بازنشانی کلیدها
+settings.reset_profile	بازنشانی نمایه
+arcade.rival_unknown	رقیب  ???
+play.rooms_tag	اتاق‌ها · ۲ تا ۴ بازیکن
+online.rollback_body	نت‌کد rollback: هر دو بازی همان نبرد را با همان ورودی‌ها اجرا می‌کنند، پس سریع و منصفانه می‌ماند.
+settings.screen_shake	لرزش صفحه
+profile.set_name	تعیین نام
+settings.sfx_volume	صدای جلوه‌ها
+training.simulate_pose	شبیه‌سازی ژست
+collection.kicker	اسکین‌ها · سلاح‌ها · بنر تزئینی
+training.slouch	قوز
+online.solo_card	انفرادی\n1V1
+home.start	شروع
+arcade.start	شروع آرکید
+exit.stay	ماندن
+settings.sure	مطمئنی؟
+settings.sure_reset_profile	مطمئنی؟ همه پیشرفت پاک می‌شود
+collection.banner_note	فقط اسکین و صحنه‌های سینمایی Ultimate. آمار روی همه اسکین‌ها یکسان است - هیچ‌چیز پولی نیست.
+hint.tabs	زبانه‌ها
+loading.tip	نکته
+training.hint	تمرین  /  تنظیم CV
+arcade.rule_stages	میدان هر راند عوض می‌شود، از کوه آغاز تا بنای اقیانوس.
+online.team_desc	دو تیم دونفره. آتش خودی نداریم: ضربه‌هایت هرگز به هم‌تیمی‌ات آسیب نمی‌زند.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  سبک بازی
+play.online_card	VS\nONLINE
+arcade.rule_rewards	پیروزی‌ها سکه و پیشرفت مأموریت می‌دهند، درست مثل VS CPU.
+exit.saved_note	نمایه، سکه‌ها و مجموعه‌ات روی همین دستگاه ذخیره شده‌اند.
+settings.key_listening	کلید یا اینجا کلیک کن
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	مبارزت و سختی آسان، متوسط یا سخت را انتخاب می‌کنی. CPU یک مبارز تصادفی می‌گیرد.
+account.keep_name_body	با حساب Google وارد شو تا نام و اطلاعاتت با تو بمانند: هر بار که بازی را باز می‌کنی و روی هر رایانه‌ای. حساب Google دیگر نام جدید خودش را می‌گیرد.
+name.you_are	تو {0} هستی!
+name.you_are_unchecked	تو {0} هستی! وقتی آنلاین بازی کنی نام را بررسی می‌کنیم.
+online.could_not_start	مسابقه شروع نشد ({0}).
+rooms.your_rooms	اتاق‌های تو
+rooms.count_click	{0}  ·  برای باز کردن روی یک اتاق کلیک کن
+rooms.code_value	کد  {0}
+rooms.players_count	{0} / {1} بازیکن
+rooms.more	+ {0} اتاق دیگر
+rooms.created	اتاق «{0}» ساخته شد. برای اشتراک کد یا دعوت دوستان روی آن کلیک کن.
+quick.searching	در حال جستجو
+quick.looking_in	جستجو در:  {0}
+room.kicker	اتاق  ·  ۲ تا ۴ بازیکن  ·  {0}
+room.battle_royale	BATTLE ROYALE

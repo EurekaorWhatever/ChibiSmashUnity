@@ -1,0 +1,257 @@
+room.ready_to_fight	লড়াইয়ের জন্য প্রস্তুত
+room.full_suffix	 · রুম পূর্ণ
+room.waiting	খেলোয়াড়দের অপেক্ষায়
+room.joined	{0}  ·  {1} / {2} জন যোগ দিয়েছে
+room.host	হোস্ট
+room.player_n	খেলোয়াড় {0}
+room.you_suffix	 · তুমি
+room.hazards_host_pick	{0} · হোস্টের পছন্দ
+room.hazards_on	বিপদ চালু
+room.hazards_off	বিপদ বন্ধ
+room.code_copied	রুম কোড {0} কপি হয়েছে। তোমার বন্ধুকে পেস্ট করে দাও।
+invite.body	{0} তোমাকে {1}-এ আমন্ত্রণ জানাচ্ছে   ({2} সে.)
+select.ult_name	ULT  {0}
+age.title	তোমার বয়স কত?
+age.body	যেকোনো বয়সে যেকোনো মোড খেলা যায়। গেমের পরিসংখ্যানের জন্য তোমার বয়স খেলোয়াড় নামের সাথে রাখা হয়।
+common.next	পরবর্তী
+age.error	তোমার বয়স লেখো, অথবা D-pad দিয়ে ঠিক করো।
+age.pad_hint	গেমপ্যাড: D-pad উপর/নিচ ১ করে, বাম/ডান ১০ করে বদলায় · A = পরবর্তী
+rooms.enter_name	রুমের নাম লেখো
+rooms.name_rules	৩-২৪টি অক্ষর, সংখ্যা বা ফাঁকা জায়গা। বন্ধুরা যোগ দিলে এটা দেখবে। রুমে ২ থেকে ৪ জন খেলোয়াড় থাকে।
+rooms.create	তৈরি করো
+common.one_moment	এক মুহূর্ত...
+account.keep_name	তোমার যোদ্ধার নাম রেখে দাও
+account.finish_in_browser	ব্রাউজারে শেষ করো...
+account.sign_in_google	GOOGLE দিয়ে সাইন ইন করো
+account.play_without	অ্যাকাউন্ট ছাড়া খেলো
+name.choose_first	আগে তোমার খেলোয়াড় নাম বেছে নাও।
+common.cancelled	বাতিল হয়েছে।
+name.welcome	স্বাগতম, যোদ্ধা! তোমার নাম কী?
+name.change_title	তোমার নাম বদলাও
+name.rules	৩-১৬টি অক্ষর, সংখ্যা বা _। একটা মজার যোদ্ধার নাম বেছে নাও, আসল নাম নয়। এই নামেই বন্ধুরা তোমাকে খুঁজে আমন্ত্রণ জানায়, আর সবাই এটাই দেখে।
+name.suggest	প্রস্তাব
+name.checking	যাচাই চলছে...
+name.lets_fight	চলো লড়ি!
+common.save	সংরক্ষণ
+name.pad_hint_first	গেমপ্যাড: A = চলো লড়ি · Y = নাম প্রস্তাব
+name.pad_hint	গেমপ্যাড: A = সংরক্ষণ · Y = নাম প্রস্তাব
+online.connected_agreeing	সংযুক্ত। ম্যাচ ঠিক করা হচ্ছে...
+online.host_settings_changed	হোস্টের সেটিংস বদলেছে — আবার রুমে যোগ দাও।
+online.version_mismatch	তোমার প্রতিপক্ষ গেমের অন্য সংস্করণ চালাচ্ছে। দুজনেরই একই সংস্করণ লাগবে।
+rooms.title	VS LOCAL
+rooms.kicker	রুম  ·  ২-৪ জন খেলোয়াড়  ·  তৈরি · যোগদান · নাম দিয়ে আমন্ত্রণ
+rooms.create_rooms	রুম তৈরি করো
+rooms.join_room	রুমে যোগ দাও
+rooms.creating	তোমার রুম তৈরি হচ্ছে...
+rooms.loading	তোমার রুম লোড হচ্ছে...
+rooms.none_yet	এখনো কোনো রুম তৈরি হয়নি!
+rooms.one_moment	এক মুহূর্ত।
+rooms.empty_help	একটি বানাতে রুম তৈরি করো চাপো, অথবা বন্ধুর রুম কোড দিয়ে রুমে যোগ দাও।
+rooms.capacity_note	রুমে ২ থেকে ৪ জন খেলোয়াড় থাকে। বন্ধুদের খেলোয়াড় নাম দিয়ে আমন্ত্রণ জানাও।
+rooms.invites_paused	রুম আমন্ত্রণ কয়েক মিনিটের জন্য বন্ধ
+rooms.refresh	রিফ্রেশ
+rooms.hint	VS LOCAL  ·  রুম
+rooms.new	নতুন
+rooms.you_host	তুমি হোস্ট
+rooms.open	খোলো
+join.enter_code	রুম কোড লেখো
+join.body	তোমার বন্ধু যে রুম কোড পাঠিয়েছে সেটা লেখো বা পেস্ট করো (Discord, চ্যাট...)।
+join.paste	পেস্ট
+join.join	যোগ দাও
+join.bad_code	এটা রুম কোড নয়। যাচাই করে আবার চেষ্টা করো (শুধু অক্ষর আর সংখ্যা)।
+rooms.fight_starting	একটি রুম লড়াই শুরু হচ্ছে। অপেক্ষা করো, অথবা আগে রুম ছেড়ে দাও।
+quick.kicker	VS ONLINE  ·  একক 1V1  ·  কাছাকাছি একজন খেলোয়াড়
+quick.player_found	খেলোয়াড় পাওয়া গেছে!
+quick.search_failed	খোঁজা ব্যর্থ
+quick.not_searching	খোঁজা হচ্ছে না
+quick.connecting	তোমার প্রতিপক্ষের সাথে সংযোগ হচ্ছে...
+quick.searching_near	কাছাকাছি একজন খেলোয়াড় খোঁজা হচ্ছে
+quick.stopped	খোঁজা থেমে গেছে। আবার চেষ্টা করো।
+quick.press_search_again	খেলোয়াড় খুঁজতে আবার খোঁজো চাপো।
+quick.privacy	দ্রুত ম্যাচ তোমার দেশ (ডিভাইসের সেটিংস থেকে) শেয়ার করে, কখনো তোমার অবস্থান নয়।
+quick.search_again	আবার খোঁজো
+quick.hint	VS ONLINE  ·  দ্রুত ম্যাচ
+room.kicker_opening	রুম  ·  রুম খোলা হচ্ছে...
+room.opening	রুম খোলা হচ্ছে...
+room.your_fighter	তোমার যোদ্ধা
+room.locked_in	লক হয়েছে
+room.everyone_ok	সবাই OK চাপলে লড়াই নিজে থেকেই শুরু হয়।
+room.share_code	কোড শেয়ার করো, বা নাম দিয়ে বন্ধুদের আমন্ত্রণ জানাও।
+room.empty_seat	খালি আসন
+room.stage_you	মঞ্চ (তুমি বাছো)
+room.stage_host	মঞ্চ (হোস্ট বাছে)
+common.ok	OK
+room.loading	লোড হচ্ছে...
+room.change	বদলাও
+room.starting	শুরু হচ্ছে...
+room.start_fight	লড়াই শুরু
+room.close	রুম বন্ধ করো
+room.leave	রুম ছাড়ো
+room.hint	VS LOCAL  ·  রুম
+room.code	কোড
+room.copy	কপি
+room.host_can_invite	হোস্ট নাম দিয়ে একজন বন্ধুকে আমন্ত্রণ জানাতে পারে।
+room.invite_by_name	নাম দিয়ে বন্ধুকে আমন্ত্রণ
+room.invite	আমন্ত্রণ
+room.full	রুম পূর্ণ।
+invite.title	রুম আমন্ত্রণ
+invite.warning	নাম যাচাই করা হয় না: শুধু পরিচিতদের আমন্ত্রণ গ্রহণ করো।
+invite.accept	গ্রহণ
+invite.decline	প্রত্যাখ্যান
+room.hazards_on_btn	বিপদ  চালু
+room.hazards_off_btn	বিপদ  বন্ধ
+select.passive	প্যাসিভ
+select.look	চেহারা
+select.cosmetic	কসমেটিক
+select.arcade_round	আর্কেড  ·  রাউন্ড {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   গেমপ্যাড ১ = 1P, গেমপ্যাড ২ = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	ডামি
+select.round_rival	রাউন্ড {0}-এর প্রতিদ্বন্দ্বী
+select.picks_at_start	লড়াই শুরুর সময় বাছবে
+select.signature_weapon	বিশেষ অস্ত্র  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  পরাজিত
+select.arcade_route	আর্কেড পথ  ·  মঞ্চ {0} / {1}
+select.select_stage	মঞ্চ বাছো
+select.local_versus	লোকাল ভার্সাস
+select.arcade_rival	আর্কেড প্রতিদ্বন্দ্বী
+select.training_dummy	প্রশিক্ষণ ডামি
+select.stage	মঞ্চ
+select.hazards	বিপদ
+select.fight	লড়াই
+select.change	বদলাও
+select.confirm	নিশ্চিত করো
+select.random	এলোমেলো
+select.fate	ভাগ্যের হাতে ছেড়ে দাও
+select.ready_bang	প্রস্তুত!
+select.loadout	লোডআউট
+select.waiting_1p	1P-এর অপেক্ষায়
+select.1p_picks_dummy	1P ডামি বাছছে
+select.selecting	বাছছে
+select.identity_hidden	পরিচয় লুকানো
+select.revealed_at_start	রাউন্ড শুরু হলে প্রকাশ পাবে
+select.ai_picks	AI তার যোদ্ধা বাছছে
+select.random_every_fight	প্রতিটি লড়াইয়ে এলোমেলো চরিত্র
+select.any_character	যেকোনো চরিত্র · এলোমেলো প্যাসিভ ও অস্ত্র
+select.lock_in_hint	লক করো  ·  অথবা একটি চরিত্রে ক্লিক করো
+select.to_ready	প্রস্তুত হতে
+select.cpu_difficulty_pick	CPU কঠিনতা  ·  লড়াইয়ের আগে বাছো
+select.ai_note	ইন্টারনেট লাগবে না। AI প্রতিটি লড়াইয়ে, এমনকি আবার ম্যাচেও, নতুন চরিত্র, প্যাসিভ আর অস্ত্র বাছে।
+select.pad_difficulty	D-PAD উপর / নিচ  ·  কঠিনতা
+select.key_difficulty	W / S  ·  কঠিনতা
+select.start_training	প্রশিক্ষণ শুরু
+select.fight_bang	লড়ো!
+select.click_to_start	অথবা বর্তমান পছন্দ নিয়ে শুরু করতে ক্লিক করো
+hud.ready	প্রস্তুত...
+hud.rival	প্রতিদ্বন্দ্বী
+hud.you	তুমি
+hud.ultimate_ready	{0} · ULTIMATE প্রস্তুত
+hud.move_detected	{0} · নড়াচড়া শনাক্ত
+hud.failed	{0} · ব্যর্থ
+hud.training_title	প্রশিক্ষণ · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  প্রশিক্ষণ
+hud.intro_online	  ·  অনলাইন  ·  ESC / START: ছাড়ো
+hud.ult_ready_press	ULT প্রস্তুত - {0} চাপো
+hud.ult_ready	ULT প্রস্তুত
+hud.sim_key	সিম কী: {0}
+hud.poses_live	 · ভঙ্গি: হাত আড়াআড়ি ব্লক / হাত বাড়ানো = আগুনের গোলা / হাত উপরে = লাফ
+hud.poses_keys	 · ভঙ্গি 1 আড়াআড়ি / 2 ঘুষি / 3 তোলা · P কুঁজো
+hud.poses_p2	 · ভঙ্গি 8/9/0
+hud.training_help	প্রশিক্ষণ: T তোমার Ultimate ভরায় · KO হওয়া যোদ্ধা 0%-এ ফেরে · Esc বিরতি
+hud.ult_pct	ULT {0}%
+hud.last_hit	শেষ আঘাত  {0}
+hud.combo_hits	কম্বো  {0} আঘাত  +{1}%
+hud.combo	কম্বো  {0}
+hud.kos	KO  {0}
+hud.cv_p1_sim	P1 ক্যামেরা · সিম
+hud.cv_p1_live	P1 ক্যামেরা · লাইভ
+hud.cv_p2_sim	P2 ক্যামেরা · সিম
+hud.cv_p2_live	P2 ক্যামেরা · লাইভ
+hud.hits_prefix	{0} আঘাত  
+results.no_contest	ফলাফল নেই
+results.draw	ড্র!
+results.cpu_wins	CPU জিতেছে
+results.you_win	তুমি জিতেছ!
+results.rival_wins	প্রতিদ্বন্দ্বী জিতেছে
+results.wins	{0} জিতেছে!
+results.takes_round	{0} রাউন্ড জিতেছে
+results.stats	সফল আঘাত  {0}\nপূর্ণ কম্বো  {1}   ·   সেরা কম্বো  {2}
+results.stats2	\nঅঙ্গভঙ্গিতে Ultimate  {0}\nপ্যারি  {1}
+results.posture	\nভালো অঙ্গবিন্যাস  {0}%
+results.rewards_named	পুরস্কার ({0}-এর প্রোফাইল)
+results.rewards_your	পুরস্কার (তোমার প্রোফাইল)
+results.rewards_p1	পুরস্কার (P1 প্রোফাইল)
+results.coins	+{0} কয়েন  (মোট {1})
+hud.do_pose	ক্যামেরার সামনে ভঙ্গি করো
+results.place_1	১ম
+results.place_2	২য়
+results.place_3	৩য়
+results.place_4	৪র্থ
+results.out	বাদ
+results.out_1	বাদ · ১ম
+results.out_2	বাদ · ২য়
+results.out_3	বাদ · ৩য়
+results.out_4	বাদ · ৪র্থ
+results.red_team	লাল দল
+results.blue_team	নীল দল
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} জন খেলোয়াড়
+hud.keys_line1	P{0}: {1} নড়াও · {2} লাফ · 
+hud.keys_line2	{0} হালকা · {1} ভারী · {2} বিশেষ · 
+hud.keys_line3	{0} ব্লক · {1} ড্যাশ · 
+hud.keys_line4	{0} দক্ষতা · {1} ult
+results.characters	চরিত্র
+results.stock_one	১টি জীবন
+results.stocks	{0}টি জীবন
+hud.respawn	ফিরে আসা
+hud.drop_in	যোগ দাও!
+results.main_menu	প্রধান মেনু
+pause.title	বিরতি
+pause.resume	চালিয়ে যাও
+pause.quit	মেনুতে ফেরো
+pause.hint	চালিয়ে যেতে B / Backspace
+leave.title	ম্যাচ ছাড়বে?
+leave.body	ম্যাচ চলতে থাকবে। ছেড়ে দিলে হার হিসেবে ধরা হবে।
+leave.leave	ছাড়ো
+leave.hint	থাকতে B / Backspace / Esc / Start
+results.winner	বিজয়ী
+results.training_no_rewards	প্রশিক্ষণ: কোনো পুরস্কার নেই
+cv.posture	অঙ্গবিন্যাস {0}%
+cv.posture_low	অঙ্গবিন্যাস {0}% - সোজা হয়ে বসো!
+cv.telemetry_ok	টেলিমেট্রি OK
+net.rooms_load_failed	তোমার রুম লোড করা যায়নি: {0}
+net.host_limit	তুমি আগে থেকেই {0}টি রুম হোস্ট করছ। আগে একটি বন্ধ করো।
+net.creating_named	"{0}" তৈরি হচ্ছে...
+net.room_ready_code	"{0}" রুম প্রস্তুত। কোড {1} শেয়ার করো বা একজন বন্ধুকে আমন্ত্রণ জানাও।
+net.create_failed	রুম তৈরি করা যায়নি: {0}
+net.joining_room	রুম {0}-এ যোগ দেওয়া হচ্ছে...
+net.you_joined	তুমি "{0}"-এ যোগ দিয়েছ। তোমার যোদ্ধা বেছে OK চাপো।
+net.no_room_code	{0} কোডের কোনো রুম নেই। কোডটি যাচাই করে আবার চেষ্টা করো।
+net.room_full_n	ওই রুম পূর্ণ ({0} জন খেলোয়াড়)।
+net.join_failed	যোগ দেওয়া যায়নি: {0}
+net.update_failed	রুম আপডেট করা যায়নি: {0}
+net.could_not_what	{0} যায়নি: {1}
+net.what_stage	মঞ্চ বদলানো
+net.what_hazards	বিপদ বদলানো
+net.press_ok_again	{0} দুজনেই আবার OK আর লড়াই শুরু চাপো।
+net.udp_port	UDP পোর্ট {0} খোলা যায়নি (আগে থেকেই ব্যবহৃত?)।
+net.lan_ready	LAN হোস্ট প্রস্তুত। তোমার বন্ধু যোগ দেবে: {0}  (পোর্ট {1})
+net.bad_ip	"{0}" বৈধ IP ঠিকানা নয়।
+net.connecting_to	{0}-এর সাথে সংযোগ হচ্ছে...
+net.sign_in_failed	সাইন ইন ব্যর্থ: {0}
+net.room_ready	"{0}" রুম প্রস্তুত। তোমার বন্ধুর সাথে কোড শেয়ার করো।
+net.searching_in	{0}-এ খেলোয়াড় খোঁজা হচ্ছে...
+net.start_failed	লড়াই শুরু করা যায়নি: {0}
+net.host_unreachable	হোস্টের কাছে পৌঁছানো যায়নি: {0}
+net.area_world	সারা বিশ্ব
+net.area_country_and	তোমার দেশ আর {0}
+region.africa	আফ্রিকা
+region.americas	আমেরিকা মহাদেশ
+region.asia	এশিয়া
+region.europe	ইউরোপ
+region.oceania	ওশেনিয়া
+region.northern_africa	উত্তর আফ্রিকা

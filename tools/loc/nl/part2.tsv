@@ -1,0 +1,257 @@
+room.ready_to_fight	KLAAR OM TE VECHTEN
+room.full_suffix	 · KAMER VOL
+room.waiting	WACHTEN OP SPELERS
+room.joined	{0}  ·  {1} / {2} BINNEN
+room.host	HOST
+room.player_n	SPELER {0}
+room.you_suffix	 · JIJ
+room.hazards_host_pick	{0} · KEUZE VAN DE HOST
+room.hazards_on	GEVAREN AAN
+room.hazards_off	GEVAREN UIT
+room.code_copied	Kamercode {0} gekopieerd. Plak hem bij je vriend.
+invite.body	{0} nodigt je uit voor {1}   ({2} s)
+select.ult_name	ULT  {0}
+age.title	HOE OUD BEN JE?
+age.body	Elke leeftijd kan elke modus spelen. Je leeftijd wordt met je spelersnaam opgeslagen voor spelstatistieken.
+common.next	VOLGENDE
+age.error	Typ je leeftijd, of stel hem in met de D-pad.
+age.pad_hint	Controller: D-pad omhoog/omlaag verandert met 1, links/rechts met 10 · A = volgende
+rooms.enter_name	VOER DE KAMERNAAM IN
+rooms.name_rules	3-24 letters, cijfers of spaties. Vrienden zien hem als ze binnenkomen. Kamers bieden plaats aan 2 tot 4 spelers.
+rooms.create	MAKEN
+common.one_moment	EVEN GEDULD...
+account.keep_name	BEHOUD JE VECHTERSNAAM
+account.finish_in_browser	RONDT HET AF IN JE BROWSER...
+account.sign_in_google	INLOGGEN MET GOOGLE
+account.play_without	SPELEN ZONDER ACCOUNT
+name.choose_first	Kies eerst je spelersnaam.
+common.cancelled	Geannuleerd.
+name.welcome	WELKOM, VECHTER! HOE HEET JE?
+name.change_title	WIJZIG JE NAAM
+name.rules	3-16 letters, cijfers of _. Kies een leuke vechtersnaam, niet je echte naam. Zo vinden en uitnodigen vrienden je, en dit ziet iedereen.
+name.suggest	VOORSTELLEN
+name.checking	CONTROLEREN...
+name.lets_fight	LATEN WE VECHTEN!
+common.save	OPSLAAN
+name.pad_hint_first	Controller: A = laten we vechten · Y = naam voorstellen
+name.pad_hint	Controller: A = opslaan · Y = naam voorstellen
+online.connected_agreeing	Verbonden. Afspraken maken over de wedstrijd...
+online.host_settings_changed	De instellingen van de host zijn gewijzigd — kom de kamer opnieuw binnen.
+online.version_mismatch	Je tegenstander gebruikt een andere versie van het spel. Beide spelers hebben dezelfde versie nodig.
+rooms.title	VS LOCAL
+rooms.kicker	KAMERS  ·  2-4 SPELERS  ·  MAKEN · BETREDEN · UITNODIGEN OP NAAM
+rooms.create_rooms	KAMERS MAKEN
+rooms.join_room	KAMER BETREDEN
+rooms.creating	JE KAMER WORDT GEMAAKT...
+rooms.loading	JE KAMERS WORDEN GELADEN...
+rooms.none_yet	Nog geen kamer gemaakt!
+rooms.one_moment	Even geduld.
+rooms.empty_help	Druk op KAMERS MAKEN om er een te maken, of op KAMER BETREDEN met de kamercode van een vriend.
+rooms.capacity_note	Kamers bieden plaats aan 2 tot 4 spelers. Nodig vrienden uit op hun spelersnaam.
+rooms.invites_paused	Kameruitnodigingen een paar minuten gepauzeerd
+rooms.refresh	VERNIEUWEN
+rooms.hint	VS LOCAL  ·  KAMERS
+rooms.new	NIEUW
+rooms.you_host	JIJ BENT HOST
+rooms.open	OPENEN
+join.enter_code	VOER DE KAMERCODE IN
+join.body	Typ of plak de kamercode die je vriend je stuurde (Discord, chat...).
+join.paste	PLAKKEN
+join.join	BETREDEN
+join.bad_code	Dat is geen kamercode. Controleer hem en probeer opnieuw (alleen letters en cijfers).
+rooms.fight_starting	Er begint een kamergevecht. Wacht erop, of verlaat eerst de kamer.
+quick.kicker	VS ONLINE  ·  SOLO 1V1  ·  EEN SPELER BIJ JOU IN DE BUURT
+quick.player_found	SPELER GEVONDEN!
+quick.search_failed	ZOEKEN MISLUKT
+quick.not_searching	ZOEKT NIET
+quick.connecting	Verbinden met je tegenstander...
+quick.searching_near	Zoeken naar een speler bij jou in de buurt
+quick.stopped	Het zoeken is gestopt. Probeer het opnieuw.
+quick.press_search_again	Druk op OPNIEUW ZOEKEN om een speler te zoeken.
+quick.privacy	Snelle wedstrijd deelt je land (uit de apparaatinstellingen), nooit je locatie.
+quick.search_again	OPNIEUW ZOEKEN
+quick.hint	VS ONLINE  ·  SNELLE WEDSTRIJD
+room.kicker_opening	KAMER  ·  KAMER WORDT GEOPEND...
+room.opening	Kamer wordt geopend...
+room.your_fighter	JOUW VECHTER
+room.locked_in	VASTGEZET
+room.everyone_ok	Iedereen drukt op OK: het gevecht begint vanzelf.
+room.share_code	Deel de code, of nodig vrienden uit op naam.
+room.empty_seat	Lege plek
+room.stage_you	SPEELVELD (jij kiest)
+room.stage_host	SPEELVELD (host kiest)
+common.ok	OK
+room.loading	LADEN...
+room.change	WIJZIGEN
+room.starting	STARTEN...
+room.start_fight	GEVECHT STARTEN
+room.close	KAMER SLUITEN
+room.leave	KAMER VERLATEN
+room.hint	VS LOCAL  ·  KAMER
+room.code	CODE
+room.copy	KOPIËREN
+room.host_can_invite	De host kan een vriend uitnodigen op naam.
+room.invite_by_name	NODIG EEN VRIEND UIT OP NAAM
+room.invite	UITNODIGEN
+room.full	De kamer is vol.
+invite.title	KAMERUITNODIGING
+invite.warning	Namen worden niet gecontroleerd: accepteer alleen uitnodigingen van mensen die je kent.
+invite.accept	ACCEPTEREN
+invite.decline	WEIGEREN
+room.hazards_on_btn	GEVAREN  AAN
+room.hazards_off_btn	GEVAREN  UIT
+select.passive	PASSIEF
+select.look	UITERLIJK
+select.cosmetic	COSMETISCH
+select.arcade_round	ARCADE  ·  RONDE {0} / {1}
+select.vs_cpu	VS CPU  ·  {0}
+select.cpu_difficulty	CPU  ·  {0}
+select.hint_pads	   ·   CONTROLLER 1 = 1P, CONTROLLER 2 = 2P
+select.hint_keys	   ·   1P  WASD  SPACE  ESC  R      2P  ARROWS  ENTER  BACKSPACE  DEL
+select.dummy	POP
+select.round_rival	RIVAAL VAN RONDE {0}
+select.picks_at_start	KIEST BIJ START VAN HET GEVECHT
+select.signature_weapon	KENMERKEND WAPEN  ·  {0}
+select.ult_line	<color=#F6C74C>ULT</color>  {0}  <color=#9AA6BC>·  {1}</color>
+select.defeated	{0}  VERSLAGEN
+select.arcade_route	ARCADEROUTE  ·  SPEELVELD {0} / {1}
+select.select_stage	KIES SPEELVELD
+select.local_versus	LOKAAL VERSUS
+select.arcade_rival	ARCADERIVAAL
+select.training_dummy	TRAININGSPOP
+select.stage	SPEELVELD
+select.hazards	GEVAREN
+select.fight	VECHTEN
+select.change	WIJZIGEN
+select.confirm	BEVESTIGEN
+select.random	WILLEKEURIG
+select.fate	LAAT HET LOT BESLISSEN
+select.ready_bang	KLAAR!
+select.loadout	UITRUSTING
+select.waiting_1p	WACHTEN OP 1P
+select.1p_picks_dummy	1P KIEST DE POP
+select.selecting	KIEST
+select.identity_hidden	IDENTITEIT VERBORGEN
+select.revealed_at_start	ONTHULD BIJ START VAN DE RONDE
+select.ai_picks	DE AI KIEST ZIJN VECHTER
+select.random_every_fight	EEN WILLEKEURIG PERSONAGE ELK GEVECHT
+select.any_character	ELK PERSONAGE · WILLEKEURIG PASSIEF EN WAPEN
+select.lock_in_hint	VASTZETTEN  ·  OF KLIK OP EEN PERSONAGE
+select.to_ready	OM KLAAR TE ZIJN
+select.cpu_difficulty_pick	CPU-MOEILIJKHEID  ·  KIES VOOR HET GEVECHT
+select.ai_note	Geen internet nodig. De AI kiest voor elk gevecht een nieuw personage, passief en wapen, ook bij revanches.
+select.pad_difficulty	D-PAD OMHOOG / OMLAAG  ·  MOEILIJKHEID
+select.key_difficulty	W / S  ·  MOEILIJKHEID
+select.start_training	TRAINING STARTEN
+select.fight_bang	VECHT!
+select.click_to_start	OF KLIK OM TE STARTEN MET DE HUIDIGE KEUZES
+hud.ready	KLAAR...
+hud.rival	RIVAAL
+hud.you	JIJ
+hud.ultimate_ready	{0} · ULTIMATE KLAAR
+hud.move_detected	{0} · BEWEGING GEDETECTEERD
+hud.failed	{0} · MISLUKT
+hud.training_title	TRAINING · {0}
+hud.intro	{0}  VS  {1}  ·  {2}
+hud.intro_training	  ·  TRAINING
+hud.intro_online	  ·  ONLINE  ·  ESC / START: VERLATEN
+hud.ult_ready_press	ULT KLAAR - druk op {0}
+hud.ult_ready	ULT KLAAR
+hud.sim_key	sim-toets: {0}
+hud.poses_live	 · poses: armen gekruist blok / arm uit = vuurbal / handen omhoog = sprong
+hud.poses_keys	 · poses 1 kruis / 2 stoot / 3 omhoog · P onderuitgezakt
+hud.poses_p2	 · poses 8/9/0
+hud.training_help	TRAINING: T vult je ultimate · KO-vechters komen terug op 0% · Esc pauze
+hud.ult_pct	ULT {0}%
+hud.last_hit	LAATSTE TREFFER  {0}
+hud.combo_hits	COMBO  {0} TREFFERS  +{1}%
+hud.combo	COMBO  {0}
+hud.kos	KO's  {0}
+hud.cv_p1_sim	P1 CAMERA · SIM
+hud.cv_p1_live	P1 CAMERA · LIVE
+hud.cv_p2_sim	P2 CAMERA · SIM
+hud.cv_p2_live	P2 CAMERA · LIVE
+hud.hits_prefix	{0} TREFFERS  
+results.no_contest	GEEN UITSLAG
+results.draw	GELIJKSPEL!
+results.cpu_wins	CPU WINT
+results.you_win	JIJ WINT!
+results.rival_wins	RIVAAL WINT
+results.wins	{0} WINT!
+results.takes_round	{0} wint de ronde
+results.stats	Raak geslagen  {0}\nVolledige combo's  {1}   ·   Beste combo  {2}
+results.stats2	\nGebaren-ultimates  {0}\nPareringen  {1}
+results.posture	\nGoede houding  {0}%
+results.rewards_named	BELONINGEN (profiel van {0})
+results.rewards_your	BELONINGEN (jouw profiel)
+results.rewards_p1	BELONINGEN (P1-profiel)
+results.coins	+{0} munten  (totaal {1})
+hud.do_pose	neem de pose aan voor de camera
+results.place_1	1E
+results.place_2	2E
+results.place_3	3E
+results.place_4	4E
+results.out	UIT
+results.out_1	UIT · 1E
+results.out_2	UIT · 2E
+results.out_3	UIT · 3E
+results.out_4	UIT · 4E
+results.red_team	RODE TEAM
+results.blue_team	BLAUWE TEAM
+results.2v2	2 VS 2
+results.royale_players	BATTLE ROYALE · {0} SPELERS
+hud.keys_line1	P{0}: {1} bewegen · {2} springen · 
+hud.keys_line2	{0} licht · {1} zwaar · {2} speciaal · 
+hud.keys_line3	{0} blok · {1} dash · 
+hud.keys_line4	{0} vaardigheden · {1} ult
+results.characters	PERSONAGES
+results.stock_one	1 LEVEN
+results.stocks	{0} LEVENS
+hud.respawn	RESPAWN
+hud.drop_in	DOE MEE!
+results.main_menu	HOOFDMENU
+pause.title	GEPAUZEERD
+pause.resume	HERVATTEN
+pause.quit	NAAR MENU
+pause.hint	B / Backspace om te hervatten
+leave.title	WEDSTRIJD VERLATEN?
+leave.body	De wedstrijd gaat door. Verlaten telt als een nederlaag.
+leave.leave	VERLATEN
+leave.hint	B / Backspace / Esc / Start om te blijven
+results.winner	WINNAAR
+results.training_no_rewards	Training: geen beloningen
+cv.posture	Houding {0}%
+cv.posture_low	Houding {0}% - zit rechtop!
+cv.telemetry_ok	Telemetrie OK
+net.rooms_load_failed	Kon je kamers niet laden: {0}
+net.host_limit	Je host al {0} kamers. Sluit er eerst een.
+net.creating_named	"{0}" wordt gemaakt...
+net.room_ready_code	Kamer "{0}" is klaar. Deel de code {1} of nodig een vriend uit.
+net.create_failed	Kon de kamer niet maken: {0}
+net.joining_room	Kamer {0} betreden...
+net.you_joined	Je bent in "{0}". Kies je vechter en druk op OK.
+net.no_room_code	Geen kamer met code {0}. Controleer de code en probeer opnieuw.
+net.room_full_n	Die kamer is vol ({0} spelers).
+net.join_failed	Kon niet binnenkomen: {0}
+net.update_failed	Kon de kamer niet bijwerken: {0}
+net.could_not_what	Kon niet {0}: {1}
+net.what_stage	het speelveld wijzigen
+net.what_hazards	de gevaren wijzigen
+net.press_ok_again	{0} Druk allebei opnieuw op OK en GEVECHT STARTEN.
+net.udp_port	Kon UDP-poort {0} niet openen (al in gebruik?).
+net.lan_ready	LAN-host klaar. Je vriend maakt verbinding met: {0}  (poort {1})
+net.bad_ip	"{0}" is geen geldig IP-adres.
+net.connecting_to	Verbinden met {0}...
+net.sign_in_failed	Inloggen mislukt: {0}
+net.room_ready	Kamer "{0}" is klaar. Deel de code met je vriend.
+net.searching_in	Spelers zoeken in {0}...
+net.start_failed	Kon het gevecht niet starten: {0}
+net.host_unreachable	Kon de host niet bereiken: {0}
+net.area_world	de hele wereld
+net.area_country_and	je land en {0}
+region.africa	Afrika
+region.americas	Amerika
+region.asia	Azië
+region.europe	Europa
+region.oceania	Oceanië
+region.northern_africa	Noord-Afrika

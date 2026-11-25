@@ -1,0 +1,257 @@
+lang.backdrop	ভাষা
+lang.title	তোমার ভাষা বেছে নাও
+lang.subtitle	গেমের সবকিছু এই ভাষায় দেখাবে। সেটিংসে গিয়ে যেকোনো সময় বদলাতে পারবে।
+lang.search_hint	ভাষা খুঁজুন...
+lang.no_match	তোমার খোঁজের সাথে কোনো ভাষা মেলেনি।
+lang.english_text	আপাতত ইংরেজি লেখা
+lang.confirm	নিশ্চিত করো  ·  {0}
+lang.confirm_none	নিশ্চিত করো
+lang.pad_hint	খুঁজতে টাইপ করো · বাছতে উপর / নিচ · Enter বা প্যাডের A = নিশ্চিত
+common.cancel	বাতিল
+settings.language	ভাষা  ·  {0}
+difficulty.dummy	ডামি
+difficulty.easy	সহজ
+difficulty.medium	মাঝারি
+difficulty.hard	কঠিন
+difficulty.dummy_upper	ডামি
+difficulty.easy_upper	সহজ
+difficulty.medium_upper	মাঝারি
+difficulty.hard_upper	কঠিন
+nav.home	হোম
+nav.play	খেলো
+nav.training	প্রশিক্ষণ
+nav.arcade	আর্কেড
+nav.collection	সংগ্রহ
+nav.settings	সেটিংস
+account.signed_in_as	{0} হিসেবে সাইন ইন করা হয়েছে।
+account.signed_in	সাইন ইন করা হয়েছে।
+account.signed_out	সাইন আউট করা হয়েছে।
+keys.who	P{0} {1}
+keys.reserved	{0} একটি ভঙ্গি / অঙ্গবিন্যাস কী (1 2 3, 8 9 0, নামপ্যাড 7 8 9, P, -)। অন্য একটি বেছে নাও।
+keys.swapped	{0};  {1} এখন {2}
+match.versus	{0}  VS  {1}
+online.locked_age	অনলাইন খেলা ১৩ বছর ও তার বেশি বয়সী খেলোয়াড়দের জন্য।
+arcade.clear_toast	আর্কেড শেষ! সব {0} জন প্রতিদ্বন্দ্বী পরাজিত
+precheck.too_dark	খুব অন্ধকার ({0}%) - আলো বাড়াও
+precheck.too_bright	খুব উজ্জ্বল ({0}%) - ঝলক কমাও
+precheck.good	ভালো ({0}%)
+loading.weapon_art	অস্ত্রের ছবি: {0}
+loading.fighter	যোদ্ধা: {0}
+precheck.checking	যাচাই চলছে... {0}
+wipe.character_select	চরিত্র বাছাই
+wipe.arcade	আর্কেড
+results.rematch	আবার ম্যাচ
+results.continue	চালিয়ে যাও
+results.finish	শেষ
+results.next_battle	পরের লড়াই
+wipe.arcade_clear	আর্কেড শেষ
+precheck.title	ক্যামেরা যাচাই
+precheck.camera_unavailable	ক্যামেরা পাওয়া যাচ্ছে না
+precheck.simulated_feed	নকল ছবি (ওয়েবক্যাম বন্ধ)
+precheck.upper_body_ok	শরীরের উপরের অংশ ফ্রেমে আছে
+precheck.step_back	একটু পিছিয়ে যাও - কাঁধ ও কোমর দেখা যেতে হবে
+loading.interface	ইন্টারফেসের গ্রাফিক্স
+loading.typefaces	ফন্ট
+loading.pose_model	ভঙ্গি ট্র্যাকিং মডেল
+loading.ready	প্রস্তুত
+onboarding.welcome	স্বাগতম!
+onboarding.your_account	তোমার অ্যাকাউন্ট
+onboarding.your_name	তোমার খেলোয়াড় নাম
+rooms.backdrop_create	VS LOCAL  ·  রুম তৈরি করো
+rooms.backdrop_join	VS LOCAL  ·  রুমে যোগ দাও
+precheck.all_passed	সব যাচাই পাস
+precheck.failed	যাচাই ব্যর্থ
+precheck.lighting	আলো
+precheck.framing	ফ্রেমিং
+precheck.posture	অঙ্গবিন্যাস
+precheck.upright	চমৎকার সোজা
+precheck.sit_up	বোনাস কয়েনের জন্য সোজা হয়ে বসো
+common.retry	আবার চেষ্টা
+precheck.play_anyway	তবুও খেলো
+common.back	ফিরে যাও
+precheck.ranked_note	র‍্যাঙ্কড কিউতে এই যাচাই পাস করতে হয়। সাধারণ ম্যাচে এটা বাদ দেওয়া যায়।
+precheck.hint	ম্যাচের আগে ক্যামেরা যাচাই
+hint.select	বাছাই
+home.play	খেলো
+home.training	প্রশিক্ষণ
+home.arcade	আর্কেড
+home.collection	চরিত্র সংগ্রহ
+home.settings	সেটিংস
+home.exit	গেম থেকে বের হও
+home.play_desc	Vs Online দ্রুত ম্যাচ, বন্ধুদের সাথে VS Local রুম, অথবা Vs CPU
+home.training_desc	ক্যামেরা সেটআপ, অঙ্গভঙ্গি অনুশীলন আর একটি প্রশিক্ষণ ডামি
+home.arcade_desc	প্রতিটি মঞ্চে পাঁচ প্রতিদ্বন্দ্বীর সাথে পরপর লড়াই
+home.collection_desc	স্কিন, অস্ত্র আর কসমেটিক ব্যানার
+home.settings_desc	কঠিনতা, ক্যামেরা বিকল্প আর কী বাইন্ডিং
+home.exit_desc	গেম বন্ধ করো
+tips.1	ULT মিটার ভরাও আর Ultimate চাপো - তারপর কাউন্টডাউন শেষ হওয়ার আগে ক্যামেরার সামনে তোমার যোদ্ধার ভঙ্গি করো।
+tips.2	বেশি DEF প্রতিটি আঘাতের ক্ষতি কমায় আর তোমার ব্লক শক্ত করে।
+tips.3	ক্যামেরা যে ভালো অঙ্গবিন্যাস ট্র্যাক করে, তাতে প্রতি ম্যাচের পর বোনাস কয়েন মেলে।
+tips.4	স্কিন আর অস্ত্র শুধু সাজসজ্জার - যোদ্ধা কী পরেছে তাতে পরিসংখ্যান কখনো বদলায় না।
+tips.5	প্রশিক্ষণে T চাপলে তোমার Ultimate ভরে যায়। ডামি সবসময় আবার উঠে দাঁড়ায়।
+tips.6	প্রত্যেক যোদ্ধার দুটি প্যাসিভের একটি থাকে - লক করার পর লোডআউট প্যানেলে সেটা বেছে নাও।
+tips.7	অনলাইন লড়াইয়ে rollback নেটকোড ব্যবহার হয়: দুই গেমই একই ইনপুট থেকে একই লড়াই চালায়।
+stats.power	শক্তি
+stats.speed	গতি
+stats.range	পরিসর
+stats.endurance	সহনশীলতা
+stats.recovery	পুনরুদ্ধার
+training.use_block	ব্লক · মেলি ও জাদু Ultimate
+training.use_fireball	আগুনের গোলা · দূরপাল্লা ও বল্লম Ultimate
+training.use_superjump	সুপার লাফ · ভারী Ultimate
+menu.online_locked	অনলাইন মোড ১৩ বছর ও তার বেশি বয়সী খেলোয়াড়দের জন্য।
+menu.no_internet	ইন্টারনেট নেই: Wi-Fi বা মোবাইল ডেটা চালু করো। VS AI অফলাইনে চলে।
+menu.four_player_soon	2v2 আর Battle Royale-এর জন্য ৪ জন খেলোয়াড়ের সাপোর্ট লাগবে, পরের একটি আপডেটে আসছে।
+profile.edit_name	নাম বদলাও
+profile.win_loss	জয় {0}  ·  হার {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	প্রস্তুত
+loading.loading	লোড হচ্ছে
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   সম্পন্ন x{2}
+arcade.rule_fight_all	সব {0}টি চরিত্রের সাথে পরপর লড়ো, এলোমেলো ক্রমে।
+arcade.rule_difficulty	CPU কঠিনতা: {0} (সেটিংসে বদলাও)।
+arcade.final	ফাইনাল
+arcade.round	রাউন্ড {0}
+training.cv_setup_source	CV সেটআপ · {0}
+training.status	ক্যামেরা: {0}\nট্র্যাকিং: {1}\nশনাক্ত: {2}
+training.off	বন্ধ
+training.none	কিছু না
+training.status_posture	   ·   অঙ্গবিন্যাস {0}%   ·   টেলিমেট্রি {1}
+collection.gold_cinematic_suffix	 · সোনালি সিনেম্যাটিক
+collection.only	শুধু {0}
+collection.pull1	টানো x1  ·  {0}
+collection.pull10	টানো x10  ·  {0}
+collection.dup_suffix	  (ডুপ্লিকেট +20)
+collection.new_suffix	  নতুন!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} সেকেন্ড  <size=12><color=#9AA6BC>(প্রতি ম্যাচে নির্দিষ্ট)</color></size>
+settings.change_name_as	নাম বদলাও  ·  {0}
+settings.change_name	নাম বদলাও
+settings.keys_help	একটি বাইন্ডিংয়ে ক্লিক করো, তারপর একটি কী চাপো বা মাউস বাটন দিয়ে ঘরটিতে ক্লিক করো (Esc / প্যাডের B / অন্য কোথাও ক্লিক বাতিল করে; ৫ সেকেন্ড সময়সীমা)। কোনো খেলোয়াড় আগে থেকেই সেটা ব্যবহার করলে দুটি জায়গা বদল করবে।\nক্যামেরার ভঙ্গি: হাত আড়াআড়ি = ব্লক · পাশে হাত বাড়ানো = আগুনের গোলা · দুই হাত উপরে = সুপার লাফ (কিবোর্ড ভঙ্গি: 1/2/3 আর 8/9/0)।
+rarity.common	সাধারণ
+rarity.rare	দুর্লভ
+rarity.epic	মহাকাব্যিক
+rarity.legendary	কিংবদন্তি
+skin.default	ক্লাসিক
+skin.mint	মিন্ট পপ
+skin.shadow	ছায়া
+skin.sakura	সাকুরা
+skin.inferno	নরকাগ্নি
+skin.celestial	স্বর্গীয়
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	শুধু ১৩+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nদল
+play.four_player_later	2v2 আর Battle Royale পরের একটি আপডেটে ৪ জন খেলোয়াড়ের সাপোর্টের সাথে আসবে।
+play.team_tag	4P · ২টি দল
+play.royale_tag	4P · সবাই সবার বিরুদ্ধে
+collection.all_fighters	সব যোদ্ধা
+arcade.mode	আর্কেড মোড
+home.tagline	অ্যারিনা ফাইটার  ·  শরীরের অঙ্গভঙ্গিতে Ultimate
+play.royale_card	BATTLE\nROYALE
+training.kicker	ক্যামেরা সেটআপ ও অনুশীলন
+settings.camera_tracking	ক্যামেরা ট্র্যাকিং (ওয়েবক্যাম)
+training.camera_off	ক্যামেরা ট্র্যাকিং: বন্ধ
+training.camera_on	ক্যামেরা ট্র্যাকিং: চালু
+collection.hint	চরিত্র সংগ্রহ
+play.choose_style	খেলার ধরন বেছে নাও
+online.kicker	খেলার ধরন বেছে নাও  ·  একক · 2V2 · BATTLE ROYALE
+play.kicker	তোমার লড়াই বেছে নাও  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	শিগগিরই আসছে
+training.cv	কম্পিউটার ভিশন
+online.connection	সংযোগ
+collection.banner	কসমেটিক ব্যানার
+settings.cpu_difficulty	CPU কঠিনতা
+play.create_join	রুম তৈরি · যোগ দাও
+settings.cv_overlay	ম্যাচে CV ওভারলে
+quests.coins_note	কয়েন শুধু খেলা থেকেই আসে: জয়, PvE, কোয়েস্ট আর ক্যামেরায় ট্র্যাক করা ভালো অঙ্গবিন্যাস।
+collection.odds	সাধারণ 60% · দুর্লভ 28% · মহাকাব্যিক 10% · কিংবদন্তি 2%
+collection.equip	সজ্জিত করো
+collection.equipped	সজ্জিত
+hint.exit	বের হও
+home.exit_upper	গেম থেকে বের হও
+exit.title	গেম থেকে বের হবে?
+online.royale_desc	সবাই নিজের জন্য। শেষ পর্যন্ত দাঁড়িয়ে থাকা যোদ্ধা জেতে।
+arcade.kicker	পাঁচ প্রতিদ্বন্দ্বী · এক দৌড়
+loading.for_battle	লড়াইয়ের জন্য
+online.invites_note	বন্ধুদের রুম আমন্ত্রণ এখানে আসে। বন্ধুদের সাথে রুম পাবে খেলো > VS LOCAL-এ।
+settings.kicker	গেম · ক্যামেরা · নিয়ন্ত্রণ
+training.gestures_live	অঙ্গভঙ্গি  (ক্যামেরার সামনে ভঙ্গি করো - ঘুষি = এক হাত সোজা পাশে বাড়ানো)
+training.gestures_sim	অঙ্গভঙ্গি  (ভঙ্গি নকল করতে কী চেপে ধরো)
+settings.key_bindings	কী বাইন্ডিং
+settings.keys_reset	কী ডিফল্টে ফেরানো হয়েছে
+play.locked	লক করা
+arcade.rule_retry	রাউন্ড হেরেছ? চালিয়ে যাও আর আবার চেষ্টা করো।
+home.hint	প্রধান মেনু
+settings.master_volume	মূল ভলিউম
+settings.match_time	ম্যাচের সময়
+play.matchmaking_card	VS\nLOCAL
+hint.move	নড়াও
+play.matchmaking_desc	একটি রুম বানাও, কোড শেয়ার করো বা নাম দিয়ে বন্ধুদের আমন্ত্রণ জানাও।
+play.no_internet_tag	ইন্টারনেট নেই
+online.no_internet_body	এখন ইন্টারনেট নেই। Wi-Fi বা মোবাইল ডেটা চালু করো, অথবা Vs CPU খেলো।
+common.off	বন্ধ
+online.offline	অফলাইন
+common.on	চালু
+settings.player1	খেলোয়াড় ১
+settings.player2	খেলোয়াড় ২
+training.practice_dummy	ডামির সাথে অনুশীলন
+settings.precheck	ম্যাচের আগে ক্যামেরা যাচাই
+loading.prepare	প্রস্তুত হও
+settings.listening_hint	একটি কী চাপো বা ঘরে ক্লিক করো  ·  ESC / প্যাডের B বাতিল করে  ·  প্যাডের বাটন বাইন্ড করা যায় না
+training.slouch_note	কুঁজো ভঙ্গি চালু/বন্ধ করতে P চাপো আর দেখো অঙ্গবিন্যাসের স্কোর কমে যাচ্ছে।
+settings.profile_reset	প্রোফাইল রিসেট হয়েছে (নাম আর সাইন-ইন থাকছে)
+collection.pull_to_unlock	আনলক করতে টানো
+quests.title	কোয়েস্ট
+online.quick_match	দ্রুত ম্যাচ
+play.online_desc	কাছাকাছি একজন খেলোয়াড়ের সাথে দ্রুত ম্যাচ, অথবা বন্ধুর আমন্ত্রণে সাড়া দাও।
+online.solo_desc	দ্রুত ম্যাচ: এখন খুঁজছে এমন খেলোয়াড়ের সাথে লড়ো, সবচেয়ে কাছেরটি আগে।
+settings.reset_keys	কী রিসেট করো
+settings.reset_profile	প্রোফাইল রিসেট করো
+arcade.rival_unknown	প্রতিদ্বন্দ্বী  ???
+play.rooms_tag	রুম · ২-৪ জন খেলোয়াড়
+online.rollback_body	Rollback নেটকোড: দুই গেমই একই ইনপুট থেকে একই লড়াই চালায়, তাই এটা দ্রুত আর ন্যায্য থাকে।
+settings.screen_shake	স্ক্রিন কাঁপুনি
+profile.set_name	নাম ঠিক করো
+settings.sfx_volume	ইফেক্টের ভলিউম
+training.simulate_pose	ভঙ্গি নকল করো
+collection.kicker	স্কিন · অস্ত্র · কসমেটিক ব্যানার
+training.slouch	কুঁজো
+online.solo_card	একক\n1V1
+home.start	শুরু
+arcade.start	আর্কেড শুরু
+exit.stay	থাকো
+settings.sure	নিশ্চিত?
+settings.sure_reset_profile	নিশ্চিত? সব অগ্রগতি মুছে যাবে
+collection.banner_note	শুধু স্কিন আর Ultimate সিনেম্যাটিক। প্রতিটি স্কিনে পরিসংখ্যান একই - কিছুই টাকার পেছনে আটকানো নয়।
+hint.tabs	ট্যাব
+loading.tip	টিপ
+training.hint	প্রশিক্ষণ  /  CV সেটআপ
+arcade.rule_stages	প্রতি রাউন্ডে মঞ্চ বদলায়, সূচনার পর্বত থেকে সমুদ্র স্মৃতিস্তম্ভ পর্যন্ত।
+online.team_desc	দুজন করে দুটি দল। নিজেদের আঘাত নেই: তোমার আঘাত কখনো সতীর্থকে লাগে না।
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  খেলার ধরন
+play.online_card	VS\nONLINE
+arcade.rule_rewards	জয়ে কয়েন আর কোয়েস্টের অগ্রগতি মেলে, ঠিক VS CPU-এর মতো।
+exit.saved_note	তোমার প্রোফাইল, কয়েন আর সংগ্রহ এই ডিভাইসে সংরক্ষিত আছে।
+settings.key_listening	কী বা এখানে ক্লিক করো
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	তুমি যোদ্ধা আর সহজ, মাঝারি বা কঠিন বেছে নাও। CPU একটি এলোমেলো যোদ্ধা পায়।
+account.keep_name_body	তোমার Google অ্যাকাউন্ট দিয়ে সাইন ইন করো, তাহলে তোমার নাম আর তথ্য তোমার সাথেই থাকবে: যতবার গেম খোলো, যেকোনো কম্পিউটারে। অন্য Google অ্যাকাউন্ট নিজের নতুন নাম পায়।
+name.you_are	তুমি {0}!
+name.you_are_unchecked	তুমি {0}! অনলাইনে খেললে আমরা নামটি যাচাই করব।
+online.could_not_start	ম্যাচ শুরু করা যায়নি ({0})।
+rooms.your_rooms	তোমার রুম
+rooms.count_click	{0}  ·  খুলতে একটি রুমে ক্লিক করো
+rooms.code_value	কোড  {0}
+rooms.players_count	{0} / {1} জন খেলোয়াড়
+rooms.more	+ আরও {0}টি রুম
+rooms.created	"{0}" রুম তৈরি হয়েছে। কোড শেয়ার করতে বা বন্ধুদের আমন্ত্রণ জানাতে এতে ক্লিক করো।
+quick.searching	খোঁজা হচ্ছে
+quick.looking_in	যেখানে খোঁজা হচ্ছে:  {0}
+room.kicker	রুম  ·  ২-৪ জন খেলোয়াড়  ·  {0}
+room.battle_royale	BATTLE ROYALE

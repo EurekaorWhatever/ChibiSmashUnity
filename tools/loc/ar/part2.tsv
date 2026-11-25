@@ -177,7 +177,7 @@ hud.cv_p1_sim	كاميرا P1 · محاكاة
 hud.cv_p1_live	كاميرا P1 · مباشر
 hud.cv_p2_sim	كاميرا P2 · محاكاة
 hud.cv_p2_live	كاميرا P2 · مباشر
-hud.hits_prefix	{0} ضربات
+hud.hits_prefix	{0} ضربات  
 results.no_contest	بلا نتيجة
 results.draw	تعادل!
 results.cpu_wins	فاز الكمبيوتر
@@ -206,9 +206,9 @@ results.red_team	الفريق الأحمر
 results.blue_team	الفريق الأزرق
 results.2v2	2 VS 2
 results.royale_players	BATTLE ROYALE · {0} لاعبين
-hud.keys_line1	P{0}: {1} حركة · {2} قفز ·
-hud.keys_line2	{0} خفيفة · {1} ثقيلة · {2} خاصة ·
-hud.keys_line3	{0} صدّ · {1} اندفاع ·
+hud.keys_line1	P{0}: {1} حركة · {2} قفز · 
+hud.keys_line2	{0} خفيفة · {1} ثقيلة · {2} خاصة · 
+hud.keys_line3	{0} صدّ · {1} اندفاع · 
 hud.keys_line4	{0} مهارات · {1} ult
 results.characters	الشخصيات
 results.stock_one	حياة واحدة

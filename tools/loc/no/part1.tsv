@@ -1,0 +1,257 @@
+lang.backdrop	SPRÅK
+lang.title	VELG SPRÅKET DITT
+lang.subtitle	Hele spillet bruker dette språket. Du kan endre det når som helst under INNSTILLINGER.
+lang.search_hint	Søk etter språk...
+lang.no_match	Ingen språk passer til søket ditt.
+lang.english_text	Engelsk tekst inntil videre
+lang.confirm	BEKREFT  ·  {0}
+lang.confirm_none	BEKREFT
+lang.pad_hint	Skriv for å søke · Opp / Ned for å velge · Enter eller A på kontroller = bekreft
+common.cancel	AVBRYT
+settings.language	SPRÅK  ·  {0}
+difficulty.dummy	Dukke
+difficulty.easy	Lett
+difficulty.medium	Middels
+difficulty.hard	Vanskelig
+difficulty.dummy_upper	DUKKE
+difficulty.easy_upper	LETT
+difficulty.medium_upper	MIDDELS
+difficulty.hard_upper	VANSKELIG
+nav.home	HJEM
+nav.play	SPILL
+nav.training	TRENING
+nav.arcade	ARCADE
+nav.collection	SAMLING
+nav.settings	INNSTILLINGER
+account.signed_in_as	Logget inn som {0}.
+account.signed_in	Logget inn.
+account.signed_out	Logget ut.
+keys.who	P{0} {1}
+keys.reserved	{0} er en positur- / holdningstast (1 2 3, 8 9 0, numpad 7 8 9, P, -). Velg en annen.
+keys.swapped	{0};  {1} er nå {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Nettspill er for spillere som er 13 år eller eldre.
+arcade.clear_toast	ARCADE FULLFØRT! Alle {0} rivalene er beseiret
+precheck.too_dark	For mørkt ({0}%) - legg til lys
+precheck.too_bright	For lyst ({0}%) - reduser gjenskinnet
+precheck.good	Bra ({0}%)
+loading.weapon_art	Våpengrafikk: {0}
+loading.fighter	Kjemper: {0}
+precheck.checking	SJEKKER... {0}
+wipe.character_select	VELG FIGUR
+wipe.arcade	ARCADE
+results.rematch	OMKAMP
+results.continue	FORTSETT
+results.finish	FULLFØR
+results.next_battle	NESTE KAMP
+wipe.arcade_clear	ARCADE FULLFØRT
+precheck.title	KAMERASJEKK
+precheck.camera_unavailable	Kameraet er ikke tilgjengelig
+precheck.simulated_feed	Simulert bilde (webkamera av)
+precheck.upper_body_ok	Overkroppen er i bildet
+precheck.step_back	Gå bakover - skuldre og hofter må synes
+loading.interface	Grensesnittgrafikk
+loading.typefaces	Skrifttyper
+loading.pose_model	Modell for positursporing
+loading.ready	Klar
+onboarding.welcome	VELKOMMEN!
+onboarding.your_account	KONTOEN DIN
+onboarding.your_name	SPILLERNAVNET DITT
+rooms.backdrop_create	VS LOCAL  ·  OPPRETT ROM
+rooms.backdrop_join	VS LOCAL  ·  BLI MED I ROM
+precheck.all_passed	ALLE SJEKKER BESTÅTT
+precheck.failed	SJEKK MISLYKTES
+precheck.lighting	LYS
+precheck.framing	BILDEUTSNITT
+precheck.posture	HOLDNING
+precheck.upright	Fin og rak
+precheck.sit_up	Sitt rett for å få bonusmynter
+common.retry	PRØV IGJEN
+precheck.play_anyway	SPILL LIKEVEL
+common.back	TILBAKE
+precheck.ranked_note	Rangerte køer krever at denne sjekken bestås. Uformelle kamper kan hoppe over den.
+precheck.hint	KAMERASJEKK FØR KAMPEN
+hint.select	VELG
+home.play	SPILL
+home.training	TRENING
+home.arcade	ARCADE
+home.collection	FIGURSAMLING
+home.settings	INNSTILLINGER
+home.exit	AVSLUTT SPILLET
+home.play_desc	Vs Online hurtigkamp, VS Local-rom med venner eller Vs CPU
+home.training_desc	Kameraoppsett, trening av gester og en treningsdukke
+home.arcade_desc	Alle fem rivalene etter hverandre på hver bane
+home.collection_desc	Skins, våpen og det kosmetiske banneret
+home.settings_desc	Vanskelighetsgrad, kamerainnstillinger og taster
+home.exit_desc	Lukk spillet
+tips.1	Fyll ULT-måleren og trykk Ultimate - gjør så kjemperens positur foran kameraet før nedtellingen er over.
+tips.2	Høyere DEF kutter skade fra hvert slag og gjør blokkeringen din sterkere.
+tips.3	God holdning som kameraet sporer, gir bonusmynter etter hver kamp.
+tips.4	Skins og våpen er bare kosmetiske - statistikken endres aldri etter hva en kjemper har på seg.
+tips.5	I Trening trykker du T for å fylle ultimaten din. Dukken reiser seg alltid igjen.
+tips.6	Hver kjemper har én av to passive evner - velg den i utstyrspanelet etter at du har låst.
+tips.7	Nettkamper bruker rollback-netcode: begge spillene kjører den samme kampen fra de samme inndataene.
+stats.power	STYRKE
+stats.speed	FART
+stats.range	REKKEVIDDE
+stats.endurance	UTHOLDENHET
+stats.recovery	RESTITUSJON
+training.use_block	Blokkering · Nærkamp- og Magi-ultimate
+training.use_fireball	Ildkule · Avstands- og Stangvåpen-ultimate
+training.use_superjump	Superhopp · Tung ultimate
+menu.online_locked	Nettmoduser er for spillere som er 13 år eller eldre.
+menu.no_internet	Ikke internett: koble til Wi-Fi eller mobildata. VS AI fungerer uten nett.
+menu.four_player_soon	2v2 og Battle Royale trenger støtte for 4 spillere, som kommer i en senere oppdatering.
+profile.edit_name	ENDRE NAVN
+profile.win_loss	S {0}  ·  T {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	KLAR
+loading.loading	LASTER
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   fullført x{2}
+arcade.rule_fight_all	Kjemp mot alle {0} figurene etter hverandre, i tilfeldig rekkefølge.
+arcade.rule_difficulty	CPU-vanskelighetsgrad: {0} (endre den under Innstillinger).
+arcade.final	FINALE
+arcade.round	RUNDE {0}
+training.cv_setup_source	CV-OPPSETT · {0}
+training.status	Kamera: {0}\nSporing: {1}\nRegistrert: {2}
+training.off	av
+training.none	ingen
+training.status_posture	   ·   Holdning {0}%   ·   Telemetri {1}
+collection.gold_cinematic_suffix	 · GULL-FILMSEKVENS
+collection.only	BARE {0}
+collection.pull1	TREKK x1  ·  {0}
+collection.pull10	TREKK x10  ·  {0}
+collection.dup_suffix	  (duplikat +20)
+collection.new_suffix	  NY!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} sekunder  <size=12><color=#9AA6BC>(fast for hver kamp)</color></size>
+settings.change_name_as	ENDRE NAVN  ·  {0}
+settings.change_name	ENDRE NAVN
+settings.keys_help	Klikk på en tildeling, og trykk så en tast eller klikk på feltet med en museknapp (Esc / B på kontroller / et klikk et annet sted avbryter; 5 sek. tidsgrense). Hvis en av spillerne allerede bruker den, bytter de to plass.\nKamerapositurer: armene i kryss = blokkering · armen ut til siden = ildkule · begge hendene opp = superhopp (tastaturpositurer: 1/2/3 og 8/9/0).
+rarity.common	VANLIG
+rarity.rare	SJELDEN
+rarity.epic	EPISK
+rarity.legendary	LEGENDARISK
+skin.default	Klassisk
+skin.mint	Mintpop
+skin.shadow	Skygge
+skin.sakura	Sakura
+skin.inferno	Inferno
+skin.celestial	Himmelsk
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	BARE 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nLAG
+play.four_player_later	2v2 og Battle Royale kommer med støtte for 4 spillere i en senere oppdatering.
+play.team_tag	4P · 2 LAG
+play.royale_tag	4P · ALLE MOT ALLE
+collection.all_fighters	ALLE KJEMPERE
+arcade.mode	ARCADE-MODUS
+home.tagline	ARENAKAMPSPILL  ·  ULTIMATER MED KROPPSGESTER
+play.royale_card	BATTLE\nROYALE
+training.kicker	KAMERAOPPSETT OG TRENING
+settings.camera_tracking	KAMERASPORING (WEBKAMERA)
+training.camera_off	KAMERASPORING: AV
+training.camera_on	KAMERASPORING: PÅ
+collection.hint	FIGURSAMLING
+play.choose_style	VELG EN SPILLESTIL
+online.kicker	VELG EN SPILLESTIL  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	VELG KAMPEN DIN  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	KOMMER SNART
+training.cv	DATASYN
+online.connection	TILKOBLING
+collection.banner	KOSMETISK BANNER
+settings.cpu_difficulty	CPU-VANSKELIGHETSGRAD
+play.create_join	OPPRETT · BLI MED I ROM
+settings.cv_overlay	CV-OVERLEGG I KAMP
+quests.coins_note	Mynter kommer bare fra spilling: seire, PvE, oppdrag og god holdning sporet av kameraet.
+collection.odds	Vanlig 60% · Sjelden 28% · Episk 10% · Legendarisk 2%
+collection.equip	UTSTYR
+collection.equipped	UTSTYRT
+hint.exit	AVSLUTT
+home.exit_upper	AVSLUTT SPILLET
+exit.title	AVSLUTTE SPILLET?
+online.royale_desc	Alle mot alle. Den siste kjemperen som står igjen, vinner.
+arcade.kicker	FEM RIVALER · ÉN RUNDE
+loading.for_battle	TIL KAMP
+online.invites_note	Rominvitasjoner fra venner dukker opp her. Rom med venner finner du under SPILL > VS LOCAL.
+settings.kicker	SPILL · KAMERA · KONTROLLER
+training.gestures_live	GESTER  (gjør posituren foran kameraet - slag = én arm strukket rett ut til siden)
+training.gestures_sim	GESTER  (hold tasten nede for å simulere posituren)
+settings.key_bindings	TASTER
+settings.keys_reset	Tastene er tilbakestilt til standard
+play.locked	LÅST
+arcade.rule_retry	Tapte du en runde? Fortsett og prøv den igjen.
+home.hint	HOVEDMENY
+settings.master_volume	HOVEDVOLUM
+settings.match_time	KAMPTID
+play.matchmaking_card	VS\nLOCAL
+hint.move	BEVEG
+play.matchmaking_desc	Lag et rom, del koden eller inviter venner med navn.
+play.no_internet_tag	IKKE INTERNETT
+online.no_internet_body	Ikke internett akkurat nå. Koble til Wi-Fi eller mobildata, eller spill Vs CPU.
+common.off	AV
+online.offline	FRAKOBLET
+common.on	PÅ
+settings.player1	SPILLER 1
+settings.player2	SPILLER 2
+training.practice_dummy	TREN MOT DUKKE
+settings.precheck	KAMERASJEKK FØR KAMPEN
+loading.prepare	GJØR DEG KLAR
+settings.listening_hint	TRYKK EN TAST ELLER KLIKK PÅ FELTET  ·  ESC / B PÅ KONTROLLER AVBRYTER  ·  KONTROLLERKNAPPER KAN IKKE TILDELES
+training.slouch_note	Trykk P for å slå en sammensunket holdning av og på, og se holdningspoengene falle.
+settings.profile_reset	Profilen er tilbakestilt (navn og innlogging beholdes)
+collection.pull_to_unlock	Trekk for å låse opp
+quests.title	OPPDRAG
+online.quick_match	HURTIGKAMP
+play.online_desc	Hurtigkamp mot en spiller i nærheten, eller svar på en venns invitasjon.
+online.solo_desc	Hurtigkamp: kjemp mot en spiller som søker nå, nærmeste først.
+settings.reset_keys	TILBAKESTILL TASTER
+settings.reset_profile	TILBAKESTILL PROFIL
+arcade.rival_unknown	RIVAL  ???
+play.rooms_tag	ROM · 2-4 SPILLERE
+online.rollback_body	Rollback-netcode: begge spillene kjører den samme kampen fra de samme inndataene, så den holder seg rask og rettferdig.
+settings.screen_shake	SKJERMRISTING
+profile.set_name	VELG NAVN
+settings.sfx_volume	EFFEKTVOLUM
+training.simulate_pose	SIMULER POSITUR
+collection.kicker	SKINS · VÅPEN · KOSMETISK BANNER
+training.slouch	SAMMENSUNKET
+online.solo_card	SOLO\n1V1
+home.start	START
+arcade.start	START ARCADE
+exit.stay	BLI
+settings.sure	SIKKER?
+settings.sure_reset_profile	SIKKER? ALL FREMGANG FORSVINNER
+collection.banner_note	Bare skins og ultimate-filmsekvenser. Statistikken er lik på alle skins - ingenting er bak betalingsmur.
+hint.tabs	FANER
+loading.tip	TIPS
+training.hint	TRENING  /  CV-OPPSETT
+arcade.rule_stages	Banen skifter hver runde, fra Begynnelsens fjell til Havmonumentet.
+online.team_desc	To lag med to. Ingen egenbeskytning: slagene dine skader aldri lagkameraten din.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  SPILLESTIL
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Seire gir mynter og fremgang i oppdrag, akkurat som VS CPU.
+exit.saved_note	Profilen, myntene og samlingen din er lagret på denne enheten.
+settings.key_listening	tast eller klikk her
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Du velger kjemper og LETT, MIDDELS eller VANSKELIG. CPU-en får en tilfeldig kjemper.
+account.keep_name_body	Logg inn med Google-kontoen din, så følger navnet og dataene dine med deg: hver gang du åpner spillet, og på hvilken som helst datamaskin. En annen Google-konto får sitt eget nye navn.
+name.you_are	Du er {0}!
+name.you_are_unchecked	Du er {0}! Vi sjekker navnet når du spiller på nett.
+online.could_not_start	Kampen kunne ikke starte ({0}).
+rooms.your_rooms	ROMMENE DINE
+rooms.count_click	{0}  ·  klikk på et rom for å åpne det
+rooms.code_value	KODE  {0}
+rooms.players_count	{0} / {1} SPILLERE
+rooms.more	+ {0} rom til
+rooms.created	Rommet «{0}» er opprettet. Klikk på det for å dele koden eller invitere venner.
+quick.searching	SØKER
+quick.looking_in	SØKER I:  {0}
+room.kicker	ROM  ·  2-4 SPILLERE  ·  {0}
+room.battle_royale	BATTLE ROYALE

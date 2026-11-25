@@ -1,0 +1,257 @@
+lang.backdrop	МОВА
+lang.title	ОБЕРИ СВОЮ МОВУ
+lang.subtitle	Уся гра буде цією мовою. Її можна змінити будь-коли в НАЛАШТУВАННЯХ.
+lang.search_hint	Пошук мов...
+lang.no_match	Жодна мова не відповідає пошуку.
+lang.english_text	Поки що англійський текст
+lang.confirm	ПІДТВЕРДИТИ  ·  {0}
+lang.confirm_none	ПІДТВЕРДИТИ
+lang.pad_hint	Друкуй для пошуку · Вгору / Вниз для вибору · Enter або A на геймпаді = підтвердити
+common.cancel	СКАСУВАТИ
+settings.language	МОВА  ·  {0}
+difficulty.dummy	Манекен
+difficulty.easy	Легко
+difficulty.medium	Середньо
+difficulty.hard	Важко
+difficulty.dummy_upper	МАНЕКЕН
+difficulty.easy_upper	ЛЕГКО
+difficulty.medium_upper	СЕРЕДНЬО
+difficulty.hard_upper	ВАЖКО
+nav.home	ГОЛОВНА
+nav.play	ГРАТИ
+nav.training	ТРЕНУВАННЯ
+nav.arcade	АРКАДА
+nav.collection	КОЛЕКЦІЯ
+nav.settings	НАЛАШТУВАННЯ
+account.signed_in_as	Вхід виконано як {0}.
+account.signed_in	Вхід виконано.
+account.signed_out	Вихід виконано.
+keys.who	P{0} {1}
+keys.reserved	{0} — клавіша пози / постави (1 2 3, 8 9 0, цифрова 7 8 9, P, -). Обери іншу.
+keys.swapped	{0};  {1} тепер {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Онлайн-гра доступна гравцям від 13 років.
+arcade.clear_toast	АРКАДУ ПРОЙДЕНО! Усіх {0} суперників переможено
+precheck.too_dark	Надто темно ({0}%) - додай світла
+precheck.too_bright	Надто яскраво ({0}%) - зменш відблиски
+precheck.good	Добре ({0}%)
+loading.weapon_art	Графіка зброї: {0}
+loading.fighter	Боєць: {0}
+precheck.checking	ПЕРЕВІРКА... {0}
+wipe.character_select	ВИБІР ПЕРСОНАЖА
+wipe.arcade	АРКАДА
+results.rematch	РЕВАНШ
+results.continue	ПРОДОВЖИТИ
+results.finish	ЗАВЕРШИТИ
+results.next_battle	НАСТУПНИЙ БІЙ
+wipe.arcade_clear	АРКАДУ ПРОЙДЕНО
+precheck.title	ПЕРЕВІРКА КАМЕРИ
+precheck.camera_unavailable	Камера недоступна
+precheck.simulated_feed	Імітоване зображення (вебкамеру вимкнено)
+precheck.upper_body_ok	Верхня частина тіла в кадрі
+precheck.step_back	Відступи назад - плечі й стегна мають бути видно
+loading.interface	Графіка інтерфейсу
+loading.typefaces	Шрифти
+loading.pose_model	Модель відстеження пози
+loading.ready	Готово
+onboarding.welcome	ВІТАЄМО!
+onboarding.your_account	ТВІЙ АКАУНТ
+onboarding.your_name	ТВОЄ ІМ'Я ГРАВЦЯ
+rooms.backdrop_create	VS LOCAL  ·  СТВОРИТИ КІМНАТИ
+rooms.backdrop_join	VS LOCAL  ·  УВІЙТИ В КІМНАТУ
+precheck.all_passed	УСІ ПЕРЕВІРКИ ПРОЙДЕНО
+precheck.failed	ПЕРЕВІРКУ НЕ ПРОЙДЕНО
+precheck.lighting	ОСВІТЛЕННЯ
+precheck.framing	КАДР
+precheck.posture	ПОСТАВА
+precheck.upright	Рівно й гарно
+precheck.sit_up	Сядь рівно, щоб отримати бонусні монети
+common.retry	ЩЕ РАЗ
+precheck.play_anyway	ГРАТИ ВСЕ ОДНО
+common.back	НАЗАД
+precheck.ranked_note	Для рейтингових черг ця перевірка має бути пройдена. Звичайні матчі можуть її пропустити.
+precheck.hint	ПЕРЕВІРКА КАМЕРИ ПЕРЕД МАТЧЕМ
+hint.select	ВИБРАТИ
+home.play	ГРАТИ
+home.training	ТРЕНУВАННЯ
+home.arcade	АРКАДА
+home.collection	КОЛЕКЦІЯ ПЕРСОНАЖІВ
+home.settings	НАЛАШТУВАННЯ
+home.exit	ВИЙТИ З ГРИ
+home.play_desc	Швидкий матч Vs Online, кімнати VS Local з друзями або Vs CPU
+home.training_desc	Налаштування камери, тренування жестів і тренувальний манекен
+home.arcade_desc	Усі п'ять суперників поспіль на кожній арені
+home.collection_desc	Скіни, зброя та косметичний банер
+home.settings_desc	Складність, параметри камери та клавіші
+home.exit_desc	Закрити гру
+tips.1	Заповни шкалу ULT і натисни Ultimate - а потім прийми позу свого бійця перед камерою, доки не скінчився відлік.
+tips.2	Вищий DEF зменшує шкоду від кожного удару й посилює блок.
+tips.3	Гарна постава, яку відстежує камера, дає бонусні монети після кожного матчу.
+tips.4	Скіни та зброя суто косметичні - характеристики ніколи не залежать від того, що вдягнув боєць.
+tips.5	У Тренуванні натисни T, щоб заповнити ультимейт. Манекен завжди підводиться.
+tips.6	Кожен боєць має одну з двох пасивних здібностей - обери її в панелі спорядження після підтвердження.
+tips.7	Онлайн-бої використовують rollback-неткод: обидві гри прораховують один і той самий бій з однакових команд.
+stats.power	СИЛА
+stats.speed	ШВИДКІСТЬ
+stats.range	ДАЛЬНІСТЬ
+stats.endurance	ВИТРИВАЛІСТЬ
+stats.recovery	ВІДНОВЛЕННЯ
+training.use_block	Блок · ультимейт Ближній бій і Магія
+training.use_fireball	Вогняна куля · ультимейт Дальній бій і Держакова зброя
+training.use_superjump	Суперстрибок · Важкий ультимейт
+menu.online_locked	Онлайн-режими доступні гравцям від 13 років.
+menu.no_internet	Немає інтернету: підключи Wi-Fi або мобільні дані. VS AI працює офлайн.
+menu.four_player_soon	Для 2v2 і Battle Royale потрібна підтримка 4 гравців, яка з'явиться в одному з наступних оновлень.
+profile.edit_name	ЗМІНИТИ ІМ'Я
+profile.win_loss	В {0}  ·  П {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	ГОТОВО
+loading.loading	ЗАВАНТАЖЕННЯ
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   виконано x{2}
+arcade.rule_fight_all	Бийся з усіма {0} персонажами поспіль, у випадковому порядку.
+arcade.rule_difficulty	Складність CPU: {0} (змінити можна в Налаштуваннях).
+arcade.final	ФІНАЛ
+arcade.round	РАУНД {0}
+training.cv_setup_source	НАЛАШТУВАННЯ CV · {0}
+training.status	Камера: {0}\nВідстеження: {1}\nВиявлено: {2}
+training.off	вимк.
+training.none	нічого
+training.status_posture	   ·   Постава {0}%   ·   Телеметрія {1}
+collection.gold_cinematic_suffix	 · ЗОЛОТИЙ РОЛИК
+collection.only	ЛИШЕ {0}
+collection.pull1	ВИТЯГНУТИ x1  ·  {0}
+collection.pull10	ВИТЯГНУТИ x10  ·  {0}
+collection.dup_suffix	  (дублікат +20)
+collection.new_suffix	  НОВЕ!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} секунд  <size=12><color=#9AA6BC>(однаково для кожного матчу)</color></size>
+settings.change_name_as	ЗМІНИТИ ІМ'Я  ·  {0}
+settings.change_name	ЗМІНИТИ ІМ'Я
+settings.keys_help	Клацни призначення, потім натисни клавішу або клацни поле кнопкою миші (Esc / B на геймпаді / клацання деінде скасовує; ліміт 5 с). Якщо хтось із гравців уже використовує її, вони поміняються місцями.\nПози для камери: схрещені руки = блок · рука вбік = вогняна куля · обидві руки вгору = суперстрибок (пози з клавіатури: 1/2/3 і 8/9/0).
+rarity.common	ЗВИЧАЙНИЙ
+rarity.rare	РІДКІСНИЙ
+rarity.epic	ЕПІЧНИЙ
+rarity.legendary	ЛЕГЕНДАРНИЙ
+skin.default	Класика
+skin.mint	М'ятний поп
+skin.shadow	Тінь
+skin.sakura	Сакура
+skin.inferno	Пекло
+skin.celestial	Небесний
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	ЛИШЕ 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nКОМАНДИ
+play.four_player_later	2v2 і Battle Royale з'являться разом із підтримкою 4 гравців в одному з наступних оновлень.
+play.team_tag	4P · 2 КОМАНДИ
+play.royale_tag	4P · КОЖЕН САМ ЗА СЕБЕ
+collection.all_fighters	УСІ БІЙЦІ
+arcade.mode	РЕЖИМ АРКАДИ
+home.tagline	АРЕННИЙ ФАЙТИНГ  ·  УЛЬТИМЕЙТИ ЖЕСТАМИ ТІЛА
+play.royale_card	BATTLE\nROYALE
+training.kicker	НАЛАШТУВАННЯ КАМЕРИ ТА ТРЕНУВАННЯ
+settings.camera_tracking	ВІДСТЕЖЕННЯ КАМЕРОЮ (ВЕБКАМЕРА)
+training.camera_off	ВІДСТЕЖЕННЯ КАМЕРОЮ: ВИМК.
+training.camera_on	ВІДСТЕЖЕННЯ КАМЕРОЮ: УВІМК.
+collection.hint	КОЛЕКЦІЯ ПЕРСОНАЖІВ
+play.choose_style	ОБЕРИ СТИЛЬ ГРИ
+online.kicker	ОБЕРИ СТИЛЬ ГРИ  ·  СОЛО · 2V2 · BATTLE ROYALE
+play.kicker	ОБЕРИ СВІЙ БІЙ  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	НЕЗАБАРОМ
+training.cv	КОМП'ЮТЕРНИЙ ЗІР
+online.connection	З'ЄДНАННЯ
+collection.banner	КОСМЕТИЧНИЙ БАНЕР
+settings.cpu_difficulty	СКЛАДНІСТЬ CPU
+play.create_join	СТВОРИТИ · УВІЙТИ В КІМНАТУ
+settings.cv_overlay	НАКЛАДКА CV У МАТЧІ
+quests.coins_note	Монети дають лише за гру: перемоги, PvE, завдання та гарну поставу, яку відстежує камера.
+collection.odds	Звичайний 60% · Рідкісний 28% · Епічний 10% · Легендарний 2%
+collection.equip	ЕКІПІРУВАТИ
+collection.equipped	ЕКІПІРОВАНО
+hint.exit	ВИХІД
+home.exit_upper	ВИЙТИ З ГРИ
+exit.title	ВИЙТИ З ГРИ?
+online.royale_desc	Кожен сам за себе. Перемагає останній боєць, що залишився на ногах.
+arcade.kicker	П'ЯТЬ СУПЕРНИКІВ · ОДИН ЗАБІГ
+loading.for_battle	ДО БОЮ
+online.invites_note	Тут з'являються запрошення друзів у кімнати. Кімнати з друзями — у ГРАТИ > VS LOCAL.
+settings.kicker	ГРА · КАМЕРА · КЕРУВАННЯ
+training.gestures_live	ЖЕСТИ  (прийми позу перед камерою - удар = одна рука витягнута прямо вбік)
+training.gestures_sim	ЖЕСТИ  (утримуй клавішу, щоб імітувати позу)
+settings.key_bindings	КЛАВІШІ
+settings.keys_reset	Клавіші скинуто до стандартних
+play.locked	ЗАБЛОКОВАНО
+arcade.rule_retry	Програв раунд? Продовжуй і спробуй ще раз.
+home.hint	ГОЛОВНЕ МЕНЮ
+settings.master_volume	ЗАГАЛЬНА ГУЧНІСТЬ
+settings.match_time	ЧАС МАТЧУ
+play.matchmaking_card	VS\nLOCAL
+hint.move	РУХ
+play.matchmaking_desc	Створи кімнату, поділися її кодом або запроси друзів за іменем.
+play.no_internet_tag	НЕМАЄ ІНТЕРНЕТУ
+online.no_internet_body	Зараз немає інтернету. Підключи Wi-Fi або мобільні дані чи грай Vs CPU.
+common.off	ВИМК.
+online.offline	ОФЛАЙН
+common.on	УВІМК.
+settings.player1	ГРАВЕЦЬ 1
+settings.player2	ГРАВЕЦЬ 2
+training.practice_dummy	ТРЕНУВАННЯ З МАНЕКЕНОМ
+settings.precheck	ПЕРЕВІРКА КАМЕРИ ПЕРЕД МАТЧЕМ
+loading.prepare	ПРИГОТУЙСЯ
+settings.listening_hint	НАТИСНИ КЛАВІШУ АБО КЛАЦНИ ПОЛЕ  ·  ESC / B НА ГЕЙМПАДІ СКАСОВУЄ  ·  КНОПКИ ГЕЙМПАДА НЕ ПРИЗНАЧАЮТЬСЯ
+training.slouch_note	Натисни P, щоб увімкнути сутулу поставу, і подивись, як падає оцінка постави.
+settings.profile_reset	Профіль скинуто (ім'я та вхід збережено)
+collection.pull_to_unlock	Витягни, щоб розблокувати
+quests.title	ЗАВДАННЯ
+online.quick_match	ШВИДКИЙ МАТЧ
+play.online_desc	Швидкий матч із гравцем поблизу або відповідь на запрошення друга.
+online.solo_desc	Швидкий матч: бийся з гравцем, який шукає зараз, найближчий першим.
+settings.reset_keys	СКИНУТИ КЛАВІШІ
+settings.reset_profile	СКИНУТИ ПРОФІЛЬ
+arcade.rival_unknown	СУПЕРНИК  ???
+play.rooms_tag	КІМНАТИ · 2-4 ГРАВЦІ
+online.rollback_body	Rollback-неткод: обидві гри прораховують один і той самий бій з однакових команд, тож він лишається швидким і чесним.
+settings.screen_shake	ТРУСІННЯ ЕКРАНА
+profile.set_name	ЗАДАТИ ІМ'Я
+settings.sfx_volume	ГУЧНІСТЬ ЕФЕКТІВ
+training.simulate_pose	ІМІТУВАТИ ПОЗУ
+collection.kicker	СКІНИ · ЗБРОЯ · КОСМЕТИЧНИЙ БАНЕР
+training.slouch	СУТУЛІСТЬ
+online.solo_card	СОЛО\n1V1
+home.start	СТАРТ
+arcade.start	ПОЧАТИ АРКАДУ
+exit.stay	ЗАЛИШИТИСЯ
+settings.sure	ТОЧНО?
+settings.sure_reset_profile	ТОЧНО? УВЕСЬ ПРОГРЕС ЗНИКНЕ
+collection.banner_note	Лише скіни та ролики ультимейтів. Характеристики однакові на кожному скіні - нічого не сховано за оплатою.
+hint.tabs	ВКЛАДКИ
+loading.tip	ПОРАДА
+training.hint	ТРЕНУВАННЯ  /  НАЛАШТУВАННЯ CV
+arcade.rule_stages	Арена змінюється щораунду, від Гори Початку до Пам'ятника Океану.
+online.team_desc	Дві команди по двоє. Без дружнього вогню: твої удари ніколи не шкодять напарнику.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  СТИЛЬ ГРИ
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Перемоги дають монети й прогрес у завданнях, як і VS CPU.
+exit.saved_note	Твій профіль, монети й колекцію збережено на цьому пристрої.
+settings.key_listening	клавіша або клацни тут
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Ти обираєш бійця та ЛЕГКО, СЕРЕДНЬО чи ВАЖКО. CPU отримує випадкового бійця.
+account.keep_name_body	Увійди через акаунт Google, і твоє ім'я та дані залишаться з тобою: щоразу, коли відкриваєш гру, і на будь-якому комп'ютері. Інший акаунт Google отримає власне нове ім'я.
+name.you_are	Ти — {0}!
+name.you_are_unchecked	Ти — {0}! Ми перевіримо ім'я, коли гратимеш онлайн.
+online.could_not_start	Не вдалося почати матч ({0}).
+rooms.your_rooms	ТВОЇ КІМНАТИ
+rooms.count_click	{0}  ·  клацни кімнату, щоб відкрити
+rooms.code_value	КОД  {0}
+rooms.players_count	{0} / {1} ГРАВЦІВ
+rooms.more	+ ще {0} кімнат
+rooms.created	Кімнату «{0}» створено. Клацни її, щоб поділитися кодом або запросити друзів.
+quick.searching	ПОШУК
+quick.looking_in	ШУКАЄМО В:  {0}
+room.kicker	КІМНАТА  ·  2-4 ГРАВЦІ  ·  {0}
+room.battle_royale	BATTLE ROYALE

@@ -1,0 +1,257 @@
+lang.backdrop	KIELI
+lang.title	VALITSE KIELESI
+lang.subtitle	Koko peli käyttää tätä kieltä. Voit vaihtaa sen milloin tahansa ASETUKSISSA.
+lang.search_hint	Hae kieliä...
+lang.no_match	Mikään kieli ei vastaa hakuasi.
+lang.english_text	Toistaiseksi englanninkielinen teksti
+lang.confirm	VAHVISTA  ·  {0}
+lang.confirm_none	VAHVISTA
+lang.pad_hint	Kirjoita hakeaksesi · Ylös / Alas valitaksesi · Enter tai ohjaimen A = vahvista
+common.cancel	PERUUTA
+settings.language	KIELI  ·  {0}
+difficulty.dummy	Nukke
+difficulty.easy	Helppo
+difficulty.medium	Keskitaso
+difficulty.hard	Vaikea
+difficulty.dummy_upper	NUKKE
+difficulty.easy_upper	HELPPO
+difficulty.medium_upper	KESKITASO
+difficulty.hard_upper	VAIKEA
+nav.home	KOTI
+nav.play	PELAA
+nav.training	HARJOITTELU
+nav.arcade	ARCADE
+nav.collection	KOKOELMA
+nav.settings	ASETUKSET
+account.signed_in_as	Kirjautunut nimellä {0}.
+account.signed_in	Kirjautunut sisään.
+account.signed_out	Kirjautunut ulos.
+keys.who	P{0} {1}
+keys.reserved	{0} on asento- / ryhtinäppäin (1 2 3, 8 9 0, numeronäppäimistön 7 8 9, P, -). Valitse toinen.
+keys.swapped	{0};  {1} on nyt {2}
+match.versus	{0}  VS  {1}
+online.locked_age	Verkkopeli on 13-vuotiaille ja sitä vanhemmille pelaajille.
+arcade.clear_toast	ARCADE LÄPÄISTY! Kaikki {0} kilpailijaa voitettu
+precheck.too_dark	Liian tumma ({0}%) - lisää valoa
+precheck.too_bright	Liian kirkas ({0}%) - vähennä häikäisyä
+precheck.good	Hyvä ({0}%)
+loading.weapon_art	Asegrafiikka: {0}
+loading.fighter	Taistelija: {0}
+precheck.checking	TARKISTETAAN... {0}
+wipe.character_select	HAHMON VALINTA
+wipe.arcade	ARCADE
+results.rematch	UUSINTAOTTELU
+results.continue	JATKA
+results.finish	LOPETA
+results.next_battle	SEURAAVA TAISTELU
+wipe.arcade_clear	ARCADE LÄPÄISTY
+precheck.title	KAMERATARKISTUS
+precheck.camera_unavailable	Kamera ei ole käytettävissä
+precheck.simulated_feed	Simuloitu kuva (verkkokamera pois)
+precheck.upper_body_ok	Ylävartalo on kuvassa
+precheck.step_back	Peräänny - olkapäiden ja lantion pitää näkyä
+loading.interface	Käyttöliittymän grafiikka
+loading.typefaces	Kirjasimet
+loading.pose_model	Asennonseurantamalli
+loading.ready	Valmis
+onboarding.welcome	TERVETULOA!
+onboarding.your_account	TILISI
+onboarding.your_name	PELAAJANIMESI
+rooms.backdrop_create	VS LOCAL  ·  LUO HUONEITA
+rooms.backdrop_join	VS LOCAL  ·  LIITY HUONEESEEN
+precheck.all_passed	KAIKKI TARKISTUKSET OK
+precheck.failed	TARKISTUS EPÄONNISTUI
+precheck.lighting	VALAISTUS
+precheck.framing	RAJAUS
+precheck.posture	RYHTI
+precheck.upright	Hienosti suorassa
+precheck.sit_up	Istu suorassa saadaksesi bonuskolikoita
+common.retry	YRITÄ UUDELLEEN
+precheck.play_anyway	PELAA SILTI
+common.back	TAKAISIN
+precheck.ranked_note	Rankatut jonot vaativat tämän tarkistuksen läpäisyn. Rennot ottelut voivat ohittaa sen.
+precheck.hint	KAMERATARKISTUS ENNEN OTTELUA
+hint.select	VALITSE
+home.play	PELAA
+home.training	HARJOITTELU
+home.arcade	ARCADE
+home.collection	HAHMOKOKOELMA
+home.settings	ASETUKSET
+home.exit	POISTU PELISTÄ
+home.play_desc	Vs Online -pikaottelu, VS Local -huoneet kavereiden kanssa tai Vs CPU
+home.training_desc	Kameran asetukset, eleiden harjoittelu ja harjoitusnukke
+home.arcade_desc	Kaikki viisi kilpailijaa peräkkäin jokaisella areenalla
+home.collection_desc	Skinit, aseet ja kosmeettinen banneri
+home.settings_desc	Vaikeustaso, kameran asetukset ja näppäimet
+home.exit_desc	Sulje peli
+tips.1	Täytä ULT-mittari ja paina Ultimatea - tee sitten taistelijasi asento kameralle ennen kuin lähtölaskenta loppuu.
+tips.2	Korkeampi DEF vähentää jokaisen osuman vahinkoa ja vahvistaa torjuntaasi.
+tips.3	Kameran seuraama hyvä ryhti tuo bonuskolikoita jokaisen ottelun jälkeen.
+tips.4	Skinit ja aseet ovat vain kosmeettisia - tilastot eivät koskaan muutu sen mukaan, mitä taistelijalla on päällä.
+tips.5	Harjoittelussa paina T täyttääksesi ultimatesi. Nukke nousee aina takaisin ylös.
+tips.6	Jokaisella taistelijalla on yksi kahdesta passiivista - valitse se varustepaneelista lukitsemisen jälkeen.
+tips.7	Verkkotaistelut käyttävät rollback-netcodea: molemmat pelit ajavat saman taistelun samoista syötteistä.
+stats.power	VOIMA
+stats.speed	NOPEUS
+stats.range	KANTAMA
+stats.endurance	KESTÄVYYS
+stats.recovery	PALAUTUMINEN
+training.use_block	Torjunta · Lähitaistelu- ja Taika-ultimate
+training.use_fireball	Tulipallo · Kauko- ja Varsiase-ultimate
+training.use_superjump	Superhyppy · Raskas ultimate
+menu.online_locked	Verkkotilat ovat 13-vuotiaille ja sitä vanhemmille pelaajille.
+menu.no_internet	Ei internetiä: yhdistä Wi-Fi tai mobiilidata. VS AI toimii ilman verkkoa.
+menu.four_player_soon	2v2 ja Battle Royale vaativat 4 pelaajan tuen, joka tulee myöhemmässä päivityksessä.
+profile.edit_name	MUOKKAA NIMEÄ
+profile.win_loss	V {0}  ·  H {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	VALMIS
+loading.loading	LADATAAN
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   suoritettu x{2}
+arcade.rule_fight_all	Taistele kaikkia {0} hahmoa vastaan peräkkäin, satunnaisessa järjestyksessä.
+arcade.rule_difficulty	CPU:n vaikeustaso: {0} (vaihda se Asetuksissa).
+arcade.final	FINAALI
+arcade.round	ERÄ {0}
+training.cv_setup_source	CV-ASETUKSET · {0}
+training.status	Kamera: {0}\nSeuranta: {1}\nTunnistettu: {2}
+training.off	pois
+training.none	ei mitään
+training.status_posture	   ·   Ryhti {0}%   ·   Telemetria {1}
+collection.gold_cinematic_suffix	 · KULTAINEN VÄLIANIMAATIO
+collection.only	VAIN {0}
+collection.pull1	VEDÄ x1  ·  {0}
+collection.pull10	VEDÄ x10  ·  {0}
+collection.dup_suffix	  (tupla +20)
+collection.new_suffix	  UUSI!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} sekuntia  <size=12><color=#9AA6BC>(kiinteä joka ottelussa)</color></size>
+settings.change_name_as	VAIHDA NIMI  ·  {0}
+settings.change_name	VAIHDA NIMI
+settings.keys_help	Napsauta näppäinasetusta ja paina sitten näppäintä tai napsauta ruutua hiiren painikkeella (Esc / ohjaimen B / napsautus muualle peruuttaa; 5 s aikaraja). Jos jompikumpi pelaaja jo käyttää sitä, ne vaihtavat paikkaa.\nKameran asennot: kädet ristissä = torjunta · käsi sivulle ojennettuna = tulipallo · molemmat kädet ylhäällä = superhyppy (näppäimistöasennot: 1/2/3 ja 8/9/0).
+rarity.common	TAVALLINEN
+rarity.rare	HARVINAINEN
+rarity.epic	EEPPINEN
+rarity.legendary	LEGENDAARINEN
+skin.default	Klassinen
+skin.mint	Minttupop
+skin.shadow	Varjo
+skin.sakura	Sakura
+skin.inferno	Inferno
+skin.celestial	Taivaallinen
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	VAIN 13+
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nJOUKKUE
+play.four_player_later	2v2 ja Battle Royale tulevat 4 pelaajan tuen myötä myöhemmässä päivityksessä.
+play.team_tag	4P · 2 JOUKKUETTA
+play.royale_tag	4P · KAIKKI KAIKKIA VASTAAN
+collection.all_fighters	KAIKKI TAISTELIJAT
+arcade.mode	ARCADE-TILA
+home.tagline	AREENATAISTELUPELI  ·  ULTIMATET VARTALON ELEILLÄ
+play.royale_card	BATTLE\nROYALE
+training.kicker	KAMERAN ASETUKSET JA HARJOITTELU
+settings.camera_tracking	KAMERASEURANTA (VERKKOKAMERA)
+training.camera_off	KAMERASEURANTA: POIS
+training.camera_on	KAMERASEURANTA: PÄÄLLÄ
+collection.hint	HAHMOKOKOELMA
+play.choose_style	VALITSE PELITYYLI
+online.kicker	VALITSE PELITYYLI  ·  SOLO · 2V2 · BATTLE ROYALE
+play.kicker	VALITSE TAISTELUSI  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	TULOSSA PIAN
+training.cv	KONENÄKÖ
+online.connection	YHTEYS
+collection.banner	KOSMEETTINEN BANNERI
+settings.cpu_difficulty	CPU:N VAIKEUSTASO
+play.create_join	LUO · LIITY HUONEISIIN
+settings.cv_overlay	CV-PEITTO OTTELUSSA
+quests.coins_note	Kolikoita saa vain pelaamalla: voitoista, PvE:stä, tehtävistä ja kameran seuraamasta hyvästä ryhdistä.
+collection.odds	Tavallinen 60% · Harvinainen 28% · Eeppinen 10% · Legendaarinen 2%
+collection.equip	VARUSTA
+collection.equipped	VARUSTETTU
+hint.exit	POISTU
+home.exit_upper	POISTU PELISTÄ
+exit.title	POISTUTAANKO PELISTÄ?
+online.royale_desc	Jokainen itsensä puolesta. Viimeinen pystyssä oleva taistelija voittaa.
+arcade.kicker	VIISI KILPAILIJAA · YKSI KIERROS
+loading.for_battle	TAISTELUUN
+online.invites_note	Kavereiden huonekutsut ilmestyvät tähän. Huoneet kavereiden kanssa löytyvät kohdasta PELAA > VS LOCAL.
+settings.kicker	PELI · KAMERA · OHJAUS
+training.gestures_live	ELEET  (tee asento kameran edessä - lyönti = toinen käsi suoraan sivulle ojennettuna)
+training.gestures_sim	ELEET  (pidä näppäintä painettuna simuloidaksesi asentoa)
+settings.key_bindings	NÄPPÄIMET
+settings.keys_reset	Näppäimet palautettu oletuksiin
+play.locked	LUKITTU
+arcade.rule_retry	Hävisitkö erän? Jatka ja yritä uudelleen.
+home.hint	PÄÄVALIKKO
+settings.master_volume	PÄÄÄÄNENVOIMAKKUUS
+settings.match_time	OTTELUN KESTO
+play.matchmaking_card	VS\nLOCAL
+hint.move	LIIKU
+play.matchmaking_desc	Luo huone, jaa sen koodi tai kutsu kavereita nimellä.
+play.no_internet_tag	EI INTERNETIÄ
+online.no_internet_body	Ei internetiä juuri nyt. Yhdistä Wi-Fi tai mobiilidata, tai pelaa Vs CPU.
+common.off	POIS
+online.offline	OFFLINE
+common.on	PÄÄLLÄ
+settings.player1	PELAAJA 1
+settings.player2	PELAAJA 2
+training.practice_dummy	HARJOITTELE NUKKEA VASTAAN
+settings.precheck	KAMERATARKISTUS ENNEN OTTELUA
+loading.prepare	VALMISTAUDU
+settings.listening_hint	PAINA NÄPPÄINTÄ TAI NAPSAUTA RUUTUA  ·  ESC / OHJAIMEN B PERUUTTAA  ·  OHJAIMEN PAINIKKEITA EI VOI ASETTAA
+training.slouch_note	Paina P vaihtaaksesi kumaraan ryhtiin ja katso, kuinka ryhtipisteet laskevat.
+settings.profile_reset	Profiili nollattu (nimi ja kirjautuminen säilytetty)
+collection.pull_to_unlock	Vedä avataksesi
+quests.title	TEHTÄVÄT
+online.quick_match	PIKAOTTELU
+play.online_desc	Pikaottelu lähelläsi olevaa pelaajaa vastaan, tai vastaa kaverin kutsuun.
+online.solo_desc	Pikaottelu: taistele juuri nyt hakevaa pelaajaa vastaan, lähin ensin.
+settings.reset_keys	NOLLAA NÄPPÄIMET
+settings.reset_profile	NOLLAA PROFIILI
+arcade.rival_unknown	KILPAILIJA  ???
+play.rooms_tag	HUONEET · 2-4 PELAAJAA
+online.rollback_body	Rollback-netcode: molemmat pelit ajavat saman taistelun samoista syötteistä, joten se pysyy nopeana ja reiluna.
+settings.screen_shake	NÄYTÖN TÄRINÄ
+profile.set_name	ASETA NIMI
+settings.sfx_volume	EFEKTIEN ÄÄNENVOIMAKKUUS
+training.simulate_pose	SIMULOI ASENTO
+collection.kicker	SKINIT · ASEET · KOSMEETTINEN BANNERI
+training.slouch	KUMARA
+online.solo_card	SOLO\n1V1
+home.start	ALOITA
+arcade.start	ALOITA ARCADE
+exit.stay	JÄÄ
+settings.sure	VARMA?
+settings.sure_reset_profile	VARMA? KAIKKI EDISTYMINEN KATOAA
+collection.banner_note	Vain skinejä ja ultimate-välianimaatioita. Tilastot ovat samat jokaisella skinillä - mitään ei ole maksumuurin takana.
+hint.tabs	VÄLILEHDET
+loading.tip	VINKKI
+training.hint	HARJOITTELU  /  CV-ASETUKSET
+arcade.rule_stages	Areena vaihtuu joka erässä, Alun Vuorelta Valtameren Monumentille.
+online.team_desc	Kaksi kahden hengen joukkuetta. Ei omien tulta: osumasi eivät koskaan satuta joukkuetoveriasi.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  PELITYYLI
+play.online_card	VS\nONLINE
+arcade.rule_rewards	Voitoista saa kolikoita ja tehtäväedistymistä, aivan kuten VS CPU:ssa.
+exit.saved_note	Profiilisi, kolikkosi ja kokoelmasi on tallennettu tälle laitteelle.
+settings.key_listening	näppäin tai napsauta tästä
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	Valitset taistelijasi ja tason HELPPO, KESKITASO tai VAIKEA. CPU saa satunnaisen taistelijan.
+account.keep_name_body	Kirjaudu Google-tililläsi, niin nimesi ja tietosi pysyvät mukanasi: joka kerta kun avaat pelin, ja millä tahansa tietokoneella. Toinen Google-tili saa oman uuden nimensä.
+name.you_are	Olet {0}!
+name.you_are_unchecked	Olet {0}! Tarkistamme nimen, kun pelaat verkossa.
+online.could_not_start	Ottelua ei voitu aloittaa ({0}).
+rooms.your_rooms	HUONEESI
+rooms.count_click	{0}  ·  napsauta huonetta avataksesi sen
+rooms.code_value	KOODI  {0}
+rooms.players_count	{0} / {1} PELAAJAA
+rooms.more	+ {0} huonetta lisää
+rooms.created	Huone "{0}" luotu. Napsauta sitä jakaaksesi koodin tai kutsuaksesi kavereita.
+quick.searching	HAETAAN
+quick.looking_in	HAETAAN ALUEELTA:  {0}
+room.kicker	HUONE  ·  2-4 PELAAJAA  ·  {0}
+room.battle_royale	BATTLE ROYALE

@@ -1,0 +1,257 @@
+lang.backdrop	שפה
+lang.title	בחר את השפה שלך
+lang.subtitle	כל המשחק ישתמש בשפה הזו. אפשר לשנות אותה בכל רגע בהגדרות.
+lang.search_hint	חיפוש שפות...
+lang.no_match	אין שפה שמתאימה לחיפוש.
+lang.english_text	טקסט באנגלית בינתיים
+lang.confirm	אישור  ·  {0}
+lang.confirm_none	אישור
+lang.pad_hint	הקלד לחיפוש · למעלה / למטה לבחירה · Enter או A בשלט = אישור
+common.cancel	ביטול
+settings.language	שפה  ·  {0}
+difficulty.dummy	בובה
+difficulty.easy	קל
+difficulty.medium	בינוני
+difficulty.hard	קשה
+difficulty.dummy_upper	בובה
+difficulty.easy_upper	קל
+difficulty.medium_upper	בינוני
+difficulty.hard_upper	קשה
+nav.home	בית
+nav.play	שחק
+nav.training	אימון
+nav.arcade	ארקייד
+nav.collection	אוסף
+nav.settings	הגדרות
+account.signed_in_as	מחובר בתור {0}.
+account.signed_in	מחובר.
+account.signed_out	מנותק.
+keys.who	P{0} {1}
+keys.reserved	{0} הוא מקש תנוחה / יציבה (1 2 3, 8 9 0, מקלדת נומרית 7 8 9, P, -). בחר מקש אחר.
+keys.swapped	{0};  {1} הוא עכשיו {2}
+match.versus	{0}  VS  {1}
+online.locked_age	משחק אונליין מיועד לשחקנים בני 13 ומעלה.
+arcade.clear_toast	הארקייד הושלם! כל {0} היריבים הובסו
+precheck.too_dark	חשוך מדי ({0}%) - הוסף אור
+precheck.too_bright	בהיר מדי ({0}%) - הפחת סינוור
+precheck.good	טוב ({0}%)
+loading.weapon_art	גרפיקת נשקים: {0}
+loading.fighter	לוחם: {0}
+precheck.checking	בודק... {0}
+wipe.character_select	בחירת דמות
+wipe.arcade	ארקייד
+results.rematch	משחק חוזר
+results.continue	המשך
+results.finish	סיום
+results.next_battle	הקרב הבא
+wipe.arcade_clear	הארקייד הושלם
+precheck.title	בדיקת מצלמה
+precheck.camera_unavailable	המצלמה לא זמינה
+precheck.simulated_feed	תמונה מדומה (מצלמת רשת כבויה)
+precheck.upper_body_ok	פלג הגוף העליון בתמונה
+precheck.step_back	התרחק אחורה - הכתפיים והירכיים צריכות להיראות
+loading.interface	גרפיקת ממשק
+loading.typefaces	גופנים
+loading.pose_model	מודל מעקב תנוחה
+loading.ready	מוכן
+onboarding.welcome	ברוך הבא!
+onboarding.your_account	החשבון שלך
+onboarding.your_name	שם השחקן שלך
+rooms.backdrop_create	VS LOCAL  ·  יצירת חדרים
+rooms.backdrop_join	VS LOCAL  ·  הצטרפות לחדר
+precheck.all_passed	כל הבדיקות עברו
+precheck.failed	הבדיקה נכשלה
+precheck.lighting	תאורה
+precheck.framing	מסגור
+precheck.posture	יציבה
+precheck.upright	זקוף ויפה
+precheck.sit_up	שב זקוף בשביל מטבעות בונוס
+common.retry	נסה שוב
+precheck.play_anyway	שחק בכל זאת
+common.back	חזרה
+precheck.ranked_note	תורים מדורגים דורשים שהבדיקה הזו תעבור. משחקים לא מדורגים יכולים לדלג עליה.
+precheck.hint	בדיקת מצלמה לפני המשחק
+hint.select	בחירה
+home.play	שחק
+home.training	אימון
+home.arcade	ארקייד
+home.collection	אוסף הדמויות
+home.settings	הגדרות
+home.exit	יציאה מהמשחק
+home.play_desc	משחק מהיר Vs Online, חדרי VS Local עם חברים, או Vs CPU
+home.training_desc	הגדרת מצלמה, תרגול מחוות ובובת אימון
+home.arcade_desc	כל חמשת היריבים ברצף בכל הזירות
+home.collection_desc	סקינים, נשקים והבאנר הקוסמטי
+home.settings_desc	רמת קושי, אפשרויות מצלמה ומקשים
+home.exit_desc	סגור את המשחק
+tips.1	מלא את מד ה-ULT ולחץ על Ultimate - ואז עשה את התנוחה של הלוחם שלך מול המצלמה לפני שהספירה נגמרת.
+tips.2	DEF גבוה יותר מוריד נזק מכל מכה ומחזק את החסימה שלך.
+tips.3	יציבה טובה שהמצלמה עוקבת אחריה מזכה במטבעות בונוס אחרי כל משחק.
+tips.4	סקינים ונשקים הם קוסמטיים בלבד - הנתונים לא משתנים לפי מה שהלוחם לובש.
+tips.5	באימון, לחץ T כדי למלא את ה-ultimate. הבובה תמיד קמה.
+tips.6	לכל לוחם יש אחת משתי יכולות פסיביות - בחר אותה בלוח הציוד אחרי הנעילה.
+tips.7	קרבות אונליין משתמשים ב-rollback netcode: שני המשחקים מריצים את אותו קרב מאותן פקודות.
+stats.power	כוח
+stats.speed	מהירות
+stats.range	טווח
+stats.endurance	סיבולת
+stats.recovery	התאוששות
+training.use_block	חסימה · ultimate של קפ"ב וקסם
+training.use_fireball	כדור אש · ultimate של טווח ורומח
+training.use_superjump	קפיצת על · ultimate כבד
+menu.online_locked	מצבי אונליין מיועדים לשחקנים בני 13 ומעלה.
+menu.no_internet	אין אינטרנט: התחבר ל-Wi-Fi או לנתונים סלולריים. VS AI עובד גם בלי אינטרנט.
+menu.four_player_soon	2v2 ו-Battle Royale צריכים תמיכה ב-4 שחקנים, שתגיע בעדכון עתידי.
+profile.edit_name	עריכת שם
+profile.win_loss	נ {0}  ·  ה {1}
+loading.status	{0}  ·  {1}
+loading.ready_upper	מוכן
+loading.loading	טוען
+home.weapon_ult	{0}  ·  ULT {1}
+play.com_difficulty	COM  {0}
+quests.progress	{0} / {1}
+quests.progress_completed	{0} / {1}   ·   הושלם x{2}
+arcade.rule_fight_all	הילחם בכל {0} הדמויות ברצף, בסדר אקראי.
+arcade.rule_difficulty	רמת קושי של ה-CPU: {0} (אפשר לשנות בהגדרות).
+arcade.final	גמר
+arcade.round	סיבוב {0}
+training.cv_setup_source	הגדרת CV · {0}
+training.status	מצלמה: {0}\nמעקב: {1}\nזוהה: {2}
+training.off	כבוי
+training.none	כלום
+training.status_posture	   ·   יציבה {0}%   ·   טלמטריה {1}
+collection.gold_cinematic_suffix	 · קטע קולנועי זהב
+collection.only	רק {0}
+collection.pull1	משיכה x1  ·  {0}
+collection.pull10	משיכה x10  ·  {0}
+collection.dup_suffix	  (כפול +20)
+collection.new_suffix	  חדש!
+collection.pull_toast	{0}! {1} · {2}
+settings.match_time_value	{0} שניות  <size=12><color=#9AA6BC>(קבוע לכל משחק)</color></size>
+settings.change_name_as	שינוי שם  ·  {0}
+settings.change_name	שינוי שם
+settings.keys_help	לחץ על מקש מוגדר, ואז לחץ על מקש או לחץ על התיבה בכפתור עכבר (Esc / B בשלט / לחיצה במקום אחר מבטלת; 5 שניות). אם שחקן כבר משתמש בו, השניים מתחלפים.\nתנוחות מצלמה: ידיים משוכלות = חסימה · יד מושטת לצד = כדור אש · שתי ידיים למעלה = קפיצת על (תנוחות מקלדת: 1/2/3 ו-8/9/0).
+rarity.common	נפוץ
+rarity.rare	נדיר
+rarity.epic	אפי
+rarity.legendary	אגדי
+skin.default	קלאסי
+skin.mint	מנטה פופ
+skin.shadow	צל
+skin.sakura	סאקורה
+skin.inferno	תופת
+skin.celestial	שמימי
+play.solo_1v1_tag	1 VS 1
+play.age_locked_tag	13+ בלבד
+play.1p_vs_1p	1P VS 1P
+play.team_card	2V2\nקבוצות
+play.four_player_later	2v2 ו-Battle Royale יגיעו עם תמיכה ב-4 שחקנים בעדכון עתידי.
+play.team_tag	4P · 2 קבוצות
+play.royale_tag	4P · כולם נגד כולם
+collection.all_fighters	כל הלוחמים
+arcade.mode	מצב ארקייד
+home.tagline	משחק לחימה בזירה  ·  ULTIMATE במחוות גוף
+play.royale_card	BATTLE\nROYALE
+training.kicker	הגדרת מצלמה ותרגול
+settings.camera_tracking	מעקב מצלמה (מצלמת רשת)
+training.camera_off	מעקב מצלמה: כבוי
+training.camera_on	מעקב מצלמה: פועל
+collection.hint	אוסף הדמויות
+play.choose_style	בחר סגנון משחק
+online.kicker	בחר סגנון משחק  ·  סולו · 2V2 · BATTLE ROYALE
+play.kicker	בחר את הקרב שלך  ·  VS ONLINE · VS LOCAL · VS CPU
+play.coming_soon	בקרוב
+training.cv	ראייה ממוחשבת
+online.connection	חיבור
+collection.banner	באנר קוסמטי
+settings.cpu_difficulty	רמת קושי CPU
+play.create_join	יצירה · הצטרפות לחדרים
+settings.cv_overlay	שכבת CV במשחק
+quests.coins_note	מטבעות מגיעים רק ממשחק: ניצחונות, PvE, משימות ויציבה טובה שהמצלמה עוקבת אחריה.
+collection.odds	נפוץ 60% · נדיר 28% · אפי 10% · אגדי 2%
+collection.equip	צייד
+collection.equipped	מצויד
+hint.exit	יציאה
+home.exit_upper	יציאה מהמשחק
+exit.title	לצאת מהמשחק?
+online.royale_desc	כל אחד לעצמו. הלוחם האחרון שנשאר עומד מנצח.
+arcade.kicker	חמישה יריבים · ריצה אחת
+loading.for_battle	לקרב
+online.invites_note	הזמנות של חברים לחדרים מופיעות כאן. חדרים עם חברים נמצאים בשחק > VS LOCAL.
+settings.kicker	משחק · מצלמה · שליטה
+training.gestures_live	מחוות  (עשה את התנוחה מול המצלמה - אגרוף = יד אחת מושטת ישר לצד)
+training.gestures_sim	מחוות  (החזק את המקש כדי לדמות את התנוחה)
+settings.key_bindings	הגדרת מקשים
+settings.keys_reset	המקשים אופסו לברירת המחדל
+play.locked	נעול
+arcade.rule_retry	הפסדת בסיבוב? המשך ונסה אותו שוב.
+home.hint	תפריט ראשי
+settings.master_volume	עוצמה ראשית
+settings.match_time	זמן משחק
+play.matchmaking_card	VS\nLOCAL
+hint.move	תזוזה
+play.matchmaking_desc	צור חדר, שתף את הקוד שלו או הזמן חברים לפי שם.
+play.no_internet_tag	אין אינטרנט
+online.no_internet_body	אין אינטרנט כרגע. התחבר ל-Wi-Fi או לנתונים סלולריים, או שחק Vs CPU.
+common.off	כבוי
+online.offline	לא מקוון
+common.on	פועל
+settings.player1	שחקן 1
+settings.player2	שחקן 2
+training.practice_dummy	תרגול מול בובה
+settings.precheck	בדיקת מצלמה לפני המשחק
+loading.prepare	היכון
+settings.listening_hint	לחץ על מקש או על התיבה  ·  ESC / B בשלט מבטל  ·  אי אפשר להגדיר כפתורי שלט
+training.slouch_note	לחץ P כדי להפעיל יציבה שפופה ותראה את ציון היציבה יורד.
+settings.profile_reset	הפרופיל אופס (השם וההתחברות נשמרו)
+collection.pull_to_unlock	משוך כדי לפתוח
+quests.title	משימות
+online.quick_match	משחק מהיר
+play.online_desc	משחק מהיר מול שחקן קרוב אליך, או ענה להזמנה של חבר.
+online.solo_desc	משחק מהיר: הילחם בשחקן שמחפש עכשיו, הקרוב ביותר קודם.
+settings.reset_keys	איפוס מקשים
+settings.reset_profile	איפוס פרופיל
+arcade.rival_unknown	יריב  ???
+play.rooms_tag	חדרים · 2-4 שחקנים
+online.rollback_body	Rollback netcode: שני המשחקים מריצים את אותו קרב מאותן פקודות, כך שהוא נשאר מהיר והוגן.
+settings.screen_shake	רעידת מסך
+profile.set_name	קביעת שם
+settings.sfx_volume	עוצמת אפקטים
+training.simulate_pose	הדמיית תנוחה
+collection.kicker	סקינים · נשקים · באנר קוסמטי
+training.slouch	שפוף
+online.solo_card	סולו\n1V1
+home.start	התחל
+arcade.start	התחל ארקייד
+exit.stay	הישאר
+settings.sure	בטוח?
+settings.sure_reset_profile	בטוח? כל ההתקדמות תימחק
+collection.banner_note	רק סקינים וקטעי ultimate קולנועיים. הנתונים זהים בכל סקין - שום דבר לא נעול מאחורי תשלום.
+hint.tabs	לשוניות
+loading.tip	טיפ
+training.hint	אימון  /  הגדרת CV
+arcade.rule_stages	הזירה מתחלפת בכל סיבוב, מהר ההתחלה ועד אנדרטת האוקיינוס.
+online.team_desc	שתי קבוצות של שניים. בלי אש ידידותית: המכות שלך לעולם לא פוגעות בחבר הקבוצה.
+online.title	VS ONLINE
+online.hint	VS ONLINE  ·  סגנון משחק
+play.online_card	VS\nONLINE
+arcade.rule_rewards	ניצחונות מזכים במטבעות ובהתקדמות במשימות, בדיוק כמו VS CPU.
+exit.saved_note	הפרופיל, המטבעות והאוסף שלך שמורים במכשיר הזה.
+settings.key_listening	מקש או לחץ כאן
+play.cpu_card	VS\nCPU
+play.cpu_tag	1P VS COM
+play.cpu_desc	אתה בוחר לוחם ורמת קושי: קל, בינוני או קשה. ה-CPU מקבל לוחם אקראי.
+account.keep_name_body	התחבר עם חשבון Google שלך והשם והנתונים שלך יישארו איתך: בכל פעם שתפתח את המשחק, ובכל מחשב. חשבון Google אחר יקבל שם חדש משלו.
+name.you_are	אתה {0}!
+name.you_are_unchecked	אתה {0}! נבדוק את השם כשתשחק אונליין.
+online.could_not_start	המשחק לא הצליח להתחיל ({0}).
+rooms.your_rooms	החדרים שלך
+rooms.count_click	{0}  ·  לחץ על חדר כדי לפתוח אותו
+rooms.code_value	קוד  {0}
+rooms.players_count	{0} / {1} שחקנים
+rooms.more	+ עוד {0} חדרים
+rooms.created	החדר "{0}" נוצר. לחץ עליו כדי לשתף את הקוד או להזמין חברים.
+quick.searching	מחפש
+quick.looking_in	מחפש ב:  {0}
+room.kicker	חדר  ·  2-4 שחקנים  ·  {0}
+room.battle_royale	BATTLE ROYALE

@@ -1,0 +1,255 @@
+region.eastern_africa	পূর্ব আফ্রিকা
+region.middle_africa	মধ্য আফ্রিকা
+region.southern_africa	দক্ষিণ আফ্রিকা অঞ্চল
+region.western_africa	পশ্চিম আফ্রিকা
+region.caribbean	ক্যারিবিয়ান
+region.central_america	মধ্য আমেরিকা
+region.south_america	দক্ষিণ আমেরিকা
+region.northern_america	উত্তর আমেরিকা
+region.central_asia	মধ্য এশিয়া
+region.eastern_asia	পূর্ব এশিয়া
+region.south_eastern_asia	দক্ষিণ-পূর্ব এশিয়া
+region.southern_asia	দক্ষিণ এশিয়া
+region.western_asia	পশ্চিম এশিয়া
+region.eastern_europe	পূর্ব ইউরোপ
+region.northern_europe	উত্তর ইউরোপ
+region.southern_europe	দক্ষিণ ইউরোপ
+region.western_europe	পশ্চিম ইউরোপ
+region.australia_and_new_zealand	অস্ট্রেলিয়া ও নিউজিল্যান্ড
+region.melanesia	মেলানেশিয়া
+region.micronesia	মাইক্রোনেশিয়া
+region.polynesia	পলিনেশিয়া
+net.joined_connecting	"{0}"-এ যোগ দিয়েছ। হোস্টের সাথে সংযোগ হচ্ছে...
+net.opponent_unreachable	তোমার প্রতিপক্ষের কাছে পৌঁছানো যায়নি: {0}
+net.quick_filling	{1} জনের মধ্যে {0} জন। {2} সে. পরে শুরু...
+invite.inviting	{0}-কে আমন্ত্রণ জানানো হচ্ছে...
+invite.sent_lasts	{0}-কে আমন্ত্রণ পাঠানো হয়েছে। এটা {1} সেকেন্ড থাকবে।
+invite.send_failed	আমন্ত্রণ পাঠানো যায়নি: {0}
+invite.joining_room_of	{0}-এর রুমে যোগ দেওয়া হচ্ছে...
+invite.paused	আমন্ত্রণ {0} মিনিটের জন্য বন্ধ।
+invite.invited_you	{0} তোমাকে "{1}"-এ আমন্ত্রণ জানিয়েছে।
+invite.ran_out	{0}-কে পাঠানো তোমার আমন্ত্রণের মেয়াদ শেষ।
+friends.choose_name	একটি খেলোয়াড় নাম বেছে নাও যাতে বন্ধুরা তোমাকে খুঁজে পায়।
+friends.unavailable	বন্ধুরা অনুপলব্ধ: {0}
+friends.your_name_is	তোমার নাম {0}। বন্ধুদের দাও যাতে তারা তোমাকে যোগ করতে পারে।
+friends.set_name_failed	নাম ঠিক করা যায়নি: {0}
+friends.request_sent	{0}-কে বন্ধুত্বের অনুরোধ পাঠানো হয়েছে।
+friends.add_failed	{0}-কে যোগ করা যায়নি: {1}
+friends.offline	{0} এখন অফলাইন।
+friends.request_then_invite	{0}-কে বন্ধুত্বের অনুরোধ পাঠানো হয়েছে। গ্রহণ করলেই আমন্ত্রণ চলে যাবে।
+friends.unreachable	{0}-এর কাছে পৌঁছানো যায়নি: {1}
+friends.creating_room_for	{0}-এর জন্য রুম তৈরি হচ্ছে...
+friends.joining	{0}-এর সাথে যোগ দেওয়া হচ্ছে...
+friends.declined	{0} আমন্ত্রণ প্রত্যাখ্যান করেছে।
+friends.version_mismatch	{0} তোমাকে আমন্ত্রণ জানিয়েছে, কিন্তু গেমের অন্য সংস্করণ চালাচ্ছে।
+friends.invite_sent_waiting	{0}-কে আমন্ত্রণ পাঠানো হয়েছে। যোগ দেওয়ার অপেক্ষা...
+name.too_short	নাম খুব ছোট (কমপক্ষে {0} অক্ষর)।
+name.too_long	নাম খুব বড় (সর্বোচ্চ {0} অক্ষর)।
+rooms.name_too_short	রুমের নাম খুব ছোট (কমপক্ষে {0} অক্ষর)।
+rooms.name_too_long	রুমের নাম খুব বড় (সর্বোচ্চ {0} অক্ষর)।
+net.bad_code	এটা বৈধ রুম কোড নয় (শুধু অক্ষর আর সংখ্যা)।
+net.version_mismatch	ওই রুমটি Chibi Clash-এর অন্য সংস্করণে তৈরি। দুজনেরই একই সংস্করণ লাগবে।
+net.loading_room	রুম লোড হচ্ছে...
+net.room_closed	রুম বন্ধ হয়েছে।
+net.you_left	তুমি রুম ছেড়েছ।
+net.waiting_host_game	শুরু হচ্ছে... হোস্টের গেমের অপেক্ষা।
+net.choose_next_fight	পরের লড়াইয়ের জন্য তোমার যোদ্ধা বেছে OK চাপো।
+net.host_changed_stage	হোস্ট মঞ্চের সেটিংস বদলেছে। আবার OK চাপো।
+net.room_closed_host_left	রুম বন্ধ হয়ে গেছে (হোস্ট চলে গেছে)।
+net.starting_fight	লড়াই শুরু হচ্ছে...
+net.player_left_joined	একজন খেলোয়াড় চলে গেছে বা যোগ দিয়েছে।
+net.no_connection	সংযোগ নেই।
+net.fight_could_not_start	লড়াই শুরু করা যায়নি।
+net.fight_starting_wait	লড়াই শুরু হচ্ছে! তোমার বন্ধুর সংযোগের অপেক্ষা...
+net.choose_press_ok	তোমার যোদ্ধা বেছে OK চাপো।
+net.too_many_starts	অনেকবার শুরু করা হয়েছে। এক মিনিট অপেক্ষা করো, তারপর লড়াই শুরু চাপো।
+net.fight_starting_connecting	লড়াই শুরু হচ্ছে! সংযোগ হচ্ছে...
+net.could_not_connect	সংযোগ করা যায়নি।
+net.friend_no_answer	তোমার বন্ধু সাড়া দেয়নি।
+net.start_cancelled	শুরু বাতিল হয়েছে।
+net.friend_no_connect	তোমার বন্ধু সংযুক্ত হয়নি।
+net.enter_code	তোমার বন্ধু যে রুম কোড দেখাচ্ছে সেটা লেখো।
+net.lan_browser	ব্রাউজারে LAN খেলা যায় না। রুম বা VS LOCAL ব্যবহার করো, অথবা LAN-এর জন্য PC সংস্করণ।
+net.enter_ip	হোস্টের IP ঠিকানা লেখো।
+net.this_pc_ip	এই PC-এর IP
+net.signing_in	সাইন ইন হচ্ছে...
+net.creating_private	একটি ব্যক্তিগত রুম তৈরি হচ্ছে...
+net.hosting_one	কোনো খোলা ম্যাচ পাওয়া যায়নি, একটি হোস্ট করা হচ্ছে...
+net.needs_2_to_4	একটি লড়াইয়ে ২ থেকে ৪ জন খেলোয়াড় লাগে।
+net.waiting_friend	তোমার বন্ধুর সংযোগের অপেক্ষা...
+net.waiting_friends	তোমার বন্ধুদের সংযোগের অপেক্ষা...
+net.connection_running	আরেকটি সংযোগ এখনো চলছে।
+net.no_valid_info	রুমে বৈধ সংযোগ তথ্য নেই (হোস্ট চলে গেছে?)।
+net.connecting_host	হোস্টের সাথে সংযোগ হচ্ছে...
+net.already_full	ওই রুম আগে থেকেই পূর্ণ।
+net.no_info	রুমে সংযোগ তথ্য নেই (হোস্ট চলে গেছে?)।
+net.player_left_searching	ওই খেলোয়াড় চলে গেছে। আবার খোঁজা হচ্ছে...
+net.connected	সংযুক্ত!
+net.relay_failed	Relay সার্ভারের সাথে সংযোগ ব্যর্থ হয়েছে।
+net.opponent_timeout	তোমার প্রতিপক্ষের কাছে পৌঁছানো যায়নি (সময় শেষ)।
+net.no_internet	ইন্টারনেট সংযোগ নেই। যেকোনো জায়গা থেকে বন্ধুদের সাথে খেলতে Wi-Fi বা মোবাইল ডেটা চালু করো। (একই নেটওয়ার্কে LAN খেলা চলে।)
+invite.wait	আরেকটি আমন্ত্রণ পাঠানোর আগে একটু অপেক্ষা করো।
+invite.type_name	তোমার বন্ধুর গেমের নাম লেখো (৩-১৬টি অক্ষর, সংখ্যা বা _)।
+invite.own_name	এটা তোমার নিজের নাম।
+invite.open_room_first	আগে তোমার রুম খোলো, তারপর আমন্ত্রণ জানাও।
+invite.room_full	তোমার রুম আগে থেকেই পূর্ণ।
+invite.could_not_send	আমন্ত্রণ পাঠানো যায়নি।
+invite.too_many	এখন অনেক বেশি আমন্ত্রণ। কয়েক সেকেন্ড পরে আবার চেষ্টা করো।
+invite.cancelled	আমন্ত্রণ বাতিল হয়েছে।
+invite.expired	ওই আমন্ত্রণের মেয়াদ শেষ।
+invite.closed_full	তোমার রুম পূর্ণ। আমন্ত্রণ বন্ধ।
+invite.closed_joined	একজন খেলোয়াড় তোমার রুমে যোগ দিয়েছে। আমন্ত্রণ বন্ধ।
+invite.closed_room	আমন্ত্রণ বাতিল: রুম বন্ধ হয়ে গেছে।
+name.taken	এই নাম আগে থেকেই নেওয়া
+name.check_unavailable	তোমার নাম অনলাইনে যাচাই করা যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করো।
+name.too_soon	তুমি একটু আগেই নাম বদলেছ। এক মিনিট পরে আবার চেষ্টা করো।
+name.choose_different	দয়া করে অন্য নাম বেছে নাও।
+friends.type_tag	তোমার বন্ধুর নাম Kira#4821-এর মতো করে লেখো।
+friends.added	বন্ধু যোগ হয়েছে।
+friends.declined_request	অনুরোধ প্রত্যাখ্যাত।
+friends.removed	বন্ধু সরানো হয়েছে।
+friends.blocked	খেলোয়াড় ব্লক করা হয়েছে।
+friends.a_friend	একজন বন্ধু
+friends.type_player_tag	খেলোয়াড়ের নাম Kira#4821-এর মতো করে লেখো।
+friends.wait_invite	আবার আমন্ত্রণের আগে একটু অপেক্ষা করো।
+name.enter	একটি নাম লেখো।
+name.bad_chars	শুধু অক্ষর, সংখ্যা আর _ ব্যবহার করো (ফাঁকা বা চিহ্ন নয়)।
+rooms.name_bad_chars	রুমের নামে শুধু অক্ষর, সংখ্যা, ফাঁকা আর _ - ' ! চলে।
+rooms.name_double_space	রুমের নামে পরপর দুটি ফাঁকা থাকতে পারবে না।
+rooms.name_choose_different	দয়া করে অন্য রুমের নাম বেছে নাও।
+gesture.cross_arms	হাত আড়াআড়ি করো
+gesture.punch_forward	সামনে ঘুষি
+gesture.raise_hands	দুই হাত তোলো
+class.kaia.passive1_desc	+15% আক্রমণের গতি
+class.kaia.passive2_desc	5% জীবন শোষণ
+class.kaia.skill1_desc	সামনে ছুটে প্রতিপক্ষকে বিঁধে দাও
+class.kaia.skill2_desc	নিখুঁত সময়ে ক্ষতি ফিরিয়ে দাও
+class.kaia.skill3_desc	দ্রুত বহুবার বিঁধে দাও
+class.kaia.ult_desc	১০ সে.: সাধারণ আক্রমণ একটি আনুভূমিক ঢেউ ছাড়ে
+class.bruna.passive1_desc	+20% ক্ষতি, -15% আক্রমণের গতি
+class.bruna.passive2_desc	+20% ক্ষতি, -15% চলার গতি
+class.bruna.skill1_desc	প্রতিপক্ষকে ধরে মাটিতে আছড়ে ফেলো
+class.bruna.skill2_desc	টর্নেডোর মতো ঘুরে বারবার আঘাত করো
+class.bruna.ult_desc	মেঝেতে আঘাত করে শকওয়েভ তৈরি করো
+class.ren.passive1_desc	+20% ক্রিটিক্যাল সম্ভাবনা
+class.ren.passive2_desc	১০ সে. +10% চলার গতি (৩০ সে. কুলডাউন)
+class.ren.skill1_desc	আনুভূমিকভাবে পেছনে লাফিয়ে তির ছোড়ো
+class.ren.skill2_desc	কাছের প্রতিপক্ষের গলা চেপে ধরে দূরে ঠেলে দাও
+class.ren.skill3_desc	আনুভূমিকভাবে তিরবৃষ্টি ছোড়ো
+class.ren.ult_desc	একটি তির বহুগুণ হয়ে তিরের ঝড় হয়
+class.lyra.passive1_desc	আঘাতে 10% সম্ভাবনা: -15% চলা, -10% ক্ষতি, -15% আক্রমণ গতি
+class.lyra.passive2_desc	20% সম্ভাবনায় ক্ষতি ব্লক
+class.lyra.skill1_desc	লক্ষ্য খোঁজা আগুনের গোলা ছোড়ো
+class.lyra.skill2_desc	৩টি অনুচর ডাকো
+class.lyra.skill3_desc	একটি মেঘ শত্রুকে অনুসরণ করে বজ্র দিয়ে আঘাত করে
+class.lyra.ult_desc	১০ সে. আগুনের বলয়: শত্রু পোড়ায়, প্রক্ষিপ্ত আটকায়
+class.taro.passive1_desc	আঘাতে 10% সম্ভাবনা: শত্রুর প্রতিরক্ষা -15%
+class.taro.passive2_desc	৩ সে. আক্রমণ না করলে পরের আঘাত +50%
+class.taro.skill1_desc	প্রসারিত হও, লাফাও আর নিচে ঘোরাও
+class.taro.skill2_desc	প্রক্ষিপ্ত আটকাতে বল্লম ঘোরাও
+class.taro.skill3_desc	বর্শা ছুড়ে আবার ফিরিয়ে আনো
+class.taro.ult_desc	শত্রুকে বিঁধে তারপর লাথি মেরে হাতল আরও গভীরে ঢোকাও
+char.kaia.role	চটপটে আক্রমণকারী
+char.kaia.style	নিখুঁত, শৃঙ্খলিত কোপে দ্রুত ও চলমান কাছাকাছি লড়াই।
+char.bruna.role	মারকুটে
+char.bruna.style	বেশি ক্ষতি আর টেকসই এক মারকুটে যোদ্ধা, যে ভারী আক্রমণে জায়গা নিয়ন্ত্রণ করে।
+char.ren.role	চটপটে তিরন্দাজ
+char.ren.style	বহুমুখী তিরের কৌশলে উচ্চ গতিশীল জোন নিয়ন্ত্রণ আর নিখুঁত চাপ।
+char.lyra.role	জোন নিয়ন্ত্রণ / প্রস্তুতি
+char.lyra.style	চটপটে জাদুকর, যে দ্রুত মন্ত্র, চালাক চলাফেরা আর নিখুঁত জাদুতে জায়গা নিয়ন্ত্রণ করে।
+char.taro.role	দূরপাল্লার বিশেষজ্ঞ
+char.taro.style	দূরপাল্লার চাপ আর নিখুঁত আঘাতে শৃঙ্খলাবদ্ধ, চলমান নিয়ন্ত্রণ।
+stage.0.name	আকাশ দোজো
+stage.0.short	আকাশ দোজো
+stage.0.tagline	মেঘের উপরে পাহাড়ি মন্দির
+stage.1.name	নিয়ন শহর
+stage.1.short	নিয়ন শহর
+stage.1.tagline	নিয়ন বৃষ্টির নিচে ছাদের অ্যারিনা
+stage.2.name	লাভা কামারশালা
+stage.2.short	লাভা কামারশালা
+stage.2.tagline	লাভার সাগরের উপরে গলিত ঢালাইখানা
+stage.3.name	সূচনার পর্বত
+stage.3.short	পর্বত
+stage.3.tagline	উল্লম্ব KO · কুয়াশাচ্ছন্ন খাদের উপর চলমান জেড প্ল্যাটফর্ম
+stage.4.name	ঐক্যের সমভূমি
+stage.4.short	সমভূমি
+stage.4.tagline	আনুভূমিক KO · এক লম্বা মাঠ, লুকানোর জায়গা নেই
+stage.5.name	আগ্নেয়গিরির অতল
+stage.5.short	আগ্নেয়গিরি
+stage.5.tagline	প্রতিটি কিনারায় KO · ম্যাগমা হ্রদ থেকে আগুন ফেটে বেরোয়
+stage.6.name	দানব পাখির আস্তানা
+stage.6.short	পাখির আস্তানা
+stage.6.tagline	আনুভূমিক KO · বিশাল পাখি অ্যারিনা ঝাঁট দেয়
+stage.7.name	পরিত্যক্ত সমুদ্র স্মৃতিস্তম্ভ
+stage.7.short	সমুদ্র
+stage.7.tagline	প্রতিটি কিনারায় KO · তিমি নেমে আসে, ধাপে নামো
+end.opponent_left	তোমার প্রতিপক্ষ ম্যাচ ছেড়ে গেছে।
+end.opponent_timeout	তোমার প্রতিপক্ষ সাড়া দেওয়া বন্ধ করেছে।
+end.connection_lost	তোমার প্রতিপক্ষের সাথে সংযোগ হারিয়ে গেছে।
+end.you_left	তুমি ম্যাচ ছেড়েছ।
+end.desync	দুই গেম মেলেনি (desync): ফলাফল নেই।
+end.unconfirmed	ম্যাচের শেষ নিশ্চিত করা যায়নি: ফলাফল নেই।
+end.handshake_failed	ম্যাচ শুরু করা যায়নি।
+end.peer_never_started	তোমার প্রতিপক্ষ কখনো ম্যাচে যোগ দেয়নি: ফলাফল নেই।
+end.too_slow	খেলার জন্য সংযোগ খুব ধীর ছিল: ফলাফল নেই।
+end.host_left	হোস্ট ম্যাচ ছেড়ে গেছে: ফলাফল নেই।
+end.dropped	তোমার সংযোগ ম্যাচ থেকে বিচ্ছিন্ন হয়েছে।
+status.aura	আভা {0}
+status.fire_ring	আগুনের বলয় {0}
+status.tailwind	পেছনের হাওয়া
+status.guard_broken	রক্ষা ভাঙা {0} সে.
+status.guard	রক্ষা {0}%
+status.reloading	রিলোড {0} সে.
+status.recharging	রিচার্জ {0} সে.
+status.hexed	অভিশপ্ত
+status.armor_break	বর্ম -15%
+hud.perform	করো: {0}
+hud.times_up	সময় শেষ!
+rewards.no_contest	ফলাফল নেই: কোনো পুরস্কার নেই
+rewards.pve_victory	PvE জয়  +{0}
+rewards.pve_match	PvE ম্যাচ  +{0}
+rewards.victory	জয়  +{0}
+rewards.match_played	খেলা ম্যাচ  +{0}
+rewards.posture	ভালো অঙ্গবিন্যাস {0}%  +{1}
+hud.revived	পুনর্জীবিত
+quest.win	৩টি ম্যাচ জেতো
+quest.pve	CPU-কে দুবার হারাও (PvE)
+quest.combo	১০টি পূর্ণ কম্বো করো
+quest.ult	৩টি অঙ্গভঙ্গি Ultimate চালু করো
+quest.parry	৫টি আক্রমণ প্যারি করো
+quest.posture	৮০%+ ভালো অঙ্গবিন্যাসে একটি ম্যাচ শেষ করো
+rewards.quest	কোয়েস্ট: {0}  +{1}
+bind.move_left	বামে সরো
+bind.move_right	ডানে সরো
+bind.drop	নামো / দ্রুত পড়ো
+bind.jump	লাফ
+bind.jump_alt	লাফ (বিকল্প)
+bind.light	হালকা আক্রমণ
+bind.heavy	ভারী আক্রমণ
+bind.block	ব্লক
+bind.dash	ড্যাশ
+bind.skill1	দক্ষতা ১
+bind.skill2	দক্ষতা ২
+bind.skill3	দক্ষতা ৩
+bind.ultimate	Ultimate
+bind.aim_up	উপরে তাক
+bind.special	বিশেষ
+hud.rejected	প্রত্যাখ্যাত: {0}
+cv.low_confidence	ট্র্যাকিংয়ের আস্থা কম
+cv.frozen	স্থির ছবি (জালিয়াতি?)
+cv.snap	হঠাৎ ভঙ্গি বদল (ম্যাক্রো?)
+cv.ok	OK
+cam.none	কোনো ক্যামেরা পাওয়া যায়নি
+cam.off	ক্যামেরা বন্ধ
+cam.starting	ক্যামেরা চালু হচ্ছে...
+cam.waiting_frames	ক্যামেরার ফ্রেমের অপেক্ষা - সিস্টেম সেটিংস > গোপনীয়তা > ক্যামেরা থেকে Unity-কে ক্যামেরা ব্যবহারের অনুমতি দাও
+cam.live	ক্যামেরা লাইভ ({0}x{1})
+pose.simulated	নকল (কিবোর্ড ভঙ্গি)
+pose.camera_off	ক্যামেরা ট্র্যাকিং বন্ধ - কিবোর্ডে নকল করা ভঙ্গি ব্যবহার হচ্ছে
+pose.model_failed	ভঙ্গি মডেল ব্যর্থ: {0}
+pose.loading	ভঙ্গি মডেল লোড হচ্ছে...
+pose.live	লাইভ শরীর ট্র্যাকিং (MoveNet, {0} Hz)
+pose.step_back	ক্যামেরা চালু - পিছিয়ে যাও যাতে কাঁধ দেখা যায়
+account.finish_browser	ব্রাউজারে সাইন ইন শেষ করো (Google দিয়ে চালিয়ে যাও বেছে নাও)...
+account.signed_out_again	সাইন আউট হয়েছে। তোমার অ্যাকাউন্ট ব্যবহার করতে আবার সাইন ইন করো।
+account.signed_in_kept	সাইন ইন হয়েছে। তোমার নাম আর অগ্রগতি এই অ্যাকাউন্টে থাকবে।

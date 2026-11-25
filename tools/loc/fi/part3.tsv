@@ -1,0 +1,255 @@
+region.eastern_africa	Itä-Afrikka
+region.middle_africa	Keski-Afrikka
+region.southern_africa	Eteläinen Afrikka
+region.western_africa	Länsi-Afrikka
+region.caribbean	Karibia
+region.central_america	Keski-Amerikka
+region.south_america	Etelä-Amerikka
+region.northern_america	Pohjois-Amerikka
+region.central_asia	Keski-Aasia
+region.eastern_asia	Itä-Aasia
+region.south_eastern_asia	Kaakkois-Aasia
+region.southern_asia	Etelä-Aasia
+region.western_asia	Länsi-Aasia
+region.eastern_europe	Itä-Eurooppa
+region.northern_europe	Pohjois-Eurooppa
+region.southern_europe	Etelä-Eurooppa
+region.western_europe	Länsi-Eurooppa
+region.australia_and_new_zealand	Australia ja Uusi-Seelanti
+region.melanesia	Melanesia
+region.micronesia	Mikronesia
+region.polynesia	Polynesia
+net.joined_connecting	Liityit huoneeseen "{0}". Yhdistetään isäntään...
+net.opponent_unreachable	Vastustajaasi ei tavoitettu: {0}
+net.quick_filling	{0}/{1} pelaajaa. Alkaa {2} s kuluttua...
+invite.inviting	Kutsutaan pelaajaa {0}...
+invite.sent_lasts	Kutsu lähetetty pelaajalle {0}. Se on voimassa {1} sekuntia.
+invite.send_failed	Kutsua ei voitu lähettää: {0}
+invite.joining_room_of	Liitytään pelaajan {0} huoneeseen...
+invite.paused	Kutsut tauolla {0} minuuttia.
+invite.invited_you	{0} kutsui sinut huoneeseen "{1}".
+invite.ran_out	Kutsusi pelaajalle {0} vanheni.
+friends.choose_name	Valitse pelaajanimi, jotta kaverit löytävät sinut.
+friends.unavailable	Kaverit eivät ole käytettävissä: {0}
+friends.your_name_is	Nimesi on {0}. Anna se kavereille, jotta he voivat lisätä sinut.
+friends.set_name_failed	Nimeä ei voitu asettaa: {0}
+friends.request_sent	Kaveripyyntö lähetetty pelaajalle {0}.
+friends.add_failed	Pelaajaa {0} ei voitu lisätä: {1}
+friends.offline	{0} on nyt offline-tilassa.
+friends.request_then_invite	Kaveripyyntö lähetetty pelaajalle {0}. Kutsu lähtee heti, kun hän hyväksyy.
+friends.unreachable	Pelaajaa {0} ei tavoitettu: {1}
+friends.creating_room_for	Luodaan huone pelaajalle {0}...
+friends.joining	Liitytään pelaajan {0} seuraan...
+friends.declined	{0} hylkäsi kutsun.
+friends.version_mismatch	{0} kutsui sinut, mutta hänellä on eri versio pelistä.
+friends.invite_sent_waiting	Kutsu lähetetty pelaajalle {0}. Odotetaan liittymistä...
+name.too_short	Nimi on liian lyhyt (vähintään {0} merkkiä).
+name.too_long	Nimi on liian pitkä (enintään {0} merkkiä).
+rooms.name_too_short	Huoneen nimi on liian lyhyt (vähintään {0} merkkiä).
+rooms.name_too_long	Huoneen nimi on liian pitkä (enintään {0} merkkiä).
+net.bad_code	Tämä ei ole kelvollinen huonekoodi (vain kirjaimia ja numeroita).
+net.version_mismatch	Se huone on luotu eri Chibi Clash -versiolla. Molemmilla pelaajilla pitää olla sama versio.
+net.loading_room	Ladataan huonetta...
+net.room_closed	Huone suljettu.
+net.you_left	Poistuit huoneesta.
+net.waiting_host_game	Aloitetaan... odotetaan isännän peliä.
+net.choose_next_fight	Valitse taistelijasi ja paina OK seuraavaa taistelua varten.
+net.host_changed_stage	Isäntä muutti areenan asetuksia. Paina OK uudelleen.
+net.room_closed_host_left	Huone suljettiin (isäntä poistui).
+net.starting_fight	Taistelu alkaa...
+net.player_left_joined	Pelaaja poistui tai liittyi.
+net.no_connection	Ei yhteyttä.
+net.fight_could_not_start	Taistelua ei voitu aloittaa.
+net.fight_starting_wait	Taistelu alkaa! Odotetaan kaverisi yhdistämistä...
+net.choose_press_ok	Valitse taistelijasi ja paina OK.
+net.too_many_starts	Liian monta aloitusta. Odota minuutti ja paina sitten ALOITA TAISTELU.
+net.fight_starting_connecting	Taistelu alkaa! Yhdistetään...
+net.could_not_connect	Yhdistäminen epäonnistui.
+net.friend_no_answer	Kaverisi ei vastannut.
+net.start_cancelled	Aloitus peruttu.
+net.friend_no_connect	Kaverisi ei yhdistänyt.
+net.enter_code	Syötä huonekoodi, jonka kaverisi näyttää.
+net.lan_browser	LAN-peli ei ole käytettävissä selaimessa. Käytä HUONEITA tai VS LOCAL -tilaa, tai PC-versiota LANia varten.
+net.enter_ip	Syötä isännän IP-osoite.
+net.this_pc_ip	tämän PC:n IP
+net.signing_in	Kirjaudutaan...
+net.creating_private	Luodaan yksityistä huonetta...
+net.hosting_one	Avointa ottelua ei löytynyt, luodaan oma...
+net.needs_2_to_4	Taisteluun tarvitaan 2-4 pelaajaa.
+net.waiting_friend	Odotetaan kaverisi yhdistämistä...
+net.waiting_friends	Odotetaan kavereidesi yhdistämistä...
+net.connection_running	Toinen yhteys on vielä käynnissä.
+net.no_valid_info	Huoneella ei ole kelvollisia yhteystietoja (poistuiko isäntä?).
+net.connecting_host	Yhdistetään isäntään...
+net.already_full	Se huone on jo täynnä.
+net.no_info	Huoneella ei ole yhteystietoja (poistuiko isäntä?).
+net.player_left_searching	Pelaaja poistui. Haetaan uudelleen...
+net.connected	Yhdistetty!
+net.relay_failed	Yhteys Relay-palvelimeen epäonnistui.
+net.opponent_timeout	Vastustajaasi ei tavoitettu (aikakatkaisu).
+net.no_internet	Ei internetyhteyttä. Yhdistä Wi-Fi tai mobiilidata pelataksesi kavereiden kanssa missä tahansa. (LAN-peli toimii samassa verkossa.)
+invite.wait	Odota hetki ennen kuin lähetät uuden kutsun.
+invite.type_name	Kirjoita kaverisi pelinimi (3-16 kirjainta, numeroa tai _).
+invite.own_name	Tämä on oma nimesi.
+invite.open_room_first	Avaa ensin huoneesi ja kutsu sitten.
+invite.room_full	Huoneesi on jo täynnä.
+invite.could_not_send	Kutsua ei voitu lähettää.
+invite.too_many	Liian monta kutsua juuri nyt. Yritä uudelleen muutaman sekunnin päästä.
+invite.cancelled	Kutsu peruttu.
+invite.expired	Kutsu vanheni.
+invite.closed_full	Huoneesi on täynnä. Kutsu suljettu.
+invite.closed_joined	Pelaaja liittyi huoneeseesi. Kutsu suljettu.
+invite.closed_room	Kutsu peruttu: huone suljettiin.
+name.taken	Tämä nimi on jo varattu
+name.check_unavailable	Nimeäsi ei voitu tarkistaa verkossa. Tarkista internetyhteys ja yritä uudelleen.
+name.too_soon	Vaihdoit nimesi hetki sitten. Yritä uudelleen minuutin päästä.
+name.choose_different	Valitse toinen nimi.
+friends.type_tag	Kirjoita kaverisi nimi muodossa Kira#4821.
+friends.added	Kaveri lisätty.
+friends.declined_request	Pyyntö hylätty.
+friends.removed	Kaveri poistettu.
+friends.blocked	Pelaaja estetty.
+friends.a_friend	Kaveri
+friends.type_player_tag	Kirjoita pelaajan nimi muodossa Kira#4821.
+friends.wait_invite	Odota hetki ennen kuin kutsut uudelleen.
+name.enter	Syötä nimi.
+name.bad_chars	Käytä vain kirjaimia, numeroita ja _ (ei välilyöntejä tai symboleja).
+rooms.name_bad_chars	Huoneiden nimissä voi käyttää vain kirjaimia, numeroita, välilyöntejä ja merkkejä _ - ' !.
+rooms.name_double_space	Huoneiden nimissä ei voi olla kahta välilyöntiä peräkkäin.
+rooms.name_choose_different	Valitse toinen huoneen nimi.
+gesture.cross_arms	KÄDET RISTIIN
+gesture.punch_forward	LYÖNTI ETEEN
+gesture.raise_hands	NOSTA MOLEMMAT KÄDET
+class.kaia.passive1_desc	+15% hyökkäysnopeus
+class.kaia.passive2_desc	5% elämänimu
+class.kaia.skill1_desc	Syöksy eteenpäin ja pistä vastustajaa
+class.kaia.skill2_desc	Täydellinen ajoitus heijastaa vahingon
+class.kaia.skill3_desc	Pistä monta kertaa nopeasti
+class.kaia.ult_desc	10 s: tavalliset hyökkäykset laukaisevat vaakasuoran aallon
+class.bruna.passive1_desc	+20% vahinko, -15% hyökkäysnopeus
+class.bruna.passive2_desc	+20% vahinko, -15% liikkumisnopeus
+class.bruna.skill1_desc	Tartu vastustajaan ja paiskaa hänet maahan
+class.bruna.skill2_desc	Pyöri kuin tornado ja osu toistuvasti
+class.bruna.ult_desc	Iske lattiaan ja luo paineaalto
+class.ren.passive1_desc	+20% kriittisen osuman mahdollisuus
+class.ren.passive2_desc	+10% liikkumisnopeus 10 s (30 s latausaika)
+class.ren.skill1_desc	Syöksy vaakasuoraan taaksepäin ja ammu
+class.ren.skill2_desc	Kurista lähellä oleva vastustaja ja työnnä hänet pois
+class.ren.skill3_desc	Ammu vaakasuora nuolisade
+class.ren.ult_desc	Yksi nuoli monistuu nuolimyrskyksi
+class.lyra.passive1_desc	10% mahdollisuus osuessa: -15% liike, -10% vahinko, -15% hyökkäysnop.
+class.lyra.passive2_desc	20% mahdollisuus torjua vahinko
+class.lyra.skill1_desc	Ammu kohteeseen hakeutuva tuliammus
+class.lyra.skill2_desc	Kutsu 3 kätyriä
+class.lyra.skill3_desc	Pilvi seuraa vihollista ja iskee ukkosella
+class.lyra.ult_desc	10 s tulirengas: polttaa vihollisia, torjuu ammuksia
+class.taro.passive1_desc	10% mahdollisuus osuessa: -15% vihollisen puolustus
+class.taro.passive2_desc	3 s ilman hyökkäystä: seuraava osuma +50%
+class.taro.skill1_desc	Ojennu, hyppää ja huitaise alaspäin
+class.taro.skill2_desc	Pyöritä varsiasetta torjuaksesi ammuksia
+class.taro.skill3_desc	Heitä keihäs ja kutsu se takaisin
+class.taro.ult_desc	Pistä vihollista ja potkaise sitten vartta syvemmälle
+char.kaia.role	Ketterä hyökkääjä
+char.kaia.style	Nopeaa ja liikkuvaa lähitaistelua tarkoilla, ketjutettavilla viilloilla.
+char.bruna.role	Rähinöitsijä
+char.bruna.style	Paljon vahinkoa tekevä ja kestävä tappelija, joka hallitsee tilaa raskailla hyökkäyksillä.
+char.ren.role	Ketterä tarkka-ampuja
+char.ren.style	Liikkuvaa alueen hallintaa ja tarkkaa painetta monipuolisilla nuolitekniikoilla.
+char.lyra.role	Alueen hallinta / valmistelu
+char.lyra.style	Ketterä loitsija, joka hallitsee tilaa nopeilla loitsuilla, ovelalla liikkumisella ja tarkalla taialla.
+char.taro.role	Kantaman erikoisosaaja
+char.taro.style	Kurinalaista ja liikkuvaa hallintaa pitkän kantaman paineella ja tarkoilla iskuilla.
+stage.0.name	Taivasdojo
+stage.0.short	Taivasdojo
+stage.0.tagline	Vuoristopyhäkkö pilvien yllä
+stage.1.name	Neonkaupunki
+stage.1.short	Neonkaupunki
+stage.1.tagline	Kattoareena neonsateessa
+stage.2.name	Laavapaja
+stage.2.short	Laavapaja
+stage.2.tagline	Sulan metallin valimo laavameren yllä
+stage.3.name	Alun Vuori
+stage.3.short	Vuori
+stage.3.tagline	Pystysuora KO · liikkuvia jadetasoja usvaisen pudotuksen yllä
+stage.4.name	Yhtenäisyyden Tasanko
+stage.4.short	Tasanko
+stage.4.tagline	Vaakasuora KO · yksi pitkä kenttä, ei piilopaikkoja
+stage.5.name	Tulivuoren Kuilu
+stage.5.short	Tulivuori
+stage.5.tagline	Jokainen reuna on KO · tulta purkautuu magmajärvestä
+stage.6.name	Jättilinnun Pesä
+stage.6.short	Linnunpesä
+stage.6.tagline	Vaakasuora KO · valtava lintu pyyhkäisee areenan yli
+stage.7.name	Hylätty Valtameren Monumentti
+stage.7.short	Valtameri
+stage.7.tagline	Jokainen reuna on KO · valas laskeutuu, pudottaudu tasanteille
+end.opponent_left	Vastustajasi poistui ottelusta.
+end.opponent_timeout	Vastustajasi lakkasi vastaamasta.
+end.connection_lost	Yhteys vastustajaasi katkesi.
+end.you_left	Poistuit ottelusta.
+end.desync	Pelit olivat eri mieltä (desync): ei tulosta.
+end.unconfirmed	Ottelun loppua ei voitu vahvistaa: ei tulosta.
+end.handshake_failed	Ottelua ei voitu aloittaa.
+end.peer_never_started	Vastustajasi ei koskaan liittynyt otteluun: ei tulosta.
+end.too_slow	Yhteys oli liian hidas pelaamiseen: ei tulosta.
+end.host_left	Isäntä poistui ottelusta: ei tulosta.
+end.dropped	Yhteytesi putosi ottelusta.
+status.aura	AURA {0}
+status.fire_ring	TULIRENGAS {0}
+status.tailwind	MYÖTÄTUULI
+status.guard_broken	SUOJAUS RIKKI {0} s
+status.guard	SUOJAUS {0}%
+status.reloading	LATAA {0} s
+status.recharging	LATAUTUU {0} s
+status.hexed	KIROTTU
+status.armor_break	PANSSARI -15%
+hud.perform	Suorita: {0}
+hud.times_up	Aika loppui!
+rewards.no_contest	Ei tulosta: ei palkintoja
+rewards.pve_victory	PvE-voitto  +{0}
+rewards.pve_match	PvE-ottelu  +{0}
+rewards.victory	Voitto  +{0}
+rewards.match_played	Pelattu ottelu  +{0}
+rewards.posture	Hyvä ryhti {0}%  +{1}
+hud.revived	ELVYTETTY
+quest.win	Voita 3 ottelua
+quest.pve	Voita CPU kahdesti (PvE)
+quest.combo	Tee 10 täyttä komboa
+quest.ult	Laukaise 3 ele-ultimatea
+quest.parry	Torju 5 hyökkäystä
+quest.posture	Pelaa ottelu loppuun yli 80 % hyvällä ryhdillä
+rewards.quest	Tehtävä: {0}  +{1}
+bind.move_left	Liiku vasemmalle
+bind.move_right	Liiku oikealle
+bind.drop	Pudottaudu / pikapudotus
+bind.jump	Hyppy
+bind.jump_alt	Hyppy (vaihtoehto)
+bind.light	Kevyt hyökkäys
+bind.heavy	Raskas hyökkäys
+bind.block	Torjunta
+bind.dash	Syöksy
+bind.skill1	Taito 1
+bind.skill2	Taito 2
+bind.skill3	Taito 3
+bind.ultimate	Ultimate
+bind.aim_up	Tähtää ylös
+bind.special	Erikois
+hud.rejected	Hylätty: {0}
+cv.low_confidence	Heikko seurannan varmuus
+cv.frozen	Jäätynyt kuva (huijaus?)
+cv.snap	Välitön asennon vaihto (makro?)
+cv.ok	OK
+cam.none	Kameraa ei löytynyt
+cam.off	Kamera pois
+cam.starting	Kamera käynnistyy...
+cam.waiting_frames	Odotetaan kameran kuvia - salli Unitylle pääsy kameraan kohdassa Järjestelmäasetukset > Tietosuoja > Kamera
+cam.live	Kamera live ({0}x{1})
+pose.simulated	Simuloitu (näppäimistöasennot)
+pose.camera_off	Kameraseuranta pois - käytetään näppäimistöllä simuloituja asentoja
+pose.model_failed	Asentomalli epäonnistui: {0}
+pose.loading	Ladataan asentomallia...
+pose.live	Live-vartaloseuranta (MoveNet, {0} Hz)
+pose.step_back	Kamera päällä - peräänny, jotta olkapääsi näkyvät
+account.finish_browser	Viimeistele kirjautuminen selaimessa (valitse Jatka Googlella)...
+account.signed_out_again	Kirjautunut ulos. Kirjaudu uudelleen käyttääksesi tiliäsi.
+account.signed_in_kept	Kirjautunut. Nimesi ja edistymisesi pysyvät tällä tilillä.
