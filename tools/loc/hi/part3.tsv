@@ -76,7 +76,7 @@ net.friend_no_answer	आपके दोस्त ने जवाब नही�
 net.start_cancelled	शुरुआत रद्द हुई।
 net.friend_no_connect	आपका दोस्त कनेक्ट नहीं हुआ।
 net.enter_code	आपके दोस्त का दिखाया रूम कोड डालें।
-net.lan_browser	ब्राउज़र में LAN खेल उपलब्ध नहीं है। रूम या मैचमेकिंग इस्तेमाल करें, या LAN के लिए PC वर्शन।
+net.lan_browser	ब्राउज़र में LAN खेल उपलब्ध नहीं है। रूम या VS LOCAL इस्तेमाल करें, या LAN के लिए PC वर्शन।
 net.enter_ip	होस्ट का IP पता डालें।
 net.this_pc_ip	इस PC का IP
 net.signing_in	साइन इन हो रहा है...

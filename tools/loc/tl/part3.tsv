@@ -76,7 +76,7 @@ net.friend_no_answer	Hindi sumagot ang kaibigan mo.
 net.start_cancelled	Kinansela ang pagsimula.
 net.friend_no_connect	Hindi nakakonekta ang kaibigan mo.
 net.enter_code	Ilagay ang room code na ipinakita ng kaibigan mo.
-net.lan_browser	Walang LAN play sa browser. Gamitin ang ROOMS o MATCHMAKING, o ang PC version para sa LAN.
+net.lan_browser	Walang LAN play sa browser. Gamitin ang ROOMS o VS LOCAL, o ang PC version para sa LAN.
 net.enter_ip	Ilagay ang IP address ng host.
 net.this_pc_ip	IP ng PC na ito
 net.signing_in	Nagsa-sign in...

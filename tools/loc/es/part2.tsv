@@ -36,7 +36,7 @@ name.pad_hint	Mando: A = guardar · Y = sugerir un nombre
 online.connected_agreeing	Conectado. Acordando la partida...
 online.host_settings_changed	El anfitrión cambió los ajustes — vuelve a unirte a la sala.
 online.version_mismatch	Tu rival usa otra versión del juego. Ambos jugadores necesitan la misma versión.
-rooms.title	MATCHMAKING
+rooms.title	VS LOCAL
 rooms.kicker	SALAS  ·  2-4 JUGADORES  ·  CREAR · UNIRSE · INVITAR POR NOMBRE
 rooms.create_rooms	CREAR SALAS
 rooms.join_room	UNIRSE A SALA
@@ -48,7 +48,7 @@ rooms.empty_help	Pulsa CREAR SALAS para crear una, o UNIRSE A SALA con el códig
 rooms.capacity_note	Las salas admiten de 2 a 4 jugadores. Invita a amigos por su nombre de jugador.
 rooms.invites_paused	Invitaciones a salas en pausa unos minutos
 rooms.refresh	ACTUALIZAR
-rooms.hint	MATCHMAKING  ·  SALAS
+rooms.hint	VS LOCAL  ·  SALAS
 rooms.new	NUEVA
 rooms.you_host	ERES ANFITRIÓN
 rooms.open	ABRIR
@@ -85,7 +85,7 @@ room.starting	EMPEZANDO...
 room.start_fight	EMPEZAR COMBATE
 room.close	CERRAR SALA
 room.leave	SALIR DE LA SALA
-room.hint	MATCHMAKING  ·  SALA
+room.hint	VS LOCAL  ·  SALA
 room.code	CÓDIGO
 room.copy	COPIAR
 room.host_can_invite	El anfitrión puede invitar a un amigo por su nombre.

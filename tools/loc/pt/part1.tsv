@@ -57,8 +57,8 @@ loading.ready	Pronto
 onboarding.welcome	BOAS-VINDAS!
 onboarding.your_account	SUA CONTA
 onboarding.your_name	SEU NOME DE JOGADOR
-rooms.backdrop_create	MATCHMAKING  ·  CRIAR SALAS
-rooms.backdrop_join	MATCHMAKING  ·  ENTRAR NA SALA
+rooms.backdrop_create	VS LOCAL  ·  CRIAR SALAS
+rooms.backdrop_join	VS LOCAL  ·  ENTRAR NA SALA
 precheck.all_passed	TUDO CERTO
 precheck.failed	VERIFICAÇÃO FALHOU
 precheck.lighting	ILUMINAÇÃO
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	COLEÇÃO DE PERSONAGENS
 home.settings	CONFIGURAÇÕES
 home.exit	SAIR DO JOGO
-home.play_desc	Partida rápida Vs Online, salas de matchmaking com amigos ou Vs CPU
+home.play_desc	Partida rápida Vs Online, salas de VS LOCAL com amigos ou Vs CPU
 home.training_desc	Configuração da câmera, treino de gestos e um boneco de treino
 home.arcade_desc	Os cinco rivais em sequência, em todos os cenários
 home.collection_desc	Skins, armas e o banner de cosméticos
@@ -159,7 +159,7 @@ training.camera_on	RASTREAMENTO POR CÂMERA: LIG.
 collection.hint	COLEÇÃO DE PERSONAGENS
 play.choose_style	ESCOLHA UM ESTILO DE JOGO
 online.kicker	ESCOLHA UM ESTILO DE JOGO  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	ESCOLHA SUA LUTA  ·  VS ONLINE · MATCHMAKING · VS CPU
+play.kicker	ESCOLHA SUA LUTA  ·  VS ONLINE · VS LOCAL · VS CPU
 play.coming_soon	EM BREVE
 training.cv	VISÃO COMPUTACIONAL
 online.connection	CONEXÃO
@@ -177,7 +177,7 @@ exit.title	SAIR DO JOGO?
 online.royale_desc	Cada um por si. O último lutador de pé vence.
 arcade.kicker	CINCO RIVAIS · UMA JORNADA
 loading.for_battle	PARA A LUTA
-online.invites_note	Convites de amigos para salas aparecem aqui. Salas com amigos ficam em JOGAR > MATCHMAKING.
+online.invites_note	Convites de amigos para salas aparecem aqui. Salas com amigos ficam em JOGAR > VS LOCAL.
 settings.kicker	JOGO · CÂMERA · CONTROLES
 training.gestures_live	GESTOS  (faça a pose para a câmera - soco = um braço esticado para o lado)
 training.gestures_sim	GESTOS  (segure a tecla para simular a pose)
@@ -188,7 +188,7 @@ arcade.rule_retry	Perdeu uma rodada? Continue e tente de novo.
 home.hint	MENU PRINCIPAL
 settings.master_volume	VOLUME GERAL
 settings.match_time	TEMPO DE PARTIDA
-play.matchmaking_card	MATCH\nMAKING
+play.matchmaking_card	VS\nLOCAL
 hint.move	MOVER
 play.matchmaking_desc	Crie uma sala, compartilhe o código ou convide amigos pelo nome.
 play.no_internet_tag	SEM INTERNET

@@ -44,7 +44,7 @@ name.pad_hint	Gamepad: A = i-save · Y = magmungkahi ng pangalan
 online.connected_agreeing	Nakakonekta. Inaayos ang laban...
 online.host_settings_changed	Nagbago ang settings ng host — sumali ulit sa room.
 online.version_mismatch	Ibang bersiyon ng laro ang gamit ng kalaban mo. Kailangang pareho ang build ng dalawang manlalaro.
-rooms.title	MATCHMAKING
+rooms.title	VS LOCAL
 rooms.kicker	MGA ROOM  ·  2-4 MANLALARO  ·  GUMAWA · SUMALI · MAG-IMBITA GAMIT ANG PANGALAN
 rooms.create_rooms	GUMAWA NG ROOM
 rooms.join_room	SUMALI SA ROOM
@@ -56,7 +56,7 @@ rooms.empty_help	Pindutin ang GUMAWA NG ROOM para gumawa, o SUMALI SA ROOM gamit
 rooms.capacity_note	2 hanggang 4 na manlalaro bawat room. Imbitahin ang kaibigan gamit ang pangalan nila sa laro.
 rooms.invites_paused	Naka-pause ang mga room invite nang ilang minuto
 rooms.refresh	I-REFRESH
-rooms.hint	MATCHMAKING  ·  MGA ROOM
+rooms.hint	VS LOCAL  ·  MGA ROOM
 rooms.new	BAGO
 rooms.you_host	IKAW ANG HOST
 rooms.open	BUKSAN
@@ -93,7 +93,7 @@ room.starting	NAGSISIMULA...
 room.start_fight	SIMULAN ANG LABAN
 room.close	ISARA ANG ROOM
 room.leave	UMALIS SA ROOM
-room.hint	MATCHMAKING  ·  ROOM
+room.hint	VS LOCAL  ·  ROOM
 room.code	CODE
 room.copy	KOPYAHIN
 room.host_can_invite	Puwedeng mag-imbita ng kaibigan ang host gamit ang pangalan.

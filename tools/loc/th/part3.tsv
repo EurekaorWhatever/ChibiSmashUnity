@@ -64,7 +64,7 @@ net.friend_no_answer	เพื่อนไม่ตอบกลับ
 net.start_cancelled	ยกเลิกการเริ่มแล้ว
 net.friend_no_connect	เพื่อนเชื่อมต่อไม่สำเร็จ
 net.enter_code	ใส่รหัสห้องที่เพื่อนแสดง
-net.lan_browser	เล่น LAN บนเบราว์เซอร์ไม่ได้ ใช้ ห้อง หรือ จับคู่ หรือใช้เวอร์ชัน PC สำหรับ LAN
+net.lan_browser	เล่น LAN บนเบราว์เซอร์ไม่ได้ ใช้ ห้อง หรือ VS LOCAL หรือใช้เวอร์ชัน PC สำหรับ LAN
 net.enter_ip	ใส่ที่อยู่ IP ของเครื่องโฮสต์
 net.this_pc_ip	IP ของเครื่องนี้
 net.signing_in	กำลังลงชื่อเข้าใช้...

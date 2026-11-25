@@ -57,8 +57,8 @@ loading.ready	Hazır
 onboarding.welcome	HOŞ GELDİN!
 onboarding.your_account	HESABIN
 onboarding.your_name	OYUNCU ADIN
-rooms.backdrop_create	EŞLEŞTİRME  ·  ODA KUR
-rooms.backdrop_join	EŞLEŞTİRME  ·  ODAYA KATIL
+rooms.backdrop_create	VS LOCAL  ·  ODA KUR
+rooms.backdrop_join	VS LOCAL  ·  ODAYA KATIL
 precheck.all_passed	TÜM KONTROLLER GEÇTİ
 precheck.failed	KONTROL BAŞARISIZ
 precheck.lighting	IŞIK
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	KARAKTER KOLEKSİYONU
 home.settings	AYARLAR
 home.exit	OYUNDAN ÇIK
-home.play_desc	Çevrimiçi hızlı maç, arkadaşlarla eşleştirme odaları veya CPU'ya karşı
+home.play_desc	Çevrimiçi hızlı maç, arkadaşlarla VS LOCAL odaları veya CPU'ya karşı
 home.training_desc	Kamera kurulumu, hareket pratiği ve antrenman kuklası
 home.arcade_desc	Beş rakibin hepsi art arda, tüm arenalarda
 home.collection_desc	Kostümler, silahlar ve kozmetik afiş
@@ -159,7 +159,7 @@ training.camera_on	KAMERA TAKİBİ: AÇIK
 collection.hint	KARAKTER KOLEKSİYONU
 play.choose_style	BİR OYUN TARZI SEÇ
 online.kicker	BİR OYUN TARZI SEÇ  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	DÖVÜŞÜNÜ SEÇ  ·  VS ONLINE · EŞLEŞTİRME · VS CPU
+play.kicker	DÖVÜŞÜNÜ SEÇ  ·  VS ONLINE · VS LOCAL · VS CPU
 play.coming_soon	YAKINDA
 training.cv	BİLGİSAYARLI GÖRÜ
 online.connection	BAĞLANTI
@@ -177,7 +177,7 @@ exit.title	OYUNDAN ÇIKILSIN MI?
 online.royale_desc	Herkes kendi için. Ayakta kalan son dövüşçü kazanır.
 arcade.kicker	BEŞ RAKİP · TEK KOŞU
 loading.for_battle	DÖVÜŞE
-online.invites_note	Arkadaşlarının oda davetleri burada çıkar. Arkadaşlarla odalar OYNA > EŞLEŞTİRME'de.
+online.invites_note	Arkadaşlarının oda davetleri burada çıkar. Arkadaşlarla odalar OYNA > VS LOCAL'de.
 settings.kicker	OYUN · KAMERA · KONTROLLER
 training.gestures_live	HAREKETLER  (pozu kameranın önünde yap - yumruk = bir kolu yana doğru uzat)
 training.gestures_sim	HAREKETLER  (pozu simüle etmek için tuşu basılı tut)
@@ -188,7 +188,7 @@ arcade.rule_retry	Raundu mu kaybettin? Devam et ve yeniden dene.
 home.hint	ANA MENÜ
 settings.master_volume	ANA SES
 settings.match_time	MAÇ SÜRESİ
-play.matchmaking_card	EŞLEŞ\nTİRME
+play.matchmaking_card	VS\nLOCAL
 hint.move	HAREKET
 play.matchmaking_desc	Bir oda kur, kodunu paylaş veya arkadaşlarını adıyla davet et.
 play.no_internet_tag	İNTERNET YOK

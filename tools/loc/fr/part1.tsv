@@ -57,8 +57,8 @@ loading.ready	Prêt
 onboarding.welcome	BIENVENUE !
 onboarding.your_account	TON COMPTE
 onboarding.your_name	TON NOM DE JOUEUR
-rooms.backdrop_create	MATCHMAKING  ·  CRÉER DES SALONS
-rooms.backdrop_join	MATCHMAKING  ·  REJOINDRE UN SALON
+rooms.backdrop_create	VS LOCAL  ·  CRÉER DES SALONS
+rooms.backdrop_join	VS LOCAL  ·  REJOINDRE UN SALON
 precheck.all_passed	TOUT EST BON
 precheck.failed	ÉCHEC DE LA VÉRIFICATION
 precheck.lighting	ÉCLAIRAGE
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	COLLECTION DE PERSONNAGES
 home.settings	PARAMÈTRES
 home.exit	QUITTER LE JEU
-home.play_desc	Match rapide en ligne, salons de matchmaking entre amis, ou contre le CPU
+home.play_desc	Match rapide en ligne, salons de VS LOCAL entre amis, ou contre le CPU
 home.training_desc	Réglage caméra, entraînement aux gestes et mannequin d'entraînement
 home.arcade_desc	Les cinq rivaux à la suite, sur toutes les arènes
 home.collection_desc	Skins, armes et bannière cosmétique
@@ -159,7 +159,7 @@ training.camera_on	SUIVI CAMÉRA : ON
 collection.hint	COLLECTION DE PERSONNAGES
 play.choose_style	CHOISIS UN STYLE DE JEU
 online.kicker	CHOISIS UN STYLE DE JEU  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	CHOISIS TON COMBAT  ·  VS EN LIGNE · MATCHMAKING · VS CPU
+play.kicker	CHOISIS TON COMBAT  ·  VS EN LIGNE · VS LOCAL · VS CPU
 play.coming_soon	BIENTÔT
 training.cv	VISION PAR ORDINATEUR
 online.connection	CONNEXION
@@ -177,7 +177,7 @@ exit.title	QUITTER LE JEU ?
 online.royale_desc	Chacun pour soi. Le dernier combattant debout gagne.
 arcade.kicker	CINQ RIVAUX · UNE PARTIE
 loading.for_battle	POUR LE COMBAT
-online.invites_note	Les invitations de salon de tes amis s'affichent ici. Les salons entre amis sont dans JOUER > MATCHMAKING.
+online.invites_note	Les invitations de salon de tes amis s'affichent ici. Les salons entre amis sont dans JOUER > VS LOCAL.
 settings.kicker	JEU · CAMÉRA · COMMANDES
 training.gestures_live	GESTES  (fais la pose devant la caméra - coup de poing = un bras tendu sur le côté)
 training.gestures_sim	GESTES  (maintiens la touche pour simuler la pose)
@@ -188,7 +188,7 @@ arcade.rule_retry	Manche perdue ? Continue et retente-la.
 home.hint	MENU PRINCIPAL
 settings.master_volume	VOLUME GÉNÉRAL
 settings.match_time	DURÉE DU MATCH
-play.matchmaking_card	MATCH\nMAKING
+play.matchmaking_card	VS\nLOCAL
 hint.move	DÉPLACER
 play.matchmaking_desc	Crée un salon, partage son code ou invite des amis par leur nom.
 play.no_internet_tag	PAS D'INTERNET

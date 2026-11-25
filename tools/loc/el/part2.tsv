@@ -51,7 +51,7 @@ name.pad_hint	Χειριστήριο: A = αποθήκευση · Y = πρότα
 online.connected_agreeing	Συνδέθηκε. Συμφωνία για τον αγώνα...
 online.host_settings_changed	Οι ρυθμίσεις του οικοδεσπότη άλλαξαν — μπες ξανά στο δωμάτιο.
 online.version_mismatch	Ο αντίπαλός σου έχει άλλη έκδοση του παιχνιδιού. Και οι δύο παίκτες χρειάζονται την ίδια έκδοση.
-rooms.title	MATCHMAKING
+rooms.title	VS LOCAL
 rooms.kicker	ΔΩΜΑΤΙΑ  ·  2-4 ΠΑΙΚΤΕΣ  ·  ΔΗΜΙΟΥΡΓΙΑ · ΕΙΣΟΔΟΣ · ΠΡΟΣΚΛΗΣΗ ΜΕ ΟΝΟΜΑ
 rooms.create_rooms	ΔΗΜΙΟΥΡΓΙΑ ΔΩΜΑΤΙΩΝ
 rooms.join_room	ΕΙΣΟΔΟΣ ΣΕ ΔΩΜΑΤΙΟ
@@ -63,7 +63,7 @@ rooms.empty_help	Πάτα ΔΗΜΙΟΥΡΓΙΑ ΔΩΜΑΤΙΩΝ για να φτ
 rooms.capacity_note	Τα δωμάτια χωράνε 2 έως 4 παίκτες. Κάλεσε φίλους με το όνομα παίκτη τους.
 rooms.invites_paused	Οι προσκλήσεις σε δωμάτια σταμάτησαν για λίγα λεπτά
 rooms.refresh	ΑΝΑΝΕΩΣΗ
-rooms.hint	MATCHMAKING  ·  ΔΩΜΑΤΙΑ
+rooms.hint	VS LOCAL  ·  ΔΩΜΑΤΙΑ
 rooms.new	ΝΕΟ
 rooms.you_host	ΕΙΣΑΙ ΟΙΚΟΔΕΣΠΟΤΗΣ
 rooms.open	ΑΝΟΙΓΜΑ
@@ -100,7 +100,7 @@ room.starting	ΕΝΑΡΞΗ...
 room.start_fight	ΕΝΑΡΞΗ ΜΑΧΗΣ
 room.close	ΚΛΕΙΣΙΜΟ ΔΩΜΑΤΙΟΥ
 room.leave	ΑΠΟΧΩΡΗΣΗ
-room.hint	MATCHMAKING  ·  ΔΩΜΑΤΙΟ
+room.hint	VS LOCAL  ·  ΔΩΜΑΤΙΟ
 room.code	ΚΩΔΙΚΟΣ
 room.copy	ΑΝΤΙΓΡΑΦΗ
 room.host_can_invite	Ο οικοδεσπότης μπορεί να καλέσει φίλο με το όνομα.

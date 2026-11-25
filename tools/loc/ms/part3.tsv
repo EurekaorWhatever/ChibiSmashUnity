@@ -76,7 +76,7 @@ net.friend_no_answer	Rakan anda tidak menjawab.
 net.start_cancelled	Permulaan dibatalkan.
 net.friend_no_connect	Rakan anda tidak bersambung.
 net.enter_code	Masukkan kod bilik yang ditunjukkan oleh rakan anda.
-net.lan_browser	Main LAN tidak tersedia dalam pelayar. Gunakan BILIK atau PADANAN, atau versi PC untuk LAN.
+net.lan_browser	Main LAN tidak tersedia dalam pelayar. Gunakan BILIK atau VS LOCAL, atau versi PC untuk LAN.
 net.enter_ip	Masukkan alamat IP hos.
 net.this_pc_ip	IP PC ini
 net.signing_in	Sedang log masuk...

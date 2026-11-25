@@ -57,8 +57,8 @@ loading.ready	就绪
 onboarding.welcome	欢迎！
 onboarding.your_account	你的账号
 onboarding.your_name	你的玩家名称
-rooms.backdrop_create	匹配  ·  创建房间
-rooms.backdrop_join	匹配  ·  加入房间
+rooms.backdrop_create	VS LOCAL  ·  创建房间
+rooms.backdrop_join	VS LOCAL  ·  加入房间
 precheck.all_passed	全部检查通过
 precheck.failed	检查未通过
 precheck.lighting	光线
@@ -78,7 +78,7 @@ home.arcade	街机
 home.collection	角色收藏
 home.settings	设置
 home.exit	退出游戏
-home.play_desc	在线快速匹配、和好友的匹配房间，或 Vs CPU
+home.play_desc	在线快速匹配、和好友的 VS LOCAL 房间，或 Vs CPU
 home.training_desc	摄像头设置、动作练习和训练木桩
 home.arcade_desc	在所有场地中连续挑战全部五名对手
 home.collection_desc	皮肤、武器和外观卡池
@@ -159,7 +159,7 @@ training.camera_on	摄像头追踪：开
 collection.hint	角色收藏
 play.choose_style	选择游戏模式
 online.kicker	选择游戏模式  ·  单人 · 2V2 · BATTLE ROYALE
-play.kicker	选择你的战斗  ·  VS ONLINE · 匹配 · VS CPU
+play.kicker	选择你的战斗  ·  VS ONLINE · VS LOCAL · VS CPU
 play.coming_soon	即将推出
 training.cv	计算机视觉
 online.connection	连接
@@ -177,7 +177,7 @@ exit.title	退出游戏？
 online.royale_desc	各自为战。最后存活的斗士获胜。
 arcade.kicker	五名对手 · 一口气打通
 loading.for_battle	准备战斗
-online.invites_note	好友的房间邀请会在这里弹出。和好友的房间在 开始游戏 > 匹配 中。
+online.invites_note	好友的房间邀请会在这里弹出。和好友的房间在 开始游戏 > VS LOCAL 中。
 settings.kicker	游戏 · 摄像头 · 操作
 training.gestures_live	动作  （在摄像头前摆出姿势 - 出拳 = 一只手臂向侧面伸直）
 training.gestures_sim	动作  （按住按键来模拟姿势）
@@ -188,7 +188,7 @@ arcade.rule_retry	输掉一回合？选择继续即可重试。
 home.hint	主菜单
 settings.master_volume	主音量
 settings.match_time	对局时间
-play.matchmaking_card	匹配\n房间
+play.matchmaking_card	VS\nLOCAL
 hint.move	移动
 play.matchmaking_desc	创建房间，分享房间码或按名称邀请好友。
 play.no_internet_tag	没有网络

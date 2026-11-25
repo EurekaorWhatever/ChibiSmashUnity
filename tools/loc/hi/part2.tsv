@@ -44,7 +44,7 @@ name.pad_hint	गेमपैड: A = सेव · Y = नाम सुझाए
 online.connected_agreeing	कनेक्ट हो गया। मैच तय हो रहा है...
 online.host_settings_changed	होस्ट की सेटिंग्स बदल गईं — रूम में फिर से जुड़ें।
 online.version_mismatch	आपका प्रतिद्वंद्वी गेम का दूसरा वर्शन चला रहा है। दोनों खिलाड़ियों को एक ही बिल्ड चाहिए।
-rooms.title	मैचमेकिंग
+rooms.title	VS LOCAL
 rooms.kicker	रूम  ·  2-4 खिलाड़ी  ·  बनाएँ · जुड़ें · नाम से बुलाएँ
 rooms.create_rooms	रूम बनाएँ
 rooms.join_room	रूम में जुड़ें
@@ -56,7 +56,7 @@ rooms.empty_help	रूम बनाने के लिए रूम बना�
 rooms.capacity_note	एक रूम में 2 से 4 खिलाड़ी। दोस्तों को उनके खिलाड़ी नाम से बुलाएँ।
 rooms.invites_paused	रूम इनवाइट कुछ मिनटों के लिए रुके हैं
 rooms.refresh	रिफ़्रेश
-rooms.hint	मैचमेकिंग  ·  रूम
+rooms.hint	VS LOCAL  ·  रूम
 rooms.new	नया
 rooms.you_host	आप होस्ट हैं
 rooms.open	खोलें
@@ -93,7 +93,7 @@ room.starting	शुरू हो रहा है...
 room.start_fight	लड़ाई शुरू करें
 room.close	रूम बंद करें
 room.leave	रूम छोड़ें
-room.hint	मैचमेकिंग  ·  रूम
+room.hint	VS LOCAL  ·  रूम
 room.code	कोड
 room.copy	कॉपी
 room.host_can_invite	होस्ट किसी दोस्त को नाम से बुला सकता है।

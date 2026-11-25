@@ -51,7 +51,7 @@ name.pad_hint	Геймпад: A = сохранить · Y = предложить
 online.connected_agreeing	Подключено. Согласуем матч...
 online.host_settings_changed	Хост изменил настройки — зайди в комнату заново.
 online.version_mismatch	У соперника другая версия игры. Обоим игрокам нужна одна и та же версия.
-rooms.title	ПОИСК МАТЧА
+rooms.title	VS LOCAL
 rooms.kicker	КОМНАТЫ  ·  2-4 ИГРОКА  ·  СОЗДАТЬ · ВОЙТИ · ПРИГЛАСИТЬ ПО ИМЕНИ
 rooms.create_rooms	СОЗДАТЬ КОМНАТЫ
 rooms.join_room	ВОЙТИ В КОМНАТУ
@@ -63,7 +63,7 @@ rooms.empty_help	Нажми СОЗДАТЬ КОМНАТЫ, чтобы созда
 rooms.capacity_note	В комнате от 2 до 4 игроков. Приглашай друзей по имени игрока.
 rooms.invites_paused	Приглашения в комнаты приостановлены на несколько минут
 rooms.refresh	ОБНОВИТЬ
-rooms.hint	ПОИСК МАТЧА  ·  КОМНАТЫ
+rooms.hint	VS LOCAL  ·  КОМНАТЫ
 rooms.new	НОВАЯ
 rooms.you_host	ТЫ ХОСТ
 rooms.open	ОТКРЫТЬ
@@ -100,7 +100,7 @@ room.starting	ЗАПУСК...
 room.start_fight	НАЧАТЬ БОЙ
 room.close	ЗАКРЫТЬ КОМНАТУ
 room.leave	ПОКИНУТЬ КОМНАТУ
-room.hint	ПОИСК МАТЧА  ·  КОМНАТА
+room.hint	VS LOCAL  ·  КОМНАТА
 room.code	КОД
 room.copy	КОПИРОВАТЬ
 room.host_can_invite	Хост может пригласить друга по имени.

@@ -57,8 +57,8 @@ loading.ready	Gotowe
 onboarding.welcome	WITAJ!
 onboarding.your_account	TWOJE KONTO
 onboarding.your_name	TWOJA NAZWA GRACZA
-rooms.backdrop_create	DOBIERANIE  ·  TWORZENIE POKOJÓW
-rooms.backdrop_join	DOBIERANIE  ·  DOŁĄCZ DO POKOJU
+rooms.backdrop_create	VS LOCAL  ·  TWORZENIE POKOJÓW
+rooms.backdrop_join	VS LOCAL  ·  DOŁĄCZ DO POKOJU
 precheck.all_passed	WSZYSTKIE TESTY ZALICZONE
 precheck.failed	TEST NIEUDANY
 precheck.lighting	OŚWIETLENIE
@@ -159,7 +159,7 @@ training.camera_on	ŚLEDZENIE KAMERĄ: WŁ.
 collection.hint	KOLEKCJA POSTACI
 play.choose_style	WYBIERZ STYL GRY
 online.kicker	WYBIERZ STYL GRY  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	WYBIERZ WALKĘ  ·  VS ONLINE · DOBIERANIE · VS CPU
+play.kicker	WYBIERZ WALKĘ  ·  VS ONLINE · VS LOCAL · VS CPU
 play.coming_soon	WKRÓTCE
 training.cv	WIDZENIE KOMPUTEROWE
 online.connection	POŁĄCZENIE
@@ -177,7 +177,7 @@ exit.title	WYJŚĆ Z GRY?
 online.royale_desc	Każdy walczy sam za siebie. Wygrywa ostatni wojownik na nogach.
 arcade.kicker	PIĘCIU RYWALI · JEDNO PODEJŚCIE
 loading.for_battle	DO WALKI
-online.invites_note	Tu pojawiają się zaproszenia do pokoi od przyjaciół. Pokoje z przyjaciółmi są w GRAJ > DOBIERANIE.
+online.invites_note	Tu pojawiają się zaproszenia do pokoi od przyjaciół. Pokoje z przyjaciółmi są w GRAJ > VS LOCAL.
 settings.kicker	GRA · KAMERA · STEROWANIE
 training.gestures_live	GESTY  (zrób pozę przed kamerą - cios = jedna ręka wyprostowana w bok)
 training.gestures_sim	GESTY  (przytrzymaj klawisz, aby zasymulować pozę)
@@ -188,7 +188,7 @@ arcade.rule_retry	Przegrana runda? Kontynuuj i spróbuj ponownie.
 home.hint	MENU GŁÓWNE
 settings.master_volume	GŁOŚNOŚĆ OGÓLNA
 settings.match_time	CZAS MECZU
-play.matchmaking_card	DOBIE-\nRANIE
+play.matchmaking_card	VS\nLOCAL
 hint.move	RUCH
 play.matchmaking_desc	Stwórz pokój, udostępnij kod lub zaproś przyjaciół po nazwie.
 play.no_internet_tag	BRAK INTERNETU

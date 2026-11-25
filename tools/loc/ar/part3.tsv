@@ -76,7 +76,7 @@ net.friend_no_answer	لم يستجب صديقك.
 net.start_cancelled	أُلغي البدء.
 net.friend_no_connect	لم يتصل صديقك.
 net.enter_code	أدخل رمز الغرفة الذي يعرضه صديقك.
-net.lan_browser	اللعب عبر LAN غير متاح في المتصفح. استخدم الغرف أو المطابقة، أو نسخة الكمبيوتر للعب عبر LAN.
+net.lan_browser	اللعب عبر LAN غير متاح في المتصفح. استخدم الغرف أو VS LOCAL، أو نسخة الكمبيوتر للعب عبر LAN.
 net.enter_ip	أدخل عنوان IP للمضيف.
 net.this_pc_ip	عنوان IP لهذا الكمبيوتر
 net.signing_in	جارٍ تسجيل الدخول...

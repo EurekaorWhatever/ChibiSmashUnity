@@ -57,8 +57,8 @@ loading.ready	Siap
 onboarding.welcome	SELAMAT DATANG!
 onboarding.your_account	AKUNMU
 onboarding.your_name	NAMA PEMAINMU
-rooms.backdrop_create	MATCHMAKING  ·  BUAT ROOM
-rooms.backdrop_join	MATCHMAKING  ·  GABUNG ROOM
+rooms.backdrop_create	VS LOCAL  ·  BUAT ROOM
+rooms.backdrop_join	VS LOCAL  ·  GABUNG ROOM
 precheck.all_passed	SEMUA CEK LULUS
 precheck.failed	CEK GAGAL
 precheck.lighting	PENCAHAYAAN
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	KOLEKSI KARAKTER
 home.settings	PENGATURAN
 home.exit	KELUAR GAME
-home.play_desc	Quick match Vs Online, room Matchmaking bersama teman, atau Vs CPU
+home.play_desc	Quick match Vs Online, room VS LOCAL bersama teman, atau Vs CPU
 home.training_desc	Atur kamera, latihan gerakan, dan boneka latihan
 home.arcade_desc	Lawan kelima rival berturut-turut di semua arena
 home.collection_desc	Skin, senjata, dan banner kosmetik
@@ -159,7 +159,7 @@ training.camera_on	PELACAKAN KAMERA: NYALA
 collection.hint	KOLEKSI KARAKTER
 play.choose_style	PILIH GAYA BERMAIN
 online.kicker	PILIH GAYA BERMAIN  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	PILIH PERTARUNGANMU  ·  VS ONLINE · MATCHMAKING · VS CPU
+play.kicker	PILIH PERTARUNGANMU  ·  VS ONLINE · VS LOCAL · VS CPU
 play.coming_soon	SEGERA HADIR
 training.cv	COMPUTER VISION
 online.connection	KONEKSI
@@ -177,7 +177,7 @@ exit.title	KELUAR GAME?
 online.royale_desc	Semua lawan semua. Petarung terakhir yang bertahan menang.
 arcade.kicker	LIMA RIVAL · SATU PERJALANAN
 loading.for_battle	UNTUK BERTARUNG
-online.invites_note	Undangan room dari teman muncul di sini. Room bersama teman ada di MAIN > MATCHMAKING.
+online.invites_note	Undangan room dari teman muncul di sini. Room bersama teman ada di MAIN > VS LOCAL.
 settings.kicker	GAME · KAMERA · KONTROL
 training.gestures_live	GERAKAN  (peragakan pose di depan kamera - pukul = satu lengan lurus ke samping)
 training.gestures_sim	GERAKAN  (tahan tombol untuk menyimulasikan pose)
@@ -188,7 +188,7 @@ arcade.rule_retry	Kalah satu ronde? Lanjutkan dan coba lagi.
 home.hint	MENU UTAMA
 settings.master_volume	VOLUME UTAMA
 settings.match_time	WAKTU PERTANDINGAN
-play.matchmaking_card	MATCH\nMAKING
+play.matchmaking_card	VS\nLOCAL
 hint.move	GERAK
 play.matchmaking_desc	Buat room, bagikan kodenya, atau undang teman lewat nama.
 play.no_internet_tag	TIDAK ADA INTERNET

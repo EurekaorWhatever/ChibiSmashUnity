@@ -36,7 +36,7 @@ name.pad_hint	パッド：A = 保存 · Y = 名前をおまかせ
 online.connected_agreeing	接続しました。試合内容を確認中...
 online.host_settings_changed	ホストが設定を変更しました — ルームに再参加してください。
 online.version_mismatch	対戦相手のゲームのバージョンが異なります。両プレイヤーが同じビルドを使う必要があります。
-rooms.title	マッチメイク
+rooms.title	VS LOCAL
 rooms.kicker	ルーム  ·  2-4人  ·  作成 · 参加 · 名前で招待
 rooms.create_rooms	ルーム作成
 rooms.join_room	ルームに参加
@@ -48,7 +48,7 @@ rooms.empty_help	ルーム作成 で新しく作るか、フレンドのルー�
 rooms.capacity_note	ルームは2〜4人用です。フレンドはプレイヤー名で招待できます。
 rooms.invites_paused	ルーム招待を数分間停止中
 rooms.refresh	更新
-rooms.hint	マッチメイク  ·  ルーム
+rooms.hint	VS LOCAL  ·  ルーム
 rooms.new	新規
 rooms.you_host	あなたがホスト
 rooms.open	開く
@@ -85,7 +85,7 @@ room.starting	開始中...
 room.start_fight	対戦開始
 room.close	ルームを閉じる
 room.leave	ルームを退出
-room.hint	マッチメイク  ·  ルーム
+room.hint	VS LOCAL  ·  ルーム
 room.code	コード
 room.copy	コピー
 room.host_can_invite	ホストは名前でフレンドを招待できます。

@@ -51,7 +51,7 @@ name.pad_hint	Kol: A = kaydet · Y = ad öner
 online.connected_agreeing	Bağlandı. Maç ayarlanıyor...
 online.host_settings_changed	Ev sahibinin ayarları değişti — odaya yeniden katıl.
 online.version_mismatch	Rakibin oyunun farklı bir sürümünü kullanıyor. İki oyuncunun da aynı sürüme ihtiyacı var.
-rooms.title	EŞLEŞTİRME
+rooms.title	VS LOCAL
 rooms.kicker	ODALAR  ·  2-4 OYUNCU  ·  KUR · KATIL · ADLA DAVET ET
 rooms.create_rooms	ODA KUR
 rooms.join_room	ODAYA KATIL
@@ -63,7 +63,7 @@ rooms.empty_help	Bir oda kurmak için ODA KUR'a, arkadaşının oda koduyla kat�
 rooms.capacity_note	Odalar 2 ila 4 oyuncu alır. Arkadaşlarını oyuncu adlarıyla davet et.
 rooms.invites_paused	Oda davetleri birkaç dakikalığına durduruldu
 rooms.refresh	YENİLE
-rooms.hint	EŞLEŞTİRME  ·  ODALAR
+rooms.hint	VS LOCAL  ·  ODALAR
 rooms.new	YENİ
 rooms.you_host	EV SAHİBİ SENSİN
 rooms.open	AÇ
@@ -100,7 +100,7 @@ room.starting	BAŞLIYOR...
 room.start_fight	DÖVÜŞÜ BAŞLAT
 room.close	ODAYI KAPAT
 room.leave	ODADAN ÇIK
-room.hint	EŞLEŞTİRME  ·  ODA
+room.hint	VS LOCAL  ·  ODA
 room.code	KOD
 room.copy	KOPYALA
 room.host_can_invite	Ev sahibi bir arkadaşını adıyla davet edebilir.

@@ -53,7 +53,7 @@
     {"code": "lg", "name": "Ganda", "native": "Luganda", "script": "Latn", "rtl": false, "translated": false},
     {"code": "ka", "name": "Georgian", "native": "ქართული", "script": "Geor", "rtl": false, "translated": false},
     {"code": "de", "name": "German", "native": "Deutsch", "script": "Latn", "rtl": false, "translated": true},
-    {"code": "el", "name": "Greek", "native": "Ελληνικά", "script": "Grek", "rtl": false, "translated": false},
+    {"code": "el", "name": "Greek", "native": "Ελληνικά", "script": "Grek", "rtl": false, "translated": true},
     {"code": "gn", "name": "Guarani", "native": "Avañe'ẽ", "script": "Latn", "rtl": false, "translated": false},
     {"code": "gu", "name": "Gujarati", "native": "ગુજરાતી", "script": "Gujr", "rtl": false, "translated": false},
     {"code": "ht", "name": "Haitian Creole", "native": "Kreyòl ayisyen", "script": "Latn", "rtl": false, "translated": false},

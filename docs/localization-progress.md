@@ -64,3 +64,7 @@ Sheets in `tools/loc/<code>/*.tsv`, built with `python -P tools/loc/build_table.
 - [x] ar Arabic (769/769 keys; RTL, needs shaping + bidi + a bundled Arabic font before it renders, see Fonts)
 - [x] pl Polish (769/769 keys)
 - [x] hi Hindi (769/769 keys; Devanagari needs shaping + a bundled font before it renders, see Fonts)
+- [x] el Greek (769/769 keys)
+
+2026-11-25: the MATCHMAKING mode is renamed **VS LOCAL** (user decision). Like VS ONLINE and VS CPU, the mode name stays
+English in every language; keys keep their `matchmaking` ids (`play.matchmaking_card`, `rooms.title` ...).

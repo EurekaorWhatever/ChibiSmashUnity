@@ -51,7 +51,7 @@ name.pad_hint	Gamepad: A = speichern · Y = Namen vorschlagen
 online.connected_agreeing	Verbunden. Match wird abgestimmt...
 online.host_settings_changed	Die Einstellungen des Hosts haben sich geändert — tritt dem Raum neu bei.
 online.version_mismatch	Dein Gegner nutzt eine andere Spielversion. Beide Spieler brauchen dieselbe Version.
-rooms.title	MATCHMAKING
+rooms.title	VS LOCAL
 rooms.kicker	RÄUME  ·  2-4 SPIELER  ·  ERSTELLEN · BEITRETEN · PER NAME EINLADEN
 rooms.create_rooms	RÄUME ERSTELLEN
 rooms.join_room	RAUM BEITRETEN
@@ -63,7 +63,7 @@ rooms.empty_help	Drück RÄUME ERSTELLEN, um einen zu machen, oder RAUM BEITRETE
 rooms.capacity_note	Räume fassen 2 bis 4 Spieler. Lade Freunde über ihren Spielernamen ein.
 rooms.invites_paused	Raum-Einladungen für ein paar Minuten pausiert
 rooms.refresh	AKTUALISIEREN
-rooms.hint	MATCHMAKING  ·  RÄUME
+rooms.hint	VS LOCAL  ·  RÄUME
 rooms.new	NEU
 rooms.you_host	DU BIST HOST
 rooms.open	ÖFFNEN
@@ -100,7 +100,7 @@ room.starting	STARTET...
 room.start_fight	KAMPF STARTEN
 room.close	RAUM SCHLIESSEN
 room.leave	RAUM VERLASSEN
-room.hint	MATCHMAKING  ·  RAUM
+room.hint	VS LOCAL  ·  RAUM
 room.code	CODE
 room.copy	KOPIEREN
 room.host_can_invite	Der Host kann einen Freund per Name einladen.

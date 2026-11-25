@@ -57,8 +57,8 @@ loading.ready	Bereit
 onboarding.welcome	WILLKOMMEN!
 onboarding.your_account	DEIN KONTO
 onboarding.your_name	DEIN SPIELERNAME
-rooms.backdrop_create	MATCHMAKING  ·  RÄUME ERSTELLEN
-rooms.backdrop_join	MATCHMAKING  ·  RAUM BEITRETEN
+rooms.backdrop_create	VS LOCAL  ·  RÄUME ERSTELLEN
+rooms.backdrop_join	VS LOCAL  ·  RAUM BEITRETEN
 precheck.all_passed	ALLE CHECKS BESTANDEN
 precheck.failed	CHECK FEHLGESCHLAGEN
 precheck.lighting	LICHT
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	CHARAKTERSAMMLUNG
 home.settings	EINSTELLUNGEN
 home.exit	SPIEL BEENDEN
-home.play_desc	Online-Schnellspiel, Matchmaking-Räume mit Freunden oder gegen die CPU
+home.play_desc	Online-Schnellspiel, VS LOCAL-Räume mit Freunden oder gegen die CPU
 home.training_desc	Kamera einrichten, Gesten üben und ein Trainingsdummy
 home.arcade_desc	Alle fünf Rivalen nacheinander über alle Arenen
 home.collection_desc	Skins, Waffen und das Kosmetik-Banner
@@ -159,7 +159,7 @@ training.camera_on	KAMERA-TRACKING: AN
 collection.hint	CHARAKTERSAMMLUNG
 play.choose_style	WÄHLE EINEN SPIELSTIL
 online.kicker	WÄHLE EINEN SPIELSTIL  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	WÄHLE DEINEN KAMPF  ·  VS ONLINE · MATCHMAKING · VS CPU
+play.kicker	WÄHLE DEINEN KAMPF  ·  VS ONLINE · VS LOCAL · VS CPU
 play.coming_soon	DEMNÄCHST
 training.cv	COMPUTER VISION
 online.connection	VERBINDUNG
@@ -177,7 +177,7 @@ exit.title	SPIEL BEENDEN?
 online.royale_desc	Jeder für sich. Wer zuletzt steht, gewinnt.
 arcade.kicker	FÜNF RIVALEN · EIN DURCHLAUF
 loading.for_battle	FÜR DEN KAMPF
-online.invites_note	Raum-Einladungen von Freunden erscheinen hier. Räume mit Freunden findest du unter SPIELEN > MATCHMAKING.
+online.invites_note	Raum-Einladungen von Freunden erscheinen hier. Räume mit Freunden findest du unter SPIELEN > VS LOCAL.
 settings.kicker	SPIEL · KAMERA · STEUERUNG
 training.gestures_live	GESTEN  (mach die Pose vor der Kamera - Schlag = einen Arm gerade zur Seite strecken)
 training.gestures_sim	GESTEN  (halte die Taste, um die Pose zu simulieren)
@@ -188,7 +188,7 @@ arcade.rule_retry	Runde verloren? Mach weiter und versuch sie erneut.
 home.hint	HAUPTMENÜ
 settings.master_volume	GESAMTLAUTSTÄRKE
 settings.match_time	MATCHDAUER
-play.matchmaking_card	MATCH\nMAKING
+play.matchmaking_card	VS\nLOCAL
 hint.move	BEWEGEN
 play.matchmaking_desc	Erstelle einen Raum, teile den Code oder lade Freunde per Name ein.
 play.no_internet_tag	KEIN INTERNET

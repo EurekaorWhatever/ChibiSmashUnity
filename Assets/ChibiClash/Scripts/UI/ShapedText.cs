@@ -32,7 +32,7 @@ namespace ChibiClash
                 {
                     int h = text.GetHashCode();
                     h = h * 31 + px; h = h * 31 + wrap; h = h * 31 + (bold ? 1 : 0);
-                    h = h * 31 + (font != null ? font.GetInstanceID() : 0);
+                    h = h * 31 + (font != null ? font.GetHashCode() : 0);
                     return h * 31 + rich.r + (rich.g << 8) + (rich.b << 16);
                 }
             }

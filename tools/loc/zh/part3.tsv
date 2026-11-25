@@ -64,7 +64,7 @@ net.friend_no_answer	你的好友没有回应。
 net.start_cancelled	已取消开始。
 net.friend_no_connect	你的好友未能连接。
 net.enter_code	输入好友显示的房间码。
-net.lan_browser	浏览器中无法进行 LAN 游戏。请使用 房间 或 匹配，或使用 PC 版进行 LAN 游戏。
+net.lan_browser	浏览器中无法进行 LAN 游戏。请使用 房间 或 VS LOCAL，或使用 PC 版进行 LAN 游戏。
 net.enter_ip	输入主机的 IP 地址。
 net.this_pc_ip	本机 IP
 net.signing_in	登录中...
