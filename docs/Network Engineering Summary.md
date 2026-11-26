@@ -1,6 +1,6 @@
 # 🌐 Network Engineering Summary: Chibi Clash
 
-🎮 Unity 6000.6.7f1 · 📡 protocol 6 · 📜 rules v25 · 👥 2-4 players online · 📅 2026-11-23
+🎮 Unity 6000.6.7f1 · 📡 protocol 6 · 📜 rules v26 · 👥 2-4 players online · 📅 2026-11-26
 
 🔗 Linked to Unity Gaming Services (Relay, Lobby and Friends turned on; Relay region tested: Singapore)
 
@@ -66,13 +66,15 @@ Rollback only works if both computers get **exactly** the same result. So the ga
 | Mode | How you connect |
 |---|---|
 | 🏠 Matchmaking (rooms) | PLAY → MATCHMAKING. Make a private room (2-4 players) and share its code. 👥 The fight starts when everyone in the room (2, 3 or 4 players) pressed OK. 3-4 players = 👑 Battle Royale. |
-| 📨 Invite by name | In your room, type a friend's in-game name. They see the invite for 60 seconds and press join. ✅ Tested with 2 games: joined in 4 seconds. |
+| 📨 Invite by name | In your room, type a player's in-game name. They see the invite for 60 seconds on PLAY > CREATE ROOM (bottom-right card) and press join. No invites through the friends list (removed 2026-11-26). ✅ Tested with 2 games: joined in 4 seconds. |
 | ⚡ Quick match | Vs Online → Solo. 👑 Battle Royale for up to 4. Finds the closest players first (your country → region → world). Starts at once with 4, or with 2-3 after 20 seconds. |
 | 🏢 LAN | Same Wi-Fi or network, no internet needed (PC version only) |
 | 🤖 Vs CPU / Training | Offline, the same game rules. Vs CPU: easy, medium or hard. |
 
 🤝 Before each online match, both games check they are the same version. Different versions are not allowed to
 play together.
+
+🆕 Rules v26 (2026-11-26): 📷 with a full meter, holding your character's pose for 0.5 s fires the ultimate (the Ult key still works). The camera is for the ultimate only: poses no longer block, super jump or throw a fireball. A v25 game and a v26 game refuse each other.
 
 🆕 Rules v25 (2026-11-23): the game rules now know 3-4 fighters (👑 Battle Royale and 👥 2v2, no friendly fire in 2v2).
 A player who leaves is out at an exact frame and the match goes on. A v24 game and a v25 game refuse each other.

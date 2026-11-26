@@ -6,18 +6,9 @@ using NUnit.Framework;
 
 namespace ChibiClash.Tests
 {
-    /// <summary>ChibiSocialRules: player names, safe display, room codes, invite validation, rate limits.</summary>
+    /// <summary>ChibiSocialRules: player names, safe display, room codes, and no friend-list invites.</summary>
     public class ChibiSocialRulesTests
     {
-        const string Proto = "p2r17";
-
-        static ChibiInviteMessage Invite(string code = "K7Q2PX", string proto = Proto, string kind = ChibiSocialRules.KindInvite) =>
-            new ChibiInviteMessage { Kind = kind, Code = code, Proto = proto, V = ChibiSocialRules.InviteVersion };
-
-        static ChibiInviteVerdict Check(ChibiInviteMessage m, bool friend = true, float now = 100f, float last = float.NegativeInfinity,
-                                        int pending = 0, bool busy = false) =>
-            ChibiSocialRules.ValidateInvite(m, friend, Proto, now, last, pending, busy);
-
         // ================================================================== names
 
         [TestCase("Kira")] [TestCase("Pip_99")] [TestCase("abc")] [TestCase("ABCDEFGHIJKLMNOP")]
@@ -93,74 +84,15 @@ namespace ChibiClash.Tests
         [TestCase("ABC")] [TestCase("ABCDEFGHIJKLM")] [TestCase("AB-CD")] [TestCase("AB CD")] [TestCase("../x")] [TestCase(null)]
         public void NormalizeCode_Invalid_Null(string input) => Assert.IsNull(ChibiSocialRules.NormalizeCode(input));
 
-        // ================================================================== invites
+        // ================================================================== no friend-list invites (2026-11-26)
 
         [Test]
-        public void Invite_FromFriend_SameBuild_Accepted() => Assert.AreEqual(ChibiInviteVerdict.Ok, Check(Invite()));
-
-        [Test]
-        public void Invite_FromStranger_Rejected() =>
-            Assert.AreEqual(ChibiInviteVerdict.NotAFriend, Check(Invite(), friend: false));
-
-        [Test]
-        public void Invite_NullOrOversizedFields_Malformed()
+        public void SocialManager_HasNoFriendListInviteApi()
         {
-            Assert.AreEqual(ChibiInviteVerdict.Malformed, Check(null));
-            Assert.AreEqual(ChibiInviteVerdict.Malformed, Check(new ChibiInviteMessage { Kind = null }));
-            Assert.AreEqual(ChibiInviteVerdict.Malformed, Check(Invite(kind: new string('x', 200))));
-            Assert.AreEqual(ChibiInviteVerdict.Malformed, Check(Invite(proto: new string('p', 500))));
-        }
-
-        [Test]
-        public void Invite_WrongKind_Rejected() =>
-            Assert.AreEqual(ChibiInviteVerdict.WrongKind, Check(Invite(kind: ChibiSocialRules.KindDecline)));
-
-        [TestCase("")] [TestCase("AB")] [TestCase("<b>HACK</b>")] [TestCase("ABCDEFGHIJKLMNOP")]
-        public void Invite_BadCode_Rejected(string code) => Assert.AreEqual(ChibiInviteVerdict.BadCode, Check(Invite(code)));
-
-        [Test]
-        public void Invite_OtherBuild_Rejected() =>
-            Assert.AreEqual(ChibiInviteVerdict.OtherBuild, Check(Invite(proto: "p1r9")));
-
-        [Test]
-        public void Invite_WithinCooldownOfSameSender_Flooding()
-        {
-            Assert.AreEqual(ChibiInviteVerdict.Flooding, Check(Invite(), now: 100f, last: 100f - ChibiSocialRules.InviteCooldown + 0.1f));
-            Assert.AreEqual(ChibiInviteVerdict.Ok, Check(Invite(), now: 100f, last: 100f - ChibiSocialRules.InviteCooldown));
-        }
-
-        [Test]
-        public void Invite_TooManyPending_Flooding() =>
-            Assert.AreEqual(ChibiInviteVerdict.Flooding, Check(Invite(), pending: ChibiSocialRules.MaxPendingInvites));
-
-        [Test]
-        public void Invite_WhileBusy_Ignored() => Assert.AreEqual(ChibiInviteVerdict.Busy, Check(Invite(), busy: true));
-
-        // ------------------------------------------------------------------ SOC-01 (review 2026-11-16)
-
-        static ChibiInviteMessage Decline() => new ChibiInviteMessage { Kind = ChibiSocialRules.KindDecline };
-
-        [Test]
-        public void Decline_FromTheFriendHoldingOurInvite_IsRecognised()
-            => Assert.IsTrue(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, "bob", invitedId: "bob"));
-
-        [Test]
-        public void Decline_WhenNoInviteIsOut_IsIgnored()
-        {
-            // The manager clears its "creating a room for" id as soon as the invite is sent, so the check must use the
-            // id of the friend who HOLDS the invite; with none out, a decline means nothing.
-            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, "bob", invitedId: null));
-            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, null, invitedId: null));
-            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, "", invitedId: ""));
-        }
-
-        [Test]
-        public void Decline_FromSomeoneElseOrANonFriendOrAnotherKind_IsIgnored()
-        {
-            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), true, "eve", invitedId: "bob"), "other friend");
-            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Decline(), false, "bob", invitedId: "bob"), "not a friend");
-            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(Invite(), true, "bob", invitedId: "bob"), "an invite, not a decline");
-            Assert.IsFalse(ChibiSocialRules.IsDeclineOfOurInvite(null, true, "bob", invitedId: "bob"), "no message");
+            // User request 2026-11-26: room invites go by player name only (ChibiNameInvites on VS LOCAL), never through
+            // the friends list. Guard against the old friend-message invite path coming back.
+            foreach (var m in typeof(ChibiSocialManager).GetMembers())
+                StringAssert.DoesNotContain("Invite", m.Name, "friend-list invite member is back: " + m.Name);
         }
     }
 }

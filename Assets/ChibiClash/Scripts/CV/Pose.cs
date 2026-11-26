@@ -179,7 +179,17 @@ namespace ChibiClash
         float postureSum, postureTime;
         int lastSample = -1;
 
-        public float PostureAverage => postureTime > 0f ? postureSum / postureTime : 1f;
+        /// <summary>
+        /// Fraction 0..1 of the sampled match time with good posture. 0 when nothing was sampled: posture is measured only
+        /// from the live camera, so playing with the camera off never counts as good posture (user report 2026-11-26).
+        /// </summary>
+        public float PostureAverage => PostureSampled ? postureSum / postureTime : 0f;
+        /// <summary>True once posture was measured from the live camera this match (see <see cref="SamplePosture"/>).</summary>
+        public bool PostureSampled => postureTime >= MinPostureSeconds;
+        /// <summary>Camera time needed before a posture score counts (a moment in view is not a match's posture).</summary>
+        public const float MinPostureSeconds = 3f;
+        /// <summary>The camera is live and sees a body right now, so <see cref="Posture"/> is a real measurement.</summary>
+        public bool PostureLive => IsLive && Source.HasPose;
 
         public GestureTracker(IPoseSource source) { Source = source; }
 
@@ -210,9 +220,13 @@ namespace ChibiClash
             StableTime += dt;
         }
 
+        /// <summary>
+        /// Add <paramref name="dt"/> of match time to the posture average, only while the live camera sees the player.
+        /// The keyboard simulator always stands upright, so counting it would hand out "good posture" with the camera off.
+        /// </summary>
         public void SamplePosture(float dt)
         {
-            if (!Source.HasPose) return;
+            if (!PostureLive) return;
             postureSum += (Posture >= 0.6f ? 1f : 0f) * dt;
             postureTime += dt;
         }

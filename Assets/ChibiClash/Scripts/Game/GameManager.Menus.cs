@@ -418,7 +418,7 @@ namespace ChibiClash
         /// <summary>
         /// Vs Online: Solo (1v1), 2v2 (Team) and Battle Royale. Only Solo is playable: the fight engine has two fighters,
         /// so the two 4-player styles are locked cards marked COMING SOON. Solo starts QUICK MATCH (a player near you, no
-        /// room). Room invites from friends pop up on this page. Right panel: the connection state, and BACK.
+        /// room). Right panel: the connection state, and BACK.
         /// </summary>
         void PlayStyleView()
         {
@@ -459,8 +459,6 @@ namespace ChibiClash
                         : Loc.T("online.rollback_body");
             Gui.Text(new Rect(x, info.y + 100f, w, 110f), body, 14, Gui.Paper, TextAnchor.UpperLeft, false);
             Gui.Text(new Rect(x, info.y + 214f, w, 60f), Loc.T("play.four_player_later"), 13, Gui.Muted, TextAnchor.UpperLeft, false);
-            Gui.Text(new Rect(x, info.y + 270f, w, 44f), Loc.T("online.invites_note"), 12,
-                     Gui.Gold, TextAnchor.UpperLeft, false);
             if (Gui.Button(new Rect(x, info.yMax - 70f, w, 50f), Loc.T("common.back"), Gui.Steel, 18)) { UiSound.Back(); Go(Page.Play); }
             EndPage();
             NavHints(Loc.T("online.hint"));
@@ -643,15 +641,7 @@ namespace ChibiClash
         readonly List<Skin> armorySkins = new List<Skin>();
         int armorySkinsFor = -1;
 
-        void CollectionView()
-        {
-            Backdrop();
-            NavBar();
-            var a = BeginPage("04", Loc.T("nav.collection"), Loc.T("collection.kicker"));
-            ArmoryTab(a);
-            EndPage();
-            Gui.HintBar(Loc.T("collection.hint"), Gui.Key("WASD", "D-PAD"), Loc.T("hint.move"), Gui.Key("SPACE", "A"), Loc.T("hint.select"), Gui.Key("ESC", "B"), Loc.T("common.back"), Gui.Key("Q / E", "LB / RB"), Loc.T("hint.tabs"));
-        }
+        // CollectionView (the roster screen) lives in GameManager.Collection.cs; ArmoryTab is its SKINS · BANNER sub-view.
 
         void ArmoryTab(Rect a)
         {

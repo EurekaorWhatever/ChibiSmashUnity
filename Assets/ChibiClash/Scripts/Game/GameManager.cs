@@ -119,9 +119,8 @@ namespace ChibiClash
             roomsSvc.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
             roomsSvc.InMatch = () => page == Page.Match || pendingOnline != null;
             roomsSvc.ScreenOpen = () => page == Page.Room;   // room starts only happen while the room screen is shown
-            nameInvites = gameObject.AddComponent<Netcode.ChibiNameInvites>();   // INVITE A FRIEND BY NAME (Vs Online rooms)
+            nameInvites = gameObject.AddComponent<Netcode.ChibiNameInvites>();   // INVITE A PLAYER BY NAME (CREATE ROOM rooms)
             nameInvites.Bind(roomsSvc);   // name, age gate and in-match come from the room service
-            social.Bind(roomsSvc);   // friend invites go into named rooms
             social.PreferredName = () => Netcode.ChibiSocialRules.CleanSavedName(Save.playerName);
             // Only a name claimed worldwide becomes Unity's public name (dev names skip the claim in editor / dev builds).
             social.NameVerified = n => nameRegistry.IsVerified(n) ||
@@ -129,9 +128,6 @@ namespace ChibiClash
             // Age gate enforced inside both services too, not only by the menu (no side path can start online play).
             rooms.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
             social.OnlineAllowed = () => PlayerIdentity.OnlineAllowed(Save.ageBand);
-            // Invites are ignored while playing or while another room flow is running.
-            social.IsBusy = () => page == Page.Match || pendingOnline != null || roomsSvc.Launching ||
-                                  rooms.State == Netcode.ChibiRoomState.Connecting || rooms.State == Netcode.ChibiRoomState.Joining;
             WebcamFeed.SetEnabled(Save.settings.useWebcam);
             ResetCamera();
             account.RestoreOnLaunch(Save.accountId);   // same account on this computer: signed in again silently
@@ -293,6 +289,7 @@ namespace ChibiClash
         /// <summary>Keyboard / gamepad driving of every non-select screen through Gui's spatial focus.</summary>
         void MenuNav()
         {
+            if (CollectionNav()) return;   // roster screen: up / down / prev / next step the roster
             if (MenuInput.Any(NavCmd.Up)) Gui.Navigate(0, -1);
             if (MenuInput.Any(NavCmd.Down)) Gui.Navigate(0, 1);
             if (MenuInput.Any(NavCmd.Left)) Gui.Navigate(-1, 0);
@@ -1185,7 +1182,9 @@ namespace ChibiClash
             Gui.Meter(new Rect(x, p.y + 56f, w, 10f), preCheckT / 5f, state, 20);
             Check(x, p.y + 80f, w, Loc.T("precheck.lighting"), lightOk, lightMsg);
             Check(x, p.y + 140f, w, Loc.T("precheck.framing"), frameOk, frameMsg);
-            Check(x, p.y + 200f, w, Loc.T("precheck.posture"), menuTracker.Posture >= 0.6f, menuTracker.Posture >= 0.6f ? Loc.T("precheck.upright") : Loc.T("precheck.sit_up"));
+            bool postureOk = menuTracker.PostureLive && menuTracker.Posture >= 0.6f;   // camera only: the simulator is always upright
+            Check(x, p.y + 200f, w, Loc.T("precheck.posture"), postureOk,
+                  !menuTracker.PostureLive ? Loc.T("precheck.posture_no_camera") : postureOk ? Loc.T("precheck.upright") : Loc.T("precheck.sit_up"));
 
             if (preCheckT >= 5f && !ok)
             {

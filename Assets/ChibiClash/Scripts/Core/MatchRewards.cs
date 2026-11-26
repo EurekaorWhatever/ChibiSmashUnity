@@ -13,8 +13,10 @@ namespace ChibiClash
         /// <summary>Training matches give nothing (MC:198).</summary>
         public bool Training;
         public int CombosLanded, UltsUsed, Parries;
-        /// <summary>Fraction 0..1 of match time with good posture (GestureTracker.PostureAverage; 1 when never sampled).</summary>
+        /// <summary>Fraction 0..1 of match time with good posture (GestureTracker.PostureAverage; 0 when never sampled).</summary>
         public float PostureAverage;
+        /// <summary>Posture was measured by the live camera this match. False (camera off): no posture coins or quest.</summary>
+        public bool PostureTracked;
     }
 
     /// <summary>
@@ -35,13 +37,17 @@ namespace ChibiClash
             log.Add(Loc.T(m.Pve ? (m.Won ? "rewards.pve_victory" : "rewards.pve_match") : m.Won ? "rewards.victory" : "rewards.match_played", matchCoins));
             save.coins += matchCoins;
 
-            int postureCoins = Mathf.RoundToInt(m.PostureAverage * 30f);
-            log.Add(Loc.T("rewards.posture", Mathf.RoundToInt(m.PostureAverage * 100f), postureCoins));
-            save.coins += postureCoins;
+            if (m.PostureTracked)
+            {
+                int postureCoins = Mathf.RoundToInt(m.PostureAverage * 30f);
+                log.Add(Loc.T("rewards.posture", Mathf.RoundToInt(m.PostureAverage * 100f), postureCoins));
+                save.coins += postureCoins;
+            }
+            else log.Add(Loc.T("rewards.posture_off"));   // camera off: posture was never measured, so no posture coins
 
             if (m.Won) save.Progress("win", 1, log);
             if (m.Won && m.Pve) save.Progress("pve", 1, log);
-            if (m.PostureAverage >= 0.8f) save.Progress("posture", 1, log);
+            if (m.PostureTracked && m.PostureAverage >= 0.8f) save.Progress("posture", 1, log);
             save.Progress("combo", m.CombosLanded, log);
             save.Progress("ult", m.UltsUsed, log);
             save.Progress("parry", m.Parries, log);

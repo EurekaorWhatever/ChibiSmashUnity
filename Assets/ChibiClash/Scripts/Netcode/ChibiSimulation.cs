@@ -283,7 +283,13 @@ namespace ChibiClash.Netcode
         public const int UltWindowTicks = 180, UltRetryTicks = 90;
         /// <summary>The class gesture must be held for StableTime &gt;= 0.15 s = 9 consecutive real ticks (F:412).</summary>
         public const int UltGestureHoldTicks = 9;
-        /// <summary>Saturation cap of <see cref="ChibiFighterSim.GestureTicks"/> (only the 9-tick threshold matters).</summary>
+        /// <summary>
+        /// Rules v26 pose ultimate (user request 2026-11-26): with a full meter, holding the class ult gesture for this many
+        /// consecutive REAL ticks (0.5 s) fires the ultimate, no window and no key needed. Longer than the 9-tick window
+        /// match so a pose passing through on the way to another stance is not mistaken for it.
+        /// </summary>
+        public const int UltPoseHoldTicks = 30;
+        /// <summary>Saturation cap of <see cref="ChibiFighterSim.GestureTicks"/> (only the 9- and 30-tick thresholds matter).</summary>
         public const int GestureTicksCap = 255;
         /// <summary>HUD prompt timers (F:422 Detected 2 s, F:431 Failed 1.3 s), real ticks. Presentation only, deterministic.</summary>
         public const int PromptDetectedTicks = 120, PromptFailedTicks = 78;
@@ -326,6 +332,7 @@ namespace ChibiClash.Netcode
             UltWindowTicks, UltRetryTicks, UltGestureHoldTicks, GestureTicksCap, PromptDetectedTicks, PromptFailedTicks,
             SuperJumpCd, SuperJumpVel, PoseShotCd, PoseShotLock, PoseShotOx, PoseShotOy, PoseShotVel, PoseShotR,
             PoseShotLife, PoseShotMult, PoseShotKbX, PoseShotKbY, PoseShotStun, PoseSlot,
+            UltPoseHoldTicks,   // rules v26
         };
 
         /// <summary>
@@ -364,7 +371,8 @@ namespace ChibiClash.Netcode
         /// <remarks>23: balance pass (review 2026-11-16 batch 4, B4-1..B4-3, 2026-11-17): trip loops removed (grounded trip stun Bruna down tilt 22, Ren down tilt 26, Kaia low sweep 28, was 34); Bruna down smash knockback 120000/90000 (was 45000/157500, straight up); the walk cancel's "on hit" needs a landed or blocked melee hit (MoveConnected, rolled back and hashed; a touch on an invulnerable, hovering, countered or parried target no longer counts); attack presses in a dash's last AttackBufferTicks are buffered and come out when the dash ends.</remarks>
         /// <remarks>24: escape dash (ED-1, 2026-11-17): a Dash press during a knockback launch (not set knockback) after 10 game ticks of it, with DashCd 0, halves Vx / Vy, ends the hitstun and the launch and starts the 33-tick dash cooldown (no invuln, no dash motion); LaunchAge and EscapeDashes per fighter in state and hash; EscapeMinAge / EscapeSpeedP / LaunchAgeCap in the config hash.</remarks>
         /// <remarks>25: four players, Phase 2a (four-player-design.md 1.3-1.5, section 9, 2026-11-23): Battle Royale (FFA) and Team (2v2) for 3-4 fighters, friendly fire off in Team for everything a player owns, hazards hit everyone, 3 stocks each, elimination places (same-tick ties shared), team / FFA timeout ranking, WinnerMask / Place; presentMask (a leaver is eliminated at an exact tick); hold steal clears the old holder's program victim; same-tick grab chains resolve order-independently (a grabber grabbed this tick whiffs); a pierce shot that hit a fighter can still be destroyed or reflected by it (3-4 fighters); LastHitBy cleared on respawn; spawns and respawn offsets for 3-4 fighters; pools 128 / 24 / 8; every four-player field hashed always (the Phase 1 1v1 canonical checksum is gone).</remarks>
-        public const int RulesVersion = 25;
+        /// <remarks>26: pose ultimate (user request 2026-11-26): with a full meter, the class ult gesture held 30 real ticks (UltPoseHoldTicks, in the config hash) fires the ultimate through the v15 fire path (also while stunned or held, like the old gesture window); the Ult key press (v22) is unchanged and stays the fallback when no camera runs. The camera is for the ultimate ONLY (user decision CI-6): CrossArms no longer blocks, RaiseHands no longer Super Jumps, PunchForward no longer fires the Pose Fireball (their constants stay in the config hash, unused).</remarks>
+        public const int RulesVersion = 26;
 
         public uint Seed;
         public FighterClass Class0, Class1;
@@ -1272,7 +1280,7 @@ namespace ChibiClash.Netcode
 
             f.LatchedEdges |= raw & ~f.PrevInput;
             f.LatchedHeld |= raw & (int)ChibiButtons.Shield;
-            if (g == (int)Gesture.CrossArms && f.UltWindowTicks == 0) f.LatchedHeld |= (int)ChibiButtons.Shield;
+            // Rules v26 (user decision CI-6, 2026-11-26): the camera is for the ultimate only, so CrossArms no longer blocks.
             f.PrevInput = raw;
         }
 
@@ -1309,7 +1317,17 @@ namespace ChibiClash.Netcode
                 f.UltPrompt = (int)ChibiUltPrompt.Hidden;
                 f.UltPromptTicks = 0;
             }
-            if (f.UltWindowTicks == 0) return;
+            if (f.UltWindowTicks == 0)
+            {
+                // Rules v26: the camera pose fires the ultimate by itself once the meter is full.
+                if (PoseUltReady(f) && InputEnabled(s))
+                {
+                    f.UltPrompt = (int)ChibiUltPrompt.Detected;
+                    f.UltPromptTicks = ChibiSimConst.PromptDetectedTicks;
+                    f.UltFirePending = true;
+                }
+                return;
+            }
 
             int left = f.UltWindowTicks - 1;
             bool match = GestureOf(f.PrevInput) == ChibiSimConst.UltGesture[f.Class] &&
@@ -1330,6 +1348,15 @@ namespace ChibiClash.Netcode
             }
             else f.UltWindowTicks = left;
         }
+
+        /// <summary>
+        /// Rules v26: true when <paramref name="f"/> holds its class ult gesture for <see cref="ChibiSimConst.UltPoseHoldTicks"/>
+        /// real ticks with a full meter, is in play and has no fire pending. Pure read of the state (deterministic).
+        /// </summary>
+        public static bool PoseUltReady(ChibiFighterSim f) =>
+            f.Ult >= ChibiSimConst.UltMax && !f.UltFirePending && f.InPlay &&
+            GestureOf(f.PrevInput) == ChibiSimConst.UltGesture[f.Class] &&
+            f.GestureTicks >= ChibiSimConst.UltPoseHoldTicks;
 
         /// <summary>
         /// Rules v22 (user decision UL-1, 2026-11-14): the Ult press edge while able to act fires the ultimate on this game
@@ -1386,15 +1413,14 @@ namespace ChibiClash.Netcode
         }
 
         /// <summary>
-        /// Builds the step input (raw | LatchedHeld, plus Shield for a CrossArms held with no ult window open, F:261 read
-        /// after the window update), returns the latched edges and pose onset, and clears the latches.
+        /// Builds the step input (raw | LatchedHeld), returns the latched edges and pose onset, and clears the latches.
+        /// Rules v26 (CI-6): a held CrossArms no longer adds Shield (the camera only fires the ultimate).
         /// </summary>
         static ChibiInputPacket ConsumeLatch(ChibiFighterSim f, ChibiInputPacket input, out int edges, out int pose)
         {
             edges = f.LatchedEdges;
             pose = f.LatchedPose;
             int raw = input.Raw | f.LatchedHeld;
-            if (GestureOf(input.Raw) == (int)Gesture.CrossArms && f.UltWindowTicks == 0) raw |= (int)ChibiButtons.Shield;
             var p = new ChibiInputPacket { Raw = (ushort)raw };
             f.LatchedEdges = 0;
             f.LatchedHeld = 0;
@@ -1496,7 +1522,8 @@ namespace ChibiClash.Netcode
             {
                 // canAct section (F:181-185): poses first, then HandleActions, whose first act is the Ult press (F:266,
                 // before the dash / block early returns, so it opens the window while dashing, blocking or attacking).
-                poseLock = HandlePoses(s, i, pose);
+                // Rules v26 (CI-6): poses no longer trigger Super Jump or the Pose Fireball; they only fire the ultimate
+                // (UltWindowRealTick). poseLock stays false.
                 if (TryFireUltPress(f, edges))
                 {
                     // Rules v22: fire now (same path as the gesture fire above). StartMove(5) interrupts a dash, so the
@@ -1799,41 +1826,6 @@ namespace ChibiClash.Netcode
                     f.Vy = 0;
                     break;
             }
-        }
-
-        /// <summary>
-        /// HandlePoses (F:371-392) on this step's latched gesture onset, only while able to act and with no ult window open
-        /// (a telemetry-invalid camera sends gesture None on the input side). RaiseHands: Super Jump (Vy 19 u/s, air jump
-        /// refilled, cd 3 s). PunchForward while free: Pose Fireball (cd 4 s, 0.25 s lock in move slot 6). An onset on
-        /// cooldown is lost, like JustStarted. Returns true when the fireball started its lock this tick.
-        /// </summary>
-        static bool HandlePoses(ChibiSimState s, int i, int pose)
-        {
-            var f = s.F[i];
-            if (pose == 0 || f.UltWindowTicks > 0) return false;
-            if (pose == (int)Gesture.RaiseHands)
-            {
-                if (f.SuperJumpCd > 0) return false;
-                f.SuperJumpCd = ChibiSimConst.SuperJumpCd;
-                f.Vy = ChibiSimConst.SuperJumpVel;
-                f.AirJumps = 1;
-                return false;
-            }
-            if (pose != (int)Gesture.PunchForward || f.PoseShotCd > 0 || f.MoveSlot >= 0) return false;
-            f.PoseShotCd = ChibiSimConst.PoseShotCd;
-            StartMove(s, i, ChibiSimConst.PoseSlot);
-            // actionLock = 0.25 is set on this tick and counted down from the next one (F:204, F:386), so the pose tick
-            // is lock frame 0 (like a program's inline frame 0): a press 15 ticks later is accepted.
-            f.MoveTick = 1;
-            SpawnProjectile(s, new ProjSpec
-            {
-                Owner = i, Kind = ChibiProjKind.PoseFireball, X = f.X + f.Facing * ChibiSimConst.PoseShotOx,
-                Y = f.Y + ChibiSimConst.PoseShotOy, Vx = f.Facing * ChibiSimConst.PoseShotVel, Vy = 0,
-                Radius = ChibiSimConst.PoseShotR, Life = ChibiSimConst.PoseShotLife, Mult = ChibiSimConst.PoseShotMult,
-                KbX = ChibiSimConst.PoseShotKbX, KbY = ChibiSimConst.PoseShotKbY, Stun = ChibiSimConst.PoseShotStun,
-                Flags = ChibiProjectileSim.FDestructible,
-            });
-            return true;
         }
 
         /// <summary>Program id of the fighter's running move (by class and slot), or <see cref="PNone"/>.</summary>

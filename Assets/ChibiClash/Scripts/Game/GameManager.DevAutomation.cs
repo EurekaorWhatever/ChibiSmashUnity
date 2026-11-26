@@ -79,6 +79,33 @@ namespace ChibiClash
             ShowScreen("quickmatch");
         }
 
+#if UNITY_EDITOR
+        /// <summary>Editor only: open CREATE ROOM with a sample room invite waiting (screenshot of the bottom-right card).</summary>
+        public void DevShowInviteCard()
+        {
+            DevScreenshotPrep();
+            nameInvites.DevInjectSample("Kira", "Kira's room");
+            Enter(Page.Rooms);
+        }
+
+        /// <summary>Editor only: open the CHARACTER COLLECTION roster screen.</summary>
+        public void DevShowCollection() { DevScreenshotPrep(); Enter(Page.Collection); }
+
+        /// <summary>
+        /// Editor only, IN MEMORY (never saved): English, no first-launch windows, an adult test age and a name, so a
+        /// screenshot shows the page itself. A later save of this session could still write them, so use a test profile.
+        /// </summary>
+        void DevScreenshotPrep()
+        {
+            if (string.IsNullOrEmpty(Save.language)) Save.language = "en";
+            Loc.Use("en");
+            langDialog = false;
+            if (Save.age <= 0) { Save.age = 20; Save.ageBand = (int)PlayerIdentity.BandForAge(Save.age); }
+            if (string.IsNullOrEmpty(Save.playerName)) Save.playerName = "Pluto";
+            nameDialog = false;
+        }
+#endif
+
         /// <summary>From inside our room: invite a player by in-game name, like the INVITE button.</summary>
         public void DevInvite(string friendName)
         {

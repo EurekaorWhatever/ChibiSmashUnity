@@ -205,7 +205,12 @@ namespace ChibiClash
                 bool showKeys = !m.IsCpu(i) && (!m.Online || i == m.LocalPlayer) && (m.Online || i < 2);   // key layouts exist for P1 / P2 only
                 int keyPlayer = m.Online ? 0 : i;
                 subLine[i] = ch.Weapon + " · " + def.passiveNames[f.Passive];
-                ultReady[i] = showKeys ? Loc.T("hud.ult_ready_press", Bindings.Label(keyPlayer, BindAction.Ultimate)) : Loc.T("hud.ult_ready");
+                // Rules v26: with the camera on, holding the class pose fires the ult too, so the prompt names it.
+                var tr = m.Tracker(i);
+                bool pose = showKeys && tr != null && tr.Source is AutoPoseSource ap && ap.WantsCamera;
+                ultReady[i] = !showKeys ? Loc.T("hud.ult_ready")
+                            : pose ? Loc.T("hud.ult_ready_pose", Bindings.Label(keyPlayer, BindAction.Ultimate), ClassDef.GestureName(def.ultGesture))
+                            : Loc.T("hud.ult_ready_press", Bindings.Label(keyPlayer, BindAction.Ultimate));
                 for (int s = 0; s < 3; s++)
                 {
                     string key = showKeys ? Bindings.Label(keyPlayer, (BindAction)((int)BindAction.Skill1 + s)) + " " : "";
@@ -247,6 +252,7 @@ namespace ChibiClash
             var port = new Rect(px, r.y + 10f, 90f, 90f);
             Gui.Rect(port, new Color(ch.Primary.r * 0.3f, ch.Primary.g * 0.3f, ch.Primary.b * 0.3f, 1f));
             CharacterArt.DrawPortrait(port, ch, 1f, right);
+            Gui.Rect(new Rect(port.x, port.yMax - 7f, port.width, 7f), PctColor(shownPct[i]));   // damage colour strip
             Gui.Frame(port, ch.Primary, 2f);
             var tag = new Rect(px - 6f, r.y + 102f, 102f, 20f);
             Gui.Skew(tag, pc, 0.3f);
@@ -304,16 +310,21 @@ namespace ChibiClash
         // View-only: everything below READS PctM / Stocks / OutTicks / HoverTicks / KosTaken and keeps its own animation
         // clocks. Nothing here feeds back into the simulation (DEVELOPER-GUIDE section 2).
 
-        /// <summary>HUD colour ramp (spec 7, view-only tuning knob): percent stops and their colours, Brawlhalla-style.</summary>
-        static readonly float[] RampAt = { 0f, 50f, 100f, 150f, 200f };
+        /// <summary>
+        /// HUD colour ramp (spec 7, view-only tuning knob): white 0 % → yellow 50 → orange 100 → red 130 → dark red 150+,
+        /// flashing from 150 % (ported from the reference fork's HUD, 2026-11-26).
+        /// </summary>
+        static readonly float[] RampAt = { 0f, 50f, 100f, 130f, 150f };
         static readonly Color[] RampCol =
         {
             new Color(1f, 0.98f, 0.94f),     // 0 %    white
             new Color(1f, 0.86f, 0.24f),     // 50 %   yellow
             new Color(1f, 0.53f, 0.12f),     // 100 %  orange
-            new Color(0.95f, 0.17f, 0.18f),  // 150 %  red
-            new Color(0.66f, 0.04f, 0.09f),  // 200 %+ dark red
+            new Color(0.95f, 0.17f, 0.18f),  // 130 %  red
+            new Color(0.55f, 0.03f, 0.08f),  // 150 %+ dark red, flashing
         };
+        /// <summary>From this percent the colour pulses between red and dark red (danger: a KO is close).</summary>
+        const float FlashFromPct = 150f;
         const float PctBlockW = 140f;     // width reserved for the big number in a player panel
         const int PctBig = 52, PctSmall = 22;
         const float PopTime = 0.32f;      // pop + shake length after the number goes up
@@ -336,6 +347,8 @@ namespace ChibiClash
         public static Color PctColor(float pct)
         {
             if (pct <= RampAt[0]) return RampCol[0];
+            if (pct >= FlashFromPct)
+                return Color.Lerp(RampCol[RampAt.Length - 1], RampCol[RampAt.Length - 2], 0.5f + 0.5f * Mathf.Sin(Time.unscaledTime * 12f));
             for (int k = 1; k < RampAt.Length; k++)
                 if (pct < RampAt[k]) return Color.Lerp(RampCol[k - 1], RampCol[k], (pct - RampAt[k - 1]) / (RampAt[k] - RampAt[k - 1]));
             return RampCol[RampAt.Length - 1];
@@ -646,7 +659,7 @@ namespace ChibiClash
                     resPct[i] = (Mathf.Min(f.PctM, ChibiPercentConst.PctCapM) / 100 / 10f).ToString("0.0") + "%";
                     var tr = m.Tracker(i);
                     resStats[i] = Loc.T("results.stats", f.HitsLanded, f.CombosLanded, f.MaxCombo) + Loc.T("results.stats2", f.UltsUsed, f.Parries) +
-                             (tr == null ? "" : Loc.T("results.posture", Mathf.RoundToInt(tr.PostureAverage * 100f)));
+                             (tr == null || !tr.PostureSampled ? "" : Loc.T("results.posture", Mathf.RoundToInt(tr.PostureAverage * 100f)));
                 }
                 string me = m.NameOf(m.LocalPlayer) ?? "";
                 resRewardsHead = me.Length > 0 ? Loc.T("results.rewards_named", ChibiSocialRules.BaseName(me)) : m.Online ? Loc.T("results.rewards_your") : Loc.T("results.rewards_p1");
@@ -846,6 +859,7 @@ namespace ChibiClash
             var port = new Rect(r.x + 10f, r.y + 9f, 56f, 56f);
             Gui.Rect(port, new Color(ch.Primary.r * 0.3f, ch.Primary.g * 0.3f, ch.Primary.b * 0.3f, 1f));
             CharacterArt.DrawPortrait(port, ch, 1f, false);
+            Gui.Rect(new Rect(port.x, port.yMax - 5f, port.width, 5f), PctColor(shownPct[i]));   // damage colour strip
             Gui.Frame(port, ch.Primary, 2f);
             var tag = new Rect(r.x + 6f, r.y + 69f, 64f, 18f);
             Gui.Skew(tag, SlotColor(m, i), 0.3f);
