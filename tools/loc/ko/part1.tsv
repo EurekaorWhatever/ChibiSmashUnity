@@ -57,8 +57,8 @@ loading.ready	준비 완료
 onboarding.welcome	환영합니다!
 onboarding.your_account	내 계정
 onboarding.your_name	내 플레이어 이름
-rooms.backdrop_create	VS LOCAL  ·  방 만들기
-rooms.backdrop_join	VS LOCAL  ·  방 참가
+rooms.backdrop_create	CREATE ROOM  ·  방 만들기
+rooms.backdrop_join	CREATE ROOM  ·  방 참가
 precheck.all_passed	모든 확인 통과
 precheck.failed	확인 실패
 precheck.lighting	조명
@@ -78,7 +78,7 @@ home.arcade	아케이드
 home.collection	캐릭터 컬렉션
 home.settings	설정
 home.exit	게임 종료
-home.play_desc	온라인 빠른 대전, 친구와 VS LOCAL 방, 또는 Vs CPU
+home.play_desc	온라인 빠른 대전, 친구와 CREATE ROOM 방, 또는 Vs CPU
 home.training_desc	카메라 설정, 동작 연습, 훈련용 허수아비
 home.arcade_desc	모든 스테이지에서 다섯 라이벌과 연속 대결
 home.collection_desc	스킨, 무기, 꾸미기 뽑기
@@ -159,7 +159,7 @@ training.camera_on	카메라 추적: 켜짐
 collection.hint	캐릭터 컬렉션
 play.choose_style	플레이 방식 선택
 online.kicker	플레이 방식 선택  ·  솔로 · 2V2 · BATTLE ROYALE
-play.kicker	대결을 선택하세요  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	대결을 선택하세요  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	출시 예정
 training.cv	컴퓨터 비전
 online.connection	연결
@@ -177,7 +177,7 @@ exit.title	게임을 종료할까요?
 online.royale_desc	모두가 적입니다. 마지막까지 살아남은 파이터가 승리합니다.
 arcade.kicker	라이벌 다섯 명 · 한 번에 돌파
 loading.for_battle	전투 준비
-online.invites_note	친구의 방 초대는 여기에 표시됩니다. 친구와의 방은 플레이 > VS LOCAL에 있습니다.
+online.invites_note	친구의 방 초대는 여기에 표시됩니다. 친구와의 방은 플레이 > CREATE ROOM에 있습니다.
 settings.kicker	게임 · 카메라 · 조작
 training.gestures_live	동작  (카메라 앞에서 포즈 - 펀치 = 한쪽 팔을 옆으로 곧게 뻗기)
 training.gestures_sim	동작  (키를 누르고 있으면 포즈를 시뮬레이션)
@@ -188,7 +188,7 @@ arcade.rule_retry	라운드에서 졌나요? 계속하기로 다시 도전하세
 home.hint	메인 메뉴
 settings.master_volume	전체 음량
 settings.match_time	경기 시간
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	이동
 play.matchmaking_desc	방을 만들고 코드를 공유하거나 이름으로 친구를 초대하세요.
 play.no_internet_tag	인터넷 없음

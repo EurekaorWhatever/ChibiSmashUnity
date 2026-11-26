@@ -57,8 +57,8 @@ loading.ready	準備完了
 onboarding.welcome	ようこそ！
 onboarding.your_account	アカウント
 onboarding.your_name	プレイヤー名
-rooms.backdrop_create	VS LOCAL  ·  ルーム作成
-rooms.backdrop_join	VS LOCAL  ·  ルームに参加
+rooms.backdrop_create	CREATE ROOM  ·  ルーム作成
+rooms.backdrop_join	CREATE ROOM  ·  ルームに参加
 precheck.all_passed	すべてのチェックに合格
 precheck.failed	チェック失敗
 precheck.lighting	明るさ
@@ -78,7 +78,7 @@ home.arcade	アーケード
 home.collection	キャラクターコレクション
 home.settings	設定
 home.exit	ゲーム終了
-home.play_desc	オンラインのクイックマッチ、フレンドとのVS LOCALルーム、または Vs CPU
+home.play_desc	オンラインのクイックマッチ、フレンドとのCREATE ROOMルーム、または Vs CPU
 home.training_desc	カメラ設定、ジェスチャー練習、トレーニング用ダミー
 home.arcade_desc	全ステージで5人のライバルと連続バトル
 home.collection_desc	スキン、武器、コスメティックガチャ
@@ -159,7 +159,7 @@ training.camera_on	カメラトラッキング：オン
 collection.hint	キャラクターコレクション
 play.choose_style	プレイスタイルを選択
 online.kicker	プレイスタイルを選択  ·  ソロ · 2V2 · BATTLE ROYALE
-play.kicker	バトルを選択  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	バトルを選択  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	近日登場
 training.cv	コンピュータビジョン
 online.connection	接続
@@ -177,7 +177,7 @@ exit.title	ゲームを終了しますか？
 online.royale_desc	全員が敵。最後まで立っていたファイターの勝ち。
 arcade.kicker	5人のライバル · 一気に勝ち抜け
 loading.for_battle	バトル開始
-online.invites_note	フレンドからのルーム招待はここに表示されます。フレンドとのルームは プレイ > VS LOCAL にあります。
+online.invites_note	フレンドからのルーム招待はここに表示されます。フレンドとのルームは プレイ > CREATE ROOM にあります。
 settings.kicker	ゲーム · カメラ · 操作
 training.gestures_live	ジェスチャー  （カメラの前でポーズ - パンチ = 片腕を横にまっすぐ伸ばす）
 training.gestures_sim	ジェスチャー  （キーを長押しでポーズをシミュレート）
@@ -188,7 +188,7 @@ arcade.rule_retry	ラウンドに負けても、コンティニューで再挑�
 home.hint	メインメニュー
 settings.master_volume	マスター音量
 settings.match_time	試合時間
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	移動
 play.matchmaking_desc	ルームを作って、コードを共有するか名前でフレンドを招待。
 play.no_internet_tag	オフライン

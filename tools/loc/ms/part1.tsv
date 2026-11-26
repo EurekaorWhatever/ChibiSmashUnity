@@ -57,8 +57,8 @@ loading.ready	Sedia
 onboarding.welcome	SELAMAT DATANG!
 onboarding.your_account	AKAUN ANDA
 onboarding.your_name	NAMA PEMAIN ANDA
-rooms.backdrop_create	VS LOCAL  ·  CIPTA BILIK
-rooms.backdrop_join	VS LOCAL  ·  SERTAI BILIK
+rooms.backdrop_create	CREATE ROOM  ·  CIPTA BILIK
+rooms.backdrop_join	CREATE ROOM  ·  SERTAI BILIK
 precheck.all_passed	SEMUA SEMAKAN LULUS
 precheck.failed	SEMAKAN GAGAL
 precheck.lighting	PENCAHAYAAN
@@ -78,7 +78,7 @@ home.arcade	ARKED
 home.collection	KOLEKSI WATAK
 home.settings	TETAPAN
 home.exit	KELUAR PERMAINAN
-home.play_desc	Perlawanan pantas Vs Online, bilik VS LOCAL bersama rakan, atau Vs CPU
+home.play_desc	Perlawanan pantas Vs Online, bilik CREATE ROOM bersama rakan, atau Vs CPU
 home.training_desc	Persediaan kamera, latihan gerak isyarat dan patung latihan
 home.arcade_desc	Lawan kelima-lima saingan berturut-turut merentas setiap pentas
 home.collection_desc	Skin, senjata dan banner kosmetik
@@ -159,7 +159,7 @@ training.camera_on	PENJEJAKAN KAMERA: HIDUP
 collection.hint	KOLEKSI WATAK
 play.choose_style	PILIH GAYA PERMAINAN
 online.kicker	PILIH GAYA PERMAINAN  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	PILIH PERTARUNGAN ANDA  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	PILIH PERTARUNGAN ANDA  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	AKAN DATANG
 training.cv	PENGLIHATAN KOMPUTER
 online.connection	SAMBUNGAN
@@ -177,7 +177,7 @@ exit.title	KELUAR PERMAINAN?
 online.royale_desc	Setiap orang untuk diri sendiri. Pejuang terakhir yang bertahan menang.
 arcade.kicker	LIMA SAINGAN · SATU LARIAN
 loading.for_battle	UNTUK BERTARUNG
-online.invites_note	Jemputan bilik daripada rakan muncul di sini. Bilik bersama rakan ada dalam MAIN > VS LOCAL.
+online.invites_note	Jemputan bilik daripada rakan muncul di sini. Bilik bersama rakan ada dalam MAIN > CREATE ROOM.
 settings.kicker	PERMAINAN · KAMERA · KAWALAN
 training.gestures_live	GERAK ISYARAT  (buat pose di depan kamera - tumbuk = satu tangan lurus ke sisi)
 training.gestures_sim	GERAK ISYARAT  (tahan kekunci untuk mensimulasikan pose)
@@ -188,7 +188,7 @@ arcade.rule_retry	Kalah satu pusingan? Teruskan dan cuba lagi.
 home.hint	MENU UTAMA
 settings.master_volume	KELANTANGAN UTAMA
 settings.match_time	MASA PERLAWANAN
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	GERAK
 play.matchmaking_desc	Cipta bilik, kongsi kodnya atau jemput rakan dengan nama.
 play.no_internet_tag	TIADA INTERNET

@@ -57,8 +57,8 @@ loading.ready	Kész
 onboarding.welcome	ÜDVÖZLÜNK!
 onboarding.your_account	A FIÓKOD
 onboarding.your_name	A JÁTÉKOSNEVED
-rooms.backdrop_create	VS LOCAL  ·  SZOBÁK LÉTREHOZÁSA
-rooms.backdrop_join	VS LOCAL  ·  CSATLAKOZÁS SZOBÁHOZ
+rooms.backdrop_create	CREATE ROOM  ·  SZOBÁK LÉTREHOZÁSA
+rooms.backdrop_join	CREATE ROOM  ·  CSATLAKOZÁS SZOBÁHOZ
 precheck.all_passed	MINDEN ELLENŐRZÉS SIKERES
 precheck.failed	SIKERTELEN ELLENŐRZÉS
 precheck.lighting	MEGVILÁGÍTÁS
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	KARAKTERGYŰJTEMÉNY
 home.settings	BEÁLLÍTÁSOK
 home.exit	KILÉPÉS A JÁTÉKBÓL
-home.play_desc	Vs Online gyors meccs, VS Local szobák barátokkal vagy Vs CPU
+home.play_desc	Vs Online gyors meccs, Create Room szobák barátokkal vagy Vs CPU
 home.training_desc	Kamerabeállítás, gesztusgyakorlás és egy edzőbábu
 home.arcade_desc	Mind az öt rivális egymás után, minden pályán
 home.collection_desc	Skinek, fegyverek és a kozmetikai banner
@@ -159,7 +159,7 @@ training.camera_on	KAMERÁS KÖVETÉS: BE
 collection.hint	KARAKTERGYŰJTEMÉNY
 play.choose_style	VÁLASSZ JÁTÉKSTÍLUST
 online.kicker	VÁLASSZ JÁTÉKSTÍLUST  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	VÁLASZD KI A CSATÁD  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	VÁLASZD KI A CSATÁD  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	HAMAROSAN
 training.cv	GÉPI LÁTÁS
 online.connection	KAPCSOLAT
@@ -177,7 +177,7 @@ exit.title	KILÉPSZ A JÁTÉKBÓL?
 online.royale_desc	Mindenki magáért. Az utolsó talpon maradt harcos nyer.
 arcade.kicker	ÖT RIVÁLIS · EGY FUTAM
 loading.for_battle	A CSATÁRA
-online.invites_note	A barátaid szobameghívói itt jelennek meg. A barátokkal közös szobák a JÁTÉK > VS LOCAL alatt vannak.
+online.invites_note	A barátaid szobameghívói itt jelennek meg. A barátokkal közös szobák a JÁTÉK > CREATE ROOM alatt vannak.
 settings.kicker	JÁTÉK · KAMERA · IRÁNYÍTÁS
 training.gestures_live	GESZTUSOK  (vedd fel a pózt a kamera előtt - ütés = egy kar egyenesen oldalra nyújtva)
 training.gestures_sim	GESZTUSOK  (tartsd lenyomva a billentyűt a póz szimulálásához)
@@ -188,7 +188,7 @@ arcade.rule_retry	Elvesztettél egy kört? Folytasd és próbáld újra.
 home.hint	FŐMENÜ
 settings.master_volume	FŐ HANGERŐ
 settings.match_time	MECCSIDŐ
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	MOZGÁS
 play.matchmaking_desc	Hozz létre szobát, oszd meg a kódját, vagy hívj meg barátokat név szerint.
 play.no_internet_tag	NINCS INTERNET

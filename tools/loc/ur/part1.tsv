@@ -57,8 +57,8 @@ loading.ready	تیار
 onboarding.welcome	خوش آمدید!
 onboarding.your_account	آپ کا اکاؤنٹ
 onboarding.your_name	آپ کا کھلاڑی نام
-rooms.backdrop_create	VS LOCAL  ·  روم بنائیں
-rooms.backdrop_join	VS LOCAL  ·  روم میں شامل ہوں
+rooms.backdrop_create	CREATE ROOM  ·  روم بنائیں
+rooms.backdrop_join	CREATE ROOM  ·  روم میں شامل ہوں
 precheck.all_passed	تمام جانچ کامیاب
 precheck.failed	جانچ ناکام
 precheck.lighting	روشنی
@@ -78,7 +78,7 @@ home.arcade	آرکیڈ
 home.collection	کرداروں کا کلیکشن
 home.settings	سیٹنگز
 home.exit	گیم سے باہر نکلیں
-home.play_desc	Vs Online فوری میچ، دوستوں کے ساتھ VS Local روم، یا Vs CPU
+home.play_desc	Vs Online فوری میچ، دوستوں کے ساتھ Create Room روم، یا Vs CPU
 home.training_desc	کیمرا سیٹ اپ، اشاروں کی مشق اور ایک تربیتی ڈمی
 home.arcade_desc	ہر اسٹیج پر پانچوں حریف ایک کے بعد ایک
 home.collection_desc	اسکنز، ہتھیار اور کاسمیٹک بینر
@@ -159,7 +159,7 @@ training.camera_on	کیمرا ٹریکنگ: آن
 collection.hint	کرداروں کا کلیکشن
 play.choose_style	کھیل کا انداز چنیں
 online.kicker	کھیل کا انداز چنیں  ·  سولو · 2V2 · BATTLE ROYALE
-play.kicker	اپنی لڑائی چنیں  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	اپنی لڑائی چنیں  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	جلد آ رہا ہے
 training.cv	کمپیوٹر وژن
 online.connection	کنکشن
@@ -177,7 +177,7 @@ exit.title	گیم سے باہر نکلیں؟
 online.royale_desc	ہر کوئی اپنے لیے۔ آخر تک کھڑا رہنے والا فائٹر جیتتا ہے۔
 arcade.kicker	پانچ حریف · ایک دوڑ
 loading.for_battle	لڑائی کے لیے
-online.invites_note	دوستوں کی روم دعوتیں یہاں آتی ہیں۔ دوستوں کے ساتھ روم کھیلیں > VS LOCAL میں ہیں۔
+online.invites_note	دوستوں کی روم دعوتیں یہاں آتی ہیں۔ دوستوں کے ساتھ روم کھیلیں > CREATE ROOM میں ہیں۔
 settings.kicker	گیم · کیمرا · کنٹرول
 training.gestures_live	اشارے  (کیمرے کے سامنے پوز بنائیں - مکا = ایک بازو سیدھا سائیڈ پر)
 training.gestures_sim	اشارے  (پوز کی نقل کے لیے کلید دبائے رکھیں)
@@ -188,7 +188,7 @@ arcade.rule_retry	راؤنڈ ہار گئے؟ جاری رکھیں اور دوبا
 home.hint	مرکزی مینو
 settings.master_volume	مرکزی آواز
 settings.match_time	میچ کا وقت
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	حرکت
 play.matchmaking_desc	روم بنائیں، اس کا کوڈ شیئر کریں یا دوستوں کو نام سے مدعو کریں۔
 play.no_internet_tag	انٹرنیٹ نہیں

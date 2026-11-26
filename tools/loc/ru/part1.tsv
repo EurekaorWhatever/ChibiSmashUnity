@@ -57,8 +57,8 @@ loading.ready	Готово
 onboarding.welcome	ДОБРО ПОЖАЛОВАТЬ!
 onboarding.your_account	ТВОЙ АККАУНТ
 onboarding.your_name	ТВОЁ ИМЯ ИГРОКА
-rooms.backdrop_create	VS LOCAL  ·  СОЗДАТЬ КОМНАТЫ
-rooms.backdrop_join	VS LOCAL  ·  ВОЙТИ В КОМНАТУ
+rooms.backdrop_create	CREATE ROOM  ·  СОЗДАТЬ КОМНАТЫ
+rooms.backdrop_join	CREATE ROOM  ·  ВОЙТИ В КОМНАТУ
 precheck.all_passed	ВСЕ ПРОВЕРКИ ПРОЙДЕНЫ
 precheck.failed	ПРОВЕРКА НЕ ПРОЙДЕНА
 precheck.lighting	СВЕТ
@@ -159,7 +159,7 @@ training.camera_on	ОТСЛЕЖИВАНИЕ КАМЕРОЙ: ВКЛ
 collection.hint	КОЛЛЕКЦИЯ ПЕРСОНАЖЕЙ
 play.choose_style	ВЫБЕРИ СТИЛЬ ИГРЫ
 online.kicker	ВЫБЕРИ СТИЛЬ ИГРЫ  ·  СОЛО · 2V2 · BATTLE ROYALE
-play.kicker	ВЫБЕРИ БОЙ  ·  VS ОНЛАЙН · VS LOCAL · VS CPU
+play.kicker	ВЫБЕРИ БОЙ  ·  VS ОНЛАЙН · CREATE ROOM · VS CPU
 play.coming_soon	СКОРО
 training.cv	КОМПЬЮТЕРНОЕ ЗРЕНИЕ
 online.connection	СОЕДИНЕНИЕ
@@ -177,7 +177,7 @@ exit.title	ВЫЙТИ ИЗ ИГРЫ?
 online.royale_desc	Каждый сам за себя. Побеждает последний устоявший боец.
 arcade.kicker	ПЯТЬ СОПЕРНИКОВ · ОДИН ЗАБЕГ
 loading.for_battle	К БОЮ
-online.invites_note	Здесь появляются приглашения друзей в комнаты. Комнаты с друзьями — в ИГРАТЬ > VS LOCAL.
+online.invites_note	Здесь появляются приглашения друзей в комнаты. Комнаты с друзьями — в ИГРАТЬ > CREATE ROOM.
 settings.kicker	ИГРА · КАМЕРА · УПРАВЛЕНИЕ
 training.gestures_live	ЖЕСТЫ  (прими позу перед камерой - удар = одна рука прямо в сторону)
 training.gestures_sim	ЖЕСТЫ  (удерживай клавишу, чтобы имитировать позу)
@@ -188,7 +188,7 @@ arcade.rule_retry	Проиграл раунд? Продолжи и попроб�
 home.hint	ГЛАВНОЕ МЕНЮ
 settings.master_volume	ОБЩАЯ ГРОМКОСТЬ
 settings.match_time	ВРЕМЯ МАТЧА
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	ДВИЖЕНИЕ
 play.matchmaking_desc	Создай комнату, поделись кодом или пригласи друзей по имени.
 play.no_internet_tag	НЕТ ИНТЕРНЕТА

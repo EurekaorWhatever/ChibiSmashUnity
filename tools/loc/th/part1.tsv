@@ -57,8 +57,8 @@ loading.ready	พร้อม
 onboarding.welcome	ยินดีต้อนรับ!
 onboarding.your_account	บัญชีของคุณ
 onboarding.your_name	ชื่อผู้เล่นของคุณ
-rooms.backdrop_create	VS LOCAL  ·  สร้างห้อง
-rooms.backdrop_join	VS LOCAL  ·  เข้าห้อง
+rooms.backdrop_create	CREATE ROOM  ·  สร้างห้อง
+rooms.backdrop_join	CREATE ROOM  ·  เข้าห้อง
 precheck.all_passed	ผ่านการตรวจสอบทั้งหมด
 precheck.failed	ตรวจสอบไม่ผ่าน
 precheck.lighting	แสงสว่าง
@@ -78,7 +78,7 @@ home.arcade	อาร์เคด
 home.collection	คอลเลกชันตัวละคร
 home.settings	ตั้งค่า
 home.exit	ออกจากเกม
-home.play_desc	จับคู่เร็ว Vs Online, ห้อง VS LOCAL กับเพื่อน หรือ Vs CPU
+home.play_desc	จับคู่เร็ว Vs Online, ห้อง CREATE ROOM กับเพื่อน หรือ Vs CPU
 home.training_desc	ตั้งค่ากล้อง ฝึกท่าทาง และหุ่นซ้อม
 home.arcade_desc	สู้คู่แข่งทั้งห้าติดต่อกันในทุกด่าน
 home.collection_desc	สกิน อาวุธ และตู้สุ่มของตกแต่ง
@@ -159,7 +159,7 @@ training.camera_on	จับท่าทางด้วยกล้อง: เ�
 collection.hint	คอลเลกชันตัวละคร
 play.choose_style	เลือกรูปแบบการเล่น
 online.kicker	เลือกรูปแบบการเล่น  ·  เดี่ยว · 2V2 · BATTLE ROYALE
-play.kicker	เลือกการต่อสู้ของคุณ  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	เลือกการต่อสู้ของคุณ  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	เร็ว ๆ นี้
 training.cv	คอมพิวเตอร์วิชัน
 online.connection	การเชื่อมต่อ
@@ -177,7 +177,7 @@ exit.title	ออกจากเกม?
 online.royale_desc	ทุกคนสู้เพื่อตัวเอง นักสู้คนสุดท้ายที่ยืนอยู่คือผู้ชนะ
 arcade.kicker	คู่แข่งห้าคน · รวดเดียว
 loading.for_battle	ลุยศึก
-online.invites_note	คำเชิญเข้าห้องจากเพื่อนจะเด้งขึ้นที่นี่ ห้องกับเพื่อนอยู่ใน เล่น > VS LOCAL
+online.invites_note	คำเชิญเข้าห้องจากเพื่อนจะเด้งขึ้นที่นี่ ห้องกับเพื่อนอยู่ใน เล่น > CREATE ROOM
 settings.kicker	เกม · กล้อง · การควบคุม
 training.gestures_live	ท่าทาง  (ทำท่าหน้ากล้อง - ต่อย = เหยียดแขนข้างหนึ่งออกไปด้านข้าง)
 training.gestures_sim	ท่าทาง  (กดปุ่มค้างไว้เพื่อจำลองท่า)
@@ -188,7 +188,7 @@ arcade.rule_retry	แพ้รอบไหน? กดสู้ต่อเพื
 home.hint	เมนูหลัก
 settings.master_volume	เสียงหลัก
 settings.match_time	เวลาแมตช์
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	เลื่อน
 play.matchmaking_desc	สร้างห้อง แชร์รหัสห้อง หรือเชิญเพื่อนด้วยชื่อ
 play.no_internet_tag	ไม่มีอินเทอร์เน็ต

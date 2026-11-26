@@ -57,8 +57,8 @@ loading.ready	Klar
 onboarding.welcome	VELKOMMEN!
 onboarding.your_account	DIN KONTO
 onboarding.your_name	DIT SPILLERNAVN
-rooms.backdrop_create	VS LOCAL  ·  OPRET RUM
-rooms.backdrop_join	VS LOCAL  ·  GÅ IND I RUM
+rooms.backdrop_create	CREATE ROOM  ·  OPRET RUM
+rooms.backdrop_join	CREATE ROOM  ·  GÅ IND I RUM
 precheck.all_passed	ALLE TJEK BESTÅET
 precheck.failed	TJEK MISLYKKEDES
 precheck.lighting	LYS
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	FIGURSAMLING
 home.settings	INDSTILLINGER
 home.exit	AFSLUT SPILLET
-home.play_desc	Vs Online hurtig kamp, VS Local-rum med venner eller Vs CPU
+home.play_desc	Vs Online hurtig kamp, Create Room-rum med venner eller Vs CPU
 home.training_desc	Kameraopsætning, træning af gestus og en træningsdukke
 home.arcade_desc	Alle fem rivaler i træk på hver bane
 home.collection_desc	Skins, våben og det kosmetiske banner
@@ -159,7 +159,7 @@ training.camera_on	KAMERASPORING: TIL
 collection.hint	FIGURSAMLING
 play.choose_style	VÆLG EN SPILLESTIL
 online.kicker	VÆLG EN SPILLESTIL  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	VÆLG DIN KAMP  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	VÆLG DIN KAMP  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	KOMMER SNART
 training.cv	COMPUTERSYN
 online.connection	FORBINDELSE
@@ -177,7 +177,7 @@ exit.title	AFSLUT SPILLET?
 online.royale_desc	Alle mod alle. Den sidste kæmper, der står tilbage, vinder.
 arcade.kicker	FEM RIVALER · ÉT LØB
 loading.for_battle	TIL KAMP
-online.invites_note	Venners rum-invitationer dukker op her. Rum med venner findes under SPIL > VS LOCAL.
+online.invites_note	Venners rum-invitationer dukker op her. Rum med venner findes under SPIL > CREATE ROOM.
 settings.kicker	SPIL · KAMERA · STYRING
 training.gestures_live	GESTUS  (lav posituren foran kameraet - slag = én arm strakt lige ud til siden)
 training.gestures_sim	GESTUS  (hold tasten nede for at simulere posituren)
@@ -188,7 +188,7 @@ arcade.rule_retry	Tabt en runde? Fortsæt og prøv den igen.
 home.hint	HOVEDMENU
 settings.master_volume	SAMLET LYDSTYRKE
 settings.match_time	KAMPTID
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	BEVÆG
 play.matchmaking_desc	Lav et rum, del koden eller inviter venner med navn.
 play.no_internet_tag	INTET INTERNET

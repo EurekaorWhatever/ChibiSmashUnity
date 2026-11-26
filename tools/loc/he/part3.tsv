@@ -69,7 +69,7 @@ net.friend_no_answer	החבר שלך לא ענה.
 net.start_cancelled	ההתחלה בוטלה.
 net.friend_no_connect	החבר שלך לא התחבר.
 net.enter_code	הזן את קוד החדר שהחבר שלך מראה.
-net.lan_browser	משחק LAN לא זמין בדפדפן. השתמש בחדרים או ב-VS LOCAL, או בגרסת ה-PC בשביל LAN.
+net.lan_browser	משחק LAN לא זמין בדפדפן. השתמש בחדרים או ב-CREATE ROOM, או בגרסת ה-PC בשביל LAN.
 net.enter_ip	הזן את כתובת ה-IP של המארח.
 net.this_pc_ip	כתובת ה-IP של המחשב הזה
 net.signing_in	מתחבר...

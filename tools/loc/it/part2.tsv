@@ -51,7 +51,7 @@ name.pad_hint	Gamepad: A = salva · Y = suggerisci un nome
 online.connected_agreeing	Connesso. Accordo sulla partita...
 online.host_settings_changed	Le impostazioni dell'host sono cambiate — rientra nella stanza.
 online.version_mismatch	Il tuo avversario usa un'altra versione del gioco. Entrambi i giocatori devono avere la stessa versione.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	STANZE  ·  2-4 GIOCATORI  ·  CREA · ENTRA · INVITA PER NOME
 rooms.create_rooms	CREA STANZE
 rooms.join_room	ENTRA IN UNA STANZA
@@ -63,7 +63,7 @@ rooms.empty_help	Premi CREA STANZE per farne una, o ENTRA IN UNA STANZA con il c
 rooms.capacity_note	Le stanze ospitano da 2 a 4 giocatori. Invita gli amici con il loro nome giocatore.
 rooms.invites_paused	Inviti alle stanze in pausa per qualche minuto
 rooms.refresh	AGGIORNA
-rooms.hint	VS LOCAL  ·  STANZE
+rooms.hint	CREATE ROOM  ·  STANZE
 rooms.new	NUOVA
 rooms.you_host	SEI L'HOST
 rooms.open	APRI
@@ -100,7 +100,7 @@ room.starting	AVVIO...
 room.start_fight	INIZIA LA SFIDA
 room.close	CHIUDI STANZA
 room.leave	ESCI DALLA STANZA
-room.hint	VS LOCAL  ·  STANZA
+room.hint	CREATE ROOM  ·  STANZA
 room.code	CODICE
 room.copy	COPIA
 room.host_can_invite	L'host può invitare un amico per nome.

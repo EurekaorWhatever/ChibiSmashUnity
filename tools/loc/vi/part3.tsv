@@ -76,7 +76,7 @@ net.friend_no_answer	Bạn của bạn không phản hồi.
 net.start_cancelled	Đã hủy bắt đầu.
 net.friend_no_connect	Bạn của bạn không kết nối được.
 net.enter_code	Nhập mã phòng bạn của bạn đưa.
-net.lan_browser	Chơi LAN không có trên trình duyệt. Hãy dùng PHÒNG hoặc VS LOCAL, hoặc bản PC để chơi LAN.
+net.lan_browser	Chơi LAN không có trên trình duyệt. Hãy dùng PHÒNG hoặc CREATE ROOM, hoặc bản PC để chơi LAN.
 net.enter_ip	Nhập địa chỉ IP của máy chủ.
 net.this_pc_ip	IP của máy này
 net.signing_in	Đang đăng nhập...

@@ -38,7 +38,7 @@ name.pad_hint	دسته: A = ذخیره · Y = پیشنهاد نام
 online.connected_agreeing	وصل شد. در حال هماهنگی مسابقه...
 online.host_settings_changed	تنظیمات میزبان عوض شد — دوباره به اتاق بپیوند.
 online.version_mismatch	حریفت نسخه دیگری از بازی را اجرا می‌کند. هر دو بازیکن به یک نسخه نیاز دارند.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	اتاق‌ها  ·  ۲ تا ۴ بازیکن  ·  ساختن · پیوستن · دعوت با نام
 rooms.create_rooms	ساختن اتاق
 rooms.join_room	پیوستن به اتاق
@@ -50,7 +50,7 @@ rooms.empty_help	ساختن اتاق را بزن تا یکی بسازی، یا �
 rooms.capacity_note	هر اتاق ۲ تا ۴ بازیکن جا دارد. دوستانت را با نام بازیکنشان دعوت کن.
 rooms.invites_paused	دعوت به اتاق برای چند دقیقه متوقف شد
 rooms.refresh	تازه‌سازی
-rooms.hint	VS LOCAL  ·  اتاق‌ها
+rooms.hint	CREATE ROOM  ·  اتاق‌ها
 rooms.new	جدید
 rooms.you_host	تو میزبانی
 rooms.open	باز کردن
@@ -87,7 +87,7 @@ room.starting	در حال شروع...
 room.start_fight	شروع نبرد
 room.close	بستن اتاق
 room.leave	ترک اتاق
-room.hint	VS LOCAL  ·  اتاق
+room.hint	CREATE ROOM  ·  اتاق
 room.code	کد
 room.copy	کپی
 room.host_can_invite	میزبان می‌تواند یک دوست را با نام دعوت کند.

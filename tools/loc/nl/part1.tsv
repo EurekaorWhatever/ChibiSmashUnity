@@ -57,8 +57,8 @@ loading.ready	Klaar
 onboarding.welcome	WELKOM!
 onboarding.your_account	JOUW ACCOUNT
 onboarding.your_name	JOUW SPELERSNAAM
-rooms.backdrop_create	VS LOCAL  ·  KAMERS MAKEN
-rooms.backdrop_join	VS LOCAL  ·  KAMER BETREDEN
+rooms.backdrop_create	CREATE ROOM  ·  KAMERS MAKEN
+rooms.backdrop_join	CREATE ROOM  ·  KAMER BETREDEN
 precheck.all_passed	ALLE CONTROLES GESLAAGD
 precheck.failed	CONTROLE MISLUKT
 precheck.lighting	VERLICHTING
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	PERSONAGECOLLECTIE
 home.settings	INSTELLINGEN
 home.exit	SPEL AFSLUITEN
-home.play_desc	Vs Online snelle wedstrijd, VS Local-kamers met vrienden of Vs CPU
+home.play_desc	Vs Online snelle wedstrijd, Create Room-kamers met vrienden of Vs CPU
 home.training_desc	Camera-instelling, gebaren oefenen en een trainingspop
 home.arcade_desc	Alle vijf rivalen achter elkaar op elk speelveld
 home.collection_desc	Skins, wapens en de cosmetische banner
@@ -159,7 +159,7 @@ training.camera_on	CAMERATRACKING: AAN
 collection.hint	PERSONAGECOLLECTIE
 play.choose_style	KIES EEN SPEELSTIJL
 online.kicker	KIES EEN SPEELSTIJL  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	KIES JE GEVECHT  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	KIES JE GEVECHT  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	BINNENKORT
 training.cv	COMPUTERVISIE
 online.connection	VERBINDING
@@ -177,7 +177,7 @@ exit.title	SPEL AFSLUITEN?
 online.royale_desc	Ieder voor zich. De laatste vechter die overeind staat, wint.
 arcade.kicker	VIJF RIVALEN · ÉÉN RUN
 loading.for_battle	VOOR HET GEVECHT
-online.invites_note	Kameruitnodigingen van vrienden verschijnen hier. Kamers met vrienden staan onder SPELEN > VS LOCAL.
+online.invites_note	Kameruitnodigingen van vrienden verschijnen hier. Kamers met vrienden staan onder SPELEN > CREATE ROOM.
 settings.kicker	SPEL · CAMERA · BESTURING
 training.gestures_live	GEBAREN  (neem de pose aan voor de camera - stoot = één arm recht opzij gestrekt)
 training.gestures_sim	GEBAREN  (houd de toets ingedrukt om de pose te simuleren)
@@ -188,7 +188,7 @@ arcade.rule_retry	Een ronde verloren? Ga door en probeer het opnieuw.
 home.hint	HOOFDMENU
 settings.master_volume	HOOFDVOLUME
 settings.match_time	WEDSTRIJDDUUR
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	BEWEGEN
 play.matchmaking_desc	Maak een kamer, deel de code of nodig vrienden uit op naam.
 play.no_internet_tag	GEEN INTERNET

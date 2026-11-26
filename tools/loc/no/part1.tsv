@@ -57,8 +57,8 @@ loading.ready	Klar
 onboarding.welcome	VELKOMMEN!
 onboarding.your_account	KONTOEN DIN
 onboarding.your_name	SPILLERNAVNET DITT
-rooms.backdrop_create	VS LOCAL  ·  OPPRETT ROM
-rooms.backdrop_join	VS LOCAL  ·  BLI MED I ROM
+rooms.backdrop_create	CREATE ROOM  ·  OPPRETT ROM
+rooms.backdrop_join	CREATE ROOM  ·  BLI MED I ROM
 precheck.all_passed	ALLE SJEKKER BESTÅTT
 precheck.failed	SJEKK MISLYKTES
 precheck.lighting	LYS
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	FIGURSAMLING
 home.settings	INNSTILLINGER
 home.exit	AVSLUTT SPILLET
-home.play_desc	Vs Online hurtigkamp, VS Local-rom med venner eller Vs CPU
+home.play_desc	Vs Online hurtigkamp, Create Room-rom med venner eller Vs CPU
 home.training_desc	Kameraoppsett, trening av gester og en treningsdukke
 home.arcade_desc	Alle fem rivalene etter hverandre på hver bane
 home.collection_desc	Skins, våpen og det kosmetiske banneret
@@ -159,7 +159,7 @@ training.camera_on	KAMERASPORING: PÅ
 collection.hint	FIGURSAMLING
 play.choose_style	VELG EN SPILLESTIL
 online.kicker	VELG EN SPILLESTIL  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	VELG KAMPEN DIN  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	VELG KAMPEN DIN  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	KOMMER SNART
 training.cv	DATASYN
 online.connection	TILKOBLING
@@ -177,7 +177,7 @@ exit.title	AVSLUTTE SPILLET?
 online.royale_desc	Alle mot alle. Den siste kjemperen som står igjen, vinner.
 arcade.kicker	FEM RIVALER · ÉN RUNDE
 loading.for_battle	TIL KAMP
-online.invites_note	Rominvitasjoner fra venner dukker opp her. Rom med venner finner du under SPILL > VS LOCAL.
+online.invites_note	Rominvitasjoner fra venner dukker opp her. Rom med venner finner du under SPILL > CREATE ROOM.
 settings.kicker	SPILL · KAMERA · KONTROLLER
 training.gestures_live	GESTER  (gjør posituren foran kameraet - slag = én arm strukket rett ut til siden)
 training.gestures_sim	GESTER  (hold tasten nede for å simulere posituren)
@@ -188,7 +188,7 @@ arcade.rule_retry	Tapte du en runde? Fortsett og prøv den igjen.
 home.hint	HOVEDMENY
 settings.master_volume	HOVEDVOLUM
 settings.match_time	KAMPTID
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	BEVEG
 play.matchmaking_desc	Lag et rom, del koden eller inviter venner med navn.
 play.no_internet_tag	IKKE INTERNETT

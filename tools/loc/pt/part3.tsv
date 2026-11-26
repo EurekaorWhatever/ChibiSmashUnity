@@ -64,7 +64,7 @@ net.friend_no_answer	Seu amigo não respondeu.
 net.start_cancelled	Início cancelado.
 net.friend_no_connect	Seu amigo não conectou.
 net.enter_code	Digite o código da sala que seu amigo está mostrando.
-net.lan_browser	O jogo em LAN não está disponível no navegador. Use SALAS ou VS LOCAL, ou a versão para PC para LAN.
+net.lan_browser	O jogo em LAN não está disponível no navegador. Use SALAS ou CREATE ROOM, ou a versão para PC para LAN.
 net.enter_ip	Digite o endereço IP do anfitrião.
 net.this_pc_ip	o IP deste PC
 net.signing_in	Entrando...

@@ -44,7 +44,7 @@ name.pad_hint	Tay cầm: A = lưu · Y = gợi ý tên
 online.connected_agreeing	Đã kết nối. Đang thống nhất trận đấu...
 online.host_settings_changed	Chủ phòng đã đổi cài đặt — hãy vào lại phòng.
 online.version_mismatch	Đối thủ dùng phiên bản game khác. Hai người chơi cần cùng một bản.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	PHÒNG  ·  2-4 NGƯỜI  ·  TẠO · VÀO · MỜI BẰNG TÊN
 rooms.create_rooms	TẠO PHÒNG
 rooms.join_room	VÀO PHÒNG
@@ -56,7 +56,7 @@ rooms.empty_help	Nhấn TẠO PHÒNG để tạo, hoặc VÀO PHÒNG bằng mã 
 rooms.capacity_note	Phòng chứa 2 đến 4 người. Mời bạn bè bằng tên người chơi.
 rooms.invites_paused	Tạm dừng lời mời vào phòng trong vài phút
 rooms.refresh	LÀM MỚI
-rooms.hint	VS LOCAL  ·  PHÒNG
+rooms.hint	CREATE ROOM  ·  PHÒNG
 rooms.new	MỚI
 rooms.you_host	BẠN LÀ CHỦ
 rooms.open	MỞ
@@ -93,7 +93,7 @@ room.starting	ĐANG BẮT ĐẦU...
 room.start_fight	BẮT ĐẦU ĐẤU
 room.close	ĐÓNG PHÒNG
 room.leave	RỜI PHÒNG
-room.hint	VS LOCAL  ·  PHÒNG
+room.hint	CREATE ROOM  ·  PHÒNG
 room.code	MÃ
 room.copy	SAO CHÉP
 room.host_can_invite	Chủ phòng có thể mời bạn bè bằng tên.

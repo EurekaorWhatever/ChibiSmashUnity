@@ -57,8 +57,8 @@ loading.ready	Gata
 onboarding.welcome	BUN VENIT!
 onboarding.your_account	CONTUL TĂU
 onboarding.your_name	NUMELE TĂU DE JUCĂTOR
-rooms.backdrop_create	VS LOCAL  ·  CREEAZĂ CAMERE
-rooms.backdrop_join	VS LOCAL  ·  INTRĂ ÎN CAMERĂ
+rooms.backdrop_create	CREATE ROOM  ·  CREEAZĂ CAMERE
+rooms.backdrop_join	CREATE ROOM  ·  INTRĂ ÎN CAMERĂ
 precheck.all_passed	TOATE VERIFICĂRILE AU TRECUT
 precheck.failed	VERIFICARE EȘUATĂ
 precheck.lighting	LUMINĂ
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	COLECȚIE DE PERSONAJE
 home.settings	SETĂRI
 home.exit	IEȘI DIN JOC
-home.play_desc	Meci rapid Vs Online, camere VS Local cu prietenii sau Vs CPU
+home.play_desc	Meci rapid Vs Online, camere Create Room cu prietenii sau Vs CPU
 home.training_desc	Configurare cameră, exersare gesturi și un manechin de antrenament
 home.arcade_desc	Toți cei cinci rivali unul după altul, pe fiecare arenă
 home.collection_desc	Skinuri, arme și bannerul cosmetic
@@ -159,7 +159,7 @@ training.camera_on	URMĂRIRE CAMERĂ: PORNITĂ
 collection.hint	COLECȚIE DE PERSONAJE
 play.choose_style	ALEGE UN STIL DE JOC
 online.kicker	ALEGE UN STIL DE JOC  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	ALEGE-ȚI LUPTA  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	ALEGE-ȚI LUPTA  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	ÎN CURÂND
 training.cv	VEDERE COMPUTERIZATĂ
 online.connection	CONEXIUNE
@@ -177,7 +177,7 @@ exit.title	IEȘI DIN JOC?
 online.royale_desc	Fiecare pentru el. Ultimul luptător rămas în picioare câștigă.
 arcade.kicker	CINCI RIVALI · O SINGURĂ CURSĂ
 loading.for_battle	PENTRU LUPTĂ
-online.invites_note	Invitațiile prietenilor în camere apar aici. Camerele cu prietenii sunt în JOACĂ > VS LOCAL.
+online.invites_note	Invitațiile prietenilor în camere apar aici. Camerele cu prietenii sunt în JOACĂ > CREATE ROOM.
 settings.kicker	JOC · CAMERĂ · CONTROALE
 training.gestures_live	GESTURI  (fă poza în fața camerei - pumn = un braț întins drept lateral)
 training.gestures_sim	GESTURI  (ține apăsată tasta pentru a simula poza)
@@ -188,7 +188,7 @@ arcade.rule_retry	Ai pierdut o rundă? Continuă și reîncearc-o.
 home.hint	MENIU PRINCIPAL
 settings.master_volume	VOLUM GENERAL
 settings.match_time	DURATA MECIULUI
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	MIȘCARE
 play.matchmaking_desc	Fă o cameră, împarte codul sau invită prieteni după nume.
 play.no_internet_tag	FĂRĂ INTERNET

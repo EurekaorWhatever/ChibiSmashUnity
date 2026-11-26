@@ -38,7 +38,7 @@ name.pad_hint	Ohjain: A = tallenna · Y = ehdota nimeä
 online.connected_agreeing	Yhdistetty. Sovitaan ottelusta...
 online.host_settings_changed	Isännän asetukset muuttuivat — liity huoneeseen uudelleen.
 online.version_mismatch	Vastustajallasi on eri versio pelistä. Molemmilla pelaajilla pitää olla sama versio.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	HUONEET  ·  2-4 PELAAJAA  ·  LUO · LIITY · KUTSU NIMELLÄ
 rooms.create_rooms	LUO HUONEITA
 rooms.join_room	LIITY HUONEESEEN
@@ -50,7 +50,7 @@ rooms.empty_help	Paina LUO HUONEITA tehdäksesi sellaisen, tai LIITY HUONEESEEN 
 rooms.capacity_note	Huoneisiin mahtuu 2-4 pelaajaa. Kutsu kavereita heidän pelaajanimellään.
 rooms.invites_paused	Huonekutsut tauolla muutaman minuutin
 rooms.refresh	PÄIVITÄ
-rooms.hint	VS LOCAL  ·  HUONEET
+rooms.hint	CREATE ROOM  ·  HUONEET
 rooms.new	UUSI
 rooms.you_host	OLET ISÄNTÄ
 rooms.open	AVAA
@@ -87,7 +87,7 @@ room.starting	ALOITETAAN...
 room.start_fight	ALOITA TAISTELU
 room.close	SULJE HUONE
 room.leave	POISTU HUONEESTA
-room.hint	VS LOCAL  ·  HUONE
+room.hint	CREATE ROOM  ·  HUONE
 room.code	KOODI
 room.copy	KOPIOI
 room.host_can_invite	Isäntä voi kutsua kaverin nimellä.

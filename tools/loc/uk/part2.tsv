@@ -38,7 +38,7 @@ name.pad_hint	Геймпад: A = зберегти · Y = запропонува
 online.connected_agreeing	З'єднано. Узгоджуємо матч...
 online.host_settings_changed	Налаштування хоста змінилися — увійди в кімнату знову.
 online.version_mismatch	У суперника інша версія гри. Обом гравцям потрібна однакова версія.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	КІМНАТИ  ·  2-4 ГРАВЦІ  ·  СТВОРИТИ · УВІЙТИ · ЗАПРОСИТИ ЗА ІМЕНЕМ
 rooms.create_rooms	СТВОРИТИ КІМНАТИ
 rooms.join_room	УВІЙТИ В КІМНАТУ
@@ -50,7 +50,7 @@ rooms.empty_help	Натисни СТВОРИТИ КІМНАТИ, щоб ство
 rooms.capacity_note	У кімнаті від 2 до 4 гравців. Запрошуй друзів за їхнім іменем гравця.
 rooms.invites_paused	Запрошення в кімнати призупинено на кілька хвилин
 rooms.refresh	ОНОВИТИ
-rooms.hint	VS LOCAL  ·  КІМНАТИ
+rooms.hint	CREATE ROOM  ·  КІМНАТИ
 rooms.new	НОВА
 rooms.you_host	ТИ ХОСТ
 rooms.open	ВІДКРИТИ
@@ -87,7 +87,7 @@ room.starting	ЗАПУСК...
 room.start_fight	ПОЧАТИ БІЙ
 room.close	ЗАКРИТИ КІМНАТУ
 room.leave	ВИЙТИ З КІМНАТИ
-room.hint	VS LOCAL  ·  КІМНАТА
+room.hint	CREATE ROOM  ·  КІМНАТА
 room.code	КОД
 room.copy	КОПІЮВАТИ
 room.host_can_invite	Хост може запросити друга за іменем.

@@ -44,7 +44,7 @@ name.pad_hint	Gamepad: A = simpan · Y = cadangkan nama
 online.connected_agreeing	Bersambung. Menyelaraskan perlawanan...
 online.host_settings_changed	Tetapan hos berubah — sertai semula bilik.
 online.version_mismatch	Lawan anda menggunakan versi permainan yang berbeza. Kedua-dua pemain perlukan binaan yang sama.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	BILIK  ·  2-4 PEMAIN  ·  CIPTA · SERTAI · JEMPUT DENGAN NAMA
 rooms.create_rooms	CIPTA BILIK
 rooms.join_room	SERTAI BILIK
@@ -56,7 +56,7 @@ rooms.empty_help	Tekan CIPTA BILIK untuk membuatnya, atau SERTAI BILIK dengan ko
 rooms.capacity_note	Bilik memuatkan 2 hingga 4 pemain. Jemput rakan dengan nama pemain mereka.
 rooms.invites_paused	Jemputan bilik dijeda selama beberapa minit
 rooms.refresh	MUAT SEMULA
-rooms.hint	VS LOCAL  ·  BILIK
+rooms.hint	CREATE ROOM  ·  BILIK
 rooms.new	BAHARU
 rooms.you_host	ANDA HOS
 rooms.open	BUKA
@@ -93,7 +93,7 @@ room.starting	MEMULAKAN...
 room.start_fight	MULA BERTARUNG
 room.close	TUTUP BILIK
 room.leave	TINGGALKAN BILIK
-room.hint	VS LOCAL  ·  BILIK
+room.hint	CREATE ROOM  ·  BILIK
 room.code	KOD
 room.copy	SALIN
 room.host_can_invite	Hos boleh menjemput rakan dengan nama.

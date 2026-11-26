@@ -69,7 +69,7 @@ net.friend_no_answer	Kaverisi ei vastannut.
 net.start_cancelled	Aloitus peruttu.
 net.friend_no_connect	Kaverisi ei yhdistänyt.
 net.enter_code	Syötä huonekoodi, jonka kaverisi näyttää.
-net.lan_browser	LAN-peli ei ole käytettävissä selaimessa. Käytä HUONEITA tai VS LOCAL -tilaa, tai PC-versiota LANia varten.
+net.lan_browser	LAN-peli ei ole käytettävissä selaimessa. Käytä HUONEITA tai CREATE ROOM -tilaa, tai PC-versiota LANia varten.
 net.enter_ip	Syötä isännän IP-osoite.
 net.this_pc_ip	tämän PC:n IP
 net.signing_in	Kirjaudutaan...

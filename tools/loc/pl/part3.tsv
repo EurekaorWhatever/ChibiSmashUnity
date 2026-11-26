@@ -64,7 +64,7 @@ net.friend_no_answer	Przyjaciel nie odpowiedział.
 net.start_cancelled	Start anulowany.
 net.friend_no_connect	Przyjaciel się nie połączył.
 net.enter_code	Wpisz kod pokoju, który pokazuje przyjaciel.
-net.lan_browser	Gra LAN nie działa w przeglądarce. Użyj POKOI lub VS LOCAL albo wersji PC do gry w LAN.
+net.lan_browser	Gra LAN nie działa w przeglądarce. Użyj POKOI lub CREATE ROOM albo wersji PC do gry w LAN.
 net.enter_ip	Wpisz adres IP hosta.
 net.this_pc_ip	IP tego komputera
 net.signing_in	Logowanie...

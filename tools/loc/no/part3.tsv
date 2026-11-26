@@ -69,7 +69,7 @@ net.friend_no_answer	Vennen din svarte ikke.
 net.start_cancelled	Start avbrutt.
 net.friend_no_connect	Vennen din koblet ikke til.
 net.enter_code	Skriv inn romkoden vennen din viser.
-net.lan_browser	LAN-spill er ikke tilgjengelig i nettleseren. Bruk ROM eller VS LOCAL, eller PC-versjonen for LAN.
+net.lan_browser	LAN-spill er ikke tilgjengelig i nettleseren. Bruk ROM eller CREATE ROOM, eller PC-versjonen for LAN.
 net.enter_ip	Skriv inn vertens IP-adresse.
 net.this_pc_ip	denne PC-ens IP
 net.signing_in	Logger inn...

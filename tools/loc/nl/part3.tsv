@@ -69,7 +69,7 @@ net.friend_no_answer	Je vriend reageerde niet.
 net.start_cancelled	Start geannuleerd.
 net.friend_no_connect	Je vriend heeft geen verbinding gemaakt.
 net.enter_code	Voer de kamercode in die je vriend laat zien.
-net.lan_browser	LAN-spelen is niet beschikbaar in de browser. Gebruik KAMERS of VS LOCAL, of de pc-versie voor LAN.
+net.lan_browser	LAN-spelen is niet beschikbaar in de browser. Gebruik KAMERS of CREATE ROOM, of de pc-versie voor LAN.
 net.enter_ip	Voer het IP-adres van de host in.
 net.this_pc_ip	het IP van deze pc
 net.signing_in	Inloggen...

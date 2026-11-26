@@ -57,8 +57,8 @@ loading.ready	প্রস্তুত
 onboarding.welcome	স্বাগতম!
 onboarding.your_account	তোমার অ্যাকাউন্ট
 onboarding.your_name	তোমার খেলোয়াড় নাম
-rooms.backdrop_create	VS LOCAL  ·  রুম তৈরি করো
-rooms.backdrop_join	VS LOCAL  ·  রুমে যোগ দাও
+rooms.backdrop_create	CREATE ROOM  ·  রুম তৈরি করো
+rooms.backdrop_join	CREATE ROOM  ·  রুমে যোগ দাও
 precheck.all_passed	সব যাচাই পাস
 precheck.failed	যাচাই ব্যর্থ
 precheck.lighting	আলো
@@ -78,7 +78,7 @@ home.arcade	আর্কেড
 home.collection	চরিত্র সংগ্রহ
 home.settings	সেটিংস
 home.exit	গেম থেকে বের হও
-home.play_desc	Vs Online দ্রুত ম্যাচ, বন্ধুদের সাথে VS Local রুম, অথবা Vs CPU
+home.play_desc	Vs Online দ্রুত ম্যাচ, বন্ধুদের সাথে Create Room রুম, অথবা Vs CPU
 home.training_desc	ক্যামেরা সেটআপ, অঙ্গভঙ্গি অনুশীলন আর একটি প্রশিক্ষণ ডামি
 home.arcade_desc	প্রতিটি মঞ্চে পাঁচ প্রতিদ্বন্দ্বীর সাথে পরপর লড়াই
 home.collection_desc	স্কিন, অস্ত্র আর কসমেটিক ব্যানার
@@ -159,7 +159,7 @@ training.camera_on	ক্যামেরা ট্র্যাকিং: চা�
 collection.hint	চরিত্র সংগ্রহ
 play.choose_style	খেলার ধরন বেছে নাও
 online.kicker	খেলার ধরন বেছে নাও  ·  একক · 2V2 · BATTLE ROYALE
-play.kicker	তোমার লড়াই বেছে নাও  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	তোমার লড়াই বেছে নাও  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	শিগগিরই আসছে
 training.cv	কম্পিউটার ভিশন
 online.connection	সংযোগ
@@ -177,7 +177,7 @@ exit.title	গেম থেকে বের হবে?
 online.royale_desc	সবাই নিজের জন্য। শেষ পর্যন্ত দাঁড়িয়ে থাকা যোদ্ধা জেতে।
 arcade.kicker	পাঁচ প্রতিদ্বন্দ্বী · এক দৌড়
 loading.for_battle	লড়াইয়ের জন্য
-online.invites_note	বন্ধুদের রুম আমন্ত্রণ এখানে আসে। বন্ধুদের সাথে রুম পাবে খেলো > VS LOCAL-এ।
+online.invites_note	বন্ধুদের রুম আমন্ত্রণ এখানে আসে। বন্ধুদের সাথে রুম পাবে খেলো > CREATE ROOM-এ।
 settings.kicker	গেম · ক্যামেরা · নিয়ন্ত্রণ
 training.gestures_live	অঙ্গভঙ্গি  (ক্যামেরার সামনে ভঙ্গি করো - ঘুষি = এক হাত সোজা পাশে বাড়ানো)
 training.gestures_sim	অঙ্গভঙ্গি  (ভঙ্গি নকল করতে কী চেপে ধরো)
@@ -188,7 +188,7 @@ arcade.rule_retry	রাউন্ড হেরেছ? চালিয়ে য�
 home.hint	প্রধান মেনু
 settings.master_volume	মূল ভলিউম
 settings.match_time	ম্যাচের সময়
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	নড়াও
 play.matchmaking_desc	একটি রুম বানাও, কোড শেয়ার করো বা নাম দিয়ে বন্ধুদের আমন্ত্রণ জানাও।
 play.no_internet_tag	ইন্টারনেট নেই

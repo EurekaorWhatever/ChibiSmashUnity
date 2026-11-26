@@ -69,7 +69,7 @@ net.friend_no_answer	دوستت پاسخ نداد.
 net.start_cancelled	شروع لغو شد.
 net.friend_no_connect	دوستت وصل نشد.
 net.enter_code	کد اتاقی را که دوستت نشان می‌دهد وارد کن.
-net.lan_browser	بازی LAN در مرورگر در دسترس نیست. از اتاق‌ها یا VS LOCAL استفاده کن، یا برای LAN نسخه رایانه را بازی کن.
+net.lan_browser	بازی LAN در مرورگر در دسترس نیست. از اتاق‌ها یا CREATE ROOM استفاده کن، یا برای LAN نسخه رایانه را بازی کن.
 net.enter_ip	نشانی IP میزبان را وارد کن.
 net.this_pc_ip	IP این رایانه
 net.signing_in	در حال ورود...

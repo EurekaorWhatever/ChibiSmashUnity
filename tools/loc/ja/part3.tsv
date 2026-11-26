@@ -64,7 +64,7 @@ net.friend_no_answer	フレンドから応答がありませんでした。
 net.start_cancelled	開始をキャンセルしました。
 net.friend_no_connect	フレンドが接続できませんでした。
 net.enter_code	フレンドに表示されているルームコードを入力してください。
-net.lan_browser	ブラウザでは LAN プレイを利用できません。ルーム や VS LOCAL を使うか、LAN は PC 版で遊んでください。
+net.lan_browser	ブラウザでは LAN プレイを利用できません。ルーム や CREATE ROOM を使うか、LAN は PC 版で遊んでください。
 net.enter_ip	ホストの IP アドレスを入力してください。
 net.this_pc_ip	このPCのIP
 net.signing_in	サインイン中...

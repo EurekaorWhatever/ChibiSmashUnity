@@ -38,7 +38,7 @@ name.pad_hint	Ovladač: A = uložit · Y = navrhnout jméno
 online.connected_agreeing	Připojeno. Domlouvá se zápas...
 online.host_settings_changed	Nastavení hostitele se změnilo — připoj se k místnosti znovu.
 online.version_mismatch	Tvůj soupeř má jinou verzi hry. Oba hráči potřebují stejnou verzi.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	MÍSTNOSTI  ·  2-4 HRÁČI  ·  VYTVOŘIT · PŘIPOJIT · POZVAT PODLE JMÉNA
 rooms.create_rooms	VYTVOŘIT MÍSTNOSTI
 rooms.join_room	PŘIPOJIT SE K MÍSTNOSTI
@@ -50,7 +50,7 @@ rooms.empty_help	Stiskni VYTVOŘIT MÍSTNOSTI a vytvoř si jednu, nebo PŘIPOJIT
 rooms.capacity_note	Místnosti mají 2 až 4 hráče. Pozvi přátele podle jejich hráčského jména.
 rooms.invites_paused	Pozvánky do místností jsou na pár minut pozastavené
 rooms.refresh	OBNOVIT
-rooms.hint	VS LOCAL  ·  MÍSTNOSTI
+rooms.hint	CREATE ROOM  ·  MÍSTNOSTI
 rooms.new	NOVÁ
 rooms.you_host	JSI HOSTITEL
 rooms.open	OTEVŘÍT
@@ -87,7 +87,7 @@ room.starting	SPOUŠTÍ SE...
 room.start_fight	ZAČÍT BOJ
 room.close	ZAVŘÍT MÍSTNOST
 room.leave	OPUSTIT MÍSTNOST
-room.hint	VS LOCAL  ·  MÍSTNOST
+room.hint	CREATE ROOM  ·  MÍSTNOST
 room.code	KÓD
 room.copy	KOPÍROVAT
 room.host_can_invite	Hostitel může pozvat přítele podle jména.

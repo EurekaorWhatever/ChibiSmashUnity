@@ -36,7 +36,7 @@ name.pad_hint	게임패드: A = 저장 · Y = 이름 추천
 online.connected_agreeing	연결되었습니다. 경기를 맞추는 중...
 online.host_settings_changed	방장이 설정을 바꿨습니다 — 방에 다시 참가하세요.
 online.version_mismatch	상대가 다른 버전의 게임을 실행 중입니다. 두 플레이어 모두 같은 빌드가 필요합니다.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	방  ·  2-4명  ·  만들기 · 참가 · 이름으로 초대
 rooms.create_rooms	방 만들기
 rooms.join_room	방 참가
@@ -48,7 +48,7 @@ rooms.empty_help	방 만들기를 눌러 새로 만들거나, 친구의 방 코�
 rooms.capacity_note	방에는 2~4명이 들어갈 수 있습니다. 플레이어 이름으로 친구를 초대하세요.
 rooms.invites_paused	방 초대가 몇 분 동안 일시 중지됨
 rooms.refresh	새로고침
-rooms.hint	VS LOCAL  ·  방
+rooms.hint	CREATE ROOM  ·  방
 rooms.new	새 방
 rooms.you_host	내가 방장
 rooms.open	열기
@@ -85,7 +85,7 @@ room.starting	시작하는 중...
 room.start_fight	대결 시작
 room.close	방 닫기
 room.leave	방 나가기
-room.hint	VS LOCAL  ·  방
+room.hint	CREATE ROOM  ·  방
 room.code	코드
 room.copy	복사
 room.host_can_invite	방장은 이름으로 친구를 초대할 수 있습니다.

@@ -75,7 +75,7 @@ net.friend_no_answer	Ο φίλος σου δεν απάντησε.
 net.start_cancelled	Η έναρξη ακυρώθηκε.
 net.friend_no_connect	Ο φίλος σου δεν συνδέθηκε.
 net.enter_code	Γράψε τον κωδικό δωματίου που δείχνει ο φίλος σου.
-net.lan_browser	Το LAN δεν είναι διαθέσιμο στον browser. Χρησιμοποίησε ΔΩΜΑΤΙΑ ή VS LOCAL, ή την έκδοση PC για LAN.
+net.lan_browser	Το LAN δεν είναι διαθέσιμο στον browser. Χρησιμοποίησε ΔΩΜΑΤΙΑ ή CREATE ROOM, ή την έκδοση PC για LAN.
 net.enter_ip	Γράψε τη διεύθυνση IP του οικοδεσπότη.
 net.this_pc_ip	η IP αυτού του PC
 net.signing_in	Σύνδεση...

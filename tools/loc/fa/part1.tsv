@@ -57,8 +57,8 @@ loading.ready	آماده
 onboarding.welcome	خوش آمدی!
 onboarding.your_account	حساب تو
 onboarding.your_name	نام بازیکن تو
-rooms.backdrop_create	VS LOCAL  ·  ساختن اتاق
-rooms.backdrop_join	VS LOCAL  ·  پیوستن به اتاق
+rooms.backdrop_create	CREATE ROOM  ·  ساختن اتاق
+rooms.backdrop_join	CREATE ROOM  ·  پیوستن به اتاق
 precheck.all_passed	همه بررسی‌ها قبول شد
 precheck.failed	بررسی ناموفق بود
 precheck.lighting	نور
@@ -78,7 +78,7 @@ home.arcade	آرکید
 home.collection	مجموعه شخصیت‌ها
 home.settings	تنظیمات
 home.exit	خروج از بازی
-home.play_desc	مسابقه سریع Vs Online، اتاق‌های VS Local با دوستان، یا Vs CPU
+home.play_desc	مسابقه سریع Vs Online، اتاق‌های Create Room با دوستان، یا Vs CPU
 home.training_desc	تنظیم دوربین، تمرین حرکات و یک آدمک تمرینی
 home.arcade_desc	هر پنج رقیب پشت سر هم در همه میدان‌ها
 home.collection_desc	اسکین‌ها، سلاح‌ها و بنر تزئینی
@@ -159,7 +159,7 @@ training.camera_on	ردیابی دوربین: روشن
 collection.hint	مجموعه شخصیت‌ها
 play.choose_style	یک سبک بازی انتخاب کن
 online.kicker	یک سبک بازی انتخاب کن  ·  انفرادی · 2V2 · BATTLE ROYALE
-play.kicker	نبردت را انتخاب کن  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	نبردت را انتخاب کن  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	به‌زودی
 training.cv	بینایی ماشین
 online.connection	اتصال
@@ -177,7 +177,7 @@ exit.title	از بازی خارج می‌شوی؟
 online.royale_desc	هر کس برای خودش. آخرین مبارزی که سرپا بماند برنده است.
 arcade.kicker	پنج رقیب · یک دور
 loading.for_battle	برای نبرد
-online.invites_note	دعوت‌های دوستان به اتاق اینجا ظاهر می‌شوند. اتاق‌های دوستان در بازی > VS LOCAL هستند.
+online.invites_note	دعوت‌های دوستان به اتاق اینجا ظاهر می‌شوند. اتاق‌های دوستان در بازی > CREATE ROOM هستند.
 settings.kicker	بازی · دوربین · کنترل
 training.gestures_live	حرکات  (ژست را جلوی دوربین بگیر - مشت = یک دست صاف به پهلو)
 training.gestures_sim	حرکات  (کلید را نگه دار تا ژست شبیه‌سازی شود)
@@ -188,7 +188,7 @@ arcade.rule_retry	یک راند را باختی؟ ادامه بده و دوبا�
 home.hint	منوی اصلی
 settings.master_volume	صدای کلی
 settings.match_time	زمان مسابقه
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	حرکت
 play.matchmaking_desc	یک اتاق بساز، کدش را به اشتراک بگذار یا دوستانت را با نام دعوت کن.
 play.no_internet_tag	بدون اینترنت

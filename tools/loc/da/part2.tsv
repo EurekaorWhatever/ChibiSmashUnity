@@ -38,7 +38,7 @@ name.pad_hint	Controller: A = gem · Y = foreslå et navn
 online.connected_agreeing	Forbundet. Aftaler kampen...
 online.host_settings_changed	Værtens indstillinger er ændret — gå ind i rummet igen.
 online.version_mismatch	Din modstander kører en anden version af spillet. Begge spillere skal have den samme version.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	RUM  ·  2-4 SPILLERE  ·  OPRET · GÅ IND · INVITER MED NAVN
 rooms.create_rooms	OPRET RUM
 rooms.join_room	GÅ IND I RUM
@@ -50,7 +50,7 @@ rooms.empty_help	Tryk på OPRET RUM for at lave et, eller GÅ IND I RUM med en v
 rooms.capacity_note	Rum har plads til 2 til 4 spillere. Inviter venner med deres spillernavn.
 rooms.invites_paused	Rum-invitationer er sat på pause i et par minutter
 rooms.refresh	OPDATER
-rooms.hint	VS LOCAL  ·  RUM
+rooms.hint	CREATE ROOM  ·  RUM
 rooms.new	NY
 rooms.you_host	DU ER VÆRT
 rooms.open	ÅBN
@@ -87,7 +87,7 @@ room.starting	STARTER...
 room.start_fight	START KAMP
 room.close	LUK RUM
 room.leave	FORLAD RUM
-room.hint	VS LOCAL  ·  RUM
+room.hint	CREATE ROOM  ·  RUM
 room.code	KODE
 room.copy	KOPIER
 room.host_can_invite	Værten kan invitere en ven med navn.

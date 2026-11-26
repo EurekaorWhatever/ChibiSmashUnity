@@ -57,8 +57,8 @@ loading.ready	तैयार
 onboarding.welcome	स्वागत है!
 onboarding.your_account	आपका अकाउंट
 onboarding.your_name	आपका खिलाड़ी नाम
-rooms.backdrop_create	VS LOCAL  ·  रूम बनाएँ
-rooms.backdrop_join	VS LOCAL  ·  रूम में जुड़ें
+rooms.backdrop_create	CREATE ROOM  ·  रूम बनाएँ
+rooms.backdrop_join	CREATE ROOM  ·  रूम में जुड़ें
 precheck.all_passed	सभी जाँच पास
 precheck.failed	जाँच फ़ेल
 precheck.lighting	रोशनी
@@ -78,7 +78,7 @@ home.arcade	आर्केड
 home.collection	कैरेक्टर कलेक्शन
 home.settings	सेटिंग्स
 home.exit	गेम से बाहर निकलें
-home.play_desc	Vs Online क्विक मैच, दोस्तों के साथ VS LOCAL रूम, या Vs CPU
+home.play_desc	Vs Online क्विक मैच, दोस्तों के साथ CREATE ROOM रूम, या Vs CPU
 home.training_desc	कैमरा सेटअप, जेस्चर अभ्यास और ट्रेनिंग डमी
 home.arcade_desc	हर स्टेज पर पाँचों प्रतिद्वंद्वियों से लगातार मुकाबला
 home.collection_desc	स्किन, हथियार और कॉस्मेटिक बैनर
@@ -159,7 +159,7 @@ training.camera_on	कैमरा ट्रैकिंग: चालू
 collection.hint	कैरेक्टर कलेक्शन
 play.choose_style	खेलने का तरीका चुनें
 online.kicker	खेलने का तरीका चुनें  ·  सोलो · 2V2 · BATTLE ROYALE
-play.kicker	अपनी लड़ाई चुनें  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	अपनी लड़ाई चुनें  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	जल्द आ रहा है
 training.cv	कंप्यूटर विज़न
 online.connection	कनेक्शन
@@ -177,7 +177,7 @@ exit.title	गेम से बाहर निकलें?
 online.royale_desc	हर कोई अपने लिए। आख़िर तक टिका रहने वाला फ़ाइटर जीतता है।
 arcade.kicker	पाँच प्रतिद्वंद्वी · एक रन
 loading.for_battle	लड़ाई के लिए
-online.invites_note	दोस्तों के रूम इनवाइट यहाँ दिखते हैं। दोस्तों वाले रूम खेलें > VS LOCAL में हैं।
+online.invites_note	दोस्तों के रूम इनवाइट यहाँ दिखते हैं। दोस्तों वाले रूम खेलें > CREATE ROOM में हैं।
 settings.kicker	गेम · कैमरा · कंट्रोल
 training.gestures_live	जेस्चर  (कैमरे के सामने पोज़ बनाएँ - पंच = एक हाथ सीधा बगल में)
 training.gestures_sim	जेस्चर  (पोज़ की नकल के लिए की दबाए रखें)
@@ -188,7 +188,7 @@ arcade.rule_retry	राउंड हार गए? जारी रखें �
 home.hint	मुख्य मेनू
 settings.master_volume	मास्टर वॉल्यूम
 settings.match_time	मैच का समय
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	चलें
 play.matchmaking_desc	रूम बनाएँ, उसका कोड शेयर करें या दोस्तों को नाम से बुलाएँ।
 play.no_internet_tag	इंटरनेट नहीं

@@ -38,7 +38,7 @@ name.pad_hint	Kontroller: A = mentés · Y = névjavaslat
 online.connected_agreeing	Csatlakozva. A meccs egyeztetése...
 online.host_settings_changed	A házigazda beállításai megváltoztak — csatlakozz újra a szobához.
 online.version_mismatch	Az ellenfeled a játék egy másik verzióját futtatja. Mindkét játékosnak ugyanaz a verzió kell.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	SZOBÁK  ·  2-4 JÁTÉKOS  ·  LÉTREHOZÁS · CSATLAKOZÁS · MEGHÍVÁS NÉV SZERINT
 rooms.create_rooms	SZOBÁK LÉTREHOZÁSA
 rooms.join_room	CSATLAKOZÁS SZOBÁHOZ
@@ -50,7 +50,7 @@ rooms.empty_help	Nyomd meg a SZOBÁK LÉTREHOZÁSA gombot, vagy CSATLAKOZZ SZOB�
 rooms.capacity_note	A szobákban 2-4 játékos fér el. Hívj meg barátokat a játékosnevük alapján.
 rooms.invites_paused	A szobameghívók néhány percre szüneteltetve
 rooms.refresh	FRISSÍTÉS
-rooms.hint	VS LOCAL  ·  SZOBÁK
+rooms.hint	CREATE ROOM  ·  SZOBÁK
 rooms.new	ÚJ
 rooms.you_host	TE VAGY A HÁZIGAZDA
 rooms.open	MEGNYITÁS
@@ -87,7 +87,7 @@ room.starting	INDUL...
 room.start_fight	HARC INDÍTÁSA
 room.close	SZOBA BEZÁRÁSA
 room.leave	KILÉPÉS A SZOBÁBÓL
-room.hint	VS LOCAL  ·  SZOBA
+room.hint	CREATE ROOM  ·  SZOBA
 room.code	KÓD
 room.copy	MÁSOLÁS
 room.host_can_invite	A házigazda név szerint meghívhat egy barátot.

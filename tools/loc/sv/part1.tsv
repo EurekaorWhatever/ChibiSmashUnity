@@ -57,8 +57,8 @@ loading.ready	Klar
 onboarding.welcome	VÄLKOMMEN!
 onboarding.your_account	DITT KONTO
 onboarding.your_name	DITT SPELARNAMN
-rooms.backdrop_create	VS LOCAL  ·  SKAPA RUM
-rooms.backdrop_join	VS LOCAL  ·  GÅ MED I RUM
+rooms.backdrop_create	CREATE ROOM  ·  SKAPA RUM
+rooms.backdrop_join	CREATE ROOM  ·  GÅ MED I RUM
 precheck.all_passed	ALLA KONTROLLER GODKÄNDA
 precheck.failed	KONTROLLEN MISSLYCKADES
 precheck.lighting	BELYSNING
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	FIGURSAMLING
 home.settings	INSTÄLLNINGAR
 home.exit	AVSLUTA SPELET
-home.play_desc	Vs Online snabbmatch, VS Local-rum med vänner eller Vs CPU
+home.play_desc	Vs Online snabbmatch, Create Room-rum med vänner eller Vs CPU
 home.training_desc	Kamerainställning, gestträning och en träningsdocka
 home.arcade_desc	Alla fem rivaler i rad på varje bana
 home.collection_desc	Skins, vapen och den kosmetiska bannern
@@ -159,7 +159,7 @@ training.camera_on	KAMERASPÅRNING: PÅ
 collection.hint	FIGURSAMLING
 play.choose_style	VÄLJ EN SPELSTIL
 online.kicker	VÄLJ EN SPELSTIL  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	VÄLJ DIN STRID  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	VÄLJ DIN STRID  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	KOMMER SNART
 training.cv	DATORSEENDE
 online.connection	ANSLUTNING
@@ -177,7 +177,7 @@ exit.title	AVSLUTA SPELET?
 online.royale_desc	Alla mot alla. Den sista kämpen som står kvar vinner.
 arcade.kicker	FEM RIVALER · ETT FÖRSÖK
 loading.for_battle	TILL STRID
-online.invites_note	Rumsinbjudningar från vänner dyker upp här. Rum med vänner finns under SPELA > VS LOCAL.
+online.invites_note	Rumsinbjudningar från vänner dyker upp här. Rum med vänner finns under SPELA > CREATE ROOM.
 settings.kicker	SPEL · KAMERA · KONTROLLER
 training.gestures_live	GESTER  (gör posen framför kameran - slag = en arm rakt ut åt sidan)
 training.gestures_sim	GESTER  (håll tangenten för att simulera posen)
@@ -188,7 +188,7 @@ arcade.rule_retry	Förlorat en runda? Fortsätt och försök igen.
 home.hint	HUVUDMENY
 settings.master_volume	HUVUDVOLYM
 settings.match_time	MATCHTID
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	FLYTTA
 play.matchmaking_desc	Skapa ett rum, dela koden eller bjud in vänner med namn.
 play.no_internet_tag	INGET INTERNET

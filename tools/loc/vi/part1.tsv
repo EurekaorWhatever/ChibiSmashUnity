@@ -57,8 +57,8 @@ loading.ready	Sẵn sàng
 onboarding.welcome	CHÀO MỪNG!
 onboarding.your_account	TÀI KHOẢN CỦA BẠN
 onboarding.your_name	TÊN NGƯỜI CHƠI
-rooms.backdrop_create	VS LOCAL  ·  TẠO PHÒNG
-rooms.backdrop_join	VS LOCAL  ·  VÀO PHÒNG
+rooms.backdrop_create	CREATE ROOM  ·  TẠO PHÒNG
+rooms.backdrop_join	CREATE ROOM  ·  VÀO PHÒNG
 precheck.all_passed	ĐẠT TẤT CẢ
 precheck.failed	KIỂM TRA THẤT BẠI
 precheck.lighting	ÁNH SÁNG
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	BỘ SƯU TẬP NHÂN VẬT
 home.settings	CÀI ĐẶT
 home.exit	THOÁT GAME
-home.play_desc	Đấu nhanh Vs Online, phòng VS LOCAL cùng bạn bè, hoặc Vs CPU
+home.play_desc	Đấu nhanh Vs Online, phòng CREATE ROOM cùng bạn bè, hoặc Vs CPU
 home.training_desc	Thiết lập camera, tập động tác và hình nộm luyện tập
 home.arcade_desc	Đấu liên tiếp cả năm đối thủ qua mọi đấu trường
 home.collection_desc	Trang phục, vũ khí và banner trang trí
@@ -159,7 +159,7 @@ training.camera_on	NHẬN DIỆN CAMERA: BẬT
 collection.hint	BỘ SƯU TẬP NHÂN VẬT
 play.choose_style	CHỌN LỐI CHƠI
 online.kicker	CHỌN LỐI CHƠI  ·  ĐƠN · 2V2 · BATTLE ROYALE
-play.kicker	CHỌN TRẬN ĐẤU  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	CHỌN TRẬN ĐẤU  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	SẮP RA MẮT
 training.cv	THỊ GIÁC MÁY TÍNH
 online.connection	KẾT NỐI
@@ -177,7 +177,7 @@ exit.title	THOÁT GAME?
 online.royale_desc	Ai lo thân nấy. Đấu sĩ trụ lại cuối cùng sẽ thắng.
 arcade.kicker	NĂM ĐỐI THỦ · MỘT LƯỢT
 loading.for_battle	VÀO TRẬN
-online.invites_note	Lời mời vào phòng của bạn bè hiện ở đây. Phòng với bạn bè nằm ở CHƠI > VS LOCAL.
+online.invites_note	Lời mời vào phòng của bạn bè hiện ở đây. Phòng với bạn bè nằm ở CHƠI > CREATE ROOM.
 settings.kicker	GAME · CAMERA · ĐIỀU KHIỂN
 training.gestures_live	ĐỘNG TÁC  (làm tư thế trước camera - đấm = duỗi thẳng một tay sang bên)
 training.gestures_sim	ĐỘNG TÁC  (giữ phím để mô phỏng tư thế)
@@ -188,7 +188,7 @@ arcade.rule_retry	Thua một hiệp? Tiếp tục và đấu lại.
 home.hint	MENU CHÍNH
 settings.master_volume	ÂM LƯỢNG CHUNG
 settings.match_time	THỜI GIAN TRẬN
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	DI CHUYỂN
 play.matchmaking_desc	Tạo phòng, chia sẻ mã hoặc mời bạn bè bằng tên.
 play.no_internet_tag	KHÔNG CÓ INTERNET

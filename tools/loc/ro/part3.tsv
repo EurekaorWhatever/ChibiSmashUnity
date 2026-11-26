@@ -69,7 +69,7 @@ net.friend_no_answer	Prietenul tău nu a răspuns.
 net.start_cancelled	Pornire anulată.
 net.friend_no_connect	Prietenul tău nu s-a conectat.
 net.enter_code	Introdu codul camerei pe care ți-l arată prietenul.
-net.lan_browser	Jocul LAN nu e disponibil în browser. Folosește CAMERE sau VS LOCAL ori versiunea PC pentru LAN.
+net.lan_browser	Jocul LAN nu e disponibil în browser. Folosește CAMERE sau CREATE ROOM ori versiunea PC pentru LAN.
 net.enter_ip	Introdu adresa IP a gazdei.
 net.this_pc_ip	IP-ul acestui PC
 net.signing_in	Se face conectarea...

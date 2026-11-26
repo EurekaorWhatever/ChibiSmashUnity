@@ -75,7 +75,7 @@ net.friend_no_answer	Ton ami n'a pas répondu.
 net.start_cancelled	Lancement annulé.
 net.friend_no_connect	Ton ami ne s'est pas connecté.
 net.enter_code	Entre le code du salon affiché par ton ami.
-net.lan_browser	Le jeu en LAN n'est pas disponible dans le navigateur. Utilise SALONS ou VS LOCAL, ou la version PC pour le LAN.
+net.lan_browser	Le jeu en LAN n'est pas disponible dans le navigateur. Utilise SALONS ou CREATE ROOM, ou la version PC pour le LAN.
 net.enter_ip	Entre l'adresse IP de l'hôte.
 net.this_pc_ip	l'IP de ce PC
 net.signing_in	Connexion...

@@ -38,7 +38,7 @@ name.pad_hint	Handkontroll: A = spara · Y = föreslå ett namn
 online.connected_agreeing	Ansluten. Matchen bestäms...
 online.host_settings_changed	Värdens inställningar har ändrats — gå med i rummet igen.
 online.version_mismatch	Din motståndare kör en annan version av spelet. Båda spelarna behöver samma version.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	RUM  ·  2-4 SPELARE  ·  SKAPA · GÅ MED · BJUD IN MED NAMN
 rooms.create_rooms	SKAPA RUM
 rooms.join_room	GÅ MED I RUM
@@ -50,7 +50,7 @@ rooms.empty_help	Tryck SKAPA RUM för att göra ett, eller GÅ MED I RUM med en 
 rooms.capacity_note	Rummen rymmer 2 till 4 spelare. Bjud in vänner med deras spelarnamn.
 rooms.invites_paused	Rumsinbjudningar pausade i några minuter
 rooms.refresh	UPPDATERA
-rooms.hint	VS LOCAL  ·  RUM
+rooms.hint	CREATE ROOM  ·  RUM
 rooms.new	NYTT
 rooms.you_host	DU ÄR VÄRD
 rooms.open	ÖPPNA
@@ -87,7 +87,7 @@ room.starting	STARTAR...
 room.start_fight	STARTA STRID
 room.close	STÄNG RUM
 room.leave	LÄMNA RUM
-room.hint	VS LOCAL  ·  RUM
+room.hint	CREATE ROOM  ·  RUM
 room.code	KOD
 room.copy	KOPIERA
 room.host_can_invite	Värden kan bjuda in en vän med namn.

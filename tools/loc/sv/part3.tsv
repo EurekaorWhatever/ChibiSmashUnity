@@ -69,7 +69,7 @@ net.friend_no_answer	Din vän svarade inte.
 net.start_cancelled	Starten avbröts.
 net.friend_no_connect	Din vän anslöt inte.
 net.enter_code	Ange rumskoden som din vän visar.
-net.lan_browser	LAN-spel är inte tillgängligt i webbläsaren. Använd RUM eller VS LOCAL, eller PC-versionen för LAN.
+net.lan_browser	LAN-spel är inte tillgängligt i webbläsaren. Använd RUM eller CREATE ROOM, eller PC-versionen för LAN.
 net.enter_ip	Ange värdens IP-adress.
 net.this_pc_ip	den här datorns IP
 net.signing_in	Loggar in...

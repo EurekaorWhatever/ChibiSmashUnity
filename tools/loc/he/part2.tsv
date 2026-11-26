@@ -38,7 +38,7 @@ name.pad_hint	שלט: A = שמור · Y = הצע שם
 online.connected_agreeing	מחובר. מסכמים את פרטי המשחק...
 online.host_settings_changed	ההגדרות של המארח השתנו — הצטרף לחדר מחדש.
 online.version_mismatch	היריב שלך מריץ גרסה אחרת של המשחק. שני השחקנים צריכים את אותה גרסה.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	חדרים  ·  2-4 שחקנים  ·  יצירה · הצטרפות · הזמנה לפי שם
 rooms.create_rooms	יצירת חדרים
 rooms.join_room	הצטרפות לחדר
@@ -50,7 +50,7 @@ rooms.empty_help	לחץ על יצירת חדרים כדי ליצור אחד, א�
 rooms.capacity_note	בחדר יש מקום ל-2 עד 4 שחקנים. הזמן חברים לפי שם השחקן שלהם.
 rooms.invites_paused	הזמנות לחדרים הושהו לכמה דקות
 rooms.refresh	רענון
-rooms.hint	VS LOCAL  ·  חדרים
+rooms.hint	CREATE ROOM  ·  חדרים
 rooms.new	חדש
 rooms.you_host	אתה המארח
 rooms.open	פתח
@@ -87,7 +87,7 @@ room.starting	מתחיל...
 room.start_fight	התחל קרב
 room.close	סגור חדר
 room.leave	צא מהחדר
-room.hint	VS LOCAL  ·  חדר
+room.hint	CREATE ROOM  ·  חדר
 room.code	קוד
 room.copy	העתק
 room.host_can_invite	המארח יכול להזמין חבר לפי שם.

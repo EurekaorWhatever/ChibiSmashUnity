@@ -57,8 +57,8 @@ loading.ready	Έτοιμο
 onboarding.welcome	ΚΑΛΩΣ ΗΡΘΕΣ!
 onboarding.your_account	Ο ΛΟΓΑΡΙΑΣΜΟΣ ΣΟΥ
 onboarding.your_name	ΤΟ ΟΝΟΜΑ ΠΑΙΚΤΗ ΣΟΥ
-rooms.backdrop_create	VS LOCAL  ·  ΔΗΜΙΟΥΡΓΙΑ ΔΩΜΑΤΙΩΝ
-rooms.backdrop_join	VS LOCAL  ·  ΕΙΣΟΔΟΣ ΣΕ ΔΩΜΑΤΙΟ
+rooms.backdrop_create	CREATE ROOM  ·  ΔΗΜΙΟΥΡΓΙΑ ΔΩΜΑΤΙΩΝ
+rooms.backdrop_join	CREATE ROOM  ·  ΕΙΣΟΔΟΣ ΣΕ ΔΩΜΑΤΙΟ
 precheck.all_passed	ΟΛΟΙ ΟΙ ΕΛΕΓΧΟΙ ΠΕΡΑΣΑΝ
 precheck.failed	Ο ΕΛΕΓΧΟΣ ΑΠΕΤΥΧΕ
 precheck.lighting	ΦΩΤΙΣΜΟΣ
@@ -159,7 +159,7 @@ training.camera_on	ΑΝΙΧΝΕΥΣΗ ΚΑΜΕΡΑΣ: ΑΝΟΙΧΤΗ
 collection.hint	ΣΥΛΛΟΓΗ ΧΑΡΑΚΤΗΡΩΝ
 play.choose_style	ΔΙΑΛΕΞΕ ΣΤΥΛ ΠΑΙΧΝΙΔΙΟΥ
 online.kicker	ΔΙΑΛΕΞΕ ΣΤΥΛ ΠΑΙΧΝΙΔΙΟΥ  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	ΔΙΑΛΕΞΕ ΜΑΧΗ  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	ΔΙΑΛΕΞΕ ΜΑΧΗ  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	ΣΥΝΤΟΜΑ
 training.cv	ΥΠΟΛΟΓΙΣΤΙΚΗ ΟΡΑΣΗ
 online.connection	ΣΥΝΔΕΣΗ
@@ -177,7 +177,7 @@ exit.title	ΕΞΟΔΟΣ ΑΠΟ ΤΟ ΠΑΙΧΝΙΔΙ;
 online.royale_desc	Ο καθένας για τον εαυτό του. Κερδίζει ο τελευταίος που μένει όρθιος.
 arcade.kicker	ΠΕΝΤΕ ΑΝΤΙΠΑΛΟΙ · ΜΙΑ ΔΙΑΔΡΟΜΗ
 loading.for_battle	ΓΙΑ ΜΑΧΗ
-online.invites_note	Οι προσκλήσεις φίλων σε δωμάτια εμφανίζονται εδώ. Τα δωμάτια με φίλους είναι στο ΠΑΙΞΕ > VS LOCAL.
+online.invites_note	Οι προσκλήσεις φίλων σε δωμάτια εμφανίζονται εδώ. Τα δωμάτια με φίλους είναι στο ΠΑΙΞΕ > CREATE ROOM.
 settings.kicker	ΠΑΙΧΝΙΔΙ · ΚΑΜΕΡΑ · ΧΕΙΡΙΣΜΟΣ
 training.gestures_live	ΚΙΝΗΣΕΙΣ  (κάνε την πόζα μπροστά στην κάμερα - γροθιά = ένα χέρι τεντωμένο στο πλάι)
 training.gestures_sim	ΚΙΝΗΣΕΙΣ  (κράτα το πλήκτρο για προσομοίωση της πόζας)
@@ -188,7 +188,7 @@ arcade.rule_retry	Έχασες γύρο; Συνέχισε και ξαναδοκ�
 home.hint	ΚΥΡΙΟ ΜΕΝΟΥ
 settings.master_volume	ΣΥΝΟΛΙΚΗ ΕΝΤΑΣΗ
 settings.match_time	ΔΙΑΡΚΕΙΑ ΑΓΩΝΑ
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	ΚΙΝΗΣΗ
 play.matchmaking_desc	Φτιάξε δωμάτιο, μοιράσου τον κωδικό ή κάλεσε φίλους με το όνομά τους.
 play.no_internet_tag	ΧΩΡΙΣ INTERNET

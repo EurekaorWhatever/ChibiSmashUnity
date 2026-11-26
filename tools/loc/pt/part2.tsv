@@ -36,7 +36,7 @@ name.pad_hint	Controle: A = salvar · Y = sugerir um nome
 online.connected_agreeing	Conectado. Combinando a partida...
 online.host_settings_changed	O anfitrião mudou as configurações — entre na sala de novo.
 online.version_mismatch	Seu oponente usa outra versão do jogo. Os dois jogadores precisam da mesma versão.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	SALAS  ·  2-4 JOGADORES  ·  CRIAR · ENTRAR · CONVIDAR PELO NOME
 rooms.create_rooms	CRIAR SALAS
 rooms.join_room	ENTRAR NA SALA
@@ -48,7 +48,7 @@ rooms.empty_help	Aperte CRIAR SALAS para criar uma, ou ENTRAR NA SALA com o cód
 rooms.capacity_note	As salas comportam de 2 a 4 jogadores. Convide amigos pelo nome de jogador.
 rooms.invites_paused	Convites para salas pausados por alguns minutos
 rooms.refresh	ATUALIZAR
-rooms.hint	VS LOCAL  ·  SALAS
+rooms.hint	CREATE ROOM  ·  SALAS
 rooms.new	NOVA
 rooms.you_host	VOCÊ É O ANFITRIÃO
 rooms.open	ABRIR
@@ -85,7 +85,7 @@ room.starting	COMEÇANDO...
 room.start_fight	COMEÇAR LUTA
 room.close	FECHAR SALA
 room.leave	SAIR DA SALA
-room.hint	VS LOCAL  ·  SALA
+room.hint	CREATE ROOM  ·  SALA
 room.code	CÓDIGO
 room.copy	COPIAR
 room.host_can_invite	O anfitrião pode convidar um amigo pelo nome.

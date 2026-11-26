@@ -75,7 +75,7 @@ net.friend_no_answer	Il tuo amico non ha risposto.
 net.start_cancelled	Avvio annullato.
 net.friend_no_connect	Il tuo amico non si è connesso.
 net.enter_code	Inserisci il codice stanza che mostra il tuo amico.
-net.lan_browser	Il gioco in LAN non è disponibile nel browser. Usa STANZE o VS LOCAL, o la versione PC per la LAN.
+net.lan_browser	Il gioco in LAN non è disponibile nel browser. Usa STANZE o CREATE ROOM, o la versione PC per la LAN.
 net.enter_ip	Inserisci l'indirizzo IP dell'host.
 net.this_pc_ip	l'IP di questo PC
 net.signing_in	Accesso in corso...

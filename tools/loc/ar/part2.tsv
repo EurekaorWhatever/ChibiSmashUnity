@@ -44,7 +44,7 @@ name.pad_hint	وحدة التحكم: A = حفظ · Y = اقتراح اسم
 online.connected_agreeing	تم الاتصال. جارٍ الاتفاق على المباراة...
 online.host_settings_changed	تغيّرت إعدادات المضيف — انضم إلى الغرفة من جديد.
 online.version_mismatch	خصمك يستخدم إصدارًا مختلفًا من اللعبة. يحتاج اللاعبان إلى الإصدار نفسه.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	الغرف  ·  2-4 لاعبين  ·  إنشاء · انضمام · دعوة بالاسم
 rooms.create_rooms	إنشاء غرف
 rooms.join_room	الانضمام إلى غرفة
@@ -56,7 +56,7 @@ rooms.empty_help	اضغط إنشاء غرف لإنشاء غرفة، أو الا�
 rooms.capacity_note	تتسع الغرف من 2 إلى 4 لاعبين. ادعُ أصدقاءك بأسمائهم في اللعبة.
 rooms.invites_paused	دعوات الغرف متوقفة مؤقتًا لبضع دقائق
 rooms.refresh	تحديث
-rooms.hint	VS LOCAL  ·  الغرف
+rooms.hint	CREATE ROOM  ·  الغرف
 rooms.new	جديد
 rooms.you_host	أنت المضيف
 rooms.open	فتح
@@ -93,7 +93,7 @@ room.starting	جارٍ البدء...
 room.start_fight	ابدأ المعركة
 room.close	إغلاق الغرفة
 room.leave	مغادرة الغرفة
-room.hint	VS LOCAL  ·  الغرفة
+room.hint	CREATE ROOM  ·  الغرفة
 room.code	الرمز
 room.copy	نسخ
 room.host_can_invite	يمكن للمضيف دعوة صديق بالاسم.

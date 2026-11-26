@@ -57,8 +57,8 @@ loading.ready	Pronto
 onboarding.welcome	BENVENUTO!
 onboarding.your_account	IL TUO ACCOUNT
 onboarding.your_name	IL TUO NOME GIOCATORE
-rooms.backdrop_create	VS LOCAL  ·  CREA STANZE
-rooms.backdrop_join	VS LOCAL  ·  ENTRA IN UNA STANZA
+rooms.backdrop_create	CREATE ROOM  ·  CREA STANZE
+rooms.backdrop_join	CREATE ROOM  ·  ENTRA IN UNA STANZA
 precheck.all_passed	TUTTE LE VERIFICHE SUPERATE
 precheck.failed	VERIFICA NON SUPERATA
 precheck.lighting	LUCE
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	COLLEZIONE PERSONAGGI
 home.settings	IMPOSTAZIONI
 home.exit	ESCI DAL GIOCO
-home.play_desc	Partita rapida online, stanze di VS LOCAL con amici o contro la CPU
+home.play_desc	Partita rapida online, stanze di CREATE ROOM con amici o contro la CPU
 home.training_desc	Impostazione camera, pratica dei gesti e un manichino d'allenamento
 home.arcade_desc	Tutti e cinque i rivali di fila, in ogni arena
 home.collection_desc	Skin, armi e banner cosmetico
@@ -159,7 +159,7 @@ training.camera_on	TRACCIAMENTO CAMERA: ON
 collection.hint	COLLEZIONE PERSONAGGI
 play.choose_style	SCEGLI UNO STILE DI GIOCO
 online.kicker	SCEGLI UNO STILE DI GIOCO  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	SCEGLI LA TUA SFIDA  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	SCEGLI LA TUA SFIDA  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	IN ARRIVO
 training.cv	VISIONE ARTIFICIALE
 online.connection	CONNESSIONE
@@ -177,7 +177,7 @@ exit.title	USCIRE DAL GIOCO?
 online.royale_desc	Ognuno per sé. Vince l'ultimo lottatore in piedi.
 arcade.kicker	CINQUE RIVALI · UNA CORSA
 loading.for_battle	PER LA SFIDA
-online.invites_note	Qui compaiono gli inviti alle stanze dei tuoi amici. Le stanze con gli amici sono in GIOCA > VS LOCAL.
+online.invites_note	Qui compaiono gli inviti alle stanze dei tuoi amici. Le stanze con gli amici sono in GIOCA > CREATE ROOM.
 settings.kicker	GIOCO · CAMERA · COMANDI
 training.gestures_live	GESTI  (fai la posa davanti alla camera - pugno = un braccio teso di lato)
 training.gestures_sim	GESTI  (tieni premuto il tasto per simulare la posa)
@@ -188,7 +188,7 @@ arcade.rule_retry	Round perso? Continua e riprovalo.
 home.hint	MENU PRINCIPALE
 settings.master_volume	VOLUME GENERALE
 settings.match_time	DURATA PARTITA
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	MUOVI
 play.matchmaking_desc	Crea una stanza, condividi il codice o invita gli amici per nome.
 play.no_internet_tag	NIENTE INTERNET

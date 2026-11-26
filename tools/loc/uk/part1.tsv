@@ -57,8 +57,8 @@ loading.ready	Готово
 onboarding.welcome	ВІТАЄМО!
 onboarding.your_account	ТВІЙ АКАУНТ
 onboarding.your_name	ТВОЄ ІМ'Я ГРАВЦЯ
-rooms.backdrop_create	VS LOCAL  ·  СТВОРИТИ КІМНАТИ
-rooms.backdrop_join	VS LOCAL  ·  УВІЙТИ В КІМНАТУ
+rooms.backdrop_create	CREATE ROOM  ·  СТВОРИТИ КІМНАТИ
+rooms.backdrop_join	CREATE ROOM  ·  УВІЙТИ В КІМНАТУ
 precheck.all_passed	УСІ ПЕРЕВІРКИ ПРОЙДЕНО
 precheck.failed	ПЕРЕВІРКУ НЕ ПРОЙДЕНО
 precheck.lighting	ОСВІТЛЕННЯ
@@ -78,7 +78,7 @@ home.arcade	АРКАДА
 home.collection	КОЛЕКЦІЯ ПЕРСОНАЖІВ
 home.settings	НАЛАШТУВАННЯ
 home.exit	ВИЙТИ З ГРИ
-home.play_desc	Швидкий матч Vs Online, кімнати VS Local з друзями або Vs CPU
+home.play_desc	Швидкий матч Vs Online, кімнати Create Room з друзями або Vs CPU
 home.training_desc	Налаштування камери, тренування жестів і тренувальний манекен
 home.arcade_desc	Усі п'ять суперників поспіль на кожній арені
 home.collection_desc	Скіни, зброя та косметичний банер
@@ -159,7 +159,7 @@ training.camera_on	ВІДСТЕЖЕННЯ КАМЕРОЮ: УВІМК.
 collection.hint	КОЛЕКЦІЯ ПЕРСОНАЖІВ
 play.choose_style	ОБЕРИ СТИЛЬ ГРИ
 online.kicker	ОБЕРИ СТИЛЬ ГРИ  ·  СОЛО · 2V2 · BATTLE ROYALE
-play.kicker	ОБЕРИ СВІЙ БІЙ  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	ОБЕРИ СВІЙ БІЙ  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	НЕЗАБАРОМ
 training.cv	КОМП'ЮТЕРНИЙ ЗІР
 online.connection	З'ЄДНАННЯ
@@ -177,7 +177,7 @@ exit.title	ВИЙТИ З ГРИ?
 online.royale_desc	Кожен сам за себе. Перемагає останній боєць, що залишився на ногах.
 arcade.kicker	П'ЯТЬ СУПЕРНИКІВ · ОДИН ЗАБІГ
 loading.for_battle	ДО БОЮ
-online.invites_note	Тут з'являються запрошення друзів у кімнати. Кімнати з друзями — у ГРАТИ > VS LOCAL.
+online.invites_note	Тут з'являються запрошення друзів у кімнати. Кімнати з друзями — у ГРАТИ > CREATE ROOM.
 settings.kicker	ГРА · КАМЕРА · КЕРУВАННЯ
 training.gestures_live	ЖЕСТИ  (прийми позу перед камерою - удар = одна рука витягнута прямо вбік)
 training.gestures_sim	ЖЕСТИ  (утримуй клавішу, щоб імітувати позу)
@@ -188,7 +188,7 @@ arcade.rule_retry	Програв раунд? Продовжуй і спробу�
 home.hint	ГОЛОВНЕ МЕНЮ
 settings.master_volume	ЗАГАЛЬНА ГУЧНІСТЬ
 settings.match_time	ЧАС МАТЧУ
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	РУХ
 play.matchmaking_desc	Створи кімнату, поділися її кодом або запроси друзів за іменем.
 play.no_internet_tag	НЕМАЄ ІНТЕРНЕТУ

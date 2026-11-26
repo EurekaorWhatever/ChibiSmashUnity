@@ -69,7 +69,7 @@ net.friend_no_answer	آپ کے دوست نے جواب نہیں دیا۔
 net.start_cancelled	آغاز منسوخ۔
 net.friend_no_connect	آپ کا دوست نہیں جڑا۔
 net.enter_code	آپ کا دوست جو روم کوڈ دکھا رہا ہے وہ لکھیں۔
-net.lan_browser	براؤزر میں LAN کھیل دستیاب نہیں۔ روم یا VS LOCAL استعمال کریں، یا LAN کے لیے PC ورژن۔
+net.lan_browser	براؤزر میں LAN کھیل دستیاب نہیں۔ روم یا CREATE ROOM استعمال کریں، یا LAN کے لیے PC ورژن۔
 net.enter_ip	میزبان کا IP پتہ لکھیں۔
 net.this_pc_ip	اس PC کا IP
 net.signing_in	سائن ان ہو رہا ہے...

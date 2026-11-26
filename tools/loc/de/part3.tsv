@@ -75,7 +75,7 @@ net.friend_no_answer	Dein Freund hat nicht geantwortet.
 net.start_cancelled	Start abgebrochen.
 net.friend_no_connect	Dein Freund hat sich nicht verbunden.
 net.enter_code	Gib den Raumcode ein, den dein Freund anzeigt.
-net.lan_browser	LAN-Spiel ist im Browser nicht verfügbar. Nutze RÄUME oder VS LOCAL, oder die PC-Version für LAN.
+net.lan_browser	LAN-Spiel ist im Browser nicht verfügbar. Nutze RÄUME oder CREATE ROOM, oder die PC-Version für LAN.
 net.enter_ip	Gib die IP-Adresse des Hosts ein.
 net.this_pc_ip	IP dieses PCs
 net.signing_in	Melde an...

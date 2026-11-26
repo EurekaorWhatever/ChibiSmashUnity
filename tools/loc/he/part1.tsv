@@ -57,8 +57,8 @@ loading.ready	מוכן
 onboarding.welcome	ברוך הבא!
 onboarding.your_account	החשבון שלך
 onboarding.your_name	שם השחקן שלך
-rooms.backdrop_create	VS LOCAL  ·  יצירת חדרים
-rooms.backdrop_join	VS LOCAL  ·  הצטרפות לחדר
+rooms.backdrop_create	CREATE ROOM  ·  יצירת חדרים
+rooms.backdrop_join	CREATE ROOM  ·  הצטרפות לחדר
 precheck.all_passed	כל הבדיקות עברו
 precheck.failed	הבדיקה נכשלה
 precheck.lighting	תאורה
@@ -78,7 +78,7 @@ home.arcade	ארקייד
 home.collection	אוסף הדמויות
 home.settings	הגדרות
 home.exit	יציאה מהמשחק
-home.play_desc	משחק מהיר Vs Online, חדרי VS Local עם חברים, או Vs CPU
+home.play_desc	משחק מהיר Vs Online, חדרי Create Room עם חברים, או Vs CPU
 home.training_desc	הגדרת מצלמה, תרגול מחוות ובובת אימון
 home.arcade_desc	כל חמשת היריבים ברצף בכל הזירות
 home.collection_desc	סקינים, נשקים והבאנר הקוסמטי
@@ -159,7 +159,7 @@ training.camera_on	מעקב מצלמה: פועל
 collection.hint	אוסף הדמויות
 play.choose_style	בחר סגנון משחק
 online.kicker	בחר סגנון משחק  ·  סולו · 2V2 · BATTLE ROYALE
-play.kicker	בחר את הקרב שלך  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	בחר את הקרב שלך  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	בקרוב
 training.cv	ראייה ממוחשבת
 online.connection	חיבור
@@ -177,7 +177,7 @@ exit.title	לצאת מהמשחק?
 online.royale_desc	כל אחד לעצמו. הלוחם האחרון שנשאר עומד מנצח.
 arcade.kicker	חמישה יריבים · ריצה אחת
 loading.for_battle	לקרב
-online.invites_note	הזמנות של חברים לחדרים מופיעות כאן. חדרים עם חברים נמצאים בשחק > VS LOCAL.
+online.invites_note	הזמנות של חברים לחדרים מופיעות כאן. חדרים עם חברים נמצאים בשחק > CREATE ROOM.
 settings.kicker	משחק · מצלמה · שליטה
 training.gestures_live	מחוות  (עשה את התנוחה מול המצלמה - אגרוף = יד אחת מושטת ישר לצד)
 training.gestures_sim	מחוות  (החזק את המקש כדי לדמות את התנוחה)
@@ -188,7 +188,7 @@ arcade.rule_retry	הפסדת בסיבוב? המשך ונסה אותו שוב.
 home.hint	תפריט ראשי
 settings.master_volume	עוצמה ראשית
 settings.match_time	זמן משחק
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	תזוזה
 play.matchmaking_desc	צור חדר, שתף את הקוד שלו או הזמן חברים לפי שם.
 play.no_internet_tag	אין אינטרנט

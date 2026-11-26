@@ -38,7 +38,7 @@ name.pad_hint	Kontroller: A = lagre · Y = foreslå et navn
 online.connected_agreeing	Tilkoblet. Avtaler kampen...
 online.host_settings_changed	Vertens innstillinger er endret — bli med i rommet på nytt.
 online.version_mismatch	Motstanderen din kjører en annen versjon av spillet. Begge spillerne trenger samme versjon.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	ROM  ·  2-4 SPILLERE  ·  OPPRETT · BLI MED · INVITER MED NAVN
 rooms.create_rooms	OPPRETT ROM
 rooms.join_room	BLI MED I ROM
@@ -50,7 +50,7 @@ rooms.empty_help	Trykk OPPRETT ROM for å lage et, eller BLI MED I ROM med en ve
 rooms.capacity_note	Rom har plass til 2 til 4 spillere. Inviter venner med spillernavnet deres.
 rooms.invites_paused	Rominvitasjoner er satt på pause i noen minutter
 rooms.refresh	OPPDATER
-rooms.hint	VS LOCAL  ·  ROM
+rooms.hint	CREATE ROOM  ·  ROM
 rooms.new	NY
 rooms.you_host	DU ER VERT
 rooms.open	ÅPNE
@@ -87,7 +87,7 @@ room.starting	STARTER...
 room.start_fight	START KAMP
 room.close	LUKK ROM
 room.leave	FORLAT ROM
-room.hint	VS LOCAL  ·  ROM
+room.hint	CREATE ROOM  ·  ROM
 room.code	KODE
 room.copy	KOPIER
 room.host_can_invite	Verten kan invitere en venn med navn.

@@ -69,7 +69,7 @@ net.friend_no_answer	তোমার বন্ধু সাড়া দেয�
 net.start_cancelled	শুরু বাতিল হয়েছে।
 net.friend_no_connect	তোমার বন্ধু সংযুক্ত হয়নি।
 net.enter_code	তোমার বন্ধু যে রুম কোড দেখাচ্ছে সেটা লেখো।
-net.lan_browser	ব্রাউজারে LAN খেলা যায় না। রুম বা VS LOCAL ব্যবহার করো, অথবা LAN-এর জন্য PC সংস্করণ।
+net.lan_browser	ব্রাউজারে LAN খেলা যায় না। রুম বা CREATE ROOM ব্যবহার করো, অথবা LAN-এর জন্য PC সংস্করণ।
 net.enter_ip	হোস্টের IP ঠিকানা লেখো।
 net.this_pc_ip	এই PC-এর IP
 net.signing_in	সাইন ইন হচ্ছে...

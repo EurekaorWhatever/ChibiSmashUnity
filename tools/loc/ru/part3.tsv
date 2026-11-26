@@ -75,7 +75,7 @@ net.friend_no_answer	Друг не ответил.
 net.start_cancelled	Запуск отменён.
 net.friend_no_connect	Друг не подключился.
 net.enter_code	Введи код комнаты, который показывает друг.
-net.lan_browser	Игра по LAN недоступна в браузере. Используй КОМНАТЫ или VS LOCAL, или версию для ПК для LAN.
+net.lan_browser	Игра по LAN недоступна в браузере. Используй КОМНАТЫ или CREATE ROOM, или версию для ПК для LAN.
 net.enter_ip	Введи IP-адрес хоста.
 net.this_pc_ip	IP этого ПК
 net.signing_in	Вход...

@@ -38,7 +38,7 @@ name.pad_hint	গেমপ্যাড: A = সংরক্ষণ · Y = না�
 online.connected_agreeing	সংযুক্ত। ম্যাচ ঠিক করা হচ্ছে...
 online.host_settings_changed	হোস্টের সেটিংস বদলেছে — আবার রুমে যোগ দাও।
 online.version_mismatch	তোমার প্রতিপক্ষ গেমের অন্য সংস্করণ চালাচ্ছে। দুজনেরই একই সংস্করণ লাগবে।
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	রুম  ·  ২-৪ জন খেলোয়াড়  ·  তৈরি · যোগদান · নাম দিয়ে আমন্ত্রণ
 rooms.create_rooms	রুম তৈরি করো
 rooms.join_room	রুমে যোগ দাও
@@ -50,7 +50,7 @@ rooms.empty_help	একটি বানাতে রুম তৈরি কর�
 rooms.capacity_note	রুমে ২ থেকে ৪ জন খেলোয়াড় থাকে। বন্ধুদের খেলোয়াড় নাম দিয়ে আমন্ত্রণ জানাও।
 rooms.invites_paused	রুম আমন্ত্রণ কয়েক মিনিটের জন্য বন্ধ
 rooms.refresh	রিফ্রেশ
-rooms.hint	VS LOCAL  ·  রুম
+rooms.hint	CREATE ROOM  ·  রুম
 rooms.new	নতুন
 rooms.you_host	তুমি হোস্ট
 rooms.open	খোলো
@@ -87,7 +87,7 @@ room.starting	শুরু হচ্ছে...
 room.start_fight	লড়াই শুরু
 room.close	রুম বন্ধ করো
 room.leave	রুম ছাড়ো
-room.hint	VS LOCAL  ·  রুম
+room.hint	CREATE ROOM  ·  রুম
 room.code	কোড
 room.copy	কপি
 room.host_can_invite	হোস্ট নাম দিয়ে একজন বন্ধুকে আমন্ত্রণ জানাতে পারে।

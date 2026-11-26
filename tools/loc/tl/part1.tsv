@@ -57,8 +57,8 @@ loading.ready	Handa na
 onboarding.welcome	MALIGAYANG PAGDATING!
 onboarding.your_account	IYONG ACCOUNT
 onboarding.your_name	IYONG PANGALAN SA LARO
-rooms.backdrop_create	VS LOCAL  ·  GUMAWA NG ROOM
-rooms.backdrop_join	VS LOCAL  ·  SUMALI SA ROOM
+rooms.backdrop_create	CREATE ROOM  ·  GUMAWA NG ROOM
+rooms.backdrop_join	CREATE ROOM  ·  SUMALI SA ROOM
 precheck.all_passed	PASADO LAHAT
 precheck.failed	HINDI PUMASA
 precheck.lighting	ILAW
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	KOLEKSIYON NG KARAKTER
 home.settings	SETTINGS
 home.exit	UMALIS SA LARO
-home.play_desc	Quick match sa Vs Online, mga VS LOCAL room kasama ang kaibigan, o Vs CPU
+home.play_desc	Quick match sa Vs Online, mga CREATE ROOM room kasama ang kaibigan, o Vs CPU
 home.training_desc	Setup ng camera, pagsasanay ng galaw at training dummy
 home.arcade_desc	Lahat ng limang karibal nang sunud-sunod sa bawat stage
 home.collection_desc	Mga skin, sandata at cosmetic banner
@@ -159,7 +159,7 @@ training.camera_on	CAMERA TRACKING: BUKAS
 collection.hint	KOLEKSIYON NG KARAKTER
 play.choose_style	PUMILI NG ISTILO NG LARO
 online.kicker	PUMILI NG ISTILO NG LARO  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	PILIIN ANG LABAN MO  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	PILIIN ANG LABAN MO  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	MALAPIT NA
 training.cv	COMPUTER VISION
 online.connection	KONEKSIYON
@@ -177,7 +177,7 @@ exit.title	UMALIS SA LARO?
 online.royale_desc	Kanya-kanyang laban. Ang huling fighter na nakatayo ang panalo.
 arcade.kicker	LIMANG KARIBAL · ISANG TAKBO
 loading.for_battle	PARA SA LABAN
-online.invites_note	Dito lumalabas ang mga room invite ng kaibigan. Nasa MAGLARO > VS LOCAL ang mga room kasama ang kaibigan.
+online.invites_note	Dito lumalabas ang mga room invite ng kaibigan. Nasa MAGLARO > CREATE ROOM ang mga room kasama ang kaibigan.
 settings.kicker	LARO · CAMERA · KONTROL
 training.gestures_live	MGA GALAW  (gawin ang pose sa harap ng camera - suntok = isang brasong diretso sa gilid)
 training.gestures_sim	MGA GALAW  (pindutin nang matagal ang key para gayahin ang pose)
@@ -188,7 +188,7 @@ arcade.rule_retry	Natalo sa isang round? Magpatuloy at ulitin ito.
 home.hint	MAIN MENU
 settings.master_volume	MASTER VOLUME
 settings.match_time	ORAS NG LABAN
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	GUMALAW
 play.matchmaking_desc	Gumawa ng room, ibahagi ang code nito o imbitahin ang kaibigan gamit ang pangalan.
 play.no_internet_tag	WALANG INTERNET

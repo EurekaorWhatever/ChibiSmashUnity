@@ -69,7 +69,7 @@ net.friend_no_answer	Tvoj priateľ neodpovedal.
 net.start_cancelled	Spustenie zrušené.
 net.friend_no_connect	Tvoj priateľ sa nepripojil.
 net.enter_code	Zadaj kód miestnosti, ktorý ukazuje tvoj priateľ.
-net.lan_browser	Hra cez LAN nie je v prehliadači dostupná. Použi MIESTNOSTI alebo VS LOCAL, alebo PC verziu pre LAN.
+net.lan_browser	Hra cez LAN nie je v prehliadači dostupná. Použi MIESTNOSTI alebo CREATE ROOM, alebo PC verziu pre LAN.
 net.enter_ip	Zadaj IP adresu hostiteľa.
 net.this_pc_ip	IP tohto PC
 net.signing_in	Prihlasuje sa...

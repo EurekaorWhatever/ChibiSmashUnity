@@ -38,7 +38,7 @@ name.pad_hint	Controller: A = salvează · Y = sugerează un nume
 online.connected_agreeing	Conectat. Se stabilește meciul...
 online.host_settings_changed	Setările gazdei s-au schimbat — reintră în cameră.
 online.version_mismatch	Adversarul tău rulează altă versiune a jocului. Ambii jucători au nevoie de aceeași versiune.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	CAMERE  ·  2-4 JUCĂTORI  ·  CREEAZĂ · INTRĂ · INVITĂ DUPĂ NUME
 rooms.create_rooms	CREEAZĂ CAMERE
 rooms.join_room	INTRĂ ÎN CAMERĂ
@@ -50,7 +50,7 @@ rooms.empty_help	Apasă CREEAZĂ CAMERE ca să faci una sau INTRĂ ÎN CAMERĂ c
 rooms.capacity_note	Camerele au 2 până la 4 jucători. Invită prieteni după numele lor de jucător.
 rooms.invites_paused	Invitațiile în camere sunt oprite câteva minute
 rooms.refresh	REÎMPROSPĂTEAZĂ
-rooms.hint	VS LOCAL  ·  CAMERE
+rooms.hint	CREATE ROOM  ·  CAMERE
 rooms.new	NOU
 rooms.you_host	TU EȘTI GAZDA
 rooms.open	DESCHIDE
@@ -87,7 +87,7 @@ room.starting	ÎNCEPE...
 room.start_fight	ÎNCEPE LUPTA
 room.close	ÎNCHIDE CAMERA
 room.leave	IEȘI DIN CAMERĂ
-room.hint	VS LOCAL  ·  CAMERĂ
+room.hint	CREATE ROOM  ·  CAMERĂ
 room.code	COD
 room.copy	COPIAZĂ
 room.host_can_invite	Gazda poate invita un prieten după nume.

@@ -57,8 +57,8 @@ loading.ready	Připraveno
 onboarding.welcome	VÍTEJ!
 onboarding.your_account	TVŮJ ÚČET
 onboarding.your_name	TVOJE HRÁČSKÉ JMÉNO
-rooms.backdrop_create	VS LOCAL  ·  VYTVOŘIT MÍSTNOSTI
-rooms.backdrop_join	VS LOCAL  ·  PŘIPOJIT SE K MÍSTNOSTI
+rooms.backdrop_create	CREATE ROOM  ·  VYTVOŘIT MÍSTNOSTI
+rooms.backdrop_join	CREATE ROOM  ·  PŘIPOJIT SE K MÍSTNOSTI
 precheck.all_passed	VŠECHNY KONTROLY PROŠLY
 precheck.failed	KONTROLA SELHALA
 precheck.lighting	OSVĚTLENÍ
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	SBÍRKA POSTAV
 home.settings	NASTAVENÍ
 home.exit	UKONČIT HRU
-home.play_desc	Rychlý zápas Vs Online, místnosti VS Local s přáteli nebo Vs CPU
+home.play_desc	Rychlý zápas Vs Online, místnosti Create Room s přáteli nebo Vs CPU
 home.training_desc	Nastavení kamery, nácvik gest a tréninková figurína
 home.arcade_desc	Všech pět soupeřů za sebou na každé aréně
 home.collection_desc	Skiny, zbraně a kosmetický banner
@@ -159,7 +159,7 @@ training.camera_on	SLEDOVÁNÍ KAMEROU: ZAP
 collection.hint	SBÍRKA POSTAV
 play.choose_style	VYBER SI STYL HRY
 online.kicker	VYBER SI STYL HRY  ·  SÓLO · 2V2 · BATTLE ROYALE
-play.kicker	VYBER SI SVŮJ BOJ  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	VYBER SI SVŮJ BOJ  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	JIŽ BRZY
 training.cv	POČÍTAČOVÉ VIDĚNÍ
 online.connection	PŘIPOJENÍ
@@ -177,7 +177,7 @@ exit.title	UKONČIT HRU?
 online.royale_desc	Každý sám za sebe. Vyhrává poslední bojovník, který zůstane stát.
 arcade.kicker	PĚT SOUPEŘŮ · JEDEN BĚH
 loading.for_battle	DO BOJE
-online.invites_note	Tady se zobrazují pozvánky přátel do místností. Místnosti s přáteli jsou v HRÁT > VS LOCAL.
+online.invites_note	Tady se zobrazují pozvánky přátel do místností. Místnosti s přáteli jsou v HRÁT > CREATE ROOM.
 settings.kicker	HRA · KAMERA · OVLÁDÁNÍ
 training.gestures_live	GESTA  (udělej pózu před kamerou - úder = jedna ruka natažená rovně do strany)
 training.gestures_sim	GESTA  (podrž klávesu pro simulaci pózy)
@@ -188,7 +188,7 @@ arcade.rule_retry	Prohrál jsi kolo? Pokračuj a zkus ho znovu.
 home.hint	HLAVNÍ MENU
 settings.master_volume	CELKOVÁ HLASITOST
 settings.match_time	ČAS ZÁPASU
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	POHYB
 play.matchmaking_desc	Vytvoř místnost, sdílej její kód nebo pozvi přátele podle jména.
 play.no_internet_tag	BEZ INTERNETU

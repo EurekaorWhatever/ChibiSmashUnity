@@ -75,7 +75,7 @@ net.friend_no_answer	Arkadaşın yanıt vermedi.
 net.start_cancelled	Başlatma iptal edildi.
 net.friend_no_connect	Arkadaşın bağlanmadı.
 net.enter_code	Arkadaşının gösterdiği oda kodunu gir.
-net.lan_browser	LAN oyunu tarayıcıda kullanılamaz. ODALAR veya VS LOCAL'ı ya da LAN için PC sürümünü kullan.
+net.lan_browser	LAN oyunu tarayıcıda kullanılamaz. ODALAR veya CREATE ROOM'u ya da LAN için PC sürümünü kullan.
 net.enter_ip	Ev sahibinin IP adresini gir.
 net.this_pc_ip	bu PC'nin IP'si
 net.signing_in	Giriş yapılıyor...

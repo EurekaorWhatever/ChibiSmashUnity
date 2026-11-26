@@ -36,7 +36,7 @@ name.pad_hint	จอย: A = บันทึก · Y = สุ่มชื่อ
 online.connected_agreeing	เชื่อมต่อแล้ว กำลังตกลงรายละเอียดแมตช์...
 online.host_settings_changed	เจ้าของห้องเปลี่ยนการตั้งค่า — เข้าห้องใหม่อีกครั้ง
 online.version_mismatch	คู่แข่งใช้เกมคนละเวอร์ชัน ผู้เล่นทั้งสองต้องใช้บิลด์เดียวกัน
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	ห้อง  ·  2-4 ผู้เล่น  ·  สร้าง · เข้าร่วม · เชิญด้วยชื่อ
 rooms.create_rooms	สร้างห้อง
 rooms.join_room	เข้าห้อง
@@ -48,7 +48,7 @@ rooms.empty_help	กด สร้างห้อง เพื่อสร้า�
 rooms.capacity_note	ห้องรับได้ 2 ถึง 4 ผู้เล่น เชิญเพื่อนด้วยชื่อผู้เล่นของเขา
 rooms.invites_paused	หยุดคำเชิญเข้าห้องชั่วคราวสักครู่
 rooms.refresh	รีเฟรช
-rooms.hint	VS LOCAL  ·  ห้อง
+rooms.hint	CREATE ROOM  ·  ห้อง
 rooms.new	ใหม่
 rooms.you_host	คุณเป็นเจ้าของ
 rooms.open	เปิด
@@ -85,7 +85,7 @@ room.starting	กำลังเริ่ม...
 room.start_fight	เริ่มการต่อสู้
 room.close	ปิดห้อง
 room.leave	ออกจากห้อง
-room.hint	VS LOCAL  ·  ห้อง
+room.hint	CREATE ROOM  ·  ห้อง
 room.code	รหัส
 room.copy	คัดลอก
 room.host_can_invite	เจ้าของห้องเชิญเพื่อนด้วยชื่อได้

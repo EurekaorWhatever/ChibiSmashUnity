@@ -38,7 +38,7 @@ name.pad_hint	Controller: A = opslaan · Y = naam voorstellen
 online.connected_agreeing	Verbonden. Afspraken maken over de wedstrijd...
 online.host_settings_changed	De instellingen van de host zijn gewijzigd — kom de kamer opnieuw binnen.
 online.version_mismatch	Je tegenstander gebruikt een andere versie van het spel. Beide spelers hebben dezelfde versie nodig.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	KAMERS  ·  2-4 SPELERS  ·  MAKEN · BETREDEN · UITNODIGEN OP NAAM
 rooms.create_rooms	KAMERS MAKEN
 rooms.join_room	KAMER BETREDEN
@@ -50,7 +50,7 @@ rooms.empty_help	Druk op KAMERS MAKEN om er een te maken, of op KAMER BETREDEN m
 rooms.capacity_note	Kamers bieden plaats aan 2 tot 4 spelers. Nodig vrienden uit op hun spelersnaam.
 rooms.invites_paused	Kameruitnodigingen een paar minuten gepauzeerd
 rooms.refresh	VERNIEUWEN
-rooms.hint	VS LOCAL  ·  KAMERS
+rooms.hint	CREATE ROOM  ·  KAMERS
 rooms.new	NIEUW
 rooms.you_host	JIJ BENT HOST
 rooms.open	OPENEN
@@ -87,7 +87,7 @@ room.starting	STARTEN...
 room.start_fight	GEVECHT STARTEN
 room.close	KAMER SLUITEN
 room.leave	KAMER VERLATEN
-room.hint	VS LOCAL  ·  KAMER
+room.hint	CREATE ROOM  ·  KAMER
 room.code	CODE
 room.copy	KOPIËREN
 room.host_can_invite	De host kan een vriend uitnodigen op naam.

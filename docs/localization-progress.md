@@ -83,5 +83,5 @@ Sheets in `tools/loc/<code>/*.tsv`, built with `python -P tools/loc/build_table.
 2026-11-25: trailing spaces restored on `hud.hits_prefix` and `hud.keys_line1..3` in every sheet (the HUD joins these
 pieces, so the space after the last `·` matters). 33 tables + English = 34 translated languages.
 
-2026-11-25: the MATCHMAKING mode is renamed **VS LOCAL** (user decision). Like VS ONLINE and VS CPU, the mode name stays
+2026-11-25: the MATCHMAKING mode is renamed **VS LOCAL**; 2026-11-26 renamed again to **CREATE ROOM** (user decisions). Like VS ONLINE and VS CPU, the mode name stays
 English in every language; keys keep their `matchmaking` ids (`play.matchmaking_card`, `rooms.title` ...).

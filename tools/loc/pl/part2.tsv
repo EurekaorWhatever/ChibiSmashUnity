@@ -36,7 +36,7 @@ name.pad_hint	Pad: A = zapisz · Y = podpowiedz nazwę
 online.connected_agreeing	Połączono. Uzgadnianie meczu...
 online.host_settings_changed	Gospodarz zmienił ustawienia — dołącz ponownie do pokoju.
 online.version_mismatch	Twój przeciwnik ma inną wersję gry. Obaj gracze potrzebują tej samej wersji.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	POKOJE  ·  2-4 GRACZY  ·  TWÓRZ · DOŁĄCZ · ZAPROŚ PO NAZWIE
 rooms.create_rooms	UTWÓRZ POKOJE
 rooms.join_room	DOŁĄCZ DO POKOJU
@@ -48,7 +48,7 @@ rooms.empty_help	Naciśnij UTWÓRZ POKOJE, aby stworzyć pokój, albo DOŁĄCZ D
 rooms.capacity_note	Pokój mieści od 2 do 4 graczy. Zapraszaj przyjaciół po nazwie gracza.
 rooms.invites_paused	Zaproszenia do pokoi wstrzymane na kilka minut
 rooms.refresh	ODŚWIEŻ
-rooms.hint	VS LOCAL  ·  POKOJE
+rooms.hint	CREATE ROOM  ·  POKOJE
 rooms.new	NOWY
 rooms.you_host	TWÓJ POKÓJ
 rooms.open	OTWÓRZ
@@ -85,7 +85,7 @@ room.starting	START...
 room.start_fight	ROZPOCZNIJ WALKĘ
 room.close	ZAMKNIJ POKÓJ
 room.leave	OPUŚĆ POKÓJ
-room.hint	VS LOCAL  ·  POKÓJ
+room.hint	CREATE ROOM  ·  POKÓJ
 room.code	KOD
 room.copy	KOPIUJ
 room.host_can_invite	Gospodarz może zaprosić przyjaciela po nazwie.

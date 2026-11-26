@@ -69,7 +69,7 @@ net.friend_no_answer	A barátod nem válaszolt.
 net.start_cancelled	Indítás megszakítva.
 net.friend_no_connect	A barátod nem csatlakozott.
 net.enter_code	Add meg a szobakódot, amit a barátod mutat.
-net.lan_browser	A LAN játék nem érhető el a böngészőben. Használd a SZOBÁK vagy a VS LOCAL módot, vagy LAN-hoz a PC-s verziót.
+net.lan_browser	A LAN játék nem érhető el a böngészőben. Használd a SZOBÁK vagy a CREATE ROOM módot, vagy LAN-hoz a PC-s verziót.
 net.enter_ip	Add meg a házigazda IP-címét.
 net.this_pc_ip	ennek a PC-nek az IP-címe
 net.signing_in	Bejelentkezés...

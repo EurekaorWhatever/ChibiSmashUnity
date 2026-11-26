@@ -57,8 +57,8 @@ loading.ready	جاهز
 onboarding.welcome	مرحبًا بك!
 onboarding.your_account	حسابك
 onboarding.your_name	اسمك في اللعبة
-rooms.backdrop_create	VS LOCAL  ·  إنشاء غرف
-rooms.backdrop_join	VS LOCAL  ·  الانضمام إلى غرفة
+rooms.backdrop_create	CREATE ROOM  ·  إنشاء غرف
+rooms.backdrop_join	CREATE ROOM  ·  الانضمام إلى غرفة
 precheck.all_passed	نجحت كل الفحوص
 precheck.failed	فشل الفحص
 precheck.lighting	الإضاءة
@@ -78,7 +78,7 @@ home.arcade	الأركيد
 home.collection	مجموعة الشخصيات
 home.settings	الإعدادات
 home.exit	الخروج من اللعبة
-home.play_desc	مباراة سريعة عبر الإنترنت، أو غرف VS LOCAL مع الأصدقاء، أو ضد الكمبيوتر
+home.play_desc	مباراة سريعة عبر الإنترنت، أو غرف CREATE ROOM مع الأصدقاء، أو ضد الكمبيوتر
 home.training_desc	إعداد الكاميرا، والتدرب على الحركات، ودمية تدريب
 home.arcade_desc	واجه المنافسين الخمسة تباعًا في كل الساحات
 home.collection_desc	الأزياء والأسلحة والراية التجميلية
@@ -159,7 +159,7 @@ training.camera_on	التتبع بالكاميرا: يعمل
 collection.hint	مجموعة الشخصيات
 play.choose_style	اختر أسلوب اللعب
 online.kicker	اختر أسلوب اللعب  ·  فردي · 2V2 · BATTLE ROYALE
-play.kicker	اختر معركتك  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	اختر معركتك  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	قريبًا
 training.cv	الرؤية الحاسوبية
 online.connection	الاتصال
@@ -177,7 +177,7 @@ exit.title	الخروج من اللعبة؟
 online.royale_desc	كل لاعب لنفسه. آخر مقاتل صامد هو الفائز.
 arcade.kicker	خمسة منافسين · جولة واحدة
 loading.for_battle	للمعركة
-online.invites_note	تظهر هنا دعوات الغرف من أصدقائك. غرف الأصدقاء موجودة في العب > VS LOCAL.
+online.invites_note	تظهر هنا دعوات الغرف من أصدقائك. غرف الأصدقاء موجودة في العب > CREATE ROOM.
 settings.kicker	اللعبة · الكاميرا · التحكم
 training.gestures_live	الحركات  (اتخذ الوضعية أمام الكاميرا - اللكمة = ذراع واحدة ممدودة للجانب)
 training.gestures_sim	الحركات  (اضغط المفتاح مطولًا لمحاكاة الوضعية)
@@ -188,7 +188,7 @@ arcade.rule_retry	خسرت جولة؟ تابع وأعد المحاولة.
 home.hint	القائمة الرئيسية
 settings.master_volume	مستوى الصوت العام
 settings.match_time	مدة المباراة
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	تحريك
 play.matchmaking_desc	أنشئ غرفة، وشارك رمزها أو ادعُ أصدقاءك بالاسم.
 play.no_internet_tag	لا يوجد إنترنت

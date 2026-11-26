@@ -57,8 +57,8 @@ loading.ready	Pripravené
 onboarding.welcome	VITAJ!
 onboarding.your_account	TVOJ ÚČET
 onboarding.your_name	TVOJE HRÁČSKE MENO
-rooms.backdrop_create	VS LOCAL  ·  VYTVORIŤ MIESTNOSTI
-rooms.backdrop_join	VS LOCAL  ·  PRIPOJIŤ SA K MIESTNOSTI
+rooms.backdrop_create	CREATE ROOM  ·  VYTVORIŤ MIESTNOSTI
+rooms.backdrop_join	CREATE ROOM  ·  PRIPOJIŤ SA K MIESTNOSTI
 precheck.all_passed	VŠETKY KONTROLY PREŠLI
 precheck.failed	KONTROLA ZLYHALA
 precheck.lighting	OSVETLENIE
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	ZBIERKA POSTÁV
 home.settings	NASTAVENIA
 home.exit	UKONČIŤ HRU
-home.play_desc	Rýchly zápas Vs Online, miestnosti VS Local s priateľmi alebo Vs CPU
+home.play_desc	Rýchly zápas Vs Online, miestnosti Create Room s priateľmi alebo Vs CPU
 home.training_desc	Nastavenie kamery, nácvik gest a tréningová figurína
 home.arcade_desc	Všetkých päť súperov za sebou na každej aréne
 home.collection_desc	Skiny, zbrane a kozmetický banner
@@ -159,7 +159,7 @@ training.camera_on	SLEDOVANIE KAMEROU: ZAP
 collection.hint	ZBIERKA POSTÁV
 play.choose_style	VYBER SI ŠTÝL HRY
 online.kicker	VYBER SI ŠTÝL HRY  ·  SÓLO · 2V2 · BATTLE ROYALE
-play.kicker	VYBER SI SVOJ BOJ  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	VYBER SI SVOJ BOJ  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	UŽ ČOSKORO
 training.cv	POČÍTAČOVÉ VIDENIE
 online.connection	PRIPOJENIE
@@ -177,7 +177,7 @@ exit.title	UKONČIŤ HRU?
 online.royale_desc	Každý sám za seba. Vyhráva posledný bojovník, ktorý zostane stáť.
 arcade.kicker	PÄŤ SÚPEROV · JEDEN BEH
 loading.for_battle	DO BOJA
-online.invites_note	Tu sa zobrazujú pozvánky priateľov do miestností. Miestnosti s priateľmi sú v HRAŤ > VS LOCAL.
+online.invites_note	Tu sa zobrazujú pozvánky priateľov do miestností. Miestnosti s priateľmi sú v HRAŤ > CREATE ROOM.
 settings.kicker	HRA · KAMERA · OVLÁDANIE
 training.gestures_live	GESTÁ  (urob pózu pred kamerou - úder = jedna ruka natiahnutá rovno do strany)
 training.gestures_sim	GESTÁ  (podrž kláves na simuláciu pózy)
@@ -188,7 +188,7 @@ arcade.rule_retry	Prehral si kolo? Pokračuj a skús ho znova.
 home.hint	HLAVNÉ MENU
 settings.master_volume	CELKOVÁ HLASITOSŤ
 settings.match_time	ČAS ZÁPASU
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	POHYB
 play.matchmaking_desc	Vytvor miestnosť, zdieľaj jej kód alebo pozvi priateľov podľa mena.
 play.no_internet_tag	BEZ INTERNETU

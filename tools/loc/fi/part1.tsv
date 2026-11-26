@@ -57,8 +57,8 @@ loading.ready	Valmis
 onboarding.welcome	TERVETULOA!
 onboarding.your_account	TILISI
 onboarding.your_name	PELAAJANIMESI
-rooms.backdrop_create	VS LOCAL  ·  LUO HUONEITA
-rooms.backdrop_join	VS LOCAL  ·  LIITY HUONEESEEN
+rooms.backdrop_create	CREATE ROOM  ·  LUO HUONEITA
+rooms.backdrop_join	CREATE ROOM  ·  LIITY HUONEESEEN
 precheck.all_passed	KAIKKI TARKISTUKSET OK
 precheck.failed	TARKISTUS EPÄONNISTUI
 precheck.lighting	VALAISTUS
@@ -78,7 +78,7 @@ home.arcade	ARCADE
 home.collection	HAHMOKOKOELMA
 home.settings	ASETUKSET
 home.exit	POISTU PELISTÄ
-home.play_desc	Vs Online -pikaottelu, VS Local -huoneet kavereiden kanssa tai Vs CPU
+home.play_desc	Vs Online -pikaottelu, Create Room -huoneet kavereiden kanssa tai Vs CPU
 home.training_desc	Kameran asetukset, eleiden harjoittelu ja harjoitusnukke
 home.arcade_desc	Kaikki viisi kilpailijaa peräkkäin jokaisella areenalla
 home.collection_desc	Skinit, aseet ja kosmeettinen banneri
@@ -159,7 +159,7 @@ training.camera_on	KAMERASEURANTA: PÄÄLLÄ
 collection.hint	HAHMOKOKOELMA
 play.choose_style	VALITSE PELITYYLI
 online.kicker	VALITSE PELITYYLI  ·  SOLO · 2V2 · BATTLE ROYALE
-play.kicker	VALITSE TAISTELUSI  ·  VS ONLINE · VS LOCAL · VS CPU
+play.kicker	VALITSE TAISTELUSI  ·  VS ONLINE · CREATE ROOM · VS CPU
 play.coming_soon	TULOSSA PIAN
 training.cv	KONENÄKÖ
 online.connection	YHTEYS
@@ -177,7 +177,7 @@ exit.title	POISTUTAANKO PELISTÄ?
 online.royale_desc	Jokainen itsensä puolesta. Viimeinen pystyssä oleva taistelija voittaa.
 arcade.kicker	VIISI KILPAILIJAA · YKSI KIERROS
 loading.for_battle	TAISTELUUN
-online.invites_note	Kavereiden huonekutsut ilmestyvät tähän. Huoneet kavereiden kanssa löytyvät kohdasta PELAA > VS LOCAL.
+online.invites_note	Kavereiden huonekutsut ilmestyvät tähän. Huoneet kavereiden kanssa löytyvät kohdasta PELAA > CREATE ROOM.
 settings.kicker	PELI · KAMERA · OHJAUS
 training.gestures_live	ELEET  (tee asento kameran edessä - lyönti = toinen käsi suoraan sivulle ojennettuna)
 training.gestures_sim	ELEET  (pidä näppäintä painettuna simuloidaksesi asentoa)
@@ -188,7 +188,7 @@ arcade.rule_retry	Hävisitkö erän? Jatka ja yritä uudelleen.
 home.hint	PÄÄVALIKKO
 settings.master_volume	PÄÄÄÄNENVOIMAKKUUS
 settings.match_time	OTTELUN KESTO
-play.matchmaking_card	VS\nLOCAL
+play.matchmaking_card	CREATE\nROOM
 hint.move	LIIKU
 play.matchmaking_desc	Luo huone, jaa sen koodi tai kutsu kavereita nimellä.
 play.no_internet_tag	EI INTERNETIÄ

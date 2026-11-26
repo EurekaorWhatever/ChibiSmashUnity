@@ -38,7 +38,7 @@ name.pad_hint	گیم پیڈ: A = محفوظ کریں · Y = نام کی تجوی
 online.connected_agreeing	جڑ گئے۔ میچ طے ہو رہا ہے...
 online.host_settings_changed	میزبان کی سیٹنگز بدل گئیں — روم میں دوبارہ شامل ہوں۔
 online.version_mismatch	آپ کا مخالف گیم کا دوسرا ورژن چلا رہا ہے۔ دونوں کھلاڑیوں کو ایک ہی ورژن چاہیے۔
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	روم  ·  2-4 کھلاڑی  ·  بنائیں · شامل ہوں · نام سے مدعو کریں
 rooms.create_rooms	روم بنائیں
 rooms.join_room	روم میں شامل ہوں
@@ -50,7 +50,7 @@ rooms.empty_help	ایک روم بنانے کے لیے روم بنائیں دبا
 rooms.capacity_note	روم میں 2 سے 4 کھلاڑی ہوتے ہیں۔ دوستوں کو ان کے کھلاڑی نام سے مدعو کریں۔
 rooms.invites_paused	روم کی دعوتیں چند منٹ کے لیے رکی ہوئی ہیں
 rooms.refresh	ریفریش
-rooms.hint	VS LOCAL  ·  روم
+rooms.hint	CREATE ROOM  ·  روم
 rooms.new	نیا
 rooms.you_host	آپ میزبان ہیں
 rooms.open	کھولیں
@@ -87,7 +87,7 @@ room.starting	شروع ہو رہا ہے...
 room.start_fight	لڑائی شروع کریں
 room.close	روم بند کریں
 room.leave	روم چھوڑیں
-room.hint	VS LOCAL  ·  روم
+room.hint	CREATE ROOM  ·  روم
 room.code	کوڈ
 room.copy	کاپی
 room.host_can_invite	میزبان کسی دوست کو نام سے مدعو کر سکتا ہے۔

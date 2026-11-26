@@ -69,7 +69,7 @@ net.friend_no_answer	Din ven svarede ikke.
 net.start_cancelled	Start annulleret.
 net.friend_no_connect	Din ven forbandt ikke.
 net.enter_code	Skriv rumkoden, som din ven viser.
-net.lan_browser	LAN-spil er ikke tilgængeligt i browseren. Brug RUM eller VS LOCAL, eller pc-versionen til LAN.
+net.lan_browser	LAN-spil er ikke tilgængeligt i browseren. Brug RUM eller CREATE ROOM, eller pc-versionen til LAN.
 net.enter_ip	Skriv værtens IP-adresse.
 net.this_pc_ip	denne pc's IP
 net.signing_in	Logger ind...

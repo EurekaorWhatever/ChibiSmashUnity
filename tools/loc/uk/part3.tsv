@@ -69,7 +69,7 @@ net.friend_no_answer	Друг не відповів.
 net.start_cancelled	Запуск скасовано.
 net.friend_no_connect	Друг не підключився.
 net.enter_code	Введи код кімнати, який показує твій друг.
-net.lan_browser	Гра по LAN недоступна в браузері. Використовуй КІМНАТИ або VS LOCAL чи версію для ПК для LAN.
+net.lan_browser	Гра по LAN недоступна в браузері. Використовуй КІМНАТИ або CREATE ROOM чи версію для ПК для LAN.
 net.enter_ip	Введи IP-адресу хоста.
 net.this_pc_ip	IP цього ПК
 net.signing_in	Вхід...

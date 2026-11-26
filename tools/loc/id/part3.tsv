@@ -76,7 +76,7 @@ net.friend_no_answer	Temanmu tidak menjawab.
 net.start_cancelled	Mulai dibatalkan.
 net.friend_no_connect	Temanmu tidak terhubung.
 net.enter_code	Masukkan kode room yang ditunjukkan temanmu.
-net.lan_browser	Main LAN tidak tersedia di browser. Pakai ROOM atau VS LOCAL, atau versi PC untuk LAN.
+net.lan_browser	Main LAN tidak tersedia di browser. Pakai ROOM atau CREATE ROOM, atau versi PC untuk LAN.
 net.enter_ip	Masukkan alamat IP host.
 net.this_pc_ip	IP PC ini
 net.signing_in	Sedang masuk...

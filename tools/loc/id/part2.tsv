@@ -44,7 +44,7 @@ name.pad_hint	Gamepad: A = simpan · Y = sarankan nama
 online.connected_agreeing	Terhubung. Menyepakati pertandingan...
 online.host_settings_changed	Pengaturan host berubah — gabung ulang ke room.
 online.version_mismatch	Lawanmu memakai versi game yang berbeda. Kedua pemain butuh build yang sama.
-rooms.title	VS LOCAL
+rooms.title	CREATE ROOM
 rooms.kicker	ROOM  ·  2-4 PEMAIN  ·  BUAT · GABUNG · UNDANG LEWAT NAMA
 rooms.create_rooms	BUAT ROOM
 rooms.join_room	GABUNG ROOM
@@ -56,7 +56,7 @@ rooms.empty_help	Tekan BUAT ROOM untuk membuatnya, atau GABUNG ROOM dengan kode 
 rooms.capacity_note	Room menampung 2 sampai 4 pemain. Undang teman lewat nama pemain mereka.
 rooms.invites_paused	Undangan room dijeda beberapa menit
 rooms.refresh	MUAT ULANG
-rooms.hint	VS LOCAL  ·  ROOM
+rooms.hint	CREATE ROOM  ·  ROOM
 rooms.new	BARU
 rooms.you_host	KAMU HOST
 rooms.open	BUKA
@@ -93,7 +93,7 @@ room.starting	MEMULAI...
 room.start_fight	MULAI BERTARUNG
 room.close	TUTUP ROOM
 room.leave	KELUAR ROOM
-room.hint	VS LOCAL  ·  ROOM
+room.hint	CREATE ROOM  ·  ROOM
 room.code	KODE
 room.copy	SALIN
 room.host_can_invite	Host bisa mengundang teman lewat nama.
