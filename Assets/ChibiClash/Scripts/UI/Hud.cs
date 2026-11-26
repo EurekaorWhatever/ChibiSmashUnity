@@ -637,7 +637,38 @@ namespace ChibiClash
         }
 
         static ChibiMatch resultsFor;
-        static int resultsRewards = -1;
+        static int resultsRewards = -1, resRewardCount;
+        static Vector2 resRewardScroll;
+        static float resRewardH = -1f, resRewardHW;
+
+        /// <summary>
+        /// The reward lines in <paramref name="view"/>, scrollable when they do not fit (user request 2026-11-27): mouse
+        /// wheel or the scrollbar, and a gamepad's right stick.
+        /// </summary>
+        static void RewardLines(Rect view)
+        {
+            if (resRewardH < 0f || resRewardHW != view.width)   // measured once per change, not every frame
+            {
+                resRewardHW = view.width;
+                resRewardH = resRewardCount == 0 ? 0f : Gui.MeasureHeight(resRewards, 13, view.width - 24f, false);
+            }
+            float contentH = resRewardH + 4f;
+            if (contentH <= view.height)
+            {
+                Gui.Text(new Rect(view.x, view.y, view.width - 8f, view.height), resRewards, 13, Gui.Paper, TextAnchor.UpperLeft, false);
+                return;
+            }
+            var pad = UnityEngine.InputSystem.Gamepad.current;
+            if (pad != null && Event.current.type == EventType.Repaint)
+            {
+                float sy = pad.rightStick.ReadValue().y;
+                if (Mathf.Abs(sy) > 0.3f) resRewardScroll.y -= sy * 360f * Time.unscaledDeltaTime;
+            }
+            resRewardScroll.y = Mathf.Clamp(resRewardScroll.y, 0f, contentH - view.height);
+            resRewardScroll = GUI.BeginScrollView(view, resRewardScroll, new Rect(0f, 0f, view.width - 18f, contentH), false, true);
+            Gui.Text(new Rect(0f, 0f, view.width - 24f, contentH), resRewards, 13, Gui.Paper, TextAnchor.UpperLeft, false);
+            GUI.EndScrollView();
+        }
         static string resTitle = "", resWhy = "", resRewardsHead = "", resRewards = "", resCoins = "";
         static readonly string[] resStocks = new string[2], resPct = new string[2], resStats = new string[2];
 
@@ -648,6 +679,7 @@ namespace ChibiClash
             {
                 resultsFor = m;
                 resultsRewards = -1;
+                resRewardScroll = Vector2.zero;
                 resTitle = noContest ? Loc.T("results.no_contest") : w < 0 ? Loc.T("results.draw") : m.IsCpu(w) ? Loc.T("results.cpu_wins") : m.Online ? (w == m.LocalPlayer ? Loc.T("results.you_win") : Loc.T("results.rival_wins"))
                          : Loc.T("results.wins", CharNameUpper(m.Def(w).type));
                 string why = m.OnlineEndText;
@@ -667,6 +699,8 @@ namespace ChibiClash
             if (m.RewardLog.Count != resultsRewards)
             {
                 resultsRewards = m.RewardLog.Count;
+                resRewardCount = m.RewardLog.Count;
+                resRewardH = -1f;
                 resRewards = string.Join("\n", m.RewardLog);
                 resCoins = Loc.T("results.coins", m.CoinsEarned, m.GM.Save.coins);
             }
@@ -943,7 +977,7 @@ namespace ChibiClash
             BuildResultsText(m, w, false);
             Gui.Rect(rw, new Color(0f, 0f, 0f, 0.3f));
             Gui.Text(new Rect(rw.x + 14f, rw.y + 6f, rw.width, 24f), resRewardsHead, 14, Gui.Gold, TextAnchor.MiddleLeft);
-            Gui.Text(new Rect(rw.x + 14f, rw.y + 32f, rw.width - 28f, 150f), resRewards, 13, Gui.Paper, TextAnchor.UpperLeft, false);
+            RewardLines(new Rect(rw.x + 14f, rw.y + 32f, rw.width - 20f, 150f));
             Gui.Text(new Rect(rw.x, rw.y + 6f, rw.width - 14f, 24f), resCoins, 16, Gui.Gold, TextAnchor.MiddleRight);
 
             float by = r.yMax - 78f;
@@ -1197,7 +1231,7 @@ namespace ChibiClash
             else
             {
                 Gui.Text(new Rect(rw.x + 14f, rw.y + 6f, rw.width, 24f), resRewardsHead, 14, Gui.Gold, TextAnchor.MiddleLeft);
-                Gui.Text(new Rect(rw.x + 14f, rw.y + 32f, rw.width - 28f, 120f), resRewards, 13, Gui.Paper, TextAnchor.UpperLeft, false);
+                RewardLines(new Rect(rw.x + 14f, rw.y + 32f, rw.width - 20f, 120f));
                 Gui.Text(new Rect(rw.x, rw.y + 6f, rw.width - 14f, 24f), resCoins, 16, Gui.Gold, TextAnchor.MiddleRight);
             }
 

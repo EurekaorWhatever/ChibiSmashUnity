@@ -125,6 +125,12 @@ namespace ChibiClash
             return false;
         }
 
+        /// <summary>
+        /// Back for windows with a text field: Esc (P1 keys) or a gamepad B / Back, never P2's Backspace, which deletes
+        /// the last typed letter there (user report 2026-11-27: Backspace closed the CHANGE NAME window).
+        /// </summary>
+        public static bool TextBack() => fired[0, (int)NavCmd.Back] || PadFired(NavCmd.Back);
+
         /// <summary>Any menu command fired this frame from any keyboard half or gamepad.</summary>
         public static bool AnyFired()
         {

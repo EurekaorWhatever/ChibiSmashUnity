@@ -855,6 +855,7 @@ namespace ChibiClash.Netcode
                 // Pre-v18 moves keep their gates and the original's range test (FI:196-200).
                 bool ranged = cls == (int)FighterClass.Ranged || cls == (int)FighterClass.Magic;
                 if (slot <= 1 && ranged && self.SetCd > 0) return false;
+                if (slot == 1 && self.HeavyCd > 0) return false;   // rules v27 heavy shot cooldown
                 if (slot >= 2 && slot <= 4 && self.Cd[slot - 2] > 0) return false;
                 if (dir == DN && !(sdx == self.Facing || Math.Abs(dx) < 200)) return false;
                 if (ranged) return Math.Abs(dy) < 1000;

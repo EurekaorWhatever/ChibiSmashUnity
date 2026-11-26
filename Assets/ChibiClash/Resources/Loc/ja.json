@@ -762,5 +762,9 @@
   "pose.step_back": "カメラオン - 肩が映るように後ろに下がってください",
   "account.finish_browser": "ブラウザでサインインを完了してください（「Google で続行」を選択）...",
   "account.signed_out_again": "サインアウトしました。アカウントを使うにはもう一度サインインしてください。",
-  "account.signed_in_kept": "サインインしました。名前と進行状況はこのアカウントに保存されます。"
+  "account.signed_in_kept": "サインインしました。名前と進行状況はこのアカウントに保存されます。",
+  "settings.show_stats": "FPS / Ping を表示",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }

@@ -270,12 +270,26 @@ namespace ChibiClash
             st.fontSize = size;
             st.fontStyle = display ? (displayFont == null ? FontStyle.Bold : FontStyle.Normal) : (bold ? FontStyle.Bold : FontStyle.Normal);
             string script = PickFont(st, s, display);
+            if (script == "Thai") s = ThaiShaper.Apply(s);   // positioned tone marks (IMGUI has no GPOS)
             if (script != null && st.font != displayFont && st.font != bodyFont && display) st.fontStyle = FontStyle.Bold;
             if (script != null && TextScript.NeedsShaper(script) && ShapedText.TryMeasure(s, st.font, size, st.fontStyle == FontStyle.Bold, out var m))
                 return m.x;
             if (RtlText.HasRtl(s)) s = RtlVisual(st, s, size, bold, display, 0f);
             measureContent.text = s;
             return st.CalcSize(measureContent).x;
+        }
+
+        /// <summary>Height of body text s wrapped at <paramref name="width"/> (same font pick as <see cref="Text"/>).</summary>
+        public static float MeasureHeight(string s, int size, float width, bool bold = true)
+        {
+            if (string.IsNullOrEmpty(s)) return 0f;
+            var st = Style(false);
+            st.fontSize = size;
+            st.fontStyle = bold ? FontStyle.Bold : FontStyle.Normal;
+            string script = PickFont(st, s, false);
+            if (script == "Thai") s = ThaiShaper.Apply(s);
+            measureContent.text = s;
+            return st.CalcHeight(measureContent, width);
         }
 
         /// <summary>Body text in r (word-wrapped), with a soft drop shadow unless it carries rich-text colours.</summary>
@@ -286,6 +300,7 @@ namespace ChibiClash
             st.fontSize = size;
             st.fontStyle = bold ? FontStyle.Bold : FontStyle.Normal;
             string script = PickFont(st, s, false);
+            if (script == "Thai") s = ThaiShaper.Apply(s);   // positioned tone marks (IMGUI has no GPOS)
             c = A(c);
             if (script != null && TextScript.NeedsShaper(script))
             {
@@ -320,6 +335,7 @@ namespace ChibiClash
             st.fontSize = size;
             st.fontStyle = displayFont == null ? FontStyle.Bold : FontStyle.Normal;
             string script = PickFont(st, s, true);
+            if (script == "Thai") s = ThaiShaper.Apply(s);   // positioned tone marks (IMGUI has no GPOS)
             if (script != null) st.fontStyle = FontStyle.Bold;   // bundled fonts ship Regular only: synthetic bold for headlines
             bool shaped = script != null && TextScript.NeedsShaper(script);
             if (!shaped && RtlText.HasRtl(s)) { s = RtlVisual(st, s, size, true, true, 0f); anchor = Mirror(anchor); }

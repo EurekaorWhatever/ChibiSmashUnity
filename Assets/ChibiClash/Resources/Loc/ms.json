@@ -762,5 +762,9 @@
   "pose.step_back": "Kamera hidup - undur supaya bahu anda kelihatan",
   "account.finish_browser": "Selesaikan log masuk dalam pelayar anda (pilih Continue with Google)...",
   "account.signed_out_again": "Sudah log keluar. Log masuk semula untuk menggunakan akaun anda.",
-  "account.signed_in_kept": "Sudah log masuk. Nama dan kemajuan anda kekal dengan akaun ini."
+  "account.signed_in_kept": "Sudah log masuk. Nama dan kemajuan anda kekal dengan akaun ini.",
+  "settings.show_stats": "Tunjukkan FPS / ping",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }

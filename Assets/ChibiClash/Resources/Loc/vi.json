@@ -762,5 +762,9 @@
   "pose.step_back": "Camera đang bật - lùi lại để thấy vai của bạn",
   "account.finish_browser": "Hoàn tất đăng nhập trong trình duyệt (chọn Continue with Google)...",
   "account.signed_out_again": "Đã đăng xuất. Đăng nhập lại để dùng tài khoản của bạn.",
-  "account.signed_in_kept": "Đã đăng nhập. Tên và tiến trình của bạn được giữ trong tài khoản này."
+  "account.signed_in_kept": "Đã đăng nhập. Tên và tiến trình của bạn được giữ trong tài khoản này.",
+  "settings.show_stats": "Hiện FPS / ping",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }

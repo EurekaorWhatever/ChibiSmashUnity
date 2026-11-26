@@ -216,6 +216,18 @@ namespace ChibiClash
             Globe(new Rect(r.x + 12f, r.y + 5f, 16f, 16f), hot ? Gui.Gold : Gui.P2);
             Gui.Text(new Rect(r.x + 34f, r.y, w - 42f, r.height), label, 13, hot ? Gui.Gold : Gui.Paper, TextAnchor.MiddleLeft, true, false);
             if (click) { UiSound.Confirm(); OpenLanguageDialog(); }
+            if (Save.settings.showStats) StatsChip(r.x - 10f, r.y, r.height);
+        }
+
+        /// <summary>FPS and ping chip left of the language button, ending at <paramref name="right"/> (user request 2026-11-27).</summary>
+        static void StatsChip(float right, float y, float h)
+        {
+            string t = PerfStats.Text;
+            float w = Gui.Measure(t, 12) + 30f;
+            var r = new Rect(right - w, y, w, h);
+            Gui.Skew(r, new Color(0.06f, 0.1f, 0.18f, 0.95f), 0.3f);
+            Gui.SkewFrame(r, Gui.Steel, 1f, 0.3f);
+            Gui.Text(r, t, 12, Gui.Paper, TextAnchor.MiddleCenter, true, false);
         }
 
         /// <summary>A small globe icon: a disc, an inner ring, the equator and a meridian.</summary>

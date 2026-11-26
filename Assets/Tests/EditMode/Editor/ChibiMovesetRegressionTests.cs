@@ -27,7 +27,9 @@ namespace ChibiClash.Tests
         /// <remarks>Rules v22 re-pin, ON PURPOSE (EL-1, 2026-11-14): the neutral normals' recovery is trimmed by a quarter
         /// and presses near a move's end are buffered, so the neutral-input trace changes (v20 values: 0x89FC7AFFu,
         /// 0x833EAAF2u, 0x382E95DCu, 0x46F72735u, 0xD56F4841u).</remarks>
-        static readonly uint[] GoldenV20 = { 0x57340963u, 0x0DAC5E24u, 0x29840B70u, 0x1CE888DAu, 0x1F20533Eu };
+        // Rules v27 (2026-11-27): re-pinned ON PURPOSE for the four pairings with Ren (Ranged) or Lyra (Magic): their neutral
+        // heavy now has a cooldown (90 / 60 ticks). Polearm vs Heavy (index 4) has neither and kept its v22 value.
+        static readonly uint[] GoldenV20 = { 0x0E32D79Du, 0x862B453Au, 0x159F8639u, 0x7F42BC31u, 0x1F20533Eu };
 
         static ChibiInputPacket Bot(ChibiSimState s, int i, int n, int seed)
         {

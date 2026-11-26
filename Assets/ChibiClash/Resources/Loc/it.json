@@ -762,5 +762,9 @@
   "pose.step_back": "Camera attiva - fai un passo indietro per inquadrare le spalle",
   "account.finish_browser": "Completa l'accesso nel browser (scegli Continua con Google)...",
   "account.signed_out_again": "Disconnesso. Accedi di nuovo per usare il tuo account.",
-  "account.signed_in_kept": "Accesso effettuato. Nome e progressi restano con questo account."
+  "account.signed_in_kept": "Accesso effettuato. Nome e progressi restano con questo account.",
+  "settings.show_stats": "Mostra FPS / ping",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }

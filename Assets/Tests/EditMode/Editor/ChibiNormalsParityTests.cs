@@ -567,6 +567,7 @@ namespace ChibiClash.Tests
         {
             var s = FarArena(FighterClass.Melee, MeleeBase);
             s.F[0].AuraTicks = 600;
+            s.F[0].AuraWaveCredit = ChibiSimConst.AuraWaveGapTicks;   // rules v27: as when the ult starts the aura
             int ax = s.F[0].X, ay = s.F[0].Y;
 
             AssertStraightShot(s, ChibiButtons.Heavy, HeavyStrike, ax + AuraOffX, ay + AuraOffY, AuraLife, n => ax + AuraOffX + n * AuraStep, 0);
