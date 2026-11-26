@@ -762,5 +762,9 @@
   "pose.step_back": "Cámara encendida - aléjate para que se vean tus hombros",
   "account.finish_browser": "Termina de iniciar sesión en tu navegador (elige Continuar con Google)...",
   "account.signed_out_again": "Sesión cerrada. Vuelve a iniciar sesión para usar tu cuenta.",
-  "account.signed_in_kept": "Sesión iniciada. Tu nombre y progreso se quedan en esta cuenta."
+  "account.signed_in_kept": "Sesión iniciada. Tu nombre y progreso se quedan en esta cuenta.",
+  "settings.show_stats": "Mostrar FPS / ping",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }

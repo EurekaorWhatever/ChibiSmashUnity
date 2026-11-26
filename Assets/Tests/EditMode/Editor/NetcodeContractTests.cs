@@ -54,8 +54,11 @@ namespace ChibiClash.Tests
         /// 26: re-recorded ON PURPOSE (pose ultimate, 2026-11-26) - only the config hash (UltPoseHoldTicks joined the gesture
         /// constants) and the Hello rules byte moved; fixtures A-D never hold a class pose with a full meter, so their
         /// checksums are unchanged.
+        /// 27: re-recorded ON PURPOSE (feedback pass, 2026-11-27): Ren / Lyra neutral heavy cooldowns (new hashed field
+        /// HeavyCd) and the Sword Aura wave credit (AuraWaveCredit) change every fixture's checksum; FeedbackConstants join
+        /// the config hash; the Hello rules byte moves.
         /// </remarks>
-        const int PinnedRulesVersion = 26;
+        const int PinnedRulesVersion = 27;
         /// <summary>The wire protocol version the wire golden values were recorded with.</summary>
         /// <remarks>3: re-recorded ON PURPOSE (CH-3) - input bit 15 changed meaning from PoseVerified to Special.
         /// 4: re-recorded ON PURPOSE (rules v20, ST-5) - the Start message carries a 1-bit HazardsOff after the stage and the
@@ -64,22 +67,23 @@ namespace ChibiClash.Tests
         /// (DisconnectTicks cap, input-progress timeout, MatchComplete and never-started scoring).</remarks>
         const int PinnedProtocolVersion = 6;
         /// <summary>Hash of every gameplay constant table + the fixture config (ChibiMatchConfig.ComputeHash).</summary>
-        const uint GoldenConfigHash = 0x290583BCu;
+        const uint GoldenConfigHash = 0x6B8F535Du;
         /// <summary>Final state checksum of fixture match A after <see cref="Ticks"/> ticks.</summary>
-        const uint GoldenChecksumA = 0x22B0CD26u;
+        const uint GoldenChecksumA = 0x0DD95AF0u;
         /// <summary>Final state checksum of fixture match B (other fighters, stage, intro off).</summary>
-        const uint GoldenChecksumB = 0x1DF9931Cu;
+        const uint GoldenChecksumB = 0x1A427DAAu;
         /// <summary>Final state checksum of fixture match C: 2v2 Team, 4 fighters, <see cref="FourTicks"/> ticks (rules v25).</summary>
-        const uint GoldenChecksumC = 0x6A062411u;
+        const uint GoldenChecksumC = 0xB01E2FADu;
         /// <summary>Final state checksum of fixture match D: 4-player Battle Royale, <see cref="FourTicks"/> ticks (rules v25).</summary>
-        const uint GoldenChecksumD = 0x0D9BD502u;
+        const uint GoldenChecksumD = 0x396A4056u;
         /// <summary>Bytes of a Hello control datagram (protocol, rules, class, passive, name "Kira").</summary>
         /// <remarks>Re-recorded on purpose: protocol 5 and rules 22 (same Hello layout; only the protocol byte moved, 4 -> 5).
         /// Rules 23 (2026-11-17): only the rules byte moved (0x60 -> 0x70), as in the v22 bump; layout unchanged, no protocol bump.
         /// Rules 24 (ED-1, 2026-11-17): only the rules byte moved (0x70 -> 0x80); layout unchanged, no protocol bump.
         /// Rules 25 (4-player rules, 2026-11-23): only the rules byte moved (0x80 -> 0x90); layout unchanged, no protocol bump.
         /// Rules 26 (pose ultimate, 2026-11-26): only the rules byte moved (0x90 -> 0xa0); layout unchanged, no protocol bump.</remarks>
-        const string GoldenHelloHex = "c961a001208922ae1a";
+        // v27 (2026-11-27): only the rules field moved (a0 -> b0); same layout, same protocol.
+        const string GoldenHelloHex = "c961b001208922ae1a";
 
         const int Ticks = 1800;   // 30 s of play: movement, attacks, skills, jumps, hits, KOs
         const int FourTicks = 600;   // 10 s of 4-fighter play: crowded hits, grabs, shots and a few KOs

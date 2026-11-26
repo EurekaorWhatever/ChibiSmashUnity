@@ -91,6 +91,7 @@ namespace ChibiClash
         public bool showCvOverlay = true;
         public bool screenShake = true;
         public bool preMatchCheck = true;
+        public bool showStats = true;   // FPS / ping readout (user request 2026-11-27)
     }
 
     /// <summary>Key/value storage behind SaveData. The game uses PlayerPrefs; tests pass an in-memory store.</summary>
@@ -345,14 +346,16 @@ namespace ChibiClash
             var q = quests?.FirstOrDefault(x => x != null && x.id == id);
             if (q == null || amount <= 0 || q.target <= 0) return 0;   // target <= 0 would never leave the loop below
             q.progress += amount;
-            int earned = 0;
+            int earned = 0, done = 0;
             while (q.progress >= q.target)
             {
                 q.progress -= q.target;
                 q.completions++;
                 earned += q.reward;
-                log?.Add(Loc.T("rewards.quest", q.DescText, q.reward));
+                done++;
             }
+            // One line per quest, not per completion (user request 2026-11-27): "Quest: Parry 5 attacks ×9  +450".
+            if (done > 0) log?.Add(Loc.T("rewards.quest", done > 1 ? q.DescText + "  ×" + done : q.DescText, earned));
             coins = (int)Math.Min(MaxCoins, (long)coins + earned);
             return earned;
         }

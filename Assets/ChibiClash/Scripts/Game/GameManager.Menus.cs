@@ -545,8 +545,10 @@ namespace ChibiClash
                     default: rule = Loc.T("arcade.rule_rewards"); break;
                 }
                 Gui.Skew(new Rect(x, y + 7f, 8f, 8f), Gui.P1, 0.4f);
-                Gui.Text(new Rect(x + 18f, y, w - 18f, 40f), rule, 14, Gui.Paper, TextAnchor.UpperLeft, false);
-                y += 40f;
+                // Row height follows the wrapped text (Thai lines wrap to two or three rows; user report 2026-11-27).
+                float rh2 = Mathf.Max(40f, Gui.MeasureHeight(rule, 14, w - 18f, false) + 10f);
+                Gui.Text(new Rect(x + 18f, y, w - 18f, rh2), rule, 14, Gui.Paper, TextAnchor.UpperLeft, false);
+                y += rh2;
             }
             Gui.PreferNext();
             if (Gui.Button(new Rect(x, box.yMax - 82f, w, 58f), Loc.T("arcade.start"), Gui.P1, 22)) StartArcade();
@@ -566,8 +568,12 @@ namespace ChibiClash
                 int st = ArcadeStage(i);
                 var prev = new Rect(row.x + 230f, row.y + 8f, (row.height - 16f) * 2f, row.height - 16f);
                 StagePreview(prev, st, 1f);
-                Gui.Text(new Rect(prev.xMax + 16f, row.y, 220f, row.height), StageLabel(st, 216f, 15), 15, Gui.Paper, TextAnchor.MiddleLeft);
-                Gui.Display(new Rect(row.x, row.y, row.width - 30f, row.height), Loc.T("arcade.rival_unknown"), 26, Gui.Muted, TextAnchor.MiddleRight);
+                // The stage name stops before the rival label (long Thai stage names ran under it; user report 2026-11-27).
+                string rival = Loc.T("arcade.rival_unknown");
+                float rivalW = Gui.Measure(rival, 26, true) + 12f;
+                float nameW = Mathf.Max(60f, row.xMax - 30f - rivalW - (prev.xMax + 16f) - 8f);
+                Gui.Text(new Rect(prev.xMax + 16f, row.y, nameW, row.height), StageLabel(st, nameW - 4f, 15), 15, Gui.Paper, TextAnchor.MiddleLeft);
+                Gui.Display(new Rect(row.x, row.y, row.width - 30f, row.height), rival, 26, Gui.Muted, TextAnchor.MiddleRight);
                 Gui.Alpha = 1f;
             }
             EndPage();
@@ -751,7 +757,7 @@ namespace ChibiClash
 
             Gui.Text(new Rect(x, y, 200f, 40f), Loc.T("settings.match_time"), 16, Gui.Paper, TextAnchor.MiddleLeft);
             Gui.Text(new Rect(x + 220f, y, 350f, 40f), Loc.T("settings.match_time_value", MatchController.MatchSeconds), 16, Gui.Paper, TextAnchor.MiddleLeft);
-            y += 56f;
+            y += 50f;
 
             Gui.Text(new Rect(x, y, 200f, 40f), Loc.T("settings.cpu_difficulty"), 16, Gui.Paper, TextAnchor.MiddleLeft);
             for (int i = 1; i <= 3; i++)
@@ -763,12 +769,13 @@ namespace ChibiClash
                     Save.Save();
                 }
             }
-            y += 56f;
+            y += 50f;
 
             if (Toggle(x, ref y, Loc.T("settings.camera_tracking"), ref s.useWebcam)) WebcamFeed.SetEnabled(s.useWebcam);
             Toggle(x, ref y, Loc.T("settings.cv_overlay"), ref s.showCvOverlay);
             Toggle(x, ref y, Loc.T("settings.precheck"), ref s.preMatchCheck);
             Toggle(x, ref y, Loc.T("settings.screen_shake"), ref s.screenShake);
+            Toggle(x, ref y, Loc.T("settings.show_stats"), ref s.showStats);
 
             // Volumes live in ChibiAudio (it persists them itself); 10 % steps with - / +, or click the meter.
             float master = Netcode.ChibiAudio.MasterVolume, sfx = Netcode.ChibiAudio.SfxVolume;
@@ -874,11 +881,12 @@ namespace ChibiClash
 
         bool Toggle(float x, ref float y, string label, ref bool value)
         {
-            Gui.Text(new Rect(x, y, 300f, 40f), label, 15, Gui.Paper, TextAnchor.MiddleLeft);
+            // Rows 44 apart (was 52) so the SHOW FPS / PING row fits above the language button (2026-11-27).
+            Gui.Text(new Rect(x, y, 300f, 38f), label, 15, Gui.Paper, TextAnchor.MiddleLeft);
             bool changed = false;
-            if (Gui.Button(new Rect(x + 340f, y, 110f, 40f), Loc.T("common.on"), Gui.Green, 15, true, value) && !value) { value = true; changed = true; }
-            if (Gui.Button(new Rect(x + 460f, y, 110f, 40f), Loc.T("common.off"), Gui.Red, 15, true, !value) && value) { value = false; changed = true; }
-            y += 52f;
+            if (Gui.Button(new Rect(x + 340f, y, 110f, 38f), Loc.T("common.on"), Gui.Green, 15, true, value) && !value) { value = true; changed = true; }
+            if (Gui.Button(new Rect(x + 460f, y, 110f, 38f), Loc.T("common.off"), Gui.Red, 15, true, !value) && value) { value = false; changed = true; }
+            y += 44f;
             if (changed) Save.Save();
             return changed;
         }

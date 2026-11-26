@@ -762,5 +762,9 @@
   "pose.step_back": "Bukas ang camera - umatras para kita ang balikat mo",
   "account.finish_browser": "Tapusin ang pag-sign in sa browser mo (piliin ang Continue with Google)...",
   "account.signed_out_again": "Naka-sign out. Mag-sign in ulit para magamit ang account mo.",
-  "account.signed_in_kept": "Naka-sign in. Mananatili sa account na ito ang pangalan at progreso mo."
+  "account.signed_in_kept": "Naka-sign in. Mananatili sa account na ito ang pangalan at progreso mo.",
+  "settings.show_stats": "Ipakita ang FPS / ping",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }

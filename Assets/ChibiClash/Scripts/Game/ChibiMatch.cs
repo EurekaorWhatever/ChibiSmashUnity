@@ -257,6 +257,9 @@ namespace ChibiClash
 
         ChibiOnlineMatchRunner _runner;
 
+        /// <summary>Smoothed online round trip in ms, or -1 (offline match, handshake, no sample yet).</summary>
+        public int PingMs => _runner != null && _runner.Match != null && _runner.Match.Session != null
+            ? PerfStats.RttX8ToMs(_runner.Match.Session.RttTicksX8, ChibiSimConst.TickRate) : -1;
         /// <summary>The online match's final result (online only; Outcome None until decided).</summary>
         public ChibiOnlineResult OnlineResult => _runner != null && _runner.Match != null ? _runner.Match.Result : default;
 

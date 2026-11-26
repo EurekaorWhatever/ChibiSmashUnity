@@ -108,6 +108,26 @@ namespace ChibiClash.Netcode
         /// </summary>
         public const int AuraWaveOffX = 700, AuraWaveOffY = 675, AuraWaveSpeedSub = 225000, AuraWaveLife = 54,
                          AuraWaveMult = 800, AuraWaveKbX = 60000, AuraWaveKbY = 30000, AuraWaveStun = 15;
+        /// <summary>
+        /// Rules v27 (user request 2026-11-27): a Sword Aura wave costs this many game ticks of wave credit, so waves come
+        /// 25 % less often. Credit grows 1 per tick while the aura is up, up to <see cref="AuraWaveCreditCap"/>, and a wave
+        /// spends one gap (the rest carries over, so the rhythm stays even). A mashed neutral light chain strikes about
+        /// every 10.7 ticks, so it throws a wave on about 3 strikes out of 4.
+        /// </summary>
+        public const int AuraWaveGapTicks = 14;
+        /// <summary>Wave credit cap: below two gaps, so a strike never loses carried credit and idling banks at most two waves.</summary>
+        public const int AuraWaveCreditCap = 2 * AuraWaveGapTicks - 1;
+        /// <summary>
+        /// Rules v27 (user request 2026-11-27): neutral heavy shot cooldown in game ticks, started when the heavy starts.
+        /// Ren (Ranged) 1.5 s, Lyra (Magic) 1 s. Other classes have none.
+        /// </summary>
+        public const int HeavyShotCdRanged = 90, HeavyShotCdMagic = 60;
+        /// <summary>Every rules-v27 constant, mixed into the config hash.</summary>
+        public static readonly int[] FeedbackConstants = { AuraWaveGapTicks, AuraWaveCreditCap, HeavyShotCdRanged, HeavyShotCdMagic };
+
+        /// <summary>Neutral heavy cooldown for a class (0 = none), rules v27.</summary>
+        public static int HeavyShotCd(int cls) =>
+            cls == (int)FighterClass.Ranged ? HeavyShotCdRanged : cls == (int)FighterClass.Magic ? HeavyShotCdMagic : 0;
 
         // Dash (docs/architecture/netcode/dash-conversion.md section 1, decision D2 = A: original at 60 fps).
         /// <summary>Dash speed 17 u/s = 283.333 milli/tick (row 1, Fighter.cs:270). Speed modifiers do not apply (row 9).</summary>
@@ -372,7 +392,8 @@ namespace ChibiClash.Netcode
         /// <remarks>24: escape dash (ED-1, 2026-11-17): a Dash press during a knockback launch (not set knockback) after 10 game ticks of it, with DashCd 0, halves Vx / Vy, ends the hitstun and the launch and starts the 33-tick dash cooldown (no invuln, no dash motion); LaunchAge and EscapeDashes per fighter in state and hash; EscapeMinAge / EscapeSpeedP / LaunchAgeCap in the config hash.</remarks>
         /// <remarks>25: four players, Phase 2a (four-player-design.md 1.3-1.5, section 9, 2026-11-23): Battle Royale (FFA) and Team (2v2) for 3-4 fighters, friendly fire off in Team for everything a player owns, hazards hit everyone, 3 stocks each, elimination places (same-tick ties shared), team / FFA timeout ranking, WinnerMask / Place; presentMask (a leaver is eliminated at an exact tick); hold steal clears the old holder's program victim; same-tick grab chains resolve order-independently (a grabber grabbed this tick whiffs); a pierce shot that hit a fighter can still be destroyed or reflected by it (3-4 fighters); LastHitBy cleared on respawn; spawns and respawn offsets for 3-4 fighters; pools 128 / 24 / 8; every four-player field hashed always (the Phase 1 1v1 canonical checksum is gone).</remarks>
         /// <remarks>26: pose ultimate (user request 2026-11-26): with a full meter, the class ult gesture held 30 real ticks (UltPoseHoldTicks, in the config hash) fires the ultimate through the v15 fire path (also while stunned or held, like the old gesture window); the Ult key press (v22) is unchanged and stays the fallback when no camera runs. The camera is for the ultimate ONLY (user decision CI-6): CrossArms no longer blocks, RaiseHands no longer Super Jumps, PunchForward no longer fires the Pose Fireball (their constants stay in the config hash, unused).</remarks>
-        public const int RulesVersion = 26;
+        /// <remarks>27: feedback pass (user request 2026-11-27): Ren's neutral heavy has a 1.5 s cooldown and Lyra's 1 s (HeavyCd, started with the move); Kaia's Sword Aura throws 25 % fewer waves (AuraWaveCredit, 14 ticks per wave, carried over, capped below two waves). New fields in CopyFrom and the checksum, constants in the config hash.</remarks>
+        public const int RulesVersion = 27;
 
         public uint Seed;
         public FighterClass Class0, Class1;
@@ -448,6 +469,9 @@ namespace ChibiClash.Netcode
             for (int k = 0; k < pk.Length; k++) ChibiSimState.Mix(ref h, pk[k]);
             ChibiSimState.Mix(ref h, HazardsOff ? 1 : 0);
             ChibiSimulation.MixStageHash(ref h, ChibiStageTable.Get(Stage));
+            // Rules v27: heavy shot cooldowns and the Sword Aura wave gap.
+            var fb = ChibiSimConst.FeedbackConstants;
+            for (int k = 0; k < fb.Length; k++) ChibiSimState.Mix(ref h, fb[k]);
             MixPlayers(ref h);   // four players: no-op for every 1v1 config (ChibiSimulation.Players.cs)
             return h;
         }
@@ -684,6 +708,10 @@ namespace ChibiClash.Netcode
 
         public int SlowTicks, WeakenTicks, SluggishTicks, ArmorBreakTicks;
         public int TailwindTicks, TailwindCd, AuraTicks, RingTicks, SetCd;
+        /// <summary>Rules v27: neutral heavy cooldown (Ranged / Magic), game ticks.</summary>
+        public int HeavyCd;
+        /// <summary>Rules v27: Sword Aura wave credit in game ticks (a wave costs <see cref="ChibiSimConst.AuraWaveGapTicks"/>).</summary>
+        public int AuraWaveCredit;
         /// <summary>
         /// Ticks since the START of the last normal or skill (Patience, damage-conversion.md section 5): init
         /// <see cref="ChibiSimConst.PatienceInit"/>, +1 at the top of every Step in every state, reset by StartMove slots 0..4.
@@ -788,6 +816,7 @@ namespace ChibiClash.Netcode
             Cd[0] = o.Cd[0]; Cd[1] = o.Cd[1]; Cd[2] = o.Cd[2];
             SlowTicks = o.SlowTicks; WeakenTicks = o.WeakenTicks; SluggishTicks = o.SluggishTicks; ArmorBreakTicks = o.ArmorBreakTicks;
             TailwindTicks = o.TailwindTicks; TailwindCd = o.TailwindCd; AuraTicks = o.AuraTicks; RingTicks = o.RingTicks; SinceAttackTicks = o.SinceAttackTicks; SetCd = o.SetCd;
+            HeavyCd = o.HeavyCd; AuraWaveCredit = o.AuraWaveCredit;
             GuardU = o.GuardU; GuardBrokenTicks = o.GuardBrokenTicks;
             PrevInput = o.PrevInput; LatchedEdges = o.LatchedEdges; LatchedHeld = o.LatchedHeld;
             DashTicks = o.DashTicks; DashCd = o.DashCd; DashDir = o.DashDir;
@@ -829,6 +858,7 @@ namespace ChibiClash.Netcode
             ChibiSimState.Mix(ref h, TailwindTicks); ChibiSimState.Mix(ref h, TailwindCd);
             ChibiSimState.Mix(ref h, AuraTicks); ChibiSimState.Mix(ref h, RingTicks); ChibiSimState.Mix(ref h, SinceAttackTicks);
             ChibiSimState.Mix(ref h, SetCd); ChibiSimState.Mix(ref h, GuardU); ChibiSimState.Mix(ref h, GuardBrokenTicks);
+            ChibiSimState.Mix(ref h, HeavyCd); ChibiSimState.Mix(ref h, AuraWaveCredit);
             ChibiSimState.Mix(ref h, PrevInput);
             ChibiSimState.Mix(ref h, HitsLanded); ChibiSimState.Mix(ref h, CombosLanded);
             ChibiSimState.Mix(ref h, UltsUsed); ChibiSimState.Mix(ref h, Parries);
@@ -1151,6 +1181,7 @@ namespace ChibiClash.Netcode
             f.Cd[0] = f.Cd[1] = f.Cd[2] = 0;
             f.SlowTicks = f.WeakenTicks = f.SluggishTicks = f.ArmorBreakTicks = 0;
             f.TailwindTicks = 0; f.TailwindCd = 0; f.AuraTicks = 0; f.RingTicks = 0; f.SinceAttackTicks = ChibiSimConst.PatienceInit; f.SetCd = 0;
+            f.HeavyCd = 0; f.AuraWaveCredit = 0;
             f.GuardU = ChibiCombatStats.GuardMaxU(f.Stats.Defense); f.GuardBrokenTicks = 0;
             f.PrevInput = 0; f.LatchedEdges = 0; f.LatchedHeld = 0;
             f.HitsLanded = f.CombosLanded = f.UltsUsed = f.Parries = 0;
@@ -1461,6 +1492,8 @@ namespace ChibiClash.Netcode
             Dec(ref f.ParryTicks); Dec(ref f.GuardTicks);
             Dec(ref f.SlowTicks); Dec(ref f.WeakenTicks); Dec(ref f.SluggishTicks); Dec(ref f.ArmorBreakTicks);
             Dec(ref f.TailwindTicks); Dec(ref f.AuraTicks); Dec(ref f.RingTicks); Dec(ref f.SetCd); Dec(ref f.GuardBrokenTicks);
+            Dec(ref f.HeavyCd);
+            if (f.AuraTicks > 0 && f.AuraWaveCredit < ChibiSimConst.AuraWaveCreditCap) f.AuraWaveCredit++;   // rules v27
             // Guard regen +24 HP/s exact (0.4 HP per tick) while last tick's shield is down and not broken (F:202-203, section 2).
             int guardMax = ChibiCombatStats.GuardMaxU(f.Stats.Defense);
             if (!f.Shielding && f.GuardBrokenTicks == 0 && f.GuardU < guardMax)
@@ -1744,6 +1777,7 @@ namespace ChibiClash.Netcode
             f.MoveMult = mult;
             if (slot >= FirstNew) StartNewMove(s, i, mv);    // rules v18 bookkeeping (README 1.3)
             if (slot >= 2 && slot <= 4) f.Cd[slot - 2] = mv.Cooldown;
+            if (slot == 1) f.HeavyCd = ChibiSimConst.HeavyShotCd(f.Class);   // rules v27
             if (slot == 5)
             {
                 // Ult cinematic (FireUltimate F:961 -> Cinematic MC:184-193): assignment, a second ult restarts the window.
@@ -1782,7 +1816,10 @@ namespace ChibiClash.Netcode
             var f = s.F[i];
             switch ((FighterClass)f.Class)
             {
-                case FighterClass.Melee: f.AuraTicks = ChibiSimConst.AuraDuration; f.MoveSlot = -1; break;
+                case FighterClass.Melee:
+                    f.AuraTicks = ChibiSimConst.AuraDuration; f.MoveSlot = -1;
+                    f.AuraWaveCredit = ChibiSimConst.AuraWaveGapTicks;   // rules v27: the first strike throws a wave
+                    break;
                 case FighterClass.Magic: f.RingTicks = ChibiSimConst.RingDuration; f.MoveSlot = -1; break;
                 case FighterClass.Heavy: f.Invuln = ChibiSimConst.SmashInvuln; break;
                 case FighterClass.Ranged: f.Invuln = ChibiSimConst.ArrowsInvuln; break;
@@ -2306,10 +2343,14 @@ namespace ChibiClash.Netcode
                     // Reload starts on the finisher's strike (F:474); never set if the move is interrupted first.
                     if (f.MoveFinisher != 0 && (f.Class == (int)FighterClass.Ranged || f.Class == (int)FighterClass.Magic))
                         f.SetCd = ChibiSimConst.SetCooldownTicks;
-                    if ((mv.Flags & ChibiMove.FAura) != 0) f.AuraTicks = ChibiSimConst.AuraDuration;
+                    if ((mv.Flags & ChibiMove.FAura) != 0) { f.AuraTicks = ChibiSimConst.AuraDuration; f.AuraWaveCredit = ChibiSimConst.AuraWaveGapTicks; }
                     if ((mv.Flags & ChibiMove.FRing) != 0) f.RingTicks = ChibiSimConst.RingDuration;
-                    // Sword Aura: every normal strike (light, finisher, heavy) also throws a wave (F:490-494, doc section 6)
-                    if (f.MoveSlot <= 1 && f.Class == (int)FighterClass.Melee && f.AuraTicks > 0)
+                    // Sword Aura: a normal strike (light, finisher, heavy) also throws a wave (F:490-494, doc section 6) when
+                    // the wave credit covers one (rules v27: 25 % fewer waves).
+                    if (f.MoveSlot <= 1 && f.Class == (int)FighterClass.Melee && f.AuraTicks > 0 &&
+                        f.AuraWaveCredit >= ChibiSimConst.AuraWaveGapTicks)
+                    {
+                        f.AuraWaveCredit -= ChibiSimConst.AuraWaveGapTicks;
                         SpawnProjectile(s, new ProjSpec
                         {
                             Owner = i, Kind = ChibiProjKind.AuraWave, X = f.X + f.Facing * ChibiSimConst.AuraWaveOffX,
@@ -2318,6 +2359,7 @@ namespace ChibiClash.Netcode
                             KbX = ChibiSimConst.AuraWaveKbX, KbY = ChibiSimConst.AuraWaveKbY, Stun = ChibiSimConst.AuraWaveStun,
                             Flags = ChibiProjectileSim.FDestructible,
                         });
+                    }
                 }
             }
 

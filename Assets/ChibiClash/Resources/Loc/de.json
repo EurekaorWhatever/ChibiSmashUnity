@@ -762,5 +762,9 @@
   "pose.step_back": "Kamera an - geh zurück, damit deine Schultern zu sehen sind",
   "account.finish_browser": "Schließ die Anmeldung im Browser ab (wähle Weiter mit Google)...",
   "account.signed_out_again": "Abgemeldet. Melde dich erneut an, um dein Konto zu nutzen.",
-  "account.signed_in_kept": "Angemeldet. Dein Name und Fortschritt bleiben bei diesem Konto."
+  "account.signed_in_kept": "Angemeldet. Dein Name und Fortschritt bleiben bei diesem Konto.",
+  "settings.show_stats": "FPS / Ping anzeigen",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }

@@ -762,5 +762,9 @@
   "pose.step_back": "Kamera nyala - mundur sedikit agar bahumu terlihat",
   "account.finish_browser": "Selesaikan proses masuk di browser (pilih Continue with Google)...",
   "account.signed_out_again": "Sudah keluar. Masuk lagi untuk memakai akunmu.",
-  "account.signed_in_kept": "Sudah masuk. Nama dan progresmu tersimpan di akun ini."
+  "account.signed_in_kept": "Sudah masuk. Nama dan progresmu tersimpan di akun ini.",
+  "settings.show_stats": "Tampilkan FPS / ping",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }

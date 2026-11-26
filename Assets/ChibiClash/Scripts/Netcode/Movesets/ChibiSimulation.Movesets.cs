@@ -124,7 +124,7 @@ namespace ChibiClash.Netcode
                     int sl = ChibiMovesetData.SlotFor(cls, 1, dir, false);
                     if (sl >= 0) { if (CanStartRow(f, sl)) StartMove(s, i, sl); return; }
                 }
-                if (!reloading) { StartMove(s, i, 1); return; }                                // rule 7
+                if (!reloading && f.HeavyCd <= 0) { StartMove(s, i, 1); return; }             // rule 7 (v27 HeavyCd)
             }
             if ((edges & (int)ChibiButtons.Special) != 0)                                      // rule 8
             {

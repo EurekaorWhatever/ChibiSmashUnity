@@ -188,6 +188,8 @@ namespace ChibiClash
         void Update()
         {
             MenuInput.Poll();
+            PerfStats.Tick(Time.unscaledDeltaTime);
+            PerfStats.PingMs = page == Page.Match && match != null ? match.PingMs : -1;
             UpdateWipe();
             UpdatePendingOnline();
             // One "join" (launch count) per run, once the friends layer has signed in (never races the account restore).
@@ -219,7 +221,7 @@ namespace ChibiClash
                 // CREATE ROOM / JOIN ROOM windows: the gamepad moves between their buttons (keys type into the field).
                 if (roomDialog || joinDialog) PadDialogNav();
                 // Text-entry dialogs own the keyboard; only Back closes the ones that may be closed.
-                if (MenuInput.Any(NavCmd.Back))
+                if (MenuInput.TextBack())
                 {
                     if (langDialog && !NeedsLanguage) { langDialog = false; UiSound.Back(); }
                     else if (roomDialog) { roomDialog = false; UiSound.Back(); }
@@ -231,7 +233,7 @@ namespace ChibiClash
             if (GUIUtility.keyboardControl != 0)
             {
                 // Typing into a text field (room code, invite name): keys type, Esc leaves the field.
-                if (MenuInput.Any(NavCmd.Back)) { GUIUtility.keyboardControl = 0; UiSound.Back(); }
+                if (MenuInput.TextBack()) { GUIUtility.keyboardControl = 0; UiSound.Back(); }
                 return;
             }
             if (page == Page.Select) UpdateSelect();
@@ -1015,6 +1017,13 @@ namespace ChibiClash
             {
                 Gui.Interactive = wipeStart < 0f;
                 var choice = Hud.Draw(match, this);
+                // FPS then ping in the top-right corner, above the player panels (user request 2026-11-27).
+                if (Save.settings.showStats)
+                {
+                    float sw = Gui.Measure(PerfStats.Text, 11) + 16f;
+                    Gui.Rect(new Rect(W - 8f - sw, 0f, sw, 15f), new Color(0.03f, 0.05f, 0.1f, 0.7f));
+                    Gui.Text(new Rect(W - 8f - sw, 0f, sw, 15f), PerfStats.Text, 11, Gui.Paper, TextAnchor.MiddleCenter, true, false);
+                }
                 if (wipeStart < 0f) HandleMatchChoice(choice);
             }
             else

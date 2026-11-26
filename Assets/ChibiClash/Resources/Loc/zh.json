@@ -762,5 +762,9 @@
   "pose.step_back": "摄像头已开启 - 请后退，让肩膀进入画面",
   "account.finish_browser": "请在浏览器中完成登录（选择“使用 Google 继续”）...",
   "account.signed_out_again": "已退出登录。请重新登录以使用你的账号。",
-  "account.signed_in_kept": "已登录。你的名称和进度会保存在此账号中。"
+  "account.signed_in_kept": "已登录。你的名称和进度会保存在此账号中。",
+  "settings.show_stats": "显示 FPS / 延迟",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "延迟 {0} ms",
+  "stats.ping_none": "延迟 --"
 }

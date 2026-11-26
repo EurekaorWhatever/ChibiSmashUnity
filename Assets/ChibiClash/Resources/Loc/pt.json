@@ -762,5 +762,9 @@
   "pose.step_back": "Câmera ligada - afaste-se para seus ombros aparecerem",
   "account.finish_browser": "Conclua o login no seu navegador (escolha Continuar com o Google)...",
   "account.signed_out_again": "Desconectado. Entre de novo para usar sua conta.",
-  "account.signed_in_kept": "Conectado. Seu nome e progresso ficam nesta conta."
+  "account.signed_in_kept": "Conectado. Seu nome e progresso ficam nesta conta.",
+  "settings.show_stats": "Mostrar FPS / ping",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }

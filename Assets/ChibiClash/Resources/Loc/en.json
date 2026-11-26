@@ -794,5 +794,9 @@
   "pose.step_back": "Camera on - step back so your shoulders are in view",
   "account.finish_browser": "Finish signing in in your browser (choose Continue with Google)...",
   "account.signed_out_again": "Signed out. Sign in again to use your account.",
-  "account.signed_in_kept": "Signed in. Your name and progress stay with this account."
+  "account.signed_in_kept": "Signed in. Your name and progress stay with this account.",
+  "settings.show_stats": "Show FPS / ping",
+  "stats.fps": "{0} FPS",
+  "stats.ping": "PING {0} ms",
+  "stats.ping_none": "PING --"
 }
