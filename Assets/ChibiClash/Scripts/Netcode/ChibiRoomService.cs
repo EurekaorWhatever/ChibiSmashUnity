@@ -8,20 +8,6 @@ using UnityEngine;
 
 namespace ChibiClash.Netcode
 {
-    /// <summary>What the friends layer needs from rooms: a room to invite into, and joining an accepted invite.</summary>
-    public interface IChibiInviteRooms
-    {
-        /// <summary>Code of the room we are in ("" when none yet).</summary>
-        string RoomCode { get; }
-        /// <summary>The last room request failed (see <see cref="RoomStatus"/>).</summary>
-        bool RoomFailed { get; }
-        string RoomStatus { get; }
-        /// <summary>Make a room to invite a friend into (no-op when we are already in one).</summary>
-        void CreateRoomForInvite(string roomName);
-        /// <summary>Join the room of an accepted invite.</summary>
-        void JoinRoomForInvite(string code);
-    }
-
     /// <summary>
     /// CREATE ROOM mode (docs/architecture/netcode/online-rooms.md "Rooms"): named private rooms that stay open between
     /// fights. Each room is a private Unity Lobby of 2 to 4 seats (<see cref="ChibiRoomRules.MaxSeats"/>). Inside it
@@ -40,7 +26,7 @@ namespace ChibiClash.Netcode
     /// var svc = gameObject.AddComponent&lt;ChibiRoomService&gt;();
     /// svc.Bind(roomManager);  svc.Create("Kira's Dojo", stage: 0);  svc.SetReady(true);  svc.PressStart();
     /// </code></example>
-    public sealed class ChibiRoomService : MonoBehaviour, IChibiInviteRooms
+    public sealed class ChibiRoomService : MonoBehaviour
     {
         const string KeyStage = "stage", KeyGo = "go", KeyRelay = "relay", KeyProto = "proto";
         /// <summary>Rules v20 (ST-5): the host's stage hazards switch, member-visible ("1" on, "0" off).</summary>
@@ -156,14 +142,6 @@ namespace ChibiClash.Netcode
 
         /// <summary>The room manager that opens the actual match link.</summary>
         public void Bind(NetworkRoomManager link) => _link = link;
-
-        // ================================================================== IChibiInviteRooms
-
-        public string RoomCode => Current != null ? Current.Code : "";
-        public bool RoomFailed => StatusIsError;
-        public string RoomStatus => Status;
-        public void CreateRoomForInvite(string roomName) { if (Current == null) Create(roomName, 0); }
-        public void JoinRoomForInvite(string code) => JoinByCode(code);
 
         // ================================================================== list
 

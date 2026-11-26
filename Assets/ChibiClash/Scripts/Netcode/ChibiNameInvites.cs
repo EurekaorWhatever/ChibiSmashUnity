@@ -27,7 +27,7 @@ namespace ChibiClash.Netcode
     /// <example><code>
     /// nameInvites = gameObject.AddComponent&lt;Netcode.ChibiNameInvites&gt;();   // finds ChibiRoomService on the same object
     /// nameInvites.Enabled = onOnlineMenu &amp;&amp; !inMatch;
-    /// nameInvites.Send("Kira", roomsSvc.RoomCode, roomsSvc.Current.Name);
+    /// nameInvites.Send("Kira", roomsSvc.Current.Code, roomsSvc.Current.Name);
     /// string code = nameInvites.Accept(0); if (code.Length &gt; 0) roomsSvc.JoinByCode(code);
     /// </code></example>
     public sealed class ChibiNameInvites : MonoBehaviour
@@ -68,6 +68,17 @@ namespace ChibiClash.Netcode
 
         ChibiRoomService _rooms;
         readonly List<PendingNameInvite> _pending = new List<PendingNameInvite>(ChibiNameInviteRules.MaxPending);
+
+#if UNITY_EDITOR
+        /// <summary>Editor only: put a sample invite in <see cref="Pending"/> so the invite card can be screenshotted.</summary>
+        /// <example><code>nameInvites.DevInjectSample("Kira", "Kira's room");</code></example>
+        internal void DevInjectSample(string fromName, string roomName)
+        {
+            if (_pending.Count >= ChibiNameInviteRules.MaxPending) return;
+            _pending.Add(new PendingNameInvite(ChibiSocialRules.SafeDisplayName(fromName), "DEVABC", ChibiSocialRules.SafeRoomName(roomName),
+                                               Time.unscaledTime + 3600f, "dev-inviter", "dev-beacon"));
+        }
+#endif
         readonly List<ChibiDismissedInvite> _dismissed = new List<ChibiDismissedInvite>(ChibiNameInviteRules.MaxDismissed + 1);
         readonly HashSet<string> _seen = new HashSet<string>();
         readonly HashSet<string> _hostsThisQuery = new HashSet<string>();

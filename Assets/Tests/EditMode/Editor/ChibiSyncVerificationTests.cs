@@ -19,7 +19,7 @@ namespace ChibiClash.Tests
 
         /// <summary>
         /// Deterministic "everything" bot: direction incl. Down, every button incl. Dash / Shield / Skill1-3 / Ultimate,
-        /// and all three gestures held for stretches (so ult windows match, CrossArms blocks, poses fire). Pure function
+        /// and all three gestures held for stretches (so ult windows and pose ultimates match; poses do nothing else since v26). Pure function
         /// of (seed, sample index).
         /// </summary>
         static ChibiInputPacket RichBot(int seed, int n)

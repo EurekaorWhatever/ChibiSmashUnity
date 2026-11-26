@@ -50,18 +50,5 @@ namespace ChibiClash.Tests
             var goal = SimulatedPoseSource.Template(Gesture.RaiseHands, false);
             Assert.Less((src.Current.p[PoseFrame.LWrist] - goal.p[PoseFrame.LWrist]).magnitude, 0.02f, "behaviour unchanged");
         }
-
-        [Test]
-        public void RemoveExpired_DoesNotAllocate_AndKeepsLiveInvites()
-        {
-            var list = new List<ChibiPendingInvite>
-            {
-                new ChibiPendingInvite { ExpiresAt = 5f }, new ChibiPendingInvite { ExpiresAt = 50f }, new ChibiPendingInvite { ExpiresAt = 1f },
-            };
-            ChibiSocialManager.RemoveExpired(list, 10f);
-            Assert.AreEqual(1, list.Count);
-            Assert.AreEqual(50f, list[0].ExpiresAt);
-            Assert.That(() => ChibiSocialManager.RemoveExpired(list, 10f), Is.Not.AllocatingGCMemory());
-        }
     }
 }

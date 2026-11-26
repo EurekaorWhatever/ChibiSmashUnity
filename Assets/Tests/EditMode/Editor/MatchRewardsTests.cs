@@ -21,11 +21,12 @@ namespace ChibiClash.Tests
         static SaveData Fresh() => SaveData.Load(new MemoryStore());
 
         static MatchStatsForRewards Stats(bool won = false, bool lost = false, bool pve = false, float posture = 0f,
-                                          int combos = 0, int ults = 0, int parries = 0, bool training = false) =>
+                                          int combos = 0, int ults = 0, int parries = 0, bool training = false,
+                                          bool tracked = true) =>
             new MatchStatsForRewards
             {
                 Won = won, Lost = lost, Pve = pve, PostureAverage = posture, CombosLanded = combos, UltsUsed = ults,
-                Parries = parries, Training = training,
+                Parries = parries, Training = training, PostureTracked = tracked,
             };
 
         [TestCase(true, true, 50)]
@@ -129,6 +130,32 @@ namespace ChibiClash.Tests
                 if (int.TryParse(digits, out int n)) sum += n;
             }
             return sum;
+        }
+
+        // ------------------------------------------------------------------ camera off (user report 2026-11-26)
+
+        [Test]
+        public void CameraOff_NoPostureCoinsAndNoPostureQuest()
+        {
+            var save = Fresh();
+            var log = new List<string>();
+            var q = save.quests.Find(x => x != null && x.id == "posture");
+            Assert.IsNotNull(q, "precondition: the profile has the posture quest");
+            int before = q.progress, doneBefore = q.completions;
+            int earned = MatchRewards.Award(save, Stats(lost: true, posture: 1f, tracked: false), log);
+            Assert.AreEqual(15, earned - QuestCoins(log), "only the 15 match coins: posture was never measured");
+            Assert.AreEqual(before, q.progress, "the posture quest needs the camera");
+            Assert.AreEqual(doneBefore, q.completions);
+        }
+
+        [Test]
+        public void SimulatedPose_IsNeverSampledAsPosture()
+        {
+            // The keyboard simulator always stands upright; it must not count as good posture.
+            var tracker = new GestureTracker(new SimulatedPoseSource("sim", () => Gesture.None));
+            for (int i = 0; i < 60; i++) { tracker.Tick(1f / 60f); tracker.SamplePosture(1f / 60f); }
+            Assert.IsFalse(tracker.PostureSampled);
+            Assert.AreEqual(0f, tracker.PostureAverage);
         }
     }
 }

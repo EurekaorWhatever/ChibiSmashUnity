@@ -802,6 +802,12 @@ namespace ChibiClash
             if (tracker == null) return;
             var g = tracker.Stable == Gesture.None ? "-" : ClassDef.GestureName(tracker.Stable);
             Text(new Rect(r.x + 8f, r.y + 1f, r.width - 16f, 20f), g, 12, Accent2, TextAnchor.MiddleRight);
+            if (!tracker.PostureLive)
+            {
+                // No live camera body: posture is not measured (never shown as good).
+                Text(new Rect(r.x + 8f, r.yMax - 21f, r.width - 16f, 20f), Loc.T(tracker.IsLive ? "cv.posture_no_body" : "cv.posture_off"), 11, Muted, TextAnchor.MiddleLeft);
+                return;
+            }
             float posture = tracker.Posture;
             var pc = posture >= 0.6f ? Green : Yellow;
             int pp = Mathf.Clamp(Mathf.RoundToInt(posture * 100f), 0, 100);

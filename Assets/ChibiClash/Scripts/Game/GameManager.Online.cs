@@ -171,7 +171,6 @@ namespace ChibiClash
                     pending.cpu[0] = pending.cpu[1] = false;
                     pending.training = false;
                     onlineNote = "";
-                    social.ClearMatchFriend();
                     // ST-5: the room carries the host's hazards pick (key "hz") next to the stage; both change in the room.
                     roomsSvc.Create(n, pending.stage, pending.hazards);
                     roomCreatePending = true;   // stays on the rooms screen: the new room shows as a block
@@ -523,8 +522,6 @@ namespace ChibiClash
                 match = ChibiMatch.CreateOnline(this, pendingOnline, pendingOnlineInput, pending.weapon[0]);
                 // SEC-004: in a room the names come from the lobby (each player's own claimed name), not from the handshake.
                 if (roomsSvc.OwnsLink) match.SetRoomNames(roomsSvc.SeatNames());
-                match.SetVerifiedOpponentName(social.MatchFriendName);   // invite match: the friends-list name
-                social.ClearMatchFriend();
                 pendingOnline = null;
                 pendingOnlineInput = null;
                 page = Page.Match;
@@ -606,8 +603,13 @@ namespace ChibiClash
                 else OpenJoinDialog();
             }
 
-            // Middle: the room blocks, or the empty / loading / offline message.
-            var area = new Rect(a.x, a.y + bh + 18f, a.width, a.height - bh - 18f - 72f);
+            // Middle: the room blocks, or the empty / loading / offline message. A waiting room invite takes a card in the
+            // bottom-right corner (above REFRESH / BACK); the middle area gives up that column so the card covers nothing.
+            float by = a.yMax - 52f;
+            bool inviteCard = NameInviteShown;
+            const float cardW = 400f, cardH = 156f;
+            inviteCardRect = new Rect(a.xMax - cardW, by - 14f - cardH, cardW, cardH);
+            var area = new Rect(a.x, a.y + bh + 18f, a.width - (inviteCard ? cardW + 24f : 0f), a.height - bh - 18f - 72f);
             if (count == 0)
             {
                 bool loading = (working || roomCreatePending) && !roomsSvc.ListLoaded;
@@ -628,7 +630,6 @@ namespace ChibiClash
             string status = roomsSvc.Status;
             bool statusErr = roomsSvc.StatusIsError;
             if (status.Length == 0 && !net) { status = NoInternetMsg; statusErr = true; }
-            float by = a.yMax - 52f;
             if (nameInvites != null && nameInvites.Paused)
                 Gui.Text(new Rect(a.x, by - 20f, 600f, 18f), Loc.T("rooms.invites_paused"), 11, Gui.Muted, TextAnchor.MiddleLeft, false, false);
             Gui.Text(new Rect(a.x, by, a.width - 420f, 50f), status, 13, statusErr ? Gui.Red : Gui.Paper, TextAnchor.MiddleLeft, false);
@@ -775,7 +776,6 @@ namespace ChibiClash
                     pending.cpu[0] = pending.cpu[1] = false;
                     pending.training = false;
                     onlineNote = "";
-                    social.ClearMatchFriend();
                     roomsSvc.JoinByCode(code);
                     Enter(Page.Room);
                 }
@@ -804,7 +804,6 @@ namespace ChibiClash
             pending.cpu[0] = pending.cpu[1] = false;
             pending.training = false;
             onlineNote = "";
-            social.ClearMatchFriend();
             if (page != Page.QuickMatch) Enter(Page.QuickMatch);
             bool busy = rooms.State != Netcode.ChibiRoomState.Idle && rooms.State != Netcode.ChibiRoomState.Failed || pendingOnline != null;
             if (!busy)
@@ -1033,7 +1032,6 @@ namespace ChibiClash
             if (Gui.Button(new Rect(x + w * 0.42f, y, w * 0.58f, 54f), launching ? Loc.T("room.starting") : Loc.T("room.start_fight"), Gui.P1, 22, canStart) && canStart)
             {
                 onlineNote = "";
-                social.ClearMatchFriend();
                 roomsSvc.PressStart();
             }
             y += 62f;
@@ -1129,52 +1127,56 @@ namespace ChibiClash
         // ---------------------------------------------------------------- ROOM INVITE pop-up (invites by name to us)
 
         /// <summary>
-        /// Online menu pages where room invites are received (never a match or another menu). Not the PLAY page: it is
-        /// also the Vs CPU menu, so opening it must not sign in or poll Lobby (SEC-007). Not the QUICK MATCH
-        /// page either: its search queries Lobby too, and both share one 1-per-second Query limit (network review
-        /// 2026-11-22), so polling there would make the search hit "too many requests" and back off.
+        /// Online menu pages where room invites are received (never a match or another menu): the CREATE ROOM rooms list and
+        /// a room (the host sends invites from there). Not the PLAY page: it is also the Vs CPU menu, so opening it must
+        /// not sign in or poll Lobby (SEC-007). Not the QUICK MATCH or Vs Online pages either: QUICK MATCH queries Lobby
+        /// too, and both share one 1-per-second Query limit (network review 2026-11-22).
         /// </summary>
-        bool OnInviteMenuPage =>
-            page == Page.PlayStyle || page == Page.Rooms || page == Page.Room;
+        bool OnInviteMenuPage => page == Page.Rooms || page == Page.Room;
 
         /// <summary>ChibiNameInvites.Enabled: online allowed (13+), on an online menu page, no online match starting.</summary>
         bool NameInvitesWanted => PlayerIdentity.OnlineAllowed(Save.ageBand) && OnInviteMenuPage && pendingOnline == null && wipeStart < 0f;
 
         /// <summary>
-        /// The pop-up is drawn this frame: an invite is waiting, no window covers the page, and we are free to answer it
-        /// (SEC-003): not seated in a room (Room page), no room join / start in progress, no online match starting.
-        /// Invites stay pending meanwhile and show once we are back on the rooms screen.
+        /// The invite card is drawn this frame: an invite is waiting, we are on the CREATE ROOM rooms list (the only page that
+        /// shows it, user request 2026-11-26), no window covers the page, and we are free to answer it (SEC-003): no room
+        /// join / start in progress, no online match starting. Invites stay pending meanwhile and show once we are back on
+        /// the rooms list.
         /// </summary>
         bool NameInviteShown => nameInvites != null && nameInvites.Pending.Count > 0 && NameInvitesWanted && !DialogOpen &&
-                                !(page == Page.Room && roomsSvc.Current != null) && !roomsSvc.Working && !roomsSvc.Launching &&
-                                !OnlineMatchStarting;
+                                page == Page.Rooms && !roomsSvc.Working && !roomsSvc.Launching && !OnlineMatchStarting;
 
         /// <summary>A quick-match or room link is connecting, or a handshake runs: an online match is about to start.</summary>
         bool OnlineMatchStarting => pendingOnline != null || rooms.State == Netcode.ChibiRoomState.Connecting ||
                                     rooms.State == Netcode.ChibiRoomState.Connected;
 
-        Rect InvitePopupRect => new Rect(W * 0.5f - 290f, 120f, 580f, 170f);
+        /// <summary>Where the invite card sits: bottom-right of the rooms list, set by <see cref="RoomsView"/> every frame.</summary>
+        Rect inviteCardRect;
+
+        /// <summary>The invite card's rectangle (clicks inside it never reach the page under it).</summary>
+        Rect InvitePopupRect => inviteCardRect;
 
         /// <summary>
-        /// ROOM INVITE pop-up (style of the old match invite): who invites us to which room, the seconds left, ACCEPT
-        /// (join their room by its code and open it) and DECLINE.
+        /// ROOM INVITE card, bottom-right of the CREATE ROOM rooms list: who invites us to which room, the seconds left,
+        /// ACCEPT (join their room by its code and open it) and DECLINE. The rooms list leaves this corner free.
         /// </summary>
         void NameInvitePopup()
         {
             var inv = nameInvites.Pending[0];
             var r = InvitePopupRect;
-            Gui.Glow(new Rect(r.x - 30f, r.y - 30f, r.width + 60f, r.height + 60f), new Color(1f, 0.8f, 0.2f, 0.35f));
+            Gui.Glow(new Rect(r.x - 16f, r.y - 16f, r.width + 32f, r.height + 32f), new Color(1f, 0.8f, 0.2f, 0.25f));
             Gui.Box(r, Gui.Gold);
-            Gui.Display(new Rect(r.x, r.y + 10f, r.width, 40f), Loc.T("invite.title"), 32, Gui.Gold, TextAnchor.MiddleCenter);
+            Gui.Display(new Rect(r.x + 16f, r.y + 8f, r.width - 32f, 30f), Loc.T("invite.title"), 24, Gui.Gold, TextAnchor.MiddleLeft);
             int left = Mathf.Max(0, Mathf.CeilToInt(inv.ExpiresAt - Time.unscaledTime));
             string from = Netcode.ChibiSocialRules.SafeDisplayName(inv.FromName);     // names come from the network:
             string room = Netcode.ChibiSocialRules.SafeRoomName(inv.RoomName);        // drawn only through the sanitisers
-            Gui.Text(new Rect(r.x + 20f, r.y + 50f, r.width - 40f, 26f), Loc.T("invite.body", from, room, left), 16, Gui.Paper);
+            Gui.Text(new Rect(r.x + 16f, r.y + 40f, r.width - 32f, 40f), Loc.T("invite.body", from, room, left), 14, Gui.Paper, TextAnchor.MiddleLeft);
             // SEC-005: names are self-reported and not unique.
-            Gui.Text(new Rect(r.x + 20f, r.y + 76f, r.width - 40f, 18f), Loc.T("invite.warning"), 11, Gui.Muted, TextAnchor.MiddleCenter, false, false);
+            Gui.Text(new Rect(r.x + 16f, r.y + 80f, r.width - 32f, 16f), Loc.T("invite.warning"), 10, Gui.Muted, TextAnchor.MiddleLeft, false, false);
             bool canAccept = !roomsSvc.Working && !roomsSvc.Launching && pendingOnline == null;
+            float bw = (r.width - 48f) * 0.5f;
             Gui.PreferNext();
-            if (Gui.Button(new Rect(r.x + 70f, r.y + 102f, 200f, 46f), canAccept ? Loc.T("invite.accept") : Loc.T("common.one_moment"), Gui.Green, 17, canAccept) && canAccept)
+            if (Gui.Button(new Rect(r.x + 16f, r.yMax - 52f, bw, 40f), canAccept ? Loc.T("invite.accept") : Loc.T("common.one_moment"), Gui.Green, 15, canAccept) && canAccept)
             {
                 string code = nameInvites.Accept(0);
                 if (!string.IsNullOrEmpty(code))
@@ -1182,12 +1184,11 @@ namespace ChibiClash
                     pending.cpu[0] = pending.cpu[1] = false;
                     pending.training = false;
                     onlineNote = "";
-                    social.ClearMatchFriend();
                     roomsSvc.JoinByCode(code);
                     Enter(Page.Room);   // leaving QUICK MATCH this way stops its search (Enter)
                 }
             }
-            if (Gui.Button(new Rect(r.xMax - 270f, r.y + 102f, 200f, 46f), Loc.T("invite.decline"), Gui.Red, 17)) nameInvites.Decline(0);
+            if (Gui.Button(new Rect(r.xMax - 16f - bw, r.yMax - 52f, bw, 40f), Loc.T("invite.decline"), Gui.Red, 15)) nameInvites.Decline(0);
         }
 
         /// <summary>
@@ -1203,7 +1204,6 @@ namespace ChibiClash
             if (autoStartedFor == cur.Id || !host || launching || roomsSvc.Working || !roomsSvc.Synced || wipeStart >= 0f) return;
             autoStartedFor = cur.Id;
             onlineNote = "";
-            social.ClearMatchFriend();
             roomsSvc.PressStart();
         }
 

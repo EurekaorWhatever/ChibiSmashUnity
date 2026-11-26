@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace ChibiClash.Tests
 {
-    /// <summary>Gesture-driven input (rules v15): ult window, CrossArms block, Super Jump, Pose Fireball, anti-cheat rules.</summary>
+    /// <summary>Gesture-driven input: ult window (v15), pose ultimate and ultimate-only poses (v26, CI-6), anti-cheat rules.</summary>
     public class ChibiGestureParityTests
     {
         const uint Seed = 1234;
@@ -283,124 +283,65 @@ namespace ChibiClash.Tests
             Assert.Greater(s.GameTicks, g0);
         }
 
-        // ================================================================== CrossArms block (F:261)
+        // ================================================================== camera poses are for the ultimate only (rules v26, CI-6)
 
         [Test]
-        public void CrossArms_NoWindow_BlocksLikeShield()
+        public void CrossArms_NoLongerBlocks()
+        {
+            // Arrange
+            var s = Arena(FighterClass.Polearm, FighterClass.Melee);
+
+            // Act
+            for (int t = 0; t < 10; t++) Step(s, G(Gesture.CrossArms));
+
+            // Assert
+            Assert.IsFalse(s.F[0].Shielding, "CI-6: the camera is for the ultimate only, CrossArms does not block");
+        }
+
+        [Test]
+        public void ShieldButton_StillBlocks()
         {
             var s = Arena(FighterClass.Polearm, FighterClass.Melee);
-            Step(s, G(Gesture.CrossArms));
-            Assert.IsTrue(s.F[0].Shielding, "CrossArms blocks");
-            var t = Arena(FighterClass.Polearm, FighterClass.Melee);
-            Step(t, B(ChibiButtons.Shield));
-            // Only the raw-input bookkeeping differs (gesture bits vs Shield bit); everything gameplay must match.
-            t.F[0].PrevInput = s.F[0].PrevInput;
-            t.F[0].GestureTicks = s.F[0].GestureTicks;
-            Assert.AreEqual(t.F[0].ComputeHashForTest(), s.F[0].ComputeHashForTest(), "identical to holding the Shield button");
+            Step(s, B(ChibiButtons.Shield));
+            Assert.IsTrue(s.F[0].Shielding, "the Block key is unchanged");
         }
 
         [Test]
-        public void CrossArms_WindowOpen_DoesNotBlock()
+        public void RaiseHands_NoSuperJump()
         {
-            var s = Arena(FighterClass.Heavy, FighterClass.Melee);   // Heavy ult gesture is RaiseHands
-            OpenWindow(s);
-            Step(s, G(Gesture.CrossArms));
-            Assert.IsFalse(s.F[0].Shielding, "no CrossArms block while the ult window is open");
-        }
-
-        // ================================================================== poses (F:371-392)
-
-        [Test]
-        public void RaiseHands_Onset_SuperJumpVy19_AirJumpRefilled_Cd180()
-        {
+            // Arrange
             var s = Arena(FighterClass.Melee, FighterClass.Melee);
-            s.F[0].AirJumps = 0;
+
+            // Act
             Step(s, G(Gesture.RaiseHands));
-            var f = s.F[0];
-            Assert.AreEqual(ChibiSimConst.SuperJumpVel - ChibiSimConst.Gravity, f.Vy, "Vy 19 u/s then one tick of gravity");
-            Assert.AreEqual(1, f.AirJumps, "air jump refilled");
-            Assert.AreEqual(ChibiSimConst.SuperJumpCd, f.SuperJumpCd);
+
+            // Assert
+            Assert.AreEqual(0, s.F[0].SuperJumpCd, "no Super Jump (CI-6)");
+            Assert.LessOrEqual(s.F[0].Vy, 0, "no upward launch");
         }
 
         [Test]
-        public void RaiseHands_HeldNotRetriggered_SecondOnsetInsideCdIgnored()
+        public void PunchForward_NoPoseFireball_NoLock()
         {
-            var s = Arena(FighterClass.Melee, FighterClass.Melee);
-            for (int k = 0; k < 60; k++) Step(s, G(Gesture.RaiseHands));   // held: one onset only
-            Assert.AreEqual(ChibiSimConst.SuperJumpCd - 59, s.F[0].SuperJumpCd);
-            Step(s, N);
-            int cd = s.F[0].SuperJumpCd;
-            int vyBefore = s.F[0].Vy;
-            Step(s, G(Gesture.RaiseHands));                                // new onset, still on cooldown
-            Assert.AreEqual(cd - 1, s.F[0].SuperJumpCd, "cooldown not restarted");
-            Assert.Less(s.F[0].Vy, ChibiSimConst.SuperJumpVel - ChibiSimConst.Gravity, "no second super jump");
-            Assert.LessOrEqual(s.F[0].Vy, vyBefore);
+            // Arrange
+            var s = Arena(FighterClass.Heavy, FighterClass.Melee, -3000, 12000);
+
+            // Act
+            Step(s, G(Gesture.PunchForward));
+
+            // Assert
+            Assert.AreEqual(0, CountProj(s, ChibiProjKind.PoseFireball), "no Pose Fireball (CI-6)");
+            Assert.AreEqual(0, s.F[0].PoseShotCd);
+            Assert.AreEqual(-1, s.F[0].MoveSlot, "no 0.25 s pose lock");
         }
 
         [Test]
-        public void PunchForward_Onset_PoseFireballSpawned_Lock15_Cd240()
+        public void PunchForward_ThenLight_LightStartsAtOnce()
         {
             var s = Arena(FighterClass.Heavy, FighterClass.Melee, -3000, 12000);
-            int since = s.F[0].SinceAttackTicks;
             Step(s, G(Gesture.PunchForward));
-            var f = s.F[0];
-            Assert.AreEqual(1, CountProj(s, ChibiProjKind.PoseFireball));
-            ChibiProjectileSim p = null;
-            foreach (var q in s.Proj) if (q.Active && q.Kind == ChibiProjKind.PoseFireball) p = q;
-            Assert.AreEqual(0, p.Owner);
-            Assert.AreEqual(ChibiSimConst.PoseShotMult, p.Mult);
-            Assert.AreEqual(ChibiSimConst.PoseShotR, p.Radius);
-            Assert.AreEqual(ChibiSimConst.PoseShotVel, p.Vx, "13 u/s toward Facing +1");
-            Assert.AreEqual(ChibiSimConst.PoseShotLife, p.Life);
-            Assert.AreEqual(-3000 + ChibiSimConst.PoseShotOx, p.X, "Center + (0.6 F, 0.1)");
-            Assert.AreEqual(ChibiSimConst.PoseShotOy, p.Y);
-            Assert.AreEqual(ChibiSimConst.PoseSlot, f.MoveSlot, "0.25 s actionLock");
-            Assert.AreEqual(ChibiSimConst.PoseShotCd, f.PoseShotCd);
-            Assert.AreEqual(since + 1, f.SinceAttackTicks, "not a normal or skill: Patience clock untouched");
-        }
-
-        [Test]
-        public void PoseFireball_Lock_LightOnTick14Lost_LightOnTick15Starts()
-        {
-            var s = Arena(FighterClass.Heavy, FighterClass.Melee, -3000, 12000);
-            Step(s, G(Gesture.PunchForward));                      // tick 0
-            for (int k = 1; k <= 13; k++) Step(s, N);
-            var lost = new ChibiSimState(); lost.CopyFrom(s);
-            Step(lost, B(ChibiButtons.Light));                     // tick 14
-            Assert.AreNotEqual(0, lost.F[0].MoveSlot, "Light on tick 14 is lost (still locked)");
-            Step(s, N);                                            // tick 14
-            Step(s, B(ChibiButtons.Light));                        // tick 15
-            Assert.AreEqual(0, s.F[0].MoveSlot, "Light on tick 15 starts (lock 0.25 s = 15 ticks)");
-        }
-
-        [Test]
-        public void PunchForward_WhileAttacking_NoFireball()
-        {
-            var s = Arena(FighterClass.Heavy, FighterClass.Melee, -3000, 12000);
-            Step(s, B(ChibiButtons.Heavy));
-            Step(s, G(Gesture.PunchForward));
-            Assert.AreEqual(0, CountProj(s, ChibiProjKind.PoseFireball), "needs actionLock <= 0 (F:383)");
-            Assert.AreEqual(0, s.F[0].PoseShotCd, "cooldown not spent on a refused pose");
-        }
-
-        [Test]
-        public void Poses_DisabledWhileUltWindowOpen()
-        {
-            var s = Arena(FighterClass.Melee, FighterClass.Melee, -3000, 12000);   // Melee ult = CrossArms
-            OpenWindow(s);
-            Step(s, G(Gesture.RaiseHands));
-            Step(s, G(Gesture.PunchForward));
-            Assert.AreEqual(0, s.F[0].SuperJumpCd, "no Super Jump during the window (F:373)");
-            Assert.AreEqual(0, CountProj(s, ChibiProjKind.PoseFireball), "no Pose Fireball during the window");
-        }
-
-        [Test]
-        public void Poses_IgnoredWhileStunned()
-        {
-            var s = Arena(FighterClass.Melee, FighterClass.Melee, -3000, 12000);
-            s.F[0].Stun = 30;
-            Step(s, G(Gesture.RaiseHands));
-            Assert.AreEqual(0, s.F[0].SuperJumpCd, "HandlePoses runs only when canAct (F:179-183)");
+            Step(s, B(ChibiButtons.Light));
+            Assert.AreEqual(0, s.F[0].MoveSlot, "a pose never locks the fighter");
         }
 
         // ================================================================== security (security-gesture-review.md section 2)
@@ -458,8 +399,9 @@ namespace ChibiClash.Tests
                 // Keep it on stage so ring-outs do not reset anything.
                 if (Math.Abs(s.F[0].X) > 6000 || s.F[0].Y > 6000) { s.F[0].X = 0; s.F[0].Y = 0; s.F[0].Vy = 0; }
             }
-            Assert.LessOrEqual(superJumps, ticks / ChibiSimConst.SuperJumpCd + 1, "Super Jump limited by its 3 s cooldown");
-            Assert.LessOrEqual(fireballs, ticks / ChibiSimConst.PoseShotCd + 1, "Pose Fireball limited by its 4 s cooldown");
+            Assert.AreEqual(0, superJumps, "poses never Super Jump (CI-6)");
+            Assert.AreEqual(0, fireballs, "poses never fire the Pose Fireball (CI-6)");
+            Assert.AreEqual(0, CountProj(s, ChibiProjKind.PoseFireball));
             Assert.AreEqual(0, s.F[0].UltsUsed, "no ult without a full meter");
         }
 
@@ -481,6 +423,70 @@ namespace ChibiClash.Tests
             for (int k = 10; k < script.Length; k++) Step(again, script[k]);
             Assert.AreEqual(straight, again.ComputeChecksum());
             Assert.AreEqual(1, again.F[0].UltsUsed, "precondition: the Heavy ult fired through the gesture");
+        }
+
+        // ================================================================== pose ultimate (rules v26, 2026-11-26)
+
+        [TestCase(FighterClass.Melee)] [TestCase(FighterClass.Heavy)] [TestCase(FighterClass.Ranged)]
+        [TestCase(FighterClass.Magic)] [TestCase(FighterClass.Polearm)]
+        public void PoseUlt_ClassPoseHeld30RealTicks_FullMeter_FiresWithoutKeyOrWindow(FighterClass c)
+        {
+            var s = Arena(c, FighterClass.Melee, -3000, 12000);
+            s.F[0].Ult = ChibiSimConst.UltMax;
+            var pose = G(UltGestureOf(c));
+            for (int t = 0; t < ChibiSimConst.UltPoseHoldTicks - 1; t++)
+            {
+                Step(s, pose);
+                Assert.AreEqual(0, s.F[0].UltsUsed, $"{c}: not before {ChibiSimConst.UltPoseHoldTicks} held ticks (tick {t})");
+            }
+            Step(s, pose);   // 30th held tick: fire pending
+            Step(s, pose);   // fires on the next game step
+            Assert.AreEqual(1, s.F[0].UltsUsed, $"{c}: holding the class pose fires the ultimate");
+            Assert.AreEqual(0, s.F[0].Ult, "meter spent");
+        }
+
+        [Test]
+        public void PoseUlt_MeterNotFull_NeverFires()
+        {
+            var s = Arena(FighterClass.Heavy, FighterClass.Melee, -3000, 12000);
+            s.F[0].Ult = ChibiSimConst.UltMax - 1;
+            for (int t = 0; t < 120; t++) Step(s, G(UltGestureOf(FighterClass.Heavy)));
+            Assert.AreEqual(0, s.F[0].UltsUsed);
+        }
+
+        [Test]
+        public void PoseUlt_WrongPose_NeverFires()
+        {
+            var s = Arena(FighterClass.Heavy, FighterClass.Melee, -3000, 12000);   // Heavy's pose is RaiseHands
+            s.F[0].Ult = ChibiSimConst.UltMax;
+            for (int t = 0; t < 120; t++) Step(s, G(Gesture.PunchForward));
+            Assert.AreEqual(0, s.F[0].UltsUsed);
+        }
+
+        [Test]
+        public void PoseUlt_ShortCrossArmsHold_DoesNotFire()
+        {
+            // A short CrossArms (under 0.5 s) passing through must not fire Melee's ult.
+            var s = Arena(FighterClass.Melee, FighterClass.Melee, -3000, 12000);
+            s.F[0].Ult = ChibiSimConst.UltMax;
+            for (int t = 0; t < ChibiSimConst.UltPoseHoldTicks - 2; t++) Step(s, G(Gesture.CrossArms));
+            for (int t = 0; t < 10; t++) Step(s, N);
+            Assert.AreEqual(0, s.F[0].UltsUsed);
+            Assert.AreEqual(ChibiSimConst.UltMax, s.F[0].Ult, "meter kept");
+        }
+
+        [Test]
+        public void PoseUlt_RollbackRestoreMidHold_SameChecksum()
+        {
+            var a = Arena(FighterClass.Ranged, FighterClass.Melee, -3000, 12000);
+            a.F[0].Ult = ChibiSimConst.UltMax;
+            var pose = G(UltGestureOf(FighterClass.Ranged));
+            for (int t = 0; t < 15; t++) Step(a, pose);
+            var b = new ChibiSimState();
+            b.CopyFrom(a);
+            for (int t = 0; t < 40; t++) { Step(a, pose); Step(b, pose); }
+            Assert.AreEqual(1, a.F[0].UltsUsed);
+            Assert.AreEqual(a.ComputeChecksum(), b.ComputeChecksum());
         }
     }
 

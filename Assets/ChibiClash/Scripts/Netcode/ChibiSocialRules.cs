@@ -4,45 +4,16 @@ using System.Text;
 namespace ChibiClash.Netcode
 {
     /// <summary>
-    /// The match invite a player sends to a friend through Unity Friends messaging. Plain public fields (serialised by the
-    /// Friends SDK). Everything in it comes from another player's machine, so it is UNTRUSTED: check it with
-    /// <see cref="ChibiSocialRules.ValidateInvite"/> before showing or acting on it.
-    /// </summary>
-    [Serializable]
-    public sealed class ChibiInviteMessage
-    {
-        /// <summary>Message kind: <see cref="ChibiSocialRules.KindInvite"/>, <see cref="ChibiSocialRules.KindDecline"/> or <see cref="ChibiSocialRules.KindCancel"/>.</summary>
-        public string Kind = "";
-        /// <summary>Lobby code of the private room (invite only).</summary>
-        public string Code = "";
-        /// <summary>Sender build tag (<see cref="NetworkRoomManager.ProtocolTag"/>): different builds cannot play each other.</summary>
-        public string Proto = "";
-        /// <summary>Message format version.</summary>
-        public int V;
-    }
-
-    /// <summary>Why an incoming invite was ignored (for logs / tests; never shown with the attacker's text).</summary>
-    public enum ChibiInviteVerdict : byte
-    {
-        Ok, NotAFriend, Malformed, WrongKind, BadCode, OtherBuild, Flooding, Busy,
-    }
-
-    /// <summary>
-    /// Pure, unit-tested rules for the social layer (player names, friend invites). Security model: Unity Friends and
+    /// Pure, unit-tested rules for the social layer (player names, room names, lobby codes). Security model: Unity Friends and
     /// Lobby are the authorities for who is a friend and which rooms exist; this class only refuses malformed or abusive
     /// input from other clients and makes names safe to draw. It never trusts anything a peer sends.
     /// </summary>
     public static class ChibiSocialRules
     {
-        public const string KindInvite = "invite", KindDecline = "decline", KindCancel = "cancel";
-        /// <summary>Invite message format version.</summary>
-        public const int InviteVersion = 1;
         /// <summary>Player names: 3..16 characters, letters, digits and underscore (Unity adds "#1234" itself).</summary>
         public const int NameMin = 3, NameMax = 16;
         /// <summary>Longest name we ever draw (name + "#" + 4-digit tag + slack); longer input is cut.</summary>
         public const int DisplayMax = 24;
-        /// <summary>INVITE by name to a non-friend: how long we wait for them to accept the friend request (seconds).</summary>
-        public const float InviteByNameWaitSeconds = 600f;
 
         /// <summary>The chosen part of a Unity name: "Kira#4821" -> "Kira" (null -> "").</summary>
         public static string BaseName(string name)
@@ -118,11 +89,7 @@ namespace ChibiClash.Netcode
         }
         /// <summary>Lobby codes are short upper-case alphanumerics; accept 4..12 to stay robust to format changes.</summary>
         public const int CodeMin = 4, CodeMax = 12;
-        /// <summary>An invite is shown for this long, then dropped (seconds, local clock: a peer's clock is not trusted).</summary>
-        public const float InviteLifetime = 60f;
-        /// <summary>One invite per friend per this many seconds is accepted (and sent): stops pop-up spam.</summary>
-        public const float InviteCooldown = 5f;
-        /// <summary>At most this many invites are pending at once.</summary>
+        /// <summary>At most this many room invites (by name, ChibiNameInviteRules) are pending at once.</summary>
         public const int MaxPendingInvites = 3;
 
         static readonly string[] StarterAdjectives =
@@ -211,34 +178,7 @@ namespace ChibiClash.Netcode
             return s;
         }
 
-        /// <summary>
-        /// Decide whether an incoming message may be shown. <paramref name="senderIsFriend"/> must come from OUR friends
-        /// list (Unity Friends), never from the message. Busy (in a match / room flow) invites are ignored.
-        /// </summary>
-        public static ChibiInviteVerdict ValidateInvite(ChibiInviteMessage m, bool senderIsFriend, string localProtoTag,
-                                                        float now, float lastFromSender, int pendingCount, bool busy)
-        {
-            if (!senderIsFriend) return ChibiInviteVerdict.NotAFriend;
-            if (m == null || m.Kind == null || m.Kind.Length > 16 || (m.Proto != null && m.Proto.Length > 32))
-                return ChibiInviteVerdict.Malformed;
-            if (m.Kind != KindInvite) return ChibiInviteVerdict.WrongKind;
-            if (NormalizeCode(m.Code) == null) return ChibiInviteVerdict.BadCode;
-            if (m.Proto != localProtoTag) return ChibiInviteVerdict.OtherBuild;
-            if (now - lastFromSender < InviteCooldown || pendingCount >= MaxPendingInvites) return ChibiInviteVerdict.Flooding;
-            if (busy) return ChibiInviteVerdict.Busy;
-            return ChibiInviteVerdict.Ok;
-        }
-
         /// <summary>Room names: 3-24 characters.</summary>
-        /// <summary>
-        /// True when <paramref name="m"/> is a friend declining the invite we sent. <paramref name="invitedId"/> is the
-        /// friend who currently HOLDS our invite (set once the invite message went out), not the friend we are still
-        /// creating a room for.
-        /// </summary>
-        /// <example><code>if (ChibiSocialRules.IsDeclineOfOurInvite(m, friend, e.UserId, _invitedId)) ...</code></example>
-        public static bool IsDeclineOfOurInvite(ChibiInviteMessage m, bool senderIsFriend, string senderId, string invitedId)
-            => m != null && senderIsFriend && m.Kind == KindDecline && !string.IsNullOrEmpty(invitedId) && senderId == invitedId;
-
         public const int RoomNameMin = 3, RoomNameMax = 24;
         /// <summary>Shown when a room has no usable name.</summary>
         public const string FallbackRoomName = "Private room";

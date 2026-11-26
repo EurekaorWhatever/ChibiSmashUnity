@@ -91,15 +91,6 @@ namespace ChibiClash
                 if (i != LocalPlayer && !string.IsNullOrEmpty(seatNames[i])) _names[i] = seatNames[i];
         }
 
-        /// <summary>
-        /// Show the opponent by the name OUR friends list gives them (an invite match): verified, so shown in full with
-        /// its #tag. 1v1 only. Ignored offline.
-        /// </summary>
-        public void SetVerifiedOpponentName(string friendName)
-        {
-            if (!Online || string.IsNullOrEmpty(friendName) || PlayerCount > 2) return;   // one opponent only (1v1 invite)
-            _names[1 - LocalPlayer] = ChibiSocialRules.PeerDisplayName(friendName, verified: true);
-        }
         /// <summary>Gesture tracker of a local human fighter (camera / simulated poses), else null.</summary>
         public GestureTracker Tracker(int i) => _human[i] != null ? _human[i].Tracker : null;
         /// <summary>World position of fighter <paramref name="i"/>'s body centre.</summary>
@@ -442,7 +433,8 @@ namespace ChibiClash
                 Pve = Config.pve && !Online,
                 Training = Config.training,
                 CombosLanded = me.CombosLanded, UltsUsed = me.UltsUsed, Parries = me.Parries,
-                PostureAverage = tracker != null ? tracker.PostureAverage : 1f,
+                PostureAverage = tracker != null ? tracker.PostureAverage : 0f,
+                PostureTracked = tracker != null && tracker.PostureSampled,
             };
             CoinsEarned = MatchRewards.Award(GM.Save, stats, RewardLog);
             GM.Save.Save();
