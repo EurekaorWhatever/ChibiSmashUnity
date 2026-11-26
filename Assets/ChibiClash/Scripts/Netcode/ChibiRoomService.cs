@@ -183,7 +183,9 @@ namespace ChibiClash.Netcode
                 if (ids != null)
                     for (int k = 0; k < ids.Count && fresh.Count < MaxListedRooms; k++)
                     {
-                        if (k > 0) await Task.Delay(1100);   // spaced reads
+                        // Spaced reads. Awaitable, not Task.Delay: the WebGL player has no threads, so a .NET timer
+                        // never fired there and Working stayed true ("ONE MOMENT..." forever once you were in 2+ rooms).
+                        if (k > 0) await Awaitable.WaitForSecondsAsync(1.1f);
                         try
                         {
                             var l = await LobbyService.Instance.GetLobbyAsync(ids[k]);

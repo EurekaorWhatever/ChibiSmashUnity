@@ -354,7 +354,7 @@ namespace ChibiClash.Netcode
             for (int attempt = 0; attempt < 2; attempt++)
             {
                 try { await LobbyService.Instance.DeleteLobbyAsync(id); return; }
-                catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.RateLimited) { await Task.Delay(1500); }
+                catch (LobbyServiceException e) when (e.Reason == LobbyExceptionReason.RateLimited) { await Awaitable.WaitForSecondsAsync(1.5f); }   // not Task.Delay: no timer thread on WebGL
                 catch (Exception) { return; }   // already gone; otherwise it goes inactive 30 s after its last heartbeat
             }
         }

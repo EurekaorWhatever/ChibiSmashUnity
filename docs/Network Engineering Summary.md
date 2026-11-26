@@ -114,6 +114,8 @@ message shares every player's name. A protocol 5 game and a protocol 6 game refu
 - ⏳ **Names never expire**, even when a player stops playing.
 - 🌍 **Web version** (GitHub Pages link): online play goes through Relay with secure WebSockets. LAN is not possible
   in a browser. 🤝 Web and PC players can play each other (Unity supports this cross-play).
+  ⏱️ The browser has no extra threads, so online waits use Unity's `Awaitable.WaitForSecondsAsync`, never
+  `Task.Delay` (a .NET timer that may never fire on the web).
 
 ## ✅ Testing
 
